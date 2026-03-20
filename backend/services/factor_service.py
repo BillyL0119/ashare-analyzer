@@ -6,30 +6,50 @@ import akshare as ak
 RISK_FREE_ANNUAL = 0.025   # ~2.5% China 1-yr deposit rate proxy
 TRADING_DAYS = 252
 
+# Tencent Finance symbol → metadata
 INDICES = {
-    "sh000300": {"zh": "沪深300", "en": "CSI 300"},
-    "sh000016": {"zh": "上证50",  "en": "SSE 50"},
-    "sz399006": {"zh": "创业板",   "en": "ChiNext"},
+    "sh000300": {"zh": "沪深300", "en": "CSI 300",  "tx": "sh000300"},
+    "sh000016": {"zh": "上证50",  "en": "SSE 50",   "tx": "sh000016"},
+    "sz399006": {"zh": "创业板",  "en": "ChiNext",  "tx": "sz399006"},
 }
 
+# In-process cache: {tx_symbol: (dates_list, log_returns_array)}
+_INDEX_CACHE: dict = {}
 
-# ── Index data ─────────────────────────────────────────────────────────────────
 
-def _fetch_index_returns(symbol: str, start_date: str, end_date: str):
-    """Return (dates_list, log_returns_array) for a market index, or (None, None)."""
+def _load_index(tx_symbol: str):
+    """Fetch full index history via Tencent Finance (no py_mini_racer).
+    Result is cached for the lifetime of the process."""
+    if tx_symbol in _INDEX_CACHE:
+        return _INDEX_CACHE[tx_symbol]
     try:
-        df = ak.stock_zh_index_daily(symbol=symbol)
-        df["date"] = df["date"].astype(str).str.replace("-", "")
-        df = df[df["date"].between(start_date, end_date)].sort_values("date")
-        if len(df) < 10:
-            return None, None
+        print(f"[factor] Loading index {tx_symbol} via Tencent Finance (first call)…")
+        df = ak.stock_zh_index_daily_tx(symbol=tx_symbol)
+        df["date"] = df["date"].astype(str)
+        df = df.sort_values("date")
         closes = df["close"].values.astype(float)
         dates = df["date"].tolist()
-        log_rets = np.diff(np.log(closes))
-        return dates[1:], log_rets
+        log_rets = np.diff(np.log(np.where(closes > 0, closes, np.nan)))
+        result = (dates[1:], log_rets)
+        _INDEX_CACHE[tx_symbol] = result
+        return result
     except Exception as e:
-        print(f"Index fetch failed for {symbol}: {e}")
+        print(f"[factor] Index load failed for {tx_symbol}: {e}")
         return None, None
+
+
+def _fetch_index_returns(tx_symbol: str, start_date_dash: str, end_date_dash: str):
+    """Return (dates_list, log_returns_array) sliced to the requested window."""
+    all_dates, all_rets = _load_index(tx_symbol)
+    if all_dates is None:
+        return None, None
+    # Filter to window
+    pairs = [(d, r) for d, r in zip(all_dates, all_rets)
+             if start_date_dash <= d <= end_date_dash]
+    if len(pairs) < 10:
+        return None, None
+    dates, rets = zip(*pairs)
+    return list(dates), np.array(rets)
 
 
 # ── Core CAPM ──────────────────────────────────────────────────────────────────
@@ -81,13 +101,18 @@ def analyze_factors(df: pd.DataFrame) -> dict:
         return {"error": "Insufficient data for factor analysis"}
 
     stock_log_rets = np.diff(np.log(closes))
-    stock_dates = [str(d) for d in dates[1:]]
 
-    start_date = str(dates[0]).replace("-", "")
-    end_date   = str(dates[-1]).replace("-", "")
+    # Dates from stock df may be "YYYYMMDD" or "YYYY-MM-DD"; normalise to "YYYY-MM-DD"
+    def _to_dash(d):
+        d = str(d).replace("-", "")
+        return f"{d[:4]}-{d[4:6]}-{d[6:8]}"
+
+    stock_dates = [_to_dash(d) for d in dates[1:]]  # aligned with log_rets
+    start_date_dash = _to_dash(dates[0])
+    end_date_dash   = _to_dash(dates[-1])
 
     # ── Primary market proxy: CSI 300 ─────────────────────────────────────────
-    mkt_dates, mkt_rets = _fetch_index_returns("sh000300", start_date, end_date)
+    mkt_dates, mkt_rets = _fetch_index_returns(INDICES["sh000300"]["tx"], start_date_dash, end_date_dash)
     if mkt_rets is None or len(mkt_rets) < 20:
         return {"error": "Could not fetch market index data for factor analysis"}
 
@@ -97,7 +122,8 @@ def analyze_factors(df: pd.DataFrame) -> dict:
     if len(common_dates) < 20:
         return {"error": "Insufficient overlapping trading days with market index"}
 
-    mkt_aligned  = np.array([mkt_rets[mkt_dates.index(d)] for d in common_dates])
+    mkt_date_set = dict(zip(mkt_dates, mkt_rets))
+    mkt_aligned  = np.array([mkt_date_set[d] for d in common_dates])
     stk_aligned  = np.array([stock_date_set[d] for d in common_dates])
 
     capm = _capm(stk_aligned, mkt_aligned)
@@ -132,7 +158,7 @@ def analyze_factors(df: pd.DataFrame) -> dict:
     # ── Correlations with other indices ───────────────────────────────────────
     correlations = {}
     for idx_sym, idx_names in INDICES.items():
-        idates, irets = _fetch_index_returns(idx_sym, start_date, end_date)
+        idates, irets = _fetch_index_returns(idx_names["tx"], start_date_dash, end_date_dash)
         if irets is None:
             correlations[idx_sym] = {"zh": idx_names["zh"], "en": idx_names["en"],
                                      "correlation": None, "beta": None}
@@ -142,7 +168,8 @@ def analyze_factors(df: pd.DataFrame) -> dict:
             correlations[idx_sym] = {"zh": idx_names["zh"], "en": idx_names["en"],
                                      "correlation": None, "beta": None}
             continue
-        ialigned = np.array([irets[idates.index(d)] for d in common])
+        idate_set = dict(zip(idates, irets))
+        ialigned = np.array([idate_set[d] for d in common])
         saligned = np.array([stock_date_set[d] for d in common])
         corr = float(np.corrcoef(saligned, ialigned)[0, 1])
         b, _, _, _, _ = stats.linregress(ialigned, saligned)
