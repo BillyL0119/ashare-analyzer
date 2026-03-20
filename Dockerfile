@@ -19,6 +19,8 @@ RUN pip3 install --break-system-packages -r backend/requirements.txt
 # Copy backend
 COPY backend/ ./backend/
 
+WORKDIR /app/backend
+
 EXPOSE 8001
 
-CMD cd backend && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8001}
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8001}"]
