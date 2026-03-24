@@ -4,9 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from routers import stocks
+from routers.indicators import router as indicators_router
+from routers.simulation import router as simulation_router
+from routers.watchlist import router as watchlist_router
 
 app = FastAPI(
-    title="A-Share Analyzer API",
+    title="Best Friend Ashare API",
     description="China A-share market data and technical analysis",
     version="1.0.0",
 )
@@ -20,8 +23,12 @@ app.add_middleware(
 )
 
 app.include_router(stocks.router, prefix="/api/stocks", tags=["stocks"])
+app.include_router(indicators_router, prefix="/api/indicators", tags=["indicators"])
+app.include_router(simulation_router, prefix="/api/simulation", tags=["simulation"])
+app.include_router(watchlist_router, prefix="/api/watchlist", tags=["watchlist"])
 
-# Serve pre-built React frontend
+# Serve pre-built Next.js static export if available, else old Vite dist
+NEXT_OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend-next", "out")
 DIST_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
 
 if os.path.isdir(DIST_DIR):
