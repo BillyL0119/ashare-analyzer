@@ -21,3 +21,6 @@ export const getStockRegime = (symbol, params) =>
 
 export const getStockFactor = (symbol, params) =>
   api.get(`/stocks/${symbol}/factor`, { params })
+
+export const getFinancial = (symbol) =>
+  api.get(`/financial/${symbol}`)

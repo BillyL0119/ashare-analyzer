@@ -11,6 +11,7 @@ import MonteCarloPanel from './MonteCarloPanel'
 import RiskPanel from './RiskPanel'
 import RegimePanel from './RegimePanel'
 import FactorPanel from './FactorPanel'
+import FinancialPanel from './FinancialPanel'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust } = useCompareStore()
@@ -107,6 +108,7 @@ export default function ComparePanel() {
           { key: 'risk', label: t.riskAnalytics },
           { key: 'regime', label: t.regimeDetector },
           { key: 'factor', label: t.factorAnalysis },
+          { key: 'financial', label: t.financialAnalysis },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -139,6 +141,8 @@ export default function ComparePanel() {
         <RegimePanel stocks={selectedSymbols} />
       ) : viewMode === 'factor' ? (
         <FactorPanel stocks={selectedSymbols} />
+      ) : viewMode === 'financial' ? (
+        <FinancialPanel stocks={selectedSymbols} />
       ) : (
         <div
           style={{
