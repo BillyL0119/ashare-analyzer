@@ -24,3 +24,9 @@ export const getStockFactor = (symbol, params) =>
 
 export const getFinancial = (symbol) =>
   api.get(`/financial/${symbol}`)
+
+export const getUSStockHistory = (symbol, params) =>
+  api.get(`/us/stock/${symbol}`, { params })
+
+export const searchUSStocks = (query) =>
+  api.get(`/us/search/${encodeURIComponent(query)}`)

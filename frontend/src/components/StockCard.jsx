@@ -12,7 +12,7 @@ import { THEME } from '../utils/chartHelpers'
 
 export default function StockCard({ stock }) {
   const { code, name } = stock
-  const { period, startDate, endDate, adjust, removeSymbol, setPeriod, setAdjust } =
+  const { period, startDate, endDate, adjust, removeSymbol, setPeriod, setAdjust, market } =
     useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
@@ -22,6 +22,7 @@ export default function StockCard({ stock }) {
     startDate,
     endDate,
     adjust,
+    market,
   })
 
   const groupId = `group_${code}`
@@ -164,10 +165,10 @@ export default function StockCard({ stock }) {
         {data && !loading && (
           <>
             <div style={{ height: 360 }}>
-              <KLineChart candles={data.candles} ma={data.ma} groupId={groupId} />
+              <KLineChart candles={data.candles} ma={data.ma} groupId={groupId} market={market} />
             </div>
             <div style={{ height: 120, borderTop: `1px solid ${THEME.border}` }}>
-              <VolumeChart candles={data.candles} groupId={groupId} />
+              <VolumeChart candles={data.candles} groupId={groupId} market={market} />
             </div>
             <div style={{ height: 120, borderTop: `1px solid ${THEME.border}` }}>
               <MACDChart macd={data.macd} groupId={groupId} />

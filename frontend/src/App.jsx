@@ -6,7 +6,7 @@ import { T } from './i18n/translations'
 import { THEME } from './utils/chartHelpers'
 
 export default function App() {
-  const { startDate, endDate, setDateRange } = useCompareStore()
+  const { startDate, endDate, setDateRange, market, setMarket } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const t = T[lang]
 
@@ -36,6 +36,29 @@ export default function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 20 }}>📊</span>
           <span style={{ fontSize: 18, fontWeight: 700, color: '#e6edf3' }}>{t.appTitle}</span>
+        </div>
+
+        {/* Market toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: '#21262d', borderRadius: 6, padding: 3 }}>
+          {[{ key: 'cn', label: t.marketCN }, { key: 'us', label: t.marketUS }].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setMarket(key)}
+              style={{
+                padding: '4px 14px',
+                borderRadius: 4,
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: 600,
+                background: market === key ? (key === 'us' ? '#4caf50' : '#1f6feb') : 'transparent',
+                color: market === key ? '#fff' : '#8b949e',
+                transition: 'all 0.15s',
+              }}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
         <SearchBar />

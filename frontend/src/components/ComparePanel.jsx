@@ -14,8 +14,8 @@ import FactorPanel from './FactorPanel'
 import FinancialPanel from './FinancialPanel'
 
 function OverlaySlot({ stock, onData }) {
-  const { period, startDate, endDate, adjust } = useCompareStore()
-  const { data } = useStockData(stock.code, { period, startDate, endDate, adjust })
+  const { period, startDate, endDate, adjust, market } = useCompareStore()
+  const { data } = useStockData(stock.code, { period, startDate, endDate, adjust, market })
 
   useEffect(() => {
     onData(stock.code, data)

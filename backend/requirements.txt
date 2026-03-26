@@ -4,6 +4,7 @@ akshare
 pandas
 numpy
 scipy
+yfinance
 supabase==2.0.3
 python-dotenv==1.0.0
 httpx==0.25.2

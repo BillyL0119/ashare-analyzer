@@ -1,7 +1,9 @@
 export const T = {
   zh: {
     appTitle: 'Best Friend Stock',
-    dataSource: '数据来源: AkShare',
+    dataSource: '数据来源: AkShare / Yahoo Finance',
+    marketCN: 'A股',
+    marketUS: '美股',
     from: '起始:',
     to: '至:',
     searchPlaceholder: '搜索股票代码或名称...',
@@ -164,7 +166,9 @@ export const T = {
   },
   en: {
     appTitle: 'Best Friend Stock',
-    dataSource: 'Data: AkShare',
+    dataSource: 'Data: AkShare / Yahoo Finance',
+    marketCN: 'A-Share',
+    marketUS: 'US Stock',
     from: 'From:',
     to: 'To:',
     searchPlaceholder: 'Search by code or name...',

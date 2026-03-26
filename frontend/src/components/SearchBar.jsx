@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { searchStocks } from '../api/stockApi'
+import { searchStocks, searchUSStocks } from '../api/stockApi'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
@@ -12,7 +12,7 @@ export default function SearchBar() {
   const debounceRef = useRef(null)
   const wrapperRef = useRef(null)
 
-  const { addSymbol, selectedSymbols } = useCompareStore()
+  const { addSymbol, selectedSymbols, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
 
@@ -20,7 +20,7 @@ export default function SearchBar() {
     if (!q.trim()) { setResults([]); setOpen(false); return }
     setSearching(true)
     try {
-      const res = await searchStocks(q)
+      const res = market === 'us' ? await searchUSStocks(q) : await searchStocks(q)
       setResults(res.data.slice(0, 20))
       setOpen(true)
     } catch {
@@ -28,7 +28,7 @@ export default function SearchBar() {
     } finally {
       setSearching(false)
     }
-  }, [])
+  }, [market])
 
   useEffect(() => {
     clearTimeout(debounceRef.current)

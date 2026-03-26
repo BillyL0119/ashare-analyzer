@@ -42,7 +42,7 @@ const sharedDataZoom = [
   },
 ]
 
-export function buildKLineOption(candles, maData, lang = 'zh') {
+export function buildKLineOption(candles, maData, lang = 'zh', upColor = THEME.up, downColor = THEME.down) {
   const dates = candles.map((c) => c.date.slice(0, 10))
   const ohlc = candles.map((c) => [c.open, c.close, c.low, c.high])
 
@@ -56,10 +56,10 @@ export function buildKLineOption(candles, maData, lang = 'zh') {
       type: 'candlestick',
       data: ohlc,
       itemStyle: {
-        color: THEME.up,
-        color0: THEME.down,
-        borderColor: THEME.up,
-        borderColor0: THEME.down,
+        color: upColor,
+        color0: downColor,
+        borderColor: upColor,
+        borderColor0: downColor,
       },
     },
   ]
@@ -98,7 +98,7 @@ export function buildKLineOption(candles, maData, lang = 'zh') {
         const [o, c, l, h] = kline.data
         const date = kline.axisValue
         const pct = candles[kline.dataIndex]?.pct_change ?? 0
-        const color = c >= o ? THEME.up : THEME.down
+        const color = c >= o ? upColor : downColor
         let html = `<div style="font-weight:bold;margin-bottom:4px">${date}</div>`
         html += `<div>${labels.open}: <span style="color:${color}">${o}</span></div>`
         html += `<div>${labels.close}: <span style="color:${color}">${c}</span></div>`
@@ -137,13 +137,13 @@ export function buildKLineOption(candles, maData, lang = 'zh') {
   }
 }
 
-export function buildVolumeOption(candles, lang = 'zh') {
+export function buildVolumeOption(candles, lang = 'zh', upColor = THEME.up, downColor = THEME.down) {
   const dates = candles.map((c) => c.date.slice(0, 10))
   const volLabel = lang === 'en' ? 'Volume' : '成交量'
   const volumes = candles.map((c) => ({
     value: c.volume,
     itemStyle: {
-      color: c.close >= c.open ? THEME.up : THEME.down,
+      color: c.close >= c.open ? upColor : downColor,
       opacity: 0.8,
     },
   }))

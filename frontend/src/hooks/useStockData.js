@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { getStockHistory, getRealtimeQuote } from '../api/stockApi'
+import { getStockHistory, getRealtimeQuote, getUSStockHistory } from '../api/stockApi'
 
 const cache = new Map()
 
@@ -7,7 +7,7 @@ function cacheKey(symbol, period, startDate, endDate, adjust) {
   return `${symbol}_${period}_${startDate}_${endDate}_${adjust}`
 }
 
-export function useStockData(symbol, { period, startDate, endDate, adjust }) {
+export function useStockData(symbol, { period, startDate, endDate, adjust, market = 'cn' }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -26,12 +26,21 @@ export function useStockData(symbol, { period, startDate, endDate, adjust }) {
       setLoading(true)
       setError(null)
       try {
-        const res = await getStockHistory(symbol, {
-          period,
-          start_date: startDate,
-          end_date: endDate,
-          adjust,
-        })
+        let res
+        if (market === 'us') {
+          res = await getUSStockHistory(symbol, {
+            period,
+            start_date: startDate,
+            end_date: endDate,
+          })
+        } else {
+          res = await getStockHistory(symbol, {
+            period,
+            start_date: startDate,
+            end_date: endDate,
+            adjust,
+          })
+        }
         cache.set(key, res.data)
         setData(res.data)
       } catch (e) {
@@ -42,6 +51,7 @@ export function useStockData(symbol, { period, startDate, endDate, adjust }) {
     }
 
     const fetchQuote = async () => {
+      if (market === 'us') return // US realtime not supported
       try {
         const res = await getRealtimeQuote(symbol)
         setQuote(res.data)
@@ -53,10 +63,12 @@ export function useStockData(symbol, { period, startDate, endDate, adjust }) {
     fetchHistory()
     fetchQuote()
 
-    // Poll realtime quote every 5 seconds
-    intervalRef.current = setInterval(fetchQuote, 5000)
+    // Poll realtime quote every 5 seconds (A-shares only)
+    if (market !== 'us') {
+      intervalRef.current = setInterval(fetchQuote, 5000)
+    }
     return () => clearInterval(intervalRef.current)
-  }, [symbol, period, startDate, endDate, adjust])
+  }, [symbol, period, startDate, endDate, adjust, market])
 
   return { data, loading, error, quote }
 }

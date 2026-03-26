@@ -13,6 +13,7 @@ const useCompareStore = create((set, get) => ({
   startDate: oneYearAgo,
   endDate: today,
   adjust: 'qfq',
+  market: 'cn', // 'cn' | 'us'
 
   addSymbol: (stock) => {
     const { selectedSymbols } = get()
@@ -30,6 +31,7 @@ const useCompareStore = create((set, get) => ({
   setPeriod: (period) => set({ period }),
   setDateRange: (startDate, endDate) => set({ startDate, endDate }),
   setAdjust: (adjust) => set({ adjust }),
+  setMarket: (market) => set({ market, selectedSymbols: [], viewMode: 'sideBySide' }),
 }))
 
 export default useCompareStore

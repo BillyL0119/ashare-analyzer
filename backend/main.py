@@ -8,6 +8,7 @@ from routers.indicators import router as indicators_router
 from routers.simulation import router as simulation_router
 from routers.watchlist import router as watchlist_router
 from routers.financial import router as financial_router
+from routers.us_stocks import router as us_stocks_router
 
 app = FastAPI(
     title="Best Friend Ashare API",
@@ -28,6 +29,7 @@ app.include_router(indicators_router, prefix="/api/indicators", tags=["indicator
 app.include_router(simulation_router, prefix="/api/simulation", tags=["simulation"])
 app.include_router(watchlist_router, prefix="/api/watchlist", tags=["watchlist"])
 app.include_router(financial_router, prefix="/api/financial", tags=["financial"])
+app.include_router(us_stocks_router, prefix="/api/us", tags=["us_stocks"])
 
 # Serve pre-built Next.js static export if available, else old Vite dist
 NEXT_OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend-next", "out")
