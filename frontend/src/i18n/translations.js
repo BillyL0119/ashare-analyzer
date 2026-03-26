@@ -1,6 +1,6 @@
 export const T = {
   zh: {
-    appTitle: 'A股分析平台',
+    appTitle: 'Best Friend Stock',
     dataSource: '数据来源: AkShare',
     from: '起始:',
     to: '至:',
@@ -163,7 +163,7 @@ export const T = {
     financialUnit: '%',
   },
   en: {
-    appTitle: 'A-Share Analyzer',
+    appTitle: 'Best Friend Stock',
     dataSource: 'Data: AkShare',
     from: 'From:',
     to: 'To:',
