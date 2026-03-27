@@ -17,6 +17,15 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
+@app.on_event("startup")
+async def preload_stock_list():
+    """Preload the A-share stock list into cache so search fallback is ready."""
+    import asyncio
+    from services.stock_service import get_stock_list
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, get_stock_list)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

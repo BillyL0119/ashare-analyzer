@@ -73,14 +73,16 @@ def get_stock_list() -> List[dict]:
         return []
 
 
-def search_stocks(q: str) -> List[dict]:
-    """Search stocks using Sina's suggest API (fast, no full-list needed)."""
+def _search_via_sina(q: str) -> List[dict]:
+    """Try Sina's suggest API. Works fast from China-based servers."""
     try:
+        from urllib.parse import quote
         r = requests.get(
-            f"https://suggest3.sinajs.cn/suggest/type=11,12&key={q}&name=suggestdata",
+            f"https://suggest3.sinajs.cn/suggest/type=11,12&key={quote(q)}&name=suggestdata",
             headers=SINA_HEADERS,
-            timeout=6,
+            timeout=4,
         )
+        r.encoding = "gbk"  # Sina returns GBK — must set before reading .text
         text = r.text
         if '"' not in text:
             return []
@@ -92,15 +94,73 @@ def search_stocks(q: str) -> List[dict]:
             parts = entry.strip().split(",")
             if len(parts) >= 5 and parts[1] in ("11", "12"):
                 code = parts[2].strip()
-                # parts[0] may be 'sz300394' for code search; parts[4] is always the Chinese name
                 name = parts[4].strip() or parts[0].strip()
                 if code and name:
-                    _name_cache[code] = name  # warm the cache
+                    _name_cache[code] = name
                     results.append({"code": code, "name": name})
         return results[:30]
     except Exception as e:
-        print(f"Search error: {e}")
+        print(f"[search] Sina API failed: {e}")
         return []
+
+
+def _search_via_eastmoney(q: str) -> List[dict]:
+    """East Money search API — works globally, returns JSON."""
+    try:
+        url = (
+            "https://searchapi.eastmoney.com/api/suggest/get"
+            f"?input={requests.utils.quote(q)}&type=14&token=D43BF722C8E33BDC906FB84D85E326E8&count=20"
+        )
+        r = requests.get(url, timeout=5, headers={"User-Agent": "Mozilla/5.0"})
+        data = r.json()
+        results = []
+        for item in data.get("QuotationCodeTable", {}).get("Data") or []:
+            code = item.get("Code", "").strip()
+            name = item.get("Name", "").strip()
+            market = item.get("MktNum", "")
+            # Only A-shares: market 0=SZ, 1=SH
+            if code and name and str(market) in ("0", "1"):
+                _name_cache[code] = name
+                results.append({"code": code, "name": name})
+        return results[:30]
+    except Exception as e:
+        print(f"[search] EastMoney API failed: {e}")
+        return []
+
+
+def _search_via_local(q: str) -> List[dict]:
+    """Local full-list fallback using cached AkShare stock list."""
+    stocks = get_stock_list()
+    if not stocks:
+        return []
+    q_lower = q.lower()
+    results = []
+    for s in stocks:
+        code = s.get("code", "")
+        name = s.get("name", "")
+        if q_lower in code.lower() or q_lower in name.lower():
+            results.append({"code": code, "name": name})
+        if len(results) >= 30:
+            break
+    return results
+
+
+def search_stocks(q: str) -> List[dict]:
+    """Search A-share stocks.
+    Tries Sina first (fast, China), then EastMoney (global), then local list fallback.
+    """
+    # 1. Sina (fast if reachable)
+    results = _search_via_sina(q)
+    if results:
+        return results
+
+    # 2. EastMoney (more globally accessible)
+    results = _search_via_eastmoney(q)
+    if results:
+        return results
+
+    # 3. Local cached list (always works, may be empty on first cold start)
+    return _search_via_local(q)
 
 
 def get_stock_name(symbol: str) -> str:
