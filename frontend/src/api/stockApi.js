@@ -30,3 +30,6 @@ export const getUSStockHistory = (symbol, params) =>
 
 export const searchUSStocks = (query) =>
   api.get(`/us/search/${encodeURIComponent(query)}`)
+
+export const getSimilarStocks = (symbol) =>
+  api.get(`/similar/${symbol}`)
