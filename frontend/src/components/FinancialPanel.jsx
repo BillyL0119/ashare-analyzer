@@ -50,7 +50,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
   return (
     <div
       style={{
-        background: '#161b22',
+        background: 'rgba(255,255,255,0.04)',
         border: `1px solid ${THEME.border}`,
         borderRadius: 8,
         padding: '14px 16px',
@@ -60,13 +60,13 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
         minWidth: 150,
       }}
     >
-      <div style={{ fontSize: 12, color: '#8b949e', fontWeight: 500 }}>{label}</div>
+      <div style={{ fontSize: 12, color: '#9aa0a6', fontWeight: 500 }}>{label}</div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-        <span style={{ fontSize: 22, fontWeight: 700, color: '#e6edf3' }}>
+        <span style={{ fontSize: 22, fontWeight: 700, color: '#e8eaed' }}>
           {fmtVal(value)}
         </span>
-        <span style={{ fontSize: 13, color: '#8b949e' }}>{unit}</span>
+        <span style={{ fontSize: 13, color: '#9aa0a6' }}>{unit}</span>
       </div>
 
       {hasYoY && (
@@ -78,10 +78,10 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
             fontSize: 12,
           }}
         >
-          <span style={{ color: '#8b949e' }}>{t.financialYoY}:</span>
+          <span style={{ color: '#9aa0a6' }}>{t.financialYoY}:</span>
           <span
             style={{
-              color: isPositive ? '#3fb950' : isNegative ? '#f85149' : '#8b949e',
+              color: isPositive ? '#26a69a' : isNegative ? '#ef5350' : '#9aa0a6',
               fontWeight: 600,
             }}
           >
@@ -91,7 +91,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
       )}
 
       {date && (
-        <div style={{ fontSize: 11, color: '#484f58' }}>
+        <div style={{ fontSize: 11, color: '#4a5568' }}>
           {t.financialReportDate}: {date}
         </div>
       )}
@@ -108,7 +108,7 @@ function SectionBlock({ titleKey, metrics, data, lang }) {
         style={{
           fontSize: 13,
           fontWeight: 600,
-          color: '#8b949e',
+          color: '#9aa0a6',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           marginBottom: 10,
@@ -208,26 +208,26 @@ export default function FinancialPanel({ stocks }) {
             >
               <span
                 style={{
-                  background: '#1f6feb22',
-                  border: '1px solid #1f6feb66',
+                  background: 'rgba(138,180,248,0.08)',
+                  border: '1px solid rgba(138,180,248,0.3)',
                   borderRadius: 4,
                   padding: '2px 8px',
                   fontSize: 12,
-                  color: '#58a6ff',
+                  color: '#8ab4f8',
                   fontFamily: 'monospace',
                 }}
               >
                 {stock.code}
               </span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: '#e6edf3' }}>{stock.name}</span>
-              <span style={{ fontSize: 12, color: '#484f58', marginLeft: 'auto' }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed' }}>{stock.name}</span>
+              <span style={{ fontSize: 12, color: '#4a5568', marginLeft: 'auto' }}>
                 {t.financialAnalysis}
               </span>
             </div>
 
             {/* States */}
             {loading && (
-              <div style={{ color: '#8b949e', fontSize: 13, padding: '20px 0' }}>
+              <div style={{ color: '#9aa0a6', fontSize: 13, padding: '20px 0' }}>
                 {t.financialLoading}
               </div>
             )}

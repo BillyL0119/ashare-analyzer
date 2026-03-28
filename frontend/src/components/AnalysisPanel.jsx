@@ -11,11 +11,11 @@ function GaugeBar({ value, label, color }) {
   const pct = Math.round(((value + 1) / 2) * 100)
   return (
     <div style={{ marginBottom: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#8b949e', marginBottom: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#9aa0a6', marginBottom: 4 }}>
         <span>{label}</span>
         <span style={{ color, fontWeight: 600 }}>{value.toFixed(2)}</span>
       </div>
-      <div style={{ background: '#21262d', borderRadius: 4, height: 8, overflow: 'hidden' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: 4, height: 8, overflow: 'hidden' }}>
         <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 4, transition: 'width 0.6s ease' }} />
       </div>
     </div>
@@ -25,7 +25,7 @@ function GaugeBar({ value, label, color }) {
 function StatRow({ label, v1, v2, highlight = false }) {
   return (
     <tr style={{ borderBottom: `1px solid ${THEME.border}` }}>
-      <td style={{ padding: '7px 10px', color: '#8b949e', fontSize: 12, whiteSpace: 'nowrap' }}>{label}</td>
+      <td style={{ padding: '7px 10px', color: '#9aa0a6', fontSize: 12, whiteSpace: 'nowrap' }}>{label}</td>
       <td style={{
         padding: '7px 10px', textAlign: 'right', fontSize: 12, fontWeight: highlight ? 600 : 400,
         color: highlight ? (parseFloat(v1) > parseFloat(v2) ? '#ef5350' : parseFloat(v1) < parseFloat(v2) ? '#26a69a' : THEME.text) : THEME.text,
@@ -52,12 +52,12 @@ function InterpretationBlock({ text }) {
         const renderBold = (str) =>
           str.split(/(\*\*[^*]+\*\*)/).map((part, j) =>
             part.startsWith('**') && part.endsWith('**')
-              ? <strong key={j} style={{ color: '#e6edf3' }}>{part.slice(2, -2)}</strong>
+              ? <strong key={j} style={{ color: '#e8eaed' }}>{part.slice(2, -2)}</strong>
               : part
           )
         return (
-          <div key={i} style={{ background: '#1c2128', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '10px 14px' }}>
-            <div style={{ color: '#58a6ff', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{title}</div>
+          <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '10px 14px' }}>
+            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{title}</div>
             <div style={{ color: '#c9d1d9', fontSize: 13, lineHeight: 1.7 }}>{renderBold(body)}</div>
           </div>
         )
@@ -96,12 +96,12 @@ export default function AnalysisPanel({ stocks }) {
   }, [stocks, period, startDate, endDate, adjust, lang])
 
   if (stocks.length < 2) {
-    return <div style={{ textAlign: 'center', padding: 40, color: '#484f58', fontSize: 14 }}>{t.needTwoStocks}</div>
+    return <div style={{ textAlign: 'center', padding: 40, color: '#4a5568', fontSize: 14 }}>{t.needTwoStocks}</div>
   }
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300, gap: 10, color: '#8b949e' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300, gap: 10, color: '#9aa0a6' }}>
         {t.calculating}
       </div>
     )
@@ -117,12 +117,12 @@ export default function AnalysisPanel({ stocks }) {
           <div key={idx} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               <span style={{ color: colorA, fontWeight: 700, fontSize: 15 }}>{a.name}</span>
-              <span style={{ color: '#8b949e', fontSize: 13 }}>{a.code}</span>
-              <span style={{ color: '#484f58', margin: '0 4px' }}>vs</span>
+              <span style={{ color: '#9aa0a6', fontSize: 13 }}>{a.code}</span>
+              <span style={{ color: '#4a5568', margin: '0 4px' }}>vs</span>
               <span style={{ color: colorB, fontWeight: 700, fontSize: 15 }}>{b.name}</span>
-              <span style={{ color: '#8b949e', fontSize: 13 }}>{b.code}</span>
+              <span style={{ color: '#9aa0a6', fontSize: 13 }}>{b.code}</span>
               {data && (
-                <span style={{ marginLeft: 'auto', color: '#484f58', fontSize: 12 }}>
+                <span style={{ marginLeft: 'auto', color: '#4a5568', fontSize: 12 }}>
                   {t.tradingDays(data.trading_days)}
                 </span>
               )}
@@ -132,7 +132,7 @@ export default function AnalysisPanel({ stocks }) {
 
             {data && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: '#0d1117', borderRadius: 6, padding: '14px 18px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '14px 18px' }}>
                   <GaugeBar value={data.correlation} label={t.returnCorr} color="#64b5f6" />
                   <GaugeBar value={data.price_similarity} label={t.priceSim} color="#66bb6a" />
                 </div>
@@ -140,8 +140,8 @@ export default function AnalysisPanel({ stocks }) {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                     <thead>
-                      <tr style={{ background: '#21262d' }}>
-                        <th style={{ padding: '8px 10px', textAlign: 'left', color: '#8b949e', fontWeight: 500 }}>{t.metric}</th>
+                      <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
+                        <th style={{ padding: '8px 10px', textAlign: 'left', color: '#9aa0a6', fontWeight: 500 }}>{t.metric}</th>
                         <th style={{ padding: '8px 10px', textAlign: 'right', color: colorA, fontWeight: 600 }}>{data.stock1.name} ({a.code})</th>
                         <th style={{ padding: '8px 10px', textAlign: 'right', color: colorB, fontWeight: 600 }}>{data.stock2.name} ({b.code})</th>
                       </tr>
@@ -155,7 +155,7 @@ export default function AnalysisPanel({ stocks }) {
                       <StatRow label={t.support} v1={data.stock1.support_resistance.support} v2={data.stock2.support_resistance.support} />
                       <StatRow label={t.resistance} v1={data.stock1.support_resistance.resistance} v2={data.stock2.support_resistance.resistance} />
                       <tr style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                        <td style={{ padding: '7px 10px', color: '#8b949e', fontSize: 12 }}>{t.patterns}</td>
+                        <td style={{ padding: '7px 10px', color: '#9aa0a6', fontSize: 12 }}>{t.patterns}</td>
                         <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 12, color: THEME.text }}>
                           {data.stock1.patterns.length ? data.stock1.patterns.join('、') : t.none}
                         </td>
@@ -168,7 +168,7 @@ export default function AnalysisPanel({ stocks }) {
                 </div>
 
                 <div>
-                  <div style={{ color: '#58a6ff', fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{t.summary}</div>
+                  <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{t.summary}</div>
                   <InterpretationBlock text={data.interpretation} />
                 </div>
               </div>

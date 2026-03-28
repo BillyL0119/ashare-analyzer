@@ -1,23 +1,23 @@
-// Shared dark theme colors
+// Shared dark theme colors — Gemini-inspired navy palette
 export const THEME = {
-  bg: '#0d1117',
-  gridBg: '#161b22',
-  text: '#c9d1d9',
-  border: '#30363d',
+  bg: '#080c14',
+  gridBg: '#0a0f1a',
+  text: '#9aa0a6',
+  border: '#1a2535',
   up: '#ef5350',
   down: '#26a69a',
   ma5: '#f0e68c',
-  ma10: '#64b5f6',
+  ma10: '#8ab4f8',
   ma20: '#ff9800',
-  ma60: '#ab47bc',
-  dif: '#ffffff',
+  ma60: '#c084fc',
+  dif: '#e8eaed',
   dea: '#ff9800',
   macdUp: '#ef5350',
   macdDown: '#26a69a',
-  rsi6: '#64b5f6',
+  rsi6: '#8ab4f8',
   rsi12: '#ff9800',
-  rsi24: '#ab47bc',
-  volume: '#42a5f5',
+  rsi24: '#c084fc',
+  volume: '#8ab4f8',
 }
 
 const sharedDataZoom = [

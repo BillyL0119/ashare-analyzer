@@ -95,7 +95,7 @@ export default function StockCard({ stock }) {
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 12,
-                background: period === key ? '#1f6feb' : '#21262d',
+                background: period === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'rgba(255,255,255,0.06)',
                 color: period === key ? '#fff' : THEME.text,
                 transition: 'background 0.15s',
               }}
@@ -116,7 +116,7 @@ export default function StockCard({ stock }) {
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 11,
-                background: adjust === key ? '#388e3c' : '#21262d',
+                background: adjust === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'rgba(255,255,255,0.06)',
                 color: adjust === key ? '#fff' : THEME.text,
                 transition: 'background 0.15s',
               }}
@@ -135,16 +135,16 @@ export default function StockCard({ stock }) {
             cursor: 'pointer',
             fontSize: 12,
             background: 'transparent',
-            color: '#8b949e',
+            color: '#9aa0a6',
             transition: 'all 0.15s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#da3633'
-            e.currentTarget.style.color = '#fff'
+            e.currentTarget.style.background = 'rgba(239,83,80,0.15)'
+            e.currentTarget.style.color = '#ef5350'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = '#8b949e'
+            e.currentTarget.style.color = '#9aa0a6'
           }}
         >
           {t.remove}
@@ -153,7 +153,7 @@ export default function StockCard({ stock }) {
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {loading && (
-          <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e', fontSize: 14 }}>
+          <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6', fontSize: 14 }}>
             {t.loading}
           </div>
         )}

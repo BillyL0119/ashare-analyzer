@@ -24,7 +24,7 @@ function Sparkline({ data, width = 80, height = 32 }) {
       <polyline
         points={pts.join(' ')}
         fill="none"
-        stroke={up ? '#3fb950' : '#f85149'}
+        stroke={up ? '#26a69a' : '#ef5350'}
         strokeWidth={1.5}
         strokeLinejoin="round"
         strokeLinecap="round"
@@ -36,14 +36,14 @@ function Sparkline({ data, width = 80, height = 32 }) {
 // Correlation bar (–1 to +1 → 0% to 100%)
 function CorrBar({ value }) {
   const pct = Math.round(((value + 1) / 2) * 100)
-  const color = value >= 0.8 ? '#3fb950' : value >= 0.5 ? '#f0e68c' : '#8b949e'
+  const color = value >= 0.8 ? '#26a69a' : value >= 0.5 ? '#f0e68c' : '#9aa0a6'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       <div
         style={{
           width: 60,
           height: 6,
-          background: '#21262d',
+          background: 'rgba(255,255,255,0.08)',
           borderRadius: 3,
           overflow: 'hidden',
         }}
@@ -94,25 +94,25 @@ function StockBlock({ stock, lang }) {
       >
         <span
           style={{
-            background: '#1f6feb22',
-            border: '1px solid #1f6feb66',
+            background: 'rgba(138,180,248,0.08)',
+            border: '1px solid rgba(138,180,248,0.3)',
             borderRadius: 4,
             padding: '2px 8px',
             fontSize: 12,
-            color: '#58a6ff',
+            color: '#8ab4f8',
             fontFamily: 'monospace',
           }}
         >
           {stock.code}
         </span>
-        <span style={{ fontSize: 15, fontWeight: 600, color: '#e6edf3' }}>{stock.name}</span>
+        <span style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed' }}>{stock.name}</span>
         {data?.industry && (
           <span
             style={{
               marginLeft: 'auto',
               fontSize: 12,
-              color: '#8b949e',
-              background: '#21262d',
+              color: '#9aa0a6',
+              background: 'rgba(255,255,255,0.06)',
               borderRadius: 4,
               padding: '2px 8px',
             }}
@@ -123,7 +123,7 @@ function StockBlock({ stock, lang }) {
       </div>
 
       {loading && (
-        <div style={{ color: '#8b949e', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>
+        <div style={{ color: '#9aa0a6', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>
           {t.similarLoading}
         </div>
       )}
@@ -154,7 +154,7 @@ function StockBlock({ stock, lang }) {
               padding: '4px 8px',
               marginBottom: 4,
               fontSize: 11,
-              color: '#484f58',
+              color: '#4a5568',
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
@@ -180,16 +180,16 @@ function StockBlock({ stock, lang }) {
                 borderBottom: idx < data.results.length - 1 ? `1px solid ${THEME.border}` : 'none',
                 transition: 'background 0.1s',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#21262d' }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
             >
-              <span style={{ fontSize: 12, color: '#484f58', fontWeight: 700 }}>
+              <span style={{ fontSize: 12, color: '#4a5568', fontWeight: 700 }}>
                 {idx + 1}
               </span>
-              <span style={{ fontSize: 12, color: '#58a6ff', fontFamily: 'monospace' }}>
+              <span style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace' }}>
                 {item.code}
               </span>
-              <span style={{ fontSize: 13, color: '#e6edf3', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {item.name}
               </span>
               <CorrBar value={item.correlation} />
@@ -198,7 +198,7 @@ function StockBlock({ stock, lang }) {
           ))}
 
           {data.results.length === 0 && (
-            <div style={{ color: '#8b949e', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
+            <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
               {t.similarNoResults}
             </div>
           )}

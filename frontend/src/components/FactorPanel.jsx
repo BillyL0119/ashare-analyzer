@@ -6,7 +6,7 @@ import { T } from '../i18n/translations'
 import { getStockFactor } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 
-const COLORS = ['#1f6feb', '#f78166', '#3fb950', '#d2a8ff']
+const COLORS = ['#8ab4f8', '#f78166', '#3fb950', '#d2a8ff']
 
 function bold(text) {
   if (!text) return []
@@ -23,10 +23,10 @@ function MetricRow({ label, value, sub, color }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       padding: '6px 0', borderBottom: `1px solid ${THEME.border}` }}>
-      <span style={{ color: '#8b949e', fontSize: 13 }}>{label}</span>
+      <span style={{ color: '#9aa0a6', fontSize: 13 }}>{label}</span>
       <span style={{ color: color || THEME.text, fontWeight: 600, fontSize: 14 }}>
         {value}
-        {sub && <span style={{ color: '#8b949e', fontSize: 12, marginLeft: 4 }}>{sub}</span>}
+        {sub && <span style={{ color: '#9aa0a6', fontSize: 12, marginLeft: 4 }}>{sub}</span>}
       </span>
     </div>
   )
@@ -44,7 +44,7 @@ function RollingBetaChart({ rolling, t }) {
     grid: { top: 30, right: 20, bottom: 40, left: 50 },
     tooltip: {
       trigger: 'axis',
-      backgroundColor: '#161b22',
+      backgroundColor: 'rgba(13,17,23,0.9)',
       borderColor: THEME.border,
       textStyle: { color: THEME.text, fontSize: 12 },
       formatter: (params) => {
@@ -55,14 +55,14 @@ function RollingBetaChart({ rolling, t }) {
     xAxis: {
       type: 'category',
       data: dates,
-      axisLabel: { color: '#8b949e', fontSize: 11,
+      axisLabel: { color: '#9aa0a6', fontSize: 11,
         formatter: (v) => v.substring(0, 4) !== dates[0].substring(0, 4) || dates.indexOf(v) === 0
           ? v.substring(0, 7) : v.substring(5, 7) },
       axisLine: { lineStyle: { color: THEME.border } },
     },
     yAxis: {
       type: 'value',
-      axisLabel: { color: '#8b949e', fontSize: 11 },
+      axisLabel: { color: '#9aa0a6', fontSize: 11 },
       splitLine: { lineStyle: { color: THEME.border, type: 'dashed' } },
     },
     series: [
@@ -70,16 +70,16 @@ function RollingBetaChart({ rolling, t }) {
         type: 'line',
         data: betas,
         smooth: true,
-        lineStyle: { color: '#1f6feb', width: 2 },
+        lineStyle: { color: '#8ab4f8', width: 2 },
         areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{ offset: 0, color: 'rgba(31,111,235,0.3)' },
-                       { offset: 1, color: 'rgba(31,111,235,0)' }] } },
+          colorStops: [{ offset: 0, color: 'rgba(138,180,248,0.3)' },
+                       { offset: 1, color: 'rgba(138,180,248,0)' }] } },
         symbol: 'none',
       },
       {
         type: 'line',
         data: new Array(betas.length).fill(1),
-        lineStyle: { color: '#8b949e', width: 1, type: 'dashed' },
+        lineStyle: { color: '#9aa0a6', width: 1, type: 'dashed' },
         symbol: 'none',
         tooltip: { show: false },
       },
@@ -100,16 +100,16 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
   return (
     <div style={{ marginBottom: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ color: '#8b949e', fontSize: 12 }}>{t.factorSysRisk}: {pctSys}%</span>
-        <span style={{ color: '#8b949e', fontSize: 12 }}>{t.factorIdioRisk}: {pctIdio}%</span>
+        <span style={{ color: '#9aa0a6', fontSize: 12 }}>{t.factorSysRisk}: {pctSys}%</span>
+        <span style={{ color: '#9aa0a6', fontSize: 12 }}>{t.factorIdioRisk}: {pctIdio}%</span>
       </div>
       <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden',
         background: THEME.border }}>
-        <div style={{ width: `${pctSys}%`, background: '#1f6feb', transition: 'width 0.5s' }} />
+        <div style={{ width: `${pctSys}%`, background: '#8ab4f8', transition: 'width 0.5s' }} />
         <div style={{ width: `${pctIdio}%`, background: '#3fb950', transition: 'width 0.5s' }} />
       </div>
       <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
-        <span style={{ color: '#1f6feb', fontSize: 11 }}>■ Systematic</span>
+        <span style={{ color: '#8ab4f8', fontSize: 11 }}>■ Systematic</span>
         <span style={{ color: '#3fb950', fontSize: 11 }}>■ Idiosyncratic</span>
       </div>
     </div>
@@ -133,20 +133,20 @@ function CorrelationBars({ correlations, t }) {
           const pct = Math.abs(v.correlation) * 100
           const isPos = v.correlation >= 0
           return [
-            <span key={`n-${sym}`} style={{ color: '#8b949e', fontSize: 12, whiteSpace: 'nowrap' }}>
+            <span key={`n-${sym}`} style={{ color: '#9aa0a6', fontSize: 12, whiteSpace: 'nowrap' }}>
               {t === T.zh ? v.zh : v.en}
             </span>,
             <div key={`b-${sym}`} style={{ position: 'relative', height: 8, borderRadius: 4,
               background: THEME.border, overflow: 'hidden' }}>
               <div style={{ position: 'absolute', left: 0, top: 0, height: '100%',
-                width: `${pct}%`, background: isPos ? '#1f6feb' : '#f85149',
+                width: `${pct}%`, background: isPos ? '#8ab4f8' : '#f85149',
                 borderRadius: 4, transition: 'width 0.5s' }} />
             </div>,
-            <span key={`c-${sym}`} style={{ color: isPos ? '#58a6ff' : '#f85149',
+            <span key={`c-${sym}`} style={{ color: isPos ? '#8ab4f8' : '#f85149',
               fontSize: 12, fontWeight: 600 }}>
               {v.correlation.toFixed(3)}
             </span>,
-            <span key={`bt-${sym}`} style={{ color: '#8b949e', fontSize: 12 }}>
+            <span key={`bt-${sym}`} style={{ color: '#9aa0a6', fontSize: 12 }}>
               β={v.beta.toFixed(2)}
             </span>,
           ]
@@ -173,7 +173,7 @@ function StockFactor({ stock, color, t, lang, params }) {
   }, [stock.code, params.period, params.start_date, params.end_date, params.adjust])
 
   const cardStyle = {
-    background: THEME.cardBg,
+    background: 'rgba(255,255,255,0.04)',
     border: `1px solid ${THEME.border}`,
     borderRadius: 10,
     padding: 16,
@@ -184,7 +184,7 @@ function StockFactor({ stock, color, t, lang, params }) {
   if (loading) return (
     <div style={cardStyle}>
       <div style={{ color, fontWeight: 700, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
-      <div style={{ color: '#8b949e', fontSize: 13 }}>{t.factorLoading}</div>
+      <div style={{ color: '#9aa0a6', fontSize: 13 }}>{t.factorLoading}</div>
     </div>
   )
 
@@ -195,7 +195,7 @@ function StockFactor({ stock, color, t, lang, params }) {
     </div>
   )
 
-  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#58a6ff'
+  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#8ab4f8'
   const alphaColor = data.alpha_annual_pct >= 0 ? '#ef5350' : '#26a69a'
 
   return (
@@ -204,7 +204,7 @@ function StockFactor({ stock, color, t, lang, params }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         marginBottom: 14 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name} ({stock.code})</span>
-        <span style={{ color: '#8b949e', fontSize: 12 }}>{t.factorSummary} · {data.sample_days}d</span>
+        <span style={{ color: '#9aa0a6', fontSize: 12 }}>{t.factorSummary} · {data.sample_days}d</span>
       </div>
 
       {/* Key metrics strip */}
@@ -217,7 +217,7 @@ function StockFactor({ stock, color, t, lang, params }) {
         ].map(({ label, val, color: c }) => (
           <div key={label} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
             borderRadius: 6, padding: '8px 10px', textAlign: 'center' }}>
-            <div style={{ color: '#8b949e', fontSize: 11, marginBottom: 3 }}>{label}</div>
+            <div style={{ color: '#9aa0a6', fontSize: 11, marginBottom: 3 }}>{label}</div>
             <div style={{ color: c, fontWeight: 700, fontSize: 16 }}>{val}</div>
           </div>
         ))}
@@ -257,7 +257,7 @@ function StockFactor({ stock, color, t, lang, params }) {
         {(lang === 'zh' ? data.interpretation.zh : data.interpretation.en)
           .split('\n\n')
           .map((para, i) => (
-            <p key={i} style={{ color: '#8b949e', fontSize: 13, lineHeight: 1.7, margin: '0 0 8px' }}>
+            <p key={i} style={{ color: '#9aa0a6', fontSize: 13, lineHeight: 1.7, margin: '0 0 8px' }}>
               {bold(para)}
             </p>
           ))}

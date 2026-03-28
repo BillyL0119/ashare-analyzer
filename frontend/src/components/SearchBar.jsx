@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { searchStocks, searchUSStocks } from '../api/stockApi'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
@@ -52,10 +52,11 @@ export default function SearchBar() {
     setResults([])
   }
 
+  const [focused, setFocused] = useState(false)
   const isFull = selectedSymbols.length >= 4
 
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', width: 320 }}>
+    <div ref={wrapperRef} style={{ position: 'relative', width: 300 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <input
           type="text"
@@ -65,19 +66,23 @@ export default function SearchBar() {
           disabled={isFull}
           style={{
             width: '100%',
-            padding: '8px 12px',
-            background: '#161b22',
-            border: '1px solid #30363d',
-            borderRadius: 6,
-            color: '#c9d1d9',
-            fontSize: 14,
+            padding: '8px 14px',
+            background: 'rgba(255,255,255,0.06)',
+            border: `1px solid ${focused ? '#8ab4f8' : 'rgba(138,180,248,0.18)'}`,
+            borderRadius: 24,
+            color: '#e8eaed',
+            fontSize: 13,
             outline: 'none',
             cursor: isFull ? 'not-allowed' : 'text',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+            boxShadow: focused ? '0 0 0 3px rgba(138,180,248,0.12)' : 'none',
+            letterSpacing: '0.15px',
           }}
-          onFocus={() => results.length > 0 && setOpen(true)}
+          onFocus={() => { setFocused(true); results.length > 0 && setOpen(true) }}
+          onBlur={() => setFocused(false)}
         />
         {searching && (
-          <span style={{ color: '#8b949e', fontSize: 12, whiteSpace: 'nowrap' }}>{t.searching}</span>
+          <span style={{ color: '#6b7280', fontSize: 11, whiteSpace: 'nowrap', position: 'absolute', right: 14 }}>{t.searching}</span>
         )}
       </div>
 
@@ -85,17 +90,18 @@ export default function SearchBar() {
         <div
           style={{
             position: 'absolute',
-            top: '100%',
+            top: 'calc(100% + 6px)',
             left: 0,
             right: 0,
-            background: '#161b22',
-            border: '1px solid #30363d',
-            borderRadius: 6,
-            marginTop: 4,
-            maxHeight: 300,
+            background: 'rgba(10,15,26,0.95)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(138,180,248,0.15)',
+            borderRadius: 12,
+            maxHeight: 320,
             overflowY: 'auto',
             zIndex: 1000,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+            boxShadow: '0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(138,180,248,0.08)',
           }}
         >
           {results.map((s) => {
@@ -105,26 +111,27 @@ export default function SearchBar() {
                 key={s.code}
                 onClick={() => !alreadyAdded && handleSelect(s)}
                 style={{
-                  padding: '10px 14px',
+                  padding: '10px 16px',
                   cursor: alreadyAdded ? 'default' : 'pointer',
-                  color: alreadyAdded ? '#484f58' : '#c9d1d9',
+                  color: alreadyAdded ? '#4a5568' : '#e8eaed',
                   display: 'flex',
                   justifyContent: 'space-between',
+                  alignItems: 'center',
                   fontSize: 13,
-                  borderBottom: '1px solid #21262d',
-                  background: alreadyAdded ? '#0d1117' : 'transparent',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
                   transition: 'background 0.15s',
+                  letterSpacing: '0.1px',
                 }}
                 onMouseEnter={(e) => {
-                  if (!alreadyAdded) e.currentTarget.style.background = '#21262d'
+                  if (!alreadyAdded) e.currentTarget.style.background = 'rgba(138,180,248,0.08)'
                 }}
                 onMouseLeave={(e) => {
                   if (!alreadyAdded) e.currentTarget.style.background = 'transparent'
                 }}
               >
-                <span style={{ color: '#64b5f6', fontFamily: 'monospace' }}>{s.code}</span>
-                <span>{s.name}</span>
-                {alreadyAdded && <span style={{ fontSize: 11, color: '#484f58' }}>{t.added}</span>}
+                <span style={{ color: '#8ab4f8', fontFamily: 'monospace', fontSize: 12 }}>{s.code}</span>
+                <span style={{ color: '#c9d1d9' }}>{s.name}</span>
+                {alreadyAdded && <span style={{ fontSize: 11, color: '#4a5568' }}>{t.added}</span>}
               </div>
             )
           })}

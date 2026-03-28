@@ -197,7 +197,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 
   if (loading) {
     return (
-      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e' }}>
+      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6' }}>
         {t.loading}
       </div>
     )
@@ -205,14 +205,14 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 
   if (!result) {
     return (
-      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#484f58', fontSize: 13 }}>
+      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a5568', fontSize: 13 }}>
         {t.loading}
       </div>
     )
   }
 
   const statStyle = { textAlign: 'center', flex: 1 }
-  const statLabel = { color: '#8b949e', fontSize: 11, marginBottom: 4 }
+  const statLabel = { color: '#9aa0a6', fontSize: 11, marginBottom: 4 }
   const statVal = (color) => ({ color, fontWeight: 700, fontSize: 18 })
 
   return (
@@ -220,15 +220,15 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
-        <span style={{ color: '#8b949e', fontSize: 13 }}>{stock.code}</span>
-        <span style={{ marginLeft: 'auto', color: '#484f58', fontSize: 12 }}>
+        <span style={{ color: '#9aa0a6', fontSize: 13 }}>{stock.code}</span>
+        <span style={{ marginLeft: 'auto', color: '#4a5568', fontSize: 12 }}>
           {t.mcCurrentPrice}: {result.lastPrice.toFixed(2)} &nbsp;|&nbsp;
           {lang === 'en' ? 'Ann. Vol' : '年化波动率'}: {result.sigma}%
         </span>
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'flex', background: '#0d1117', borderRadius: 6, padding: '12px 8px', marginBottom: 14 }}>
+      <div style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '12px 8px', marginBottom: 14 }}>
         <div style={statStyle}>
           <div style={statLabel}>{t.mcProb}</div>
           <div style={statVal(parseFloat(result.probProfit) >= 50 ? '#ef5350' : '#26a69a')}>{result.probProfit}%</div>
@@ -282,11 +282,11 @@ export default function MonteCarloPanel({ stocks }) {
   const btnStyle = (active) => ({
     padding: '4px 10px',
     borderRadius: 4,
-    border: `1px solid ${active ? '#1f6feb' : THEME.border}`,
+    border: `1px solid ${active ? '#8ab4f8' : THEME.border}`,
     cursor: 'pointer',
     fontSize: 12,
-    background: active ? '#1f6feb22' : '#21262d',
-    color: active ? '#64b5f6' : THEME.text,
+    background: active ? 'rgba(138,180,248,0.12)' : 'rgba(255,255,255,0.06)',
+    color: active ? '#8ab4f8' : THEME.text,
     transition: 'all 0.15s',
   })
 
@@ -304,13 +304,13 @@ export default function MonteCarloPanel({ stocks }) {
         flexWrap: 'wrap',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: '#8b949e', fontSize: 13 }}>{t.mcSims}:</span>
+          <span style={{ color: '#9aa0a6', fontSize: 13 }}>{t.mcSims}:</span>
           {[100, 500, 1000].map((n) => (
             <button key={n} style={btnStyle(nSims === n)} onClick={() => setNSims(n)}>{n}</button>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: '#8b949e', fontSize: 13 }}>{t.mcDays}:</span>
+          <span style={{ color: '#9aa0a6', fontSize: 13 }}>{t.mcDays}:</span>
           {[60, 125, 252].map((n) => (
             <button key={n} style={btnStyle(nDays === n)} onClick={() => setNDays(n)}>{n}d</button>
           ))}
@@ -325,8 +325,8 @@ export default function MonteCarloPanel({ stocks }) {
             cursor: running ? 'wait' : 'pointer',
             fontSize: 13,
             fontWeight: 600,
-            background: running ? '#21262d' : '#1f6feb',
-            color: running ? '#8b949e' : '#fff',
+            background: running ? 'rgba(255,255,255,0.06)' : 'linear-gradient(135deg, #8ab4f8, #c084fc)',
+            color: running ? '#9aa0a6' : '#fff',
             transition: 'all 0.15s',
           }}
         >

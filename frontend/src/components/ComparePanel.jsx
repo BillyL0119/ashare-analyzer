@@ -56,7 +56,7 @@ function OverlayView({ lang }) {
       </div>
 
       {!allLoaded ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, color: '#8b949e' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, color: '#9aa0a6' }}>
           {t.loading}
         </div>
       ) : (
@@ -88,9 +88,9 @@ export default function ComparePanel() {
           gap: 16,
         }}
       >
-        <div style={{ fontSize: 48 }}>📈</div>
-        <div style={{ fontSize: 18, color: '#8b949e' }}>{t.emptyTitle}</div>
-        <div style={{ fontSize: 13, color: '#484f58' }}>{t.emptySubtitle}</div>
+        <div style={{ fontSize: 52, filter: 'drop-shadow(0 0 20px rgba(138,180,248,0.4))' }}>📈</div>
+        <div style={{ fontSize: 18, color: '#9aa0a6', fontWeight: 500, letterSpacing: '0.2px' }}>{t.emptyTitle}</div>
+        <div style={{ fontSize: 13, color: '#4a5568', letterSpacing: '0.1px' }}>{t.emptySubtitle}</div>
       </div>
     )
   }
@@ -98,9 +98,21 @@ export default function ComparePanel() {
   const cols = Math.min(selectedSymbols.length, 2)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <span style={{ color: '#8b949e', fontSize: 13 }}>{t.viewMode}</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {/* Mode tab bar */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 6,
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(138,180,248,0.10)',
+          borderRadius: 16,
+          padding: '6px 10px',
+        }}
+      >
+        <span style={{ color: '#4a5568', fontSize: 12, letterSpacing: '0.3px', marginRight: 2 }}>{t.viewMode}</span>
         {[
           { key: 'sideBySide', label: t.sideBySide },
           { key: 'overlay', label: t.overlay },
@@ -116,14 +128,25 @@ export default function ComparePanel() {
             key={key}
             onClick={() => setViewMode(key)}
             style={{
-              padding: '4px 12px',
-              borderRadius: 4,
+              padding: '5px 14px',
+              borderRadius: 20,
               border: 'none',
               cursor: 'pointer',
-              fontSize: 13,
-              background: viewMode === key ? '#1f6feb' : '#21262d',
-              color: viewMode === key ? '#fff' : '#c9d1d9',
-              transition: 'background 0.15s',
+              fontSize: 12,
+              fontWeight: viewMode === key ? 600 : 400,
+              letterSpacing: '0.2px',
+              background: viewMode === key
+                ? 'linear-gradient(135deg, #8ab4f8, #c084fc)'
+                : 'transparent',
+              color: viewMode === key ? '#fff' : '#9aa0a6',
+              transition: 'all 0.2s ease',
+              boxShadow: viewMode === key ? '0 2px 10px rgba(138,180,248,0.25)' : 'none',
+            }}
+            onMouseEnter={(e) => {
+              if (viewMode !== key) e.currentTarget.style.color = '#e8eaed'
+            }}
+            onMouseLeave={(e) => {
+              if (viewMode !== key) e.currentTarget.style.color = '#9aa0a6'
             }}
           >
             {label}
