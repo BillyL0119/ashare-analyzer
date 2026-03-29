@@ -3,77 +3,79 @@ import akshare as ak
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import json
+import os
+import time
 
 router = APIRouter()
 
-# Module-level cache: symbol -> (industry_name, [(code, name), ...])
+# Module-level cache: symbol -> (industry_name, [code, ...])
 _industry_cache: dict = {}
+
+# Load industry map once at import time
+_INDUSTRY_MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "industry_map.json")
+try:
+    with open(_INDUSTRY_MAP_PATH, "r", encoding="utf-8") as f:
+        _INDUSTRY_MAP = json.load(f)
+except Exception:
+    _INDUSTRY_MAP = {"prefixes": {}, "industries": {}}
 
 
 def _get_60d_closes(symbol: str, start: str, end: str) -> pd.Series:
+    """Fetch daily closes using Sina Finance (ak.stock_zh_a_daily)."""
     try:
-        df = ak.stock_zh_a_hist(
-            symbol=symbol, period="daily",
-            start_date=start, end_date=end, adjust="qfq"
+        df = ak.stock_zh_a_daily(
+            symbol=symbol,
+            start_date=start,
+            end_date=end,
+            adjust="qfq",
         )
         if df is None or df.empty:
             return pd.Series(dtype=float, name=symbol)
-        df = df.sort_values("日期")
-        return df.set_index("日期")["收盘"].rename(symbol)
+        df = df.sort_index()
+        return df["close"].rename(symbol)
     except Exception:
         return pd.Series(dtype=float, name=symbol)
 
 
 def _find_industry(symbol: str):
-    """Return (industry_name, [(code, name), ...]) for the given symbol.
-    Checks all industries in parallel; result is cached at module level."""
+    """Return (industry_name, [code, ...]) using the local industry_map.json.
+    Falls back to prefix-based lookup if not found by exact match."""
     if symbol in _industry_cache:
         return _industry_cache[symbol]
 
-    try:
-        industries_df = ak.stock_board_industry_name_em()
-        industry_names = industries_df["板块名称"].tolist()
-    except Exception as e:
-        raise RuntimeError(f"Failed to load industry list: {e}")
+    industries = _INDUSTRY_MAP.get("industries", {})
+    prefixes = _INDUSTRY_MAP.get("prefixes", {})
 
-    found = [None]  # mutable container for early exit
+    # Exact match in industries
+    for industry_name, codes in industries.items():
+        if symbol in codes:
+            _industry_cache[symbol] = (industry_name, list(codes))
+            return industry_name, list(codes)
 
-    def _check(ind_name):
-        if found[0] is not None:
-            return None
-        try:
-            cons = ak.stock_board_industry_cons_em(symbol=ind_name)
-            if cons is None or cons.empty:
-                return None
-            codes = cons["代码"].astype(str).str.zfill(6).tolist()
-            if symbol in codes:
-                pairs = list(zip(codes, cons["名称"].tolist()))
-                return ind_name, pairs
-        except Exception:
-            pass
-        return None
+    # Prefix fallback
+    industry_name = prefixes.get(symbol)
+    if industry_name and industry_name in industries:
+        codes = list(industries[industry_name])
+        _industry_cache[symbol] = (industry_name, codes)
+        return industry_name, codes
 
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        futures = {ex.submit(_check, ind): ind for ind in industry_names}
-        for future in as_completed(futures):
-            res = future.result()
-            if res:
-                found[0] = res
-                # cancel remaining (best effort)
-                for f in futures:
-                    f.cancel()
-                break
-
-    if found[0] is None:
-        raise RuntimeError(f"Could not identify industry for {symbol}")
-
-    _industry_cache[symbol] = found[0]
-    return found[0]
+    # Last resort: guess by first digit
+    prefix_map = {
+        "6": "银行",
+        "0": "房地产",
+        "3": "半导体",
+    }
+    guessed = prefix_map.get(symbol[0], "消费电子")
+    codes = list(industries.get(guessed, []))
+    _industry_cache[symbol] = (guessed, codes)
+    return guessed, codes
 
 
 @router.get("/{symbol}")
 def similar_stocks(symbol: str):
+    from services.stock_service import search_stocks
+
     end_dt = datetime.now()
     start_dt = end_dt - timedelta(days=100)  # ~70 trading days
     start_str = start_dt.strftime("%Y%m%d")
@@ -87,28 +89,29 @@ def similar_stocks(symbol: str):
     target_returns = target_closes.pct_change().dropna()
 
     # 2. Find industry and peer list
-    try:
-        industry_name, peers = _find_industry(symbol)
-    except RuntimeError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    industry_name, peer_codes = _find_industry(symbol)
 
-    # Exclude self; limit to 60 peers for speed
-    peer_list = [(c, n) for c, n in peers if c != symbol][:60]
+    # Exclude self; limit to 15 peers
+    peer_codes = [c for c in peer_codes if c != symbol][:15]
 
-    # 3. Fetch price data for all peers in parallel
-    def _fetch(item):
-        code, name = item
-        closes = _get_60d_closes(code, start_str, end_str)
-        return code, name, closes
+    # Build name lookup via search_stocks
+    def _lookup_name(code: str) -> str:
+        try:
+            results = search_stocks(code)
+            for r in results:
+                if r.get("code") == code:
+                    return r.get("name", code)
+        except Exception:
+            pass
+        return code
 
+    # 3. Fetch price data SEQUENTIALLY with throttle
     peer_results = []
-    with ThreadPoolExecutor(max_workers=10) as ex:
-        futures = {ex.submit(_fetch, item): item for item in peer_list}
-        for future in as_completed(futures, timeout=45):
-            try:
-                peer_results.append(future.result())
-            except Exception:
-                pass
+    for code in peer_codes:
+        closes = _get_60d_closes(code, start_str, end_str)
+        name = _lookup_name(code)
+        peer_results.append((code, name, closes))
+        time.sleep(0.3)
 
     # 4. Compute Pearson correlation on daily returns
     results = []

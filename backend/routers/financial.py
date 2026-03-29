@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 import akshare as ak
 import pandas as pd
 import math
+import time
 
 router = APIRouter()
 
@@ -22,11 +23,45 @@ def _fmt_large(val):
     return round(v / 1e8, 2)  # convert to 亿
 
 
+def _symbol_to_yf_ticker(symbol: str) -> str:
+    """Convert 6-digit A-share code to Yahoo Finance ticker."""
+    if symbol.startswith("6"):
+        return f"{symbol}.SS"
+    return f"{symbol}.SZ"
+
+
+def _get_yf_valuation(symbol: str) -> dict:
+    """Fetch PE/PB from yfinance, cached per-symbol for 1 hour."""
+    cache = _get_yf_valuation._yf_cache
+    now = time.time()
+    if symbol in cache:
+        cached_val, cached_ts = cache[symbol]
+        if now - cached_ts < 3600:
+            return cached_val
+
+    try:
+        import yfinance as yf
+        ticker_str = _symbol_to_yf_ticker(symbol)
+        info = yf.Ticker(ticker_str).info
+        pe_ttm = _safe(info.get("trailingPE") or info.get("forwardPE"))
+        pb = _safe(info.get("priceToBook"))
+        result = {"pe_ttm": pe_ttm, "pb": pb}
+    except Exception as e:
+        print(f"[financial] yfinance valuation error for {symbol}: {e}")
+        result = {"pe_ttm": None, "pb": None}
+
+    cache[symbol] = (result, now)
+    return result
+
+
+_get_yf_valuation._yf_cache = {}
+
+
 @router.get("/{symbol}")
 def financial_analysis(symbol: str):
     """
     Return key financial ratios for a stock.
-    PE/PB from ak.stock_a_indicator_lg; financial ratios from ak.stock_financial_analysis_indicator.
+    PE/PB from yfinance; financial ratios from ak.stock_financial_analysis_indicator.
     """
     result = {
         "symbol": symbol,
@@ -44,25 +79,11 @@ def financial_analysis(symbol: str):
         },
     }
 
-    # ── Valuation: PE / PB from stock_a_indicator_lg ──────────────────────────
+    # ── Valuation: PE / PB from yfinance ──────────────────────────────────────
     try:
-        df_val = ak.stock_a_indicator_lg(symbol=symbol)
-        if df_val is not None and not df_val.empty:
-            df_val = df_val.sort_values("日期", ascending=True).tail(120)
-            latest = df_val.iloc[-1]
-
-            result["valuation"]["pe_ttm"] = _safe(latest.get("pe_ttm") or latest.get("pe"))
-            result["valuation"]["pb"] = _safe(latest.get("pb"))
-
-            # Build sparkline history (last 60 points)
-            for col, key in [("pe_ttm", "pe"), ("pb", "pb")]:
-                col_name = col if col in df_val.columns else "pe"
-                hist = []
-                for _, row in df_val.tail(60).iterrows():
-                    v = _safe(row.get(col_name))
-                    if v is not None:
-                        hist.append({"date": str(row["日期"])[:10], "value": v})
-                result["history"][key] = hist
+        val = _get_yf_valuation(symbol)
+        result["valuation"]["pe_ttm"] = val.get("pe_ttm")
+        result["valuation"]["pb"] = val.get("pb")
     except Exception as e:
         print(f"[financial] valuation error for {symbol}: {e}")
 
@@ -120,17 +141,15 @@ def financial_analysis(symbol: str):
                     yoy = round(val - prev_val, 2)
 
                 if key == "operating_cf":
-                    # Store in 亿 units
                     result["cashflow"]["operating_cf"] = {
-                        "value": _fmt_large(val * 1e8 if val is not None else None) if col and "亿" not in (col or "") else _fmt_large(val),
+                        "value": None,
                         "yoy": None,
                         "date": str(latest_fin.get("日期", ""))[:10],
                     }
-                    # Try raw value in case unit is already yuan
                     raw_col = find_col(df_fin, candidates)
                     if raw_col:
                         raw_val = _safe(latest_fin.get(raw_col))
-                        # heuristic: if value > 1e6, it's already in yuan, convert to 亿
+                        # heuristic: if value > 1e4, it's in yuan, convert to 亿
                         if raw_val is not None and abs(raw_val) > 1e4:
                             result["cashflow"]["operating_cf"]["value"] = round(raw_val / 1e8, 2)
                         else:
