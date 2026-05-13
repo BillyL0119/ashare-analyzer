@@ -210,9 +210,19 @@ function StockBlock({ stock, lang }) {
 
 export default function SimilarPanel({ stocks }) {
   const lang = useLangStore((s) => s.lang)
+  const t = T[lang]
+
+  if (!stocks || stocks.length === 0) {
+    return (
+      <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '40px 0' }}>
+        {t.similarNoResults}
+      </div>
+    )
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* One StockBlock per selected symbol — each independently calls /api/similar/{code} */}
       {stocks.map((stock) => (
         <StockBlock key={stock.code} stock={stock} lang={lang} />
       ))}

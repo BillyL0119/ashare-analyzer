@@ -178,12 +178,17 @@ def similar_stocks(symbol: str):
         end_str = end_dt.strftime("%Y%m%d")
 
         # ── Target series ──
-        logger.info("Fetching closes for target %s", symbol)
+        logger.info("Fetching closes for target %s (start=%s end=%s)", symbol, start_str, end_str)
         target_closes = _get_closes(symbol, start_str, end_str)
+        # If sparse data in 100-day window, widen to 240 days
+        if len(target_closes) < 10:
+            wider_start = (end_dt - timedelta(days=240)).strftime("%Y%m%d")
+            logger.info("Retrying %s with wider window %s", symbol, wider_start)
+            target_closes = _get_closes(symbol, wider_start, end_str)
         if len(target_closes) < 10:
             raise HTTPException(
                 status_code=422,
-                detail=f"无法获取 {symbol} 的历史行情数据（返回数据不足 10 个交易日），请确认股票代码正确",
+                detail=f"无法获取 {symbol} 的历史行情数据（不足 10 个交易日），请确认股票代码正确且未停牌",
             )
 
         target_returns = target_closes.pct_change().dropna()
@@ -193,7 +198,7 @@ def similar_stocks(symbol: str):
         peer_codes = peer_codes[:20]   # cap at 20 to limit request time
 
         # ── Fetch each peer sequentially ──
-        peer_data: list[tuple] = []
+        peer_data = []
         for code in peer_codes:
             closes = _get_closes(code, start_str, end_str)
             name = _get_stock_name(code)
