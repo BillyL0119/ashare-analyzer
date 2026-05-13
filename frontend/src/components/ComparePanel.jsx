@@ -13,6 +13,7 @@ import RegimePanel from './RegimePanel'
 import FactorPanel from './FactorPanel'
 import FinancialPanel from './FinancialPanel'
 import SimilarPanel from './SimilarPanel'
+import NewsPanel from './NewsPanel'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -123,6 +124,7 @@ export default function ComparePanel() {
           { key: 'factor', label: t.factorAnalysis },
           { key: 'financial', label: t.financialAnalysis },
           { key: 'similar', label: t.similarTrend },
+          { key: 'news', label: t.newsSentiment },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -170,6 +172,8 @@ export default function ComparePanel() {
         <FinancialPanel stocks={selectedSymbols} />
       ) : viewMode === 'similar' ? (
         <SimilarPanel stocks={selectedSymbols} />
+      ) : viewMode === 'news' ? (
+        <NewsPanel stocks={selectedSymbols} />
       ) : (
         <div
           style={{
