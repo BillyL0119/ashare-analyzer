@@ -1,28 +1,52 @@
+"""
+Similar trend scanner — backend router.
+Finds A-share stocks in the same industry whose recent price movements
+are most correlated with the target stock.
+
+Data source: Sina Finance via akshare (works from HK servers).
+"""
+
 from fastapi import APIRouter, HTTPException
 import akshare as ak
 import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
 import json
 import os
 import time
+import logging
 import requests
+from datetime import datetime, timedelta
 
+logger = logging.getLogger("similar")
 router = APIRouter()
 
-# ── Cache ────────────────────────────────────────────────────────────────────
-_industry_cache: dict = {}          # symbol -> (industry, [codes])
-_name_cache: dict = {}              # code -> name
-_similar_cache: dict = {}           # symbol -> (timestamp, result)
-_CACHE_TTL = 3600                   # 1 hour
+# ── Caches ────────────────────────────────────────────────────────────────────
+_industry_cache: dict = {}   # symbol -> (industry_name, [codes])
+_name_cache: dict = {}       # code -> name
+_result_cache: dict = {}     # symbol -> (timestamp, response_dict)
+_CACHE_TTL = 3600            # 1 hour
 
 # ── Industry map ─────────────────────────────────────────────────────────────
-_INDUSTRY_MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "industry_map.json")
+_MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "industry_map.json")
 try:
-    with open(_INDUSTRY_MAP_PATH, "r", encoding="utf-8") as f:
-        _INDUSTRY_MAP = json.load(f)
-except Exception:
+    with open(_MAP_PATH, "r", encoding="utf-8") as _f:
+        _INDUSTRY_MAP: dict = json.load(_f)
+        logger.info("industry_map.json loaded OK, industries: %s",
+                    list(_INDUSTRY_MAP.get("industries", {}).keys()))
+except Exception as _e:
+    logger.error("Failed to load industry_map.json: %s", _e)
     _INDUSTRY_MAP = {"industries": {}}
+
+# Broad fallback peer list used when a stock isn't in any industry bucket.
+# Mix of large-caps across sectors so there's always something to correlate.
+_FALLBACK_PEERS = [
+    "600519", "000858", "002304",   # 白酒
+    "601398", "600036", "000001",   # 银行
+    "300750", "601012", "002475",   # 新能源
+    "600276", "000538", "002252",   # 医药
+    "601166", "600016", "601288",   # 银行2
+    "000651", "600690", "002241",   # 消费电子
+    "600900", "601991",             # 电力
+]
 
 SINA_HEADERS = {
     "Referer": "https://finance.sina.com.cn",
@@ -30,150 +54,188 @@ SINA_HEADERS = {
 }
 
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _to_sina_symbol(code: str) -> str:
-    """Convert bare A-share code to Sina Finance prefix format (sh/sz/bj)."""
+    """'600519' -> 'sh600519', '000858' -> 'sz000858', etc."""
     code = code.strip()
     if code.startswith(("sh", "sz", "bj")):
         return code
-    if code.startswith(("60", "68", "51", "11")):
+    if code.startswith(("60", "68", "51", "11", "50", "58")):
         return "sh" + code
-    if code.startswith(("00", "30", "12", "15", "16", "17", "18")):
+    if code.startswith(("00", "30", "12", "15", "16", "17", "18", "39")):
         return "sz" + code
     if code.startswith(("43", "83", "87", "88")):
         return "bj" + code
-    # default: Shanghai
-    return "sh" + code
+    return "sh" + code  # default Shanghai
 
 
 def _get_stock_name(code: str) -> str:
-    """Look up stock name via Sina HQ API; fall back to bare code."""
+    """Query Sina HQ API for the stock's Chinese name."""
     if code in _name_cache:
         return _name_cache[code]
     try:
-        sina_sym = _to_sina_symbol(code)
         r = requests.get(
-            f"http://hq.sinajs.cn/list={sina_sym}",
+            f"http://hq.sinajs.cn/list={_to_sina_symbol(code)}",
             headers=SINA_HEADERS,
             timeout=5,
         )
         text = r.text
         if '"' in text:
             name = text.split('"')[1].split(",")[0]
-            if name and name != sina_sym:
+            if name and not name.startswith("sh") and not name.startswith("sz"):
                 _name_cache[code] = name
                 return name
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("name lookup failed for %s: %s", code, exc)
     return code
 
 
 def _get_closes(code: str, start: str, end: str) -> pd.Series:
-    """Fetch daily adjusted closes from Sina Finance via akshare."""
-    try:
-        sina_sym = _to_sina_symbol(code)
-        df = ak.stock_zh_a_daily(
-            symbol=sina_sym,
-            start_date=start,
-            end_date=end,
-            adjust="qfq",
-        )
-        if df is None or df.empty:
-            return pd.Series(dtype=float, name=code)
-        df = df.sort_index()
-        return df["close"].rename(code)
-    except Exception:
-        return pd.Series(dtype=float, name=code)
+    """
+    Fetch daily close prices from Sina Finance.
+    Tries forward-adjusted first; falls back to unadjusted on failure.
+    Returns an empty Series on any error.
+    """
+    sina_sym = _to_sina_symbol(code)
+    for adjust in ("qfq", ""):
+        try:
+            df = ak.stock_zh_a_daily(
+                symbol=sina_sym,
+                start_date=start,
+                end_date=end,
+                adjust=adjust,
+            )
+            if df is None or df.empty:
+                continue
+
+            # Normalize column names (some akshare versions use different names)
+            df.columns = [c.lower().strip() for c in df.columns]
+            if "close" not in df.columns:
+                # Try common aliases
+                for alias in ("收盘", "收盘价", "close_price"):
+                    if alias in df.columns:
+                        df = df.rename(columns={alias: "close"})
+                        break
+
+            if "close" not in df.columns:
+                logger.warning("No 'close' column for %s (adjust=%s), cols: %s",
+                               code, adjust, list(df.columns))
+                continue
+
+            df = df.sort_index()
+            series = df["close"].dropna()
+            if len(series) >= 10:
+                logger.debug("Got %d rows for %s (adjust=%s)", len(series), code, adjust)
+                return series.rename(code)
+        except Exception as exc:
+            logger.warning("stock_zh_a_daily failed for %s adjust=%s: %s", code, adjust, exc)
+
+    return pd.Series(dtype=float, name=code)
 
 
 def _find_industry(symbol: str):
-    """Return (industry_name, [peer_codes]) for the given symbol."""
+    """Return (industry_name, peer_code_list) for symbol."""
     if symbol in _industry_cache:
         return _industry_cache[symbol]
 
     industries = _INDUSTRY_MAP.get("industries", {})
-
-    # Exact match: find which industry list contains this symbol
     for name, codes in industries.items():
         if symbol in codes:
-            _industry_cache[symbol] = (name, list(codes))
-            return name, list(codes)
+            result = (name, [c for c in codes if c != symbol])
+            _industry_cache[symbol] = result
+            return result
 
-    # Not found → return empty
-    _industry_cache[symbol] = ("未知", [])
-    return "未知", []
+    # Not in map — use fallback peers
+    fallback = [c for c in _FALLBACK_PEERS if c != symbol]
+    result = ("综合", fallback)
+    _industry_cache[symbol] = result
+    logger.info("Symbol %s not in industry map; using fallback peers", symbol)
+    return result
 
 
 # ── Route ─────────────────────────────────────────────────────────────────────
 
 @router.get("/{symbol}")
 def similar_stocks(symbol: str):
-    # Check cache
-    now = time.time()
-    if symbol in _similar_cache:
-        ts, result = _similar_cache[symbol]
-        if now - ts < _CACHE_TTL:
-            return result
+    """
+    Returns up to 10 stocks from the same industry whose recent price
+    trend is most correlated with `symbol` (Pearson on daily returns).
+    Results are cached for 1 hour.
+    """
+    try:
+        # ── Cache hit ──
+        now = time.time()
+        if symbol in _result_cache:
+            ts, cached = _result_cache[symbol]
+            if now - ts < _CACHE_TTL:
+                logger.debug("Cache hit for %s", symbol)
+                return cached
 
-    end_dt = datetime.now()
-    start_dt = end_dt - timedelta(days=100)   # ~70 trading days
-    start_str = start_dt.strftime("%Y%m%d")
-    end_str = end_dt.strftime("%Y%m%d")
+        end_dt = datetime.now()
+        start_dt = end_dt - timedelta(days=100)   # ~70 trading days
+        start_str = start_dt.strftime("%Y%m%d")
+        end_str = end_dt.strftime("%Y%m%d")
 
-    # 1. Target price series
-    target_closes = _get_closes(symbol, start_str, end_str)
-    if len(target_closes) < 10:
-        raise HTTPException(status_code=404, detail=f"无法获取 {symbol} 的历史数据，请检查股票代码")
+        # ── Target series ──
+        logger.info("Fetching closes for target %s", symbol)
+        target_closes = _get_closes(symbol, start_str, end_str)
+        if len(target_closes) < 10:
+            raise HTTPException(
+                status_code=422,
+                detail=f"无法获取 {symbol} 的历史行情数据（返回数据不足 10 个交易日），请确认股票代码正确",
+            )
 
-    target_returns = target_closes.pct_change().dropna()
+        target_returns = target_closes.pct_change().dropna()
 
-    # 2. Industry + peers
-    industry_name, peer_codes = _find_industry(symbol)
-    if not peer_codes:
-        raise HTTPException(status_code=404, detail=f"未找到 {symbol} 的行业分类")
+        # ── Industry peers ──
+        industry_name, peer_codes = _find_industry(symbol)
+        peer_codes = peer_codes[:20]   # cap at 20 to limit request time
 
-    peer_codes = [c for c in peer_codes if c != symbol][:20]
+        # ── Fetch each peer sequentially ──
+        peer_data: list[tuple] = []
+        for code in peer_codes:
+            closes = _get_closes(code, start_str, end_str)
+            name = _get_stock_name(code)
+            peer_data.append((code, name, closes))
+            time.sleep(0.3)
 
-    # 3. Fetch peers SEQUENTIALLY with throttle
-    peer_data = []
-    for code in peer_codes:
-        closes = _get_closes(code, start_str, end_str)
-        name = _get_stock_name(code)
-        peer_data.append((code, name, closes))
-        time.sleep(0.3)
+        # ── Pearson correlation on aligned daily returns ──
+        results = []
+        for code, name, closes in peer_data:
+            if len(closes) < 10:
+                continue
+            peer_returns = closes.pct_change().dropna()
+            common_idx = target_returns.index.intersection(peer_returns.index)
+            if len(common_idx) < 10:
+                continue
+            corr = float(target_returns[common_idx].corr(peer_returns[common_idx]))
+            if corr != corr:   # NaN check
+                continue
+            base = float(closes.iloc[0])
+            if base == 0:
+                continue
+            sparkline = [round(float(v) / base * 100, 2) for v in closes.tolist()]
+            results.append({
+                "code": code,
+                "name": name,
+                "correlation": round(corr, 4),
+                "sparkline": sparkline,
+            })
 
-    # 4. Pearson correlation on daily returns
-    results = []
-    for code, name, closes in peer_data:
-        if len(closes) < 10:
-            continue
-        peer_returns = closes.pct_change().dropna()
-        common = target_returns.index.intersection(peer_returns.index)
-        if len(common) < 10:
-            continue
-        corr = target_returns[common].corr(peer_returns[common])
-        if pd.isna(corr):
-            continue
+        results.sort(key=lambda x: x["correlation"], reverse=True)
 
-        base = closes.iloc[0]
-        if base == 0:
-            continue
-        sparkline = [round(float(v / base * 100), 2) for v in closes.values]
+        response = {
+            "symbol": symbol,
+            "industry": industry_name,
+            "results": results[:10],
+        }
+        _result_cache[symbol] = (now, response)
+        logger.info("Similar scan done for %s: %d results", symbol, len(results))
+        return response
 
-        results.append({
-            "code": code,
-            "name": name,
-            "correlation": round(float(corr), 4),
-            "sparkline": sparkline,
-        })
-
-    results.sort(key=lambda x: x["correlation"], reverse=True)
-
-    response = {
-        "symbol": symbol,
-        "industry": industry_name,
-        "results": results[:10],
-    }
-    _similar_cache[symbol] = (now, response)
-    return response
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Unexpected error in similar_stocks for %s", symbol)
+        raise HTTPException(status_code=500, detail=f"服务器内部错误：{exc}") from exc
