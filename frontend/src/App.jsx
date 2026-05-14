@@ -3,6 +3,7 @@ import ComparePanel from './components/ComparePanel'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import { T } from './i18n/translations'
+import { useMobile } from './hooks/useMobile'
 
 const ACCENT_BLUE = '#8ab4f8'
 const ACCENT_PURPLE = '#c084fc'
@@ -11,6 +12,7 @@ export default function App() {
   const { startDate, endDate, setDateRange, market, setMarket } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const t = T[lang]
+  const isMobile = useMobile()
 
   const dateInputStyle = {
     background: 'rgba(255,255,255,0.06)',
@@ -50,10 +52,10 @@ export default function App() {
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(138,180,248,0.10)',
-          padding: '10px 24px',
+          padding: isMobile ? '8px 12px' : '10px 24px',
           display: 'flex',
           alignItems: 'center',
-          gap: 18,
+          gap: isMobile ? 8 : 18,
           flexShrink: 0,
           flexWrap: 'wrap',
         }}
@@ -128,8 +130,8 @@ export default function App() {
 
         <SearchBar />
 
-        {/* Date range */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#9aa0a6' }}>
+        {/* Date range — hidden on mobile (too cramped) */}
+        <div style={{ display: isMobile ? 'none' : 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#9aa0a6' }}>
           <span>{t.from}</span>
           <input
             type="date"
@@ -187,7 +189,7 @@ export default function App() {
         <div style={{ color: '#4a5568', fontSize: 11, letterSpacing: '0.3px' }}>{t.dataSource}</div>
       </header>
 
-      <main style={{ padding: '20px 24px', flex: 1 }}>
+      <main style={{ padding: isMobile ? '10px 12px' : '20px 24px', flex: 1 }}>
         <ComparePanel />
       </main>
     </div>

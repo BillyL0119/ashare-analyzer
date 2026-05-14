@@ -9,6 +9,7 @@ import VolumeChart from './VolumeChart'
 import MACDChart from './MACDChart'
 import RSIChart from './RSIChart'
 import { THEME } from '../utils/chartHelpers'
+import { useMobile } from '../hooks/useMobile'
 
 export default function StockCard({ stock }) {
   const { code, name } = stock
@@ -16,6 +17,7 @@ export default function StockCard({ stock }) {
     useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
+  const isMobile = useMobile()
 
   const { data, loading, error, quote } = useStockData(code, {
     period,
@@ -164,16 +166,16 @@ export default function StockCard({ stock }) {
         )}
         {data && !loading && (
           <>
-            <div style={{ height: 360 }}>
+            <div style={{ height: isMobile ? 220 : 360 }}>
               <KLineChart candles={data.candles} ma={data.ma} groupId={groupId} market={market} />
             </div>
-            <div style={{ height: 120, borderTop: `1px solid ${THEME.border}` }}>
+            <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}` }}>
               <VolumeChart candles={data.candles} groupId={groupId} market={market} />
             </div>
-            <div style={{ height: 120, borderTop: `1px solid ${THEME.border}` }}>
+            <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}` }}>
               <MACDChart macd={data.macd} groupId={groupId} />
             </div>
-            <div style={{ height: 120, borderTop: `1px solid ${THEME.border}` }}>
+            <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}` }}>
               <RSIChart rsi={data.rsi} groupId={groupId} />
             </div>
           </>

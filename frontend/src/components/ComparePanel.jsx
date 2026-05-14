@@ -3,6 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
+import { useMobile } from '../hooks/useMobile'
 import StockCard from './StockCard'
 import { useStockData } from '../hooks/useStockData'
 import { buildOverlayOption, THEME } from '../utils/chartHelpers'
@@ -76,6 +77,7 @@ export default function ComparePanel() {
   const { selectedSymbols, viewMode, setViewMode } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
+  const isMobile = useMobile()
 
   if (selectedSymbols.length === 0) {
     return (
@@ -100,13 +102,15 @@ export default function ComparePanel() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      {/* Mode tab bar */}
+      {/* Mode tab bar — horizontal scroll on mobile */}
       <div
+        className="tab-bar"
         style={{
           display: 'flex',
           gap: 6,
           alignItems: 'center',
-          flexWrap: 'wrap',
+          flexWrap: isMobile ? 'nowrap' : 'wrap',
+          overflowX: isMobile ? 'auto' : 'visible',
           background: 'rgba(255,255,255,0.03)',
           border: '1px solid rgba(138,180,248,0.10)',
           borderRadius: 16,
@@ -130,13 +134,15 @@ export default function ComparePanel() {
             key={key}
             onClick={() => setViewMode(key)}
             style={{
-              padding: '5px 14px',
+              padding: isMobile ? '4px 10px' : '5px 14px',
               borderRadius: 20,
               border: 'none',
               cursor: 'pointer',
-              fontSize: 12,
+              fontSize: isMobile ? 11 : 12,
               fontWeight: viewMode === key ? 600 : 400,
               letterSpacing: '0.2px',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
               background: viewMode === key
                 ? 'linear-gradient(135deg, #8ab4f8, #c084fc)'
                 : 'transparent',

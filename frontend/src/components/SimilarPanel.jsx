@@ -4,6 +4,7 @@ import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { getSimilarStocks } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
+import { useMobile } from '../hooks/useMobile'
 
 // Simple SVG sparkline
 function Sparkline({ data, width = 80, height = 32 }) {
@@ -57,7 +58,7 @@ function CorrBar({ value }) {
   )
 }
 
-function StockBlock({ stock, lang }) {
+function StockBlock({ stock, lang, isMobile }) {
   const t = T[lang]
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -145,57 +146,95 @@ function StockBlock({ stock, lang }) {
 
       {data && !loading && (
         <>
-          {/* Column headers */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '28px 80px 1fr 120px 90px',
-              gap: '0 12px',
-              padding: '4px 8px',
-              marginBottom: 4,
-              fontSize: 11,
-              color: '#4a5568',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-            }}
-          >
-            <span>#</span>
-            <span>{t.similarCode}</span>
-            <span>{t.similarName}</span>
-            <span>{t.similarCorr}</span>
-            <span>{t.similarTrend2}</span>
-          </div>
-
-          {data.results.map((item, idx) => (
-            <div
-              key={item.code}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '28px 80px 1fr 120px 90px',
-                gap: '0 12px',
-                alignItems: 'center',
-                padding: '8px 8px',
-                borderRadius: 6,
-                borderBottom: idx < data.results.length - 1 ? `1px solid ${THEME.border}` : 'none',
-                transition: 'background 0.1s',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-            >
-              <span style={{ fontSize: 12, color: '#4a5568', fontWeight: 700 }}>
-                {idx + 1}
-              </span>
-              <span style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace' }}>
-                {item.code}
-              </span>
-              <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {item.name}
-              </span>
-              <CorrBar value={item.correlation} />
-              <Sparkline data={item.sparkline} />
+          {isMobile ? (
+            /* ── Mobile: card list ── */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {data.results.map((item, idx) => (
+                <div
+                  key={item.code}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    padding: '8px 10px',
+                    background: 'rgba(138,180,248,0.04)',
+                    border: `1px solid ${THEME.border}`,
+                    borderRadius: 8,
+                  }}
+                >
+                  <span style={{ fontSize: 11, color: '#4a5568', fontWeight: 700, minWidth: 18 }}>
+                    {idx + 1}
+                  </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace' }}>
+                        {item.code}
+                      </span>
+                      <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {item.name}
+                      </span>
+                    </div>
+                    <CorrBar value={item.correlation} />
+                  </div>
+                  <Sparkline data={item.sparkline} width={60} height={26} />
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            /* ── Desktop: table grid ── */
+            <>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '28px 80px 1fr 120px 90px',
+                  gap: '0 12px',
+                  padding: '4px 8px',
+                  marginBottom: 4,
+                  fontSize: 11,
+                  color: '#4a5568',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                <span>#</span>
+                <span>{t.similarCode}</span>
+                <span>{t.similarName}</span>
+                <span>{t.similarCorr}</span>
+                <span>{t.similarTrend2}</span>
+              </div>
+
+              {data.results.map((item, idx) => (
+                <div
+                  key={item.code}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '28px 80px 1fr 120px 90px',
+                    gap: '0 12px',
+                    alignItems: 'center',
+                    padding: '8px 8px',
+                    borderRadius: 6,
+                    borderBottom: idx < data.results.length - 1 ? `1px solid ${THEME.border}` : 'none',
+                    transition: 'background 0.1s',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                >
+                  <span style={{ fontSize: 12, color: '#4a5568', fontWeight: 700 }}>
+                    {idx + 1}
+                  </span>
+                  <span style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace' }}>
+                    {item.code}
+                  </span>
+                  <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {item.name}
+                  </span>
+                  <CorrBar value={item.correlation} />
+                  <Sparkline data={item.sparkline} />
+                </div>
+              ))}
+            </>
+          )}
 
           {data.results.length === 0 && (
             <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
@@ -211,6 +250,7 @@ function StockBlock({ stock, lang }) {
 export default function SimilarPanel({ stocks }) {
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
+  const isMobile = useMobile()
 
   if (!stocks || stocks.length === 0) {
     return (
@@ -222,9 +262,8 @@ export default function SimilarPanel({ stocks }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* One StockBlock per selected symbol — each independently calls /api/similar/{code} */}
       {stocks.map((stock) => (
-        <StockBlock key={stock.code} stock={stock} lang={lang} />
+        <StockBlock key={stock.code} stock={stock} lang={lang} isMobile={isMobile} />
       ))}
     </div>
   )

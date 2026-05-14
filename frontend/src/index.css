@@ -112,3 +112,33 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ── Mobile responsive ───────────────────────────────────────────────────── */
+
+/* Prevent any element from overflowing the viewport horizontally */
+@media (max-width: 768px) {
+  * {
+    max-width: 100%;
+  }
+  /* Allow overflow on explicit scroll containers */
+  .tab-bar {
+    max-width: none;
+  }
+}
+
+/* Tab bar: hide scrollbar but keep scroll functionality */
+.tab-bar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge */
+}
+.tab-bar::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari */
+}
+
+/* FinancialPanel metric cards: shrink min-width on small screens */
+@media (max-width: 480px) {
+  .metric-card {
+    min-width: 130px !important;
+  }
+}
