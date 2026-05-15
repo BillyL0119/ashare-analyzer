@@ -37,7 +37,25 @@ _PEER_SLEEP    = 0.3     # polite delay between peer fetches
 # ── Module-level caches ───────────────────────────────────────────────────────
 _industry_cache: dict = {}   # symbol -> (industry_name, [codes])
 _result_cache: dict = {}     # symbol -> (ts, response_dict)
+_cross_cache: dict  = {}     # symbol -> (ts, response_dict)  for /cross
 _name_map: dict = {}         # code -> name, populated at startup
+
+# ── Related-industry mapping for cross-sector scan ────────────────────────────
+_RELATED_INDUSTRY: dict[str, list[str]] = {
+    "白酒":  ["消费"],
+    "银行":  ["金融"],      # 金融若不在 map 中则忽略，不报错
+    "新能源": ["科技"],
+    "医药":  ["消费"],
+    "科技":  ["新能源"],
+    "消费":  ["白酒"],
+    "军工":  ["科技"],
+    "地产":  ["能源"],
+    "能源":  ["化工", "电力"],
+    "化工":  ["能源"],
+    "汽车":  ["新能源"],
+    "电力":  ["能源", "新能源"],
+    "传媒":  ["科技", "消费"],
+}
 
 # ── Preload stock names in background ─────────────────────────────────────────
 def _load_name_map():
@@ -279,7 +297,181 @@ def _find_industry(symbol: str):
     return result
 
 
-# ── Route ─────────────────────────────────────────────────────────────────────
+def _build_cross_pool(symbol: str):
+    """
+    Return (primary_industry, [related_industry_names], [(code, industry, type)])
+    where type is 'same' | 'related'.
+    Deduplicates: each code appears at most once, preferring 'same'.
+    """
+    industries = _INDUSTRY_MAP.get("industries", {})
+
+    # Find primary industry
+    primary: str | None = None
+    for iname, codes in industries.items():
+        if symbol in codes:
+            primary = iname
+            break
+
+    if primary is None:
+        # Not in map — broad fallback, all tagged "same"
+        pool = [(c, "综合", "same") for c in _FALLBACK_PEERS if c != symbol]
+        return ("综合", [], pool)
+
+    # Related industries (only those actually present in the map)
+    related_names = [r for r in _RELATED_INDUSTRY.get(primary, []) if r in industries]
+
+    seen: set[str] = {symbol}
+    pool: list[tuple[str, str, str]] = []
+
+    # Same-industry peers first
+    for code in industries.get(primary, []):
+        if code not in seen:
+            pool.append((code, primary, "same"))
+            seen.add(code)
+
+    # Related-industry peers next
+    for rel in related_names:
+        for code in industries.get(rel, []):
+            if code not in seen:
+                pool.append((code, rel, "related"))
+                seen.add(code)
+
+    return (primary, related_names, pool)
+
+
+# ── Routes ────────────────────────────────────────────────────────────────────
+# NOTE: /{symbol}/cross must be registered BEFORE /{symbol} so FastAPI
+# doesn't accidentally shadow it (extra path segment makes them distinct,
+# but explicit ordering is safer).
+
+@router.get("/{symbol}/cross")
+def similar_cross(symbol: str):
+    """
+    Cross-industry similar trend scan.
+    Combines same-industry peers with related-industry peers, returns top 15
+    ranked by Pearson correlation.  Each result carries 'industry' and
+    'industry_type' ("same" | "related") fields.
+    """
+    stale_cached = None
+
+    try:
+        now = time.time()
+        deadline = now + _TOTAL_TIMEOUT
+
+        # ── Cache ──────────────────────────────────────────────────────────────
+        if symbol in _cross_cache:
+            ts, cached = _cross_cache[symbol]
+            age = now - ts
+            if age < _CACHE_FRESH:
+                return cached
+            if age < _CACHE_STALE:
+                stale_cached = cached
+
+        end_dt  = datetime.now()
+        end_str = end_dt.strftime("%Y%m%d")
+        start_str = (end_dt - timedelta(days=100)).strftime("%Y%m%d")
+
+        # ── Target price series ────────────────────────────────────────────────
+        logger.info("Cross scan: fetching target %s", symbol)
+        target_closes = _get_closes(symbol, start_str, end_str)
+        if len(target_closes) < 10:
+            wider_str = (end_dt - timedelta(days=240)).strftime("%Y%m%d")
+            target_closes = _get_closes(symbol, wider_str, end_str)
+            start_str = wider_str
+
+        if len(target_closes) < 10:
+            if stale_cached:
+                return {**stale_cached, "data_quality": "stale"}
+            raise HTTPException(
+                status_code=422,
+                detail=f"无法获取 {symbol} 的历史行情数据（不足 10 个交易日）",
+            )
+
+        target_returns = target_closes.pct_change().dropna()
+
+        # ── Build cross-industry candidate pool ────────────────────────────────
+        primary, related_names, pool = _build_cross_pool(symbol)
+        # Limit to 25 candidates to stay within deadline
+        pool = pool[:25]
+
+        target_name = _get_stock_name(symbol)
+        total_pool_size = len(pool)
+
+        # ── Fetch peers sequentially ───────────────────────────────────────────
+        peer_data: list[tuple[str, str, str, str, pd.Series]] = []
+        deadline_hit = False
+        for code, industry, itype in pool:
+            if time.time() > deadline:
+                deadline_hit = True
+                logger.warning("Cross deadline hit at %s for %s", code, symbol)
+                break
+            closes = _get_closes(code, start_str, end_str)
+            name   = _get_stock_name(code)
+            peer_data.append((code, name, industry, itype, closes))
+            time.sleep(_PEER_SLEEP)
+
+        # ── Compute correlations ───────────────────────────────────────────────
+        results = []
+        failed = total_pool_size - len(peer_data)
+
+        for code, name, industry, itype, closes in peer_data:
+            if len(closes) < 10:
+                failed += 1
+                continue
+            peer_returns = closes.pct_change().dropna()
+            common_idx   = target_returns.index.intersection(peer_returns.index)
+            if len(common_idx) < 10:
+                failed += 1
+                continue
+            corr = float(target_returns[common_idx].corr(peer_returns[common_idx]))
+            if corr != corr:
+                failed += 1
+                continue
+            base = float(closes.iloc[0])
+            if base == 0:
+                failed += 1
+                continue
+            sparkline = [round(float(v) / base * 100, 2) for v in closes.tolist()]
+            results.append({
+                "code":          code,
+                "name":          name,
+                "industry":      industry,
+                "industry_type": itype,
+                "correlation":   round(corr, 4),
+                "sparkline":     sparkline,
+            })
+
+        results.sort(key=lambda x: x["correlation"], reverse=True)
+        data_quality = "full" if (failed == 0 and not deadline_hit) else "partial"
+
+        if len(results) < _MIN_RESULTS and stale_cached:
+            return {**stale_cached, "data_quality": "stale"}
+
+        # Scanned industries summary
+        scanned = [primary] + related_names
+
+        response = {
+            "symbol":             symbol,
+            "name":               target_name,
+            "primary_industry":   primary,
+            "related_industries": related_names,
+            "scanned_industries": scanned,
+            "results":            results[:15],
+            "data_quality":       data_quality,
+        }
+        _cross_cache[symbol] = (now, response)
+        logger.info("Cross done %s: primary=%s related=%s results=%d failed=%d",
+                    symbol, primary, related_names, len(results), failed)
+        return response
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Cross scan error for %s", symbol)
+        if stale_cached:
+            return {**stale_cached, "data_quality": "stale"}
+        raise HTTPException(status_code=500, detail=f"服务器内部错误：{exc}") from exc
+
 
 @router.get("/{symbol}")
 def similar_stocks(symbol: str):

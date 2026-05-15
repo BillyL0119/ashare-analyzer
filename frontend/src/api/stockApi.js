@@ -34,6 +34,9 @@ export const searchUSStocks = (query) =>
 export const getSimilarStocks = (symbol) =>
   api.get(`/similar/${symbol}`)
 
+export const getSimilarCross = (symbol) =>
+  api.get(`/similar/${symbol}/cross`)
+
 export const getNews = (symbol) =>
   api.get(`/news/${symbol}`)
 

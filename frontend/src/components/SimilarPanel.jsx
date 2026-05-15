@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
-import { getSimilarStocks } from '../api/stockApi'
+import { getSimilarStocks, getSimilarCross } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import { useMobile } from '../hooks/useMobile'
 
-// Simple SVG sparkline
+// ── Sub-components ────────────────────────────────────────────────────────────
+
 function Sparkline({ data, width = 80, height = 32 }) {
   if (!data || data.length < 2) return <div style={{ width, height }} />
   const min = Math.min(...data)
@@ -17,9 +17,7 @@ function Sparkline({ data, width = 80, height = 32 }) {
     const y = height - ((v - min) / range) * height
     return `${x.toFixed(1)},${y.toFixed(1)}`
   })
-  const last = data[data.length - 1]
-  const first = data[0]
-  const up = last >= first
+  const up = data[data.length - 1] >= data[0]
   return (
     <svg width={width} height={height} style={{ display: 'block' }}>
       <polyline
@@ -34,21 +32,12 @@ function Sparkline({ data, width = 80, height = 32 }) {
   )
 }
 
-// Correlation bar (–1 to +1 → 0% to 100%)
 function CorrBar({ value }) {
   const pct = Math.round(((value + 1) / 2) * 100)
   const color = value >= 0.8 ? '#26a69a' : value >= 0.5 ? '#f0e68c' : '#9aa0a6'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <div
-        style={{
-          width: 60,
-          height: 6,
-          background: 'rgba(255,255,255,0.08)',
-          borderRadius: 3,
-          overflow: 'hidden',
-        }}
-      >
+      <div style={{ width: 60, height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
         <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 3 }} />
       </div>
       <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: 'monospace', minWidth: 36 }}>
@@ -58,20 +47,97 @@ function CorrBar({ value }) {
   )
 }
 
-function StockBlock({ stock, lang, isMobile }) {
+function IndustryPill({ label, type }) {
+  const isSame = type === 'same'
+  return (
+    <span
+      style={{
+        fontSize: 10,
+        fontWeight: 600,
+        padding: '2px 6px',
+        borderRadius: 10,
+        whiteSpace: 'nowrap',
+        background: isSame
+          ? 'rgba(138,180,248,0.12)'
+          : 'rgba(192,132,252,0.12)',
+        color: isSame ? '#8ab4f8' : '#c084fc',
+        border: `1px solid ${isSame ? 'rgba(138,180,248,0.25)' : 'rgba(192,132,252,0.25)'}`,
+        letterSpacing: '0.02em',
+      }}
+    >
+      {label}
+    </span>
+  )
+}
+
+// ── ModeToggle ────────────────────────────────────────────────────────────────
+
+function ModeToggle({ mode, setMode, t }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(138,180,248,0.12)',
+        borderRadius: 20,
+        padding: 3,
+        gap: 2,
+        flexShrink: 0,
+      }}
+    >
+      {[
+        { key: 'same', label: t.similarSame },
+        { key: 'cross', label: t.similarCross },
+      ].map(({ key, label }) => (
+        <button
+          key={key}
+          onClick={() => setMode(key)}
+          style={{
+            padding: '4px 14px',
+            borderRadius: 16,
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: 12,
+            fontWeight: mode === key ? 600 : 400,
+            background: mode === key
+              ? 'linear-gradient(135deg, #8ab4f8, #c084fc)'
+              : 'transparent',
+            color: mode === key ? '#fff' : '#9aa0a6',
+            transition: 'all 0.2s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// ── StockBlock ────────────────────────────────────────────────────────────────
+
+function StockBlock({ stock, mode, lang, isMobile }) {
   const t = T[lang]
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    setData(null)
     setLoading(true)
     setError(null)
-    getSimilarStocks(stock.code)
+    const fetch = mode === 'cross' ? getSimilarCross : getSimilarStocks
+    fetch(stock.code)
       .then((res) => setData(res.data))
       .catch((e) => setError(e?.response?.data?.detail || t.similarError))
       .finally(() => setLoading(false))
-  }, [stock.code]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stock.code, mode]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isCross = mode === 'cross'
+
+  // Column definitions: cross mode adds an industry column
+  const gridSame  = '28px 80px 1fr 120px 90px'
+  const gridCross = '28px 80px 80px 1fr 120px 90px'
 
   return (
     <div
@@ -82,15 +148,16 @@ function StockBlock({ stock, lang, isMobile }) {
         padding: 16,
       }}
     >
-      {/* Header */}
+      {/* Header row */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          marginBottom: 14,
+          marginBottom: 10,
           paddingBottom: 10,
           borderBottom: `1px solid ${THEME.border}`,
+          flexWrap: 'wrap',
         }}
       >
         <span
@@ -107,7 +174,9 @@ function StockBlock({ stock, lang, isMobile }) {
           {stock.code}
         </span>
         <span style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed' }}>{stock.name}</span>
-        {data?.industry && (
+
+        {/* Industry tag (same mode) */}
+        {!isCross && data?.industry && (
           <span
             style={{
               marginLeft: 'auto',
@@ -119,6 +188,19 @@ function StockBlock({ stock, lang, isMobile }) {
             }}
           >
             {data.industry}
+          </span>
+        )}
+
+        {/* Cross mode: scanned industries summary */}
+        {isCross && data?.scanned_industries && (
+          <span
+            style={{
+              marginLeft: 'auto',
+              fontSize: 11,
+              color: '#9aa0a6',
+            }}
+          >
+            {t.similarScanned(data.scanned_industries, data.results.length)}
           </span>
         )}
       </div>
@@ -147,7 +229,7 @@ function StockBlock({ stock, lang, isMobile }) {
       {data && !loading && (
         <>
           {isMobile ? (
-            /* ── Mobile: card list ── */
+            /* ── Mobile card list ── */
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {data.results.map((item, idx) => (
                 <div
@@ -166,13 +248,16 @@ function StockBlock({ stock, lang, isMobile }) {
                     {idx + 1}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace' }}>
                         {item.code}
                       </span>
                       <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {item.name}
                       </span>
+                      {isCross && item.industry && (
+                        <IndustryPill label={item.industry} type={item.industry_type} />
+                      )}
                     </div>
                     <CorrBar value={item.correlation} />
                   </div>
@@ -181,12 +266,12 @@ function StockBlock({ stock, lang, isMobile }) {
               ))}
             </div>
           ) : (
-            /* ── Desktop: table grid ── */
+            /* ── Desktop table ── */
             <>
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '28px 80px 1fr 120px 90px',
+                  gridTemplateColumns: isCross ? gridCross : gridSame,
                   gap: '0 12px',
                   padding: '4px 8px',
                   marginBottom: 4,
@@ -199,6 +284,7 @@ function StockBlock({ stock, lang, isMobile }) {
               >
                 <span>#</span>
                 <span>{t.similarCode}</span>
+                {isCross && <span>{t.similarIndustry}</span>}
                 <span>{t.similarName}</span>
                 <span>{t.similarCorr}</span>
                 <span>{t.similarTrend2}</span>
@@ -209,7 +295,7 @@ function StockBlock({ stock, lang, isMobile }) {
                   key={item.code}
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: '28px 80px 1fr 120px 90px',
+                    gridTemplateColumns: isCross ? gridCross : gridSame,
                     gap: '0 12px',
                     alignItems: 'center',
                     padding: '8px 8px',
@@ -226,6 +312,11 @@ function StockBlock({ stock, lang, isMobile }) {
                   <span style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace' }}>
                     {item.code}
                   </span>
+                  {isCross && (
+                    <span>
+                      <IndustryPill label={item.industry} type={item.industry_type} />
+                    </span>
+                  )}
                   <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.name}
                   </span>
@@ -247,10 +338,13 @@ function StockBlock({ stock, lang, isMobile }) {
   )
 }
 
+// ── SimilarPanel (outer) ──────────────────────────────────────────────────────
+
 export default function SimilarPanel({ stocks }) {
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
+  const [mode, setMode] = useState('same')   // 'same' | 'cross'
 
   if (!stocks || stocks.length === 0) {
     return (
@@ -262,8 +356,22 @@ export default function SimilarPanel({ stocks }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Mode toggle (shared across all stock blocks) */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <ModeToggle mode={mode} setMode={setMode} t={t} />
+        <span style={{ fontSize: 12, color: '#4a5568' }}>
+          {mode === 'same' ? t.similarSame : t.similarCross}
+        </span>
+      </div>
+
       {stocks.map((stock) => (
-        <StockBlock key={stock.code} stock={stock} lang={lang} isMobile={isMobile} />
+        <StockBlock
+          key={stock.code}
+          stock={stock}
+          mode={mode}
+          lang={lang}
+          isMobile={isMobile}
+        />
       ))}
     </div>
   )
