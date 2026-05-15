@@ -39,25 +39,66 @@ _industry_cache: dict = {}   # symbol -> (industry_name, [codes])
 _result_cache: dict = {}     # symbol -> (ts, response_dict)
 _name_map: dict = {}         # code -> name, populated at startup
 
-# ── Preload all A-share names via stock_zh_a_spot_em in background ────────────
+# ── Preload stock names in background ─────────────────────────────────────────
 def _load_name_map():
-    """Fetch full A-share name list and populate _name_map. Runs in daemon thread."""
-    global _name_map
+    """
+    Populate _name_map with A-share code→name pairs.
+    Source 1: akshare stock_zh_a_spot_em (eastmoney, globally reachable)
+    Source 2: Sina batch HQ API using all codes from industry_map.json
+              (Sina CDN works from HK servers; no mainland-only endpoints)
+    """
+    import requests as _requests
+
+    # ── Source 1: eastmoney spot data ─────────────────────────────────────────
     try:
         df = ak.stock_zh_a_spot_em()
-        # Columns include '代码' and '名称'
         mapping = dict(zip(df['代码'].astype(str), df['名称'].astype(str)))
         _name_map.update(mapping)
-        logger.info("Name map loaded: %d stocks", len(_name_map))
+        logger.info("Name map loaded via stock_zh_a_spot_em: %d stocks", len(_name_map))
+        return
     except Exception as exc:
-        logger.warning("stock_zh_a_spot_em failed (%s), trying stock_info_a_code_name", exc)
-        try:
-            df2 = ak.stock_info_a_code_name()
-            mapping = dict(zip(df2['code'].astype(str), df2['name'].astype(str)))
-            _name_map.update(mapping)
-            logger.info("Name map loaded via fallback: %d stocks", len(_name_map))
-        except Exception as exc2:
-            logger.error("Both name sources failed: %s", exc2)
+        logger.warning("stock_zh_a_spot_em failed: %s", exc)
+
+    # ── Source 2: Sina batch HQ API (globally accessible CDN) ─────────────────
+    try:
+        all_codes: list[str] = []
+        for codes in _INDUSTRY_MAP.get("industries", {}).values():
+            all_codes.extend(codes)
+        all_codes.extend(_FALLBACK_PEERS)
+        all_codes = list(dict.fromkeys(all_codes))   # deduplicate, preserve order
+
+        # Sina accepts up to ~200 symbols per request; do in chunks of 100
+        chunk_size = 100
+        for i in range(0, len(all_codes), chunk_size):
+            chunk = all_codes[i : i + chunk_size]
+            sina_list = ",".join(_to_sina_symbol(c) for c in chunk)
+            try:
+                r = _requests.get(
+                    f"http://hq.sinajs.cn/list={sina_list}",
+                    headers={
+                        "Referer": "https://finance.sina.com.cn",
+                        "User-Agent": "Mozilla/5.0",
+                    },
+                    timeout=10,
+                )
+                r.encoding = "gbk"
+                for line in r.text.splitlines():
+                    # var hq_str_sh600519="贵州茅台,1500.00,...";
+                    if '="' not in line:
+                        continue
+                    left, _, rest = line.partition('="')
+                    name = rest.split(",")[0].strip()
+                    # Extract bare code: hq_str_sh600519 → 600519
+                    var = left.split("hq_str_")[-1]   # sh600519
+                    code = var[2:] if len(var) > 2 else ""
+                    if code and name and not name.startswith(("sh", "sz", "bj")):
+                        _name_map[code] = name
+            except Exception as chunk_exc:
+                logger.debug("Sina chunk %d failed: %s", i, chunk_exc)
+
+        logger.info("Name map loaded via Sina batch: %d stocks", len(_name_map))
+    except Exception as exc:
+        logger.error("Sina batch name lookup failed: %s", exc)
 
 threading.Thread(target=_load_name_map, daemon=True).start()
 
