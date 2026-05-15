@@ -36,3 +36,6 @@ export const getSimilarStocks = (symbol) =>
 
 export const getNews = (symbol) =>
   api.get(`/news/${symbol}`)
+
+export const getRadarScore = (symbol) =>
+  api.get(`/radar/${symbol}`)

@@ -1,6 +1,7 @@
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
 import WelcomeModal from './components/WelcomeModal'
+import Watchlist from './components/Watchlist'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import { T } from './i18n/translations'
@@ -30,6 +31,7 @@ export default function App() {
   return (
     <>
     <WelcomeModal lang={lang} />
+    <Watchlist lang={lang} />
     <div
       style={{
         minHeight: '100vh',

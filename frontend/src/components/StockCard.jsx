@@ -3,6 +3,7 @@ import * as echarts from 'echarts'
 import { useStockData } from '../hooks/useStockData'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
+import useWatchlistStore from '../store/watchlistStore'
 import { T } from '../i18n/translations'
 import KLineChart from './KLineChart'
 import VolumeChart from './VolumeChart'
@@ -16,6 +17,8 @@ export default function StockCard({ stock }) {
   const { period, startDate, endDate, adjust, removeSymbol, setPeriod, setAdjust, market } =
     useCompareStore()
   const lang = useLangStore((s) => s.lang)
+  const { add: wlAdd, remove: wlRemove, has: wlHas } = useWatchlistStore()
+  const inWatchlist = wlHas(code)
   const t = T[lang]
   const isMobile = useMobile()
 
@@ -127,6 +130,26 @@ export default function StockCard({ stock }) {
             </button>
           ))}
         </div>
+
+        {/* Watchlist star */}
+        <button
+          onClick={() => inWatchlist ? wlRemove(code) : wlAdd(stock)}
+          title={inWatchlist ? (lang === 'zh' ? '移出收藏' : 'Remove from watchlist') : (lang === 'zh' ? '加入收藏' : 'Add to watchlist')}
+          style={{
+            padding: '3px 6px',
+            borderRadius: 4,
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: 16,
+            background: 'transparent',
+            color: inWatchlist ? '#f6c90e' : '#4a5568',
+            transition: 'color 0.15s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#f6c90e' }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = inWatchlist ? '#f6c90e' : '#4a5568' }}
+        >
+          {inWatchlist ? '★' : '☆'}
+        </button>
 
         <button
           onClick={() => removeSymbol(code)}

@@ -15,6 +15,7 @@ import FactorPanel from './FactorPanel'
 import FinancialPanel from './FinancialPanel'
 import SimilarPanel from './SimilarPanel'
 import NewsPanel from './NewsPanel'
+import RadarPanel from './RadarPanel'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -129,6 +130,7 @@ export default function ComparePanel() {
           { key: 'financial', label: t.financialAnalysis },
           { key: 'similar', label: t.similarTrend },
           { key: 'news', label: t.newsSentiment },
+          { key: 'radar', label: t.radarTab },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -180,6 +182,8 @@ export default function ComparePanel() {
         <SimilarPanel stocks={selectedSymbols} />
       ) : viewMode === 'news' ? (
         <NewsPanel stocks={selectedSymbols} />
+      ) : viewMode === 'radar' ? (
+        <RadarPanel stocks={selectedSymbols} />
       ) : (
         <div
           style={{

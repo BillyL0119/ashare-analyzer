@@ -171,6 +171,11 @@ export const T = {
     financialYoY: '同比变动',
     financialReportDate: '报告期',
     financialUnit: '%',
+    // Radar Chart
+    radarTitle: '多维雷达对比',
+    radarLoading: '正在计算各维度得分...',
+    radarNoStocks: '请先添加股票',
+    radarTab: '雷达对比',
     // News Sentiment
     newsSentiment: '新闻舆情',
     newsLoading: '正在抓取新闻并分析舆情...',
@@ -364,6 +369,11 @@ export const T = {
     financialYoY: 'YoY Change',
     financialReportDate: 'Report Date',
     financialUnit: '%',
+    // Radar Chart
+    radarTitle: 'Multi-Dimension Radar',
+    radarLoading: 'Computing dimension scores...',
+    radarNoStocks: 'Please add a stock first',
+    radarTab: 'Radar',
     // News Sentiment
     newsSentiment: 'News Sentiment',
     newsLoading: 'Fetching news and analyzing sentiment...',
