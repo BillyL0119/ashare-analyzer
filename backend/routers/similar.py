@@ -16,15 +16,10 @@ import akshare as ak
 import pandas as pd
 import json
 import os
-import sys
 import time
 import logging
 import threading
 from datetime import datetime, timedelta
-
-# Use shared name cache from stock_service so startup preload applies here too
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from services.stock_service import get_stock_name as _get_stock_name
 
 logger = logging.getLogger("similar")
 router = APIRouter()
@@ -42,6 +37,34 @@ _PEER_SLEEP    = 0.3     # polite delay between peer fetches
 # ── Module-level caches ───────────────────────────────────────────────────────
 _industry_cache: dict = {}   # symbol -> (industry_name, [codes])
 _result_cache: dict = {}     # symbol -> (ts, response_dict)
+_name_map: dict = {}         # code -> name, populated at startup
+
+# ── Preload all A-share names via stock_zh_a_spot_em in background ────────────
+def _load_name_map():
+    """Fetch full A-share name list and populate _name_map. Runs in daemon thread."""
+    global _name_map
+    try:
+        df = ak.stock_zh_a_spot_em()
+        # Columns include '代码' and '名称'
+        mapping = dict(zip(df['代码'].astype(str), df['名称'].astype(str)))
+        _name_map.update(mapping)
+        logger.info("Name map loaded: %d stocks", len(_name_map))
+    except Exception as exc:
+        logger.warning("stock_zh_a_spot_em failed (%s), trying stock_info_a_code_name", exc)
+        try:
+            df2 = ak.stock_info_a_code_name()
+            mapping = dict(zip(df2['code'].astype(str), df2['name'].astype(str)))
+            _name_map.update(mapping)
+            logger.info("Name map loaded via fallback: %d stocks", len(_name_map))
+        except Exception as exc2:
+            logger.error("Both name sources failed: %s", exc2)
+
+threading.Thread(target=_load_name_map, daemon=True).start()
+
+
+def _get_stock_name(code: str) -> str:
+    """Look up stock name from preloaded map; return code as fallback."""
+    return _name_map.get(code, code)
 
 # ── Industry map ──────────────────────────────────────────────────────────────
 _MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "industry_map.json")
