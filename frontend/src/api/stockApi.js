@@ -42,3 +42,6 @@ export const getNews = (symbol) =>
 
 export const getRadarScore = (symbol) =>
   api.get(`/radar/${symbol}`)
+
+export const getKnowledgeToday = () =>
+  api.get('/knowledge/today')

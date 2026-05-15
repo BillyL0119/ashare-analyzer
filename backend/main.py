@@ -9,6 +9,7 @@ from routers.us_stocks import router as us_stocks_router
 from routers.similar import router as similar_router
 from routers.news import router as news_router
 from routers.radar import router as radar_router
+from routers.knowledge import router as knowledge_router
 
 app = FastAPI(
     title="Best Friend Ashare API",
@@ -42,3 +43,4 @@ app.include_router(us_stocks_router, prefix="/api/us", tags=["us_stocks"])
 app.include_router(similar_router, prefix="/api/similar", tags=["similar"])
 app.include_router(news_router, prefix="/api/news", tags=["news"])
 app.include_router(radar_router, prefix="/api/radar", tags=["radar"])
+app.include_router(knowledge_router, prefix="/api/knowledge", tags=["knowledge"])

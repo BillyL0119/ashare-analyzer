@@ -200,6 +200,13 @@ export const T = {
     newsAiAnalysis: 'AI 分析',
     newsReadMore: '查看原文 →',
     newsSource: '来源',
+    // Knowledge Card
+    knowledgeBtn: '💡 今日知识',
+    knowledgeClose: '×',
+    knowledgeDifficulty: '难度',
+    knowledgeFormula: '核心公式',
+    knowledgeExample: '实例',
+    knowledgeTags: '标签',
   },
   en: {
     appTitle: 'Best Friend Stock',
@@ -402,5 +409,12 @@ export const T = {
     newsAiAnalysis: 'AI Analysis',
     newsReadMore: 'Read more →',
     newsSource: 'Source',
+    // Knowledge Card
+    knowledgeBtn: '💡 Daily Insight',
+    knowledgeClose: '×',
+    knowledgeDifficulty: 'Difficulty',
+    knowledgeFormula: 'Key Formula',
+    knowledgeExample: 'Example',
+    knowledgeTags: 'Tags',
   },
 }
