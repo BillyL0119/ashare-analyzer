@@ -67,7 +67,13 @@ def get_stock_list() -> List[dict]:
     """Fetch full A-share code+name list. Cached after first call."""
     try:
         df = ak.stock_info_a_code_name()
-        return df[["code", "name"]].to_dict(orient="records")
+        records = df[["code", "name"]].to_dict(orient="records")
+        # Populate name cache so get_stock_name() can serve from memory
+        for r in records:
+            code, name = r.get("code", ""), r.get("name", "")
+            if code and name:
+                _name_cache[code] = name
+        return records
     except Exception as e:
         print(f"Error fetching stock list: {e}")
         return []

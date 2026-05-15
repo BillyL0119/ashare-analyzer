@@ -16,11 +16,15 @@ import akshare as ak
 import pandas as pd
 import json
 import os
+import sys
 import time
 import logging
 import threading
-import requests
 from datetime import datetime, timedelta
+
+# Use shared name cache from stock_service so startup preload applies here too
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from services.stock_service import get_stock_name as _get_stock_name
 
 logger = logging.getLogger("similar")
 router = APIRouter()
@@ -37,7 +41,6 @@ _PEER_SLEEP    = 0.3     # polite delay between peer fetches
 
 # ── Module-level caches ───────────────────────────────────────────────────────
 _industry_cache: dict = {}   # symbol -> (industry_name, [codes])
-_name_cache: dict = {}       # code -> name
 _result_cache: dict = {}     # symbol -> (ts, response_dict)
 
 # ── Industry map ──────────────────────────────────────────────────────────────
@@ -61,11 +64,6 @@ _FALLBACK_PEERS = [
     "000651", "600690", "002241",   # 消费电子
     "600900", "601991",             # 电力
 ]
-
-SINA_HEADERS = {
-    "Referer": "https://finance.sina.com.cn",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-}
 
 
 # ── Low-level helpers ─────────────────────────────────────────────────────────
@@ -196,26 +194,6 @@ def _get_closes(code: str, start: str, end: str) -> pd.Series:
     logger.warning("All sources/retries exhausted for %s", code)
     return pd.Series(dtype=float, name=code)
 
-
-def _get_stock_name(code: str) -> str:
-    """Query Sina HQ API for Chinese stock name; returns code on failure."""
-    if code in _name_cache:
-        return _name_cache[code]
-    try:
-        r = requests.get(
-            f"http://hq.sinajs.cn/list={_to_sina_symbol(code)}",
-            headers=SINA_HEADERS,
-            timeout=5,
-        )
-        text = r.text
-        if '"' in text:
-            name = text.split('"')[1].split(",")[0].strip()
-            if name and not name.startswith(("sh", "sz", "bj")):
-                _name_cache[code] = name
-                return name
-    except Exception as exc:
-        logger.debug("name lookup failed for %s: %s", code, exc)
-    return code
 
 
 def _find_industry(symbol: str):
