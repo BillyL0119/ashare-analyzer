@@ -189,9 +189,12 @@ def export_pdf(symbol: str):
         logger.exception("PDF build failed for %s", symbol)
         raise HTTPException(status_code=500, detail=f"PDF生成失败: {e}")
 
-    filename = f"{symbol}_{name}_report.pdf"
+    cd = (
+        "attachment; filename=" + symbol + "_report.pdf; "
+        "filename*=UTF-8''" + symbol + "_" + name + "_report.pdf"
+    )
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={"Content-Disposition": cd},
     )
