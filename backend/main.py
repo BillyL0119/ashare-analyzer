@@ -10,6 +10,8 @@ from routers.similar import router as similar_router
 from routers.news import router as news_router
 from routers.radar import router as radar_router
 from routers.knowledge import router as knowledge_router
+from routers.market import router as market_router
+from routers.export import router as export_router
 
 app = FastAPI(
     title="Best Friend Ashare API",

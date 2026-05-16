@@ -40,6 +40,12 @@ _result_cache: dict = {}     # symbol -> (ts, response_dict)
 _cross_cache: dict  = {}     # symbol -> (ts, response_dict)  for /cross
 _name_map: dict = {}         # code -> name, populated at startup
 
+# ── Disk cache directories ────────────────────────────────────────────────────
+_SIMILAR_CACHE_DIR = os.path.join(os.path.dirname(__file__), "../data/similar_cache")
+_PRICE_CACHE_DIR   = os.path.join(os.path.dirname(__file__), "../data/price_cache")
+os.makedirs(_SIMILAR_CACHE_DIR, exist_ok=True)
+os.makedirs(_PRICE_CACHE_DIR,   exist_ok=True)
+
 # ── Related-industry mapping for cross-sector scan ────────────────────────────
 _RELATED_INDUSTRY: dict[str, list[str]] = {
     "白酒":  ["消费"],
@@ -66,6 +72,15 @@ def _load_name_map():
               (Sina CDN works from HK servers; no mainland-only endpoints)
     """
     import requests as _requests
+
+    # ── Source 0: local stock_names.json (always available) ───────────────────
+    try:
+        _local_path = os.path.join(os.path.dirname(__file__), "../data/stock_names.json")
+        with open(_local_path, "r", encoding="utf-8") as _lf:
+            _name_map.update(json.load(_lf))
+        logger.info("Name map seeded from local stock_names.json: %d entries", len(_name_map))
+    except Exception as _le:
+        logger.warning("local stock_names.json load failed: %s", _le)
 
     # ── Source 1: eastmoney spot data ─────────────────────────────────────────
     try:
@@ -339,6 +354,39 @@ def _build_cross_pool(symbol: str):
     return (primary, related_names, pool)
 
 
+
+def _get_closes_cached(code: str, start: str, end: str) -> pd.Series:
+    """Disk-cached wrapper around _get_closes. Cache key: code + today's date."""
+    today   = datetime.now().strftime("%Y%m%d")
+    pc_file = os.path.join(_PRICE_CACHE_DIR, f"{code}_{today}.json")
+    if os.path.exists(pc_file):
+        try:
+            with open(pc_file, "r") as _f:
+                _pc = json.load(_f)
+            s = pd.Series(
+                _pc["prices"],
+                index=pd.to_datetime(_pc["dates"]),
+                name=code, dtype=float,
+            )
+            if len(s) >= 10:
+                logger.debug("Price disk cache hit for %s", code)
+                return s
+        except Exception as _e:
+            logger.debug("Price cache read %s: %s", code, _e)
+
+    result = _get_closes(code, start, end)
+
+    if len(result) >= 10:
+        try:
+            with open(pc_file, "w") as _f:
+                json.dump({
+                    "dates":  [str(d)[:10] for d in result.index],
+                    "prices": [float(v) for v in result.values],
+                }, _f)
+        except Exception as _e:
+            logger.debug("Price cache write %s: %s", code, _e)
+    return result
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 # NOTE: /{symbol}/cross must be registered BEFORE /{symbol} so FastAPI
 # doesn't accidentally shadow it (extra path segment makes them distinct,
@@ -359,6 +407,17 @@ def similar_cross(symbol: str):
         deadline = now + _TOTAL_TIMEOUT
 
         # ── Cache ──────────────────────────────────────────────────────────────
+        today_c = datetime.now().strftime("%Y%m%d")
+        _cc_file = os.path.join(_SIMILAR_CACHE_DIR, f"{symbol}_cross_{today_c}.json")
+        if os.path.exists(_cc_file) and symbol not in _cross_cache:
+            try:
+                with open(_cc_file, "r", encoding="utf-8") as _ccf:
+                    _cdisk = json.load(_ccf)
+                _cross_cache[symbol] = (now, _cdisk)
+                logger.info("Cross disk cache loaded for %s", symbol)
+            except Exception as _cce:
+                logger.debug("Cross disk cache read %s: %s", symbol, _cce)
+
         if symbol in _cross_cache:
             ts, cached = _cross_cache[symbol]
             age = now - ts
@@ -373,10 +432,10 @@ def similar_cross(symbol: str):
 
         # ── Target price series ────────────────────────────────────────────────
         logger.info("Cross scan: fetching target %s", symbol)
-        target_closes = _get_closes(symbol, start_str, end_str)
+        target_closes = _get_closes_cached(symbol, start_str, end_str)
         if len(target_closes) < 10:
             wider_str = (end_dt - timedelta(days=240)).strftime("%Y%m%d")
-            target_closes = _get_closes(symbol, wider_str, end_str)
+            target_closes = _get_closes_cached(symbol, wider_str, end_str)
             start_str = wider_str
 
         if len(target_closes) < 10:
@@ -405,7 +464,7 @@ def similar_cross(symbol: str):
                 deadline_hit = True
                 logger.warning("Cross deadline hit at %s for %s", code, symbol)
                 break
-            closes = _get_closes(code, start_str, end_str)
+            closes = _get_closes_cached(code, start_str, end_str)
             name   = _get_stock_name(code)
             peer_data.append((code, name, industry, itype, closes))
             time.sleep(_PEER_SLEEP)
@@ -460,6 +519,12 @@ def similar_cross(symbol: str):
             "data_quality":       data_quality,
         }
         _cross_cache[symbol] = (now, response)
+        try:
+            _cc_file2 = os.path.join(_SIMILAR_CACHE_DIR, f"{symbol}_cross_{datetime.now().strftime('%Y%m%d')}.json")
+            with open(_cc_file2, "w", encoding="utf-8") as _ccf2:
+                json.dump(response, _ccf2, ensure_ascii=False)
+        except Exception as _cce2:
+            logger.debug("Cross disk cache write %s: %s", symbol, _cce2)
         logger.info("Cross done %s: primary=%s related=%s results=%d failed=%d",
                     symbol, primary, related_names, len(results), failed)
         return response
@@ -489,6 +554,17 @@ def similar_stocks(symbol: str):
         deadline = now + _TOTAL_TIMEOUT
 
         # ── Cache ──────────────────────────────────────────────────────────────
+        today = datetime.now().strftime("%Y%m%d")
+        _sc_file = os.path.join(_SIMILAR_CACHE_DIR, f"{symbol}_{today}.json")
+        if os.path.exists(_sc_file) and symbol not in _result_cache:
+            try:
+                with open(_sc_file, "r", encoding="utf-8") as _scf:
+                    _disk = json.load(_scf)
+                _result_cache[symbol] = (now, _disk)
+                logger.info("Similar disk cache loaded for %s", symbol)
+            except Exception as _sce:
+                logger.debug("Similar disk cache read %s: %s", symbol, _sce)
+
         if symbol in _result_cache:
             ts, cached = _result_cache[symbol]
             age = now - ts
@@ -504,13 +580,13 @@ def similar_stocks(symbol: str):
         # ── Target stock price series ──────────────────────────────────────────
         start_str = (end_dt - timedelta(days=100)).strftime("%Y%m%d")
         logger.info("Fetching closes for target %s (%s→%s)", symbol, start_str, end_str)
-        target_closes = _get_closes(symbol, start_str, end_str)
+        target_closes = _get_closes_cached(symbol, start_str, end_str)
 
         # Widen to 240 days if data is sparse
         if len(target_closes) < 10:
             wider_str = (end_dt - timedelta(days=240)).strftime("%Y%m%d")
             logger.info("Widening window for %s → %s", symbol, wider_str)
-            target_closes = _get_closes(symbol, wider_str, end_str)
+            target_closes = _get_closes_cached(symbol, wider_str, end_str)
             start_str = wider_str   # peers also use wider window
 
         if len(target_closes) < 10:
@@ -541,7 +617,7 @@ def similar_stocks(symbol: str):
                                code, symbol, remaining)
                 deadline_hit = True
                 break
-            closes = _get_closes(code, start_str, end_str)
+            closes = _get_closes_cached(code, start_str, end_str)
             name   = _get_stock_name(code)
             peer_data.append((code, name, closes))
             time.sleep(_PEER_SLEEP)
@@ -593,6 +669,12 @@ def similar_stocks(symbol: str):
             "data_quality": data_quality,
         }
         _result_cache[symbol] = (now, response)
+        try:
+            _sc_file2 = os.path.join(_SIMILAR_CACHE_DIR, f"{symbol}_{datetime.now().strftime('%Y%m%d')}.json")
+            with open(_sc_file2, "w", encoding="utf-8") as _scf2:
+                json.dump(response, _scf2, ensure_ascii=False)
+        except Exception as _sce2:
+            logger.debug("Similar disk cache write %s: %s", symbol, _sce2)
         logger.info("Done %s: %d results, %d failed, quality=%s",
                     symbol, len(results), failed, data_quality)
         return response

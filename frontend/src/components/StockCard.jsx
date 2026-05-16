@@ -131,6 +131,26 @@ export default function StockCard({ stock }) {
           ))}
         </div>
 
+        {/* Export PDF */}
+        <button
+          onClick={() => window.open(`/api/export/pdf/${code}`, '_blank')}
+          title={lang === 'zh' ? '导出PDF报告' : 'Export PDF Report'}
+          style={{
+            padding: '3px 8px',
+            borderRadius: 4,
+            border: '1px solid rgba(138,180,248,0.18)',
+            cursor: 'pointer',
+            fontSize: 11,
+            background: 'transparent',
+            color: '#9aa0a6',
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.12)'; e.currentTarget.style.color = '#8ab4f8' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9aa0a6' }}
+        >
+          {lang === 'zh' ? '导出报告' : 'Export PDF'}
+        </button>
+
         {/* Watchlist star */}
         <button
           onClick={() => inWatchlist ? wlRemove(code) : wlAdd(stock)}

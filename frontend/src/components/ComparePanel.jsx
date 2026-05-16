@@ -16,6 +16,7 @@ import FinancialPanel from './FinancialPanel'
 import SimilarPanel from './SimilarPanel'
 import NewsPanel from './NewsPanel'
 import RadarPanel from './RadarPanel'
+import MarketOverview from './MarketOverview'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -81,22 +82,7 @@ export default function ComparePanel() {
   const isMobile = useMobile()
 
   if (selectedSymbols.length === 0) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '60vh',
-          gap: 16,
-        }}
-      >
-        <div style={{ fontSize: 52, filter: 'drop-shadow(0 0 20px rgba(138,180,248,0.4))' }}>📈</div>
-        <div style={{ fontSize: 18, color: '#9aa0a6', fontWeight: 500, letterSpacing: '0.2px' }}>{t.emptyTitle}</div>
-        <div style={{ fontSize: 13, color: '#4a5568', letterSpacing: '0.1px' }}>{t.emptySubtitle}</div>
-      </div>
-    )
+    return <MarketOverview lang={lang} />
   }
 
   const cols = Math.min(selectedSymbols.length, 2)
