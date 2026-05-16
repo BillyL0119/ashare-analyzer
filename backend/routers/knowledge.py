@@ -69,7 +69,7 @@ _KB = [
     {
         "topic": "DCF 折现现金流估值",
         "category": "估值",
-        "content_zh": "DCF（Discounted Cash Flow）是理论上最严谨的估值方法，将企业未来所有自由现金流折算到今天的价值之和。核心假设是折现率（反映风险）和终值增速。对假设极其敏感，"垃圾进垃圾出"是常见批评。",
+        "content_zh": "DCF（Discounted Cash Flow）是理论上最严谨的估值方法，将企业未来所有自由现金流折算到今天的价值之和。核心假设是折现率（反映风险）和终值增速。对假设极其敏感，\"垃圾进垃圾出\"是常见批评。",
         "content_en": "DCF is theoretically the most rigorous valuation method, summing all future free cash flows discounted to present value. Key inputs are the discount rate (reflecting risk) and terminal growth rate. Highly sensitive to assumptions — 'garbage in, garbage out.'",
         "key_formula": "内在价值 = Σ FCFₜ / (1+r)ᵗ + 终值 / (1+r)ⁿ",
         "example": "若折现率 10%，5 年后 FCF = 10 亿，终值 100 亿，则今天价值 ≈ 68 亿。",
@@ -130,7 +130,7 @@ _KB = [
     {
         "topic": "成交量分析",
         "category": "技术分析",
-        "content_zh": "成交量是价格走势的"验证者"。量增价升是健康上涨；量缩价升说明上涨动力不足；量增价跌说明抛压沉重；量缩价跌是正常整理。"天量之后天价，地量之后地价"是量价关系的经典总结。",
+        "content_zh": "成交量是价格走势的【验证者】。量增价升是健康上涨；量缩价升说明上涨动力不足；量增价跌说明抛压沉重；量缩价跌是正常整理。【天量之后天价，地量之后地价】是量价关系的经典总结。",
         "content_en": "Volume validates price moves. Rising volume on price gains is healthy; rising volume on price declines signals heavy selling. Shrinking volume on gains suggests weak momentum. The saying 'peak volume precedes peak price' captures the classic volume-price relationship.",
         "key_formula": "量比 = 当日成交量 ÷ 过去5日平均成交量",
         "example": "量比 > 2.5 且价格突破阻力位，确认有效突破概率较高。",
@@ -181,7 +181,7 @@ _KB = [
     {
         "topic": "现金流量表解读",
         "category": "基本面",
-        "content_zh": "现金流量表分三部分：经营现金流（日常运营收支）、投资现金流（资本支出和投资）、融资现金流（借债和分红）。"利润是意见，现金流是事实"——经营现金流持续大于净利润是优质企业的重要特征。",
+        "content_zh": "现金流量表分三部分：经营现金流（日常运营收支）、投资现金流（资本支出和投资）、融资现金流（借债和分红）。\"利润是意见，现金流是事实\"——经营现金流持续大于净利润是优质企业的重要特征。",
         "content_en": "The cash flow statement has three sections: operating, investing, and financing cash flows. 'Earnings are opinions, cash flow is fact.' Strong and sustained operating cash flow exceeding net profit is a hallmark of a high-quality business.",
         "key_formula": "自由现金流 (FCF) = 经营现金流 − 资本支出",
         "example": "某企业净利润 10 亿，经营现金流 15 亿 → 现金质量优质；若相反则需警惕。",
@@ -212,7 +212,7 @@ _KB = [
     {
         "topic": "利率与股市的关系",
         "category": "宏观经济",
-        "content_zh": "利率上升时：债券收益率提高→股票吸引力下降；企业融资成本升高→盈利承压；DCF分母变大→估值压缩。因此"利率是股市的引力"（巴菲特语）。加息周期对高估值成长股打击最大。",
+        "content_zh": "利率上升时：债券收益率提高→股票吸引力下降；企业融资成本升高→盈利承压；DCF分母变大→估值压缩。因此\"利率是股市的引力\"（巴菲特语）。加息周期对高估值成长股打击最大。",
         "content_en": "When interest rates rise: bond yields increase (reducing stock appeal), corporate borrowing costs climb (pressuring earnings), and DCF discount rates grow (compressing valuations). Buffett famously called interest rates 'gravity for stocks.' Rate hikes hit high-valuation growth stocks hardest.",
         "key_formula": "股票内在价值 ∝ 1 ÷ 折现率；折现率 ≈ 无风险利率 + 风险溢价",
         "example": "2022年美联储加息，纳斯达克跌约33%；高P/E科技股跌幅普遍超过50%。",
@@ -222,7 +222,7 @@ _KB = [
     {
         "topic": "GDP 与股市关系",
         "category": "宏观经济",
-        "content_zh": "GDP 是衡量经济总量的指标，股市通常被称为经济的"晴雨表"，但两者关系并非线性。巴菲特指标（总市值/GDP）> 1 时历史上往往预示股市高估。股市会提前6-12个月反映经济走势。",
+        "content_zh": "GDP 是衡量经济总量的指标，股市通常被称为经济的\"晴雨表\"，但两者关系并非线性。巴菲特指标（总市值/GDP）> 1 时历史上往往预示股市高估。股市会提前6-12个月反映经济走势。",
         "content_en": "GDP measures total economic output. Stock markets are often called economic 'barometers,' but the relationship is non-linear. The Buffett Indicator (total market cap / GDP > 1) has historically signalled overvaluation. Markets typically lead the economy by 6-12 months.",
         "key_formula": "巴菲特指标 = 股市总市值 ÷ GDP × 100%",
         "example": "2020 年底美国巴菲特指标超 200%，创历史新高，随后部分板块大幅回调。",
@@ -242,7 +242,7 @@ _KB = [
     {
         "topic": "北向资金",
         "category": "宏观经济",
-        "content_zh": "北向资金指通过沪港通、深港通流入A股市场的境外资金（因从香港往北流入大陆而得名）。北向资金被认为是"聪明钱"，其净流入/流出方向常被散户作为参考信号，但并非总是准确。",
+        "content_zh": "北向资金指通过沪港通、深港通流入A股市场的境外资金（因从香港往北流入大陆而得名）。北向资金被认为是\"聪明钱\"，其净流入/流出方向常被散户作为参考信号，但并非总是准确。",
         "content_en": "Northbound funds refer to foreign capital flowing into A-shares via the Shanghai-Hong Kong and Shenzhen-Hong Kong Stock Connect programs (flowing 'northward' from Hong Kong to mainland China). Often called 'smart money,' their flows are widely tracked, though not infallible.",
         "key_formula": "北向资金净流入 = 当日买入额 − 当日卖出额",
         "example": "某交易日北向资金净流入 100 亿元，被解读为外资看多A股信号。",
@@ -303,7 +303,7 @@ _KB = [
     {
         "topic": "除权除息",
         "category": "A股规则",
-        "content_zh": "分红（派息）后股价按除息参考价下调，称为除息；送股（股本增加）后股价按比例下调，称为除权。除权除息后总市值不变，但股价降低了，容易被误判为股价"下跌"。实际上，复权后的价格才能真实反映收益。",
+        "content_zh": "分红（派息）后股价按除息参考价下调，称为除息；送股（股本增加）后股价按比例下调，称为除权。除权除息后总市值不变，但股价降低了，容易被误判为股价\"下跌\"。实际上，复权后的价格才能真实反映收益。",
         "content_en": "When a company pays a cash dividend, the stock price is adjusted down by the dividend amount on the ex-dividend date. When bonus shares are issued, the price is proportionally reduced. Total market cap is unchanged. Adjusted (復權) prices properly reflect total returns for technical analysis.",
         "key_formula": "除息参考价 = (前收盘 − 每股现金红利) ÷ (1 + 送股比例)",
         "example": "股价 20 元，派息 0.5 元，送 10 股 → 除权除息参考价 = (20−0.5)÷(1+0.1) ≈ 17.7 元。",
@@ -324,7 +324,7 @@ _KB = [
     {
         "topic": "复利效应",
         "category": "投资理念",
-        "content_zh": "复利是"世界第八大奇迹"（爱因斯坦语）。每年将收益再投入本金，收益在下一期也产生收益，长期形成指数级增长。时间和收益率是复利的两个关键变量。年化15%坚持20年，本金增长约16倍。",
+        "content_zh": "复利是\"世界第八大奇迹\"（爱因斯坦语）。每年将收益再投入本金，收益在下一期也产生收益，长期形成指数级增长。时间和收益率是复利的两个关键变量。年化15%坚持20年，本金增长约16倍。",
         "content_en": "Compound interest is the 'eighth wonder of the world' (attributed to Einstein). Reinvesting returns generates returns on returns, creating exponential growth over time. Time and rate of return are the two key variables. 15% annually for 20 years grows capital ~16x.",
         "key_formula": "终值 = 本金 × (1 + r)ⁿ；r = 年化收益率，n = 年数",
         "example": "10 万元，年化 15%，10 年后 ≈ 40.5 万；20 年后 ≈ 163 万。",
@@ -344,7 +344,7 @@ _KB = [
     {
         "topic": "风险与收益的关系",
         "category": "投资理念",
-        "content_zh": "资本资产定价模型（CAPM）指出，更高的预期收益必须以承担更高风险为代价。无风险收益率（国债）是基准，额外承担的市场风险（β）对应风险溢价。任何声称"高收益低风险"的投资都值得高度警惕。",
+        "content_zh": "资本资产定价模型（CAPM）指出，更高的预期收益必须以承担更高风险为代价。无风险收益率（国债）是基准，额外承担的市场风险（β）对应风险溢价。任何声称\"高收益低风险\"的投资都值得高度警惕。",
         "content_en": "CAPM establishes that higher expected returns require accepting higher risk. The risk-free rate (government bonds) is the baseline; additional market risk (β) commands a risk premium. Any investment claiming high return with low risk should be viewed with extreme scepticism.",
         "key_formula": "期望收益 = 无风险利率 + β × (市场收益 − 无风险利率)",
         "example": "若无风险利率 3%，市场收益 10%，β=1.5 → 期望收益 = 3% + 1.5×7% = 13.5%",
@@ -354,7 +354,7 @@ _KB = [
     {
         "topic": "贪婪恐惧指数",
         "category": "投资理念",
-        "content_zh": "市场情绪在贪婪（过度乐观，导致高估）和恐惧（过度悲观，导致低估）之间摆动。巴菲特名言："别人贪婪时我恐惧，别人恐惧时我贪婪。" CNN编制的恐惧与贪婪指数（0-100）是常见情绪参考工具。",
+        "content_zh": "市场情绪在贪婪（过度乐观，导致高估）和恐惧（过度悲观，导致低估）之间摆动。巴菲特名言：\"别人贪婪时我恐惧，别人恐惧时我贪婪。\" CNN编制的恐惧与贪婪指数（0-100）是常见情绪参考工具。",
         "content_en": "Market sentiment oscillates between greed (overoptimism causing overvaluation) and fear (excessive pessimism causing undervaluation). Buffett's famous maxim: 'Be fearful when others are greedy, and greedy when others are fearful.' CNN's Fear & Greed Index (0-100) is a popular sentiment gauge.",
         "key_formula": "无单一公式。综合波动率、动量、看跌/看涨期权比率等多个指标合成。",
         "example": "2020年3月疫情暴跌时恐惧指数触底，随后市场大幅反弹；2021年初指数过热。",
