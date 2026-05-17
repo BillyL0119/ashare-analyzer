@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
 import WelcomeModal from './components/WelcomeModal'
 import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
+import PaperTradingPanel from './components/PaperTradingPanel'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import { T } from './i18n/translations'
@@ -16,6 +18,7 @@ export default function App() {
   const { lang, setLang } = useLangStore()
   const t = T[lang]
   const isMobile = useMobile()
+  const [appTab, setAppTab] = useState('analysis')  // 'analysis' | 'paper'
 
   const dateInputStyle = {
     background: 'rgba(255,255,255,0.06)',
@@ -193,11 +196,42 @@ export default function App() {
           ))}
         </div>
 
+        {/* App tab toggle */}
+        <div
+          style={{
+            display: 'flex', alignItems: 'center',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(138,180,248,0.12)',
+            borderRadius: 24, padding: 3, gap: 2,
+          }}
+        >
+          {[
+            { key: 'analysis', label: lang === 'zh' ? '行情分析' : 'Analysis' },
+            { key: 'paper',    label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setAppTab(key)}
+              style={{
+                padding: '4px 13px', borderRadius: 20, border: 'none',
+                cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                background: appTab === key
+                  ? `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`
+                  : 'transparent',
+                color: appTab === key ? '#fff' : '#9aa0a6',
+                transition: 'all 0.2s ease', whiteSpace: 'nowrap',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         <div style={{ color: '#4a5568', fontSize: 11, letterSpacing: '0.3px' }}>{t.dataSource}</div>
       </header>
 
       <main style={{ padding: isMobile ? '10px 12px' : '20px 24px', flex: 1 }}>
-        <ComparePanel />
+        {appTab === 'paper' ? <PaperTradingPanel lang={lang} /> : <ComparePanel />}
       </main>
     </div>
     </>
