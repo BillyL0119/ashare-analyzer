@@ -17,6 +17,8 @@ import SimilarPanel from './SimilarPanel'
 import NewsPanel from './NewsPanel'
 import RadarPanel from './RadarPanel'
 import MarketOverview from './MarketOverview'
+import CalendarPanel from './CalendarPanel'
+import StockDetailPage from './StockDetailPage'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -76,13 +78,45 @@ function OverlayView({ lang }) {
 }
 
 export default function ComparePanel() {
-  const { selectedSymbols, viewMode, setViewMode } = useCompareStore()
+  const { selectedSymbols, viewMode, setViewMode, addSymbol } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
+  const [detailSymbol, setDetailSymbol] = useState(null)
+  const [detailName,   setDetailName]   = useState(null)
 
-  if (selectedSymbols.length === 0) {
-    return <MarketOverview lang={lang} />
+  const openDetail = (code, name) => { setDetailSymbol(code); setDetailName(name) }
+  const closeDetail = () => { setDetailSymbol(null); setDetailName(null) }
+  const handleLoadMain = (code, name) => {
+    closeDetail()
+    addSymbol({ code, name: name || code })
+  }
+
+  const handleStockSelect = (code, name) => {
+    addSymbol({ code, name: name || code })
+  }
+
+  if (selectedSymbols.length === 0 && viewMode !== 'calendar') {
+    return (
+      <>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+          <button
+            onClick={() => setViewMode('calendar')}
+            style={{
+              padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
+              fontSize: 12, background: 'rgba(138,180,248,0.1)', color: '#8ab4f8',
+            }}
+          >
+            {lang === 'zh' ? 'A股日历' : 'A-Share Calendar'}
+          </button>
+        </div>
+        <MarketOverview lang={lang} onStockSelect={handleStockSelect} />
+        {detailSymbol && (
+          <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang}
+            onClose={closeDetail} onLoadMain={handleLoadMain} />
+        )}
+      </>
+    )
   }
 
   const cols = Math.min(selectedSymbols.length, 2)
@@ -117,6 +151,7 @@ export default function ComparePanel() {
           { key: 'similar', label: t.similarTrend },
           { key: 'news', label: t.newsSentiment },
           { key: 'radar', label: t.radarTab },
+          { key: 'calendar', label: lang === 'zh' ? 'A股日历' : 'Calendar' },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -165,11 +200,13 @@ export default function ComparePanel() {
       ) : viewMode === 'financial' ? (
         <FinancialPanel stocks={selectedSymbols} />
       ) : viewMode === 'similar' ? (
-        <SimilarPanel stocks={selectedSymbols} />
+        <SimilarPanel stocks={selectedSymbols} onOpenDetail={openDetail} />
       ) : viewMode === 'news' ? (
-        <NewsPanel stocks={selectedSymbols} />
+        <NewsPanel stocks={selectedSymbols} onOpenDetail={openDetail} />
       ) : viewMode === 'radar' ? (
         <RadarPanel stocks={selectedSymbols} />
+      ) : viewMode === 'calendar' ? (
+        <CalendarPanel lang={lang} onStockSelect={handleStockSelect} />
       ) : (
         <div
           style={{
@@ -182,6 +219,11 @@ export default function ComparePanel() {
             <StockCard key={s.code} stock={s} />
           ))}
         </div>
+      )}
+
+      {detailSymbol && (
+        <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang}
+          onClose={closeDetail} onLoadMain={handleLoadMain} />
       )}
     </div>
   )

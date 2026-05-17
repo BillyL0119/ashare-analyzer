@@ -207,6 +207,8 @@ export const T = {
     knowledgeFormula: '核心公式',
     knowledgeExample: '实例',
     knowledgeTags: '标签',
+    // Calendar
+    calendarTab: 'A股日历',
   },
   en: {
     appTitle: 'Best Friend Stock',
@@ -416,5 +418,7 @@ export const T = {
     knowledgeFormula: 'Key Formula',
     knowledgeExample: 'Example',
     knowledgeTags: 'Tags',
+    // Calendar
+    calendarTab: 'Calendar',
   },
 }

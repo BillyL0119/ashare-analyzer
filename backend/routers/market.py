@@ -21,6 +21,10 @@ _CACHE_TTL = 300
 _cache_ts: float = 0
 _cache_data: dict | None = None
 
+_SECTORS_TTL = 600  # 10 minutes
+_sectors_ts: float = 0
+_sectors_data: dict | None = None
+
 _MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "industry_map.json")
 try:
     with open(_MAP_PATH, "r", encoding="utf-8") as _f:
@@ -122,4 +126,65 @@ def market_overview():
 
     _cache_ts   = now
     _cache_data = result
+    return result
+
+
+@router.get("/sectors")
+def market_sectors():
+    """Return per-industry average change_pct with leader stock, cached 10 min."""
+    global _sectors_ts, _sectors_data
+
+    now = time.time()
+    if _sectors_data is not None and now - _sectors_ts < _SECTORS_TTL:
+        return _sectors_data
+
+    # Fetch live spot data once
+    spot_df = None
+    try:
+        spot_df = ak.stock_zh_a_spot_em()
+    except Exception as e:
+        logger.warning("sectors: spot_em failed: %s", e)
+
+    sectors = []
+    for industry_name, code_list in _INDUSTRY_MAP.get("industries", {}).items():
+        sample = code_list[:5]  # top 5 stocks per industry
+        changes = []
+        leader_code = ""
+        leader_name = ""
+        leader_pct = None
+
+        if spot_df is not None:
+            try:
+                codes_str = spot_df["代码"].astype(str)
+                for code in sample:
+                    row = spot_df[codes_str == code]
+                    if row.empty:
+                        continue
+                    pct = pd.to_numeric(row.iloc[0].get("涨跌幅", None), errors="coerce")
+                    if pd.isna(pct):
+                        continue
+                    name = str(row.iloc[0].get("名称", code))
+                    changes.append(pct)
+                    if leader_pct is None or pct > leader_pct:
+                        leader_pct = pct
+                        leader_code = code
+                        leader_name = name
+            except Exception as e:
+                logger.warning("sectors: parsing row for %s: %s", industry_name, e)
+
+        avg_pct = round(sum(changes) / len(changes), 2) if changes else 0.0
+        sectors.append({
+            "name": industry_name,
+            "change_pct": avg_pct,
+            "leader": leader_name,
+            "leader_code": leader_code,
+        })
+
+    sectors.sort(key=lambda x: x["change_pct"], reverse=True)
+    result = {
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "sectors": sectors,
+    }
+    _sectors_ts = now
+    _sectors_data = result
     return result

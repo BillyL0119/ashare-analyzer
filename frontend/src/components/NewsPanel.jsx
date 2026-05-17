@@ -280,7 +280,7 @@ function FilterPill({ active, color, onClick, children }) {
 }
 
 // ── Per-stock news block ──────────────────────────────────────────────────────
-function NewsBlock({ stock, lang }) {
+function NewsBlock({ stock, lang, onOpenDetail }) {
   const t = T[lang]
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -333,7 +333,12 @@ function NewsBlock({ stock, lang }) {
         }}>
           {stock.code}
         </span>
-        <span style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed' }}>{stock.name}</span>
+        <span
+          onClick={() => onOpenDetail && onOpenDetail(stock.code, stock.name)}
+          style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+        >
+          {stock.name}
+        </span>
         <span style={{
           marginLeft: 'auto',
           fontSize: 11,
@@ -457,12 +462,12 @@ function NewsBlock({ stock, lang }) {
 }
 
 // ── Panel (one block per compared stock) ─────────────────────────────────────
-export default function NewsPanel({ stocks }) {
+export default function NewsPanel({ stocks, onOpenDetail }) {
   const lang = useLangStore((s) => s.lang)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {stocks.map((stock) => (
-        <NewsBlock key={stock.code} stock={stock} lang={lang} />
+        <NewsBlock key={stock.code} stock={stock} lang={lang} onOpenDetail={onOpenDetail} />
       ))}
     </div>
   )

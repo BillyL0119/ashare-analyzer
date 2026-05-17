@@ -116,7 +116,7 @@ function ModeToggle({ mode, setMode, t }) {
 
 // ── StockBlock ────────────────────────────────────────────────────────────────
 
-function StockBlock({ stock, mode, lang, isMobile }) {
+function StockBlock({ stock, mode, lang, isMobile, onOpenDetail }) {
   const t = T[lang]
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -249,7 +249,10 @@ function StockBlock({ stock, mode, lang, isMobile }) {
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace' }}>
+                      <span
+                        onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
+                        style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                      >
                         {item.code}
                       </span>
                       <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -309,7 +312,10 @@ function StockBlock({ stock, mode, lang, isMobile }) {
                   <span style={{ fontSize: 12, color: '#4a5568', fontWeight: 700 }}>
                     {idx + 1}
                   </span>
-                  <span style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace' }}>
+                  <span
+                    onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
+                    style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                  >
                     {item.code}
                   </span>
                   {isCross && (
@@ -340,7 +346,7 @@ function StockBlock({ stock, mode, lang, isMobile }) {
 
 // ── SimilarPanel (outer) ──────────────────────────────────────────────────────
 
-export default function SimilarPanel({ stocks }) {
+export default function SimilarPanel({ stocks, onOpenDetail }) {
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
@@ -371,6 +377,7 @@ export default function SimilarPanel({ stocks }) {
           mode={mode}
           lang={lang}
           isMobile={isMobile}
+          onOpenDetail={onOpenDetail}
         />
       ))}
     </div>
