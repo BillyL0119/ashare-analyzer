@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 export default function WelcomeModal({ onLangSelect }) {
   const savedLang = localStorage.getItem('bfs_lang')
-  const [step, setStep] = useState(savedLang ? 2 : 1)
+  const [step, setStep] = useState(1)
   const [selectedLang, setSelectedLang] = useState(savedLang || null)
   const [open, setOpen] = useState(true)
 
