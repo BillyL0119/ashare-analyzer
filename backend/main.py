@@ -15,6 +15,7 @@ from routers.export import router as export_router
 from routers.calendar import router as calendar_router
 from routers.paper_trading import router as paper_router
 from routers.analytics import router as analytics_router
+from routers.study import router as study_router
 
 app = FastAPI(
     title="Best Friend Ashare API",
@@ -54,3 +55,4 @@ app.include_router(export_router, prefix="/api/export", tags=["export"])
 app.include_router(calendar_router, prefix="/api/calendar", tags=["calendar"])
 app.include_router(paper_router, prefix="/api/paper", tags=["paper_trading"])
 app.include_router(analytics_router, prefix="/api/analytics", tags=["analytics"])
+app.include_router(study_router, prefix="/api/study", tags=["study"])

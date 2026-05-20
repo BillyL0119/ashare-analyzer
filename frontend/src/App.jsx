@@ -5,6 +5,7 @@ import WelcomeModal from './components/WelcomeModal'
 import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
 import PaperTradingPanel from './components/PaperTradingPanel'
+import StudyCenter from './components/StudyCenter'
 import StatsDisplay from './components/StatsDisplay'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
@@ -219,6 +220,7 @@ export default function App() {
           {[
             { key: 'analysis', label: lang === 'zh' ? '行情分析' : 'Analysis' },
             { key: 'paper',    label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
+            { key: 'study',    label: lang === 'zh' ? '学习中心' : 'Study' },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -242,7 +244,7 @@ export default function App() {
       </header>
 
       <main style={{ padding: isMobile ? '10px 12px' : '20px 24px', flex: 1 }}>
-        {appTab === 'paper' ? <PaperTradingPanel lang={lang} /> : <ComparePanel />}
+        {appTab === 'study' ? <StudyCenter lang={lang} /> : appTab === 'paper' ? <PaperTradingPanel lang={lang} /> : <ComparePanel />}
       </main>
 
       {/* Hidden stats entry — bottom left corner */}
