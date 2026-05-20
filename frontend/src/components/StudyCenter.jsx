@@ -24,8 +24,9 @@ function saveProgress(exam, p) {
 }
 
 // ── Sidebar topic row ─────────────────────────────────────────────────────────
-function TopicRow({ topic, active, read, accentColor, onClick }) {
+function TopicRow({ topic, active, read, accentColor, zh, onClick }) {
   const [hover, setHover] = useState(false)
+  const displayTitle = (!zh && topic.title_en) ? topic.title_en : topic.title
   return (
     <div
       onClick={onClick}
@@ -54,7 +55,7 @@ function TopicRow({ topic, active, read, accentColor, onClick }) {
           fontWeight: active ? 600 : 400,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>
-          {topic.title}
+          {displayTitle}
         </div>
         <div style={{ fontSize: 10, color: 'rgba(154,160,166,0.5)', marginTop: 1 }}>
           {topic.estimated_time}
@@ -73,7 +74,7 @@ function hexToRgb(hex) {
 }
 
 // ── Paper group (collapsible) ─────────────────────────────────────────────────
-function PaperGroup({ paper, activeId, progress, accentColor, onSelect }) {
+function PaperGroup({ paper, activeId, progress, accentColor, zh, onSelect }) {
   const [open, setOpen] = useState(true)
   const readCount = paper.topics.filter((t) => progress[t.id]).length
 
@@ -100,6 +101,7 @@ function PaperGroup({ paper, activeId, progress, accentColor, onSelect }) {
           active={t.id === activeId}
           read={!!progress[t.id]}
           accentColor={accentColor}
+          zh={zh}
           onClick={() => onSelect(t.id)}
         />
       ))}
@@ -123,18 +125,23 @@ function KeyTermPill({ term }) {
 }
 
 // ── Section block ─────────────────────────────────────────────────────────────
-function SectionBlock({ section, index, total, accentColor }) {
+function SectionBlock({ section, index, total, accentColor, zh }) {
+  const heading   = (!zh && section.heading_en)   ? section.heading_en   : section.heading
+  const body      = (!zh && section.body_en)      ? section.body_en      : section.body
+  const realWorld = (!zh && section.real_world_en) ? section.real_world_en : section.real_world
+  const examTip   = (!zh && section.exam_tip_en)  ? section.exam_tip_en  : section.exam_tip
+
   return (
     <div style={{ marginBottom: index < total - 1 ? 32 : 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <div style={{ width: 3, height: 22, background: accentColor, borderRadius: 2, flexShrink: 0 }} />
         <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: '#e8eaed' }}>
-          {section.heading}
+          {heading}
         </h3>
       </div>
 
       <p style={{ fontSize: 14, lineHeight: 1.85, color: '#c9d1d9', margin: '0 0 14px', paddingLeft: 15 }}>
-        {section.body}
+        {body}
       </p>
 
       {section.key_terms?.length > 0 && (
@@ -143,7 +150,7 @@ function SectionBlock({ section, index, total, accentColor }) {
         </div>
       )}
 
-      {section.real_world && (
+      {realWorld && (
         <div style={{
           borderLeft: '3px solid #f59e0b',
           background: 'rgba(245,158,11,0.08)',
@@ -155,12 +162,12 @@ function SectionBlock({ section, index, total, accentColor }) {
             🌍 REAL WORLD CONNECTION
           </div>
           <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
-            {section.real_world}
+            {realWorld}
           </div>
         </div>
       )}
 
-      {section.exam_tip && (
+      {examTip && (
         <div style={{
           borderLeft: '3px solid #fbbf24',
           background: 'rgba(251,191,36,0.08)',
@@ -169,10 +176,10 @@ function SectionBlock({ section, index, total, accentColor }) {
           marginLeft: 15, marginBottom: 12,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: '#fbbf24', marginBottom: 6, letterSpacing: '0.05em' }}>
-            📝 EXAM TIP
+            📝 {zh ? 'EXAM TIP' : 'KEY INSIGHT'}
           </div>
           <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
-            {section.exam_tip}
+            {examTip}
           </div>
         </div>
       )}
@@ -335,6 +342,7 @@ export default function StudyCenter({ lang }) {
                   activeId={activeId}
                   progress={progress}
                   accentColor={accentColor}
+                  zh={zh}
                   onSelect={selectTopic}
                 />
               ))
@@ -361,7 +369,7 @@ export default function StudyCenter({ lang }) {
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
                   <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#e8eaed', lineHeight: 1.2 }}>
-                    {topicData.title}
+                    {(!zh && topicData.title_en) ? topicData.title_en : topicData.title}
                   </h1>
                   {isRead && (
                     <span style={{
@@ -387,6 +395,7 @@ export default function StudyCenter({ lang }) {
                   index={i}
                   total={topicData.sections.length}
                   accentColor={accentColor}
+                  zh={zh}
                 />
               ))}
 
@@ -431,7 +440,7 @@ export default function StudyCenter({ lang }) {
                         fontSize: 14, fontWeight: 600, cursor: 'pointer',
                       }}
                     >
-                      {zh ? '下一课题 →' : 'Next Topic →'} {next.title}
+                      {zh ? '下一课题 →' : 'Next Topic →'} {(!zh && next.title_en) ? next.title_en : next.title}
                     </button>
                   )
                 })()}
