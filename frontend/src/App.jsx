@@ -45,7 +45,7 @@ export default function App() {
 
   return (
     <>
-    <WelcomeModal lang={lang} />
+    <WelcomeModal onLangSelect={setLang} />
     <Watchlist lang={lang} />
     <KnowledgeCard lang={lang} />
     <div
