@@ -77,7 +77,7 @@ function OverlayView({ lang }) {
   )
 }
 
-export default function ComparePanel() {
+export default function ComparePanel({ onTabChange }) {
   const { selectedSymbols, viewMode, setViewMode, addSymbol } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
@@ -110,7 +110,7 @@ export default function ComparePanel() {
             {lang === 'zh' ? 'A股日历' : 'A-Share Calendar'}
           </button>
         </div>
-        <MarketOverview lang={lang} onStockSelect={handleStockSelect} />
+        <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} />
         {detailSymbol && (
           <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang}
             onClose={closeDetail} onLoadMain={handleLoadMain} />

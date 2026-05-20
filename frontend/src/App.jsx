@@ -244,7 +244,7 @@ export default function App() {
       </header>
 
       <main style={{ padding: isMobile ? '10px 12px' : '20px 24px', flex: 1 }}>
-        {appTab === 'study' ? <StudyCenter lang={lang} /> : appTab === 'paper' ? <PaperTradingPanel lang={lang} /> : <ComparePanel />}
+        {appTab === 'study' ? <StudyCenter lang={lang} /> : appTab === 'paper' ? <PaperTradingPanel lang={lang} /> : <ComparePanel onTabChange={handleTabChange} />}
       </main>
 
       {/* Hidden stats entry — bottom left corner */}

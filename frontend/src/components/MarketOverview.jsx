@@ -1,286 +1,145 @@
-import { useState, useEffect } from 'react'
-import StockDetailPage from './StockDetailPage'
+import { useState } from 'react'
 
-const REFRESH_INTERVAL = 60000
-const UP   = '#ef5350'
-const DOWN = '#26a69a'
-const BG   = 'rgba(255,255,255,0.03)'
-const BDR  = 'rgba(138,180,248,0.10)'
+const ACCENT_BLUE   = '#8ab4f8'
+const ACCENT_PURPLE = '#c084fc'
+const BDR           = 'rgba(138,180,248,0.10)'
 
-function IndexCard({ label, data }) {
-  if (!data) return (
-    <div style={{ flex: 1, background: BG, border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', minWidth: 140 }}>
-      <div style={{ color: '#4a5568', fontSize: 13, marginBottom: 6 }}>{label}</div>
-      <div style={{ color: '#4a5568', fontSize: 22 }}>--</div>
-    </div>
-  )
-  const up    = data.change_pct >= 0
-  const color = up ? UP : DOWN
-  return (
-    <div style={{ flex: 1, background: BG, border: `1px solid ${up ? 'rgba(239,83,80,0.22)' : 'rgba(38,166,154,0.22)'}`, borderRadius: 12, padding: '16px 20px', minWidth: 140 }}>
-      <div style={{ color: '#9aa0a6', fontSize: 13, marginBottom: 6 }}>{label}</div>
-      <div style={{ color, fontSize: 22, fontWeight: 700, fontFamily: 'monospace' }}>{data.value.toFixed(2)}</div>
-      <div style={{ color, fontSize: 13, marginTop: 4 }}>
-        {up ? '+' : ''}{data.change.toFixed(2)}&nbsp;({up ? '+' : ''}{(data.change_pct * 100).toFixed(2)}%)
-      </div>
-    </div>
-  )
-}
+const FEATURES = [
+  { icon: '📈', zh: '相似走势分析', en: 'Similar Trends',   descZh: '找到与目标股票走势高度相关的同行，判断行业性行情还是个股独立行情', descEn: 'Find stocks moving in sync with your target to identify sector vs individual momentum' },
+  { icon: '🤖', zh: 'AI 智能分析',  en: 'AI Analysis',      descZh: 'Claude AI 一键生成投资洞察，分析技术面、基本面与市场情绪', descEn: 'Claude AI generates investment insights instantly — technicals, fundamentals, and sentiment' },
+  { icon: '📰', zh: '新闻舆情',     en: 'News Sentiment',   descZh: '实时中英文新闻 AI 情感评分，快速把握市场对个股的看法', descEn: 'Real-time Chinese & English news with AI sentiment scoring for each stock' },
+  { icon: '🎮', zh: '模拟炒股',     en: 'Paper Trading',    descZh: '100万虚拟资金，T+1规则，真实手续费，练好再用真钱', descEn: 'Practice with ¥1,000,000 virtual money, T+1 rules, and real commission fees' },
+  { icon: '📚', zh: '备考学习',     en: 'Exam Study',       descZh: 'A-Level、IB、IGCSE、AP 经济学全套内容，含真实市场案例', descEn: 'A-Level, IB, IGCSE, AP Economics content with real A-share market examples' },
+  { icon: '💡', zh: '每日知识',     en: 'Daily Knowledge',  descZh: '每天一个经济学概念 + 一个金融知识，积少成多', descEn: 'One economics concept + one finance insight delivered daily' },
+]
 
-function ADBar({ advance, decline, flat, totalVolume, lang }) {
-  const total  = advance + decline + flat || 1
-  const advPct = (advance / total * 100).toFixed(1)
-  const decPct = (decline / total * 100).toFixed(1)
-  const fltPct = (flat    / total * 100).toFixed(1)
-  return (
-    <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 12, padding: '14px 20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, fontSize: 13 }}>
-        <span style={{ color: UP,   fontWeight: 600 }}>↑ {advance} ({advPct}%)</span>
-        <span style={{ color: '#9aa0a6' }}>{lang === 'zh' ? '成交' : 'Vol'} {totalVolume}</span>
-        <span style={{ color: DOWN, fontWeight: 600 }}>↓ {decline} ({decPct}%)</span>
-      </div>
-      <div style={{ height: 12, borderRadius: 6, overflow: 'hidden', background: '#1a2233', display: 'flex' }}>
-        <div style={{ width: `${advPct}%`, background: UP,   transition: 'width 0.6s' }} />
-        <div style={{ width: `${fltPct}%`, background: '#4a5568' }} />
-        <div style={{ flex: 1,             background: DOWN }} />
-      </div>
-      <div style={{ marginTop: 6, fontSize: 12, color: '#4a5568' }}>
-        {lang === 'zh' ? '平盘' : 'Flat'} {flat}
-      </div>
-    </div>
-  )
-}
-
-// ── Sector heatmap tile ──────────────────────────────────────────────────────
-
-function heatColor(pct) {
-  // pct in roughly [-3, +3]; map to red/green with intensity
-  const clamped = Math.max(-4, Math.min(4, pct))
-  if (clamped >= 0) {
-    const t = clamped / 4
-    // white → red
-    const r = 255
-    const g = Math.round(255 * (1 - t) * 0.8)
-    const b = Math.round(255 * (1 - t) * 0.8)
-    return { bg: `rgba(${r},${g},${b},${0.08 + t * 0.22})`, color: UP }
-  } else {
-    const t = -clamped / 4
-    // white → green
-    const r = Math.round(255 * (1 - t) * 0.8)
-    const g = 200
-    const b = Math.round(200 * (1 - t) * 0.85)
-    return { bg: `rgba(${r},${g},${b},${0.08 + t * 0.22})`, color: DOWN }
-  }
-}
-
-function SectorHeatTile({ sector, lang, onSectorClick }) {
+function FeatureCard({ feature, lang }) {
   const [hover, setHover] = useState(false)
-  const { bg, color } = heatColor(sector.change_pct)
-  const up = sector.change_pct >= 0
-
   return (
     <div
-      onClick={() => onSectorClick(sector)}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
-        position: 'relative',
-        background: bg,
-        border: `1px solid ${up ? 'rgba(239,83,80,0.2)' : 'rgba(38,166,154,0.2)'}`,
-        borderRadius: 10,
-        padding: '12px 10px',
-        textAlign: 'center',
-        cursor: 'pointer',
-        transition: 'transform 0.15s, box-shadow 0.15s',
+        background: hover ? 'rgba(138,180,248,0.07)' : 'rgba(255,255,255,0.03)',
+        border: `1px solid ${hover ? 'rgba(138,180,248,0.22)' : BDR}`,
+        borderRadius: 14,
+        padding: '22px 20px',
+        transition: 'all 0.18s ease',
         transform: hover ? 'translateY(-2px)' : 'none',
-        boxShadow: hover ? '0 4px 16px rgba(0,0,0,0.3)' : 'none',
+        cursor: 'default',
       }}
     >
-      <div style={{ color: '#e8eaed', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
-        {sector.name}
+      <div style={{ fontSize: 28, marginBottom: 12 }}>{feature.icon}</div>
+      <div style={{
+        fontSize: 14, fontWeight: 700,
+        color: hover ? ACCENT_BLUE : '#e8eaed',
+        marginBottom: 8, transition: 'color 0.18s',
+      }}>
+        {lang === 'zh' ? feature.zh : feature.en}
       </div>
-      <div style={{ color, fontSize: 14, fontWeight: 700, fontFamily: 'monospace' }}>
-        {up ? '+' : ''}{sector.change_pct.toFixed(2)}%
+      <div style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>
+        {lang === 'zh' ? feature.descZh : feature.descEn}
       </div>
-      {sector.leader && (
-        <div style={{ color: '#9aa0a6', fontSize: 10, marginTop: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {sector.leader}
-        </div>
-      )}
-
-      {/* Hover tooltip: would show all stocks but we only have leader info from API */}
-      {hover && sector.leader && (
-        <div style={{
-          position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)',
-          background: '#1a2233', border: `1px solid ${BDR}`, borderRadius: 8,
-          padding: '8px 12px', zIndex: 100, whiteSpace: 'nowrap', pointerEvents: 'none',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-        }}>
-          <div style={{ fontSize: 12, color: '#8ab4f8', marginBottom: 2 }}>
-            {lang === 'zh' ? '龙头股' : 'Leader'}
-          </div>
-          <div style={{ fontSize: 12, color: '#e8eaed' }}>
-            {sector.leader_code} {sector.leader}
-          </div>
-          <div style={{ fontSize: 11, color: '#4a5568', marginTop: 4 }}>
-            {lang === 'zh' ? '点击查看板块相似走势' : 'Click to see sector trends'}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
 
-export default function MarketOverview({ lang, onStockSelect }) {
-  const [data,         setData]         = useState(null)
-  const [sectors,      setSectors]      = useState(null)
-  const [loading,      setLoading]      = useState(true)
-  const [lastUpdate,   setLastUpdate]   = useState(null)
-  const [detailSymbol, setDetailSymbol] = useState(null)
-  const [detailName,   setDetailName]   = useState(null)
+export default function MarketOverview({ lang, onTabChange }) {
+  const zh = lang === 'zh'
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch('/api/market/overview')
-      if (res.ok) { setData(await res.json()); setLastUpdate(new Date()) }
-    } catch (e) { console.error('market overview:', e) }
-    finally { setLoading(false) }
-  }
-
-  const fetchSectors = async () => {
-    try {
-      const res = await fetch('/api/market/sectors')
-      if (res.ok) setSectors(await res.json())
-    } catch (e) { console.error('sectors:', e) }
-  }
-
-  useEffect(() => {
-    fetchData()
-    fetchSectors()
-    const t = setInterval(() => { fetchData(); fetchSectors() }, REFRESH_INTERVAL)
-    return () => clearInterval(t)
-  }, [])
-
-  if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh', color: '#9aa0a6', fontSize: 14 }}>
-      {lang === 'zh' ? '加载市场数据...' : 'Loading market data...'}
-    </div>
-  )
-
-  const handleSectorClick = (sector) => {
-    // Load leader stock into detail page
-    if (sector.leader_code) {
-      setDetailSymbol(sector.leader_code)
-      setDetailName(sector.leader)
-    }
+  const focusSearch = () => {
+    const input = document.querySelector('header input[type="text"]') ||
+                  document.querySelector('header input')
+    if (input) { input.focus(); input.select() }
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 920, margin: '0 auto', width: '100%' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 16, fontWeight: 600, background: 'linear-gradient(90deg,#8ab4f8,#c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          {lang === 'zh' ? 'A股市场概览' : 'A-Share Market Overview'}
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      padding: '48px 24px 40px', maxWidth: 860, margin: '0 auto', width: '100%',
+    }}>
+
+      {/* ── Hero ── */}
+      <div style={{ textAlign: 'center', marginBottom: 44 }}>
+        <div style={{ fontSize: 11, letterSpacing: '0.15em', color: '#4a5568', textTransform: 'uppercase', marginBottom: 18 }}>
+          bestfriendstock.com
         </div>
-        <div style={{ fontSize: 11, color: '#4a5568' }}>
-          {data?.date} {data?.time}
-          {lastUpdate && ` · ${lastUpdate.toLocaleTimeString()}`}
+
+        <h1 style={{
+          margin: '0 0 16px',
+          fontSize: 'clamp(26px, 4vw, 40px)',
+          fontWeight: 800,
+          background: `linear-gradient(90deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`,
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          lineHeight: 1.2, letterSpacing: '-0.3px',
+        }}>
+          {zh ? '发现你的下一只好股票' : 'Discover Your Next Great Stock'}
+        </h1>
+
+        <p style={{ fontSize: 15, color: '#6b7280', margin: '0 0 32px', lineHeight: 1.6 }}>
+          {zh
+            ? '专为学生设计的 A 股智能分析平台 · 完全免费'
+            : 'Smart A-Share Analysis for Students · Completely Free'}
+        </p>
+
+        {/* CTA buttons */}
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={focusSearch}
+            style={{
+              background: `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`,
+              color: '#fff', border: 'none', borderRadius: 10,
+              padding: '12px 28px', fontSize: 14, fontWeight: 700,
+              cursor: 'pointer', letterSpacing: '0.2px',
+              boxShadow: '0 4px 20px rgba(138,180,248,0.3)',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(138,180,248,0.4)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(138,180,248,0.3)' }}
+          >
+            🔍 {zh ? '开始分析' : 'Start Analyzing'}
+          </button>
+
+          <button
+            onClick={() => onTabChange && onTabChange('study')}
+            style={{
+              background: 'rgba(192,132,252,0.1)',
+              color: ACCENT_PURPLE,
+              border: `1px solid rgba(192,132,252,0.25)`,
+              borderRadius: 10, padding: '12px 28px',
+              fontSize: 14, fontWeight: 700,
+              cursor: 'pointer', letterSpacing: '0.2px',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(192,132,252,0.18)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(192,132,252,0.1)' }}
+          >
+            📚 {zh ? '学习中心' : 'Study Center'}
+          </button>
         </div>
       </div>
 
-      {/* Index cards */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <IndexCard label={lang === 'zh' ? '上证指数' : 'Shanghai'} data={data?.shanghai_index} />
-        <IndexCard label={lang === 'zh' ? '深证成指' : 'Shenzhen'} data={data?.shenzhen_index} />
-        <IndexCard label={lang === 'zh' ? '创业板指' : 'ChiNext'}  data={data?.chinext_index}  />
+      {/* ── Feature cards ── */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+        gap: 14, width: '100%', marginBottom: 36,
+      }}>
+        {FEATURES.map((f) => (
+          <FeatureCard key={f.zh} feature={f} lang={lang} />
+        ))}
       </div>
 
-      {/* Advance / decline bar */}
-      {data && (
-        <ADBar
-          advance={data.advance_count} decline={data.decline_count}
-          flat={data.flat_count} totalVolume={data.total_volume} lang={lang}
-        />
-      )}
-
-      {/* Northbound */}
-      {data?.northbound_flow && data.northbound_flow !== 'N/A' && (
-        <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 12, padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ color: '#9aa0a6', fontSize: 13 }}>{lang === 'zh' ? '北向资金' : 'Northbound Flow'}</span>
-          <span style={{ color: data.northbound_flow.startsWith('+') ? UP : DOWN, fontSize: 17, fontWeight: 700 }}>
-            {data.northbound_flow}
-          </span>
-        </div>
-      )}
-
-      {/* ── Sector Heatmap (from /api/market/sectors) ── */}
-      {sectors?.sectors?.length > 0 && (
-        <div>
-          <div style={{ color: '#9aa0a6', fontSize: 12, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>{lang === 'zh' ? '板块热力图' : 'Sector Heatmap'}</span>
-            <span style={{ fontSize: 11, color: '#4a5568' }}>
-              {lang === 'zh' ? '点击色块查看龙头股详情' : 'Click tile for leader details'}
-            </span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8 }}>
-            {sectors.sectors.map((s) => (
-              <SectorHeatTile
-                key={s.name}
-                sector={s}
-                lang={lang}
-                onSectorClick={handleSectorClick}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Fallback: old sector performance if sectors API not ready */}
-      {!sectors && data?.sector_performance?.length > 0 && (
-        <div>
-          <div style={{ color: '#9aa0a6', fontSize: 12, marginBottom: 10 }}>
-            {lang === 'zh' ? '行业板块表现' : 'Sector Performance'}
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))', gap: 8 }}>
-            {data.sector_performance.map((s) => {
-              const up  = s.change_pct >= 0
-              const mag = Math.min(Math.abs(s.change_pct) / 3, 1)
-              return (
-                <div key={s.name} style={{
-                  background: up ? `rgba(239,83,80,${0.07 + mag * 0.2})` : `rgba(38,166,154,${0.07 + mag * 0.2})`,
-                  border: `1px solid ${up ? 'rgba(239,83,80,0.22)' : 'rgba(38,166,154,0.22)'}`,
-                  borderRadius: 8, padding: '10px 12px', textAlign: 'center',
-                }}>
-                  <div style={{ color: '#e8eaed', fontSize: 13, fontWeight: 500 }}>{s.name}</div>
-                  <div style={{ color: up ? UP : DOWN, fontSize: 13, fontWeight: 700, marginTop: 4, fontFamily: 'monospace' }}>
-                    {up ? '+' : ''}{s.change_pct.toFixed(2)}%
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Hint */}
-      <div style={{ textAlign: 'center', marginTop: 6, color: '#4a5568', fontSize: 13 }}>
-        {lang === 'zh' ? '在上方搜索栏输入股票代码开始分析 ↑' : 'Search a stock code above to begin analysis ↑'}
+      {/* ── Data source note ── */}
+      <div style={{ fontSize: 11, color: '#374151', textAlign: 'center', lineHeight: 1.8 }}>
+        {zh
+          ? '数据来源：AkShare · Yahoo Finance · Sina Finance · 实时更新'
+          : 'Data: AkShare · Yahoo Finance · Sina Finance · Real-time updates'}
+        <br />
+        {zh
+          ? '由两名高中生 Billy 和 Frank 合作开发 · 仅供学习用途'
+          : 'Built by two high school students, Billy & Frank · For educational use only'}
       </div>
-
-      {/* Stock detail modal */}
-      {detailSymbol && (
-        <StockDetailPage
-          symbol={detailSymbol}
-          name={detailName}
-          lang={lang}
-          onClose={() => { setDetailSymbol(null); setDetailName(null) }}
-          onLoadMain={(code, n) => {
-            setDetailSymbol(null)
-            setDetailName(null)
-            onStockSelect && onStockSelect(code, n)
-          }}
-        />
-      )}
     </div>
   )
 }

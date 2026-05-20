@@ -8,10 +8,11 @@ const GREEN       = '#34d399'
 const PROGRESS_BG = 'rgba(255,255,255,0.06)'
 
 const EXAMS = [
-  { key: 'alevel', label: 'A-Level', color: '#6366f1', board: 'Cambridge 9708' },
-  { key: 'igcse',  label: 'IGCSE',   color: '#10b981', board: 'Cambridge 0455' },
-  { key: 'ap',     label: 'AP',      color: '#f59e0b', board: 'College Board'  },
-  { key: 'ib',     label: 'IB',      color: '#8b5cf6', board: 'IB SL/HL'       },
+  { key: 'alevel', label: 'A-Level', title: 'A-Level Economics',      color: '#6366f1', board: 'Cambridge 9708' },
+  { key: 'igcse',  label: 'IGCSE',   title: 'IGCSE Economics',        color: '#10b981', board: 'Cambridge 0455' },
+  { key: 'ap',     label: 'AP',      title: 'AP Macroeconomics',      color: '#f59e0b', board: 'College Board'  },
+  { key: 'ib',     label: 'IB',      title: 'IB Economics SL/HL',     color: '#8b5cf6', board: 'IB SL/HL'       },
+  { key: 'stocks', label: '股票入门', title: '股票知识入门',            color: '#ec4899', board: 'Stock Basics'   },
 ]
 
 function storageKey(exam) { return `bfs_study_${exam}` }
@@ -298,7 +299,7 @@ export default function StudyCenter({ lang }) {
               fontSize: 13, fontWeight: 800, letterSpacing: '0.02em',
               color: accentColor, marginBottom: 2,
             }}>
-              {examMeta.label} Economics
+              {examMeta.title}
             </div>
             <div style={{ fontSize: 11, color: MUTED }}>{examMeta.board}</div>
 
