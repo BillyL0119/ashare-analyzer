@@ -245,24 +245,24 @@ export default function App() {
         {appTab === 'paper' ? <PaperTradingPanel lang={lang} /> : <ComparePanel />}
       </main>
 
-      {/* Hidden stats entry — small icon in bottom-right corner */}
-      <button
-        onClick={() => setShowStats(true)}
-        title="Analytics"
-        style={{
-          position: 'fixed', bottom: 16, right: 16, zIndex: 50,
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(138,180,248,0.08)',
-          borderRadius: '50%', width: 28, height: 28,
-          cursor: 'pointer', fontSize: 13, color: 'rgba(154,160,166,0.4)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: 'opacity 0.2s',
-        }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = '#8ab4f8'; e.currentTarget.style.borderColor = 'rgba(138,180,248,0.3)' }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(154,160,166,0.4)'; e.currentTarget.style.borderColor = 'rgba(138,180,248,0.08)' }}
-      >
-        📊
-      </button>
+      {/* Hidden stats entry — bottom left corner */}
+      <div style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 800 }}>
+        <button
+          onClick={() => setShowStats(true)}
+          style={{
+            background: 'rgba(22,27,46,0.9)',
+            border: '0.5px solid rgba(138,180,248,0.2)',
+            borderRadius: 20,
+            padding: '6px 12px',
+            fontSize: 12,
+            color: 'rgba(232,234,240,0.4)',
+            cursor: 'pointer',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          📊
+        </button>
+      </div>
 
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
     </div>
