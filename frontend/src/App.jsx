@@ -1,14 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
 import WelcomeModal from './components/WelcomeModal'
 import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
 import PaperTradingPanel from './components/PaperTradingPanel'
+import StatsDisplay from './components/StatsDisplay'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import { T } from './i18n/translations'
 import { useMobile } from './hooks/useMobile'
+import { trackVisit, trackFeature } from './utils/analytics'
 
 const ACCENT_BLUE = '#8ab4f8'
 const ACCENT_PURPLE = '#c084fc'
@@ -18,7 +20,16 @@ export default function App() {
   const { lang, setLang } = useLangStore()
   const t = T[lang]
   const isMobile = useMobile()
-  const [appTab, setAppTab] = useState('analysis')  // 'analysis' | 'paper'
+  const [appTab,    setAppTab]    = useState('analysis')  // 'analysis' | 'paper'
+  const [showStats, setShowStats] = useState(false)
+
+  // Track page visit once on mount
+  useEffect(() => { trackVisit('home') }, [])
+
+  const handleTabChange = (tab) => {
+    setAppTab(tab)
+    trackFeature(tab === 'paper' ? 'paper_trading' : 'analysis')
+  }
 
   const dateInputStyle = {
     background: 'rgba(255,255,255,0.06)',
@@ -211,7 +222,7 @@ export default function App() {
           ].map(({ key, label }) => (
             <button
               key={key}
-              onClick={() => setAppTab(key)}
+              onClick={() => handleTabChange(key)}
               style={{
                 padding: '4px 13px', borderRadius: 20, border: 'none',
                 cursor: 'pointer', fontSize: 12, fontWeight: 600,
@@ -233,6 +244,27 @@ export default function App() {
       <main style={{ padding: isMobile ? '10px 12px' : '20px 24px', flex: 1 }}>
         {appTab === 'paper' ? <PaperTradingPanel lang={lang} /> : <ComparePanel />}
       </main>
+
+      {/* Hidden stats entry — small icon in bottom-right corner */}
+      <button
+        onClick={() => setShowStats(true)}
+        title="Analytics"
+        style={{
+          position: 'fixed', bottom: 16, right: 16, zIndex: 50,
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(138,180,248,0.08)',
+          borderRadius: '50%', width: 28, height: 28,
+          cursor: 'pointer', fontSize: 13, color: 'rgba(154,160,166,0.4)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'opacity 0.2s',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = '#8ab4f8'; e.currentTarget.style.borderColor = 'rgba(138,180,248,0.3)' }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(154,160,166,0.4)'; e.currentTarget.style.borderColor = 'rgba(138,180,248,0.08)' }}
+      >
+        📊
+      </button>
+
+      {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
     </div>
     </>
   )

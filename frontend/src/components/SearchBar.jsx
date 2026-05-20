@@ -3,6 +3,7 @@ import { searchStocks, searchUSStocks } from '../api/stockApi'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
+import { trackSearch } from '../utils/analytics'
 
 export default function SearchBar() {
   const [query, setQuery] = useState('')
@@ -47,6 +48,7 @@ export default function SearchBar() {
 
   const handleSelect = (stock) => {
     addSymbol(stock)
+    trackSearch(stock.code)
     setQuery('')
     setOpen(false)
     setResults([])
