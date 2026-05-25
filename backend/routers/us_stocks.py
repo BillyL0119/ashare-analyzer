@@ -407,22 +407,23 @@ def get_us_similar(symbol: str):
 
     def _fetch_returns(ticker_sym: str):
         try:
-            df = yf.download(ticker_sym, start=start_dt, end=end_dt,
-                             interval="1d", auto_adjust=True, progress=False)
+            t = yf.Ticker(ticker_sym)
+            df = t.history(start=start_dt, end=end_dt, interval="1d", auto_adjust=True)
             if df is None or df.empty or len(df) < 20:
-                return None
-            closes = df["Close"].squeeze()
-            return closes.pct_change().dropna()
+                return None, []
+            closes = df["Close"]
+            sparkline = [round(float(v), 2) for v in closes.dropna().tolist()[-20:]]
+            return closes.pct_change().dropna(), sparkline
         except Exception:
-            return None
+            return None, []
 
-    ref_ret = _fetch_returns(sym)
+    ref_ret, _ = _fetch_returns(sym)
     if ref_ret is None:
         raise HTTPException(status_code=500, detail=f"Cannot fetch data for {sym}")
 
     results = []
     for peer in candidates:
-        peer_ret = _fetch_returns(peer)
+        peer_ret, sparkline = _fetch_returns(peer)
         if peer_ret is None:
             continue
         combined = pd.concat([ref_ret, peer_ret], axis=1, join="inner")
@@ -434,18 +435,7 @@ def get_us_similar(symbol: str):
         if np.isnan(corr):
             continue
 
-        # Sparkline: last 20 closes
-        sparkline = []
-        try:
-            spark_df = yf.download(peer, period="1mo", interval="1d",
-                                   auto_adjust=True, progress=False)
-            if spark_df is not None and not spark_df.empty:
-                spark_closes = spark_df["Close"].squeeze().dropna().tolist()
-                sparkline = [round(float(v), 2) for v in spark_closes[-20:]]
-        except Exception:
-            pass
-
-        peer_name = next((t["name"] for t in POPULAR_TICKERS if t["code"] == peer), peer)
+        peer_name = next((tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), peer)
 
         results.append({
             "code": peer,
