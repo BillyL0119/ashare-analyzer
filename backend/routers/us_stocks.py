@@ -400,7 +400,7 @@ def get_us_similar(symbol: str):
     if not candidates:
         return {"symbol": sym, "sector": sector or "", "results": []}
 
-    candidates = candidates[:30]
+    candidates = candidates[:15]  # limit to avoid rate limits
 
     end_dt = datetime.now()
     start_dt = end_dt - timedelta(days=365)
@@ -408,7 +408,7 @@ def get_us_similar(symbol: str):
     def _fetch_returns(ticker_sym: str):
         try:
             t = yf.Ticker(ticker_sym)
-            df = t.history(start=start_dt, end=end_dt, interval="1d", auto_adjust=True)
+            df = t.history(period="1y", interval="1d", auto_adjust=True)
             if df is None or df.empty or len(df) < 20:
                 return None, []
             closes = df["Close"]
@@ -419,7 +419,10 @@ def get_us_similar(symbol: str):
 
     ref_ret, _ = _fetch_returns(sym)
     if ref_ret is None:
-        raise HTTPException(status_code=500, detail=f"Cannot fetch data for {sym}")
+        # Graceful fallback: rate limited or no data — return empty
+        response = {"symbol": sym, "sector": sector or "", "results": [], "rate_limited": True}
+        _sim_cache[sym] = (now - _SIM_TTL + 300, response)  # short cache (5 min) so it retries soon
+        return response
 
     results = []
     for peer in candidates:
