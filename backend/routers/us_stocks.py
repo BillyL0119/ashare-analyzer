@@ -319,7 +319,7 @@ def _fetch_history_candles(sym: str) -> list:
             return cached
 
     data = _av_get({
-        "function": "TIME_SERIES_DAILY_ADJUSTED",
+        "function": "TIME_SERIES_DAILY",
         "symbol": sym,
         "outputsize": "full",
     })
@@ -345,8 +345,8 @@ def _fetch_history_candles(sym: str) -> list:
             "open":   _safe(vals.get("1. open")),
             "high":   _safe(vals.get("2. high")),
             "low":    _safe(vals.get("3. low")),
-            "close":  _safe(vals.get("5. adjusted close")),
-            "volume": int(float(vals.get("6. volume", 0))),
+            "close":  _safe(vals.get("4. close")),
+            "volume": int(float(vals.get("5. volume", 0))),
         })
 
     _disk_write(cache_file, candles)
