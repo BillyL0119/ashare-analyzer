@@ -28,8 +28,14 @@ export const getFinancial = (symbol) =>
 export const getUSStockHistory = (symbol, params) =>
   api.get(`/us/stock/${symbol}`, { params })
 
+export const getUSRealtime = (symbol) =>
+  api.get(`/us/stock/${symbol}/realtime`)
+
 export const searchUSStocks = (query) =>
-  api.get(`/us/search/${encodeURIComponent(query)}`)
+  api.get('/us/search', { params: { q: query } })
+
+export const getUSSimilarStocks = (symbol) =>
+  api.get(`/us/similar/${symbol}`)
 
 export const getSimilarStocks = (symbol) =>
   api.get(`/similar/${symbol}`)
@@ -37,8 +43,8 @@ export const getSimilarStocks = (symbol) =>
 export const getSimilarCross = (symbol) =>
   api.get(`/similar/${symbol}/cross`)
 
-export const getNews = (symbol) =>
-  api.get(`/news/${symbol}`)
+export const getNews = (symbol, market = 'cn') =>
+  api.get(`/news/${symbol}`, { params: { market } })
 
 export const getRadarScore = (symbol) =>
   api.get(`/radar/${symbol}`)

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { getStockHistory, getRealtimeQuote, getUSStockHistory } from '../api/stockApi'
+import { getStockHistory, getRealtimeQuote, getUSStockHistory, getUSRealtime } from '../api/stockApi'
 
 const cache = new Map()
 
@@ -51,22 +51,33 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
     }
 
     const fetchQuote = async () => {
-      if (market === 'us') return // US realtime not supported
       try {
-        const res = await getRealtimeQuote(symbol)
-        setQuote(res.data)
+        if (market === 'us') {
+          const res = await getUSRealtime(symbol)
+          // Map US realtime to same shape as CN quote
+          const d = res.data
+          setQuote({
+            price: d.price,
+            pct_change: d.change_pct,
+            change: d.change,
+            volume: d.volume,
+            name: d.name,
+          })
+        } else {
+          const res = await getRealtimeQuote(symbol)
+          setQuote(res.data)
+        }
       } catch {
-        // Silently fail — market may be closed
+        // Silently fail — market may be closed or outside hours
       }
     }
 
     fetchHistory()
     fetchQuote()
 
-    // Poll realtime quote every 5 seconds (A-shares only)
-    if (market !== 'us') {
-      intervalRef.current = setInterval(fetchQuote, 5000)
-    }
+    // Poll A-shares every 5s; US every 60s (yfinance is slower)
+    const pollInterval = market === 'us' ? 60000 : 5000
+    intervalRef.current = setInterval(fetchQuote, pollInterval)
     return () => clearInterval(intervalRef.current)
   }, [symbol, period, startDate, endDate, adjust, market])
 

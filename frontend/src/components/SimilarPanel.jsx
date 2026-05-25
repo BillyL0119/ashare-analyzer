@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import useLangStore from '../store/langStore'
+import useCompareStore from '../store/compareStore'
 import { T } from '../i18n/translations'
-import { getSimilarStocks, getSimilarCross } from '../api/stockApi'
+import { getSimilarStocks, getSimilarCross, getUSSimilarStocks } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import { useMobile } from '../hooks/useMobile'
 
@@ -116,7 +117,7 @@ function ModeToggle({ mode, setMode, t }) {
 
 // ── StockBlock ────────────────────────────────────────────────────────────────
 
-function StockBlock({ stock, mode, lang, isMobile, onOpenDetail }) {
+function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
   const t = T[lang]
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -126,12 +127,25 @@ function StockBlock({ stock, mode, lang, isMobile, onOpenDetail }) {
     setData(null)
     setLoading(true)
     setError(null)
-    const fetch = mode === 'cross' ? getSimilarCross : getSimilarStocks
-    fetch(stock.code)
-      .then((res) => setData(res.data))
+    let fetchFn
+    if (market === 'us') {
+      fetchFn = getUSSimilarStocks
+    } else {
+      fetchFn = mode === 'cross' ? getSimilarCross : getSimilarStocks
+    }
+    fetchFn(stock.code)
+      .then((res) => {
+        // Normalize US similar response to match CN shape
+        const d = res.data
+        if (market === 'us') {
+          setData({ results: d.results || [], industry: d.sector || '', scanned_industries: [d.sector || ''] })
+        } else {
+          setData(d)
+        }
+      })
       .catch((e) => setError(e?.response?.data?.detail || t.similarError))
       .finally(() => setLoading(false))
-  }, [stock.code, mode]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stock.code, mode, market]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isCross = mode === 'cross'
 
@@ -348,6 +362,7 @@ function StockBlock({ stock, mode, lang, isMobile, onOpenDetail }) {
 
 export default function SimilarPanel({ stocks, onOpenDetail }) {
   const lang = useLangStore((s) => s.lang)
+  const market = useCompareStore((s) => s.market)
   const t = T[lang]
   const isMobile = useMobile()
   const [mode, setMode] = useState('same')   // 'same' | 'cross'
@@ -362,13 +377,15 @@ export default function SimilarPanel({ stocks, onOpenDetail }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* Mode toggle (shared across all stock blocks) */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <ModeToggle mode={mode} setMode={setMode} t={t} />
-        <span style={{ fontSize: 12, color: '#4a5568' }}>
-          {mode === 'same' ? t.similarSame : t.similarCross}
-        </span>
-      </div>
+      {/* Mode toggle — hidden for US (no cross-sector endpoint) */}
+      {market !== 'us' && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <ModeToggle mode={mode} setMode={setMode} t={t} />
+          <span style={{ fontSize: 12, color: '#4a5568' }}>
+            {mode === 'same' ? t.similarSame : t.similarCross}
+          </span>
+        </div>
+      )}
 
       {stocks.map((stock) => (
         <StockBlock
@@ -376,6 +393,7 @@ export default function SimilarPanel({ stocks, onOpenDetail }) {
           stock={stock}
           mode={mode}
           lang={lang}
+          market={market}
           isMobile={isMobile}
           onOpenDetail={onOpenDetail}
         />

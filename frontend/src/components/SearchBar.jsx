@@ -64,7 +64,7 @@ export default function SearchBar() {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={isFull ? t.searchFull : t.searchPlaceholder}
+          placeholder={isFull ? t.searchFull : (market === 'us' ? t.searchPlaceholderUS : t.searchPlaceholder)}
           disabled={isFull}
           style={{
             width: '100%',
@@ -132,7 +132,8 @@ export default function SearchBar() {
                 }}
               >
                 <span style={{ color: '#8ab4f8', fontFamily: 'monospace', fontSize: 12 }}>{s.code}</span>
-                <span style={{ color: '#c9d1d9' }}>{s.name}</span>
+                <span style={{ color: '#c9d1d9', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
+                {s.exchange && market === 'us' && <span style={{ fontSize: 10, color: '#4a5568' }}>{s.exchange}</span>}
                 {alreadyAdded && <span style={{ fontSize: 11, color: '#4a5568' }}>{t.added}</span>}
               </div>
             )

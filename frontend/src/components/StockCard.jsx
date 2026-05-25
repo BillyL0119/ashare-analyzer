@@ -81,7 +81,7 @@ export default function StockCard({ stock }) {
         {quote && (
           <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
             <span style={{ color: priceColor, fontSize: 18, fontWeight: 700 }}>
-              {quote.price.toFixed(2)}
+              {market === 'us' ? '$' : ''}{quote.price.toFixed(2)}
             </span>
             <span style={{ color: priceColor, fontSize: 13 }}>
               {priceDelta >= 0 ? '+' : ''}{priceDelta.toFixed(2)}%
@@ -110,26 +110,28 @@ export default function StockCard({ stock }) {
           ))}
         </div>
 
-        <div style={{ display: 'flex', gap: 4 }}>
-          {Object.entries(adjustLabels).map(([key, label]) => (
-            <button
-              key={key}
-              onClick={() => setAdjust(key)}
-              style={{
-                padding: '3px 8px',
-                borderRadius: 4,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 11,
-                background: adjust === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'rgba(255,255,255,0.06)',
-                color: adjust === key ? '#fff' : THEME.text,
-                transition: 'background 0.15s',
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        {market !== 'us' && (
+          <div style={{ display: 'flex', gap: 4 }}>
+            {Object.entries(adjustLabels).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setAdjust(key)}
+                style={{
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 11,
+                  background: adjust === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'rgba(255,255,255,0.06)',
+                  color: adjust === key ? '#fff' : THEME.text,
+                  transition: 'background 0.15s',
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Export PDF */}
         <button

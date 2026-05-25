@@ -73,13 +73,15 @@ function PctBadge({ value }) {
 }
 
 // ── Sell Modal ───────────────────────────────────────────────────────────────
-function SellModal({ pos, symbol, lang, onConfirm, onClose }) {
+function SellModal({ pos, symbol, lang, market, onConfirm, onClose }) {
+  const isUS   = market === 'us'
+  const lotSize = isUS ? 1 : 100
+  const currSym = isUS ? '$' : '¥'
   const [shares, setShares] = useState(pos.available_shares)
-  const lotSize = 100
 
-  const amount    = shares * pos.current_price
-  const commission= Math.max(5, amount * 0.0013)
-  const net       = amount - commission
+  const amount     = shares * pos.current_price
+  const commission = isUS ? 0 : Math.max(5, amount * 0.0013)
+  const net        = amount - commission
 
   const zhEn = (zh, en) => lang === 'zh' ? zh : en
 
@@ -97,11 +99,11 @@ function SellModal({ pos, symbol, lang, onConfirm, onClose }) {
         </div>
         <div style={{ fontSize: 13, color: MUTED, marginBottom: 6 }}>
           {zhEn('可卖股数', 'Available')}: {pos.available_shares} {zhEn('股', 'shares')}
-          &nbsp;·&nbsp;{zhEn('现价', 'Price')}: ¥{fmt(pos.current_price)}
+          &nbsp;·&nbsp;{zhEn('现价', 'Price')}: {currSym}{fmt(pos.current_price)}
         </div>
         <div style={{ marginBottom: 14 }}>
           <label style={{ fontSize: 12, color: MUTED, display: 'block', marginBottom: 4 }}>
-            {zhEn('卖出数量（100股整数倍）', 'Shares to sell (multiples of 100)')}
+            {isUS ? zhEn('卖出数量', 'Shares to sell') : zhEn('卖出数量（100股整数倍）', 'Shares to sell (×100)')}
           </label>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <input
@@ -110,7 +112,11 @@ function SellModal({ pos, symbol, lang, onConfirm, onClose }) {
               min={lotSize}
               max={pos.available_shares}
               step={lotSize}
-              onChange={(e) => setShares(Math.min(pos.available_shares, Math.max(lotSize, Math.round(Number(e.target.value) / lotSize) * lotSize)))}
+              onChange={(e) => {
+                const v = Number(e.target.value)
+                const clamped = Math.min(pos.available_shares, Math.max(lotSize, isUS ? Math.floor(v) : Math.round(v / 100) * 100))
+                setShares(clamped)
+              }}
               style={{
                 flex: 1, background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
                 borderRadius: 8, color: '#e8eaed', padding: '8px 12px', fontSize: 14, outline: 'none',
@@ -125,20 +131,20 @@ function SellModal({ pos, symbol, lang, onConfirm, onClose }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, marginBottom: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: MUTED }}>{zhEn('成交金额', 'Trade Amount')}</span>
-            <span style={{ color: '#e8eaed' }}>¥{fmt(amount)}</span>
+            <span style={{ color: '#e8eaed' }}>{currSym}{fmt(amount)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: MUTED }}>{zhEn('手续费 + 印花税', 'Commission + Stamp Duty')}</span>
-            <span style={{ color: SELL_CLR }}>-¥{fmt(commission)}</span>
+            <span style={{ color: MUTED }}>{isUS ? zhEn('手续费（零佣金）', 'Commission (zero)') : zhEn('手续费 + 印花税', 'Commission + Stamp Duty')}</span>
+            <span style={{ color: isUS ? BUY_CLR : SELL_CLR }}>{isUS ? zhEn('$0', '$0') : `-${currSym}${fmt(commission)}`}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
             <span style={{ color: MUTED }}>{zhEn('预计到账', 'Net Proceeds')}</span>
-            <span style={{ color: BUY_CLR }}>¥{fmt(net)}</span>
+            <span style={{ color: BUY_CLR }}>{currSym}{fmt(net)}</span>
           </div>
         </div>
         <Btn
           color={SELL_CLR}
-          disabled={shares <= 0 || shares > pos.available_shares || shares % lotSize !== 0}
+          disabled={shares <= 0 || shares > pos.available_shares || (!isUS && shares % 100 !== 0)}
           onClick={() => onConfirm(shares)}
           style={{ width: '100%' }}
         >
@@ -188,6 +194,11 @@ export default function PaperTradingPanel({ lang }) {
   const [account,  setAccount] = useState(null)
   const [loading,  setLoading] = useState(true)
   const [err,      setErr]     = useState(null)
+
+  // Market toggle for paper trading
+  const [ptMarket, setPtMarket] = useState('cn')   // 'cn' | 'us'
+  const isUS = ptMarket === 'us'
+  const currSym = isUS ? '$' : '¥'
 
   // Buy form
   const [buyCode,    setBuyCode]    = useState('')
@@ -240,14 +251,28 @@ export default function PaperTradingPanel({ lang }) {
 
   // ── Quote lookup ──────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!buyCode || buyCode.length < 6) { setQuoteInfo(null); return }
+    setQuoteInfo(null)
+    if (!buyCode) return
+    const minLen = isUS ? 1 : 6
+    if (buyCode.length < minLen) return
     setQuoteLoading(true)
-    fetch(`/api/stocks/${buyCode}/realtime`)
+    const url = isUS
+      ? `/api/us/stock/${buyCode.toUpperCase()}/realtime`
+      : `/api/stocks/${buyCode}/realtime`
+    fetch(url)
       .then((r) => r.json())
       .then((d) => setQuoteInfo(d.price ? { price: d.price, name: d.name } : null))
       .catch(() => setQuoteInfo(null))
       .finally(() => setQuoteLoading(false))
-  }, [buyCode])
+  }, [buyCode, isUS])
+
+  // Reset shares when switching market
+  useEffect(() => {
+    setBuyCode('')
+    setBuyShares(isUS ? 1 : 100)
+    setQuoteInfo(null)
+    setBuyMsg(null)
+  }, [ptMarket]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Buy ───────────────────────────────────────────────────────────────────
   const handleBuy = async () => {
@@ -256,12 +281,12 @@ export default function PaperTradingPanel({ lang }) {
       const res = await fetch('/api/paper/buy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: deviceId, symbol: buyCode, shares: buyShares }),
+        body: JSON.stringify({ device_id: deviceId, symbol: buyCode, shares: buyShares, market: ptMarket }),
       })
       const data = await res.json()
       if (!res.ok) { setBuyMsg({ type: 'error', text: data.detail }); return }
       setBuyMsg({ type: 'success', text: data.message })
-      setBuyCode(''); setBuyShares(100); setQuoteInfo(null)
+      setBuyCode(''); setBuyShares(isUS ? 1 : 100); setQuoteInfo(null)
       fetchAccount()
     } catch (e) {
       setBuyMsg({ type: 'error', text: e.message })
@@ -275,7 +300,7 @@ export default function PaperTradingPanel({ lang }) {
       const res = await fetch('/api/paper/sell', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: deviceId, symbol: sellModal.symbol, shares }),
+        body: JSON.stringify({ device_id: deviceId, symbol: sellModal.symbol, shares, market: ptMarket }),
       })
       const data = await res.json()
       if (!res.ok) { setActionMsg({ type: 'error', text: data.detail }); return }
@@ -283,7 +308,7 @@ export default function PaperTradingPanel({ lang }) {
       const sign = pl >= 0 ? '+' : ''
       setActionMsg({
         type: pl >= 0 ? 'success' : 'error',
-        text: `${data.message} | ${zhEn('盈亏', 'P&L')}: ${sign}¥${fmt(pl)} (${sign}${fmt(data.profit_loss_pct)}%)`,
+        text: `${data.message} | ${zhEn('盈亏', 'P&L')}: ${sign}${currSym}${fmt(pl)} (${sign}${fmt(data.profit_loss_pct)}%)`,
       })
       fetchAccount()
     } catch (e) {
@@ -308,18 +333,18 @@ export default function PaperTradingPanel({ lang }) {
   }
 
   // ── Pre-render calculations ───────────────────────────────────────────────
-  const portfolio  = account?.portfolio || {}
-  const txns       = account?.transactions || []
-  const totalValue = account?.total_value ?? 1_000_000
-  const cash       = account?.cash ?? 1_000_000
-  const retPct     = account?.return_pct ?? 0
-  const commission = account?.total_commission_paid ?? 0
+  const portfolio  = isUS ? (account?.us_portfolio || {}) : (account?.portfolio || {})
+  const txns       = isUS ? (account?.us_transactions || []) : (account?.transactions || [])
+  const totalValue = isUS ? (account?.us_total_value ?? 100_000) : (account?.total_value ?? 1_000_000)
+  const cash       = isUS ? (account?.us_cash ?? 100_000) : (account?.cash ?? 1_000_000)
+  const retPct     = isUS ? (account?.us_return_pct ?? 0) : (account?.return_pct ?? 0)
+  const commission = isUS ? (account?.us_total_commission_paid ?? 0) : (account?.total_commission_paid ?? 0)
   const rank       = account?.rank ?? '--'
 
   const portfolioValue = Object.values(portfolio).reduce((s, p) => s + (p.market_value || 0), 0)
 
   const buyAmount     = quoteInfo ? quoteInfo.price * buyShares : 0
-  const buyCommission = buyAmount ? Math.max(5, buyAmount * 0.0003) : 0
+  const buyCommission = isUS ? 0 : (buyAmount ? Math.max(5, buyAmount * 0.0003) : 0)
   const buyTotalCost  = buyAmount + buyCommission
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -344,6 +369,7 @@ export default function PaperTradingPanel({ lang }) {
           pos={sellModal.pos}
           symbol={sellModal.symbol}
           lang={lang}
+          market={ptMarket}
           onConfirm={handleSell}
           onClose={() => setSellModal(null)}
         />
@@ -364,6 +390,28 @@ export default function PaperTradingPanel({ lang }) {
         </div>
       )}
 
+      {/* ── Market toggle ── */}
+      <div style={{ display: 'flex', gap: 6, background: 'rgba(255,255,255,0.04)', border: `1px solid ${BDR}`, borderRadius: 24, padding: 4, width: 'fit-content' }}>
+        {[
+          { key: 'cn', label: zhEn('A股（¥100万）', 'A-Share (¥1M)') },
+          { key: 'us', label: zhEn('美股（$10万）', 'US Stocks ($100K)') },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setPtMarket(key)}
+            style={{
+              padding: '5px 18px', borderRadius: 20, border: 'none', cursor: 'pointer',
+              fontSize: 12, fontWeight: 600,
+              background: ptMarket === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'transparent',
+              color: ptMarket === key ? '#fff' : MUTED,
+              transition: 'all 0.2s',
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {/* ── 1. Account Overview ── */}
       <Card>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
@@ -375,7 +423,7 @@ export default function PaperTradingPanel({ lang }) {
               </span>
             </div>
             <div style={{ fontSize: 28, fontWeight: 800, color: retPct >= 0 ? BUY_CLR : SELL_CLR, fontFamily: 'monospace' }}>
-              ¥{fmt(totalValue, 0)}
+              {currSym}{fmt(totalValue, 0)}
             </div>
             <div style={{ marginTop: 4 }}>
               <PctBadge value={retPct} />
@@ -397,9 +445,9 @@ export default function PaperTradingPanel({ lang }) {
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {[
-            { label: zhEn('现金余额', 'Cash'), value: `¥${fmt(cash, 0)}`, color: '#e8eaed' },
-            { label: zhEn('持仓市值', 'Portfolio Value'), value: `¥${fmt(portfolioValue, 0)}`, color: '#8ab4f8' },
-            { label: zhEn('已付手续费', 'Commission Paid'), value: `¥${fmt(commission)}`, color: MUTED },
+            { label: zhEn('现金余额', 'Cash'), value: `${currSym}${fmt(cash, 0)}`, color: '#e8eaed' },
+            { label: zhEn('持仓市值', 'Portfolio Value'), value: `${currSym}${fmt(portfolioValue, 0)}`, color: '#8ab4f8' },
+            { label: zhEn('已付手续费', 'Commission Paid'), value: `${currSym}${fmt(commission)}`, color: MUTED },
           ].map(({ label, value, color }) => (
             <div key={label} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 16px', minWidth: 140, flex: 1 }}>
               <div style={{ fontSize: 11, color: MUTED, marginBottom: 4 }}>{label}</div>
@@ -419,13 +467,13 @@ export default function PaperTradingPanel({ lang }) {
           {/* Code input */}
           <div style={{ flex: '0 0 140px' }}>
             <label style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
-              {zhEn('股票代码', 'Stock Code')}
+              {isUS ? zhEn('股票代码', 'Ticker') : zhEn('股票代码', 'Stock Code')}
             </label>
             <input
               value={buyCode}
-              onChange={(e) => setBuyCode(e.target.value.trim())}
-              placeholder="600519"
-              maxLength={6}
+              onChange={(e) => setBuyCode(e.target.value.trim().toUpperCase())}
+              placeholder={isUS ? 'AAPL' : '600519'}
+              maxLength={isUS ? 10 : 6}
               style={{
                 width: '100%', boxSizing: 'border-box',
                 background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
@@ -434,7 +482,7 @@ export default function PaperTradingPanel({ lang }) {
             />
             {quoteInfo && (
               <div style={{ fontSize: 11, color: BUY_CLR, marginTop: 4 }}>
-                {quoteInfo.name} · ¥{fmt(quoteInfo.price)}
+                {quoteInfo.name} · {currSym}{fmt(quoteInfo.price)}
               </div>
             )}
             {quoteLoading && <div style={{ fontSize: 11, color: MUTED, marginTop: 4 }}>{zhEn('查询中...', 'Loading...')}</div>}
@@ -443,14 +491,17 @@ export default function PaperTradingPanel({ lang }) {
           {/* Shares input */}
           <div style={{ flex: '0 0 180px' }}>
             <label style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
-              {zhEn('买入股数（100整数倍）', 'Shares (×100)')}
+              {isUS ? zhEn('买入股数（最少1股）', 'Shares (min 1)') : zhEn('买入股数（100整数倍）', 'Shares (×100)')}
             </label>
             <input
               type="number"
               value={buyShares}
-              min={100}
-              step={100}
-              onChange={(e) => setBuyShares(Math.max(100, Math.round(Number(e.target.value) / 100) * 100))}
+              min={isUS ? 1 : 100}
+              step={isUS ? 1 : 100}
+              onChange={(e) => {
+                const v = Math.max(isUS ? 1 : 100, Number(e.target.value))
+                setBuyShares(isUS ? Math.floor(v) : Math.round(v / 100) * 100)
+              }}
               style={{
                 width: '100%', boxSizing: 'border-box',
                 background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
@@ -462,11 +513,12 @@ export default function PaperTradingPanel({ lang }) {
           {/* Preview */}
           {quoteInfo && (
             <div style={{ flex: 1, minWidth: 200, fontSize: 12, color: MUTED, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div>{zhEn('预计花费', 'Est. Cost')}: <span style={{ color: '#e8eaed', fontFamily: 'monospace' }}>¥{fmt(buyTotalCost)}</span></div>
-              <div>{zhEn('手续费', 'Commission')}: <span style={{ color: SELL_CLR, fontFamily: 'monospace' }}>¥{fmt(buyCommission)}</span></div>
+              <div>{zhEn('预计花费', 'Est. Cost')}: <span style={{ color: '#e8eaed', fontFamily: 'monospace' }}>{currSym}{fmt(buyTotalCost)}</span></div>
+              {!isUS && <div>{zhEn('手续费', 'Commission')}: <span style={{ color: SELL_CLR, fontFamily: 'monospace' }}>{currSym}{fmt(buyCommission)}</span></div>}
+              {isUS && <div style={{ color: BUY_CLR }}>{lang === 'zh' ? '零佣金' : 'Zero commission'}</div>}
               <div>{zhEn('买入后剩余现金', 'Cash After')}: <span style={{
                 color: cash >= buyTotalCost ? BUY_CLR : SELL_CLR, fontFamily: 'monospace',
-              }}>¥{fmt(cash - buyTotalCost, 0)}</span></div>
+              }}>{currSym}{fmt(cash - buyTotalCost, 0)}</span></div>
             </div>
           )}
 
@@ -541,15 +593,15 @@ export default function PaperTradingPanel({ lang }) {
                         {canSell ? (
                           <span style={{ color: BUY_CLR }}>{pos.available_shares}</span>
                         ) : (
-                          <span style={{ color: MUTED, fontSize: 11 }}>{zhEn('明日可卖 🔒', 'T+1 🔒')}</span>
+                          <span style={{ color: MUTED, fontSize: 11 }}>{isUS ? zhEn('T+2 🔒', 'T+2 🔒') : zhEn('明日可卖 🔒', 'T+1 🔒')}</span>
                         )}
                       </td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: MUTED }}>¥{fmt(pos.avg_cost)}</td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>¥{fmt(pos.current_price)}</td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>¥{fmt(pos.market_value, 0)}</td>
+                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: MUTED }}>{currSym}{fmt(pos.avg_cost)}</td>
+                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>{currSym}{fmt(pos.current_price)}</td>
+                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>{currSym}{fmt(pos.market_value, 0)}</td>
                       <td style={{ padding: '10px 10px' }}>
                         <div style={{ color: isProfit ? BUY_CLR : SELL_CLR, fontWeight: 700, fontFamily: 'monospace', fontSize: 12 }}>
-                          {isProfit ? '+' : ''}¥{fmt(pos.profit_loss, 0)}
+                          {isProfit ? '+' : ''}{currSym}{fmt(pos.profit_loss, 0)}
                         </div>
                         <div style={{ color: isProfit ? BUY_CLR : SELL_CLR, fontSize: 11 }}>
                           ({isProfit ? '+' : ''}{fmt(pos.profit_loss_pct)}%)

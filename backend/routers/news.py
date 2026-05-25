@@ -6,7 +6,7 @@ analysis instantly, then call Claude for deeper per-item analysis.
 Results cached 30 min; AI results cached 2 hours.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 import akshare as ak
 import requests
 import json
@@ -234,21 +234,143 @@ def _fetch_yahoo_rss(symbol: str) -> list[dict]:
 
 # ── Route ─────────────────────────────────────────────────────────────────────
 
+_POS_KW_EN = [
+    "beat estimates", "record high", "strong growth", "raised guidance",
+    "buyback", "dividend increase", "upgraded", "outperform", "exceeds",
+    "record revenue", "profit surge", "partnership", "acquisition approved",
+]
+_NEG_KW_EN = [
+    "missed estimates", "downgrade", "layoffs", "investigation", "recall",
+    "guidance cut", "debt", "loss", "below expectations", "revenue miss",
+    "regulatory probe", "underperform", "decline", "warning",
+]
+
+
+def _keyword_sentiment_en(text: str) -> dict:
+    text_lower = text.lower()
+    pos = sum(1 for kw in _POS_KW_EN if kw in text_lower)
+    neg = sum(1 for kw in _NEG_KW_EN if kw in text_lower)
+    total = pos + neg
+    if total == 0:
+        return {"label": "neutral", "score": 0.0}
+    score = round((pos - neg) / (pos + neg), 3)
+    label = "positive" if score > 0.1 else "negative" if score < -0.1 else "neutral"
+    return {"label": label, "score": score}
+
+
+def _fetch_yahoo_rss_us(symbol: str) -> list[dict]:
+    """Yahoo Finance RSS for US-listed ticker (no suffix needed)."""
+    url = (
+        f"https://feeds.finance.yahoo.com/rss/2.0/headline"
+        f"?s={symbol}&region=US&lang=en-US"
+    )
+    try:
+        r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+        if r.status_code != 200:
+            return []
+        root = ET.fromstring(r.text)
+        items = root.findall(".//item")
+        rows = []
+        for item in items[:20]:
+            title = (item.findtext("title") or "").strip()
+            if not title:
+                continue
+            rows.append({
+                "title": title,
+                "content": (item.findtext("description") or "")[:300].strip(),
+                "source": "Yahoo Finance",
+                "time": (item.findtext("pubDate") or "").strip(),
+                "url": (item.findtext("link") or "").strip(),
+                "lang": "en",
+            })
+        return rows
+    except Exception as exc:
+        logger.debug("Yahoo RSS US failed for %s: %s", symbol, exc)
+        return []
+
+
 @router.get("/{symbol}")
-def get_news(symbol: str):
+def get_news(symbol: str, market: str = Query("cn")):
     """
     Return up to 20 recent news items with keyword + AI sentiment for `symbol`.
+    Pass market=us to fetch English-only Yahoo Finance news for US stocks.
     Overall sentiment summary included. Cached 30 minutes.
     """
     try:
         now = time.time()
+        cache_key = f"{symbol}_{market}"
         # Cache hit
-        if symbol in _result_cache:
-            ts, cached = _result_cache[symbol]
+        if cache_key in _result_cache:
+            ts, cached = _result_cache[cache_key]
             if now - ts < _RESULT_TTL:
-                logger.debug("Cache hit for news/%s", symbol)
+                logger.debug("Cache hit for news/%s market=%s", symbol, market)
                 return cached
 
+        # ── US market: English-only Yahoo Finance ──
+        if market == "us":
+            sym_upper = symbol.upper()
+            news_raw = _fetch_yahoo_rss_us(sym_upper)
+            stock_name = sym_upper
+
+            if not news_raw:
+                response = {
+                    "symbol": sym_upper,
+                    "stock_name": stock_name,
+                    "news": [],
+                    "overall": {
+                        "positive_count": 0,
+                        "neutral_count": 0,
+                        "negative_count": 0,
+                        "sentiment_score": 0.0,
+                        "ai_summary": "No news data available.",
+                    },
+                }
+                _result_cache[cache_key] = (now, response)
+                return response
+
+            processed = []
+            for item in news_raw:
+                kw = _keyword_sentiment_en(item["title"] + " " + item.get("content", ""))
+                processed.append({
+                    "title": item["title"],
+                    "source": item["source"],
+                    "time": item["time"],
+                    "url": item["url"],
+                    "lang": "en",
+                    "keyword_sentiment": kw,
+                    "ai_sentiment": {"sentiment": kw["label"], "reason": ""},
+                    "final_sentiment": kw["label"],
+                })
+
+            pos = sum(1 for n in processed if n["final_sentiment"] == "positive")
+            neu = sum(1 for n in processed if n["final_sentiment"] == "neutral")
+            neg = sum(1 for n in processed if n["final_sentiment"] == "negative")
+            total = len(processed)
+            score = round((pos - neg) / total, 3) if total > 0 else 0.0
+
+            ai_summary = _ai_overall_summary(stock_name, [n["title"] for n in processed])
+            if not ai_summary:
+                ai_summary = (
+                    f"Overall sentiment is {'positive' if pos > neg else 'negative' if neg > pos else 'neutral'}. "
+                    f"{total} articles found."
+                )
+
+            response = {
+                "symbol": sym_upper,
+                "stock_name": stock_name,
+                "news": processed,
+                "overall": {
+                    "positive_count": pos,
+                    "neutral_count": neu,
+                    "negative_count": neg,
+                    "sentiment_score": score,
+                    "ai_summary": ai_summary,
+                },
+            }
+            _result_cache[cache_key] = (now, response)
+            return response
+
+        # ── CN market (original logic) ──
         stock_name = _get_stock_name(symbol)
 
         # ── Fetch from sources ──
@@ -274,7 +396,7 @@ def get_news(symbol: str):
                     "ai_summary": "暂无新闻数据",
                 },
             }
-            _result_cache[symbol] = (now, response)
+            _result_cache[cache_key] = (now, response)
             return response
 
         # ── Per-item sentiment ──
@@ -328,7 +450,7 @@ def get_news(symbol: str):
                 "ai_summary": ai_summary,
             },
         }
-        _result_cache[symbol] = (now, response)
+        _result_cache[cache_key] = (now, response)
         logger.info(
             "News done for %s: %d items, pos=%d neu=%d neg=%d",
             symbol, total, pos, neu, neg,

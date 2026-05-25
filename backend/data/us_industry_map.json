@@ -1,0 +1,14 @@
+{
+  "Technology": ["AAPL","MSFT","GOOGL","GOOG","META","NVDA","AMD","INTC","ORCL","CRM","ADBE","AVGO","QCOM","TXN","AMAT","MU","LRCX","KLAC","MRVL","SNPS","CDNS","ANSS","FTNT","PANW","CRWD","ZS","OKTA","DDOG","SNOW","NET","MDB","TEAM","NOW","WDAY","VEEV","PLTR"],
+  "Finance": ["JPM","BAC","WFC","GS","MS","C","BLK","AXP","V","MA","PYPL","SCHW","COF","SPGI","MCO","BX","KKR","APO","AFL","MET","PRU","ALL","TRV","CB","AIG","PGR","HIG","BRK-B"],
+  "Healthcare": ["JNJ","UNH","PFE","ABBV","MRK","LLY","BMY","AMGN","GILD","CVS","ABT","MDT","TMO","DHR","SYK","BSX","EW","ISRG","BDX","IQV","IDXX","HOLX","ALGN","MOH","CNC","HUM","ELV","CI"],
+  "Consumer Discretionary": ["AMZN","TSLA","HD","MCD","NKE","SBUX","TGT","BKNG","CMG","LULU","ROST","TJX","LOW","AZO","ORLY","F","GM","ETSY","EBAY","W","RH","WSM"],
+  "Consumer Staples": ["WMT","PG","KO","PEP","COST","PM","MO","MDLZ","CL","KHC","GIS","K","SJM","CAG","HRL","MKC","CLX","CHD","EL","KR","SYY"],
+  "Energy": ["XOM","CVX","COP","SLB","EOG","MPC","PSX","VLO","OXY","HAL","BKR","DVN","HES","MRO","APA","CTRA","TRGP","KMI","WMB","OKE","EPD","ET"],
+  "Industrials": ["BA","CAT","GE","HON","MMM","UPS","FDX","RTX","LMT","NOC","DE","EMR","ETN","PH","ROK","AME","ROP","CTAS","ADP","VRSK","CPRT","FAST","GWW","TT","JCI","XYL","IEX","GNRC"],
+  "Communication Services": ["GOOGL","META","NFLX","DIS","CMCSA","T","VZ","TMUS","CHTR","EA","TTWO","RBLX","SNAP","PINS","MTCH","IAC","LYV","WBD","PARA","FOXA","NYT","SIRI"],
+  "Real Estate": ["AMT","PLD","CCI","EQIX","PSA","DLR","O","WELL","SPG","EXR","AVB","EQR","MAA","UDR","CPT","ESS","INVH","AMH","TRNO","REXR","EGP"],
+  "Utilities": ["NEE","DUK","SO","D","AEP","EXC","SRE","PEG","ED","ETR","FE","ES","AWK","CMS","NI","LNT","EVRG","ATO","UGI"],
+  "Materials": ["LIN","APD","SHW","ECL","DD","DOW","LYB","PPG","EMN","CE","ALB","FCX","NEM","NUE","STLD","RS","CMC","X","CLF","AA"],
+  "SPX_ETF": ["SPY","QQQ","IWM","DIA","VTI","VOO","IVV","VEA","EEM","GLD","SLV","USO","TLT","IEF","HYG","LQD","VNQ","XLK","XLF","XLV","XLE","XLI","XLP","XLY","XLU","XLB","XLRE"]
+}

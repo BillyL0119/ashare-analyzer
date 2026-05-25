@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import useLangStore from '../store/langStore'
+import useCompareStore from '../store/compareStore'
 import { T } from '../i18n/translations'
 import { getNews } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
@@ -280,7 +281,7 @@ function FilterPill({ active, color, onClick, children }) {
 }
 
 // ── Per-stock news block ──────────────────────────────────────────────────────
-function NewsBlock({ stock, lang, onOpenDetail }) {
+function NewsBlock({ stock, lang, market, onOpenDetail }) {
   const t = T[lang]
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -292,11 +293,11 @@ function NewsBlock({ stock, lang, onOpenDetail }) {
     setLoading(true)
     setError(null)
     setData(null)
-    getNews(stock.code)
+    getNews(stock.code, market)
       .then((res) => setData(res.data))
       .catch((e) => setError(e?.response?.data?.detail || t.newsError))
       .finally(() => setLoading(false))
-  }, [stock.code]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stock.code, market]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = (data?.news || [])
     .filter((n) => langFilter === 'all' || n.lang === langFilter)
@@ -464,10 +465,11 @@ function NewsBlock({ stock, lang, onOpenDetail }) {
 // ── Panel (one block per compared stock) ─────────────────────────────────────
 export default function NewsPanel({ stocks, onOpenDetail }) {
   const lang = useLangStore((s) => s.lang)
+  const market = useCompareStore((s) => s.market)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {stocks.map((stock) => (
-        <NewsBlock key={stock.code} stock={stock} lang={lang} onOpenDetail={onOpenDetail} />
+        <NewsBlock key={stock.code} stock={stock} lang={lang} market={market} onOpenDetail={onOpenDetail} />
       ))}
     </div>
   )

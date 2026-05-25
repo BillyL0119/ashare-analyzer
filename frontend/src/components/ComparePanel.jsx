@@ -78,7 +78,7 @@ function OverlayView({ lang }) {
 }
 
 export default function ComparePanel({ onTabChange }) {
-  const { selectedSymbols, viewMode, setViewMode, addSymbol } = useCompareStore()
+  const { selectedSymbols, viewMode, setViewMode, addSymbol, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
@@ -146,12 +146,16 @@ export default function ComparePanel({ onTabChange }) {
           { key: 'monteCarlo', label: t.monteCarlo },
           { key: 'risk', label: t.riskAnalytics },
           { key: 'regime', label: t.regimeDetector },
-          { key: 'factor', label: t.factorAnalysis },
-          { key: 'financial', label: t.financialAnalysis },
+          // factor & financial rely on A-share specific data sources
+          ...(market !== 'us' ? [
+            { key: 'factor', label: t.factorAnalysis },
+            { key: 'financial', label: t.financialAnalysis },
+          ] : []),
           { key: 'similar', label: t.similarTrend },
           { key: 'news', label: t.newsSentiment },
           { key: 'radar', label: t.radarTab },
-          { key: 'calendar', label: lang === 'zh' ? 'A股日历' : 'Calendar' },
+          // calendar is A-share only
+          ...(market !== 'us' ? [{ key: 'calendar', label: lang === 'zh' ? 'A股日历' : 'Calendar' }] : []),
         ].map(({ key, label }) => (
           <button
             key={key}
