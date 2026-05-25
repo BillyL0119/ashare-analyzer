@@ -19,6 +19,44 @@ import json
 import os
 import time
 
+# ── Disk cache ────────────────────────────────────────────────────────────────
+_DISK_CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "us_cache")
+os.makedirs(_DISK_CACHE_DIR, exist_ok=True)
+
+
+def _disk_read(filename: str):
+    path = os.path.join(_DISK_CACHE_DIR, filename)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def _disk_write(filename: str, data):
+    path = os.path.join(_DISK_CACHE_DIR, filename)
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f)
+    except Exception:
+        pass
+
+
+def _yf_history_with_retry(ticker_sym: str, **kwargs):
+    """Call yf.Ticker().history() with 0.5s pre-sleep and up to 2 retries."""
+    time.sleep(0.5)
+    for attempt in range(3):
+        try:
+            t = yf.Ticker(ticker_sym)
+            df = t.history(**kwargs)
+            if df is not None and not df.empty:
+                return df
+        except Exception:
+            pass
+        if attempt < 2:
+            time.sleep(1)
+    return None
+
 router = APIRouter()
 
 # ── Industry map ──────────────────────────────────────────────────────────────
@@ -333,20 +371,24 @@ def get_us_history(
     period: str = "1y",
     interval: str = "1d",
 ):
-    """Historical OHLCV data. Cached 1 hour."""
+    """Historical OHLCV data. Cached 1 hour (memory) + daily disk cache."""
     sym = symbol.upper()
-    cache_key = f"{sym}_{period}_{interval}"
+    mem_key = f"{sym}_{period}_{interval}"
     now = time.time()
-    if cache_key in _hist_cache:
-        ts, data = _hist_cache[cache_key]
+    if mem_key in _hist_cache:
+        ts, data = _hist_cache[mem_key]
         if now - ts < _HIST_TTL:
             return data
 
-    try:
-        ticker = yf.Ticker(sym)
-        df = ticker.history(period=period, interval=interval, auto_adjust=True)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Disk cache: keyed by date (daily granularity)
+    today = datetime.now().strftime("%Y%m%d")
+    disk_file = f"{sym}_history_{today}_{period}_{interval}.json"
+    disk_data = _disk_read(disk_file)
+    if disk_data:
+        _hist_cache[mem_key] = (now, disk_data)
+        return disk_data
+
+    df = _yf_history_with_retry(sym, period=period, interval=interval, auto_adjust=True)
 
     if df is None or df.empty:
         raise HTTPException(status_code=404, detail=f"No data found for {sym}")
@@ -370,7 +412,8 @@ def get_us_history(
     ]
 
     result = {"symbol": sym, "candles": candles}
-    _hist_cache[cache_key] = (now, result)
+    _hist_cache[mem_key] = (now, result)
+    _disk_write(disk_file, result)
     return result
 
 
@@ -402,20 +445,22 @@ def get_us_similar(symbol: str):
 
     candidates = candidates[:15]  # limit to avoid rate limits
 
-    end_dt = datetime.now()
-    start_dt = end_dt - timedelta(days=365)
+    # Disk cache: hourly for similar (computed across many tickers, expensive)
+    today = datetime.now().strftime("%Y%m%d")
+    hour = datetime.now().strftime("%H")
+    sim_disk_file = f"{sym}_similar_{today}_{hour}.json"
+    sim_disk_data = _disk_read(sim_disk_file)
+    if sim_disk_data:
+        _sim_cache[sym] = (now, sim_disk_data)
+        return sim_disk_data
 
     def _fetch_returns(ticker_sym: str):
-        try:
-            t = yf.Ticker(ticker_sym)
-            df = t.history(period="1y", interval="1d", auto_adjust=True)
-            if df is None or df.empty or len(df) < 20:
-                return None, []
-            closes = df["Close"]
-            sparkline = [round(float(v), 2) for v in closes.dropna().tolist()[-20:]]
-            return closes.pct_change().dropna(), sparkline
-        except Exception:
+        df = _yf_history_with_retry(ticker_sym, period="1y", interval="1d", auto_adjust=True)
+        if df is None or df.empty or len(df) < 20:
             return None, []
+        closes = df["Close"]
+        sparkline = [round(float(v), 2) for v in closes.dropna().tolist()[-20:]]
+        return closes.pct_change().dropna(), sparkline
 
     ref_ret, _ = _fetch_returns(sym)
     if ref_ret is None:
@@ -457,6 +502,7 @@ def get_us_similar(symbol: str):
         "results": results,
     }
     _sim_cache[sym] = (now, response)
+    _disk_write(sim_disk_file, response)
     return response
 
 
@@ -473,11 +519,7 @@ def get_us_stock(
     start = _fmt_date(start_date) or (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
     end = _fmt_date(end_date) or datetime.now().strftime("%Y-%m-%d")
 
-    try:
-        ticker = yf.Ticker(symbol.upper())
-        df = ticker.history(start=start, end=end, interval=interval, auto_adjust=True)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    df = _yf_history_with_retry(symbol.upper(), start=start, end=end, interval=interval, auto_adjust=True)
 
     if df is None or df.empty:
         raise HTTPException(status_code=404, detail=f"No data found for {symbol}")

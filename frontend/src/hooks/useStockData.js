@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { getStockHistory, getRealtimeQuote, getUSStockHistory, getUSRealtime } from '../api/stockApi'
 
 const cache = new Map()
@@ -12,11 +12,18 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [quote, setQuote] = useState(null)
+  const [retryCount, setRetryCount] = useState(0)
   const intervalRef = useRef(null)
+
+  const key = cacheKey(symbol, period, startDate, endDate, adjust)
+
+  const refetch = useCallback(() => {
+    cache.delete(key)
+    setRetryCount((c) => c + 1)
+  }, [key])
 
   useEffect(() => {
     if (!symbol) return
-    const key = cacheKey(symbol, period, startDate, endDate, adjust)
 
     const fetchHistory = async () => {
       if (cache.has(key)) {
@@ -54,7 +61,6 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
       try {
         if (market === 'us') {
           const res = await getUSRealtime(symbol)
-          // Map US realtime to same shape as CN quote
           const d = res.data
           setQuote({
             price: d.price,
@@ -79,7 +85,7 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
     const pollInterval = market === 'us' ? 60000 : 5000
     intervalRef.current = setInterval(fetchQuote, pollInterval)
     return () => clearInterval(intervalRef.current)
-  }, [symbol, period, startDate, endDate, adjust, market])
+  }, [symbol, period, startDate, endDate, adjust, market, retryCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { data, loading, error, quote }
+  return { data, loading, error, quote, refetch }
 }

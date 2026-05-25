@@ -860,6 +860,7 @@ def _slim_curriculum(curriculum: dict) -> dict:
             slim_topics.append({
                 "id":             topic["id"],
                 "title":          topic["title"],
+                "title_en":       topic.get("title_en", topic["title"]),
                 "estimated_time": topic["estimated_time"],
                 "section_count":  len(topic["sections"]),
             })

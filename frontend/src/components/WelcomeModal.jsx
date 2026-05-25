@@ -65,7 +65,7 @@ export default function WelcomeModal({ onLangSelect }) {
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.2)'}
             onMouseLeave={e => e.currentTarget.style.background = 'rgba(167,139,250,0.06)'}
             >
-              <div style={{ fontSize: 28, marginBottom: 8 }}>🇬🇧</div>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>🇺🇸</div>
               <div style={{ fontSize: 16, fontWeight: 600 }}>English</div>
               <div style={{ fontSize: 12, color: 'rgba(232,234,240,0.4)', marginTop: 4 }}>英文</div>
             </button>

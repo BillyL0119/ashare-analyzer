@@ -22,7 +22,7 @@ export default function StockCard({ stock }) {
   const t = T[lang]
   const isMobile = useMobile()
 
-  const { data, loading, error, quote } = useStockData(code, {
+  const { data, loading, error, quote, refetch } = useStockData(code, {
     period,
     startDate,
     endDate,
@@ -205,8 +205,25 @@ export default function StockCard({ stock }) {
           </div>
         )}
         {error && (
-          <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f85149', fontSize: 13 }}>
-            {error}
+          <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+            <div style={{ color: '#f85149', fontSize: 13, textAlign: 'center', maxWidth: 260 }}>
+              {market === 'us'
+                ? (lang === 'zh' ? '数据加载中，请稍后重试' : 'Data loading... Please wait a moment and try again')
+                : error}
+            </div>
+            {market === 'us' && (
+              <button
+                onClick={refetch}
+                style={{
+                  padding: '5px 18px', borderRadius: 16, border: 'none', cursor: 'pointer',
+                  fontSize: 12, fontWeight: 600,
+                  background: 'linear-gradient(135deg, #8ab4f8, #c084fc)',
+                  color: '#fff',
+                }}
+              >
+                {lang === 'zh' ? '重试' : 'Retry'}
+              </button>
+            )}
           </div>
         )}
         {data && !loading && (
