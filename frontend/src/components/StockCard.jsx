@@ -206,9 +206,11 @@ export default function StockCard({ stock }) {
         )}
         {error && (
           <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-            <div style={{ color: '#f85149', fontSize: 13, textAlign: 'center', maxWidth: 260 }}>
+            <div style={{ color: '#f85149', fontSize: 13, textAlign: 'center', maxWidth: 280 }}>
               {market === 'us'
-                ? (lang === 'zh' ? '数据加载中，请稍后重试' : 'Data loading... Please wait a moment and try again')
+                ? (String(error).includes('API_LIMIT') || String(error).includes('limit')
+                    ? (lang === 'zh' ? '今日数据请求已达上限，显示缓存数据' : 'Daily data limit reached. Cached data shown where available.')
+                    : (lang === 'zh' ? '数据加载失败，请重试' : 'Unable to load data. Please try again.'))
                 : error}
             </div>
             {market === 'us' && (

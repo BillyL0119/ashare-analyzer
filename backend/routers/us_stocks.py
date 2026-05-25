@@ -1,67 +1,73 @@
 """
 US Stock router — /api/us/*
+Data source: Alpha Vantage API (25 calls/day free tier — disk cache is critical)
 
 Endpoints:
   GET /search?q={query}               Search by ticker or company name
   GET /stock/{symbol}                 Historical OHLCV + indicators (legacy, used by useStockData)
-  GET /stock/{symbol}/realtime        Real-time quote  (5-min cache)
-  GET /stock/{symbol}/history         Historical OHLCV (1-hr cache, spec-style params)
-  GET /similar/{symbol}               Top-10 peers by Pearson correlation (2-hr cache)
+  GET /stock/{symbol}/realtime        Real-time quote (15-min memory cache)
+  GET /stock/{symbol}/history         Historical OHLCV (7-day disk cache)
+  GET /similar/{symbol}               Top-10 peers by Pearson correlation (1-day disk cache)
 """
 
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
-import yfinance as yf
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 import json
 import os
 import time
+import requests
+
+router = APIRouter()
+
+AV_KEY  = "30EZ8EJHLMD6HPXP"
+AV_BASE = "https://www.alphavantage.co/query"
 
 # ── Disk cache ────────────────────────────────────────────────────────────────
 _DISK_CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "us_cache")
 os.makedirs(_DISK_CACHE_DIR, exist_ok=True)
 
 
+def _disk_path(filename: str) -> str:
+    return os.path.join(_DISK_CACHE_DIR, filename)
+
+
 def _disk_read(filename: str):
-    path = os.path.join(_DISK_CACHE_DIR, filename)
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(_disk_path(filename), "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return None
 
 
 def _disk_write(filename: str, data):
-    path = os.path.join(_DISK_CACHE_DIR, filename)
     try:
-        with open(path, "w", encoding="utf-8") as f:
+        with open(_disk_path(filename), "w", encoding="utf-8") as f:
             json.dump(data, f)
     except Exception:
         pass
 
 
-def _yf_history_with_retry(ticker_sym: str, **kwargs):
-    """Call yf.Ticker().history() with 0.5s pre-sleep and up to 2 retries."""
-    time.sleep(0.5)
-    for attempt in range(3):
-        try:
-            t = yf.Ticker(ticker_sym)
-            df = t.history(**kwargs)
-            if df is not None and not df.empty:
-                return df
-        except Exception:
-            pass
-        if attempt < 2:
-            time.sleep(1)
-    return None
+def _disk_age_days(filename: str) -> float:
+    try:
+        return (time.time() - os.path.getmtime(_disk_path(filename))) / 86400
+    except Exception:
+        return float("inf")
 
-router = APIRouter()
+
+# ── Memory cache (realtime only) ───────────────────────────────────────────────
+_rt_cache: dict = {}
+_RT_TTL = 900  # 15 minutes
+
 
 # ── Industry map ──────────────────────────────────────────────────────────────
 _INDUSTRY_MAP: dict = {}
-_INDUSTRY_MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "us_industry_map.json")
+_INDUSTRY_MAP_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "data", "us_industry_map.json"
+)
+
 
 def _load_industry_map():
     global _INDUSTRY_MAP
@@ -73,19 +79,11 @@ def _load_industry_map():
     except Exception:
         _INDUSTRY_MAP = {}
 
+
 _load_industry_map()
 
-# ── Caches ────────────────────────────────────────────────────────────────────
-_rt_cache:   dict = {}   # realtime   5 min
-_hist_cache: dict = {}   # history    60 min
-_sim_cache:  dict = {}   # similar    120 min
 
-_RT_TTL   = 300
-_HIST_TTL = 3600
-_SIM_TTL  = 7200
-
-
-# ── Popular tickers for fast search ──────────────────────────────────────────
+# ── Popular tickers for fast local search ─────────────────────────────────────
 POPULAR_TICKERS = [
     # Tech
     {"code": "AAPL",  "name": "Apple Inc.",              "exchange": "NASDAQ", "sector": "Technology"},
@@ -232,7 +230,22 @@ POPULAR_TICKERS = [
 ]
 
 
-# ── Utilities ─────────────────────────────────────────────────────────────────
+# ── Alpha Vantage helpers ──────────────────────────────────────────────────────
+
+def _av_get(params: dict) -> dict:
+    """GET request to Alpha Vantage, returns parsed JSON."""
+    params = dict(params)
+    params["apikey"] = AV_KEY
+    resp = requests.get(AV_BASE, params=params, timeout=20)
+    resp.raise_for_status()
+    return resp.json()
+
+
+def _is_rate_limited(data: dict) -> bool:
+    return "Note" in data or "Information" in data
+
+
+# ── Math utilities ────────────────────────────────────────────────────────────
 
 def _safe(v):
     try:
@@ -242,11 +255,11 @@ def _safe(v):
         return None
 
 
-def _compute_ma(closes):
-    return {f'ma{w}': closes.rolling(w).mean() for w in [5, 10, 20, 60]}
+def _compute_ma(closes: pd.Series):
+    return {f"ma{w}": closes.rolling(w).mean() for w in [5, 10, 20, 60]}
 
 
-def _compute_macd(closes):
+def _compute_macd(closes: pd.Series):
     ema12 = closes.ewm(span=12, adjust=False).mean()
     ema26 = closes.ewm(span=26, adjust=False).mean()
     dif = ema12 - ema26
@@ -254,21 +267,27 @@ def _compute_macd(closes):
     return dif, dea, (dif - dea) * 2
 
 
-def _compute_rsi(closes):
+def _compute_rsi(closes: pd.Series):
     result = {}
     for p in [6, 12, 24]:
         delta = closes.diff()
-        avg_gain = delta.clip(lower=0).ewm(alpha=1/p, adjust=False).mean()
-        avg_loss = (-delta.clip(upper=0)).ewm(alpha=1/p, adjust=False).mean()
-        rs = avg_gain / avg_loss.replace(0, float('nan'))
-        result[f'rsi{p}'] = 100 - (100 / (1 + rs))
+        avg_gain = delta.clip(lower=0).ewm(alpha=1 / p, adjust=False).mean()
+        avg_loss = (-delta.clip(upper=0)).ewm(alpha=1 / p, adjust=False).mean()
+        rs = avg_gain / avg_loss.replace(0, float("nan"))
+        result[f"rsi{p}"] = 100 - (100 / (1 + rs))
     return result
 
 
-def _fmt_date(d):
-    if d and len(d) == 8 and '-' not in d:
+def _fmt_date(d: Optional[str]) -> Optional[str]:
+    if d and len(d) == 8 and "-" not in d:
         return f"{d[:4]}-{d[4:6]}-{d[6:8]}"
     return d
+
+
+def _period_to_days(period: str) -> int:
+    return {"1m": 30, "3m": 90, "6m": 180, "1y": 365, "2y": 730, "5y": 1825}.get(
+        period, 365
+    )
 
 
 def _find_sector(symbol: str) -> Optional[str]:
@@ -282,41 +301,135 @@ def _find_sector(symbol: str) -> Optional[str]:
     return None
 
 
+# ── Core data fetchers (shared by multiple endpoints) ─────────────────────────
+
+def _fetch_history_candles(sym: str) -> list:
+    """
+    Fetch full daily adjusted history from AV.
+    Returns list of candle dicts sorted by date ASC.
+    Disk-cached for 7 days (history doesn't change).
+    Raises HTTPException on unrecoverable failure.
+    """
+    cache_file = f"{sym}_history.json"
+
+    # Fresh disk cache (< 7 days)
+    if _disk_age_days(cache_file) < 7:
+        cached = _disk_read(cache_file)
+        if cached:
+            return cached
+
+    data = _av_get({
+        "function": "TIME_SERIES_DAILY_ADJUSTED",
+        "symbol": sym,
+        "outputsize": "full",
+    })
+
+    if _is_rate_limited(data):
+        # Fall back to stale disk cache rather than failing
+        cached = _disk_read(cache_file)
+        if cached:
+            return cached
+        raise HTTPException(
+            status_code=429,
+            detail="API_LIMIT: API limit reached, please try again tomorrow",
+        )
+
+    ts = data.get("Time Series (Daily)", {})
+    if not ts:
+        raise HTTPException(status_code=404, detail=f"No data for {sym}")
+
+    candles = []
+    for date_str, vals in sorted(ts.items()):
+        candles.append({
+            "date": date_str,
+            "open":   _safe(vals.get("1. open")),
+            "high":   _safe(vals.get("2. high")),
+            "low":    _safe(vals.get("3. low")),
+            "close":  _safe(vals.get("5. adjusted close")),
+            "volume": int(float(vals.get("6. volume", 0))),
+        })
+
+    _disk_write(cache_file, candles)
+    return candles
+
+
+def _fetch_overview(sym: str) -> dict:
+    """
+    Fetch company overview (name, sector, pe, 52w hi/lo, etc).
+    Disk-cached 7 days — does NOT raise on rate limit (returns empty dict).
+    """
+    cache_file = f"{sym}_overview.json"
+
+    if _disk_age_days(cache_file) < 7:
+        cached = _disk_read(cache_file)
+        if cached:
+            return cached
+
+    try:
+        data = _av_get({"function": "OVERVIEW", "symbol": sym})
+    except Exception:
+        return _disk_read(cache_file) or {}
+
+    if _is_rate_limited(data):
+        return _disk_read(cache_file) or {}
+
+    if not data.get("Symbol"):
+        return {}
+
+    overview = {
+        "name":        data.get("Name", sym),
+        "sector":      data.get("Sector", ""),
+        "industry":    data.get("Industry", ""),
+        "market_cap":  _safe(data.get("MarketCapitalization")),
+        "pe_ratio":    _safe(data.get("TrailingPE")),
+        "week52_high": _safe(data.get("52WeekHigh")),
+        "week52_low":  _safe(data.get("52WeekLow")),
+        "exchange":    data.get("Exchange", ""),
+    }
+    _disk_write(cache_file, overview)
+    return overview
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @router.get("/search")
 def search_us_stocks(q: str = Query(..., min_length=1)):
-    """Search by ticker symbol or company name. Fast local match + yfinance fallback."""
+    """Search by ticker symbol or company name. Fast local match + AV fallback."""
     q_lower = q.strip().lower()
     results = []
     seen = set()
 
     for t in POPULAR_TICKERS:
-        if q_lower in t['code'].lower() or q_lower in t['name'].lower():
-            if t['code'] not in seen:
-                seen.add(t['code'])
+        if q_lower in t["code"].lower() or q_lower in t["name"].lower():
+            if t["code"] not in seen:
+                seen.add(t["code"])
                 results.append({
-                    "code": t['code'],
-                    "name": t['name'],
+                    "code":     t["code"],
+                    "name":     t["name"],
                     "exchange": t.get("exchange", ""),
-                    "sector": t.get("sector", ""),
+                    "sector":   t.get("sector", ""),
                 })
         if len(results) >= 15:
             break
 
-    # yfinance fallback for exact symbol lookup
+    # AV SYMBOL_SEARCH for tickers not in the popular list
     if not results:
         try:
-            sym = q.strip().upper()
-            info = yf.Ticker(sym).info
-            name = info.get('shortName') or info.get('longName')
-            if name:
-                results.append({
-                    "code": sym,
-                    "name": name,
-                    "exchange": info.get("exchange", ""),
-                    "sector": info.get("sector", ""),
-                })
+            data = _av_get({"function": "SYMBOL_SEARCH", "keywords": q.strip()})
+            if not _is_rate_limited(data):
+                for m in data.get("bestMatches", []):
+                    if (
+                        m.get("3. type") == "Equity"
+                        and m.get("4. region") == "United States"
+                    ):
+                        results.append({
+                            "code":     m.get("1. symbol", ""),
+                            "name":     m.get("2. name", ""),
+                            "exchange": m.get("4. region", ""),
+                            "sector":   "",
+                        })
+                    if len(results) >= 10:
+                        break
         except Exception:
             pass
 
@@ -325,112 +438,96 @@ def search_us_stocks(q: str = Query(..., min_length=1)):
 
 @router.get("/stock/{symbol}/realtime")
 def get_us_realtime(symbol: str):
-    """Real-time US stock quote. Cached 5 minutes."""
+    """Real-time US stock quote. Memory cached 15 min."""
     sym = symbol.upper()
     now = time.time()
+
     if sym in _rt_cache:
         ts, data = _rt_cache[sym]
         if now - ts < _RT_TTL:
             return data
 
     try:
-        ticker = yf.Ticker(sym)
-        info = ticker.info
+        gq_data = _av_get({"function": "GLOBAL_QUOTE", "symbol": sym})
     except Exception as e:
+        if sym in _rt_cache:
+            _, data = _rt_cache[sym]
+            return data
         raise HTTPException(status_code=500, detail=str(e))
 
-    if not info:
-        raise HTTPException(status_code=404, detail=f"No data for {sym}")
+    if _is_rate_limited(gq_data):
+        if sym in _rt_cache:
+            _, data = _rt_cache[sym]
+            return data
+        raise HTTPException(
+            status_code=429,
+            detail="API_LIMIT: API limit reached, please try again tomorrow",
+        )
 
-    def _f(key):
-        v = info.get(key)
-        return _safe(v) if v is not None else None
+    gq = gq_data.get("Global Quote", {})
+    if not gq or not gq.get("05. price"):
+        raise HTTPException(status_code=404, detail=f"No realtime data for {sym}")
+
+    change_pct_raw = gq.get("10. change percent", "0%").replace("%", "")
+    overview = _fetch_overview(sym)
 
     result = {
-        "symbol": sym,
-        "name": info.get("shortName") or info.get("longName") or sym,
-        "price": _f("currentPrice") or _f("regularMarketPrice") or _f("previousClose"),
-        "change": _f("regularMarketChange"),
-        "change_pct": _f("regularMarketChangePercent"),
-        "volume": info.get("regularMarketVolume"),
-        "market_cap": info.get("marketCap"),
-        "pe_ratio": _f("trailingPE"),
-        "week52_high": _f("fiftyTwoWeekHigh"),
-        "week52_low": _f("fiftyTwoWeekLow"),
-        "sector": info.get("sector", ""),
-        "industry": info.get("industry", ""),
-        "exchange": info.get("exchange", ""),
+        "symbol":            sym,
+        "name":              overview.get("name") or sym,
+        "price":             _safe(gq.get("05. price")),
+        "change":            _safe(gq.get("09. change")),
+        "change_pct":        _safe(change_pct_raw),
+        "volume":            int(float(gq.get("06. volume", 0))),
+        "latest_trading_day": gq.get("07. latest trading day", ""),
+        "market_cap":        overview.get("market_cap"),
+        "pe_ratio":          overview.get("pe_ratio"),
+        "week52_high":       overview.get("week52_high"),
+        "week52_low":        overview.get("week52_low"),
+        "sector":            overview.get("sector", ""),
+        "industry":          overview.get("industry", ""),
+        "exchange":          overview.get("exchange", ""),
     }
     _rt_cache[sym] = (now, result)
     return result
 
 
 @router.get("/stock/{symbol}/history")
-def get_us_history(
-    symbol: str,
-    period: str = "1y",
-    interval: str = "1d",
-):
-    """Historical OHLCV data. Cached 1 hour (memory) + daily disk cache."""
+def get_us_history(symbol: str, period: str = "1y", interval: str = "1d"):
+    """Historical OHLCV. Disk-cached 7 days."""
     sym = symbol.upper()
-    mem_key = f"{sym}_{period}_{interval}"
-    now = time.time()
-    if mem_key in _hist_cache:
-        ts, data = _hist_cache[mem_key]
-        if now - ts < _HIST_TTL:
-            return data
+    all_candles = _fetch_history_candles(sym)
 
-    # Disk cache: keyed by date (daily granularity)
-    today = datetime.now().strftime("%Y%m%d")
-    disk_file = f"{sym}_history_{today}_{period}_{interval}.json"
-    disk_data = _disk_read(disk_file)
-    if disk_data:
-        _hist_cache[mem_key] = (now, disk_data)
-        return disk_data
+    days = _period_to_days(period)
+    cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+    candles = [c for c in all_candles if c["date"] >= cutoff]
 
-    df = _yf_history_with_retry(sym, period=period, interval=interval, auto_adjust=True)
+    for i, c in enumerate(candles):
+        if i == 0:
+            c["pct_change"] = None
+        else:
+            prev = candles[i - 1]["close"]
+            cur = c["close"]
+            c["pct_change"] = (
+                round((cur - prev) / prev * 100, 4) if prev and cur else None
+            )
 
-    if df is None or df.empty:
-        raise HTTPException(status_code=404, detail=f"No data found for {sym}")
-
-    df.index = pd.to_datetime(df.index)
-    df = df.sort_index()
-    closes = df["Close"]
-    pct = closes.pct_change() * 100
-
-    candles = [
-        {
-            "date": idx.strftime("%Y-%m-%d"),
-            "open": _safe(row["Open"]),
-            "high": _safe(row["High"]),
-            "low": _safe(row["Low"]),
-            "close": _safe(row["Close"]),
-            "volume": int(row["Volume"]) if not pd.isna(row["Volume"]) else 0,
-            "pct_change": _safe(pct.iloc[i]),
-        }
-        for i, (idx, row) in enumerate(df.iterrows())
-    ]
-
-    result = {"symbol": sym, "candles": candles}
-    _hist_cache[mem_key] = (now, result)
-    _disk_write(disk_file, result)
-    return result
+    return {"symbol": sym, "candles": candles}
 
 
 @router.get("/similar/{symbol}")
 def get_us_similar(symbol: str):
-    """Top-10 peers by Pearson correlation on last-year daily returns. Cached 2 hours."""
+    """Top-10 peers by Pearson correlation on daily returns. Disk-cached 1 day."""
     sym = symbol.upper()
-    now = time.time()
-    if sym in _sim_cache:
-        ts, data = _sim_cache[sym]
-        if now - ts < _SIM_TTL:
-            return data
+    today = datetime.now().strftime("%Y%m%d")
+    sim_file = f"{sym}_similar_{today}.json"
+
+    cached = _disk_read(sim_file)
+    if cached:
+        return cached
 
     _load_industry_map()
     sector = _find_sector(sym)
 
-    # Get candidate peers
     candidates: list = []
     if sector and sector in _INDUSTRY_MAP:
         candidates = [s for s in _INDUSTRY_MAP[sector] if s != sym]
@@ -443,70 +540,60 @@ def get_us_similar(symbol: str):
     if not candidates:
         return {"symbol": sym, "sector": sector or "", "results": []}
 
-    candidates = candidates[:15]  # limit to avoid rate limits
+    candidates = candidates[:12]
 
-    # Disk cache: hourly for similar (computed across many tickers, expensive)
-    today = datetime.now().strftime("%Y%m%d")
-    hour = datetime.now().strftime("%H")
-    sim_disk_file = f"{sym}_similar_{today}_{hour}.json"
-    sim_disk_data = _disk_read(sim_disk_file)
-    if sim_disk_data:
-        _sim_cache[sym] = (now, sim_disk_data)
-        return sim_disk_data
+    def _get_closes(ticker_sym: str):
+        try:
+            all_c = _fetch_history_candles(ticker_sym)
+            recent = all_c[-252:] if len(all_c) > 252 else all_c
+            closes = [c["close"] for c in recent if c["close"] is not None]
+            sparkline = [c["close"] for c in all_c[-20:] if c["close"] is not None]
+            return closes, sparkline
+        except Exception:
+            return [], []
 
-    def _fetch_returns(ticker_sym: str):
-        df = _yf_history_with_retry(ticker_sym, period="1y", interval="1d", auto_adjust=True)
-        if df is None or df.empty or len(df) < 20:
-            return None, []
-        closes = df["Close"]
-        sparkline = [round(float(v), 2) for v in closes.dropna().tolist()[-20:]]
-        return closes.pct_change().dropna(), sparkline
+    ref_closes, _ = _get_closes(sym)
+    if len(ref_closes) < 20:
+        return {"symbol": sym, "sector": sector or "", "results": [], "rate_limited": True}
 
-    ref_ret, _ = _fetch_returns(sym)
-    if ref_ret is None:
-        # Graceful fallback: rate limited or no data — return empty
-        response = {"symbol": sym, "sector": sector or "", "results": [], "rate_limited": True}
-        _sim_cache[sym] = (now - _SIM_TTL + 300, response)  # short cache (5 min) so it retries soon
-        return response
+    ref_series = pd.Series(ref_closes, dtype=float).pct_change().dropna()
 
     results = []
     for peer in candidates:
-        peer_ret, sparkline = _fetch_returns(peer)
-        if peer_ret is None:
+        peer_closes, sparkline = _get_closes(peer)
+        if len(peer_closes) < 20:
             continue
-        combined = pd.concat([ref_ret, peer_ret], axis=1, join="inner")
-        combined.columns = ["ref", "peer"]
-        combined = combined.dropna()
+        peer_series = pd.Series(peer_closes, dtype=float).pct_change().dropna()
+        min_len = min(len(ref_series), len(peer_series))
+        combined = pd.DataFrame({
+            "ref":  ref_series.iloc[-min_len:].values,
+            "peer": peer_series.iloc[-min_len:].values,
+        }).dropna()
         if len(combined) < 20:
             continue
         corr = float(combined["ref"].corr(combined["peer"]))
         if np.isnan(corr):
             continue
-
-        peer_name = next((tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), peer)
-
+        peer_name = next(
+            (tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), peer
+        )
         results.append({
-            "code": peer,
-            "name": peer_name,
+            "code":        peer,
+            "name":        peer_name,
             "correlation": round(corr, 4),
-            "sparkline": sparkline,
-            "sector": sector or "",
+            "sparkline":   sparkline,
+            "sector":      sector or "",
         })
 
     results.sort(key=lambda x: x["correlation"], reverse=True)
     results = results[:10]
 
-    response = {
-        "symbol": sym,
-        "sector": sector or "",
-        "results": results,
-    }
-    _sim_cache[sym] = (now, response)
-    _disk_write(sim_disk_file, response)
+    response = {"symbol": sym, "sector": sector or "", "results": results}
+    _disk_write(sim_file, response)
     return response
 
 
-# ── Legacy endpoint (backward compat with useStockData hook) ──────────────────
+# ── Legacy endpoint (backward compat with useStockData / getUSStockHistory) ───
 
 @router.get("/stock/{symbol}")
 def get_us_stock(
@@ -515,48 +602,50 @@ def get_us_stock(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
 ):
-    interval = {"daily": "1d", "weekly": "1wk", "monthly": "1mo"}.get(period, "1d")
-    start = _fmt_date(start_date) or (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+    sym = symbol.upper()
+    all_candles = _fetch_history_candles(sym)
+
+    start = _fmt_date(start_date) or (datetime.now() - timedelta(days=365)).strftime(
+        "%Y-%m-%d"
+    )
     end = _fmt_date(end_date) or datetime.now().strftime("%Y-%m-%d")
+    candles_raw = [c for c in all_candles if start <= c["date"] <= end]
 
-    df = _yf_history_with_retry(symbol.upper(), start=start, end=end, interval=interval, auto_adjust=True)
+    if not candles_raw:
+        raise HTTPException(status_code=404, detail=f"No data found for {sym}")
 
-    if df is None or df.empty:
-        raise HTTPException(status_code=404, detail=f"No data found for {symbol}")
-
-    df.index = pd.to_datetime(df.index)
-    df = df.sort_index()
-
-    closes = df['Close']
+    closes = pd.Series([c["close"] for c in candles_raw], dtype=float)
     ma = _compute_ma(closes)
     dif, dea, macd_hist = _compute_macd(closes)
     rsi = _compute_rsi(closes)
     pct = closes.pct_change() * 100
 
-    dates = [idx.strftime("%Y-%m-%d") for idx in df.index]
-
     candles = [
         {
-            "date": dates[i],
-            "open": _safe(row['Open']),
-            "high": _safe(row['High']),
-            "low": _safe(row['Low']),
-            "close": _safe(row['Close']),
-            "volume": int(row['Volume']) if not pd.isna(row['Volume']) else 0,
-            "amount": _safe(row['Close'] * row['Volume']),
+            "date":       c["date"],
+            "open":       c["open"],
+            "high":       c["high"],
+            "low":        c["low"],
+            "close":      c["close"],
+            "volume":     c["volume"],
+            "amount":     round(c["close"] * c["volume"], 2)
+                          if c["close"] and c["volume"]
+                          else None,
             "pct_change": _safe(pct.iloc[i]),
-            "turnover": 0,
+            "turnover":   0,
         }
-        for i, (_, row) in enumerate(df.iterrows())
+        for i, c in enumerate(candles_raw)
     ]
+
+    dates = [c["date"] for c in candles_raw]
 
     ma_data = [
         {
             "date": d,
-            "ma5":  _safe(ma['ma5'].iloc[i]),
-            "ma10": _safe(ma['ma10'].iloc[i]),
-            "ma20": _safe(ma['ma20'].iloc[i]),
-            "ma60": _safe(ma['ma60'].iloc[i]),
+            "ma5":  _safe(ma["ma5"].iloc[i]),
+            "ma10": _safe(ma["ma10"].iloc[i]),
+            "ma20": _safe(ma["ma20"].iloc[i]),
+            "ma60": _safe(ma["ma60"].iloc[i]),
         }
         for i, d in enumerate(dates)
     ]
@@ -573,25 +662,21 @@ def get_us_stock(
 
     rsi_data = [
         {
-            "date": d,
-            "rsi6":  _safe(rsi['rsi6'].iloc[i]),
-            "rsi12": _safe(rsi['rsi12'].iloc[i]),
-            "rsi24": _safe(rsi['rsi24'].iloc[i]),
+            "date":  d,
+            "rsi6":  _safe(rsi["rsi6"].iloc[i]),
+            "rsi12": _safe(rsi["rsi12"].iloc[i]),
+            "rsi24": _safe(rsi["rsi24"].iloc[i]),
         }
         for i, d in enumerate(dates)
     ]
 
-    try:
-        info = ticker.info
-        name = info.get('shortName') or info.get('longName') or symbol.upper()
-    except Exception:
-        name = symbol.upper()
+    overview = _fetch_overview(sym)
 
     return {
-        "symbol": symbol.upper(),
-        "name": name,
+        "symbol": sym,
+        "name":   overview.get("name") or sym,
         "candles": candles,
-        "ma": ma_data,
-        "macd": macd_data,
-        "rsi": rsi_data,
+        "ma":      ma_data,
+        "macd":    macd_data,
+        "rsi":     rsi_data,
     }
