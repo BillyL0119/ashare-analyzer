@@ -10,7 +10,8 @@ const PROGRESS_BG = 'rgba(255,255,255,0.06)'
 const EXAMS = [
   { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#6366f1', board: 'Cambridge 9708' },
   { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#10b981', board: 'Cambridge 0455' },
-  { key: 'ap',     label: 'AP',      label_en: 'AP',      title: 'AP Macroeconomics',      title_en: 'AP Macroeconomics',      color: '#f59e0b', board: 'College Board'  },
+  { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: '#f59e0b', board: 'College Board' },
+  { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#ef4444', board: 'College Board' },
   { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#8b5cf6', board: 'IB SL/HL'       },
   { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '股票知识入门',       title_en: 'Stock Market Basics',    color: '#ec4899', board: 'Stock Basics'   },
 ]
