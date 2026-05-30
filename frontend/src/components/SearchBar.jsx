@@ -22,7 +22,12 @@ export default function SearchBar() {
     setSearching(true)
     try {
       const res = market === 'us' ? await searchUSStocks(q) : await searchStocks(q)
-      setResults(res.data.slice(0, 20))
+      const raw = res.data.slice(0, 20)
+      // US search returns { symbol, name, ... } — normalize to { code, name, ... }
+      const normalized = market === 'us'
+        ? raw.map((s) => ({ ...s, code: s.code || s.symbol }))
+        : raw
+      setResults(normalized)
       setOpen(true)
     } catch {
       setResults([])
