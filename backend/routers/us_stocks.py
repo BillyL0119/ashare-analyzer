@@ -1,16 +1,17 @@
 """
 US Stock router — /api/us/*
-Data source: Alpha Vantage API (25 calls/day free tier — disk cache is critical)
+Data source: Polygon.io API (disk cache is critical for free tier)
 
 Endpoints:
   GET /search?q={query}               Search by ticker or company name
-  GET /stock/{symbol}                 Historical OHLCV + indicators (legacy, used by useStockData)
-  GET /stock/{symbol}/realtime        Real-time quote (15-min memory cache)
-  GET /stock/{symbol}/history         Historical OHLCV (7-day disk cache)
+  GET /stock/{symbol}                 Historical OHLCV + indicators (legacy)
+  GET /stock/{symbol}/realtime        Previous-day quote (1-hour disk cache)
+  GET /stock/{symbol}/history         Historical OHLCV (cached until next day)
   GET /similar/{symbol}               Top-10 peers by Pearson correlation (1-day disk cache)
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 from typing import Optional
 import pandas as pd
 import numpy as np
@@ -22,44 +23,34 @@ import requests
 
 router = APIRouter()
 
-AV_KEY  = "30EZ8EJHLMD6HPXP"
-AV_BASE = "https://www.alphavantage.co/query"
+POLYGON_KEY  = "ni5ftWPpA88XtLZPAlE35rohnEwIjFoH"
+POLYGON_BASE = "https://api.polygon.io"
 
 # ── Disk cache ────────────────────────────────────────────────────────────────
-_DISK_CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "us_cache")
-os.makedirs(_DISK_CACHE_DIR, exist_ok=True)
+CACHE_DIR = os.path.join(os.path.dirname(__file__), "../data/us_cache")
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 
-def _disk_path(filename: str) -> str:
-    return os.path.join(_DISK_CACHE_DIR, filename)
+def read_cache(key: str, max_age_hours: float = 24):
+    path = os.path.join(CACHE_DIR, f"{key}.json")
+    if os.path.exists(path):
+        age = time.time() - os.path.getmtime(path)
+        if age < max_age_hours * 3600:
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+    return None
 
 
-def _disk_read(filename: str):
+def write_cache(key: str, data):
+    path = os.path.join(CACHE_DIR, f"{key}.json")
     try:
-        with open(_disk_path(filename), "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return None
-
-
-def _disk_write(filename: str, data):
-    try:
-        with open(_disk_path(filename), "w", encoding="utf-8") as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f)
     except Exception:
         pass
-
-
-def _disk_age_days(filename: str) -> float:
-    try:
-        return (time.time() - os.path.getmtime(_disk_path(filename))) / 86400
-    except Exception:
-        return float("inf")
-
-
-# ── Memory cache (realtime only) ───────────────────────────────────────────────
-_rt_cache: dict = {}
-_RT_TTL = 900  # 15 minutes
 
 
 # ── Industry map ──────────────────────────────────────────────────────────────
@@ -230,22 +221,7 @@ POPULAR_TICKERS = [
 ]
 
 
-# ── Alpha Vantage helpers ──────────────────────────────────────────────────────
-
-def _av_get(params: dict) -> dict:
-    """GET request to Alpha Vantage, returns parsed JSON."""
-    params = dict(params)
-    params["apikey"] = AV_KEY
-    resp = requests.get(AV_BASE, params=params, timeout=20)
-    resp.raise_for_status()
-    return resp.json()
-
-
-def _is_rate_limited(data: dict) -> bool:
-    return "Note" in data or "Information" in data
-
-
-# ── Math utilities ────────────────────────────────────────────────────────────
+# ── Math utilities (used by legacy endpoint) ──────────────────────────────────
 
 def _safe(v):
     try:
@@ -301,296 +277,352 @@ def _find_sector(symbol: str) -> Optional[str]:
     return None
 
 
-# ── Core data fetchers (shared by multiple endpoints) ─────────────────────────
+# ── Polygon.io helpers ────────────────────────────────────────────────────────
 
-def _fetch_history_candles(sym: str) -> list:
+def _polygon_get(path: str, params: dict = None) -> dict:
+    """GET request to Polygon.io, returns parsed JSON."""
+    p = dict(params or {})
+    p["apiKey"] = POLYGON_KEY
+    resp = requests.get(f"{POLYGON_BASE}{path}", params=p, timeout=20)
+    resp.raise_for_status()
+    return resp.json()
+
+
+# ── Core data fetchers ────────────────────────────────────────────────────────
+
+def _fetch_history_candles(sym: str, days: int = 365) -> list:
     """
-    Fetch full daily adjusted history from AV.
+    Fetch daily OHLCV from Polygon aggregates.
     Returns list of candle dicts sorted by date ASC.
-    Disk-cached for 7 days (history doesn't change).
-    Raises HTTPException on unrecoverable failure.
+    Cached until next calendar day.
     """
-    cache_file = f"{sym}_history.json"
+    today = datetime.now().strftime("%Y-%m-%d")
+    cache_key = f"{sym}_history_{today}"
+    cached = read_cache(cache_key, max_age_hours=24)
+    if cached:
+        return cached
 
-    # Fresh disk cache (< 7 days)
-    if _disk_age_days(cache_file) < 7:
-        cached = _disk_read(cache_file)
-        if cached:
-            return cached
+    to_date = datetime.now().strftime("%Y-%m-%d")
+    from_date = (datetime.now() - timedelta(days=max(days, 365))).strftime("%Y-%m-%d")
 
-    data = _av_get({
-        "function": "TIME_SERIES_DAILY",
-        "symbol": sym,
-        "outputsize": "full",
-    })
+    data = _polygon_get(
+        f"/v2/aggs/ticker/{sym}/range/1/day/{from_date}/{to_date}",
+        {"adjusted": "true", "sort": "asc", "limit": 365},
+    )
 
-    if _is_rate_limited(data):
-        # Fall back to stale disk cache rather than failing
-        cached = _disk_read(cache_file)
-        if cached:
-            return cached
-        raise HTTPException(
-            status_code=429,
-            detail="API_LIMIT: API limit reached, please try again tomorrow",
-        )
-
-    ts = data.get("Time Series (Daily)", {})
-    if not ts:
-        raise HTTPException(status_code=404, detail=f"No data for {sym}")
+    results = data.get("results", [])
+    if not results:
+        return []
 
     candles = []
-    for date_str, vals in sorted(ts.items()):
+    for bar in results:
+        ts_ms = bar.get("t", 0)
+        date_str = datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d")
         candles.append({
-            "date": date_str,
-            "open":   _safe(vals.get("1. open")),
-            "high":   _safe(vals.get("2. high")),
-            "low":    _safe(vals.get("3. low")),
-            "close":  _safe(vals.get("4. close")),
-            "volume": int(float(vals.get("5. volume", 0))),
+            "date":   date_str,
+            "open":   round(bar.get("o", 0), 4),
+            "high":   round(bar.get("h", 0), 4),
+            "low":    round(bar.get("l", 0), 4),
+            "close":  round(bar.get("c", 0), 4),
+            "volume": int(bar.get("v", 0)),
         })
 
-    _disk_write(cache_file, candles)
+    write_cache(cache_key, candles)
     return candles
 
 
-def _fetch_overview(sym: str) -> dict:
+def _fetch_company_info(sym: str) -> dict:
     """
-    Fetch company overview (name, sector, pe, 52w hi/lo, etc).
-    Disk-cached 7 days — does NOT raise on rate limit (returns empty dict).
+    Fetch company reference data from Polygon.
+    Cached 7 days.
     """
-    cache_file = f"{sym}_overview.json"
+    cache_key = f"{sym}_info"
+    cached = read_cache(cache_key, max_age_hours=7 * 24)
+    if cached:
+        return cached
 
-    if _disk_age_days(cache_file) < 7:
-        cached = _disk_read(cache_file)
-        if cached:
-            return cached
-
-    try:
-        data = _av_get({"function": "OVERVIEW", "symbol": sym})
-    except Exception:
-        return _disk_read(cache_file) or {}
-
-    if _is_rate_limited(data):
-        return _disk_read(cache_file) or {}
-
-    if not data.get("Symbol"):
+    data = _polygon_get(f"/v3/reference/tickers/{sym}")
+    res = data.get("results", {})
+    if not res:
         return {}
 
-    overview = {
-        "name":        data.get("Name", sym),
-        "sector":      data.get("Sector", ""),
-        "industry":    data.get("Industry", ""),
-        "market_cap":  _safe(data.get("MarketCapitalization")),
-        "pe_ratio":    _safe(data.get("TrailingPE")),
-        "week52_high": _safe(data.get("52WeekHigh")),
-        "week52_low":  _safe(data.get("52WeekLow")),
-        "exchange":    data.get("Exchange", ""),
+    branding = res.get("branding", {})
+    info = {
+        "name":         res.get("name", sym),
+        "sector":       res.get("sic_description", ""),
+        "industry":     res.get("sic_description", ""),
+        "market_cap":   res.get("market_cap"),
+        "employees":    res.get("total_employees"),
+        "description":  res.get("description", ""),
+        "homepage_url": res.get("homepage_url", ""),
+        "exchange":     res.get("primary_exchange", ""),
     }
-    _disk_write(cache_file, overview)
-    return overview
+    write_cache(cache_key, info)
+    return info
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
+@router.get("/stock/{symbol}/history")
+def get_us_history(symbol: str, period: str = "1y"):
+    sym = symbol.upper()
+    days = _period_to_days(period)
+
+    try:
+        all_candles = _fetch_history_candles(sym, days)
+        if not all_candles:
+            cached = read_cache(f"{sym}_history_{datetime.now().strftime('%Y-%m-%d')}", max_age_hours=9999)
+            if cached:
+                return {"symbol": sym, "data": cached, "cached": True}
+            return JSONResponse({"error": "Unable to load data", "cached": False}, status_code=502)
+
+        cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+        candles = [c for c in all_candles if c["date"] >= cutoff]
+        return {"symbol": sym, "data": candles}
+
+    except Exception:
+        # Try any stale cache on failure
+        for stale_hours in [9999]:
+            cached = read_cache(f"{sym}_history_{datetime.now().strftime('%Y-%m-%d')}", max_age_hours=stale_hours)
+            if cached:
+                cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+                return {"symbol": sym, "data": [c for c in cached if c["date"] >= cutoff], "cached": True}
+        return JSONResponse({"error": "Unable to load data", "cached": False}, status_code=502)
+
+
+@router.get("/stock/{symbol}/realtime")
+def get_us_realtime(symbol: str):
+    sym = symbol.upper()
+
+    try:
+        # Price: cache 1 hour
+        price_cache_key = f"{sym}_realtime"
+        price_data = read_cache(price_cache_key, max_age_hours=1)
+
+        if not price_data:
+            prev = _polygon_get(
+                f"/v2/aggs/ticker/{sym}/prev",
+                {"adjusted": "true"},
+            )
+            bars = prev.get("results", [])
+            if bars:
+                bar = bars[0]
+                close  = bar.get("c", 0)
+                open_  = bar.get("o", 0)
+                change     = round(close - open_, 4)
+                change_pct = round((change / open_ * 100), 4) if open_ else 0
+                price_data = {
+                    "price":      round(close, 4),
+                    "change":     change,
+                    "change_pct": change_pct,
+                    "volume":     int(bar.get("v", 0)),
+                }
+                write_cache(price_cache_key, price_data)
+
+        # Company info: cache 7 days
+        info = {}
+        try:
+            info = _fetch_company_info(sym)
+        except Exception:
+            info = read_cache(f"{sym}_info", max_age_hours=9999) or {}
+
+        # 52-week high/low from 1-year history
+        week52_high = None
+        week52_low  = None
+        try:
+            hist = _fetch_history_candles(sym, 365)
+            if hist:
+                highs = [c["high"] for c in hist if c["high"]]
+                lows  = [c["low"]  for c in hist if c["low"]]
+                week52_high = max(highs) if highs else None
+                week52_low  = min(lows)  if lows  else None
+        except Exception:
+            pass
+
+        if not price_data:
+            cached_rt = read_cache(f"{sym}_realtime", max_age_hours=9999)
+            if cached_rt:
+                return {**cached_rt, **info, "symbol": sym, "cached": True}
+            return JSONResponse({"error": "Unable to load data", "cached": False}, status_code=502)
+
+        result = {
+            "symbol":       sym,
+            "name":         info.get("name", sym),
+            "price":        price_data.get("price"),
+            "change":       price_data.get("change"),
+            "change_pct":   price_data.get("change_pct"),
+            "volume":       price_data.get("volume"),
+            "market_cap":   info.get("market_cap"),
+            "pe_ratio":     None,
+            "week52_high":  week52_high,
+            "week52_low":   week52_low,
+            "sector":       info.get("sector", ""),
+            "industry":     info.get("industry", ""),
+            "description":  info.get("description", ""),
+            "homepage_url": info.get("homepage_url", ""),
+            "employees":    info.get("employees"),
+        }
+        return result
+
+    except Exception:
+        cached_rt = read_cache(f"{sym}_realtime", max_age_hours=9999)
+        cached_info = read_cache(f"{sym}_info", max_age_hours=9999) or {}
+        if cached_rt:
+            return {
+                "symbol":       sym,
+                "name":         cached_info.get("name", sym),
+                "price":        cached_rt.get("price"),
+                "change":       cached_rt.get("change"),
+                "change_pct":   cached_rt.get("change_pct"),
+                "volume":       cached_rt.get("volume"),
+                "market_cap":   cached_info.get("market_cap"),
+                "pe_ratio":     None,
+                "week52_high":  None,
+                "week52_low":   None,
+                "sector":       cached_info.get("sector", ""),
+                "industry":     cached_info.get("industry", ""),
+                "description":  cached_info.get("description", ""),
+                "homepage_url": cached_info.get("homepage_url", ""),
+                "employees":    cached_info.get("employees"),
+                "cached":       True,
+            }
+        return JSONResponse({"error": "Unable to load data", "cached": False}, status_code=502)
+
+
 @router.get("/search")
 def search_us_stocks(q: str = Query(..., min_length=1)):
-    """Search by ticker symbol or company name. Fast local match + AV fallback."""
-    q_lower = q.strip().lower()
+    q_strip  = q.strip()
+    q_lower  = q_strip.lower()
+    cache_key = f"search_{q_lower}"
+
+    cached = read_cache(cache_key, max_age_hours=24)
+    if cached:
+        return cached
+
+    # Fast local match first
     results = []
     seen = set()
-
     for t in POPULAR_TICKERS:
         if q_lower in t["code"].lower() or q_lower in t["name"].lower():
             if t["code"] not in seen:
                 seen.add(t["code"])
                 results.append({
-                    "code":     t["code"],
+                    "symbol":   t["code"],
                     "name":     t["name"],
                     "exchange": t.get("exchange", ""),
                     "sector":   t.get("sector", ""),
+                    "type":     "CS",
                 })
-        if len(results) >= 15:
+        if len(results) >= 10:
             break
 
-    # AV SYMBOL_SEARCH for tickers not in the popular list
+    # Polygon search for anything not in popular list
     if not results:
         try:
-            data = _av_get({"function": "SYMBOL_SEARCH", "keywords": q.strip()})
-            if not _is_rate_limited(data):
-                for m in data.get("bestMatches", []):
-                    if (
-                        m.get("3. type") == "Equity"
-                        and m.get("4. region") == "United States"
-                    ):
-                        results.append({
-                            "code":     m.get("1. symbol", ""),
-                            "name":     m.get("2. name", ""),
-                            "exchange": m.get("4. region", ""),
-                            "sector":   "",
-                        })
-                    if len(results) >= 10:
-                        break
+            data = _polygon_get(
+                "/v3/reference/tickers",
+                {"search": q_strip, "market": "stocks", "active": "true", "limit": 10},
+            )
+            for item in data.get("results", []):
+                if item.get("type") != "CS":
+                    continue
+                results.append({
+                    "symbol":   item.get("ticker", ""),
+                    "name":     item.get("name", ""),
+                    "exchange": item.get("primary_exchange", ""),
+                    "sector":   "",
+                    "type":     "CS",
+                })
+                if len(results) >= 10:
+                    break
         except Exception:
             pass
 
+    write_cache(cache_key, results)
     return results
-
-
-@router.get("/stock/{symbol}/realtime")
-def get_us_realtime(symbol: str):
-    """Real-time US stock quote. Memory cached 15 min."""
-    sym = symbol.upper()
-    now = time.time()
-
-    if sym in _rt_cache:
-        ts, data = _rt_cache[sym]
-        if now - ts < _RT_TTL:
-            return data
-
-    try:
-        gq_data = _av_get({"function": "GLOBAL_QUOTE", "symbol": sym})
-    except Exception as e:
-        if sym in _rt_cache:
-            _, data = _rt_cache[sym]
-            return data
-        raise HTTPException(status_code=500, detail=str(e))
-
-    if _is_rate_limited(gq_data):
-        if sym in _rt_cache:
-            _, data = _rt_cache[sym]
-            return data
-        raise HTTPException(
-            status_code=429,
-            detail="API_LIMIT: API limit reached, please try again tomorrow",
-        )
-
-    gq = gq_data.get("Global Quote", {})
-    if not gq or not gq.get("05. price"):
-        raise HTTPException(status_code=404, detail=f"No realtime data for {sym}")
-
-    change_pct_raw = gq.get("10. change percent", "0%").replace("%", "")
-    overview = _fetch_overview(sym)
-
-    result = {
-        "symbol":            sym,
-        "name":              overview.get("name") or sym,
-        "price":             _safe(gq.get("05. price")),
-        "change":            _safe(gq.get("09. change")),
-        "change_pct":        _safe(change_pct_raw),
-        "volume":            int(float(gq.get("06. volume", 0))),
-        "latest_trading_day": gq.get("07. latest trading day", ""),
-        "market_cap":        overview.get("market_cap"),
-        "pe_ratio":          overview.get("pe_ratio"),
-        "week52_high":       overview.get("week52_high"),
-        "week52_low":        overview.get("week52_low"),
-        "sector":            overview.get("sector", ""),
-        "industry":          overview.get("industry", ""),
-        "exchange":          overview.get("exchange", ""),
-    }
-    _rt_cache[sym] = (now, result)
-    return result
-
-
-@router.get("/stock/{symbol}/history")
-def get_us_history(symbol: str, period: str = "1y", interval: str = "1d"):
-    """Historical OHLCV. Disk-cached 7 days."""
-    sym = symbol.upper()
-    all_candles = _fetch_history_candles(sym)
-
-    days = _period_to_days(period)
-    cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
-    candles = [c for c in all_candles if c["date"] >= cutoff]
-
-    for i, c in enumerate(candles):
-        if i == 0:
-            c["pct_change"] = None
-        else:
-            prev = candles[i - 1]["close"]
-            cur = c["close"]
-            c["pct_change"] = (
-                round((cur - prev) / prev * 100, 4) if prev and cur else None
-            )
-
-    return {"symbol": sym, "candles": candles}
 
 
 @router.get("/similar/{symbol}")
 def get_us_similar(symbol: str):
-    """Top-10 peers by Pearson correlation on daily returns. Disk-cached 1 day."""
     sym = symbol.upper()
-    today = datetime.now().strftime("%Y%m%d")
-    sim_file = f"{sym}_similar_{today}.json"
+    cache_key = f"{sym}_similar_us"
 
-    cached = _disk_read(sim_file)
+    cached = read_cache(cache_key, max_age_hours=24)
     if cached:
         return cached
 
-    _load_industry_map()
-    sector = _find_sector(sym)
+    try:
+        _load_industry_map()
+        sector = _find_sector(sym)
 
-    candidates: list = []
-    if sector and sector in _INDUSTRY_MAP:
-        candidates = [s for s in _INDUSTRY_MAP[sector] if s != sym]
-    else:
-        for tickers in _INDUSTRY_MAP.values():
-            for s in tickers:
-                if s != sym and s not in candidates:
-                    candidates.append(s)
+        candidates: list = []
+        if sector and sector in _INDUSTRY_MAP:
+            candidates = [s for s in _INDUSTRY_MAP[sector] if s != sym]
+        else:
+            for tickers in _INDUSTRY_MAP.values():
+                for s in tickers:
+                    if s != sym and s not in candidates:
+                        candidates.append(s)
 
-    if not candidates:
-        return {"symbol": sym, "sector": sector or "", "results": []}
+        if not candidates:
+            return {"symbol": sym, "industry": sector or "", "results": []}
 
-    candidates = candidates[:12]
+        candidates = candidates[:15]
 
-    def _get_closes(ticker_sym: str):
-        try:
-            all_c = _fetch_history_candles(ticker_sym)
-            recent = all_c[-252:] if len(all_c) > 252 else all_c
-            closes = [c["close"] for c in recent if c["close"] is not None]
-            sparkline = [c["close"] for c in all_c[-20:] if c["close"] is not None]
-            return closes, sparkline
-        except Exception:
-            return [], []
+        def _get_closes(ticker_sym: str):
+            try:
+                all_c = _fetch_history_candles(ticker_sym, 365)
+                recent   = all_c[-252:] if len(all_c) > 252 else all_c
+                closes   = [c["close"] for c in recent if c.get("close")]
+                sparkline = [c["close"] for c in all_c[-20:] if c.get("close")]
+                return closes, sparkline
+            except Exception:
+                return [], []
 
-    ref_closes, _ = _get_closes(sym)
-    if len(ref_closes) < 20:
-        return {"symbol": sym, "sector": sector or "", "results": [], "rate_limited": True}
+        ref_closes, _ = _get_closes(sym)
+        if len(ref_closes) < 20:
+            return {"symbol": sym, "industry": sector or "", "results": []}
 
-    ref_series = pd.Series(ref_closes, dtype=float).pct_change().dropna()
+        ref_series = pd.Series(ref_closes, dtype=float).pct_change().dropna()
 
-    results = []
-    for peer in candidates:
-        peer_closes, sparkline = _get_closes(peer)
-        if len(peer_closes) < 20:
-            continue
-        peer_series = pd.Series(peer_closes, dtype=float).pct_change().dropna()
-        min_len = min(len(ref_series), len(peer_series))
-        combined = pd.DataFrame({
-            "ref":  ref_series.iloc[-min_len:].values,
-            "peer": peer_series.iloc[-min_len:].values,
-        }).dropna()
-        if len(combined) < 20:
-            continue
-        corr = float(combined["ref"].corr(combined["peer"]))
-        if np.isnan(corr):
-            continue
-        peer_name = next(
-            (tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), peer
-        )
-        results.append({
-            "code":        peer,
-            "name":        peer_name,
-            "correlation": round(corr, 4),
-            "sparkline":   sparkline,
-            "sector":      sector or "",
-        })
+        results = []
+        for peer in candidates:
+            peer_closes, sparkline = _get_closes(peer)
+            if len(peer_closes) < 20:
+                continue
+            peer_series = pd.Series(peer_closes, dtype=float).pct_change().dropna()
+            min_len = min(len(ref_series), len(peer_series))
+            combined = pd.DataFrame({
+                "ref":  ref_series.iloc[-min_len:].values,
+                "peer": peer_series.iloc[-min_len:].values,
+            }).dropna()
+            if len(combined) < 20:
+                continue
+            corr = float(combined["ref"].corr(combined["peer"]))
+            if np.isnan(corr):
+                continue
+            peer_name = next(
+                (tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), peer
+            )
+            results.append({
+                "code":        peer,
+                "name":        peer_name,
+                "correlation": round(corr, 4),
+                "sparkline":   sparkline,
+            })
 
-    results.sort(key=lambda x: x["correlation"], reverse=True)
-    results = results[:10]
+        results.sort(key=lambda x: x["correlation"], reverse=True)
+        results = results[:10]
 
-    response = {"symbol": sym, "sector": sector or "", "results": results}
-    _disk_write(sim_file, response)
-    return response
+        response = {"symbol": sym, "industry": sector or "", "results": results}
+        write_cache(cache_key, response)
+        return response
+
+    except Exception:
+        stale = read_cache(cache_key, max_age_hours=9999)
+        if stale:
+            return {**stale, "cached": True}
+        return JSONResponse({"error": "Unable to load data", "cached": False}, status_code=502)
 
 
 # ── Legacy endpoint (backward compat with useStockData / getUSStockHistory) ───
@@ -603,16 +635,14 @@ def get_us_stock(
     end_date: Optional[str] = None,
 ):
     sym = symbol.upper()
-    all_candles = _fetch_history_candles(sym)
+    all_candles = _fetch_history_candles(sym, 365)
 
-    start = _fmt_date(start_date) or (datetime.now() - timedelta(days=365)).strftime(
-        "%Y-%m-%d"
-    )
-    end = _fmt_date(end_date) or datetime.now().strftime("%Y-%m-%d")
+    start = _fmt_date(start_date) or (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+    end   = _fmt_date(end_date)   or datetime.now().strftime("%Y-%m-%d")
     candles_raw = [c for c in all_candles if start <= c["date"] <= end]
 
     if not candles_raw:
-        raise HTTPException(status_code=404, detail=f"No data found for {sym}")
+        return JSONResponse({"error": f"No data found for {sym}", "cached": False}, status_code=404)
 
     closes = pd.Series([c["close"] for c in candles_raw], dtype=float)
     ma = _compute_ma(closes)
@@ -628,9 +658,7 @@ def get_us_stock(
             "low":        c["low"],
             "close":      c["close"],
             "volume":     c["volume"],
-            "amount":     round(c["close"] * c["volume"], 2)
-                          if c["close"] and c["volume"]
-                          else None,
+            "amount":     round(c["close"] * c["volume"], 2) if c["close"] and c["volume"] else None,
             "pct_change": _safe(pct.iloc[i]),
             "turnover":   0,
         }
@@ -670,11 +698,15 @@ def get_us_stock(
         for i, d in enumerate(dates)
     ]
 
-    overview = _fetch_overview(sym)
+    info = {}
+    try:
+        info = _fetch_company_info(sym)
+    except Exception:
+        info = read_cache(f"{sym}_info", max_age_hours=9999) or {}
 
     return {
         "symbol": sym,
-        "name":   overview.get("name") or sym,
+        "name":   info.get("name", sym),
         "candles": candles,
         "ma":      ma_data,
         "macd":    macd_data,
