@@ -29,7 +29,9 @@ export default function App() {
 
   const handleTabChange = (tab) => {
     setAppTab(tab)
-    trackFeature(tab === 'paper' ? 'paper_trading' : 'analysis')
+    if (tab === 'paper') trackFeature('paper_trading')
+    else if (tab === 'study') trackFeature('study')
+    else trackFeature('analysis')
   }
 
   const dateInputStyle = {

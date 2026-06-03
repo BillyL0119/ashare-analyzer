@@ -4,6 +4,7 @@ Supports: A-Level (Cambridge 9708), IGCSE (Cambridge 0455), AP Macroeconomics, A
 """
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 from typing import Optional
 
 router = APIRouter()
@@ -1299,3 +1300,57 @@ def get_topic_legacy(topic_id: str):
     if topic is None:
         raise HTTPException(status_code=404, detail=f"Topic '{topic_id}' not found")
     return topic
+
+
+# ── AI Tutor ──────────────────────────────────────────────────────────────────
+
+_EXAM_DISPLAY = {
+    "ap_micro": "AP Microeconomics",
+    "ap_macro": "AP Macroeconomics",
+    "alevel":   "A-Level Economics",
+    "igcse":    "IGCSE Economics",
+    "ib":       "IB Economics",
+    "stocks":   "Stock Market",
+}
+
+
+class AskBody(BaseModel):
+    question: str
+    topic_id: str = ""
+    exam: str = "ap_micro"
+    lang: str = "en"
+
+
+@router.post("/ask")
+def ask_ai_tutor(body: AskBody):
+    exam_key = body.exam.lower()
+    exam_name = _EXAM_DISPLAY.get(exam_key, "Economics")
+
+    topic_title = "Economics"
+    if exam_key in _TOPIC_MAPS and body.topic_id:
+        topic = _TOPIC_MAPS[exam_key].get(body.topic_id)
+        if topic:
+            topic_title = topic.get("title_en") or topic.get("title", "Economics")
+
+    system_prompt = (
+        f"You are an expert economics tutor specialising in {exam_name}. "
+        f"The student is currently studying: {topic_title}. "
+        "Answer their question clearly and concisely. "
+        "Always: (1) define key terms precisely, (2) use a real-world example with actual data, "
+        f"(3) include an exam tip specific to {exam_name} format, (4) keep answer under 300 words. "
+        "If the question is in Chinese, answer in Chinese. If in English, answer in English."
+    )
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic()
+        msg = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=600,
+            system=system_prompt,
+            messages=[{"role": "user", "content": body.question}],
+        )
+        answer = msg.content[0].text.strip()
+        return {"answer": answer, "topic": topic_title, "exam": exam_name}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"AI tutor unavailable: {exc}")

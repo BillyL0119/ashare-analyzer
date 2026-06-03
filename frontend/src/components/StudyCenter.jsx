@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const SIDEBAR_BG  = '#0d1120'
 const CONTENT_BG  = '#0b0f1a'
@@ -196,6 +196,189 @@ function SectionBlock({ section, index, total, accentColor, zh }) {
     </div>
   )
 }
+
+// ── AI Tutor ──────────────────────────────────────────────────────────────────
+function AITutor({ topicId, exam, zh, accentColor }) {
+  const [input,   setInput]   = useState('')
+  const [loading, setLoading] = useState(false)
+  const [history, setHistory] = useState([])   // [{q, answer, displayed}]
+  const timerRef = useRef(null)
+
+  // Typewriter: when a new answer arrives, animate it char by char
+  useEffect(() => {
+    const last = history[history.length - 1]
+    if (!last || last.displayed === last.answer) return
+    clearInterval(timerRef.current)
+    let idx = last.displayed.length
+    timerRef.current = setInterval(() => {
+      idx += 2  // 2 chars per tick for speed
+      setHistory((prev) => {
+        const updated = [...prev]
+        const item = updated[updated.length - 1]
+        if (idx >= item.answer.length) {
+          clearInterval(timerRef.current)
+          updated[updated.length - 1] = { ...item, displayed: item.answer }
+        } else {
+          updated[updated.length - 1] = { ...item, displayed: item.answer.slice(0, idx) }
+        }
+        return updated
+      })
+    }, 18)
+    return () => clearInterval(timerRef.current)
+  }, [history.length]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const submit = () => {
+    const q = input.trim()
+    if (!q || loading) return
+    setInput('')
+    setLoading(true)
+    fetch('/api/study/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, topic_id: topicId, exam, lang: zh ? 'zh' : 'en' }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        const answer = d.answer || (zh ? '抱歉，AI 暂时无法回答。' : 'Sorry, AI is temporarily unavailable.')
+        setHistory((prev) => {
+          const next = [...prev, { q, answer, displayed: '' }].slice(-3)
+          return next
+        })
+        // Track AI tutor usage
+        fetch('/api/analytics/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ device_id: localStorage.getItem('bfs_device_id') || 'anon', event: 'feature', feature: 'ai_tutor' }),
+        }).catch(() => {})
+      })
+      .catch(() => {
+        setHistory((prev) => [...prev, {
+          q, answer: zh ? '网络错误，请重试。' : 'Network error. Please try again.', displayed: '',
+        }].slice(-3))
+      })
+      .finally(() => setLoading(false))
+  }
+
+  const handleKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }
+
+  return (
+    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(138,180,248,0.10)' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+        <span style={{ fontSize: 20 }}>🤖</span>
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#e8eaed' }}>
+            {zh ? 'AI 导师' : 'Ask AI Tutor'}
+          </div>
+          <div style={{ fontSize: 11, color: '#9aa0a6', marginTop: 1 }}>
+            {zh ? '对这个课题有任何问题，都可以问我' : 'Ask anything about this topic'}
+          </div>
+        </div>
+      </div>
+
+      {/* Past Q&A */}
+      {history.map((item, i) => (
+        <div key={i} style={{ marginBottom: 16 }}>
+          {/* Question bubble */}
+          <div style={{
+            display: 'flex', justifyContent: 'flex-end', marginBottom: 8,
+          }}>
+            <div style={{
+              background: `rgba(${hexToRgb(accentColor)},0.12)`,
+              border: `1px solid rgba(${hexToRgb(accentColor)},0.2)`,
+              borderRadius: '12px 12px 4px 12px',
+              padding: '8px 14px',
+              maxWidth: '75%',
+              fontSize: 13, color: '#e8eaed', lineHeight: 1.6,
+            }}>
+              {item.q}
+            </div>
+          </div>
+          {/* Answer */}
+          <div style={{
+            borderLeft: '3px solid',
+            borderImage: 'linear-gradient(180deg,#8ab4f8,#c084fc) 1',
+            background: 'rgba(138,180,248,0.05)',
+            borderRadius: '0 10px 10px 0',
+            padding: '12px 16px',
+            fontSize: 13, color: 'rgba(232,234,240,0.9)', lineHeight: 1.8,
+            whiteSpace: 'pre-wrap',
+          }}>
+            {item.displayed}
+            {item.displayed.length < item.answer.length && (
+              <span style={{ opacity: 0.5, animation: 'blink 1s infinite' }}>▋</span>
+            )}
+          </div>
+        </div>
+      ))}
+
+      {/* Loading */}
+      {loading && (
+        <div style={{
+          borderLeft: '3px solid rgba(138,180,248,0.4)',
+          background: 'rgba(138,180,248,0.04)',
+          borderRadius: '0 10px 10px 0',
+          padding: '12px 16px',
+          marginBottom: 16,
+          fontSize: 13, color: '#9aa0a6', fontStyle: 'italic',
+        }}>
+          {zh ? 'AI 思考中...' : 'AI is thinking...'}
+          <span style={{ marginLeft: 6, opacity: 0.6 }}>●●●</span>
+        </div>
+      )}
+
+      {/* Input row */}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder={zh ? '问AI导师任何问题...' : 'Ask anything about this topic...'}
+          rows={2}
+          style={{
+            flex: 1,
+            background: 'rgba(255,255,255,0.04)',
+            border: `1px solid rgba(${hexToRgb(accentColor)},0.25)`,
+            borderRadius: 10,
+            color: '#e8eaed',
+            padding: '10px 14px',
+            fontSize: 13,
+            resize: 'none',
+            outline: 'none',
+            lineHeight: 1.6,
+            fontFamily: 'inherit',
+          }}
+          disabled={loading}
+        />
+        <button
+          onClick={submit}
+          disabled={loading || !input.trim()}
+          style={{
+            background: input.trim() && !loading
+              ? `linear-gradient(135deg, ${accentColor}, ${accentColor}99)`
+              : 'rgba(255,255,255,0.06)',
+            border: 'none',
+            borderRadius: 10,
+            padding: '0 18px',
+            color: input.trim() && !loading ? '#fff' : '#9aa0a6',
+            fontSize: 18,
+            cursor: input.trim() && !loading ? 'pointer' : 'default',
+            transition: 'all 0.2s',
+            flexShrink: 0,
+          }}
+        >
+          {loading ? '⟳' : '↑'}
+        </button>
+      </div>
+      {history.length > 0 && (
+        <div style={{ fontSize: 11, color: '#4a5568', marginTop: 6, textAlign: 'right' }}>
+          {zh ? `显示最近 ${history.length} 条问答` : `Showing last ${history.length} Q&A`}
+        </div>
+      )}
+    </div>
+  )
+}
+
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function StudyCenter({ lang }) {
@@ -404,6 +587,14 @@ export default function StudyCenter({ lang }) {
                   zh={zh}
                 />
               ))}
+
+              {/* AI Tutor */}
+              <AITutor
+                topicId={activeId}
+                exam={activeExam}
+                zh={zh}
+                accentColor={accentColor}
+              />
 
               {/* Mark as read + next topic */}
               <div style={{ marginTop: 36, paddingTop: 24, borderTop: `1px solid ${BDR}` }}>

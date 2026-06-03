@@ -173,9 +173,9 @@ def get_stats():
         for sym, cnt in top_stocks
     ]
 
-    # Daily chart — last 14 days, sorted ascending
+    # Daily chart — last 30 days, sorted ascending
     chart = []
-    for i in range(13, -1, -1):
+    for i in range(29, -1, -1):
         d = (today_dt - timedelta(days=i)).strftime("%Y-%m-%d")
         chart.append({
             "date":   d,
@@ -183,13 +183,19 @@ def get_stats():
             "unique": daily.get(d, {}).get("unique",  0),
         })
 
+    feature_usage = data.get("feature_usage", {})
+    stocks_analyzed = sum(data.get("stock_searches", {}).values())
+    study_sessions  = feature_usage.get("study", 0)
+
     return {
-        "total_visits":   data.get("total_visits",   0),
-        "unique_devices": data.get("unique_devices",  0),
-        "today_visits":   today_visits,
-        "today_unique":   today_unique,
+        "total_visits":    data.get("total_visits",   0),
+        "unique_devices":  data.get("unique_devices",  0),
+        "today_visits":    today_visits,
+        "today_unique":    today_unique,
         "this_week_visits": this_week,
-        "top_stocks":     top_stocks_out,
-        "feature_usage":  data.get("feature_usage", {}),
-        "daily_chart":    chart,
+        "stocks_analyzed": stocks_analyzed,
+        "study_sessions":  study_sessions,
+        "top_stocks":      top_stocks_out,
+        "feature_usage":   feature_usage,
+        "daily_chart":     chart,
     }

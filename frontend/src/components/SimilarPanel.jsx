@@ -138,7 +138,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
         // Normalize US similar response to match CN shape
         const d = res.data
         if (market === 'us') {
-          setData({ results: d.results || [], industry: d.sector || '', scanned_industries: [d.sector || ''] })
+          setData({ results: d.results || [], industry: d.industry || '', scanned_industries: [d.industry || ''] })
         } else {
           setData(d)
         }

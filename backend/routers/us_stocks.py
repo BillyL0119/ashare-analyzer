@@ -602,8 +602,14 @@ def get_us_similar(symbol: str):
             if np.isnan(corr):
                 continue
             peer_name = next(
-                (tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), peer
+                (tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), None
             )
+            if not peer_name:
+                try:
+                    info = _fetch_company_info(peer)
+                    peer_name = info.get("name") or peer
+                except Exception:
+                    peer_name = peer
             results.append({
                 "code":        peer,
                 "name":        peer_name,
