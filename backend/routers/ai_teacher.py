@@ -102,7 +102,7 @@ async def ai_chat(body: ChatBody):
                 )
 
                 for chunk in client.models.generate_content_stream(
-                    model="gemini-2.0-flash-lite",
+                    model="gemini-1.5-flash",
                     contents=contents,
                     config=cfg,
                 ):
