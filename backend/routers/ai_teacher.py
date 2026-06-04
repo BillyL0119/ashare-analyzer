@@ -72,25 +72,40 @@ async def ai_chat(body: ChatBody):
 
         def _run():
             try:
-                import google.generativeai as genai
-                genai.configure(api_key=GEMINI_KEY)
-                model = genai.GenerativeModel(
-                    model_name="gemini-1.5-flash",
-                    system_instruction=SYSTEM_PROMPT,
-                    generation_config={"max_output_tokens": 800},
+                from google import genai as google_genai
+                from google.genai import types as genai_types
+
+                client = google_genai.Client(api_key=GEMINI_KEY)
+
+                # Build full contents list: history + new message
+                contents = []
+                for m in body.history:
+                    if not m.content.strip():
+                        continue
+                    role = "model" if m.role == "assistant" else "user"
+                    contents.append(
+                        genai_types.Content(
+                            role=role,
+                            parts=[genai_types.Part(text=m.content)],
+                        )
+                    )
+                contents.append(
+                    genai_types.Content(
+                        role="user",
+                        parts=[genai_types.Part(text=body.message)],
+                    )
                 )
-                # Convert history: assistant → model
-                hist = [
-                    {
-                        "role": "model" if m.role == "assistant" else "user",
-                        "parts": [{"text": m.content}],
-                    }
-                    for m in body.history
-                    if m.content.strip()
-                ]
-                chat_obj = model.start_chat(history=hist)
-                resp = chat_obj.send_message(body.message, stream=True)
-                for chunk in resp:
+
+                cfg = genai_types.GenerateContentConfig(
+                    system_instruction=SYSTEM_PROMPT,
+                    max_output_tokens=800,
+                )
+
+                for chunk in client.models.generate_content_stream(
+                    model="gemini-1.5-flash",
+                    contents=contents,
+                    config=cfg,
+                ):
                     try:
                         txt = chunk.text
                         if txt:
