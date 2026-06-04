@@ -1,6 +1,6 @@
 """
 AI Teacher — /api/ai/chat
-Streaming chat powered by Google Gemini 1.5 Flash.
+Streaming chat powered by Groq (llama-3.1-8b-instant).
 Rate limit: 10 requests / device / minute.
 """
 
@@ -19,7 +19,7 @@ import os
 router = APIRouter()
 logger = logging.getLogger("ai_teacher")
 
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyCf1zskn9rqw5c8hmIMy_EuhViUudgMHvc")
+GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
 
 SYSTEM_PROMPT = (
     "你是 BestFriendStock 的 AI 老师，专为学生设计。你擅长：\n"
@@ -72,48 +72,32 @@ async def ai_chat(body: ChatBody):
 
         def _run():
             try:
-                from google import genai as google_genai
-                from google.genai import types as genai_types
+                from groq import Groq
 
-                client = google_genai.Client(api_key=GEMINI_KEY)
+                client = Groq(api_key=GROQ_KEY)
 
-                # Build full contents list: history + new message
-                contents = []
+                # Build messages: system + history + new user message
+                messages = [{"role": "system", "content": SYSTEM_PROMPT}]
                 for m in body.history:
                     if not m.content.strip():
                         continue
-                    role = "model" if m.role == "assistant" else "user"
-                    contents.append(
-                        genai_types.Content(
-                            role=role,
-                            parts=[genai_types.Part(text=m.content)],
+                    role = "assistant" if m.role == "assistant" else "user"
+                    messages.append({"role": role, "content": m.content})
+                messages.append({"role": "user", "content": body.message})
+
+                stream = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=messages,
+                    max_tokens=800,
+                    stream=True,
+                )
+
+                for chunk in stream:
+                    txt = chunk.choices[0].delta.content
+                    if txt:
+                        asyncio.run_coroutine_threadsafe(
+                            q.put({"text": txt}), loop
                         )
-                    )
-                contents.append(
-                    genai_types.Content(
-                        role="user",
-                        parts=[genai_types.Part(text=body.message)],
-                    )
-                )
-
-                cfg = genai_types.GenerateContentConfig(
-                    system_instruction=SYSTEM_PROMPT,
-                    max_output_tokens=800,
-                )
-
-                for chunk in client.models.generate_content_stream(
-                    model="gemini-2.0-flash-lite",
-                    contents=contents,
-                    config=cfg,
-                ):
-                    try:
-                        txt = chunk.text
-                        if txt:
-                            asyncio.run_coroutine_threadsafe(
-                                q.put({"text": txt}), loop
-                            )
-                    except Exception:
-                        pass
             except Exception as exc:
                 asyncio.run_coroutine_threadsafe(
                     q.put({"error": str(exc)}), loop
