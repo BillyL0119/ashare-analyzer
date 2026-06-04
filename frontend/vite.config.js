@@ -12,4 +12,15 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-echarts': ['echarts', 'echarts-for-react'],
+          'vendor-recharts': ['recharts'],
+        },
+      },
+    },
+  },
 })

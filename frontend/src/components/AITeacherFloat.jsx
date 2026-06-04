@@ -178,7 +178,7 @@ export default function AITeacherFloat({ lang }) {
       {/* ── Chat window ── */}
       {open && (
         <div style={{
-          position: 'fixed', bottom: 82, right: 24, zIndex: 950,
+          position: 'fixed', bottom: 148, right: 24, zIndex: 950,
           width: 350, height: 480,
           background: '#0b0f1a',
           border: `1px solid ${BDR}`,
@@ -305,7 +305,7 @@ export default function AITeacherFloat({ lang }) {
         onClick={() => setOpen(v => !v)}
         title={zh ? 'AI 老师' : 'AI Tutor'}
         style={{
-          position: 'fixed', bottom: 24, right: 24, zIndex: 951,
+          position: 'fixed', bottom: 90, right: 24, zIndex: 951,
           width: 50, height: 50, borderRadius: '50%',
           background: open
             ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`

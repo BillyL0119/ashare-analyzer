@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
 import WelcomeModal from './components/WelcomeModal'
 import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
-import PaperTradingPanel from './components/PaperTradingPanel'
-import StudyCenter from './components/StudyCenter'
 import GlobalSentiment from './components/GlobalSentiment'
-import AITeacherFloat from './components/AITeacherFloat'
-import AITeacherPage from './components/AITeacherPage'
 import StatsDisplay from './components/StatsDisplay'
+
+const PaperTradingPanel = lazy(() => import('./components/PaperTradingPanel'))
+const StudyCenter       = lazy(() => import('./components/StudyCenter'))
+const AITeacherFloat    = lazy(() => import('./components/AITeacherFloat'))
+const AITeacherPage     = lazy(() => import('./components/AITeacherPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import { T } from './i18n/translations'
@@ -263,18 +264,20 @@ export default function App() {
       </header>
 
       <main style={{ padding: isMobile ? '10px 12px' : '20px 24px', flex: 1 }}>
-        {appTab === 'study' ? (
-          <StudyCenter lang={lang} />
-        ) : appTab === 'paper' ? (
-          <PaperTradingPanel lang={lang} />
-        ) : appTab === 'ai_teacher' ? (
-          <AITeacherPage lang={lang} />
-        ) : (
-          <>
-            <GlobalSentiment lang={lang} />
-            <ComparePanel onTabChange={handleTabChange} />
-          </>
-        )}
+        <Suspense fallback={null}>
+          {appTab === 'study' ? (
+            <StudyCenter lang={lang} />
+          ) : appTab === 'paper' ? (
+            <PaperTradingPanel lang={lang} />
+          ) : appTab === 'ai_teacher' ? (
+            <AITeacherPage lang={lang} />
+          ) : (
+            <>
+              <GlobalSentiment lang={lang} />
+              <ComparePanel onTabChange={handleTabChange} />
+            </>
+          )}
+        </Suspense>
       </main>
 
       {/* Hidden stats entry — bottom left corner */}
@@ -297,7 +300,9 @@ export default function App() {
       </div>
 
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
-      <AITeacherFloat lang={lang} />
+      <Suspense fallback={null}>
+        <AITeacherFloat lang={lang} />
+      </Suspense>
       <style>{`
         @keyframes bfsPageFadeIn {
           from { opacity: 0; }
