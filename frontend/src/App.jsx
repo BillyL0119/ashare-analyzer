@@ -7,6 +7,8 @@ import KnowledgeCard from './components/KnowledgeCard'
 import PaperTradingPanel from './components/PaperTradingPanel'
 import StudyCenter from './components/StudyCenter'
 import GlobalSentiment from './components/GlobalSentiment'
+import AITeacherFloat from './components/AITeacherFloat'
+import AITeacherPage from './components/AITeacherPage'
 import StatsDisplay from './components/StatsDisplay'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
@@ -221,9 +223,10 @@ export default function App() {
           }}
         >
           {[
-            { key: 'analysis', label: lang === 'zh' ? '行情分析' : 'Analysis' },
-            { key: 'paper',    label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
-            { key: 'study',    label: lang === 'zh' ? '学习中心' : 'Study' },
+            { key: 'analysis',   label: lang === 'zh' ? '行情分析' : 'Analysis' },
+            { key: 'paper',      label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
+            { key: 'study',      label: lang === 'zh' ? '学习中心' : 'Study' },
+            { key: 'ai_teacher', label: lang === 'zh' ? 'AI老师' : 'AI Tutor' },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -251,6 +254,8 @@ export default function App() {
           <StudyCenter lang={lang} />
         ) : appTab === 'paper' ? (
           <PaperTradingPanel lang={lang} />
+        ) : appTab === 'ai_teacher' ? (
+          <AITeacherPage lang={lang} />
         ) : (
           <>
             <GlobalSentiment lang={lang} />
@@ -279,6 +284,7 @@ export default function App() {
       </div>
 
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
+      <AITeacherFloat lang={lang} />
     </div>
     </>
   )
