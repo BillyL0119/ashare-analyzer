@@ -228,20 +228,23 @@ _CN_INDEX_SYMBOLS = {
     "创业板指": "sz399006",
 }
 
-# AkShare Sina symbol mapping for global indices (works from CN/HK servers)
+# AkShare Sina symbol mapping — US indices only (index_us_stock_sina)
 _AK_SINA_MAP = {
-    "^GSPC":  ".INX",
-    "^IXIC":  ".IXIC",
-    "^DJI":   ".DJI",
-    "^N225":  ".N225",
-    "^HSI":   ".HSI",
-    "^FTSE":  ".FTSE",
-    "^GDAXI": ".GDAXI",
-    "^FCHI":  ".FCHI",
-    "^KS11":  ".KS11",
-    "^AXJO":  ".AXJO",
-    "^BSESN":  ".BSESN",
-    "^GSPTSE": ".GSPTSE",
+    "^GSPC": ".INX",
+    "^IXIC": ".IXIC",
+    "^DJI":  ".DJI",
+}
+
+# AkShare global index mapping — Chinese name keys for index_global_hist_sina
+_AK_GLOBAL_SINA_MAP = {
+    "^FTSE":   "英国富时100指数",
+    "^GDAXI":  "德国DAX 30种股价指数",
+    "^FCHI":   "法CAC40指数",
+    "^N225":   "日经225指数",
+    "^KS11":   "首尔综合指数",
+    "^BSESN":  "印度孟买SENSEX指数",
+    "^AXJO":   "澳大利亚标准普尔200指数",
+    "^GSPTSE": "加拿大S&P/TSX综合指数",
 }
 
 
@@ -262,6 +265,27 @@ def _ak_us_index(sina_sym: str, days: int = 252) -> dict:
         }
     except Exception as e:
         logger.debug("ak_us_index %s: %s", sina_sym, e)
+        return {}
+
+
+def _ak_global_index(zh_name: str, days: int = 10) -> dict:
+    """Fetch non-US global index from AkShare Sina global history (index_global_hist_sina).
+    Takes Chinese name as key, e.g. '日经225指数'. Only needs last 2 rows for change_pct."""
+    try:
+        df = ak.index_global_hist_sina(symbol=zh_name)
+        df = df.dropna(subset=["close"]).tail(days)
+        df = df.rename(columns={"close": "Close"})
+        if len(df) < 2:
+            return {}
+        last = float(df["Close"].iloc[-1])
+        prev = float(df["Close"].iloc[-2])
+        return {
+            "close": round(last, 2),
+            "change_pct": round((last - prev) / prev * 100, 2),
+            "hist": df,
+        }
+    except Exception as e:
+        logger.debug("ak_global_index %s: %s", zh_name, e)
         return {}
 
 
@@ -376,20 +400,25 @@ def _do_fetch_sentiment() -> dict:
         return _sentiment_data or _DEFAULT_SENTIMENT
     _sentiment_fetching = True
     try:
-        # ── Fetch US indices from AkShare/Sina (works from CN servers) ──────
+        # ── Fetch all indices concurrently ───────────────────────────────────
         raw: dict = {}
         with ThreadPoolExecutor(max_workers=8) as pool:
-            futures = {pool.submit(_ak_us_index, sina_sym): yf_sym
-                       for yf_sym, sina_sym in _AK_SINA_MAP.items()}
+            futures: dict = {}
+            # US indices via index_us_stock_sina (252 days — needed for RSI)
+            for yf_sym, sina_sym in _AK_SINA_MAP.items():
+                futures[pool.submit(_ak_us_index, sina_sym)] = yf_sym
+            # Global indices via index_global_hist_sina (10 days — change_pct only)
+            for yf_sym, zh_name in _AK_GLOBAL_SINA_MAP.items():
+                futures[pool.submit(_ak_global_index, zh_name)] = yf_sym
             for fut in as_completed(futures):
                 yf_sym = futures[fut]
                 try:
                     raw[yf_sym] = fut.result()
                     if raw[yf_sym]:
-                        logger.info("ak_us_index %s ok close=%.2f", yf_sym, raw[yf_sym]["close"])
+                        logger.info("fetched %s ok close=%.2f", yf_sym, raw[yf_sym]["close"])
                 except Exception as e:
                     raw[yf_sym] = {}
-                    logger.debug("ak_us_index %s failed: %s", yf_sym, e)
+                    logger.debug("fetch %s failed: %s", yf_sym, e)
         # ── US score: RSI + 52w distance from S&P500 ────────────────────────
         vix_d = {}  # no AkShare VIX source
         us_hist = None

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import {
   ComposableMap, Geographies, Geography,
-  Marker, ZoomableGroup, Graticule, Sphere,
+  Marker, Graticule, Sphere,
 } from 'react-simple-maps'
 import ReactECharts from 'echarts-for-react'
 
@@ -9,19 +9,20 @@ import ReactECharts from 'echarts-for-react'
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
 // ── ISO 3166-1 numeric → index metadata ──────────────────────────────────────
-// coords: [lon, lat] for the label marker
+// region matches the `region` field from /api/market/sentiment
+// coords: [lon, lat] for label marker placement
 const COUNTRY_MAP = {
-  '840': { sym: '^GSPC',    label: 'S&P',    label_zh: '标普',  coords: [-100, 40] },
-  '124': { sym: '^GSPTSE',  label: 'TSX',    label_zh: 'TSX',   coords: [-96,  57] },
-  '826': { sym: '^FTSE',    label: 'FTSE',   label_zh: '富时',  coords: [ -2,  54] },
-  '276': { sym: '^GDAXI',   label: 'DAX',    label_zh: 'DAX',   coords: [ 10,  52] },
-  '250': { sym: '^FCHI',    label: 'CAC',    label_zh: 'CAC',   coords: [  2,  46] },
-  '356': { sym: '^BSESN',   label: 'SENSEX', label_zh: '感指',  coords: [ 79,  22] },
-  '156': { sym: 'sh000001', label: 'SSE',    label_zh: '上证',  coords: [104,  35] },
-  '410': { sym: '^KS11',    label: 'KOSPI',  label_zh: '韩综',  coords: [128,  37] },
-  '392': { sym: '^N225',    label: 'Nikkei', label_zh: '日经',  coords: [138,  37] },
-  '344': { sym: '^HSI',     label: 'HSI',    label_zh: '恒生',  coords: [114,  22] },
-  '036': { sym: '^AXJO',    label: 'ASX',    label_zh: 'ASX',   coords: [134, -25] },
+  '840': { sym: '^GSPC',    region: 'us', label: 'S&P',    label_zh: '标普',  coords: [-100, 40] },
+  '124': { sym: '^GSPTSE',  region: 'ca', label: 'TSX',    label_zh: 'TSX',   coords: [ -96, 57] },
+  '826': { sym: '^FTSE',    region: 'uk', label: 'FTSE',   label_zh: '富时',  coords: [  -2, 54] },
+  '276': { sym: '^GDAXI',   region: 'de', label: 'DAX',    label_zh: 'DAX',   coords: [  10, 52] },
+  '250': { sym: '^FCHI',    region: 'fr', label: 'CAC',    label_zh: 'CAC',   coords: [   2, 46] },
+  '356': { sym: '^BSESN',   region: 'in', label: 'SENSEX', label_zh: '感指',  coords: [  79, 22] },
+  '156': { sym: 'sh000001', region: 'cn', label: 'SSE',    label_zh: '上证',  coords: [ 104, 35] },
+  '410': { sym: '^KS11',    region: 'kr', label: 'KOSPI',  label_zh: '韩综',  coords: [ 128, 37] },
+  '392': { sym: '^N225',    region: 'jp', label: 'Nikkei', label_zh: '日经',  coords: [ 138, 37] },
+  '344': { sym: '^HSI',     region: 'hk', label: 'HSI',    label_zh: '恒生',  coords: [ 114, 22] },
+  '036': { sym: '^AXJO',    region: 'au', label: 'ASX',    label_zh: 'ASX',   coords: [ 134,-25] },
 }
 
 // ── Bloomberg-style colour scale ──────────────────────────────────────────────
@@ -207,21 +208,33 @@ function WorldMap({ indices, lang }) {
   const [tooltip, setTooltip] = useState(null)
   const zh = lang === 'zh'
 
-  // Build symbol → index data lookup
+  // Build lookups: symbol → idx, and region → best idx (fallback)
   const bySymbol = {}
+  const byRegion = {}
   for (const idx of indices) {
     bySymbol[idx.symbol] = idx
-    // Backward compat: CN index might still have symbol="—"
-    if (idx.region === 'cn') {
-      if (idx.name_zh === '上证指数' || idx.name === '上证指数') bySymbol['sh000001'] = idx
+    // Region fallback: keep best (non-null) index per region
+    if (!byRegion[idx.region] || (idx.change_pct !== null && byRegion[idx.region].change_pct === null)) {
+      byRegion[idx.region] = idx
     }
   }
+  // Prefer specific representative indices
+  for (const idx of indices) {
+    if (idx.symbol === '^GSPC') byRegion['us'] = idx
+    if (idx.name_zh === '上证指数' || idx.name === '上证指数') {
+      byRegion['cn'] = idx
+      bySymbol['sh000001'] = idx
+    }
+  }
+
+  // Resolve index for a country: try symbol first, then region
+  const resolveIdx = (meta) => bySymbol[meta.sym] ?? byRegion[meta.region] ?? null
 
   const handleEnter = (geo, e) => {
     const id = String(geo.id).padStart(3, '0')
     const meta = COUNTRY_MAP[id] || COUNTRY_MAP[String(geo.id)]
     if (!meta) return
-    const idx = bySymbol[meta.sym]
+    const idx = resolveIdx(meta)
     setTooltip({ x: e.clientX, y: e.clientY, meta, idx })
   }
   const handleMove = (e) => {
@@ -245,7 +258,6 @@ function WorldMap({ indices, lang }) {
         projectionConfig={{ scale: 155, center: [10, 10] }}
         style={{ width: '100%', height: 'auto', display: 'block' }}
       >
-        <ZoomableGroup zoom={1} minZoom={0.8} maxZoom={6}>
           {/* Ocean */}
           <Sphere id="rsm-sphere-bg" fill="#0a1628" stroke="#1a2a4a" strokeWidth={0.5} />
           {/* Graticule grid lines */}
@@ -255,10 +267,10 @@ function WorldMap({ indices, lang }) {
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
               geographies.map(geo => {
-                // world-atlas uses numeric id, zero-pad to 3 digits
+                // world-atlas stores numeric IDs; zero-pad to match our 3-digit keys
                 const id = String(geo.id).padStart(3, '0')
                 const meta = COUNTRY_MAP[id] || COUNTRY_MAP[String(geo.id)]
-                const idx = meta ? bySymbol[meta.sym] : null
+                const idx = meta ? resolveIdx(meta) : null
                 const pct = idx?.change_pct ?? null
                 const fill = countryFill(pct)
 
@@ -288,7 +300,7 @@ function WorldMap({ indices, lang }) {
 
           {/* Country labels — only when data available */}
           {Object.entries(COUNTRY_MAP).map(([id, meta]) => {
-            const idx = bySymbol[meta.sym]
+            const idx = resolveIdx(meta)
             const pct = idx?.change_pct
             if (pct === null || pct === undefined) return null
             const sign = pct >= 0 ? '+' : ''
@@ -318,7 +330,6 @@ function WorldMap({ indices, lang }) {
               </Marker>
             )
           })}
-        </ZoomableGroup>
       </ComposableMap>
 
       {/* Colour legend */}
