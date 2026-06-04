@@ -26,9 +26,17 @@ export default function App() {
   const isMobile = useMobile()
   const [appTab,    setAppTab]    = useState('analysis')  // 'analysis' | 'paper'
   const [showStats, setShowStats] = useState(false)
+  const [scrolled,  setScrolled]  = useState(false)
 
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
+
+  // Scroll-aware header
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const handleTabChange = (tab) => {
     setAppTab(tab)
@@ -67,6 +75,7 @@ export default function App() {
         display: 'flex',
         flexDirection: 'column',
         letterSpacing: '0.15px',
+        animation: 'bfsPageFadeIn 0.35s ease both',
       }}
     >
       {/* Glassmorphism header */}
@@ -75,16 +84,18 @@ export default function App() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(8, 12, 20, 0.82)',
+          background: scrolled ? 'rgba(8, 12, 20, 0.96)' : 'rgba(8, 12, 20, 0.82)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(138,180,248,0.10)',
+          boxShadow: scrolled ? '0 1px 24px rgba(0,0,0,0.45)' : 'none',
           padding: isMobile ? '8px 12px' : '10px 24px',
           display: 'flex',
           alignItems: 'center',
           gap: isMobile ? 8 : 18,
           flexShrink: 0,
           flexWrap: 'wrap',
+          transition: 'background 0.3s ease, box-shadow 0.3s ease',
         }}
       >
         {/* Logo */}
@@ -238,7 +249,9 @@ export default function App() {
                   ? `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`
                   : 'transparent',
                 color: appTab === key ? '#fff' : '#9aa0a6',
-                transition: 'all 0.2s ease', whiteSpace: 'nowrap',
+                transition: 'all 0.25s ease', whiteSpace: 'nowrap',
+                transform: appTab === key ? 'scale(1.04)' : 'scale(1)',
+                boxShadow: appTab === key ? '0 2px 10px rgba(138,180,248,0.2)' : 'none',
               }}
             >
               {label}
@@ -285,6 +298,15 @@ export default function App() {
 
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
       <AITeacherFloat lang={lang} />
+      <style>{`
+        @keyframes bfsPageFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [style*="bfsPageFadeIn"] { animation: none !important; }
+        }
+      `}</style>
     </div>
     </>
   )

@@ -492,7 +492,7 @@ export default function GlobalSentiment({ lang }) {
               </div>
             </div>
           ) : (
-            <>
+            <div style={{ animation: 'fadeIn 0.5s ease both' }}>
               {/* Map + Gauges row */}
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
                 {/* World Map */}
@@ -540,7 +540,7 @@ export default function GlobalSentiment({ lang }) {
 
               {/* Ticker bar */}
               <TickerBar indices={indices} zh={zh} />
-            </>
+            </div>
           )}
         </div>
       )}
