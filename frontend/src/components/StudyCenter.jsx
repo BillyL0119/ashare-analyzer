@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import ReactECharts from 'echarts-for-react'
 
 const SIDEBAR_BG  = '#0d1120'
 const CONTENT_BG  = '#0b0f1a'
@@ -14,6 +15,7 @@ const EXAMS = [
   { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#ef4444', board: 'College Board' },
   { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#8b5cf6', board: 'IB SL/HL'       },
   { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '股票知识入门',       title_en: 'Stock Market Basics',    color: '#ec4899', board: 'Stock Basics'   },
+  { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#06b6d4', board: 'Timeline' },
 ]
 
 function storageKey(exam) { return `bfs_study_${exam}` }
@@ -380,6 +382,275 @@ function AITutor({ topicId, exam, zh, accentColor }) {
 }
 
 
+// ── Economic Event Price Chart ─────────────────────────────────────────────────
+function EventPriceChart({ eventId, tickers, zh }) {
+  const [prices, setPrices] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!eventId) return
+    setLoading(true)
+    setPrices(null)
+    fetch(`/api/study/events/${eventId}/prices`)
+      .then((r) => r.json())
+      .then((d) => setPrices(d.prices))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [eventId])
+
+  const option = useMemo(() => {
+    if (!prices) return null
+    const series = tickers.map((t) => {
+      const data = (prices[t.symbol] || []).map((p) => [p.date, p.value])
+      return {
+        name: t.label,
+        type: 'line',
+        data,
+        smooth: true,
+        symbol: 'none',
+        lineStyle: { width: 2, color: t.color },
+        itemStyle: { color: t.color },
+      }
+    })
+    return {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#1a2035',
+        borderColor: 'rgba(138,180,248,0.2)',
+        textStyle: { color: '#e8eaed', fontSize: 12 },
+        formatter: (params) => {
+          let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
+          params.forEach((p) => {
+            s += `<div style="display:flex;align-items:center;gap:6px;margin:2px 0">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color}"></span>
+              <span>${p.seriesName}: <b>${p.value?.[1]?.toFixed(1)}</b></span>
+            </div>`
+          })
+          return s
+        },
+      },
+      legend: {
+        data: tickers.map((t) => t.label),
+        textStyle: { color: '#9aa0a6', fontSize: 12 },
+        top: 8,
+      },
+      grid: { left: 48, right: 24, top: 40, bottom: 36 },
+      xAxis: {
+        type: 'time',
+        axisLine: { lineStyle: { color: 'rgba(138,180,248,0.15)' } },
+        axisLabel: { color: '#9aa0a6', fontSize: 10 },
+        splitLine: { show: false },
+      },
+      yAxis: {
+        type: 'value',
+        name: zh ? '相对指数 (=100)' : 'Normalised (=100)',
+        nameTextStyle: { color: '#9aa0a6', fontSize: 10 },
+        axisLine: { show: false },
+        axisLabel: { color: '#9aa0a6', fontSize: 10 },
+        splitLine: { lineStyle: { color: 'rgba(138,180,248,0.07)' } },
+      },
+      series,
+    }
+  }, [prices, tickers, zh])
+
+  if (loading) return (
+    <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6', fontSize: 13 }}>
+      {zh ? '加载价格数据...' : 'Loading price data...'}
+    </div>
+  )
+  if (!prices) return null
+  const allEmpty = tickers.every((t) => !(prices[t.symbol]?.length))
+  if (allEmpty) return (
+    <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6', fontSize: 13 }}>
+      {zh ? '暂无价格数据' : 'Price data unavailable'}
+    </div>
+  )
+
+  return (
+    <ReactECharts
+      option={option}
+      style={{ height: 260 }}
+      theme="dark"
+      opts={{ renderer: 'svg' }}
+    />
+  )
+}
+
+// ── Economic Events Timeline ───────────────────────────────────────────────────
+function EventTimeline({ zh }) {
+  const [events, setEvents]       = useState([])
+  const [loading, setLoading]     = useState(false)
+  const [activeId, setActiveId]   = useState(null)
+  const ACCENT = '#06b6d4'
+
+  useEffect(() => {
+    setLoading(true)
+    fetch('/api/study/events')
+      .then((r) => r.json())
+      .then((d) => {
+        setEvents(d.events || [])
+        if (d.events?.length) setActiveId(d.events[0].id)
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  const active = events.find((e) => e.id === activeId)
+
+  return (
+    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+
+      {/* ── Left timeline column ── */}
+      <div style={{
+        width: 220, flexShrink: 0,
+        background: SIDEBAR_BG,
+        borderRight: `1px solid ${BDR}`,
+        overflowY: 'auto',
+        padding: '20px 0',
+      }}>
+        <div style={{ padding: '0 16px 12px', fontSize: 11, fontWeight: 700, color: `rgba(6,182,212,0.7)`, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+          {zh ? '历史大事件' : 'Major Events'}
+        </div>
+
+        {loading && (
+          <div style={{ padding: '16px', color: MUTED, fontSize: 12 }}>
+            {zh ? '加载中...' : 'Loading...'}
+          </div>
+        )}
+
+        {/* Timeline items */}
+        <div style={{ position: 'relative', paddingLeft: 16 }}>
+          {/* Vertical line */}
+          <div style={{
+            position: 'absolute', left: 28, top: 8, bottom: 8,
+            width: 2, background: 'rgba(6,182,212,0.15)', borderRadius: 1,
+          }} />
+
+          {events.map((ev, i) => {
+            const isActive = ev.id === activeId
+            return (
+              <div
+                key={ev.id}
+                onClick={() => setActiveId(ev.id)}
+                style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
+                  padding: '10px 12px 10px 0', cursor: 'pointer',
+                  position: 'relative',
+                  borderRadius: 8,
+                  background: isActive ? 'rgba(6,182,212,0.08)' : 'transparent',
+                  marginBottom: 4,
+                  transition: 'background 0.15s',
+                }}
+              >
+                {/* Dot */}
+                <div style={{
+                  width: 12, height: 12, borderRadius: '50%', flexShrink: 0,
+                  marginTop: 3, zIndex: 1,
+                  background: isActive ? ACCENT : 'rgba(6,182,212,0.3)',
+                  border: isActive ? `2px solid ${ACCENT}` : '2px solid rgba(6,182,212,0.2)',
+                  boxShadow: isActive ? `0 0 8px ${ACCENT}60` : 'none',
+                  transition: 'all 0.15s',
+                }} />
+                <div>
+                  <div style={{ fontSize: 11, color: isActive ? ACCENT : 'rgba(6,182,212,0.5)', fontWeight: 700, marginBottom: 2 }}>
+                    {ev.year}
+                  </div>
+                  <div style={{ fontSize: 12, color: isActive ? '#e8eaed' : MUTED, lineHeight: 1.4, fontWeight: isActive ? 600 : 400 }}>
+                    {zh ? ev.title : ev.title_en}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'rgba(154,160,166,0.45)', marginTop: 2 }}>
+                    {ev.date_range}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* ── Right detail panel ── */}
+      <div style={{ flex: 1, background: CONTENT_BG, overflowY: 'auto' }}>
+        {!active ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: MUTED, fontSize: 14 }}>
+            {zh ? '选择左侧事件' : 'Select an event'}
+          </div>
+        ) : (
+          <div style={{ padding: '28px 36px 48px', maxWidth: 820 }}>
+
+            {/* Header */}
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 6 }}>
+                <span style={{
+                  fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 12,
+                  background: 'rgba(6,182,212,0.12)', color: ACCENT,
+                  border: '1px solid rgba(6,182,212,0.2)',
+                }}>
+                  {active.date_range}
+                </span>
+              </div>
+              <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 800, color: '#e8eaed' }}>
+                {zh ? active.title : active.title_en}
+              </h1>
+              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.8, color: '#c9d1d9' }}>
+                {zh ? active.description : active.description_en}
+              </p>
+            </div>
+
+            {/* Price chart */}
+            <div style={{
+              background: 'rgba(255,255,255,0.02)',
+              border: `1px solid ${BDR}`,
+              borderRadius: 12,
+              padding: '16px 20px',
+              marginBottom: 24,
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: ACCENT, marginBottom: 12, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                {zh ? '市场走势（以事件起点=100标准化）' : 'Market Performance (normalised to 100 at start)'}
+              </div>
+              <EventPriceChart eventId={active.id} tickers={active.tickers} zh={zh} />
+            </div>
+
+            {/* Exam points */}
+            <div style={{
+              background: 'rgba(255,255,255,0.02)',
+              border: `1px solid ${BDR}`,
+              borderRadius: 12,
+              padding: '16px 20px',
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#fbbf24', marginBottom: 14, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                📝 {zh ? '考试考点' : 'Exam Connection Points'}
+              </div>
+              {(zh ? active.exam_points_zh : active.exam_points).map((ep, i) => (
+                <div key={i} style={{
+                  display: 'flex', gap: 12, marginBottom: i < active.exam_points.length - 1 ? 14 : 0,
+                  paddingBottom: i < active.exam_points.length - 1 ? 14 : 0,
+                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(138,180,248,0.07)' : 'none',
+                }}>
+                  <span style={{
+                    flexShrink: 0, fontSize: 11, fontWeight: 700,
+                    padding: '3px 10px', borderRadius: 10, height: 'fit-content',
+                    background: 'rgba(251,191,36,0.1)', color: '#fbbf24',
+                    border: '1px solid rgba(251,191,36,0.2)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {ep.exam}
+                  </span>
+                  <span style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.85)' }}>
+                    {ep.point}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function StudyCenter({ lang }) {
   const zh = lang === 'zh'
@@ -394,8 +665,9 @@ export default function StudyCenter({ lang }) {
   const examMeta = EXAMS.find((e) => e.key === activeExam) || EXAMS[0]
   const accentColor = examMeta.color
 
-  // Fetch curriculum whenever exam changes
+  // Fetch curriculum whenever exam changes (skip for events tab)
   useEffect(() => {
+    if (activeExam === 'events') return
     setLoadingCurr(true)
     setCurriculum(null)
     setActiveId(null)
@@ -480,10 +752,14 @@ export default function StudyCenter({ lang }) {
         })}
       </div>
 
-      {/* ── Body: sidebar + content ── */}
+      {/* ── Body: sidebar + content (or EventTimeline) ── */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
+        {/* ── Events timeline special view ── */}
+        {activeExam === 'events' && <EventTimeline zh={zh} />}
+
         {/* ── Left sidebar ── */}
+        {activeExam !== 'events' &&
         <div style={{
           width: 260, flexShrink: 0, background: SIDEBAR_BG,
           borderRight: `1px solid ${BDR}`,
@@ -538,8 +814,10 @@ export default function StudyCenter({ lang }) {
             )}
           </div>
         </div>
+        }
 
         {/* ── Right content area ── */}
+        {activeExam !== 'events' &&
         <div style={{
           flex: 1, background: CONTENT_BG,
           overflowY: 'auto', display: 'flex', flexDirection: 'column',
@@ -645,6 +923,7 @@ export default function StudyCenter({ lang }) {
             </div>
           )}
         </div>
+        }
       </div>
     </div>
   )

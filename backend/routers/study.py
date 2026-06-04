@@ -1354,3 +1354,218 @@ def ask_ai_tutor(body: AskBody):
         return {"answer": answer, "topic": topic_title, "exam": exam_name}
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"AI tutor unavailable: {exc}")
+
+
+# ── Economic Events Timeline ──────────────────────────────────────────────────
+
+ECONOMIC_EVENTS = [
+    {
+        "id": "asian_crisis_1997",
+        "title": "亚洲金融危机",
+        "title_en": "Asian Financial Crisis",
+        "date_range": "1997-07 ~ 1998-12",
+        "year": 1997,
+        "description": "1997年7月，泰铢遭受投机性攻击并崩溃，危机迅速蔓延至东南亚和东亚各国。泰国、印尼、韩国、马来西亚货币和股市暴跌，多国被迫向IMF寻求紧急救援。香港恒生指数在危机期间累计下跌约50%，上证指数由于资本管制受到较大保护。",
+        "description_en": "Beginning with the collapse of the Thai baht in July 1997 after speculative attacks, the crisis spread rapidly across Southeast and East Asia. Thailand, Indonesia, South Korea and Malaysia saw their currencies and stock markets collapse. The Hang Seng fell ~50%; mainland China was largely shielded by capital controls.",
+        "exam_points": [
+            {"exam": "A-Level", "point": "Fixed vs floating exchange rates; speculative attack mechanism; IMF conditionality and moral hazard; contagion via trade and financial linkages."},
+            {"exam": "AP Macro", "point": "Balance of payments crisis; current account deficits; role of IMF; currency crisis and capital flight."},
+            {"exam": "IB", "point": "Exchange rate systems (HL); financial account; international financial institutions (IMF); J-curve effect."},
+        ],
+        "exam_points_zh": [
+            {"exam": "A-Level", "point": "固定汇率与浮动汇率；投机性攻击机制；IMF援助条件与道德风险；贸易和金融渠道的传染效应。"},
+            {"exam": "AP宏观", "point": "国际收支危机；经常账户赤字；IMF角色；货币危机与资本外逃。"},
+            {"exam": "IB", "point": "汇率制度（HL）；金融账户；国际金融机构（IMF）；J曲线效应。"},
+        ],
+        "tickers": [
+            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
+            {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"},
+        ],
+        "price_start": "1997-01-01",
+        "price_end": "1999-06-30",
+    },
+    {
+        "id": "dotcom_2000",
+        "title": "科技网络泡沫",
+        "title_en": "Dot-com Bubble",
+        "date_range": "2000-03 ~ 2002-10",
+        "year": 2000,
+        "description": "1990年代末，互联网公司股价在投机热潮中大幅攀升，纳斯达克指数于2000年3月达到历史峰值5048点。随后估值崩溃，至2002年10月纳斯达克已较峰值下跌约78%，数千家互联网公司倒闭，美国经济陷入短暂衰退。",
+        "description_en": "Soaring internet company valuations driven by speculative mania pushed the NASDAQ to a peak of 5,048 in March 2000. The subsequent collapse wiped out ~78% of NASDAQ's value by October 2002. Thousands of dot-com firms went bankrupt and the US entered a brief recession.",
+        "exam_points": [
+            {"exam": "A-Level", "point": "Speculative bubbles and irrational exuberance; asset price inflation; wealth effect on consumption; recession and the output gap."},
+            {"exam": "AP Macro", "point": "Business cycle; aggregate demand shifts; recessionary gap; role of monetary policy (Fed rate cuts post-crash)."},
+            {"exam": "IB", "point": "Market failure (speculation); business cycles; Keynesian vs monetarist policy responses."},
+        ],
+        "exam_points_zh": [
+            {"exam": "A-Level", "point": "投机泡沫与非理性繁荣；资产价格通胀；财富效应对消费的影响；衰退与产出缺口。"},
+            {"exam": "AP宏观", "point": "商业周期；总需求转移；衰退性缺口；货币政策角色（崩溃后联储降息）。"},
+            {"exam": "IB", "point": "市场失灵（投机）；商业周期；凯恩斯主义与货币主义的政策回应。"},
+        ],
+        "tickers": [
+            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
+            {"symbol": "^IXIC", "label": "纳斯达克", "color": "#10b981"},
+        ],
+        "price_start": "1999-09-01",
+        "price_end": "2003-03-31",
+    },
+    {
+        "id": "financial_crisis_2008",
+        "title": "全球金融危机",
+        "title_en": "Global Financial Crisis",
+        "date_range": "2008-09 ~ 2009-03",
+        "year": 2008,
+        "description": "美国次级房贷市场崩溃引发全球金融危机。2008年9月，雷曼兄弟申请破产保护，全球金融体系几乎陷入瘫痪。标普500从峰值累计跌幅逾56%。中国推出4万亿元人民币刺激计划，上证指数2008年全年跌幅超65%，随后随刺激计划回升。",
+        "description_en": "The collapse of the US subprime mortgage market triggered a global financial crisis. Lehman Brothers filed for bankruptcy in September 2008, nearly freezing the global financial system. S&P 500 fell over 56% peak-to-trough. China launched a ¥4 trillion stimulus; the SSE Composite fell 65% in 2008 before recovering sharply.",
+        "exam_points": [
+            {"exam": "A-Level", "point": "Systemic risk and moral hazard; credit crunch; asymmetric information (sub-prime lending); fiscal multiplier; quantitative easing."},
+            {"exam": "AP Macro", "point": "Recession and output gap; fiscal stimulus (multiplier); Fed's unconventional monetary policy (QE, ZIRP); Keynesian response."},
+            {"exam": "IB", "point": "Financial market failure; government intervention (bailouts, stimulus); Keynesian vs supply-side policies; debt sustainability (HL)."},
+        ],
+        "exam_points_zh": [
+            {"exam": "A-Level", "point": "系统性风险与道德风险；信贷紧缩；信息不对称（次级贷款）；财政乘数；量化宽松。"},
+            {"exam": "AP宏观", "point": "衰退与产出缺口；财政刺激（乘数效应）；美联储非常规货币政策（QE、零利率）；凯恩斯主义回应。"},
+            {"exam": "IB", "point": "金融市场失灵；政府干预（救助、刺激）；凯恩斯主义与供给侧政策；债务可持续性（HL）。"},
+        ],
+        "tickers": [
+            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
+            {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"},
+        ],
+        "price_start": "2007-06-01",
+        "price_end": "2010-06-30",
+    },
+    {
+        "id": "ashare_crash_2015",
+        "title": "A股股灾",
+        "title_en": "China A-Share Market Crash",
+        "date_range": "2015-06 ~ 2015-09",
+        "year": 2015,
+        "description": "在杠杆资金（场内外配资）和散户情绪推动下，上证指数从2014年7月的约2000点急升至2015年6月的峰值5178点。随后在短短三个月内暴跌约45%，中国证监会紧急推出"国家队"救市措施，包括暂停新股发行、禁止大股东减持等。",
+        "description_en": "Driven by leveraged retail investors (margin financing and shadow lending), the SSE Composite surged from ~2,000 in mid-2014 to a peak of 5,178 in June 2015. It then crashed ~45% in three months. The CSRC launched emergency 'national team' interventions: halting IPOs, banning large-shareholder selling, and deploying state funds to buy shares.",
+        "exam_points": [
+            {"exam": "A-Level", "point": "Speculative bubbles; leverage and amplification; government intervention in asset markets; moral hazard from bailouts."},
+            {"exam": "AP Macro", "point": "Asset market volatility; wealth effect; government stabilisation policy; international spillovers (CNY devaluation)."},
+            {"exam": "IB", "point": "Market failure (speculation, information asymmetry); government intervention; exchange rate policy (CNY devaluation Aug 2015)."},
+        ],
+        "exam_points_zh": [
+            {"exam": "A-Level", "point": "投机泡沫；杠杆与放大效应；政府干预资产市场；救助带来的道德风险。"},
+            {"exam": "AP宏观", "point": "资产市场波动；财富效应；政府稳定政策；国际溢出效应（人民币贬值）。"},
+            {"exam": "IB", "point": "市场失灵（投机、信息不对称）；政府干预；汇率政策（2015年8月人民币贬值）。"},
+        ],
+        "tickers": [
+            {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"},
+            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
+        ],
+        "price_start": "2014-12-01",
+        "price_end": "2016-03-31",
+    },
+    {
+        "id": "covid_2020",
+        "title": "新冠疫情冲击",
+        "title_en": "COVID-19 Pandemic Shock",
+        "date_range": "2020-02 ~ 2020-04",
+        "year": 2020,
+        "description": "新冠疫情在全球蔓延引发历史上速度最快的熊市之一。标普500从历史高点到2020年3月23日跌幅达34%，仅用33天。各国央行和政府随即出台史无前例的刺激措施：美联储将利率降至零并重启QE，美国国会通过超2万亿美元CARES法案，市场在刺激政策驱动下V型反弹。",
+        "description_en": "The global spread of COVID-19 triggered one of the fastest bear markets in history. The S&P 500 fell 34% in 33 days to its low on 23 March 2020. Governments and central banks responded with unprecedented stimulus: the Fed cut rates to zero and restarted QE; the US passed the $2.2 trillion CARES Act. Markets staged a V-shaped recovery driven by stimulus expectations.",
+        "exam_points": [
+            {"exam": "A-Level", "point": "Supply-side shock vs demand shock; fiscal multiplier (large-scale stimulus); central bank tools (QE, forward guidance); debt sustainability trade-off."},
+            {"exam": "AP Macro", "point": "Aggregate supply shock; recessionary gap; fiscal policy (CARES Act multiplier); Fed's toolkit (rate cuts, QE); inflation risk post-stimulus."},
+            {"exam": "IB", "point": "Supply-side and demand-side shocks; Keynesian vs monetarist response; long-run vs short-run trade-offs; developing vs developed country impacts."},
+        ],
+        "exam_points_zh": [
+            {"exam": "A-Level", "point": "供给侧冲击与需求冲击；财政乘数（大规模刺激）；央行工具（QE、前瞻性指引）；债务可持续性权衡。"},
+            {"exam": "AP宏观", "point": "总供给冲击；衰退性缺口；财政政策（CARES法案乘数）；美联储工具箱（降息、QE）；刺激后的通胀风险。"},
+            {"exam": "IB", "point": "供给侧与需求侧冲击；凯恩斯主义与货币主义回应；长短期权衡；发展中国家与发达国家的差异化影响。"},
+        ],
+        "tickers": [
+            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
+            {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"},
+        ],
+        "price_start": "2019-08-01",
+        "price_end": "2021-03-31",
+    },
+    {
+        "id": "fed_hikes_2022",
+        "title": "美联储激进加息",
+        "title_en": "Fed Rate Hike Cycle",
+        "date_range": "2022-03 ~ 2023-07",
+        "year": 2022,
+        "description": "疫情后大规模财政刺激与供应链中断推动美国通胀飙升至40年高点（CPI峰值9.1%，2022年6月）。美联储随即展开史上最快加息周期之一，在16个月内累计加息525个基点，联邦基金利率从0.25%升至5.5%。标普500 2022年全年跌幅超19%，10年期美债收益率攀升至逾15年高位，A股亦受美元走强和外资撤出影响承压。",
+        "description_en": "Post-pandemic fiscal stimulus and supply chain disruptions drove US inflation to a 40-year high (CPI peak 9.1%, June 2022). The Fed launched one of its fastest hiking cycles in history, raising rates 525bps in 16 months to 5.5%. The S&P 500 fell 19%+ in 2022; 10-year Treasury yields hit 15-year highs. A-shares also came under pressure from USD strength and foreign capital outflows.",
+        "exam_points": [
+            {"exam": "A-Level", "point": "Phillips curve trade-off; cost-push vs demand-pull inflation; monetary transmission mechanism; interest rate effect on investment (crowding out); exchange rate channel."},
+            {"exam": "AP Macro", "point": "Inflation targeting; Taylor Rule; monetary policy transmission; stagflation risk; impact on bond prices (inverse yield-price relationship)."},
+            {"exam": "IB", "point": "Monetary policy effectiveness; inflation types; exchange rate impact on trade (HL); debt service burden for developing economies."},
+        ],
+        "exam_points_zh": [
+            {"exam": "A-Level", "point": "菲利普斯曲线权衡；成本推动型与需求拉动型通胀；货币政策传导机制；利率对投资的挤出效应；汇率渠道。"},
+            {"exam": "AP宏观", "point": "通胀目标制；泰勒规则；货币政策传导；滞胀风险；债券价格与收益率的反向关系。"},
+            {"exam": "IB", "point": "货币政策有效性；通胀类型；汇率对贸易的影响（HL）；发展中国家的债务偿还压力。"},
+        ],
+        "tickers": [
+            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
+            {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"},
+        ],
+        "price_start": "2021-09-01",
+        "price_end": "2023-09-30",
+    },
+]
+
+# Simple in-memory price cache: { event_id: { ticker: [(date_str, close), ...] } }
+_events_price_cache: dict = {}
+
+
+def _fetch_event_prices(event: dict) -> dict:
+    """Fetch and normalise price data for an event's tickers using yfinance."""
+    import yfinance as yf
+    prices = {}
+    for t in event["tickers"]:
+        sym = t["symbol"]
+        try:
+            df = yf.download(sym, start=event["price_start"], end=event["price_end"],
+                             auto_adjust=True, progress=False)
+            if df.empty:
+                prices[sym] = []
+                continue
+            close_col = "Close"
+            series = df[close_col].dropna()
+            # Normalise to 100 at start so both indices are comparable
+            base = float(series.iloc[0])
+            prices[sym] = [
+                {"date": str(idx.date()), "value": round(float(v) / base * 100, 2)}
+                for idx, v in series.items()
+            ]
+        except Exception:
+            prices[sym] = []
+    return prices
+
+
+@router.get("/events")
+def get_events():
+    """Return list of major economic events (metadata only, no price data)."""
+    slim = []
+    for ev in ECONOMIC_EVENTS:
+        slim.append({
+            "id":           ev["id"],
+            "title":        ev["title"],
+            "title_en":     ev["title_en"],
+            "date_range":   ev["date_range"],
+            "year":         ev["year"],
+            "description":  ev["description"],
+            "description_en": ev["description_en"],
+            "exam_points":  ev["exam_points"],
+            "exam_points_zh": ev["exam_points_zh"],
+            "tickers":      ev["tickers"],
+        })
+    return {"events": slim}
+
+
+@router.get("/events/{event_id}/prices")
+def get_event_prices(event_id: str):
+    """Return normalised price series for the given event (cached)."""
+    event = next((e for e in ECONOMIC_EVENTS if e["id"] == event_id), None)
+    if event is None:
+        raise HTTPException(status_code=404, detail=f"Event '{event_id}' not found")
+    if event_id not in _events_price_cache:
+        _events_price_cache[event_id] = _fetch_event_prices(event)
+    return {"event_id": event_id, "prices": _events_price_cache[event_id], "tickers": event["tickers"]}
