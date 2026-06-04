@@ -1,7 +1,52 @@
 import { useState, useEffect, useRef } from 'react'
+import {
+  ComposableMap, Geographies, Geography,
+  Marker, ZoomableGroup, Graticule, Sphere,
+} from 'react-simple-maps'
 import ReactECharts from 'echarts-for-react'
 
-// ── colour helpers ────────────────────────────────────────────────────────────
+// ── Geo URL (TopoJSON, loaded client-side) ────────────────────────────────────
+const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
+
+// ── ISO 3166-1 numeric → index metadata ──────────────────────────────────────
+// coords: [lon, lat] for the label marker
+const COUNTRY_MAP = {
+  '840': { sym: '^GSPC',    label: 'S&P',    label_zh: '标普',  coords: [-100, 40] },
+  '124': { sym: '^GSPTSE',  label: 'TSX',    label_zh: 'TSX',   coords: [-96,  57] },
+  '826': { sym: '^FTSE',    label: 'FTSE',   label_zh: '富时',  coords: [ -2,  54] },
+  '276': { sym: '^GDAXI',   label: 'DAX',    label_zh: 'DAX',   coords: [ 10,  52] },
+  '250': { sym: '^FCHI',    label: 'CAC',    label_zh: 'CAC',   coords: [  2,  46] },
+  '356': { sym: '^BSESN',   label: 'SENSEX', label_zh: '感指',  coords: [ 79,  22] },
+  '156': { sym: 'sh000001', label: 'SSE',    label_zh: '上证',  coords: [104,  35] },
+  '410': { sym: '^KS11',    label: 'KOSPI',  label_zh: '韩综',  coords: [128,  37] },
+  '392': { sym: '^N225',    label: 'Nikkei', label_zh: '日经',  coords: [138,  37] },
+  '344': { sym: '^HSI',     label: 'HSI',    label_zh: '恒生',  coords: [114,  22] },
+  '036': { sym: '^AXJO',    label: 'ASX',    label_zh: 'ASX',   coords: [134, -25] },
+}
+
+// ── Bloomberg-style colour scale ──────────────────────────────────────────────
+function countryFill(pct) {
+  if (pct === null || pct === undefined) return '#1a2035'
+  if (pct >=  2) return '#00e87a'
+  if (pct >=  1) return '#00c55a'
+  if (pct >=  0) return '#007a40'
+  if (pct >= -1) return '#8b2020'
+  if (pct >= -2) return '#cc2222'
+  return '#ff1a1a'
+}
+function hoverFill(pct) {
+  if (pct === null || pct === undefined) return '#26304a'
+  return pct >= 0 ? '#00ffaa' : '#ff4455'
+}
+function labelColor(pct) {
+  if (pct === null || pct === undefined) return '#9aa0a6'
+  if (pct >=  2) return '#00ff88'
+  if (pct >=  0) return '#00cc66'
+  if (pct >= -2) return '#ff6666'
+  return '#ff2222'
+}
+
+// ── Ticker helpers ────────────────────────────────────────────────────────────
 function changePctColor(pct) {
   if (pct === null || pct === undefined) return '#9aa0a6'
   if (pct > 1)  return '#22c55e'
@@ -11,14 +56,14 @@ function changePctColor(pct) {
 }
 function changePctBg(pct) {
   if (pct === null || pct === undefined) return 'rgba(154,160,166,0.08)'
-  if (pct >= 0) return 'rgba(34,197,94,0.08)'
-  return 'rgba(239,68,68,0.08)'
+  return pct >= 0 ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)'
 }
 function changePctBorder(pct) {
   if (pct === null || pct === undefined) return 'rgba(154,160,166,0.15)'
-  if (pct >= 0) return 'rgba(34,197,94,0.2)'
-  return 'rgba(239,68,68,0.2)'
+  return pct >= 0 ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'
 }
+
+// ── Sentiment gauge ───────────────────────────────────────────────────────────
 function scoreColor(s) {
   if (s < 25) return '#ef4444'
   if (s < 45) return '#f97316'
@@ -27,328 +72,96 @@ function scoreColor(s) {
   return '#22c55e'
 }
 
-// ── ECharts gauge option ──────────────────────────────────────────────────────
 function buildGauge(score) {
   return {
     backgroundColor: 'transparent',
     series: [{
       type: 'gauge',
-      startAngle: 180,
-      endAngle: 0,
-      min: 0,
-      max: 100,
-      radius: '88%',
-      center: ['50%', '70%'],
+      startAngle: 180, endAngle: 0,
+      min: 0, max: 100,
+      radius: '88%', center: ['50%', '70%'],
       axisLine: {
         lineStyle: {
           width: 14,
           color: [
-            [0.25, '#ef4444'],
-            [0.45, '#f97316'],
-            [0.55, '#fbbf24'],
-            [0.75, '#84cc16'],
-            [1.00, '#22c55e'],
+            [0.25, '#ef4444'], [0.45, '#f97316'],
+            [0.55, '#fbbf24'], [0.75, '#84cc16'], [1.0, '#22c55e'],
           ],
         },
       },
-      pointer: {
-        length: '62%',
-        width: 4,
-        itemStyle: { color: '#e8eaed' },
-      },
-      axisTick:  { show: false },
-      splitLine: { show: false },
-      axisLabel: { show: false },
-      title:     { show: false },
+      pointer: { length: '62%', width: 4, itemStyle: { color: '#e8eaed' } },
+      axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
+      title: { show: false },
       detail: {
         valueAnimation: true,
         formatter: '{value}',
         color: scoreColor(score),
-        fontSize: 26,
-        fontWeight: 700,
-        offsetCenter: [0, '18%'],
-        fontFamily: 'inherit',
+        fontSize: 24, fontWeight: 700,
+        offsetCenter: [0, '18%'], fontFamily: 'inherit',
       },
       data: [{ value: score }],
     }],
   }
 }
 
-// ── SVG simplified world map ──────────────────────────────────────────────────
-// Market pin positions in 800×390 SVG coordinate space (Mercator-ish)
-// align: 'below' → label below dot; 'above' → label above dot
-const MARKET_PINS = [
-  { sym: '^GSPC',    x: 178, y: 108, label: 'S&P 500',  label_zh: '标普500',  align: 'below' },
-  { sym: '^FTSE',    x: 360, y:  54, label: 'FTSE 100', label_zh: '富时100',  align: 'below' },
-  { sym: '^FCHI',    x: 400, y:  80, label: 'CAC 40',   label_zh: 'CAC 40',   align: 'below' },
-  { sym: '^GDAXI',   x: 432, y:  62, label: 'DAX',      label_zh: 'DAX',      align: 'above' },
-  { sym: '^BSESN',   x: 540, y: 155, label: 'SENSEX',   label_zh: '印度感指', align: 'below' },
-  { sym: 'sh000001', x: 650, y: 100, label: 'Shanghai', label_zh: '上证',     align: 'above' },
-  { sym: '^KS11',    x: 720, y:  88, label: 'KOSPI',    label_zh: '韩综',     align: 'above' },
-  { sym: '^N225',    x: 757, y:  60, label: 'Nikkei',   label_zh: '日经',     align: 'below' },
-  { sym: '^HSI',     x: 700, y: 148, label: 'Hang Seng',label_zh: '恒生',     align: 'below' },
-  { sym: '^AXJO',    x: 726, y: 285, label: 'ASX 200',  label_zh: 'ASX',      align: 'below' },
-]
-
-function WorldMapSVG({ indices, lang }) {
-  const [tip, setTip] = useState(null)
-  const zh = lang === 'zh'
-
-  // Build lookup: symbol → index data
-  const bySymbol = {}
-  for (const idx of indices) {
-    bySymbol[idx.symbol] = idx
-    // Also match CN indices by name for backward compat (old symbol="—")
-    if (idx.region === 'cn') {
-      if (idx.name_zh === '上证指数' || idx.name === '上证指数') bySymbol['sh000001'] = idx
-      if (idx.name_zh === '深证成指' || idx.name === '深证成指') bySymbol['sz399001'] = idx
-      if (idx.name_zh === '创业板指' || idx.name === '创业板指') bySymbol['sz399006'] = idx
-    }
-  }
-
-  return (
-    <div style={{ position: 'relative', width: '100%' }}>
-      <svg
-        viewBox="0 0 800 390"
-        style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 8 }}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Ocean */}
-        <rect width="800" height="390" fill="#07111f" rx="8" />
-
-        {/* Grid lines */}
-        {[78, 156, 234, 312].map(y => (
-          <line key={y} x1="0" y1={y} x2="800" y2={y}
-            stroke="rgba(138,180,248,0.04)" strokeWidth="1" />
-        ))}
-        {[160, 320, 480, 640].map(x => (
-          <line key={x} x1={x} y1="0" x2={x} y2="390"
-            stroke="rgba(138,180,248,0.04)" strokeWidth="1" />
-        ))}
-
-        {/* ── Continent fills ── */}
-        <g fill="rgba(22,36,66,0.92)" stroke="rgba(138,180,248,0.18)" strokeWidth="0.8">
-          {/* Greenland */}
-          <polygon points="248,2 312,2 334,18 312,42 278,46 248,32" />
-          {/* North America */}
-          <polygon points="55,25 182,14 238,44 268,84 268,148 248,202 220,226 190,218 155,204 122,182 88,156 58,128 44,78" />
-          {/* Central America */}
-          <polygon points="220,226 248,202 265,222 260,242 235,246 220,232" />
-          {/* South America */}
-          <polygon points="158,242 238,246 284,266 292,312 272,366 240,390 205,390 172,358 158,295" />
-          {/* Iceland */}
-          <polygon points="336,22 352,18 360,28 352,38 336,36" />
-          {/* British Isles */}
-          <polygon points="344,32 362,28 374,38 370,56 352,60 340,48" />
-          {/* Europe */}
-          <polygon points="360,28 392,18 448,26 464,62 448,94 420,110 384,114 352,100 338,70" />
-          {/* Africa */}
-          <polygon points="340,112 420,108 475,122 514,160 522,216 508,280 468,334 428,348 385,332 350,290 330,232 334,176" />
-          {/* Middle East */}
-          <polygon points="458,110 508,110 522,140 520,170 492,180 468,168 452,148" />
-          {/* India */}
-          <polygon points="504,114 542,106 568,130 570,180 545,222 520,218 503,186" />
-          {/* Asia main */}
-          <polygon points="438,26 546,14 660,6 736,26 794,62 800,120 780,176 742,210 702,222 652,220 596,232 552,210 510,180 476,154 456,120 445,73" />
-          {/* SE Asia peninsula */}
-          <polygon points="596,175 622,178 635,202 625,226 605,230 590,210" />
-          {/* Japan */}
-          <polygon points="733,46 756,40 770,54 770,88 755,100 735,88" />
-          {/* Taiwan */}
-          <polygon points="724,130 732,126 736,138 728,142" />
-          {/* Sri Lanka */}
-          <polygon points="558,200 566,196 570,208 562,212" />
-          {/* Australia */}
-          <polygon points="638,228 732,212 798,252 800,300 782,342 740,358 682,350 638,322 622,280" />
-          {/* New Zealand */}
-          <polygon points="792,316 804,310 806,340 794,348" />
-        </g>
-
-        {/* ── Market pins ── */}
-        {MARKET_PINS.map((pin, i) => {
-          const idx = bySymbol[pin.sym]
-          const pct = idx?.change_pct ?? null
-          const close = idx?.close ?? null
-          const dotColor = pct === null ? '#9aa0a6' : pct >= 0 ? '#22c55e' : '#ef4444'
-          const glowColor = pct === null ? 'rgba(154,160,166,0.12)'
-            : pct >= 0 ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)'
-          const sign = pct !== null ? (pct >= 0 ? '+' : '') : ''
-          const pctStr = pct !== null ? `${sign}${pct.toFixed(2)}%` : '—'
-          const above = pin.align === 'above'
-          const labelY = above ? pin.y - 22 : pin.y + 20
-          const pctY   = above ? pin.y - 11 : pin.y + 30
-
-          return (
-            <g
-              key={pin.sym}
-              style={{ cursor: 'pointer' }}
-              onMouseEnter={() => setTip({ pin, idx, pct, close, pctStr, dotColor })}
-              onMouseLeave={() => setTip(null)}
-            >
-              {/* Animated pulse ring */}
-              <circle
-                cx={pin.x} cy={pin.y} r="11"
-                fill="none" stroke={dotColor} strokeWidth="1.2"
-                style={{
-                  transformOrigin: `${pin.x}px ${pin.y}px`,
-                  animation: `pinPulse 2.6s ease-out ${(i * 0.28).toFixed(2)}s infinite`,
-                }}
-              />
-              {/* Glow fill */}
-              <circle cx={pin.x} cy={pin.y} r="13" fill={glowColor} />
-              {/* Dot */}
-              <circle cx={pin.x} cy={pin.y} r="5.5" fill={dotColor} opacity="0.95" />
-              <circle cx={pin.x} cy={pin.y} r="2.5" fill="#fff" opacity="0.45" />
-              {/* Name label */}
-              <text x={pin.x} y={labelY} textAnchor="middle"
-                fontSize="8" fill="rgba(232,234,240,0.7)" fontFamily="inherit">
-                {zh ? pin.label_zh : pin.label}
-              </text>
-              {/* Pct label */}
-              <text x={pin.x} y={pctY} textAnchor="middle"
-                fontSize="7.5" fill={dotColor} fontFamily="monospace" fontWeight="700">
-                {pctStr}
-              </text>
-            </g>
-          )
-        })}
-
-        {/* ── Tooltip ── */}
-        {tip && (() => {
-          const tx = Math.min(Math.max(tip.pin.x - 74, 4), 648)
-          const ty = tip.pin.align === 'above'
-            ? Math.min(tip.pin.y + 8, 330)
-            : Math.max(tip.pin.y - 66, 4)
-          const name = zh ? tip.pin.label_zh : tip.pin.label
-          const closeStr = tip.close !== null ? Number(tip.close).toLocaleString() : '—'
-          return (
-            <g>
-              <rect x={tx} y={ty} width={148} height={58} rx="6"
-                fill="rgba(8,14,30,0.97)" stroke="rgba(138,180,248,0.3)" strokeWidth="1" />
-              <text x={tx + 74} y={ty + 18} textAnchor="middle"
-                fontSize="11" fill="#e8eaed" fontWeight="700" fontFamily="inherit">
-                {name}
-              </text>
-              <text x={tx + 74} y={ty + 34} textAnchor="middle"
-                fontSize="11" fill="rgba(232,234,240,0.55)" fontFamily="monospace">
-                {closeStr}
-              </text>
-              <text x={tx + 74} y={ty + 50} textAnchor="middle"
-                fontSize="12" fill={tip.dotColor} fontWeight="700" fontFamily="monospace">
-                {tip.pctStr}
-              </text>
-            </g>
-          )
-        })()}
-
-        {/* Legend */}
-        <g>
-          <circle cx="14" cy="378" r="5" fill="#22c55e" opacity="0.85" />
-          <text x="22" y="382" fontSize="9" fill="rgba(232,234,240,0.45)" fontFamily="inherit">
-            {zh ? '涨' : 'Up'}
-          </text>
-          <circle cx="46" cy="378" r="5" fill="#ef4444" opacity="0.85" />
-          <text x="54" y="382" fontSize="9" fill="rgba(232,234,240,0.45)" fontFamily="inherit">
-            {zh ? '跌' : 'Down'}
-          </text>
-          <text x="786" y="382" textAnchor="end" fontSize="9"
-            fill="rgba(138,180,248,0.3)" fontFamily="inherit">
-            BestFriendStock
-          </text>
-        </g>
-      </svg>
-    </div>
-  )
-}
-
-// ── Gauge card ────────────────────────────────────────────────────────────────
 function GaugeCard({ title, score, labelZh, labelEn, vix, zh }) {
   const label = zh ? labelZh : labelEn
   const color = scoreColor(score)
   return (
     <div style={{
-      flex: 1, minWidth: 120,
       background: 'rgba(255,255,255,0.025)',
       border: '1px solid rgba(138,180,248,0.10)',
-      borderRadius: 10,
-      padding: '10px 8px 8px',
-      textAlign: 'center',
+      borderRadius: 10, padding: '10px 8px 8px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 11, color: '#9aa0a6', marginBottom: 4, letterSpacing: '0.3px' }}>
         {title}
       </div>
-      <ReactECharts
-        option={buildGauge(score)}
-        style={{ height: 130 }}
-        opts={{ renderer: 'svg' }}
-      />
-      <div style={{ fontSize: 13, fontWeight: 700, color, marginTop: -6 }}>
-        {label}
-      </div>
-      {vix !== null && vix !== undefined && (
-        <div style={{ fontSize: 10, color: '#9aa0a6', marginTop: 3 }}>
-          VIX {Number(vix).toFixed(1)}
-        </div>
+      <ReactECharts option={buildGauge(score)} style={{ height: 118 }} opts={{ renderer: 'svg' }} />
+      <div style={{ fontSize: 13, fontWeight: 700, color, marginTop: -4 }}>{label}</div>
+      {vix != null && (
+        <div style={{ fontSize: 10, color: '#9aa0a6', marginTop: 3 }}>VIX {Number(vix).toFixed(1)}</div>
       )}
     </div>
   )
 }
 
-// ── Ticker bar ────────────────────────────────────────────────────────────────
+// ── Scrolling ticker bar ──────────────────────────────────────────────────────
 function TickerBar({ indices, zh }) {
   const scrollRef = useRef(null)
-  // Auto-scroll left
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
     let x = 0
-    const step = () => {
+    const id = setInterval(() => {
       x += 0.4
       if (x >= el.scrollWidth / 2) x = 0
       el.scrollLeft = x
-    }
-    const id = setInterval(step, 24)
+    }, 24)
     return () => clearInterval(id)
   }, [indices])
 
-  const doubled = [...indices, ...indices]  // duplicate for seamless loop
-
+  const doubled = [...indices, ...indices]
   return (
     <div
       ref={scrollRef}
-      style={{
-        display: 'flex', gap: 8, overflowX: 'hidden',
-        padding: '8px 0 4px', marginTop: 10,
-        userSelect: 'none',
-      }}
-      onMouseEnter={() => scrollRef.current && (scrollRef.current._paused = true)}
-      onMouseLeave={() => scrollRef.current && (scrollRef.current._paused = false)}
+      style={{ display: 'flex', gap: 8, overflowX: 'hidden', padding: '8px 0 4px', marginTop: 10, userSelect: 'none' }}
     >
       {doubled.map((idx, i) => {
         const pct = idx.change_pct
         return (
-          <div
-            key={i}
-            style={{
-              flexShrink: 0, minWidth: 110,
-              background: changePctBg(pct),
-              border: `1px solid ${changePctBorder(pct)}`,
-              borderRadius: 8, padding: '5px 12px',
-              textAlign: 'center',
-            }}
-          >
+          <div key={i} style={{
+            flexShrink: 0, minWidth: 110,
+            background: changePctBg(pct), border: `1px solid ${changePctBorder(pct)}`,
+            borderRadius: 8, padding: '5px 12px', textAlign: 'center',
+          }}>
             <div style={{ fontSize: 10, color: '#9aa0a6', marginBottom: 2, whiteSpace: 'nowrap' }}>
               {zh ? (idx.name_zh || idx.name) : idx.name}
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: changePctColor(pct) }}>
-              {pct !== null && pct !== undefined
-                ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`
-                : '—'}
+              {pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'}
             </div>
             <div style={{ fontSize: 10, color: 'rgba(232,234,240,0.5)' }}>
-              {idx.close !== null && idx.close !== undefined
-                ? Number(idx.close).toLocaleString()
-                : '—'}
+              {idx.close != null ? Number(idx.close).toLocaleString() : '—'}
             </div>
           </div>
         )
@@ -357,10 +170,228 @@ function TickerBar({ indices, zh }) {
   )
 }
 
+// ── Loading skeleton ──────────────────────────────────────────────────────────
+function LoadingSkeleton() {
+  const shimmer = {
+    position: 'absolute', inset: 0,
+    background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
+    backgroundSize: '200% 100%',
+    animation: 'skshimmer 1.6s infinite',
+  }
+  return (
+    <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+      <div style={{
+        flex: '1 1 360px', minWidth: 0, height: 290, borderRadius: 8,
+        background: 'rgba(138,180,248,0.04)', border: '1px solid rgba(138,180,248,0.07)',
+        overflow: 'hidden', position: 'relative',
+      }}>
+        <div style={shimmer} />
+      </div>
+      <div style={{ flex: '0 0 200px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {[0, 1].map(i => (
+          <div key={i} style={{
+            height: 148, borderRadius: 10,
+            background: 'rgba(138,180,248,0.04)', border: '1px solid rgba(138,180,248,0.07)',
+            overflow: 'hidden', position: 'relative',
+          }}>
+            <div style={{ ...shimmer, animationDelay: `${i * 0.2}s` }} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── World choropleth map ──────────────────────────────────────────────────────
+function WorldMap({ indices, lang }) {
+  const [tooltip, setTooltip] = useState(null)
+  const zh = lang === 'zh'
+
+  // Build symbol → index data lookup
+  const bySymbol = {}
+  for (const idx of indices) {
+    bySymbol[idx.symbol] = idx
+    // Backward compat: CN index might still have symbol="—"
+    if (idx.region === 'cn') {
+      if (idx.name_zh === '上证指数' || idx.name === '上证指数') bySymbol['sh000001'] = idx
+    }
+  }
+
+  const handleEnter = (geo, e) => {
+    const id = String(geo.id).padStart(3, '0')
+    const meta = COUNTRY_MAP[id] || COUNTRY_MAP[String(geo.id)]
+    if (!meta) return
+    const idx = bySymbol[meta.sym]
+    setTooltip({ x: e.clientX, y: e.clientY, meta, idx })
+  }
+  const handleMove = (e) => {
+    setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)
+  }
+  const handleLeave = () => setTooltip(null)
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        background: '#050d1a',
+        borderRadius: 8,
+        overflow: 'hidden',
+        lineHeight: 0,
+      }}
+      onMouseMove={handleMove}
+    >
+      <ComposableMap
+        projection="geoNaturalEarth1"
+        projectionConfig={{ scale: 155, center: [10, 10] }}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
+      >
+        <ZoomableGroup zoom={1} minZoom={0.8} maxZoom={6}>
+          {/* Ocean */}
+          <Sphere id="rsm-sphere-bg" fill="#0a1628" stroke="#1a2a4a" strokeWidth={0.5} />
+          {/* Graticule grid lines */}
+          <Graticule stroke="#0f1f3d" strokeWidth={0.4} />
+
+          {/* Country fills */}
+          <Geographies geography={GEO_URL}>
+            {({ geographies }) =>
+              geographies.map(geo => {
+                // world-atlas uses numeric id, zero-pad to 3 digits
+                const id = String(geo.id).padStart(3, '0')
+                const meta = COUNTRY_MAP[id] || COUNTRY_MAP[String(geo.id)]
+                const idx = meta ? bySymbol[meta.sym] : null
+                const pct = idx?.change_pct ?? null
+                const fill = countryFill(pct)
+
+                return (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill={fill}
+                    stroke="#2a3a5c"
+                    strokeWidth={0.4}
+                    style={{
+                      default: { fill, outline: 'none' },
+                      hover: {
+                        fill: hoverFill(pct),
+                        outline: 'none',
+                        cursor: meta ? 'pointer' : 'default',
+                      },
+                      pressed: { fill, outline: 'none' },
+                    }}
+                    onMouseEnter={(e) => handleEnter(geo, e)}
+                    onMouseLeave={handleLeave}
+                  />
+                )
+              })
+            }
+          </Geographies>
+
+          {/* Country labels — only when data available */}
+          {Object.entries(COUNTRY_MAP).map(([id, meta]) => {
+            const idx = bySymbol[meta.sym]
+            const pct = idx?.change_pct
+            if (pct === null || pct === undefined) return null
+            const sign = pct >= 0 ? '+' : ''
+            const lbl = zh ? meta.label_zh : meta.label
+            const color = labelColor(pct)
+            const text = `${lbl} ${sign}${pct.toFixed(2)}%`
+            const w = text.length * 4.6 + 8
+            return (
+              <Marker key={id} coordinates={meta.coords}>
+                <rect
+                  x={-w / 2} y="-12" width={w} height="12"
+                  rx="2"
+                  fill="rgba(5,10,22,0.84)"
+                  stroke={color}
+                  strokeWidth="0.4"
+                />
+                <text
+                  y="-2"
+                  textAnchor="middle"
+                  fontSize={6.5}
+                  fill={color}
+                  fontWeight="700"
+                  fontFamily="'Courier New', monospace"
+                >
+                  {text}
+                </text>
+              </Marker>
+            )
+          })}
+        </ZoomableGroup>
+      </ComposableMap>
+
+      {/* Colour legend */}
+      <div style={{
+        position: 'absolute', bottom: 6, left: 10,
+        display: 'flex', alignItems: 'center', gap: 6,
+        pointerEvents: 'none',
+      }}>
+        {[
+          { color: '#00e87a', label: '>2%' },
+          { color: '#007a40', label: '0%' },
+          { color: '#cc2222', label: '<0%' },
+          { color: '#ff1a1a', label: '<-2%' },
+        ].map(({ color, label }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
+            <span style={{ fontSize: 8, color: 'rgba(232,234,240,0.4)', fontFamily: 'monospace' }}>
+              {label}
+            </span>
+          </div>
+        ))}
+        <span style={{ fontSize: 8, color: 'rgba(138,180,248,0.3)', marginLeft: 6 }}>
+          {zh ? '滚轮缩放' : 'scroll to zoom'}
+        </span>
+      </div>
+
+      {/* Tooltip */}
+      {tooltip && tooltip.idx && (() => {
+        const pct = tooltip.idx.change_pct
+        const color = labelColor(pct)
+        const name = zh
+          ? (tooltip.idx.name_zh || tooltip.idx.name)
+          : tooltip.idx.name
+        const close = tooltip.idx.close != null
+          ? Number(tooltip.idx.close).toLocaleString()
+          : '—'
+        const pctStr = pct != null
+          ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`
+          : '—'
+        return (
+          <div style={{
+            position: 'fixed',
+            left: tooltip.x + 14,
+            top: tooltip.y - 72,
+            zIndex: 9999,
+            background: 'rgba(5,10,22,0.97)',
+            border: '1px solid rgba(138,180,248,0.3)',
+            borderRadius: 8,
+            padding: '8px 14px',
+            minWidth: 140,
+            pointerEvents: 'none',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.6)',
+          }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed', marginBottom: 4 }}>
+              {name}
+            </div>
+            <div style={{ fontSize: 13, color: 'rgba(232,234,240,0.6)', marginBottom: 3, fontFamily: 'monospace' }}>
+              {close}
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 700, color, fontFamily: 'monospace' }}>
+              {pctStr}
+            </div>
+          </div>
+        )
+      })()}
+    </div>
+  )
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 export default function GlobalSentiment({ lang }) {
-  const [data,      setData]      = useState(null)
-  const [loading,   setLoading]   = useState(true)
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
   const zh = lang === 'zh'
 
@@ -372,14 +403,14 @@ export default function GlobalSentiment({ lang }) {
       .finally(() => setLoading(false))
   }, [])
 
-  const usScore  = data?.us_sentiment?.score  ?? 50
-  const cnScore  = data?.cn_sentiment?.score  ?? 50
-  const indices  = data?.indices ?? []
-  const updTime  = data?.updated_at?.slice(11, 16) ?? ''
+  const usScore = data?.us_sentiment?.score ?? 50
+  const cnScore = data?.cn_sentiment?.score ?? 50
+  const indices = data?.indices ?? []
+  const updTime = data?.updated_at?.slice(11, 16) ?? ''
 
   return (
     <div style={{
-      background: 'rgba(8,14,26,0.75)',
+      background: 'rgba(5,13,26,0.85)',
       border: '1px solid rgba(138,180,248,0.11)',
       borderRadius: 12,
       marginBottom: 16,
@@ -396,7 +427,6 @@ export default function GlobalSentiment({ lang }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Live dot */}
           <div style={{
             width: 7, height: 7, borderRadius: '50%',
             background: loading ? '#fbbf24' : '#22c55e',
@@ -408,7 +438,7 @@ export default function GlobalSentiment({ lang }) {
             background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           }}>
-            {zh ? '全球市场情绪地图' : 'Global Market Sentiment'}
+            {zh ? '全球市场情绪' : 'Global Market Sentiment'}
           </span>
           {updTime && !loading && (
             <span style={{ fontSize: 10, color: '#4a5568' }}>
@@ -417,7 +447,7 @@ export default function GlobalSentiment({ lang }) {
           )}
         </div>
         <span style={{ fontSize: 11, color: '#4a5568', userSelect: 'none' }}>
-          {collapsed ? '▼ 展开' : '▲ 收起'}
+          {collapsed ? '▼' : '▲'}
         </span>
       </div>
 
@@ -425,135 +455,45 @@ export default function GlobalSentiment({ lang }) {
       {!collapsed && (
         <div style={{ padding: '12px 16px 14px' }}>
           {loading ? (
-            <div style={{ animation: 'fadeIn 0.3s ease' }}>
-              {/* Map + Gauges skeleton row */}
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                {/* Map skeleton */}
-                <div style={{
-                  flex: '1 1 360px', minWidth: 0,
-                  height: 195, borderRadius: 8,
-                  background: 'rgba(138,180,248,0.04)',
-                  border: '1px solid rgba(138,180,248,0.07)',
-                  overflow: 'hidden', position: 'relative',
-                }}>
-                  <div style={{ position: 'absolute', inset: 0, animation: 'skshimmer 1.6s infinite',
-                    background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
-                    backgroundSize: '200% 100%',
-                  }} />
-                  {/* Fake continent blobs */}
-                  {[
-                    { l: '8%',  t: '20%', w: '18%', h: '35%' },
-                    { l: '10%', t: '58%', w: '10%', h: '25%' },
-                    { l: '32%', t: '15%', w: '14%', h: '28%' },
-                    { l: '32%', t: '52%', w: '10%', h: '30%' },
-                    { l: '55%', t: '12%', w: '28%', h: '42%' },
-                    { l: '72%', t: '58%', w: '10%', h: '18%' },
-                  ].map((s, i) => (
-                    <div key={i} style={{
-                      position: 'absolute', left: s.l, top: s.t, width: s.w, height: s.h,
-                      borderRadius: 6, background: 'rgba(138,180,248,0.06)',
-                    }} />
-                  ))}
-                  {/* Fake pins */}
-                  {[
-                    { l: '22%', t: '27%' }, { l: '55%', t: '22%' },
-                    { l: '38%', t: '20%' }, { l: '63%', t: '28%' },
-                    { l: '68%', t: '38%' }, { l: '76%', t: '62%' },
-                  ].map((p, i) => (
-                    <div key={i} style={{
-                      position: 'absolute', left: p.l, top: p.t,
-                      width: 10, height: 10, borderRadius: '50%',
-                      background: 'rgba(138,180,248,0.18)',
-                      transform: 'translate(-50%,-50%)',
-                    }} />
-                  ))}
-                </div>
-                {/* Gauge column skeleton */}
-                <div style={{ flex: '0 0 256px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{
-                    height: 10, width: '60%', margin: '0 auto', borderRadius: 4,
-                    background: 'rgba(138,180,248,0.07)',
-                  }} />
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    {[0, 1].map(i => (
-                      <div key={i} style={{
-                        flex: 1, height: 150, borderRadius: 10,
-                        background: 'rgba(138,180,248,0.04)',
-                        border: '1px solid rgba(138,180,248,0.07)',
-                        overflow: 'hidden', position: 'relative',
-                      }}>
-                        <div style={{ position: 'absolute', inset: 0, animation: 'skshimmer 1.6s infinite',
-                          animationDelay: `${i * 0.2}s`,
-                          background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
-                          backgroundSize: '200% 100%',
-                        }} />
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{
-                    height: 52, borderRadius: 8,
-                    background: 'rgba(138,180,248,0.03)',
-                    border: '1px solid rgba(138,180,248,0.07)',
-                  }} />
-                </div>
-              </div>
-              {/* Ticker skeleton */}
-              <div style={{
-                marginTop: 10, height: 32, borderRadius: 6,
-                background: 'rgba(138,180,248,0.04)',
-                border: '1px solid rgba(138,180,248,0.07)',
-                overflow: 'hidden', position: 'relative',
-              }}>
-                <div style={{ position: 'absolute', inset: 0, animation: 'skshimmer 1.6s infinite',
-                  animationDelay: '0.4s',
-                  background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
-                  backgroundSize: '200% 100%',
-                }} />
-              </div>
-            </div>
+            <LoadingSkeleton />
           ) : (
             <div style={{ animation: 'fadeIn 0.5s ease both' }}>
-              {/* Map + Gauges row */}
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                {/* World Map */}
+              {/* Map 75% + Gauges 25% */}
+              <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                {/* World map */}
                 <div style={{ flex: '1 1 360px', minWidth: 0 }}>
-                  <WorldMapSVG indices={indices} lang={lang} />
+                  <WorldMap indices={indices} lang={lang} />
                 </div>
 
-                {/* Gauge column */}
-                <div style={{ flex: '0 0 256px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {/* Sentiment gauges */}
+                <div style={{ flex: '0 0 200px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <div style={{ fontSize: 11, color: '#4a5568', textAlign: 'center', letterSpacing: '0.3px' }}>
-                    {zh ? '市场情绪指数 (0-100)' : 'Sentiment Index (0-100)'}
+                    {zh ? '情绪指数 (0-100)' : 'Sentiment Index (0-100)'}
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <GaugeCard
-                      title={zh ? '美股情绪' : 'US Sentiment'}
-                      score={usScore}
-                      labelZh={data?.us_sentiment?.label_zh}
-                      labelEn={data?.us_sentiment?.label_en}
-                      vix={data?.us_sentiment?.vix}
-                      zh={zh}
-                    />
-                    <GaugeCard
-                      title={zh ? 'A股情绪' : 'A-Share'}
-                      score={cnScore}
-                      labelZh={data?.cn_sentiment?.label_zh}
-                      labelEn={data?.cn_sentiment?.label_en}
-                      zh={zh}
-                    />
-                  </div>
-
-                  {/* Sentiment description */}
+                  <GaugeCard
+                    title={zh ? '美股情绪' : 'US Sentiment'}
+                    score={usScore}
+                    labelZh={data?.us_sentiment?.label_zh}
+                    labelEn={data?.us_sentiment?.label_en}
+                    vix={data?.us_sentiment?.vix}
+                    zh={zh}
+                  />
+                  <GaugeCard
+                    title={zh ? 'A股情绪' : 'A-Share'}
+                    score={cnScore}
+                    labelZh={data?.cn_sentiment?.label_zh}
+                    labelEn={data?.cn_sentiment?.label_en}
+                    zh={zh}
+                  />
                   <div style={{
-                    fontSize: 11, lineHeight: 1.6, color: '#4a5568',
+                    fontSize: 10, lineHeight: 1.6, color: '#4a5568',
                     padding: '8px 10px',
                     background: 'rgba(255,255,255,0.02)',
                     borderRadius: 8, border: '1px solid rgba(138,180,248,0.07)',
-                    marginTop: 2,
                   }}>
                     {zh
-                      ? '综合RSI、52周高点距离、VIX波动率及涨跌比计算，仅供参考，不构成投资建议。'
-                      : 'Composite of RSI, 52w-high proximity, VIX & advance/decline ratio. For reference only, not investment advice.'}
+                      ? '综合RSI、52周高点及涨跌比计算，仅供参考，不构成投资建议。'
+                      : 'Composite of RSI, 52w-high & A/D ratio. Not investment advice.'}
                   </div>
                 </div>
               </div>
@@ -564,6 +504,7 @@ export default function GlobalSentiment({ lang }) {
           )}
         </div>
       )}
+
       <style>{`
         @keyframes skshimmer {
           0%   { background-position: -200% 0; }
@@ -572,11 +513,6 @@ export default function GlobalSentiment({ lang }) {
         @keyframes fadeIn {
           from { opacity: 0; }
           to   { opacity: 1; }
-        }
-        @keyframes pinPulse {
-          0%   { transform: scale(1);   opacity: 0.75; }
-          70%  { transform: scale(2.4); opacity: 0; }
-          100% { transform: scale(2.4); opacity: 0; }
         }
       `}</style>
     </div>

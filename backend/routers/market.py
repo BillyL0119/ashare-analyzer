@@ -217,7 +217,8 @@ _GLOBAL_INDEX_META: dict = {
     "^FCHI":  {"name": "CAC 40",     "name_zh": "CAC 40",   "region": "fr"},
     "^KS11":  {"name": "KOSPI",      "name_zh": "韩国综合", "region": "kr"},
     "^AXJO":  {"name": "ASX 200",    "name_zh": "澳大利亚", "region": "au"},
-    "^BSESN": {"name": "SENSEX",     "name_zh": "印度感指", "region": "in"},
+    "^BSESN":  {"name": "SENSEX",     "name_zh": "印度感指", "region": "in"},
+    "^GSPTSE": {"name": "TSX",        "name_zh": "加拿大TSX","region": "ca"},
 }
 
 # CN index symbol codes (for sentiment index list)
@@ -239,7 +240,8 @@ _AK_SINA_MAP = {
     "^FCHI":  ".FCHI",
     "^KS11":  ".KS11",
     "^AXJO":  ".AXJO",
-    "^BSESN": ".BSESN",
+    "^BSESN":  ".BSESN",
+    "^GSPTSE": ".GSPTSE",
 }
 
 
