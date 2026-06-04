@@ -235,6 +235,49 @@ def _yf_history(symbol: str, period: str = "1y") -> dict:
         return {}
 
 
+def _yf_batch(symbols: list, period: str = "1y") -> dict:
+    """Batch-download multiple tickers in a single yf.download() request.
+    Returns {symbol: {"close": float, "change_pct": float, "hist": df}} or {symbol: {}}.
+    One HTTP request is far less likely to trigger Yahoo Finance rate limiting than
+    N parallel Ticker().history() calls.
+    """
+    try:
+        import yfinance as yf
+        data = yf.download(
+            tickers=" ".join(symbols),
+            period=period,
+            group_by="ticker",
+            progress=False,
+            threads=False,
+            auto_adjust=True,
+        )
+        result: dict = {}
+        multi = len(symbols) > 1
+        for sym in symbols:
+            try:
+                hist = data[sym] if multi else data
+                # Drop rows where Close is NaN
+                hist = hist.dropna(subset=["Close"])
+                if len(hist) < 2:
+                    result[sym] = {}
+                    continue
+                last = float(hist["Close"].iloc[-1])
+                prev = float(hist["Close"].iloc[-2])
+                result[sym] = {
+                    "close": round(last, 2),
+                    "change_pct": round((last - prev) / prev * 100, 2),
+                    "hist": hist,
+                }
+            except Exception as e:
+                logger.debug("yf_batch %s: %s", sym, e)
+                result[sym] = {}
+        return result
+    except Exception as e:
+        logger.warning("yf_batch download failed: %s", e)
+        # Fallback: individual calls
+        return {sym: _yf_history(sym, period) for sym in symbols}
+
+
 def _calc_rsi(hist: pd.DataFrame, period: int = 14) -> float:
     try:
         delta = hist["Close"].diff()
@@ -285,13 +328,9 @@ def _do_fetch_sentiment() -> dict:
         return _sentiment_data or _DEFAULT_SENTIMENT
     _sentiment_fetching = True
     try:
-        # Use max_workers=3 to avoid Yahoo Finance rate limiting
-        fetch_syms = list(_GLOBAL_INDEX_META.keys()) + ["^VIX"]
-        raw: dict = {}
-        with ThreadPoolExecutor(max_workers=3) as pool:
-            futures = {pool.submit(_yf_history, s, "1y"): s for s in fetch_syms}
-            for fut in as_completed(futures):
-                raw[futures[fut]] = fut.result()
+        # Single batch download — one request instead of 8+ parallel to avoid rate limiting
+        fetch_syms = list(_GLOBAL_INDEX_META.keys()) + ["^VIX", "000001.SS"]
+        raw = _yf_batch(fetch_syms, "1y")
 
         # ── US score: fallback chain ^GSPC → ^DJI → ^IXIC ──────────────────
         vix_d = raw.get("^VIX", {})
@@ -336,15 +375,12 @@ def _do_fetch_sentiment() -> dict:
         except Exception as e:
             logger.warning("cn breadth failed: %s", e)
 
-        # Shanghai RSI: yfinance 000001.SS → akshare daily fallback
-        sh_hist = None
-        for sh_sym in ("000001.SS", "000300.SS"):
-            d = _yf_history(sh_sym, "60d")
-            h = d.get("hist")
-            if h is not None and len(h) >= 16:
-                sh_hist = h
-                logger.info("cn rsi using %s", sh_sym)
-                break
+        # Shanghai RSI: from batch (000001.SS already fetched) → akshare daily fallback
+        sh_hist = raw.get("000001.SS", {}).get("hist")
+        if sh_hist is not None and len(sh_hist) >= 16:
+            logger.info("cn rsi using 000001.SS from batch")
+        else:
+            sh_hist = None
         if sh_hist is None:
             try:
                 sh_df = ak.stock_zh_index_daily(symbol="sh000001")
@@ -399,20 +435,29 @@ def _do_fetch_sentiment() -> dict:
         if not cn_added:
             try:
                 df = ak.stock_zh_index_spot_sina()
-                sina_map = {"上证综合": "上证指数", "深圳成指": "深证成指", "创业板": "创业板指"}
+                # Match by exact symbol code — avoids substring false-positives
+                sina_targets = {
+                    "sh000001": "上证指数",
+                    "sz399001": "深证成指",
+                    "sz399006": "创业板指",
+                }
                 for _, row in df.iterrows():
-                    nm = str(row.get("名称", ""))
-                    display = next((v for k, v in sina_map.items() if k in nm), None)
+                    code = str(row.get("代码", "")).lower().strip()
+                    display = sina_targets.get(code)
                     if display:
+                        # Sina uses different column names — try both variants
+                        close_val = row.get("最新价") or row.get("price") or 0
+                        pct_val   = row.get("涨跌幅") or row.get("percent") or 0
                         indices.append({
-                            "symbol":     str(row.get("代码", "—")),
+                            "symbol":     code,
                             "name":       display,
                             "name_zh":    display,
                             "region":     "cn",
-                            "close":      round(_safe_float(row.get("最新价", 0) or row.get("price", 0)), 2),
-                            "change_pct": round(_safe_float(row.get("涨跌幅", 0) or row.get("percent", 0)), 2),
+                            "close":      round(_safe_float(close_val), 2),
+                            "change_pct": round(_safe_float(pct_val), 2),
                         })
-                logger.info("cn indices via sina fallback, added %d", sum(1 for i in indices if i["region"] == "cn"))
+                sina_cn = sum(1 for i in indices if i["region"] == "cn")
+                logger.info("cn indices via sina fallback: added %d", sina_cn)
             except Exception as e:
                 logger.warning("cn indices sina: %s", e)
 
