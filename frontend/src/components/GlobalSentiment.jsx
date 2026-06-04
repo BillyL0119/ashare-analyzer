@@ -228,6 +228,7 @@ function WorldMap({ indices, lang }) {
       countryDataMap[geoId] = idx
     }
   }
+  console.log('countryDataMap:', JSON.stringify(countryDataMap, null, 2))
 
   return (
     <div
@@ -250,6 +251,7 @@ function WorldMap({ indices, lang }) {
             geographies.map(geo => {
               const geoId = String(geo.id)
               const data = countryDataMap[geoId]
+              if (data) console.log('geoId:', geoId, 'data:', data)
               const pct = data?.change_pct ?? null
               const fill = getFillColor(pct)
 
@@ -375,7 +377,7 @@ export default function GlobalSentiment({ lang }) {
   useEffect(() => {
     fetch('/api/market/sentiment')
       .then(r => r.json())
-      .then(setData)
+      .then(d => { console.log('sentiment data:', JSON.stringify(d, null, 2)); setData(d) })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
