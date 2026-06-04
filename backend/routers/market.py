@@ -213,15 +213,33 @@ _GLOBAL_INDEX_META: dict = {
     "^N225":  {"name": "Nikkei 225", "name_zh": "日经225",  "region": "jp"},
     "^HSI":   {"name": "Hang Seng",  "name_zh": "恒生指数", "region": "hk"},
     "^FTSE":  {"name": "FTSE 100",   "name_zh": "富时100",  "region": "uk"},
-    "^GDAXI": {"name": "DAX",        "name_zh": "DAX",       "region": "de"},
+    "^GDAXI": {"name": "DAX",        "name_zh": "DAX",      "region": "de"},
+    "^FCHI":  {"name": "CAC 40",     "name_zh": "CAC 40",   "region": "fr"},
+    "^KS11":  {"name": "KOSPI",      "name_zh": "韩国综合", "region": "kr"},
+    "^AXJO":  {"name": "ASX 200",    "name_zh": "澳大利亚", "region": "au"},
+    "^BSESN": {"name": "SENSEX",     "name_zh": "印度感指", "region": "in"},
 }
 
+# CN index symbol codes (for sentiment index list)
+_CN_INDEX_SYMBOLS = {
+    "上证指数": "sh000001",
+    "深证成指": "sz399001",
+    "创业板指": "sz399006",
+}
 
-# AkShare Sina symbol mapping for US indices (works from CN servers)
+# AkShare Sina symbol mapping for global indices (works from CN/HK servers)
 _AK_SINA_MAP = {
-    "^GSPC": ".INX",
-    "^IXIC": ".IXIC",
-    "^DJI":  ".DJI",
+    "^GSPC":  ".INX",
+    "^IXIC":  ".IXIC",
+    "^DJI":   ".DJI",
+    "^N225":  ".N225",
+    "^HSI":   ".HSI",
+    "^FTSE":  ".FTSE",
+    "^GDAXI": ".GDAXI",
+    "^FCHI":  ".FCHI",
+    "^KS11":  ".KS11",
+    "^AXJO":  ".AXJO",
+    "^BSESN": ".BSESN",
 }
 
 
@@ -358,7 +376,7 @@ def _do_fetch_sentiment() -> dict:
     try:
         # ── Fetch US indices from AkShare/Sina (works from CN servers) ──────
         raw: dict = {}
-        with ThreadPoolExecutor(max_workers=3) as pool:
+        with ThreadPoolExecutor(max_workers=8) as pool:
             futures = {pool.submit(_ak_us_index, sina_sym): yf_sym
                        for yf_sym, sina_sym in _AK_SINA_MAP.items()}
             for fut in as_completed(futures):
@@ -370,10 +388,6 @@ def _do_fetch_sentiment() -> dict:
                 except Exception as e:
                     raw[yf_sym] = {}
                     logger.debug("ak_us_index %s failed: %s", yf_sym, e)
-        # Symbols not available via AkShare/Sina
-        for sym in ("^VIX", "^N225", "^HSI", "^FTSE", "^GDAXI"):
-            raw[sym] = {}
-
         # ── US score: RSI + 52w distance from S&P500 ────────────────────────
         vix_d = {}  # no AkShare VIX source
         us_hist = None
@@ -453,7 +467,7 @@ def _do_fetch_sentiment() -> dict:
                     nm = str(row.get("名称", ""))
                     if any(k in nm for k in ("上证指数", "深证成指", "创业板指")):
                         indices.append({
-                            "symbol":     "—",
+                            "symbol":     _CN_INDEX_SYMBOLS.get(nm, "—"),
                             "name":       nm,
                             "name_zh":    nm,
                             "region":     "cn",

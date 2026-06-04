@@ -76,28 +76,34 @@ function buildGauge(score) {
 
 // ── SVG simplified world map ──────────────────────────────────────────────────
 // Market pin positions in 800×390 SVG coordinate space (Mercator-ish)
+// align: 'below' → label below dot; 'above' → label above dot
 const MARKET_PINS = [
-  { region: 'us', sym: '^GSPC',  x: 182, y: 108, label: 'S&P 500',   label_zh: '标普500'   },
-  { region: 'uk', sym: '^FTSE',  x: 370, y:  65, label: 'FTSE 100',  label_zh: '富时100'   },
-  { region: 'de', sym: '^GDAXI', x: 422, y:  68, label: 'DAX',        label_zh: 'DAX'       },
-  { region: 'jp', sym: '^N225',  x: 753, y:  72, label: 'Nikkei 225', label_zh: '日经225'   },
-  { region: 'hk', sym: '^HSI',   x: 700, y: 150, label: 'Hang Seng',  label_zh: '恒生指数'  },
-  { region: 'cn', sym: '—',      x: 655, y: 108, label: 'Shanghai',   label_zh: '上证指数'  },
+  { sym: '^GSPC',    x: 178, y: 108, label: 'S&P 500',  label_zh: '标普500',  align: 'below' },
+  { sym: '^FTSE',    x: 360, y:  54, label: 'FTSE 100', label_zh: '富时100',  align: 'below' },
+  { sym: '^FCHI',    x: 400, y:  80, label: 'CAC 40',   label_zh: 'CAC 40',   align: 'below' },
+  { sym: '^GDAXI',   x: 432, y:  62, label: 'DAX',      label_zh: 'DAX',      align: 'above' },
+  { sym: '^BSESN',   x: 540, y: 155, label: 'SENSEX',   label_zh: '印度感指', align: 'below' },
+  { sym: 'sh000001', x: 650, y: 100, label: 'Shanghai', label_zh: '上证',     align: 'above' },
+  { sym: '^KS11',    x: 720, y:  88, label: 'KOSPI',    label_zh: '韩综',     align: 'above' },
+  { sym: '^N225',    x: 757, y:  60, label: 'Nikkei',   label_zh: '日经',     align: 'below' },
+  { sym: '^HSI',     x: 700, y: 148, label: 'Hang Seng',label_zh: '恒生',     align: 'below' },
+  { sym: '^AXJO',    x: 726, y: 285, label: 'ASX 200',  label_zh: 'ASX',      align: 'below' },
 ]
 
 function WorldMapSVG({ indices, lang }) {
   const [tip, setTip] = useState(null)
   const zh = lang === 'zh'
 
-  // Build lookup: region→index
-  const byRegion = {}
+  // Build lookup: symbol → index data
+  const bySymbol = {}
   for (const idx of indices) {
-    if (!byRegion[idx.region]) byRegion[idx.region] = idx
-  }
-  // prefer S&P 500 for 'us', prefer 上证 for 'cn'
-  for (const idx of indices) {
-    if (idx.symbol === '^GSPC') byRegion['us'] = idx
-    if (idx.name_zh === '上证指数' || idx.name === '上证指数') byRegion['cn'] = idx
+    bySymbol[idx.symbol] = idx
+    // Also match CN indices by name for backward compat (old symbol="—")
+    if (idx.region === 'cn') {
+      if (idx.name_zh === '上证指数' || idx.name === '上证指数') bySymbol['sh000001'] = idx
+      if (idx.name_zh === '深证成指' || idx.name === '深证成指') bySymbol['sz399001'] = idx
+      if (idx.name_zh === '创业板指' || idx.name === '创业板指') bySymbol['sz399006'] = idx
+    }
   }
 
   return (
@@ -159,36 +165,48 @@ function WorldMapSVG({ indices, lang }) {
         </g>
 
         {/* ── Market pins ── */}
-        {MARKET_PINS.map(pin => {
-          const idx = byRegion[pin.region]
+        {MARKET_PINS.map((pin, i) => {
+          const idx = bySymbol[pin.sym]
           const pct = idx?.change_pct ?? null
           const close = idx?.close ?? null
           const dotColor = pct === null ? '#9aa0a6' : pct >= 0 ? '#22c55e' : '#ef4444'
-          const glowColor = pct === null ? 'rgba(154,160,166,0.15)'
-            : pct >= 0 ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'
+          const glowColor = pct === null ? 'rgba(154,160,166,0.12)'
+            : pct >= 0 ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)'
           const sign = pct !== null ? (pct >= 0 ? '+' : '') : ''
           const pctStr = pct !== null ? `${sign}${pct.toFixed(2)}%` : '—'
+          const above = pin.align === 'above'
+          const labelY = above ? pin.y - 22 : pin.y + 20
+          const pctY   = above ? pin.y - 11 : pin.y + 30
 
           return (
             <g
-              key={pin.region}
+              key={pin.sym}
               style={{ cursor: 'pointer' }}
               onMouseEnter={() => setTip({ pin, idx, pct, close, pctStr, dotColor })}
               onMouseLeave={() => setTip(null)}
             >
-              {/* Glow ring */}
-              <circle cx={pin.x} cy={pin.y} r="20" fill={glowColor} />
+              {/* Animated pulse ring */}
+              <circle
+                cx={pin.x} cy={pin.y} r="11"
+                fill="none" stroke={dotColor} strokeWidth="1.2"
+                style={{
+                  transformOrigin: `${pin.x}px ${pin.y}px`,
+                  animation: `pinPulse 2.6s ease-out ${(i * 0.28).toFixed(2)}s infinite`,
+                }}
+              />
+              {/* Glow fill */}
+              <circle cx={pin.x} cy={pin.y} r="13" fill={glowColor} />
               {/* Dot */}
-              <circle cx={pin.x} cy={pin.y} r="7" fill={dotColor} opacity="0.9" />
-              <circle cx={pin.x} cy={pin.y} r="4" fill="#fff" opacity="0.3" />
+              <circle cx={pin.x} cy={pin.y} r="5.5" fill={dotColor} opacity="0.95" />
+              <circle cx={pin.x} cy={pin.y} r="2.5" fill="#fff" opacity="0.45" />
               {/* Name label */}
-              <text x={pin.x} y={pin.y + 22} textAnchor="middle"
-                fontSize="8.5" fill="rgba(232,234,240,0.65)" fontFamily="inherit">
+              <text x={pin.x} y={labelY} textAnchor="middle"
+                fontSize="8" fill="rgba(232,234,240,0.7)" fontFamily="inherit">
                 {zh ? pin.label_zh : pin.label}
               </text>
               {/* Pct label */}
-              <text x={pin.x} y={pin.y + 33} textAnchor="middle"
-                fontSize="8.5" fill={dotColor} fontFamily="monospace" fontWeight="700">
+              <text x={pin.x} y={pctY} textAnchor="middle"
+                fontSize="7.5" fill={dotColor} fontFamily="monospace" fontWeight="700">
                 {pctStr}
               </text>
             </g>
@@ -197,20 +215,22 @@ function WorldMapSVG({ indices, lang }) {
 
         {/* ── Tooltip ── */}
         {tip && (() => {
-          const tx = Math.min(tip.pin.x + 12, 640)
-          const ty = Math.max(tip.pin.y - 52, 4)
+          const tx = Math.min(Math.max(tip.pin.x - 74, 4), 648)
+          const ty = tip.pin.align === 'above'
+            ? Math.min(tip.pin.y + 8, 330)
+            : Math.max(tip.pin.y - 66, 4)
           const name = zh ? tip.pin.label_zh : tip.pin.label
-          const closeStr = tip.close !== null ? tip.close.toLocaleString() : '—'
+          const closeStr = tip.close !== null ? Number(tip.close).toLocaleString() : '—'
           return (
             <g>
               <rect x={tx} y={ty} width={148} height={58} rx="6"
-                fill="rgba(8,14,30,0.96)" stroke="rgba(138,180,248,0.28)" strokeWidth="1" />
+                fill="rgba(8,14,30,0.97)" stroke="rgba(138,180,248,0.3)" strokeWidth="1" />
               <text x={tx + 74} y={ty + 18} textAnchor="middle"
                 fontSize="11" fill="#e8eaed" fontWeight="700" fontFamily="inherit">
                 {name}
               </text>
               <text x={tx + 74} y={ty + 34} textAnchor="middle"
-                fontSize="11" fill="rgba(232,234,240,0.6)" fontFamily="monospace">
+                fontSize="11" fill="rgba(232,234,240,0.55)" fontFamily="monospace">
                 {closeStr}
               </text>
               <text x={tx + 74} y={ty + 50} textAnchor="middle"
@@ -231,7 +251,7 @@ function WorldMapSVG({ indices, lang }) {
           <text x="54" y="382" fontSize="9" fill="rgba(232,234,240,0.45)" fontFamily="inherit">
             {zh ? '跌' : 'Down'}
           </text>
-          <text x="780" y="382" textAnchor="end" fontSize="9"
+          <text x="786" y="382" textAnchor="end" fontSize="9"
             fill="rgba(138,180,248,0.3)" fontFamily="inherit">
             BestFriendStock
           </text>
@@ -552,6 +572,11 @@ export default function GlobalSentiment({ lang }) {
         @keyframes fadeIn {
           from { opacity: 0; }
           to   { opacity: 1; }
+        }
+        @keyframes pinPulse {
+          0%   { transform: scale(1);   opacity: 0.75; }
+          70%  { transform: scale(2.4); opacity: 0; }
+          100% { transform: scale(2.4); opacity: 0; }
         }
       `}</style>
     </div>
