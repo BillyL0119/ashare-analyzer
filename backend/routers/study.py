@@ -1440,7 +1440,7 @@ ECONOMIC_EVENTS = [
         "title_en": "China A-Share Market Crash",
         "date_range": "2015-06 ~ 2015-09",
         "year": 2015,
-        "description": "在杠杆资金（场内外配资）和散户情绪推动下，上证指数从2014年7月的约2000点急升至2015年6月的峰值5178点。随后在短短三个月内暴跌约45%，中国证监会紧急推出"国家队"救市措施，包括暂停新股发行、禁止大股东减持等。",
+        "description": "在杠杆资金（场内外配资）和散户情绪推动下，上证指数从2014年7月的约2000点急升至2015年6月的峰值5178点。随后在短短三个月内暴跌约45%，中国证监会紧急推出\"国家队\"救市措施，包括暂停新股发行、禁止大股东减持等。",
         "description_en": "Driven by leveraged retail investors (margin financing and shadow lending), the SSE Composite surged from ~2,000 in mid-2014 to a peak of 5,178 in June 2015. It then crashed ~45% in three months. The CSRC launched emergency 'national team' interventions: halting IPOs, banning large-shareholder selling, and deploying state funds to buy shares.",
         "exam_points": [
             {"exam": "A-Level", "point": "Speculative bubbles; leverage and amplification; government intervention in asset markets; moral hazard from bailouts."},
