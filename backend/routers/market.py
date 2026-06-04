@@ -285,36 +285,85 @@ def _do_fetch_sentiment() -> dict:
         return _sentiment_data or _DEFAULT_SENTIMENT
     _sentiment_fetching = True
     try:
+        # Use max_workers=3 to avoid Yahoo Finance rate limiting
         fetch_syms = list(_GLOBAL_INDEX_META.keys()) + ["^VIX"]
         raw: dict = {}
-        with ThreadPoolExecutor(max_workers=8) as pool:
+        with ThreadPoolExecutor(max_workers=3) as pool:
             futures = {pool.submit(_yf_history, s, "1y"): s for s in fetch_syms}
             for fut in as_completed(futures):
                 raw[futures[fut]] = fut.result()
 
-        sp500_d = raw.get("^GSPC", {})
-        vix_d   = raw.get("^VIX",  {})
-        hist_sp = sp500_d.get("hist")
-        if hist_sp is not None and len(hist_sp) >= 16:
-            rsi_s  = _calc_rsi(hist_sp)
-            dist_s = _dist_score(hist_sp)
-            vix_s  = _vix_score(vix_d.get("close", 20.0)) if vix_d else 50.0
-            us_score = round((rsi_s + dist_s + vix_s) / 3, 1)
+        # ── US score: fallback chain ^GSPC → ^DJI → ^IXIC ──────────────────
+        vix_d = raw.get("^VIX", {})
+        vix_close = vix_d.get("close")
+        vix_s = _vix_score(vix_close) if vix_close else None
+
+        us_hist = None
+        for sym in ("^GSPC", "^DJI", "^IXIC"):
+            h = raw.get(sym, {}).get("hist")
+            if h is not None and len(h) >= 16:
+                us_hist = h
+                logger.info("us sentiment using %s hist", sym)
+                break
+
+        if us_hist is not None:
+            rsi_s  = _calc_rsi(us_hist)
+            dist_s = _dist_score(us_hist)
+            components = [rsi_s, dist_s]
+            if vix_s is not None:
+                components.append(vix_s)
+            us_score = round(sum(components) / len(components), 1)
+            logger.info("us score: rsi=%.1f dist=%.1f vix=%s → %.1f",
+                        rsi_s, dist_s, f"{vix_s:.1f}" if vix_s else "N/A", us_score)
+        elif vix_s is not None:
+            us_score = round(vix_s, 1)
+            logger.info("us score (vix-only): %.1f", us_score)
         else:
             us_score = 50.0
+            logger.warning("us score: no data available, using 50.0")
 
-        cn_score = 50.0
+        # ── CN score: breadth + Shanghai RSI, each optional ─────────────────
+        cn_components = []
+
         try:
-            spot_df  = ak.stock_zh_a_spot_em()
-            pct_col  = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
-            breadth  = _breadth_score(int((pct_col > 0).sum()), int((pct_col < 0).sum()))
-            sh_raw   = _yf_history("000001.SS", "60d")
-            sh_hist  = sh_raw.get("hist")
-            sh_rsi   = _calc_rsi(sh_hist) if sh_hist is not None and len(sh_hist) >= 16 else 50.0
-            cn_score = round((breadth + sh_rsi) / 2, 1)
+            spot_df = ak.stock_zh_a_spot_em()
+            pct_col = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
+            adv = int((pct_col > 0).sum())
+            dec = int((pct_col < 0).sum())
+            b = _breadth_score(adv, dec)
+            cn_components.append(b)
+            logger.info("cn breadth: adv=%d dec=%d → %.1f", adv, dec, b)
         except Exception as e:
-            logger.warning("cn sentiment: %s", e)
+            logger.warning("cn breadth failed: %s", e)
 
+        # Shanghai RSI: yfinance 000001.SS → akshare daily fallback
+        sh_hist = None
+        for sh_sym in ("000001.SS", "000300.SS"):
+            d = _yf_history(sh_sym, "60d")
+            h = d.get("hist")
+            if h is not None and len(h) >= 16:
+                sh_hist = h
+                logger.info("cn rsi using %s", sh_sym)
+                break
+        if sh_hist is None:
+            try:
+                sh_df = ak.stock_zh_index_daily(symbol="sh000001")
+                sh_df = sh_df.rename(columns={"close": "Close"}).tail(60)
+                if len(sh_df) >= 16:
+                    sh_hist = sh_df
+                    logger.info("cn rsi using akshare daily sh000001")
+            except Exception as e:
+                logger.warning("cn shanghai daily akshare: %s", e)
+
+        if sh_hist is not None:
+            sh_rsi = _calc_rsi(sh_hist)
+            cn_components.append(sh_rsi)
+            logger.info("cn rsi=%.1f", sh_rsi)
+
+        cn_score = round(sum(cn_components) / len(cn_components), 1) if cn_components else 50.0
+        logger.info("cn score: components=%s → %.1f", cn_components, cn_score)
+
+        # ── Global indices list ──────────────────────────────────────────────
         indices = []
         for sym, meta in _GLOBAL_INDEX_META.items():
             d = raw.get(sym, {})
@@ -327,6 +376,8 @@ def _do_fetch_sentiment() -> dict:
                 "change_pct": d.get("change_pct"),
             })
 
+        # CN indices: stock_zh_index_spot_em → stock_zh_index_spot_sina fallback
+        cn_added = False
         try:
             for param in ("上证系列指数", "深证系列指数"):
                 df = ak.stock_zh_index_spot_em(symbol=param)
@@ -341,8 +392,29 @@ def _do_fetch_sentiment() -> dict:
                             "close":      round(_safe_float(row.get("最新价", 0)), 2),
                             "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2),
                         })
+                        cn_added = True
         except Exception as e:
-            logger.warning("cn indices for sentiment: %s", e)
+            logger.warning("cn indices spot_em: %s", e)
+
+        if not cn_added:
+            try:
+                df = ak.stock_zh_index_spot_sina()
+                sina_map = {"上证综合": "上证指数", "深圳成指": "深证成指", "创业板": "创业板指"}
+                for _, row in df.iterrows():
+                    nm = str(row.get("名称", ""))
+                    display = next((v for k, v in sina_map.items() if k in nm), None)
+                    if display:
+                        indices.append({
+                            "symbol":     str(row.get("代码", "—")),
+                            "name":       display,
+                            "name_zh":    display,
+                            "region":     "cn",
+                            "close":      round(_safe_float(row.get("最新价", 0) or row.get("price", 0)), 2),
+                            "change_pct": round(_safe_float(row.get("涨跌幅", 0) or row.get("percent", 0)), 2),
+                        })
+                logger.info("cn indices via sina fallback, added %d", sum(1 for i in indices if i["region"] == "cn"))
+            except Exception as e:
+                logger.warning("cn indices sina: %s", e)
 
         us_lbl = _score_label(us_score)
         cn_lbl = _score_label(cn_score)
