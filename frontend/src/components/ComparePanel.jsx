@@ -18,6 +18,7 @@ import NewsPanel from './NewsPanel'
 import RadarPanel from './RadarPanel'
 import MarketOverview from './MarketOverview'
 import CalendarPanel from './CalendarPanel'
+import EarningsPanel from './EarningsPanel'
 import StockDetailPage from './StockDetailPage'
 
 function OverlaySlot({ stock, onData }) {
@@ -96,18 +97,29 @@ export default function ComparePanel({ onTabChange }) {
     addSymbol({ code, name: name || code })
   }
 
-  if (selectedSymbols.length === 0 && viewMode !== 'calendar') {
+  if (selectedSymbols.length === 0 && viewMode !== 'calendar' && viewMode !== 'earnings') {
     return (
       <>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 8 }}>
+          {market !== 'us' && (
+            <button
+              onClick={() => setViewMode('calendar')}
+              style={{
+                padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                fontSize: 12, background: 'rgba(138,180,248,0.1)', color: '#8ab4f8',
+              }}
+            >
+              {lang === 'zh' ? 'A股日历' : 'A-Share Calendar'}
+            </button>
+          )}
           <button
-            onClick={() => setViewMode('calendar')}
+            onClick={() => setViewMode('earnings')}
             style={{
               padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
-              fontSize: 12, background: 'rgba(138,180,248,0.1)', color: '#8ab4f8',
+              fontSize: 12, background: 'rgba(99,102,241,0.12)', color: '#818cf8',
             }}
           >
-            {lang === 'zh' ? 'A股日历' : 'A-Share Calendar'}
+            {lang === 'zh' ? '财报日历' : 'Earnings Calendar'}
           </button>
         </div>
         <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} />
@@ -156,6 +168,7 @@ export default function ComparePanel({ onTabChange }) {
           { key: 'radar', label: t.radarTab },
           // calendar is A-share only
           ...(market !== 'us' ? [{ key: 'calendar', label: lang === 'zh' ? 'A股日历' : 'Calendar' }] : []),
+          { key: 'earnings', label: lang === 'zh' ? '财报日历' : 'Earnings' },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -211,6 +224,8 @@ export default function ComparePanel({ onTabChange }) {
         <RadarPanel stocks={selectedSymbols} />
       ) : viewMode === 'calendar' ? (
         <CalendarPanel lang={lang} onStockSelect={handleStockSelect} />
+      ) : viewMode === 'earnings' ? (
+        <EarningsPanel lang={lang} onStockSelect={handleStockSelect} />
       ) : (
         <div
           style={{
