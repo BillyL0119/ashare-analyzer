@@ -3,6 +3,7 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from routers import stocks
 from routers.indicators import router as indicators_router
 from routers.simulation import router as simulation_router
@@ -53,6 +54,30 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/sitemap.xml", response_class=Response)
+async def sitemap():
+    content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://bestfriendstock.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://bestfriendstock.com/ai-teacher</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>"""
+    return Response(content=content, media_type="application/xml")
+
+@app.get("/robots.txt", response_class=Response)
+async def robots():
+    content = """User-agent: *
+Allow: /
+Sitemap: https://bestfriendstock.com/sitemap.xml"""
+    return Response(content=content, media_type="text/plain")
 
 app.include_router(stocks.router, prefix="/api/stocks", tags=["stocks"])
 app.include_router(indicators_router, prefix="/api/indicators", tags=["indicators"])
