@@ -15,10 +15,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-echarts': ['echarts', 'echarts-for-react'],
-          'vendor-recharts': ['recharts'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules/echarts') || id.includes('node_modules/echarts-for-react')) return 'vendor-echarts'
+          if (id.includes('node_modules/recharts')) return 'vendor-recharts'
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor-react'
         },
       },
     },
