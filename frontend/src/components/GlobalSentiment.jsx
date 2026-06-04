@@ -8,42 +8,54 @@ import ReactECharts from 'echarts-for-react'
 // ── Geo URL (TopoJSON, loaded client-side) ────────────────────────────────────
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
-// ── ISO 3166-1 numeric → index metadata ──────────────────────────────────────
-// region matches the `region` field from /api/market/sentiment
-// coords: [lon, lat] for label marker placement
-const COUNTRY_MAP = {
-  '840': { sym: '^GSPC',    region: 'us', label: 'S&P',    label_zh: '标普',  coords: [-100, 40] },
-  '124': { sym: '^GSPTSE',  region: 'ca', label: 'TSX',    label_zh: 'TSX',   coords: [ -96, 57] },
-  '826': { sym: '^FTSE',    region: 'uk', label: 'FTSE',   label_zh: '富时',  coords: [  -2, 54] },
-  '276': { sym: '^GDAXI',   region: 'de', label: 'DAX',    label_zh: 'DAX',   coords: [  10, 52] },
-  '250': { sym: '^FCHI',    region: 'fr', label: 'CAC',    label_zh: 'CAC',   coords: [   2, 46] },
-  '356': { sym: '^BSESN',   region: 'in', label: 'SENSEX', label_zh: '感指',  coords: [  79, 22] },
-  '156': { sym: 'sh000001', region: 'cn', label: 'SSE',    label_zh: '上证',  coords: [ 104, 35] },
-  '410': { sym: '^KS11',    region: 'kr', label: 'KOSPI',  label_zh: '韩综',  coords: [ 128, 37] },
-  '392': { sym: '^N225',    region: 'jp', label: 'Nikkei', label_zh: '日经',  coords: [ 138, 37] },
-  '344': { sym: '^HSI',     region: 'hk', label: 'HSI',    label_zh: '恒生',  coords: [ 114, 22] },
-  '036': { sym: '^AXJO',    region: 'au', label: 'ASX',    label_zh: 'ASX',   coords: [ 134,-25] },
+// ── symbol → ISO 3166-1 numeric string (must match String(geo.id) exactly) ────
+// world-atlas stores IDs as integers: Australia=36, US=840, etc. — NO zero-pad
+const SYMBOL_TO_GEO_ID = {
+  '^GSPC':    '840',  // USA (S&P 500 represents the US)
+  '^N225':    '392',  // Japan
+  '^FTSE':    '826',  // UK
+  '^GDAXI':   '276',  // Germany
+  '^FCHI':    '250',  // France
+  '^KS11':    '410',  // South Korea
+  '^AXJO':    '36',   // Australia — integer 36, NOT '036'
+  '^BSESN':   '356',  // India
+  '^GSPTSE':  '124',  // Canada
+  'sh000001': '156',  // China
+}
+
+// Marker label positions [lon, lat] keyed by geo ID string
+const MARKER_META = {
+  '840': { label: 'S&P',    label_zh: '标普',  coords: [-100, 40] },
+  '124': { label: 'TSX',    label_zh: 'TSX',   coords: [  -96, 57] },
+  '826': { label: 'FTSE',   label_zh: '富时',  coords: [   -2, 54] },
+  '276': { label: 'DAX',    label_zh: 'DAX',   coords: [   10, 52] },
+  '250': { label: 'CAC',    label_zh: 'CAC',   coords: [    2, 46] },
+  '356': { label: 'SENSEX', label_zh: '感指',  coords: [   79, 22] },
+  '156': { label: 'SSE',    label_zh: '上证',  coords: [  104, 35] },
+  '410': { label: 'KOSPI',  label_zh: '韩综',  coords: [  128, 37] },
+  '392': { label: 'Nikkei', label_zh: '日经',  coords: [  138, 37] },
+  '36':  { label: 'ASX',    label_zh: 'ASX',   coords: [  134,-25] },
 }
 
 // ── Bloomberg-style colour scale ──────────────────────────────────────────────
-function countryFill(pct) {
+function getFillColor(pct) {
   if (pct === null || pct === undefined) return '#1a2035'
-  if (pct >=  2) return '#00e87a'
-  if (pct >=  1) return '#00c55a'
-  if (pct >=  0) return '#007a40'
-  if (pct >= -1) return '#8b2020'
-  if (pct >= -2) return '#cc2222'
-  return '#ff1a1a'
+  if (pct >  2) return '#00ff88'
+  if (pct >  1) return '#00cc66'
+  if (pct >  0) return '#009944'
+  if (pct > -1) return '#cc3333'
+  if (pct > -2) return '#ff4444'
+  return '#ff0000'
 }
-function hoverFill(pct) {
+function getHoverColor(pct) {
   if (pct === null || pct === undefined) return '#26304a'
-  return pct >= 0 ? '#00ffaa' : '#ff4455'
+  return pct >= 0 ? '#44ffaa' : '#ff6677'
 }
-function labelColor(pct) {
+function getLabelColor(pct) {
   if (pct === null || pct === undefined) return '#9aa0a6'
-  if (pct >=  2) return '#00ff88'
-  if (pct >=  0) return '#00cc66'
-  if (pct >= -2) return '#ff6666'
+  if (pct >  1) return '#00ff88'
+  if (pct >= 0) return '#00cc66'
+  if (pct > -2) return '#ff6666'
   return '#ff2222'
 }
 
@@ -208,128 +220,82 @@ function WorldMap({ indices, lang }) {
   const [tooltip, setTooltip] = useState(null)
   const zh = lang === 'zh'
 
-  // Build lookups: symbol → idx, and region → best idx (fallback)
-  const bySymbol = {}
-  const byRegion = {}
+  // Build geoId → index data map (symbol lookup → geo ID)
+  const countryDataMap = {}
   for (const idx of indices) {
-    bySymbol[idx.symbol] = idx
-    // Region fallback: keep best (non-null) index per region
-    if (!byRegion[idx.region] || (idx.change_pct !== null && byRegion[idx.region].change_pct === null)) {
-      byRegion[idx.region] = idx
+    const geoId = SYMBOL_TO_GEO_ID[idx.symbol]
+    if (geoId && idx.change_pct !== null && idx.change_pct !== undefined) {
+      countryDataMap[geoId] = idx
     }
   }
-  // Prefer specific representative indices
-  for (const idx of indices) {
-    if (idx.symbol === '^GSPC') byRegion['us'] = idx
-    if (idx.name_zh === '上证指数' || idx.name === '上证指数') {
-      byRegion['cn'] = idx
-      bySymbol['sh000001'] = idx
-    }
-  }
-
-  // Resolve index for a country: try symbol first, then region
-  const resolveIdx = (meta) => bySymbol[meta.sym] ?? byRegion[meta.region] ?? null
-
-  const handleEnter = (geo, e) => {
-    const id = String(geo.id).padStart(3, '0')
-    const meta = COUNTRY_MAP[id] || COUNTRY_MAP[String(geo.id)]
-    if (!meta) return
-    const idx = resolveIdx(meta)
-    setTooltip({ x: e.clientX, y: e.clientY, meta, idx })
-  }
-  const handleMove = (e) => {
-    setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)
-  }
-  const handleLeave = () => setTooltip(null)
 
   return (
     <div
-      style={{
-        position: 'relative',
-        background: '#050d1a',
-        borderRadius: 8,
-        overflow: 'hidden',
-        lineHeight: 0,
-      }}
-      onMouseMove={handleMove}
+      style={{ position: 'relative', background: '#050d1a', borderRadius: 8, overflow: 'hidden', lineHeight: 0 }}
+      onMouseMove={(e) => setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)}
     >
       <ComposableMap
         projection="geoNaturalEarth1"
         projectionConfig={{ scale: 155, center: [10, 10] }}
         style={{ width: '100%', height: 'auto', display: 'block' }}
       >
-          {/* Ocean */}
-          <Sphere id="rsm-sphere-bg" fill="#0a1628" stroke="#1a2a4a" strokeWidth={0.5} />
-          {/* Graticule grid lines */}
-          <Graticule stroke="#0f1f3d" strokeWidth={0.4} />
+        {/* Ocean */}
+        <Sphere id="rsm-sphere-bg" fill="#0a1628" stroke="#1a2a4a" strokeWidth={0.5} />
+        {/* Graticule grid lines */}
+        <Graticule stroke="#0f1f3d" strokeWidth={0.4} />
 
-          {/* Country fills */}
-          <Geographies geography={GEO_URL}>
-            {({ geographies }) =>
-              geographies.map(geo => {
-                // world-atlas stores numeric IDs; zero-pad to match our 3-digit keys
-                const id = String(geo.id).padStart(3, '0')
-                const meta = COUNTRY_MAP[id] || COUNTRY_MAP[String(geo.id)]
-                const idx = meta ? resolveIdx(meta) : null
-                const pct = idx?.change_pct ?? null
-                const fill = countryFill(pct)
+        {/* Country fills — geoId = String(geo.id), no zero-padding */}
+        <Geographies geography={GEO_URL}>
+          {({ geographies }) =>
+            geographies.map(geo => {
+              const geoId = String(geo.id)
+              const data = countryDataMap[geoId]
+              const pct = data?.change_pct ?? null
+              const fill = getFillColor(pct)
 
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill={fill}
-                    stroke="#2a3a5c"
-                    strokeWidth={0.4}
-                    style={{
-                      default: { fill, outline: 'none' },
-                      hover: {
-                        fill: hoverFill(pct),
-                        outline: 'none',
-                        cursor: meta ? 'pointer' : 'default',
-                      },
-                      pressed: { fill, outline: 'none' },
-                    }}
-                    onMouseEnter={(e) => handleEnter(geo, e)}
-                    onMouseLeave={handleLeave}
-                  />
-                )
-              })
-            }
-          </Geographies>
-
-          {/* Country labels — only when data available */}
-          {Object.entries(COUNTRY_MAP).map(([id, meta]) => {
-            const idx = resolveIdx(meta)
-            const pct = idx?.change_pct
-            if (pct === null || pct === undefined) return null
-            const sign = pct >= 0 ? '+' : ''
-            const lbl = zh ? meta.label_zh : meta.label
-            const color = labelColor(pct)
-            const text = `${lbl} ${sign}${pct.toFixed(2)}%`
-            const w = text.length * 4.6 + 8
-            return (
-              <Marker key={id} coordinates={meta.coords}>
-                <rect
-                  x={-w / 2} y="-12" width={w} height="12"
-                  rx="2"
-                  fill="rgba(5,10,22,0.84)"
-                  stroke={color}
-                  strokeWidth="0.4"
+              return (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill={fill}
+                  stroke="#2a3a5c"
+                  strokeWidth={0.4}
+                  style={{
+                    default: { fill, outline: 'none' },
+                    hover:   { fill: getHoverColor(pct), outline: 'none', cursor: data ? 'pointer' : 'default' },
+                    pressed: { fill, outline: 'none' },
+                  }}
+                  onMouseEnter={(e) => {
+                    if (data) setTooltip({ x: e.clientX, y: e.clientY, data })
+                  }}
+                  onMouseLeave={() => setTooltip(null)}
                 />
-                <text
-                  y="-2"
-                  textAnchor="middle"
-                  fontSize={6.5}
-                  fill={color}
-                  fontWeight="700"
-                  fontFamily="'Courier New', monospace"
-                >
-                  {text}
-                </text>
-              </Marker>
-            )
-          })}
+              )
+            })
+          }
+        </Geographies>
+
+        {/* Country labels — only shown when data available */}
+        {Object.entries(MARKER_META).map(([geoId, meta]) => {
+          const data = countryDataMap[geoId]
+          const pct = data?.change_pct
+          if (pct === null || pct === undefined) return null
+          const sign = pct >= 0 ? '+' : ''
+          const lbl = zh ? meta.label_zh : meta.label
+          const color = getLabelColor(pct)
+          const text = `${lbl} ${sign}${pct.toFixed(2)}%`
+          const w = text.length * 4.6 + 8
+          return (
+            <Marker key={geoId} coordinates={meta.coords}>
+              <rect x={-w / 2} y="-12" width={w} height="12" rx="2"
+                fill="rgba(5,10,22,0.84)" stroke={color} strokeWidth="0.4" />
+              <text y="-2" textAnchor="middle" fontSize={6.5}
+                fill={color} fontWeight="700" fontFamily="'Courier New', monospace">
+                {text}
+              </text>
+            </Marker>
+          )
+        })}
       </ComposableMap>
 
       {/* Colour legend */}
@@ -339,10 +305,10 @@ function WorldMap({ indices, lang }) {
         pointerEvents: 'none',
       }}>
         {[
-          { color: '#00e87a', label: '>2%' },
-          { color: '#007a40', label: '0%' },
-          { color: '#cc2222', label: '<0%' },
-          { color: '#ff1a1a', label: '<-2%' },
+          { color: '#00ff88', label: '>2%' },
+          { color: '#009944', label: '0%' },
+          { color: '#cc3333', label: '<0%' },
+          { color: '#ff0000', label: '<-2%' },
         ].map(({ color, label }) => (
           <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
@@ -352,19 +318,19 @@ function WorldMap({ indices, lang }) {
           </div>
         ))}
         <span style={{ fontSize: 8, color: 'rgba(138,180,248,0.3)', marginLeft: 6 }}>
-          {zh ? '滚轮缩放' : 'scroll to zoom'}
+          BestFriendStock
         </span>
       </div>
 
       {/* Tooltip */}
-      {tooltip && tooltip.idx && (() => {
-        const pct = tooltip.idx.change_pct
-        const color = labelColor(pct)
+      {tooltip && tooltip.data && (() => {
+        const pct = tooltip.data.change_pct
+        const color = getLabelColor(pct)
         const name = zh
-          ? (tooltip.idx.name_zh || tooltip.idx.name)
-          : tooltip.idx.name
-        const close = tooltip.idx.close != null
-          ? Number(tooltip.idx.close).toLocaleString()
+          ? (tooltip.data.name_zh || tooltip.data.name)
+          : tooltip.data.name
+        const close = tooltip.data.close != null
+          ? Number(tooltip.data.close).toLocaleString()
           : '—'
         const pctStr = pct != null
           ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`
