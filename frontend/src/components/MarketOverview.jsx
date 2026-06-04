@@ -95,7 +95,7 @@ export default function MarketOverview({ lang, onTabChange }) {
           WebkitTextFillColor: 'transparent',
           lineHeight: 1.2, letterSpacing: '-0.3px',
         }}>
-          {zh ? '发现你的下一只好股票' : 'Discover Your Next Great Stock'}
+          {zh ? '股市里，有我陪你' : 'Your Best Friend in the Market'}
         </h1>
 
         <p className="bfs-hero-sub" style={{
