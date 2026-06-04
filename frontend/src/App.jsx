@@ -264,7 +264,7 @@ export default function App() {
         <div style={{ color: '#4a5568', fontSize: 11, letterSpacing: '0.3px' }}>{t.dataSource}</div>
       </header>
 
-      <main style={{ padding: isMobile ? '10px 12px' : '20px 24px', flex: 1 }}>
+      <main style={{ padding: isMobile ? '6px 12px' : '6px 24px', flex: 1 }}>
         <Suspense fallback={null}>
           {appTab === 'study' ? (
             <StudyCenter lang={lang} />

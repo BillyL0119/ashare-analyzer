@@ -157,15 +157,15 @@ function TickerBar({ indices, zh }) {
   return (
     <div
       ref={scrollRef}
-      style={{ display: 'flex', gap: 8, overflowX: 'hidden', padding: '8px 0 4px', marginTop: 10, userSelect: 'none' }}
+      style={{ display: 'flex', gap: 8, overflowX: 'hidden', padding: '4px 0 2px', marginTop: 6, userSelect: 'none' }}
     >
       {doubled.map((idx, i) => {
         const pct = idx.change_pct
         return (
           <div key={i} style={{
-            flexShrink: 0, minWidth: 110,
+            flexShrink: 0, minWidth: 100,
             background: changePctBg(pct), border: `1px solid ${changePctBorder(pct)}`,
-            borderRadius: 8, padding: '5px 12px', textAlign: 'center',
+            borderRadius: 8, padding: '4px 10px', textAlign: 'center',
           }}>
             <div style={{ fontSize: 10, color: '#9aa0a6', marginBottom: 2, whiteSpace: 'nowrap' }}>
               {zh ? (idx.name_zh || idx.name) : idx.name}
@@ -228,8 +228,6 @@ function WorldMap({ indices, lang }) {
       countryDataMap[geoId] = idx
     }
   }
-  console.log('countryDataMap:', JSON.stringify(countryDataMap, null, 2))
-
   return (
     <div
       style={{ position: 'relative', background: '#050d1a', borderRadius: 8, overflow: 'hidden', lineHeight: 0 }}
@@ -251,7 +249,6 @@ function WorldMap({ indices, lang }) {
             geographies.map(geo => {
               const geoId = String(geo.id)
               const data = countryDataMap[geoId]
-              if (data) console.log('geoId:', geoId, 'data:', data)
               const pct = data?.change_pct ?? null
               const fill = getFillColor(pct)
 
@@ -377,7 +374,7 @@ export default function GlobalSentiment({ lang }) {
   useEffect(() => {
     fetch('/api/market/sentiment')
       .then(r => r.json())
-      .then(d => { console.log('sentiment data:', JSON.stringify(d, null, 2)); setData(d) })
+      .then(setData)
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
@@ -392,7 +389,7 @@ export default function GlobalSentiment({ lang }) {
       background: 'rgba(5,13,26,0.85)',
       border: '1px solid rgba(138,180,248,0.11)',
       borderRadius: 12,
-      marginBottom: 16,
+      marginBottom: 10,
       overflow: 'hidden',
       backdropFilter: 'blur(8px)',
     }}>
@@ -401,7 +398,7 @@ export default function GlobalSentiment({ lang }) {
         onClick={() => setCollapsed(v => !v)}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '9px 16px', cursor: 'pointer',
+          padding: '6px 14px', cursor: 'pointer',
           borderBottom: collapsed ? 'none' : '1px solid rgba(138,180,248,0.07)',
         }}
       >
@@ -432,7 +429,7 @@ export default function GlobalSentiment({ lang }) {
 
       {/* ── Body ── */}
       {!collapsed && (
-        <div style={{ padding: '12px 16px 14px' }}>
+        <div style={{ padding: '8px 14px 10px' }}>
           {loading ? (
             <LoadingSkeleton />
           ) : (

@@ -55,7 +55,7 @@ export default function DailyReport({ lang }) {
   return (
     <div style={{
       background: 'rgba(8,12,20,0.7)', border: '1px solid rgba(138,180,248,0.15)',
-      borderRadius: 12, marginBottom: 16, overflow: 'hidden',
+      borderRadius: 10, marginBottom: 8, overflow: 'hidden',
       backdropFilter: 'blur(10px)',
     }}>
       {/* Header row */}
@@ -63,7 +63,7 @@ export default function DailyReport({ lang }) {
         onClick={() => setOpen(v => !v)}
         style={{
           width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-          padding: '11px 16px', background: 'none', border: 'none', cursor: 'pointer',
+          padding: '7px 14px', background: 'none', border: 'none', cursor: 'pointer',
           textAlign: 'left',
         }}
       >
