@@ -405,10 +405,90 @@ export default function GlobalSentiment({ lang }) {
       {!collapsed && (
         <div style={{ padding: '12px 16px 14px' }}>
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '28px 0', color: '#9aa0a6', fontSize: 13 }}>
-              {zh ? '加载全球市场数据...' : 'Loading global market data...'}
-              <div style={{ fontSize: 11, color: '#4a5568', marginTop: 6 }}>
-                {zh ? '首次加载约需15秒' : 'First load takes ~15s'}
+            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+              {/* Map + Gauges skeleton row */}
+              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                {/* Map skeleton */}
+                <div style={{
+                  flex: '1 1 360px', minWidth: 0,
+                  height: 195, borderRadius: 8,
+                  background: 'rgba(138,180,248,0.04)',
+                  border: '1px solid rgba(138,180,248,0.07)',
+                  overflow: 'hidden', position: 'relative',
+                }}>
+                  <div style={{ position: 'absolute', inset: 0, animation: 'skshimmer 1.6s infinite',
+                    background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
+                    backgroundSize: '200% 100%',
+                  }} />
+                  {/* Fake continent blobs */}
+                  {[
+                    { l: '8%',  t: '20%', w: '18%', h: '35%' },
+                    { l: '10%', t: '58%', w: '10%', h: '25%' },
+                    { l: '32%', t: '15%', w: '14%', h: '28%' },
+                    { l: '32%', t: '52%', w: '10%', h: '30%' },
+                    { l: '55%', t: '12%', w: '28%', h: '42%' },
+                    { l: '72%', t: '58%', w: '10%', h: '18%' },
+                  ].map((s, i) => (
+                    <div key={i} style={{
+                      position: 'absolute', left: s.l, top: s.t, width: s.w, height: s.h,
+                      borderRadius: 6, background: 'rgba(138,180,248,0.06)',
+                    }} />
+                  ))}
+                  {/* Fake pins */}
+                  {[
+                    { l: '22%', t: '27%' }, { l: '55%', t: '22%' },
+                    { l: '38%', t: '20%' }, { l: '63%', t: '28%' },
+                    { l: '68%', t: '38%' }, { l: '76%', t: '62%' },
+                  ].map((p, i) => (
+                    <div key={i} style={{
+                      position: 'absolute', left: p.l, top: p.t,
+                      width: 10, height: 10, borderRadius: '50%',
+                      background: 'rgba(138,180,248,0.18)',
+                      transform: 'translate(-50%,-50%)',
+                    }} />
+                  ))}
+                </div>
+                {/* Gauge column skeleton */}
+                <div style={{ flex: '0 0 256px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{
+                    height: 10, width: '60%', margin: '0 auto', borderRadius: 4,
+                    background: 'rgba(138,180,248,0.07)',
+                  }} />
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {[0, 1].map(i => (
+                      <div key={i} style={{
+                        flex: 1, height: 150, borderRadius: 10,
+                        background: 'rgba(138,180,248,0.04)',
+                        border: '1px solid rgba(138,180,248,0.07)',
+                        overflow: 'hidden', position: 'relative',
+                      }}>
+                        <div style={{ position: 'absolute', inset: 0, animation: 'skshimmer 1.6s infinite',
+                          animationDelay: `${i * 0.2}s`,
+                          background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
+                          backgroundSize: '200% 100%',
+                        }} />
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{
+                    height: 52, borderRadius: 8,
+                    background: 'rgba(138,180,248,0.03)',
+                    border: '1px solid rgba(138,180,248,0.07)',
+                  }} />
+                </div>
+              </div>
+              {/* Ticker skeleton */}
+              <div style={{
+                marginTop: 10, height: 32, borderRadius: 6,
+                background: 'rgba(138,180,248,0.04)',
+                border: '1px solid rgba(138,180,248,0.07)',
+                overflow: 'hidden', position: 'relative',
+              }}>
+                <div style={{ position: 'absolute', inset: 0, animation: 'skshimmer 1.6s infinite',
+                  animationDelay: '0.4s',
+                  background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
+                  backgroundSize: '200% 100%',
+                }} />
               </div>
             </div>
           ) : (
@@ -464,6 +544,16 @@ export default function GlobalSentiment({ lang }) {
           )}
         </div>
       )}
+      <style>{`
+        @keyframes skshimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position:  200% 0; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+      `}</style>
     </div>
   )
 }

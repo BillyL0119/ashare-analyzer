@@ -5,7 +5,8 @@ Returns A-share market overview: main indices, advance/decline, total volume,
 northbound flow, and sector performance. Data cached 5 minutes.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
+import asyncio
 import akshare as ak
 import pandas as pd
 import json
@@ -193,9 +194,17 @@ def market_sectors():
 
 # ── Global Market Sentiment ──────────────────────────────────────────────────
 
-_SENTIMENT_TTL = 900  # 15 minutes
+_SENTIMENT_TTL = 1800  # 30 minutes
 _sentiment_ts: float = 0
 _sentiment_data: dict | None = None
+_sentiment_fetching: bool = False
+
+_DEFAULT_SENTIMENT = {
+    "us_sentiment": {"score": 50.0, "label_zh": "中性", "label_en": "Neutral", "vix": None},
+    "cn_sentiment": {"score": 50.0, "label_zh": "中性", "label_en": "Neutral"},
+    "indices": [],
+    "updated_at": None,
+}
 
 _GLOBAL_INDEX_META: dict = {
     "^GSPC":  {"name": "S&P 500",    "name_zh": "标普500",  "region": "us"},
@@ -269,94 +278,130 @@ def _score_label(score: float) -> tuple:
     return ("极度贪婪", "Extreme Greed")
 
 
+def _do_fetch_sentiment() -> dict:
+    """Blocking fetch of all sentiment data. Writes to globals when done."""
+    global _sentiment_ts, _sentiment_data, _sentiment_fetching
+    if _sentiment_fetching:
+        return _sentiment_data or _DEFAULT_SENTIMENT
+    _sentiment_fetching = True
+    try:
+        fetch_syms = list(_GLOBAL_INDEX_META.keys()) + ["^VIX"]
+        raw: dict = {}
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            futures = {pool.submit(_yf_history, s, "1y"): s for s in fetch_syms}
+            for fut in as_completed(futures):
+                raw[futures[fut]] = fut.result()
+
+        sp500_d = raw.get("^GSPC", {})
+        vix_d   = raw.get("^VIX",  {})
+        hist_sp = sp500_d.get("hist")
+        if hist_sp is not None and len(hist_sp) >= 16:
+            rsi_s  = _calc_rsi(hist_sp)
+            dist_s = _dist_score(hist_sp)
+            vix_s  = _vix_score(vix_d.get("close", 20.0)) if vix_d else 50.0
+            us_score = round((rsi_s + dist_s + vix_s) / 3, 1)
+        else:
+            us_score = 50.0
+
+        cn_score = 50.0
+        try:
+            spot_df  = ak.stock_zh_a_spot_em()
+            pct_col  = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
+            breadth  = _breadth_score(int((pct_col > 0).sum()), int((pct_col < 0).sum()))
+            sh_raw   = _yf_history("000001.SS", "60d")
+            sh_hist  = sh_raw.get("hist")
+            sh_rsi   = _calc_rsi(sh_hist) if sh_hist is not None and len(sh_hist) >= 16 else 50.0
+            cn_score = round((breadth + sh_rsi) / 2, 1)
+        except Exception as e:
+            logger.warning("cn sentiment: %s", e)
+
+        indices = []
+        for sym, meta in _GLOBAL_INDEX_META.items():
+            d = raw.get(sym, {})
+            indices.append({
+                "symbol":     sym,
+                "name":       meta["name"],
+                "name_zh":    meta["name_zh"],
+                "region":     meta["region"],
+                "close":      d.get("close"),
+                "change_pct": d.get("change_pct"),
+            })
+
+        try:
+            for param in ("上证系列指数", "深证系列指数"):
+                df = ak.stock_zh_index_spot_em(symbol=param)
+                for _, row in df.iterrows():
+                    nm = str(row.get("名称", ""))
+                    if any(k in nm for k in ("上证指数", "深证成指", "创业板指")):
+                        indices.append({
+                            "symbol":     "—",
+                            "name":       nm,
+                            "name_zh":    nm,
+                            "region":     "cn",
+                            "close":      round(_safe_float(row.get("最新价", 0)), 2),
+                            "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2),
+                        })
+        except Exception as e:
+            logger.warning("cn indices for sentiment: %s", e)
+
+        us_lbl = _score_label(us_score)
+        cn_lbl = _score_label(cn_score)
+        result = {
+            "us_sentiment": {
+                "score":    us_score,
+                "label_zh": us_lbl[0],
+                "label_en": us_lbl[1],
+                "vix":      vix_d.get("close"),
+            },
+            "cn_sentiment": {
+                "score":    cn_score,
+                "label_zh": cn_lbl[0],
+                "label_en": cn_lbl[1],
+            },
+            "indices":    indices,
+            "updated_at": datetime.now().isoformat(),
+        }
+        _sentiment_ts   = time.time()
+        _sentiment_data = result
+        return result
+    except Exception as e:
+        logger.error("sentiment fetch failed: %s", e)
+        return _sentiment_data or _DEFAULT_SENTIMENT
+    finally:
+        _sentiment_fetching = False
+
+
+def warmup_sentiment():
+    """Called at startup to pre-warm the sentiment cache in background."""
+    logger.info("Warming up sentiment cache...")
+    _do_fetch_sentiment()
+    logger.info("Sentiment cache warmed up.")
+
+
 @router.get("/sentiment")
-def market_sentiment():
+async def market_sentiment(background_tasks: BackgroundTasks):
     global _sentiment_ts, _sentiment_data
     now = time.time()
+
+    # Fresh cache — return immediately
     if _sentiment_data is not None and now - _sentiment_ts < _SENTIMENT_TTL:
         return _sentiment_data
 
-    # Fetch all yfinance data in parallel
-    fetch_syms = list(_GLOBAL_INDEX_META.keys()) + ["^VIX"]
-    raw: dict = {}
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        futures = {pool.submit(_yf_history, s, "1y"): s for s in fetch_syms}
-        for fut in as_completed(futures):
-            raw[futures[fut]] = fut.result()
+    # Stale cache — return stale data now, refresh in background
+    if _sentiment_data is not None:
+        if not _sentiment_fetching:
+            background_tasks.add_task(_do_fetch_sentiment)
+        return _sentiment_data
 
-    # --- US Fear & Greed (RSI + 52w distance + VIX) ---
-    sp500_d = raw.get("^GSPC", {})
-    vix_d   = raw.get("^VIX",  {})
-    hist_sp = sp500_d.get("hist")
-    if hist_sp is not None and len(hist_sp) >= 16:
-        rsi_s  = _calc_rsi(hist_sp)
-        dist_s = _dist_score(hist_sp)
-        vix_s  = _vix_score(vix_d.get("close", 20.0)) if vix_d else 50.0
-        us_score = round((rsi_s + dist_s + vix_s) / 3, 1)
-    else:
-        us_score = 50.0
-
-    # --- A-Share sentiment (advance/decline breadth + Shanghai RSI) ---
-    cn_score = 50.0
+    # No cache — fetch with 8-second timeout, fall back to default
     try:
-        spot_df  = ak.stock_zh_a_spot_em()
-        pct_col  = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
-        breadth  = _breadth_score(int((pct_col > 0).sum()), int((pct_col < 0).sum()))
-        sh_raw   = _yf_history("000001.SS", "60d")
-        sh_hist  = sh_raw.get("hist")
-        sh_rsi   = _calc_rsi(sh_hist) if sh_hist is not None and len(sh_hist) >= 16 else 50.0
-        cn_score = round((breadth + sh_rsi) / 2, 1)
-    except Exception as e:
-        logger.warning("cn sentiment: %s", e)
-
-    # --- Build indices list ---
-    indices = []
-    for sym, meta in _GLOBAL_INDEX_META.items():
-        d = raw.get(sym, {})
-        indices.append({
-            "symbol":     sym,
-            "name":       meta["name"],
-            "name_zh":    meta["name_zh"],
-            "region":     meta["region"],
-            "close":      d.get("close"),
-            "change_pct": d.get("change_pct"),
-        })
-
-    # A-share indices via akshare
-    try:
-        for param in ("上证系列指数", "深证系列指数"):
-            df = ak.stock_zh_index_spot_em(symbol=param)
-            for _, row in df.iterrows():
-                nm = str(row.get("名称", ""))
-                if any(k in nm for k in ("上证指数", "深证成指", "创业板指")):
-                    indices.append({
-                        "symbol":     "—",
-                        "name":       nm,
-                        "name_zh":    nm,
-                        "region":     "cn",
-                        "close":      round(_safe_float(row.get("最新价", 0)), 2),
-                        "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2),
-                    })
-    except Exception as e:
-        logger.warning("cn indices for sentiment: %s", e)
-
-    us_lbl = _score_label(us_score)
-    cn_lbl = _score_label(cn_score)
-    result = {
-        "us_sentiment": {
-            "score":    us_score,
-            "label_zh": us_lbl[0],
-            "label_en": us_lbl[1],
-            "vix":      vix_d.get("close"),
-        },
-        "cn_sentiment": {
-            "score":    cn_score,
-            "label_zh": cn_lbl[0],
-            "label_en": cn_lbl[1],
-        },
-        "indices":    indices,
-        "updated_at": datetime.now().isoformat(),
-    }
-    _sentiment_ts   = now
-    _sentiment_data = result
-    return result
+        loop = asyncio.get_running_loop()
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, _do_fetch_sentiment),
+            timeout=8.0,
+        )
+        return result
+    except asyncio.TimeoutError:
+        logger.warning("sentiment fetch timed out, returning default")
+        background_tasks.add_task(_do_fetch_sentiment)
+        return _DEFAULT_SENTIMENT
