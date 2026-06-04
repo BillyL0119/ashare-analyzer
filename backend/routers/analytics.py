@@ -37,6 +37,41 @@ try:
 except Exception:
     _STOCK_NAMES = {}
 
+# Common US stock names (hardcoded for display; avoids live API call per request)
+_US_NAMES: dict = {
+    "AAPL": "Apple", "MSFT": "Microsoft", "NVDA": "NVIDIA", "GOOGL": "Alphabet",
+    "AMZN": "Amazon", "META": "Meta", "TSLA": "Tesla", "BRK.B": "Berkshire",
+    "AVGO": "Broadcom", "JPM": "JPMorgan", "LLY": "Eli Lilly", "V": "Visa",
+    "UNH": "UnitedHealth", "XOM": "ExxonMobil", "MA": "Mastercard", "JNJ": "J&J",
+    "PG": "P&G", "HD": "Home Depot", "COST": "Costco", "ABBV": "AbbVie",
+    "AMD": "AMD", "NFLX": "Netflix", "CRM": "Salesforce", "BAC": "BofA",
+    "ORCL": "Oracle", "WMT": "Walmart", "MRK": "Merck", "CVX": "Chevron",
+    "PEP": "PepsiCo", "ADBE": "Adobe", "QCOM": "Qualcomm", "TXN": "TI",
+    "INTC": "Intel", "MU": "Micron", "ARM": "ARM Holdings", "TSM": "TSMC",
+    "BABA": "Alibaba", "PDD": "PDD Holdings", "JD": "JD.com", "BIDU": "Baidu",
+}
+
+
+def _resolve_name(sym: str) -> str:
+    """Resolve stock symbol to display name, checking A-share and US name tables."""
+    if sym in _STOCK_NAMES:
+        return _STOCK_NAMES[sym]
+    if sym.upper() in _US_NAMES:
+        return _US_NAMES[sym.upper()]
+    # Try AkShare for unknown A-share codes (6-digit numbers)
+    if sym.isdigit() and len(sym) == 6:
+        try:
+            import akshare as ak
+            df = ak.stock_info_a_code_name()
+            row = df[df["code"] == sym]
+            if not row.empty:
+                name = str(row.iloc[0]["name"])
+                _STOCK_NAMES[sym] = name  # cache for this process lifetime
+                return name
+        except Exception:
+            pass
+    return sym
+
 
 def _today() -> str:
     return datetime.now(_BEIJING_TZ).strftime("%Y-%m-%d")
@@ -166,8 +201,8 @@ def get_stats():
     top_stocks = sorted(searches.items(), key=lambda x: x[1], reverse=True)[:10]
     top_stocks_out = [
         {
-            "symbol":  sym,
-            "name":    _STOCK_NAMES.get(sym, sym),
+            "symbol":   sym,
+            "name":     _resolve_name(sym),
             "searches": cnt,
         }
         for sym, cnt in top_stocks

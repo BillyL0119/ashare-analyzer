@@ -13,7 +13,7 @@ import json
 import os
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 router = APIRouter()
@@ -217,6 +217,34 @@ _GLOBAL_INDEX_META: dict = {
 }
 
 
+# AkShare Sina symbol mapping for US indices (works from CN servers)
+_AK_SINA_MAP = {
+    "^GSPC": ".INX",
+    "^IXIC": ".IXIC",
+    "^DJI":  ".DJI",
+}
+
+
+def _ak_us_index(sina_sym: str, days: int = 252) -> dict:
+    """Fetch US index history from AkShare/Sina (works reliably from CN servers)."""
+    try:
+        df = ak.index_us_stock_sina(symbol=sina_sym)
+        df = df.dropna(subset=["close"]).tail(days)
+        df = df.rename(columns={"close": "Close"})
+        if len(df) < 2:
+            return {}
+        last = float(df["Close"].iloc[-1])
+        prev = float(df["Close"].iloc[-2])
+        return {
+            "close": round(last, 2),
+            "change_pct": round((last - prev) / prev * 100, 2),
+            "hist": df,
+        }
+    except Exception as e:
+        logger.debug("ak_us_index %s: %s", sina_sym, e)
+        return {}
+
+
 def _yf_history(symbol: str, period: str = "1y") -> dict:
     try:
         import yfinance as yf
@@ -328,15 +356,26 @@ def _do_fetch_sentiment() -> dict:
         return _sentiment_data or _DEFAULT_SENTIMENT
     _sentiment_fetching = True
     try:
-        # Single batch download — one request instead of 8+ parallel to avoid rate limiting
-        fetch_syms = list(_GLOBAL_INDEX_META.keys()) + ["^VIX", "000001.SS"]
-        raw = _yf_batch(fetch_syms, "1y")
+        # ── Fetch US indices from AkShare/Sina (works from CN servers) ──────
+        raw: dict = {}
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            futures = {pool.submit(_ak_us_index, sina_sym): yf_sym
+                       for yf_sym, sina_sym in _AK_SINA_MAP.items()}
+            for fut in as_completed(futures):
+                yf_sym = futures[fut]
+                try:
+                    raw[yf_sym] = fut.result()
+                    if raw[yf_sym]:
+                        logger.info("ak_us_index %s ok close=%.2f", yf_sym, raw[yf_sym]["close"])
+                except Exception as e:
+                    raw[yf_sym] = {}
+                    logger.debug("ak_us_index %s failed: %s", yf_sym, e)
+        # Symbols not available via AkShare/Sina
+        for sym in ("^VIX", "^N225", "^HSI", "^FTSE", "^GDAXI"):
+            raw[sym] = {}
 
-        # ── US score: fallback chain ^GSPC → ^DJI → ^IXIC ──────────────────
-        vix_d = raw.get("^VIX", {})
-        vix_close = vix_d.get("close")
-        vix_s = _vix_score(vix_close) if vix_close else None
-
+        # ── US score: RSI + 52w distance from S&P500 ────────────────────────
+        vix_d = {}  # no AkShare VIX source
         us_hist = None
         for sym in ("^GSPC", "^DJI", "^IXIC"):
             h = raw.get(sym, {}).get("hist")
@@ -348,15 +387,8 @@ def _do_fetch_sentiment() -> dict:
         if us_hist is not None:
             rsi_s  = _calc_rsi(us_hist)
             dist_s = _dist_score(us_hist)
-            components = [rsi_s, dist_s]
-            if vix_s is not None:
-                components.append(vix_s)
-            us_score = round(sum(components) / len(components), 1)
-            logger.info("us score: rsi=%.1f dist=%.1f vix=%s → %.1f",
-                        rsi_s, dist_s, f"{vix_s:.1f}" if vix_s else "N/A", us_score)
-        elif vix_s is not None:
-            us_score = round(vix_s, 1)
-            logger.info("us score (vix-only): %.1f", us_score)
+            us_score = round((rsi_s + dist_s) / 2, 1)
+            logger.info("us score: rsi=%.1f dist=%.1f → %.1f", rsi_s, dist_s, us_score)
         else:
             us_score = 50.0
             logger.warning("us score: no data available, using 50.0")
@@ -522,3 +554,111 @@ async def market_sentiment(background_tasks: BackgroundTasks):
         logger.warning("sentiment fetch timed out, returning default")
         background_tasks.add_task(_do_fetch_sentiment)
         return _DEFAULT_SENTIMENT
+
+
+# ── Daily Market Report ───────────────────────────────────────────────────────
+
+_REPORT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "daily_report.json")
+_BEIJING_TZ  = timezone(timedelta(hours=8))
+
+
+def _generate_daily_report(today: str) -> dict:
+    """Generate a bilingual daily market report using AkShare data."""
+    cn_data, us_data = {}, {}
+
+    # CN indices (yesterday's close via spot)
+    try:
+        for param in ("上证系列指数", "深证系列指数"):
+            df = ak.stock_zh_index_spot_em(symbol=param)
+            for _, row in df.iterrows():
+                nm = str(row.get("名称", ""))
+                if "上证指数" in nm:
+                    cn_data["sh"] = {"name": "上证指数", "close": round(_safe_float(row.get("最新价", 0)), 2),
+                                     "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2)}
+                elif "深证成指" in nm:
+                    cn_data["sz"] = {"name": "深证成指", "close": round(_safe_float(row.get("最新价", 0)), 2),
+                                     "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2)}
+                elif "创业板指" in nm:
+                    cn_data["cyb"] = {"name": "创业板指", "close": round(_safe_float(row.get("最新价", 0)), 2),
+                                      "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2)}
+    except Exception as e:
+        logger.warning("daily_report cn indices: %s", e)
+
+    # US indices from AkShare/Sina
+    us_map = {".INX": ("sp500", "S&P 500", "标普500"),
+              ".IXIC": ("nasdaq", "NASDAQ", "纳斯达克"),
+              ".DJI": ("dji", "Dow Jones", "道琼斯")}
+    for sina_sym, (key, name_en, name_zh) in us_map.items():
+        d = _ak_us_index(sina_sym, days=5)
+        if d:
+            us_data[key] = {"name_en": name_en, "name_zh": name_zh,
+                            "close": d["close"], "change_pct": d["change_pct"]}
+
+    # Sentiment from cache
+    sentiment = _sentiment_data or _DEFAULT_SENTIMENT
+    cn_score = sentiment.get("cn_sentiment", {}).get("score", 50)
+    cn_label_zh = sentiment.get("cn_sentiment", {}).get("label_zh", "中性")
+    cn_label_en = sentiment.get("cn_sentiment", {}).get("label_en", "Neutral")
+
+    # Build one-line summary
+    sh = cn_data.get("sh")
+    sp = us_data.get("sp500")
+    def fmt_pct(v):
+        if v is None: return "N/A"
+        sign = "+" if v >= 0 else ""
+        return f"{sign}{v:.2f}%"
+
+    if sh and sp:
+        summary_zh = (f"今日A股{'上涨' if sh['change_pct']>=0 else '下跌'}，"
+                      f"上证{fmt_pct(sh['change_pct'])}；"
+                      f"昨夜美股标普{'收涨' if sp['change_pct']>=0 else '收跌'}{fmt_pct(sp['change_pct'])}。"
+                      f"当前市场情绪：{cn_label_zh}（{cn_score:.0f}分）")
+        summary_en = (f"A-shares {'up' if sh['change_pct']>=0 else 'down'} today, "
+                      f"SSE {fmt_pct(sh['change_pct'])}; "
+                      f"US S&P 500 {'gained' if sp['change_pct']>=0 else 'fell'} {fmt_pct(sp['change_pct'])} overnight. "
+                      f"Market mood: {cn_label_en} ({cn_score:.0f})")
+    elif sh:
+        summary_zh = f"今日A股上证{fmt_pct(sh['change_pct'])}，市场情绪{cn_label_zh}（{cn_score:.0f}分）"
+        summary_en = f"A-shares SSE {fmt_pct(sh['change_pct'])} today. Market mood: {cn_label_en} ({cn_score:.0f})"
+    else:
+        summary_zh = f"今日市场情绪：{cn_label_zh}（{cn_score:.0f}分）"
+        summary_en = f"Market mood today: {cn_label_en} ({cn_score:.0f})"
+
+    return {
+        "date": today,
+        "summary_zh": summary_zh,
+        "summary_en": summary_en,
+        "cn_indices": cn_data,
+        "us_indices": us_data,
+        "sentiment": {
+            "cn_score": cn_score,
+            "cn_label_zh": cn_label_zh,
+            "cn_label_en": cn_label_en,
+        },
+        "generated_at": datetime.now(_BEIJING_TZ).isoformat(),
+    }
+
+
+@router.get("/daily-report")
+def daily_report():
+    """Return today's market daily report (cached by date, Beijing time)."""
+    today = datetime.now(_BEIJING_TZ).strftime("%Y-%m-%d")
+
+    # Return cached report if it's for today
+    if os.path.exists(_REPORT_PATH):
+        try:
+            with open(_REPORT_PATH, encoding="utf-8") as f:
+                cached = json.load(f)
+            if cached.get("date") == today:
+                return cached
+        except Exception:
+            pass
+
+    report = _generate_daily_report(today)
+    try:
+        os.makedirs(os.path.dirname(_REPORT_PATH), exist_ok=True)
+        with open(_REPORT_PATH, "w", encoding="utf-8") as f:
+            json.dump(report, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logger.warning("daily_report cache write failed: %s", e)
+    return report

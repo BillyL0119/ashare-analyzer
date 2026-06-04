@@ -6,6 +6,7 @@ import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
 import GlobalSentiment from './components/GlobalSentiment'
 import StatsDisplay from './components/StatsDisplay'
+import DailyReport from './components/DailyReport'
 
 const PaperTradingPanel = lazy(() => import('./components/PaperTradingPanel'))
 const StudyCenter       = lazy(() => import('./components/StudyCenter'))
@@ -273,6 +274,7 @@ export default function App() {
             <AITeacherPage lang={lang} />
           ) : (
             <>
+              <DailyReport lang={lang} />
               <GlobalSentiment lang={lang} />
               <ComparePanel onTabChange={handleTabChange} />
             </>
