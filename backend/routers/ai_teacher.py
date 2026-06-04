@@ -1,6 +1,6 @@
 """
 AI Teacher — /api/ai/chat
-Streaming chat powered by Groq (llama-3.1-8b-instant).
+Streaming chat powered by DeepSeek (deepseek-chat).
 Rate limit: 10 requests / device / minute.
 """
 
@@ -19,7 +19,7 @@ import os
 router = APIRouter()
 logger = logging.getLogger("ai_teacher")
 
-GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
+DEEPSEEK_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 
 SYSTEM_PROMPT = (
     "你是 BestFriendStock 的 AI 老师，专为学生设计。你擅长：\n"
@@ -72,9 +72,12 @@ async def ai_chat(body: ChatBody):
 
         def _run():
             try:
-                from groq import Groq
+                from openai import OpenAI
 
-                client = Groq(api_key=GROQ_KEY)
+                client = OpenAI(
+                    api_key=DEEPSEEK_KEY,
+                    base_url="https://api.deepseek.com",
+                )
 
                 # Build messages: system + history + new user message
                 messages = [{"role": "system", "content": SYSTEM_PROMPT}]
@@ -86,7 +89,7 @@ async def ai_chat(body: ChatBody):
                 messages.append({"role": "user", "content": body.message})
 
                 stream = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
+                    model="deepseek-chat",
                     messages=messages,
                     max_tokens=800,
                     stream=True,
