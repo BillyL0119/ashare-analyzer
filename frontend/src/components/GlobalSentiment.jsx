@@ -230,13 +230,13 @@ function WorldMap({ indices, lang }) {
   }
   return (
     <div
-      style={{ position: 'relative', background: '#050d1a', borderRadius: 8, overflow: 'hidden', lineHeight: 0 }}
+      style={{ position: 'relative', background: '#050d1a', borderRadius: 8, overflow: 'hidden', lineHeight: 0, height: '100%' }}
       onMouseMove={(e) => setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)}
     >
       <ComposableMap
         projection="geoNaturalEarth1"
-        projectionConfig={{ scale: 155, center: [10, 10] }}
-        style={{ width: '100%', height: 'auto', display: 'block' }}
+        projectionConfig={{ scale: 140, center: [10, 10] }}
+        style={{ width: '100%', height: '100%', display: 'block' }}
       >
         {/* Ocean */}
         <Sphere id="rsm-sphere-bg" fill="#0a1628" stroke="#1a2a4a" strokeWidth={0.5} />
@@ -390,6 +390,10 @@ export default function GlobalSentiment({ lang }) {
       border: '1px solid rgba(138,180,248,0.11)',
       borderRadius: 12,
       marginBottom: 10,
+      height: 'calc(100vh - 120px)',
+      minHeight: 420,
+      display: 'flex',
+      flexDirection: 'column',
       overflow: 'hidden',
       backdropFilter: 'blur(8px)',
     }}>
@@ -429,20 +433,20 @@ export default function GlobalSentiment({ lang }) {
 
       {/* ── Body ── */}
       {!collapsed && (
-        <div style={{ padding: '8px 14px 10px' }}>
+        <div style={{ padding: '4px 14px 6px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {loading ? (
             <LoadingSkeleton />
           ) : (
-            <div style={{ animation: 'fadeIn 0.5s ease both' }}>
+            <div style={{ animation: 'fadeIn 0.5s ease both', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               {/* Map 75% + Gauges 25% */}
-              <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 14, alignItems: 'stretch', flex: 1, minHeight: 0, flexWrap: 'nowrap' }}>
                 {/* World map */}
-                <div style={{ flex: '1 1 360px', minWidth: 0 }}>
+                <div style={{ flex: '1 1 0', minWidth: 0, overflow: 'hidden' }}>
                   <WorldMap indices={indices} lang={lang} />
                 </div>
 
                 {/* Sentiment gauges */}
-                <div style={{ flex: '0 0 200px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ flex: '0 0 192px', display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto' }}>
                   <div style={{ fontSize: 11, color: '#4a5568', textAlign: 'center', letterSpacing: '0.3px' }}>
                     {zh ? '情绪指数 (0-100)' : 'Sentiment Index (0-100)'}
                   </div>
@@ -475,7 +479,9 @@ export default function GlobalSentiment({ lang }) {
               </div>
 
               {/* Ticker bar */}
-              <TickerBar indices={indices} zh={zh} />
+              <div style={{ flexShrink: 0 }}>
+                <TickerBar indices={indices} zh={zh} />
+              </div>
             </div>
           )}
         </div>
