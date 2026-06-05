@@ -95,21 +95,11 @@ function CardPanel({ item, lang }) {
   )
 }
 
-export default function KnowledgeCard({ lang }) {
+export default function KnowledgeCard({ lang, open, onClose }) {
   const t = T[lang]
-  const [open,    setOpen]    = useState(false)
   const [data,    setData]    = useState(null)
   const [loading, setLoading] = useState(false)
   const [tab,     setTab]     = useState('economics')  // 'economics' | 'finance'
-
-  // Auto-open once per day
-  useEffect(() => {
-    const seen = localStorage.getItem(LS_KEY)
-    if (seen !== todayStr()) {
-      setOpen(true)
-      localStorage.setItem(LS_KEY, todayStr())
-    }
-  }, [])
 
   // Fetch when first opened
   useEffect(() => {
@@ -127,91 +117,66 @@ export default function KnowledgeCard({ lang }) {
     finance:   lang === 'zh' ? '金融分析' : 'Finance',
   }
 
+  if (!open) return null
+
   return (
     <div style={{
-      position: 'fixed', bottom: 24, right: 24, zIndex: 900,
-      display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8,
+      position: 'fixed', top: 56, right: 16, zIndex: 900,
+      width: 320,
+      background: 'rgba(6, 15, 30, 0.98)',
+      border: '1px solid #1a2f50',
+      borderRadius: 14,
+      boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px #2a4a7f',
+      overflow: 'hidden',
     }}>
-      {open && (
-        <div style={{
-          width: 320,
-          background: 'rgba(12, 18, 30, 0.97)',
-          border: '1px solid rgba(138,180,248,0.18)',
-          borderRadius: 14,
-          boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(138,180,248,0.08)',
-          overflow: 'hidden',
+      {/* Header */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(14,165,233,0.12), rgba(139,92,246,0.12))',
+        borderBottom: '1px solid #1a2f50',
+        padding: '10px 14px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>
+          💡 {t.knowledgeBtn}
+        </span>
+        <button onClick={onClose} style={{
+          background: 'none', border: 'none', color: '#94a3b8',
+          cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 2px',
         }}>
-          {/* Header */}
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(138,180,248,0.15), rgba(192,132,252,0.15))',
-            borderBottom: '1px solid rgba(138,180,248,0.12)',
-            padding: '10px 14px',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#e8eaed' }}>
-              {t.knowledgeBtn}
-            </span>
-            <button onClick={() => setOpen(false)} style={{
-              background: 'none', border: 'none', color: '#9aa0a6',
-              cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 2px',
-            }}>
-              {t.knowledgeClose}
-            </button>
-          </div>
-
-          {/* Tabs */}
-          <div style={{ display: 'flex', borderBottom: '1px solid rgba(138,180,248,0.10)' }}>
-            {['economics', 'finance'].map((key) => (
-              <button
-                key={key}
-                onClick={() => setTab(key)}
-                style={{
-                  flex: 1, padding: '7px 0', fontSize: 12, fontWeight: tab === key ? 700 : 400,
-                  border: 'none', cursor: 'pointer',
-                  background: tab === key ? 'rgba(138,180,248,0.10)' : 'transparent',
-                  color: tab === key ? '#8ab4f8' : '#9aa0a6',
-                  borderBottom: tab === key ? '2px solid #8ab4f8' : '2px solid transparent',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {TAB_LABEL[key]}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ padding: '12px 14px 14px' }}>
-            {loading && (
-              <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
-                ...
-              </div>
-            )}
-            {data && !loading && (
-              <CardPanel item={data[tab]} lang={lang} />
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Collapsed button */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          style={{
-            background: 'linear-gradient(135deg, rgba(138,180,248,0.2), rgba(192,132,252,0.2))',
-            border: '1px solid rgba(138,180,248,0.3)',
-            borderRadius: 20, padding: '8px 16px',
-            color: '#c8d4f0', fontSize: 13, fontWeight: 600,
-            cursor: 'pointer', backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(138,180,248,0.6)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(138,180,248,0.3)' }}
-        >
-          {t.knowledgeBtn}
+          {t.knowledgeClose}
         </button>
-      )}
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', borderBottom: '1px solid #1a2f50' }}>
+        {['economics', 'finance'].map((key) => (
+          <button
+            key={key}
+            onClick={() => setTab(key)}
+            style={{
+              flex: 1, padding: '7px 0', fontSize: 12, fontWeight: tab === key ? 700 : 400,
+              border: 'none', cursor: 'pointer',
+              background: tab === key ? 'rgba(14,165,233,0.08)' : 'transparent',
+              color: tab === key ? '#0ea5e9' : '#94a3b8',
+              borderBottom: tab === key ? '2px solid #0ea5e9' : '2px solid transparent',
+              transition: 'all 0.15s',
+            }}
+          >
+            {TAB_LABEL[key]}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding: '12px 14px 14px' }}>
+        {loading && (
+          <div style={{ color: '#94a3b8', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
+            ...
+          </div>
+        )}
+        {data && !loading && (
+          <CardPanel item={data[tab]} lang={lang} />
+        )}
+      </div>
     </div>
   )
 }

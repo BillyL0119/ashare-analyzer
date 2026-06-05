@@ -26,12 +26,24 @@ export default function App() {
   const { lang, setLang } = useLangStore()
   const t = T[lang]
   const isMobile = useMobile()
-  const [appTab,    setAppTab]    = useState('analysis')  // 'analysis' | 'paper'
-  const [showStats, setShowStats] = useState(false)
-  const [scrolled,  setScrolled]  = useState(false)
+  const [appTab,       setAppTab]       = useState('analysis')
+  const [showStats,    setShowStats]    = useState(false)
+  const [scrolled,     setScrolled]     = useState(false)
+  const [showInsight,  setShowInsight]  = useState(false)
+  const [showAIFloat,  setShowAIFloat]  = useState(false)
 
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
+
+  // Auto-open Daily Insight once per day
+  useEffect(() => {
+    const todayStr = new Date().toISOString().slice(0, 10)
+    const seen = localStorage.getItem('bfs_knowledge_date')
+    if (seen !== todayStr) {
+      setShowInsight(true)
+      localStorage.setItem('bfs_knowledge_date', todayStr)
+    }
+  }, [])
 
   // Scroll-aware header
   useEffect(() => {
@@ -63,7 +75,7 @@ export default function App() {
     <>
     <WelcomeModal onLangSelect={(lang) => setLang(lang)} />
     <Watchlist lang={lang} />
-    <KnowledgeCard lang={lang} />
+    <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
     <div
       style={{
         minHeight: '100vh',
@@ -224,6 +236,31 @@ export default function App() {
           ))}
         </div>
 
+        {/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}
+        {[
+          { key: 'insight', icon: '💡', active: showInsight, onClick: () => setShowInsight(v => !v), title: lang === 'zh' ? '每日知识' : 'Daily Insight' },
+          { key: 'ai',      icon: '🎓', active: showAIFloat, onClick: () => setShowAIFloat(v => !v), title: lang === 'zh' ? 'AI 老师'  : 'AI Tutor' },
+        ].map(({ key, icon, active, onClick, title }) => (
+          <button
+            key={key}
+            onClick={onClick}
+            title={title}
+            style={{
+              width: 34, height: 34, borderRadius: '50%',
+              border: `1px solid ${active ? '#0ea5e9' : '#1a2f50'}`,
+              background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
+              cursor: 'pointer', fontSize: 16,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all 0.2s ease', flexShrink: 0,
+              boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
+            }}
+            onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#0f1f3d' }}
+            onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent' }}
+          >
+            {icon}
+          </button>
+        ))}
+
         {/* App tab toggle */}
         <div
           style={{
@@ -303,7 +340,7 @@ export default function App() {
 
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
       <Suspense fallback={null}>
-        <AITeacherFloat lang={lang} />
+        <AITeacherFloat lang={lang} open={showAIFloat} onClose={() => setShowAIFloat(false)} />
       </Suspense>
       <style>{`
         @keyframes bfsPageFadeIn {

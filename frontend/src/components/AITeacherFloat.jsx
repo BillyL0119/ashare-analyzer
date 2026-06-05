@@ -63,8 +63,7 @@ function Bubble({ msg, accent }) {
   )
 }
 
-export default function AITeacherFloat({ lang }) {
-  const [open,      setOpen]      = useState(false)
+export default function AITeacherFloat({ lang, open, onClose }) {
   const [messages,  setMessages]  = useState([])
   const [input,     setInput]     = useState('')
   const [busy,      setBusy]      = useState(false)
@@ -173,12 +172,13 @@ export default function AITeacherFloat({ lang }) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
   }
 
+  if (!open) return null
+
   return (
     <>
       {/* ── Chat window ── */}
-      {open && (
-        <div style={{
-          position: 'fixed', bottom: 148, right: 24, zIndex: 950,
+      <div style={{
+          position: 'fixed', top: 56, right: 16, zIndex: 950,
           width: 350, height: 480,
           background: '#0b0f1a',
           border: `1px solid ${BDR}`,
@@ -218,7 +218,7 @@ export default function AITeacherFloat({ lang }) {
                 }}
               >🗑</button>
               <button
-                onClick={() => setOpen(false)}
+                onClick={onClose}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontSize: 16, color: '#4a5568', padding: '2px 4px', borderRadius: 4,
@@ -298,30 +298,6 @@ export default function AITeacherFloat({ lang }) {
             </button>
           </div>
         </div>
-      )}
-
-      {/* ── Floating button ── */}
-      <button
-        onClick={() => setOpen(v => !v)}
-        title={zh ? 'AI 老师' : 'AI Tutor'}
-        style={{
-          position: 'fixed', bottom: 90, right: 24, zIndex: 951,
-          width: 50, height: 50, borderRadius: '50%',
-          background: open
-            ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
-            : 'rgba(13,17,32,0.92)',
-          border: `1.5px solid ${open ? 'transparent' : 'rgba(138,180,248,0.3)'}`,
-          boxShadow: open
-            ? '0 4px 20px rgba(138,180,248,0.4)'
-            : '0 2px 12px rgba(0,0,0,0.5)',
-          cursor: 'pointer', fontSize: 22,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: 'all 0.25s ease',
-          backdropFilter: 'blur(8px)',
-        }}
-      >
-        {open ? '✕' : '🎓'}
-      </button>
     </>
   )
 }
