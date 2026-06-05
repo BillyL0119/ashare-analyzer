@@ -386,10 +386,10 @@ def _breadth_score(advance: int, decline: int) -> float:
 
 
 def _score_label(score: float) -> tuple:
-    if score < 25: return ("极度恐慌", "Extreme Fear")
+    if score < 30: return ("极度恐慌", "Extreme Fear")
     if score < 45: return ("恐慌",     "Fear")
     if score < 55: return ("中性",     "Neutral")
-    if score < 75: return ("贪婪",     "Greed")
+    if score < 70: return ("贪婪",     "Greed")
     return ("极度贪婪", "Extreme Greed")
 
 
@@ -644,8 +644,11 @@ def _generate_daily_report(today: str) -> dict:
     cn_score = sentiment.get("cn_sentiment", {}).get("score", 50)
     cn_label_zh = sentiment.get("cn_sentiment", {}).get("label_zh", "中性")
     cn_label_en = sentiment.get("cn_sentiment", {}).get("label_en", "Neutral")
+    us_score = sentiment.get("us_sentiment", {}).get("score", 50)
+    us_label_zh = sentiment.get("us_sentiment", {}).get("label_zh", "中性")
+    us_label_en = sentiment.get("us_sentiment", {}).get("label_en", "Neutral")
 
-    # Build one-line summary
+    # Build one-line summary (US score drives the mood headline)
     sh = cn_data.get("sh")
     sp = us_data.get("sp500")
     def fmt_pct(v):
@@ -657,17 +660,17 @@ def _generate_daily_report(today: str) -> dict:
         summary_zh = (f"今日A股{'上涨' if sh['change_pct']>=0 else '下跌'}，"
                       f"上证{fmt_pct(sh['change_pct'])}；"
                       f"昨夜美股标普{'收涨' if sp['change_pct']>=0 else '收跌'}{fmt_pct(sp['change_pct'])}。"
-                      f"当前市场情绪：{cn_label_zh}（{cn_score:.0f}分）")
+                      f"美股情绪：{us_label_zh}（{us_score:.0f}分）")
         summary_en = (f"A-shares {'up' if sh['change_pct']>=0 else 'down'} today, "
                       f"SSE {fmt_pct(sh['change_pct'])}; "
                       f"US S&P 500 {'gained' if sp['change_pct']>=0 else 'fell'} {fmt_pct(sp['change_pct'])} overnight. "
-                      f"Market mood: {cn_label_en} ({cn_score:.0f})")
+                      f"Market mood today: {us_label_en} ({us_score:.0f})")
     elif sh:
-        summary_zh = f"今日A股上证{fmt_pct(sh['change_pct'])}，市场情绪{cn_label_zh}（{cn_score:.0f}分）"
-        summary_en = f"A-shares SSE {fmt_pct(sh['change_pct'])} today. Market mood: {cn_label_en} ({cn_score:.0f})"
+        summary_zh = f"今日A股上证{fmt_pct(sh['change_pct'])}，美股情绪{us_label_zh}（{us_score:.0f}分）"
+        summary_en = f"A-shares SSE {fmt_pct(sh['change_pct'])} today. Market mood today: {us_label_en} ({us_score:.0f})"
     else:
-        summary_zh = f"今日市场情绪：{cn_label_zh}（{cn_score:.0f}分）"
-        summary_en = f"Market mood today: {cn_label_en} ({cn_score:.0f})"
+        summary_zh = f"今日市场情绪：{us_label_zh}（{us_score:.0f}分）"
+        summary_en = f"Market mood today: {us_label_en} ({us_score:.0f})"
 
     return {
         "date": today,
@@ -676,6 +679,9 @@ def _generate_daily_report(today: str) -> dict:
         "cn_indices": cn_data,
         "us_indices": us_data,
         "sentiment": {
+            "us_score": us_score,
+            "us_label_zh": us_label_zh,
+            "us_label_en": us_label_en,
             "cn_score": cn_score,
             "cn_label_zh": cn_label_zh,
             "cn_label_en": cn_label_en,
