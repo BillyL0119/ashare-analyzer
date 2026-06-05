@@ -189,6 +189,8 @@ export const T = {
     radarLoading: '正在计算各维度得分...',
     radarNoStocks: '请先添加股票',
     radarTab: '雷达对比',
+    scoreTab: '股票打分',
+    backtestTab: '策略回测',
     // News Sentiment
     newsSentiment: '新闻舆情',
     newsLoading: '正在抓取新闻并分析舆情...',
@@ -409,6 +411,8 @@ export const T = {
     radarLoading: 'Computing dimension scores...',
     radarNoStocks: 'Please add a stock first',
     radarTab: 'Radar',
+    scoreTab: 'Score',
+    backtestTab: 'Backtest',
     // News Sentiment
     newsSentiment: 'News Sentiment',
     newsLoading: 'Fetching news and analyzing sentiment...',

@@ -20,6 +20,8 @@ import MarketOverview from './MarketOverview'
 import CalendarPanel from './CalendarPanel'
 import EarningsPanel from './EarningsPanel'
 import StockDetailPage from './StockDetailPage'
+import ScorePanel from './ScorePanel'
+import BacktestPanel from './BacktestPanel'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -169,6 +171,8 @@ export default function ComparePanel({ onTabChange }) {
           // calendar is A-share only
           ...(market !== 'us' ? [{ key: 'calendar', label: lang === 'zh' ? 'A股日历' : 'Calendar' }] : []),
           { key: 'earnings', label: lang === 'zh' ? '财报日历' : 'Earnings' },
+          { key: 'score',   label: t.scoreTab || (lang === 'zh' ? '股票打分' : 'Score') },
+          { key: 'backtest',label: t.backtestTab || (lang === 'zh' ? '策略回测' : 'Backtest') },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -226,6 +230,10 @@ export default function ComparePanel({ onTabChange }) {
         <CalendarPanel lang={lang} onStockSelect={handleStockSelect} />
       ) : viewMode === 'earnings' ? (
         <EarningsPanel lang={lang} onStockSelect={handleStockSelect} />
+      ) : viewMode === 'score' ? (
+        <ScorePanel stocks={selectedSymbols} />
+      ) : viewMode === 'backtest' ? (
+        <BacktestPanel stocks={selectedSymbols} />
       ) : (
         <div
           style={{

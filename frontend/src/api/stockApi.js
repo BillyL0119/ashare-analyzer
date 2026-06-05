@@ -51,3 +51,9 @@ export const getRadarScore = (symbol) =>
 
 export const getKnowledgeToday = () =>
   api.get('/knowledge/today')
+
+export const getStockScore = (symbol) =>
+  api.get(`/stock/score/${symbol}`)
+
+export const getBacktest = (symbol, strategy, period) =>
+  api.get(`/stock/backtest/${symbol}`, { params: { strategy, period } })
