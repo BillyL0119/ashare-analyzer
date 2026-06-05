@@ -22,7 +22,7 @@ const ACCENT_BLUE = '#8ab4f8'
 const ACCENT_PURPLE = '#c084fc'
 
 export default function App() {
-  const { startDate, endDate, setDateRange, market, setMarket } = useCompareStore()
+  const { startDate, endDate, setDateRange, market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const t = T[lang]
   const isMobile = useMobile()
@@ -274,8 +274,8 @@ export default function App() {
             <AITeacherPage lang={lang} />
           ) : (
             <>
-              <DailyReport lang={lang} />
-              <GlobalSentiment lang={lang} />
+              {selectedSymbols.length === 0 && <DailyReport lang={lang} />}
+              {selectedSymbols.length === 0 && <GlobalSentiment lang={lang} />}
               <ComparePanel onTabChange={handleTabChange} />
             </>
           )}
