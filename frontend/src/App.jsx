@@ -133,7 +133,7 @@ export default function App() {
             style={{
               fontSize: 17,
               fontWeight: 700,
-              background: `linear-gradient(90deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`,
+              background: 'linear-gradient(135deg, #38bdf8, #818cf8)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               letterSpacing: '0.3px',
@@ -167,7 +167,9 @@ export default function App() {
                 fontSize: 13,
                 fontWeight: 600,
                 letterSpacing: '0.2px',
-                background: market === key ? ACCENT_BLUE : 'transparent',
+                background: market === key
+                  ? 'linear-gradient(135deg, #0ea5e9, #38bdf8)'
+                  : 'rgba(255,255,255,0.04)',
                 color: market === key ? '#fff' : '#94a3b8',
                 transition: 'all 0.2s ease',
                 boxShadow: market === key ? `0 2px 12px rgba(14,165,233,0.3)` : 'none',
@@ -254,8 +256,14 @@ export default function App() {
               transition: 'all 0.2s ease', flexShrink: 0,
               boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
             }}
-            onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#0f1f3d' }}
-            onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#0f1f3d'
+              e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = active ? 'rgba(14,165,233,0.15)' : 'transparent'
+              e.currentTarget.style.boxShadow = active ? '0 0 10px rgba(14,165,233,0.25)' : 'none'
+            }}
           >
             {icon}
           </button>
@@ -279,13 +287,13 @@ export default function App() {
             <button
               key={key}
               onClick={() => handleTabChange(key)}
+              className={`bfs-nav-tab${appTab === key ? ' is-active' : ''}`}
               style={{
-                padding: '4px 13px', borderRadius: 20, border: 'none',
-                cursor: 'pointer', fontSize: 12, fontWeight: 600,
-                background: appTab === key ? ACCENT_BLUE : 'transparent',
-                color: appTab === key ? '#fff' : '#94a3b8',
-                transition: 'all 0.25s ease', whiteSpace: 'nowrap',
-                boxShadow: appTab === key ? `0 2px 12px rgba(14,165,233,0.3)` : 'none',
+                padding: '4px 13px', borderRadius: 6, border: 'none',
+                cursor: 'pointer', fontSize: 12, fontWeight: appTab === key ? 600 : 400,
+                background: 'transparent',
+                color: appTab === key ? '#0ea5e9' : '#94a3b8',
+                transition: 'color 0.2s ease', whiteSpace: 'nowrap',
               }}
             >
               {label}
@@ -311,9 +319,13 @@ export default function App() {
             <AITeacherPage lang={lang} />
           ) : (
             <>
-              {selectedSymbols.length === 0 && <DailyReport lang={lang} />}
-              {selectedSymbols.length === 0 && <GlobalSentiment lang={lang} />}
-              <ComparePanel onTabChange={handleTabChange} />
+              {selectedSymbols.length === 0 && (
+                <div className="bfs-enter-1"><DailyReport lang={lang} /></div>
+              )}
+              {selectedSymbols.length === 0 && (
+                <div className="bfs-enter-2"><GlobalSentiment lang={lang} /></div>
+              )}
+              <div className="bfs-enter-3"><ComparePanel onTabChange={handleTabChange} /></div>
             </>
           )}
         </Suspense>

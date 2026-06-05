@@ -95,15 +95,92 @@ body {
   border-radius: 6px;
 }
 
+/* ── Page entrance stagger ──────────────────────────────────────────────── */
+@keyframes bfsSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.bfs-enter-1 { animation: bfsSlideUp 0.4s ease both; }
+.bfs-enter-2 { animation: bfsSlideUp 0.4s ease 0.12s both; }
+.bfs-enter-3 { animation: bfsSlideUp 0.4s ease 0.24s both; }
+.bfs-enter-4 { animation: bfsSlideUp 0.4s ease 0.36s both; }
+
+/* ── Card hover lift ────────────────────────────────────────────────────── */
+.bfs-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.bfs-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.12);
+  border-color: #2a4a7f !important;
+}
+
+/* ── Ticker item hover ──────────────────────────────────────────────────── */
+.bfs-ticker-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+.bfs-ticker-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.12);
+  z-index: 1;
+}
+
+/* ── Button interactions ────────────────────────────────────────────────── */
+.bfs-btn {
+  transition: filter 0.2s ease, transform 0.2s ease !important;
+}
+.bfs-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.bfs-btn:active {
+  transform: scale(0.97) !important;
+  filter: brightness(0.9) !important;
+}
+
+/* ── Chevron rotation ───────────────────────────────────────────────────── */
+.bfs-chevron {
+  display: inline-block;
+  transition: transform 0.25s ease;
+  font-style: normal;
+}
+.bfs-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+/* ── Nav tab active underline ───────────────────────────────────────────── */
+.bfs-nav-tab {
+  position: relative;
+  overflow: visible;
+}
+.bfs-nav-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 4px; right: 4px;
+  height: 2px;
+  background: transparent;
+  border-radius: 1px;
+  transition: background 0.2s ease;
+}
+.bfs-nav-tab.is-active::after {
+  background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+}
+
 /* ── Card entrance ──────────────────────────────────────────────────────── */
 @keyframes bfsCardSlideIn {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Button active press ────────────────────────────────────────────────── */
-.bfs-btn:active {
-  transform: scale(0.97) !important;
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .bfs-enter-1, .bfs-enter-2, .bfs-enter-3, .bfs-enter-4 {
+    animation: none !important;
+  }
+  .bfs-chevron { transition: none !important; }
+  .bfs-card    { transition: none !important; }
 }
 
 #root {

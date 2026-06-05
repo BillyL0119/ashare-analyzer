@@ -84,8 +84,8 @@ export default function DailyReport({ lang }) {
         }}>
           {summary}
         </span>
-        <span style={{ fontSize: 12, color: '#4a5568', flexShrink: 0 }}>
-          {open ? '▲' : '▼'}
+        <span className={`bfs-chevron${open ? ' is-open' : ''}`} style={{ fontSize: 12, color: '#4a5568', flexShrink: 0 }}>
+          ▼
         </span>
       </button>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import ReactECharts from 'echarts-for-react'
 import KLineLesson from './KLineLesson'
+import { useMobile } from '../hooks/useMobile'
 
 const SIDEBAR_BG  = '#0d1120'
 const CONTENT_BG  = '#0b0f1a'
@@ -655,6 +656,7 @@ function EventTimeline({ zh }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export default function StudyCenter({ lang }) {
   const zh = lang === 'zh'
+  const isMobile = useMobile()
   const [activeExam, setActiveExam] = useState('alevel')
   const [curriculum,    setCurriculum]    = useState(null)
   const [activeId,      setActiveId]      = useState(null)
@@ -662,6 +664,7 @@ export default function StudyCenter({ lang }) {
   const [progress,      setProgress]      = useState(() => loadProgress('alevel'))
   const [loadingTopic,  setLoadingTopic]  = useState(false)
   const [loadingCurr,   setLoadingCurr]   = useState(false)
+  const [mobileView,    setMobileView]    = useState('list') // 'list' | 'content'
 
   const examMeta = EXAMS.find((e) => e.key === activeExam) || EXAMS[0]
   const accentColor = examMeta.color
@@ -674,6 +677,7 @@ export default function StudyCenter({ lang }) {
     setActiveId(null)
     setTopicData(null)
     setProgress(loadProgress(activeExam))
+    setMobileView('list')
     fetch(`/api/study/curriculum?exam=${activeExam}`)
       .then((r) => r.json())
       .then((d) => {
@@ -688,6 +692,7 @@ export default function StudyCenter({ lang }) {
   const selectTopic = (id, exam = activeExam) => {
     setActiveId(id)
     setLoadingTopic(true)
+    setMobileView('content')
     fetch(`/api/study/topic/${exam}/${id}`)
       .then((r) => r.json())
       .then(setTopicData)
@@ -718,12 +723,12 @@ export default function StudyCenter({ lang }) {
     }}>
 
       {/* ── Exam tab bar ── */}
-      <div style={{
+      <div className="tab-bar" style={{
         display: 'flex', alignItems: 'center', gap: 4,
         padding: '10px 14px 0',
         background: SIDEBAR_BG,
         borderBottom: `1px solid ${BDR}`,
-        flexShrink: 0,
+        flexShrink: 0, overflowX: 'auto',
       }}>
         {EXAMS.map((exam) => {
           const active = exam.key === activeExam
@@ -764,9 +769,10 @@ export default function StudyCenter({ lang }) {
 
         {/* ── Left sidebar ── */}
         {activeExam !== 'events' && activeExam !== 'stocks' &&
+        (!isMobile || mobileView === 'list') &&
         <div style={{
-          width: 260, flexShrink: 0, background: SIDEBAR_BG,
-          borderRight: `1px solid ${BDR}`,
+          width: isMobile ? '100%' : 260, flexShrink: 0, background: SIDEBAR_BG,
+          borderRight: isMobile ? 'none' : `1px solid ${BDR}`,
           display: 'flex', flexDirection: 'column', overflowY: 'auto',
         }}>
           {/* Header */}
@@ -822,10 +828,26 @@ export default function StudyCenter({ lang }) {
 
         {/* ── Right content area ── */}
         {activeExam !== 'events' && activeExam !== 'stocks' &&
+        (!isMobile || mobileView === 'content') &&
         <div style={{
           flex: 1, background: CONTENT_BG,
           overflowY: 'auto', display: 'flex', flexDirection: 'column',
         }}>
+          {/* Mobile back button */}
+          {isMobile && (
+            <button
+              onClick={() => setMobileView('list')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '10px 14px', background: SIDEBAR_BG,
+                border: 'none', borderBottom: `1px solid ${BDR}`,
+                color: '#9aa0a6', fontSize: 13, cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              ← {zh ? '返回列表' : 'Back'}
+            </button>
+          )}
           {!topicData && !loadingTopic ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: MUTED, fontSize: 14 }}>
               {zh ? '选择左侧课题开始学习' : 'Select a topic from the sidebar to begin'}

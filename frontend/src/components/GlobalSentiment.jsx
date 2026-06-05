@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useMobile } from '../hooks/useMobile'
 import {
   ComposableMap, Geographies, Geography,
   Marker, Graticule, Sphere,
@@ -61,19 +62,22 @@ function getLabelColor(pct) {
 
 // ── Ticker helpers ────────────────────────────────────────────────────────────
 function changePctColor(pct) {
-  if (pct === null || pct === undefined) return '#9aa0a6'
-  if (pct > 1)  return '#22c55e'
-  if (pct > 0)  return '#86efac'
-  if (pct > -1) return '#fca5a5'
-  return '#ef4444'
+  if (pct === null || pct === undefined) return '#94a3b8'
+  if (pct > 0)  return '#10b981'
+  if (pct < 0)  return '#ef4444'
+  return '#94a3b8'
 }
 function changePctBg(pct) {
-  if (pct === null || pct === undefined) return 'rgba(154,160,166,0.08)'
-  return pct >= 0 ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)'
+  if (pct === null || pct === undefined) return 'rgba(148,163,184,0.06)'
+  if (pct > 0) return 'rgba(16,185,129,0.08)'
+  if (pct < 0) return 'rgba(239,68,68,0.08)'
+  return 'rgba(148,163,184,0.06)'
 }
 function changePctBorder(pct) {
-  if (pct === null || pct === undefined) return 'rgba(154,160,166,0.15)'
-  return pct >= 0 ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'
+  if (pct === null || pct === undefined) return 'rgba(148,163,184,0.15)'
+  if (pct > 0) return 'rgba(16,185,129,0.2)'
+  if (pct < 0) return 'rgba(239,68,68,0.2)'
+  return 'rgba(148,163,184,0.15)'
 }
 
 // ── Sentiment gauge ───────────────────────────────────────────────────────────
@@ -121,9 +125,9 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh }) {
   const label = zh ? labelZh : labelEn
   const color = scoreColor(score)
   return (
-    <div style={{
-      background: 'rgba(255,255,255,0.025)',
-      border: '1px solid rgba(138,180,248,0.10)',
+    <div className="bfs-card" style={{
+      background: '#060f1e',
+      border: '1px solid #1a2f50',
       borderRadius: 10, padding: '10px 8px 8px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 11, color: '#9aa0a6', marginBottom: 4, letterSpacing: '0.3px' }}>
@@ -141,11 +145,13 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh }) {
 // ── Scrolling ticker bar ──────────────────────────────────────────────────────
 function TickerBar({ indices, zh }) {
   const scrollRef = useRef(null)
+  const pausedRef = useRef(false)
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
     let x = 0
     const id = setInterval(() => {
+      if (pausedRef.current) return
       x += 0.4
       if (x >= el.scrollWidth / 2) x = 0
       el.scrollLeft = x
@@ -157,6 +163,8 @@ function TickerBar({ indices, zh }) {
   return (
     <div
       ref={scrollRef}
+      onMouseEnter={() => { pausedRef.current = true }}
+      onMouseLeave={() => { pausedRef.current = false }}
       style={{ display: 'flex', gap: 8, overflowX: 'hidden', padding: '4px 0 2px', marginTop: 6, userSelect: 'none' }}
     >
       {doubled.map((idx, i) => {
@@ -287,8 +295,11 @@ function WorldMap({ indices, lang }) {
           const color = getLabelColor(pct)
           return (
             <Marker key={geoId} coordinates={meta.coords}>
-              {/* Soft glow halo */}
-              <circle r={7} fill={color} opacity={0.18} style={{ pointerEvents: 'none' }} />
+              {/* Soft glow halo — pulses */}
+              <circle r={7} fill={color} opacity={0.18} style={{ pointerEvents: 'none' }}>
+                <animate attributeName="r" values="5;9;5" dur="2.4s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.25;0.06;0.25" dur="2.4s" repeatCount="indefinite" />
+              </circle>
               {/* Core dot — interactive */}
               <circle
                 r={4}
@@ -386,6 +397,7 @@ export default function GlobalSentiment({ lang }) {
   const [loading, setLoading] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
   const zh = lang === 'zh'
+  const isMobile = useMobile()
 
   useEffect(() => {
     fetch('/api/market/sentiment')
@@ -442,8 +454,8 @@ export default function GlobalSentiment({ lang }) {
             </span>
           )}
         </div>
-        <span style={{ fontSize: 11, color: '#4a5568', userSelect: 'none' }}>
-          {collapsed ? '▼' : '▲'}
+        <span className={`bfs-chevron${collapsed ? '' : ' is-open'}`} style={{ fontSize: 11, color: '#4a5568', userSelect: 'none' }}>
+          ▼
         </span>
       </div>
 
@@ -454,43 +466,51 @@ export default function GlobalSentiment({ lang }) {
             <LoadingSkeleton />
           ) : (
             <div style={{ animation: 'fadeIn 0.5s ease both', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              {/* Map 75% + Gauges 25% */}
-              <div style={{ display: 'flex', gap: 14, alignItems: 'stretch', flex: 1, minHeight: 0, flexWrap: 'nowrap' }}>
+              {/* Map + Gauges */}
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 14, alignItems: 'stretch', flex: 1, minHeight: 0, flexWrap: 'nowrap' }}>
                 {/* World map */}
-                <div style={{ flex: '1 1 0', minWidth: 0, overflow: 'hidden' }}>
+                <div style={{ flex: isMobile ? 'none' : '1 1 0', height: isMobile ? 250 : undefined, minWidth: 0, overflow: 'hidden' }}>
                   <WorldMap indices={indices} lang={lang} />
                 </div>
 
                 {/* Sentiment gauges */}
-                <div style={{ flex: '0 0 192px', display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto' }}>
-                  <div style={{ fontSize: 11, color: '#4a5568', textAlign: 'center', letterSpacing: '0.3px' }}>
-                    {zh ? '情绪指数 (0-100)' : 'Sentiment Index (0-100)'}
+                <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8, overflowY: isMobile ? 'visible' : 'auto', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
+                  {!isMobile && (
+                    <div style={{ fontSize: 11, color: '#4a5568', textAlign: 'center', letterSpacing: '0.3px' }}>
+                      {zh ? '情绪指数 (0-100)' : 'Sentiment Index (0-100)'}
+                    </div>
+                  )}
+                  <div style={{ flex: isMobile ? '1 1 45%' : 'none' }}>
+                    <GaugeCard
+                      title={zh ? '美股情绪' : 'US Sentiment'}
+                      score={usScore}
+                      labelZh={data?.us_sentiment?.label_zh}
+                      labelEn={data?.us_sentiment?.label_en}
+                      vix={data?.us_sentiment?.vix}
+                      zh={zh}
+                    />
                   </div>
-                  <GaugeCard
-                    title={zh ? '美股情绪' : 'US Sentiment'}
-                    score={usScore}
-                    labelZh={data?.us_sentiment?.label_zh}
-                    labelEn={data?.us_sentiment?.label_en}
-                    vix={data?.us_sentiment?.vix}
-                    zh={zh}
-                  />
-                  <GaugeCard
-                    title={zh ? 'A股情绪' : 'A-Share'}
-                    score={cnScore}
-                    labelZh={data?.cn_sentiment?.label_zh}
-                    labelEn={data?.cn_sentiment?.label_en}
-                    zh={zh}
-                  />
-                  <div style={{
-                    fontSize: 10, lineHeight: 1.6, color: '#4a5568',
-                    padding: '8px 10px',
-                    background: 'rgba(255,255,255,0.02)',
-                    borderRadius: 8, border: '1px solid rgba(138,180,248,0.07)',
-                  }}>
-                    {zh
-                      ? '综合RSI、52周高点及涨跌比计算，仅供参考，不构成投资建议。'
-                      : 'Composite of RSI, 52w-high & A/D ratio. Not investment advice.'}
+                  <div style={{ flex: isMobile ? '1 1 45%' : 'none' }}>
+                    <GaugeCard
+                      title={zh ? 'A股情绪' : 'A-Share'}
+                      score={cnScore}
+                      labelZh={data?.cn_sentiment?.label_zh}
+                      labelEn={data?.cn_sentiment?.label_en}
+                      zh={zh}
+                    />
                   </div>
+                  {!isMobile && (
+                    <div style={{
+                      fontSize: 10, lineHeight: 1.6, color: '#4a5568',
+                      padding: '8px 10px',
+                      background: 'rgba(255,255,255,0.02)',
+                      borderRadius: 8, border: '1px solid rgba(138,180,248,0.07)',
+                    }}>
+                      {zh
+                        ? '综合RSI、52周高点及涨跌比计算，仅供参考，不构成投资建议。'
+                        : 'Composite of RSI, 52w-high & A/D ratio. Not investment advice.'}
+                    </div>
+                  )}
                 </div>
               </div>
 
