@@ -9,8 +9,6 @@ import { useStockData } from '../hooks/useStockData'
 import { buildOverlayOption, THEME } from '../utils/chartHelpers'
 import AnalysisPanel from './AnalysisPanel'
 import MonteCarloPanel from './MonteCarloPanel'
-import RiskPanel from './RiskPanel'
-import RegimePanel from './RegimePanel'
 import FactorPanel from './FactorPanel'
 import FinancialPanel from './FinancialPanel'
 import SimilarPanel from './SimilarPanel'
@@ -158,8 +156,6 @@ export default function ComparePanel({ onTabChange }) {
           { key: 'overlay', label: t.overlay },
           { key: 'analysis', label: t.analysis },
           { key: 'monteCarlo', label: t.monteCarlo },
-          { key: 'risk', label: t.riskAnalytics },
-          { key: 'regime', label: t.regimeDetector },
           // factor & financial rely on A-share specific data sources
           ...(market !== 'us' ? [
             { key: 'factor', label: t.factorAnalysis },
@@ -212,10 +208,6 @@ export default function ComparePanel({ onTabChange }) {
         <AnalysisPanel stocks={selectedSymbols} />
       ) : viewMode === 'monteCarlo' ? (
         <MonteCarloPanel stocks={selectedSymbols} />
-      ) : viewMode === 'risk' ? (
-        <RiskPanel stocks={selectedSymbols} />
-      ) : viewMode === 'regime' ? (
-        <RegimePanel stocks={selectedSymbols} />
       ) : viewMode === 'factor' ? (
         <FactorPanel stocks={selectedSymbols} />
       ) : viewMode === 'financial' ? (
