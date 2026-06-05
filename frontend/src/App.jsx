@@ -271,11 +271,13 @@ export default function App() {
 
         {/* App tab toggle */}
         <div
+          className="tab-bar"
           style={{
             display: 'flex', alignItems: 'center',
             background: '#060f1e',
             border: '1px solid #1a2f50',
             borderRadius: 24, padding: 3, gap: 2,
+            overflowX: 'auto', flexWrap: 'nowrap', flexShrink: 1,
           }}
         >
           {[

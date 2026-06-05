@@ -80,9 +80,10 @@ export default function StockCard({ stock }) {
           borderLeft: '3px solid #0ea5e9',
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
+          gap: isMobile ? 6 : 12,
           flexShrink: 0,
-          flexWrap: 'wrap',
+          flexWrap: isMobile ? 'nowrap' : 'wrap',
+          overflowX: isMobile ? 'auto' : 'visible',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
@@ -265,7 +266,7 @@ export default function StockCard({ stock }) {
         )}
         {data && !loading && (
           <>
-            <div style={{ height: isMobile ? 220 : 360 }}>
+            <div style={{ height: isMobile ? 300 : 360 }}>
               <KLineChart candles={data.candles} ma={data.ma} groupId={groupId} market={market} />
             </div>
             <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}` }}>

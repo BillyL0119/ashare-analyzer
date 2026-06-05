@@ -70,6 +70,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -248,6 +249,10 @@ code {
   .tab-bar {
     max-width: none;
   }
+  /* Touch targets — all interactive elements */
+  button, a, [role="button"] {
+    min-height: 36px;
+  }
 }
 
 /* Tab bar: hide scrollbar but keep scroll functionality */
@@ -258,6 +263,14 @@ code {
 }
 .tab-bar::-webkit-scrollbar {
   display: none;                /* Chrome / Safari */
+}
+
+/* Smooth momentum scrolling for all overflow containers on iOS */
+[style*="overflow-y: auto"],
+[style*="overflowY: auto"],
+[style*="overflow-y: scroll"],
+[style*="overflowY: scroll"] {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* FinancialPanel metric cards: shrink min-width on small screens */

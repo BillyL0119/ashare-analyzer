@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useMobile } from '../hooks/useMobile'
 
 const ACCENT_BLUE   = '#8ab4f8'
 const ACCENT_PURPLE = '#c084fc'
@@ -63,6 +64,7 @@ function FeatureCard({ feature, lang, index }) {
 
 export default function MarketOverview({ lang, onTabChange }) {
   const zh = lang === 'zh'
+  const isMobile = useMobile()
 
   const focusSearch = () => {
     const input = document.querySelector('header input[type="text"]') ||
@@ -87,7 +89,7 @@ export default function MarketOverview({ lang, onTabChange }) {
 
         <h1 className="bfs-hero-title" style={{
           margin: '0 0 16px',
-          fontSize: 'clamp(26px, 4vw, 40px)',
+          fontSize: isMobile ? 28 : 'clamp(30px, 4vw, 40px)',
           fontWeight: 800,
           background: `linear-gradient(90deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE}, #a78bfa, ${ACCENT_BLUE})`,
           backgroundSize: '300% 100%',
@@ -107,7 +109,7 @@ export default function MarketOverview({ lang, onTabChange }) {
         </p>
 
         {/* CTA buttons */}
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 12, justifyContent: 'center', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
           <button
             className="bfs-cta-primary"
             onClick={focusSearch}
@@ -116,6 +118,7 @@ export default function MarketOverview({ lang, onTabChange }) {
               color: '#fff', border: 'none', borderRadius: 10,
               padding: '12px 28px', fontSize: 14, fontWeight: 700,
               cursor: 'pointer', letterSpacing: '0.2px',
+              minHeight: 44, width: isMobile ? '100%' : 'auto',
             }}
           >
             🔍 {zh ? '开始分析' : 'Start Analyzing'}
@@ -131,6 +134,7 @@ export default function MarketOverview({ lang, onTabChange }) {
               borderRadius: 10, padding: '12px 28px',
               fontSize: 14, fontWeight: 700,
               cursor: 'pointer', letterSpacing: '0.2px',
+              minHeight: 44, width: isMobile ? '100%' : 'auto',
             }}
           >
             📚 {zh ? '学习中心' : 'Study Center'}
@@ -141,8 +145,8 @@ export default function MarketOverview({ lang, onTabChange }) {
       {/* ── Feature cards ── */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-        gap: 14, width: '100%', marginBottom: 36,
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))',
+        gap: isMobile ? 10 : 14, width: '100%', marginBottom: 36,
       }}>
         {FEATURES.map((f, i) => (
           <FeatureCard key={f.zh} feature={f} lang={lang} index={i} />
