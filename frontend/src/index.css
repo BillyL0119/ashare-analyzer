@@ -1,20 +1,74 @@
-:root {
-  /* ── Finance terminal palette ─────────────────────────── */
-  --bg-primary:    #020813;
-  --bg-secondary:  #060f1e;
-  --bg-tertiary:   #0a1628;
-  --bg-hover:      #0f1f3d;
-  --border-primary: #1a2f50;
-  --border-glow:   #2a4a7f;
+/* ── Dark theme (default) ────────────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  --bg-primary:      #020813;
+  --bg-secondary:    #060f1e;
+  --bg-tertiary:     #0a1628;
+  --bg-hover:        #0f1f3d;
+  --border-primary:  #1a2f50;
+  --border-glow:     #2a4a7f;
+  --text-primary:    #e2e8f0;
+  --text-secondary:  #94a3b8;
+  --text-muted:      #475569;
+  --card-bg:         #060f1e;
+  --nav-bg:          rgba(2, 8, 19, 0.95);
+  --nav-bg-dim:      rgba(2, 8, 19, 0.88);
+  --map-ocean:       #0a1628;
+  --map-sphere:      #050d1a;
+  --map-border:      #2a3a5c;
+  --map-graticule:   #0f1f3d;
+  --map-land:        #1a2035;
+  --skeleton-base:   #0a1628;
+  --skeleton-shine:  #1a2f50;
+  --chart-bg:        #060f1e;
+  --chart-text:      #94a3b8;
+  --chart-border:    #1a2f50;
+  --chart-tooltip:   rgba(2,8,19,0.95);
+
+  /* ── accent / signal colours (shared) */
   --accent-blue:   #0ea5e9;
   --accent-purple: #8b5cf6;
   --accent-cyan:   #06b6d4;
   --accent-gold:   #f59e0b;
-  --text-primary:  #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted:    #475569;
   --green-bright:  #10b981;
   --red-bright:    #ef4444;
+}
+
+/* ── Light theme ─────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --bg-primary:      #f8fafc;
+  --bg-secondary:    #ffffff;
+  --bg-tertiary:     #f1f5f9;
+  --bg-hover:        #e2e8f0;
+  --border-primary:  #cbd5e1;
+  --border-glow:     #93c5fd;
+  --text-primary:    #0f172a;
+  --text-secondary:  #475569;
+  --text-muted:      #94a3b8;
+  --card-bg:         #ffffff;
+  --nav-bg:          rgba(248, 250, 252, 0.97);
+  --nav-bg-dim:      rgba(248, 250, 252, 0.92);
+  --map-ocean:       #dbeafe;
+  --map-sphere:      #bfdbfe;
+  --map-border:      #94a3b8;
+  --map-graticule:   #cbd5e1;
+  --map-land:        #e2e8f0;
+  --skeleton-base:   #e2e8f0;
+  --skeleton-shine:  #f1f5f9;
+  --chart-bg:        #ffffff;
+  --chart-text:      #475569;
+  --chart-border:    #e2e8f0;
+  --chart-tooltip:   rgba(255,255,255,0.97);
+
+  --accent-blue:   #0284c7;
+  --accent-purple: #7c3aed;
+  --accent-cyan:   #0891b2;
+  --accent-gold:   #d97706;
+  --green-bright:  #059669;
+  --red-bright:    #dc2626;
+}
+
+:root {
 
   /* ── Legacy vars (kept for App.css compat) ────────────── */
   --text: #6b6375;
@@ -73,10 +127,30 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ── Global theme transition ─────────────────────────────────────────────── */
+html {
+  transition: background-color 0.3s ease;
+}
+body,
+body * {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease,
+              box-shadow 0.25s ease;
+}
+/* Exempt animations from the blanket transition */
+body *[style*="animation"],
+body *[class*="skeleton"] {
+  transition: none !important;
+}
+
 body {
   margin: 0;
   background: var(--bg-primary);
   font-family: var(--sans);
+}
+
+/* ── Light-mode structural overrides ─────────────────────────────────────── */
+:root[data-theme="light"] body {
+  color: var(--text-primary);
 }
 
 /* ── Skeleton shimmer ───────────────────────────────────────────────────── */
@@ -87,13 +161,14 @@ body {
 .skeleton {
   background: linear-gradient(
     90deg,
-    #0a1628 25%,
-    #1a2f50 50%,
-    #0a1628 75%
+    var(--skeleton-base)  25%,
+    var(--skeleton-shine) 50%,
+    var(--skeleton-base)  75%
   );
   background-size: 200% 100%;
   animation: bfsSkeleton 1.5s ease-in-out infinite;
   border-radius: 4px;
+  transition: none !important;
 }
 .skeleton-appear {
   animation: bfsSkeletonFadeIn 0.3s ease both;
@@ -120,7 +195,7 @@ body {
 .bfs-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(14, 165, 233, 0.12);
-  border-color: #2a4a7f !important;
+  border-color: var(--border-glow) !important;
 }
 
 /* ── Ticker item hover ──────────────────────────────────────────────────── */

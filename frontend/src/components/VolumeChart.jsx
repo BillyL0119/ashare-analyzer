@@ -1,5 +1,6 @@
 import ReactECharts from 'echarts-for-react'
 import useLangStore from '../store/langStore'
+import useThemeStore from '../store/themeStore'
 import { buildVolumeOption } from '../utils/chartHelpers'
 
 const US_UP = '#4caf50'
@@ -9,6 +10,7 @@ export default function VolumeChart({ candles, groupId, market = 'cn' }) {
   if (!candles || candles.length === 0) return null
 
   const lang = useLangStore((s) => s.lang)
+  useThemeStore((s) => s.theme)
   const upColor = market === 'us' ? US_UP : undefined
   const downColor = market === 'us' ? US_DOWN : undefined
   const option = buildVolumeOption(candles, lang, upColor, downColor)

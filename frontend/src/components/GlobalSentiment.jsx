@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useMobile } from '../hooks/useMobile'
+import useThemeStore from '../store/themeStore'
 import {
   ComposableMap, Geographies, Geography,
   Marker, Graticule, Sphere,
@@ -236,6 +237,13 @@ function WorldMap({ indices, lang }) {
   const [tooltip, setTooltip] = useState(null)
   const hideTimer = useRef(null)
   const zh = lang === 'zh'
+  const theme = useThemeStore((s) => s.theme)
+  const isLight = theme === 'light'
+  const oceanColor    = isLight ? '#dbeafe' : '#050d1a'
+  const sphereStroke  = isLight ? '#93c5fd' : '#1a2a4a'
+  const graticuleColor = isLight ? '#bfdbfe' : '#0f1f3d'
+  const landEmpty     = isLight ? '#e2e8f0' : '#1a2035'
+  const landBorder    = isLight ? '#94a3b8' : '#2a3a5c'
 
   const countryDataMap = {}
   for (const idx of indices) {
@@ -256,7 +264,7 @@ function WorldMap({ indices, lang }) {
 
   return (
     <div
-      style={{ position: 'relative', background: '#050d1a', borderRadius: 8, overflow: 'hidden', lineHeight: 0, height: '100%' }}
+      style={{ position: 'relative', background: oceanColor, borderRadius: 8, overflow: 'hidden', lineHeight: 0, height: '100%' }}
       onMouseMove={(e) => setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)}
     >
       <ComposableMap
@@ -264,8 +272,8 @@ function WorldMap({ indices, lang }) {
         projectionConfig={{ scale: 140, center: [10, 10] }}
         style={{ width: '100%', height: '100%', display: 'block' }}
       >
-        <Sphere id="rsm-sphere-bg" fill="#0a1628" stroke="#1a2a4a" strokeWidth={0.5} />
-        <Graticule stroke="#0f1f3d" strokeWidth={0.4} />
+        <Sphere id="rsm-sphere-bg" fill={oceanColor} stroke={sphereStroke} strokeWidth={0.5} />
+        <Graticule stroke={graticuleColor} strokeWidth={0.4} />
 
         <Geographies geography={GEO_URL}>
           {({ geographies }) =>
@@ -273,13 +281,13 @@ function WorldMap({ indices, lang }) {
               const geoId = String(geo.id)
               const data  = countryDataMap[geoId]
               const pct   = data?.change_pct ?? null
-              const fill  = getFillColor(pct)
+              const fill  = pct !== null ? getFillColor(pct) : landEmpty
               return (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
                   fill={fill}
-                  stroke="#2a3a5c"
+                  stroke={landBorder}
                   strokeWidth={0.4}
                   style={{
                     default: { fill, outline: 'none' },
