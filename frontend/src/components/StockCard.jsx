@@ -92,7 +92,28 @@ export default function StockCard({ stock }) {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 4, marginLeft: 'auto' }}>
+        <div style={{ display: 'flex', gap: 4, marginLeft: 'auto', alignItems: 'center' }}>
+          {/* K-line education button — placed right next to period selector */}
+          <button
+            onClick={() => setShowKLineTip(true)}
+            title={lang === 'zh' ? '学习K线图基础知识' : 'Learn candlestick basics'}
+            style={{
+              padding: '3px 9px',
+              borderRadius: 4,
+              border: '1px solid rgba(138,180,248,0.35)',
+              cursor: 'pointer',
+              fontSize: 11,
+              background: 'rgba(138,180,248,0.08)',
+              color: '#8ab4f8',
+              transition: 'all 0.15s',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.2)'; e.currentTarget.style.borderColor = '#8ab4f8' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.08)'; e.currentTarget.style.borderColor = 'rgba(138,180,248,0.35)' }}
+          >
+            📖 {lang === 'zh' ? 'K线教学' : 'Learn'}
+          </button>
+
           {Object.entries(periodLabels).map(([key, label]) => (
             <button
               key={key}
@@ -233,23 +254,8 @@ export default function StockCard({ stock }) {
         )}
         {data && !loading && (
           <>
-            <div style={{ position: 'relative', height: isMobile ? 220 : 360 }}>
+            <div style={{ height: isMobile ? 220 : 360 }}>
               <KLineChart candles={data.candles} ma={data.ma} groupId={groupId} market={market} />
-              <button
-                onClick={() => setShowKLineTip(true)}
-                title={lang === 'zh' ? '学习K线图基础知识' : 'Learn candlestick basics'}
-                style={{
-                  position: 'absolute', top: 8, right: 8, zIndex: 10,
-                  padding: '3px 9px', borderRadius: 12, border: '1px solid rgba(138,180,248,0.2)',
-                  background: 'rgba(16,20,31,0.85)', backdropFilter: 'blur(6px)',
-                  color: '#8ab4f8', fontSize: 11, cursor: 'pointer',
-                  transition: 'all 0.15s',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.15)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(16,20,31,0.85)' }}
-              >
-                📖 {lang === 'zh' ? '学习K线' : 'Learn K-Line'}
-              </button>
             </div>
             <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}` }}>
               <VolumeChart candles={data.candles} groupId={groupId} market={market} />
