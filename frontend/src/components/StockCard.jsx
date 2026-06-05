@@ -1,4 +1,8 @@
 import { useEffect, useState } from 'react'
+
+// Fixed bar heights to avoid Math.random() re-renders
+const SK_KLINE = [45,62,38,71,55,48,66,42,78,52,60,35,70,58,44,68,51,74,40,63]
+const SK_VOL   = [30,55,25,80,45,35,60,28,70,40,52,22,65,48,32,62,38,72,28,55]
 import * as echarts from 'echarts'
 import { useStockData } from '../hooks/useStockData'
 import useCompareStore from '../store/compareStore'
@@ -236,8 +240,27 @@ export default function StockCard({ stock }) {
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {loading && (
-          <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6', fontSize: 14 }}>
-            {t.loading}
+          <div className="skeleton-appear" style={{ display: 'flex', flexDirection: 'column' }}>
+            {/* K-line skeleton */}
+            <div style={{ height: isMobile ? 300 : 360, padding: '12px 8px 8px', display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+              {SK_KLINE.map((h, i) => (
+                <div key={i} className="skeleton" style={{ flex: 1, height: `${h}%`, borderRadius: 2 }} />
+              ))}
+            </div>
+            {/* Volume skeleton */}
+            <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}`, padding: '8px 8px 4px', display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+              {SK_VOL.map((h, i) => (
+                <div key={i} className="skeleton" style={{ flex: 1, height: `${h}%`, borderRadius: 2, opacity: 0.7 }} />
+              ))}
+            </div>
+            {/* MACD skeleton */}
+            <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}`, padding: '20px 12px' }}>
+              <div className="skeleton" style={{ height: '35%', borderRadius: 3 }} />
+            </div>
+            {/* RSI skeleton */}
+            <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}`, padding: '20px 12px' }}>
+              <div className="skeleton" style={{ height: '35%', borderRadius: 3 }} />
+            </div>
           </div>
         )}
         {error && (

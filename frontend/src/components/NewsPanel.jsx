@@ -17,36 +17,24 @@ const IMPACT_STYLE = {
   low:    { bg: 'rgba(154,160,166,0.10)', color: '#9aa0a6' },
 }
 
-// ── Loading animation ─────────────────────────────────────────────────────────
-function LoadingPulse({ label }) {
+// ── News skeleton ─────────────────────────────────────────────────────────────
+function NewsSkeleton() {
   return (
-    <div style={{ padding: '36px 0', textAlign: 'center' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 5, marginBottom: 16 }}>
-        {[0, 1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            style={{
-              width: 6,
-              height: 28,
-              borderRadius: 3,
-              background: 'linear-gradient(180deg, #8ab4f8, #c084fc)',
-              animationName: 'newsPulse',
-              animationDuration: '1.1s',
-              animationDelay: `${i * 0.12}s`,
-              animationTimingFunction: 'ease-in-out',
-              animationIterationCount: 'infinite',
-              animationDirection: 'alternate',
-            }}
-          />
-        ))}
-      </div>
-      <div style={{ fontSize: 13, color: '#9aa0a6' }}>{label}</div>
-      <style>{`
-        @keyframes newsPulse {
-          from { transform: scaleY(0.35); opacity: 0.35; }
-          to   { transform: scaleY(1);    opacity: 1; }
-        }
-      `}</style>
+    <div className="skeleton-appear" style={{ display: 'flex', flexDirection: 'column' }}>
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i} style={{
+          padding: '12px 0',
+          borderBottom: `1px solid ${THEME.border}`,
+          display: 'flex', flexDirection: 'column', gap: 7,
+        }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div className="skeleton" style={{ height: 18, width: 48, borderRadius: 10, flexShrink: 0 }} />
+            <div className="skeleton" style={{ height: 14, flex: 1 }} />
+          </div>
+          <div className="skeleton" style={{ height: 11, width: '72%', marginLeft: 56 }} />
+          <div className="skeleton" style={{ height: 10, width: '32%', marginLeft: 56 }} />
+        </div>
+      ))}
     </div>
   )
 }
@@ -353,7 +341,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
       </div>
 
       {/* Loading */}
-      {loading && <LoadingPulse label={t.newsLoading} />}
+      {loading && <NewsSkeleton />}
 
       {/* Error */}
       {error && !loading && (

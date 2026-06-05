@@ -193,29 +193,37 @@ function TickerBar({ indices, zh }) {
 
 // ── Loading skeleton ──────────────────────────────────────────────────────────
 function LoadingSkeleton() {
-  const shimmer = {
-    position: 'absolute', inset: 0,
-    background: 'linear-gradient(90deg,transparent 0%,rgba(138,180,248,0.06) 50%,transparent 100%)',
-    backgroundSize: '200% 100%',
-    animation: 'skshimmer 1.6s infinite',
-  }
+  const isMobile = useMobile()
   return (
-    <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-      <div style={{
-        flex: '1 1 360px', minWidth: 0, height: 290, borderRadius: 8,
-        background: 'rgba(138,180,248,0.04)', border: '1px solid rgba(138,180,248,0.07)',
-        overflow: 'hidden', position: 'relative',
-      }}>
-        <div style={shimmer} />
+    <div className="skeleton-appear" style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+      {/* Map + gauges row */}
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 14, flex: 1, minHeight: 0 }}>
+        {/* Map placeholder */}
+        <div className="skeleton" style={{
+          flex: isMobile ? 'none' : '1 1 0',
+          height: isMobile ? 200 : '100%', minHeight: isMobile ? 200 : 240,
+          borderRadius: 8,
+        }} />
+        {/* Gauge cards */}
+        <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8 }}>
+          {[0, 1].map(i => (
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: '12px 10px', borderRadius: 10, border: '1px solid rgba(138,180,248,0.08)' }}>
+              <div className="skeleton" style={{ height: 10, width: '60%', margin: '0 auto' }} />
+              {/* Gauge arc placeholder */}
+              <div className="skeleton" style={{ height: 80, borderRadius: 8 }} />
+              <div className="skeleton" style={{ height: 10, width: '50%', margin: '0 auto' }} />
+            </div>
+          ))}
+        </div>
       </div>
-      <div style={{ flex: '0 0 200px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {[0, 1].map(i => (
-          <div key={i} style={{
-            height: 148, borderRadius: 10,
-            background: 'rgba(138,180,248,0.04)', border: '1px solid rgba(138,180,248,0.07)',
-            overflow: 'hidden', position: 'relative',
-          }}>
-            <div style={{ ...shimmer, animationDelay: `${i * 0.2}s` }} />
+
+      {/* Ticker bar placeholders */}
+      <div style={{ display: 'flex', gap: 8, flexShrink: 0, overflow: 'hidden' }}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} style={{ flexShrink: 0, width: 100, borderRadius: 8, padding: '8px 10px', border: '1px solid rgba(138,180,248,0.07)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div className="skeleton" style={{ height: 9, width: '70%' }} />
+            <div className="skeleton" style={{ height: 13, width: '55%' }} />
+            <div className="skeleton" style={{ height: 9, width: '45%' }} />
           </div>
         ))}
       </div>
@@ -524,10 +532,6 @@ export default function GlobalSentiment({ lang }) {
       )}
 
       <style>{`
-        @keyframes skshimmer {
-          0%   { background-position: -200% 0; }
-          100% { background-position:  200% 0; }
-        }
         @keyframes fadeIn {
           from { opacity: 0; }
           to   { opacity: 1; }

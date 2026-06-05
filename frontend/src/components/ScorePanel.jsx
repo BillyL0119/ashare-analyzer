@@ -166,12 +166,32 @@ export default function ScorePanel({ stocks }) {
   )
 
   if (loading) return (
-    <div style={{ textAlign: 'center', padding: 40, color: '#9aa0a6' }}>
-      <div style={{ fontSize: 16, marginBottom: 8 }}>
-        {isCN ? '正在计算评分，请稍候…' : 'Computing score, please wait…'}
-      </div>
-      <div style={{ fontSize: 12, color: '#4a5568' }}>
-        {isCN ? '（首次加载约需 10-20 秒）' : '(First load may take 10-20s)'}
+    <div className="skeleton-appear" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {stocks.map((s) => (
+        <div key={s.code} style={{
+          background: THEME.gridBg, border: `1px solid ${THEME.border}`,
+          borderRadius: 12, padding: '16px 20px',
+        }}>
+          {/* Header row */}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}>
+            <div className="skeleton" style={{ height: 16, width: 100 }} />
+            <div className="skeleton" style={{ height: 16, width: 52, marginLeft: 'auto', borderRadius: 12 }} />
+          </div>
+          {/* Radar + score ring */}
+          <div style={{ display: 'flex', gap: 20, marginBottom: 16, flexWrap: 'wrap' }}>
+            <div className="skeleton" style={{ flex: '1 1 200px', height: 200, borderRadius: 8 }} />
+            <div className="skeleton" style={{ width: 140, height: 140, borderRadius: '50%', flexShrink: 0, alignSelf: 'center' }} />
+          </div>
+          {/* Dim cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className="skeleton" style={{ height: 88, borderRadius: 10 }} />
+            ))}
+          </div>
+        </div>
+      ))}
+      <div style={{ fontSize: 11, color: '#4a5568', textAlign: 'center', marginTop: 4 }}>
+        {isCN ? '首次计算约需 10–20 秒' : 'First load may take 10–20s'}
       </div>
     </div>
   )

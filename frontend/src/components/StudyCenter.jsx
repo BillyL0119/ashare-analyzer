@@ -806,8 +806,13 @@ export default function StudyCenter({ lang }) {
           {/* Topic list */}
           <div style={{ padding: '10px 6px', flex: 1 }}>
             {loadingCurr ? (
-              <div style={{ padding: '20px 12px', color: MUTED, fontSize: 12 }}>
-                {zh ? '加载中...' : 'Loading...'}
+              <div className="skeleton-appear" style={{ padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[85, 70, 90, 65, 80].map((w, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 6px' }}>
+                    <div className="skeleton" style={{ width: 10, height: 10, borderRadius: '50%', flexShrink: 0 }} />
+                    <div className="skeleton" style={{ height: 11, width: `${w}%` }} />
+                  </div>
+                ))}
               </div>
             ) : (
               curriculum?.papers?.map((paper) => (
@@ -853,8 +858,22 @@ export default function StudyCenter({ lang }) {
               {zh ? '选择左侧课题开始学习' : 'Select a topic from the sidebar to begin'}
             </div>
           ) : loadingTopic ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: MUTED, fontSize: 14 }}>
-              {zh ? '加载中...' : 'Loading...'}
+            <div className="skeleton-appear" style={{ padding: '28px 36px 40px', maxWidth: 780, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Title */}
+              <div className="skeleton" style={{ height: 26, width: '60%', borderRadius: 6 }} />
+              <div className="skeleton" style={{ height: 12, width: '35%' }} />
+              {/* Section blocks */}
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(138,180,248,0.07)` : 'none' }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div className="skeleton" style={{ width: 3, height: 20, borderRadius: 2, flexShrink: 0 }} />
+                    <div className="skeleton" style={{ height: 18, width: `${[55, 45, 60][i]}%` }} />
+                  </div>
+                  <div className="skeleton" style={{ height: 12, width: '100%' }} />
+                  <div className="skeleton" style={{ height: 12, width: '90%' }} />
+                  <div className="skeleton" style={{ height: 12, width: '75%' }} />
+                </div>
+              ))}
             </div>
           ) : (
             <div style={{ padding: '28px 36px 40px', maxWidth: 780 }}>

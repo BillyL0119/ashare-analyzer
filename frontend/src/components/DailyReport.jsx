@@ -34,14 +34,17 @@ export default function DailyReport({ lang }) {
 
   if (loading) {
     return (
-      <div style={{
+      <div className="skeleton-appear" style={{
         background: '#060f1e', border: '1px solid #1a2f50',
         borderLeft: '2px solid #0ea5e9',
-        borderRadius: 10, padding: '12px 16px', marginBottom: 16,
+        borderRadius: 10, padding: '10px 16px', marginBottom: 8,
         display: 'flex', alignItems: 'center', gap: 10,
       }}>
-        <span style={{ fontSize: 16 }}>📰</span>
-        <div className="skeleton" style={{ flex: 1, height: 14 }} />
+        <span style={{ fontSize: 16, flexShrink: 0 }}>📰</span>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="skeleton" style={{ height: 12, width: '85%' }} />
+          <div className="skeleton" style={{ height: 10, width: '55%' }} />
+        </div>
       </div>
     )
   }
