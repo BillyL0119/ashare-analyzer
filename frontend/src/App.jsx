@@ -8,10 +8,11 @@ import GlobalSentiment from './components/GlobalSentiment'
 import StatsDisplay from './components/StatsDisplay'
 import DailyReport from './components/DailyReport'
 
-const PaperTradingPanel = lazy(() => import('./components/PaperTradingPanel'))
-const StudyCenter       = lazy(() => import('./components/StudyCenter'))
-const AITeacherFloat    = lazy(() => import('./components/AITeacherFloat'))
-const AITeacherPage     = lazy(() => import('./components/AITeacherPage'))
+const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
+const StudyCenter        = lazy(() => import('./components/StudyCenter'))
+const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
+const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
+const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -58,6 +59,7 @@ export default function App() {
     setAppTab(tab)
     if (tab === 'paper') trackFeature('paper_trading')
     else if (tab === 'study') trackFeature('study')
+    else if (tab === 'universities') trackFeature('universities')
     else trackFeature('analysis')
   }
 
@@ -301,10 +303,11 @@ export default function App() {
           }}
         >
           {[
-            { key: 'analysis',   label: lang === 'zh' ? '行情分析' : 'Analysis' },
-            { key: 'paper',      label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
-            { key: 'study',      label: lang === 'zh' ? '学习中心' : 'Study' },
-            { key: 'ai_teacher', label: lang === 'zh' ? 'AI老师' : 'AI Tutor' },
+            { key: 'analysis',      label: lang === 'zh' ? '行情分析' : 'Analysis' },
+            { key: 'paper',         label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
+            { key: 'study',         label: lang === 'zh' ? '学习中心' : 'Study' },
+            { key: 'ai_teacher',    label: lang === 'zh' ? 'AI老师' : 'AI Tutor' },
+            { key: 'universities',  label: lang === 'zh' ? '大学推荐' : 'Universities' },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -339,6 +342,8 @@ export default function App() {
             <PaperTradingPanel lang={lang} />
           ) : appTab === 'ai_teacher' ? (
             <AITeacherPage lang={lang} />
+          ) : appTab === 'universities' ? (
+            <UniversitiesPage lang={lang} />
           ) : (
             <>
               {selectedSymbols.length === 0 && (

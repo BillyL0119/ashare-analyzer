@@ -24,6 +24,7 @@ from routers.earnings import router as earnings_router
 from routers.ai_teacher import router as ai_teacher_router
 from routers.score import router as score_router
 from routers.backtest import router as backtest_router
+from routers.universities import router as universities_router
 
 app = FastAPI(
     title="Best Friend Ashare API",
@@ -101,3 +102,4 @@ app.include_router(earnings_router, prefix="/api/earnings", tags=["earnings"])
 app.include_router(ai_teacher_router, prefix="/api/ai", tags=["ai_teacher"])
 app.include_router(score_router, prefix="/api/stock/score", tags=["score"])
 app.include_router(backtest_router, prefix="/api/stock/backtest", tags=["backtest"])
+app.include_router(universities_router, prefix="/api/universities", tags=["universities"])
