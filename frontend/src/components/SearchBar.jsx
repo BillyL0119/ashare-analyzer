@@ -74,15 +74,15 @@ export default function SearchBar() {
           style={{
             width: '100%',
             padding: '8px 14px',
-            background: 'rgba(255,255,255,0.06)',
-            border: `1px solid ${focused ? '#8ab4f8' : 'rgba(138,180,248,0.18)'}`,
+            background: '#060f1e',
+            border: `1px solid ${focused ? '#0ea5e9' : '#1a2f50'}`,
             borderRadius: 24,
-            color: '#e8eaed',
+            color: '#e2e8f0',
             fontSize: 13,
             outline: 'none',
             cursor: isFull ? 'not-allowed' : 'text',
             transition: 'border-color 0.2s, box-shadow 0.2s',
-            boxShadow: focused ? '0 0 0 3px rgba(138,180,248,0.12)' : 'none',
+            boxShadow: focused ? '0 0 0 3px rgba(14,165,233,0.15)' : 'none',
             letterSpacing: '0.15px',
           }}
           onFocus={() => { setFocused(true); results.length > 0 && setOpen(true) }}
@@ -100,15 +100,13 @@ export default function SearchBar() {
             top: 'calc(100% + 6px)',
             left: 0,
             right: 0,
-            background: 'rgba(10,15,26,0.95)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(138,180,248,0.15)',
+            background: '#060f1e',
+            border: '1px solid #1a2f50',
             borderRadius: 12,
             maxHeight: 320,
             overflowY: 'auto',
             zIndex: 1000,
-            boxShadow: '0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(138,180,248,0.08)',
+            boxShadow: '0 16px 40px rgba(0,0,0,0.7), 0 0 0 1px #2a4a7f',
           }}
         >
           {results.map((s) => {
@@ -130,13 +128,13 @@ export default function SearchBar() {
                   letterSpacing: '0.1px',
                 }}
                 onMouseEnter={(e) => {
-                  if (!alreadyAdded) e.currentTarget.style.background = 'rgba(138,180,248,0.08)'
+                  if (!alreadyAdded) e.currentTarget.style.background = '#0f1f3d'
                 }}
                 onMouseLeave={(e) => {
                   if (!alreadyAdded) e.currentTarget.style.background = 'transparent'
                 }}
               >
-                <span style={{ color: '#8ab4f8', fontFamily: 'monospace', fontSize: 12 }}>{s.code}</span>
+                <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 12 }}>{s.code}</span>
                 <span style={{ color: '#c9d1d9', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                 {s.exchange && market === 'us' && <span style={{ fontSize: 10, color: '#4a5568' }}>{s.exchange}</span>}
                 {alreadyAdded && <span style={{ fontSize: 11, color: '#4a5568' }}>{t.added}</span>}

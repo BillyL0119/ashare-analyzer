@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const BG       = '#080c14'
-const CARD_BG  = 'rgba(255,255,255,0.03)'
-const BDR      = 'rgba(138,180,248,0.12)'
-const BUY_CLR  = '#34d399'
-const SELL_CLR = '#f87171'
-const MUTED    = '#9aa0a6'
+const BG        = '#020813'
+const CARD_BG   = '#060f1e'
+const BDR       = '#1a2f50'
+const BUY_CLR   = '#34d399'
+const SELL_CLR  = '#ef4444'
+const PROFIT_CLR = '#f59e0b'  /* gold for positive returns */
+const MUTED     = '#94a3b8'
 
 function getDeviceId() {
   const key = 'bfs_device_id'
@@ -21,7 +22,7 @@ function getDeviceId() {
 // ── Small UI helpers ─────────────────────────────────────────────────────────
 function Card({ children, style }) {
   return (
-    <div style={{ background: CARD_BG, border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', ...style }}>
+    <div style={{ background: CARD_BG, border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', transition: 'border-color 0.2s', ...style }}>
       {children}
     </div>
   )
@@ -66,7 +67,7 @@ function fmt(n, dec = 2) {
 function PctBadge({ value }) {
   const up = value >= 0
   return (
-    <span style={{ color: up ? BUY_CLR : SELL_CLR, fontWeight: 700, fontFamily: 'monospace' }}>
+    <span style={{ color: up ? PROFIT_CLR : SELL_CLR, fontWeight: 700, fontFamily: '"JetBrains Mono", monospace' }}>
       {up ? '+' : ''}{fmt(value)}%
     </span>
   )
@@ -422,7 +423,7 @@ export default function PaperTradingPanel({ lang }) {
                 {rank === -1 ? '--' : `#${rank}`}
               </span>
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: retPct >= 0 ? BUY_CLR : SELL_CLR, fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 28, fontWeight: 800, color: retPct >= 0 ? PROFIT_CLR : SELL_CLR, fontFamily: '"JetBrains Mono", monospace' }}>
               {currSym}{fmt(totalValue, 0)}
             </div>
             <div style={{ marginTop: 4 }}>
@@ -600,10 +601,10 @@ export default function PaperTradingPanel({ lang }) {
                       <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>{currSym}{fmt(pos.current_price)}</td>
                       <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>{currSym}{fmt(pos.market_value, 0)}</td>
                       <td style={{ padding: '10px 10px' }}>
-                        <div style={{ color: isProfit ? BUY_CLR : SELL_CLR, fontWeight: 700, fontFamily: 'monospace', fontSize: 12 }}>
+                        <div style={{ color: isProfit ? PROFIT_CLR : SELL_CLR, fontWeight: 700, fontFamily: '"JetBrains Mono", monospace', fontSize: 12 }}>
                           {isProfit ? '+' : ''}{currSym}{fmt(pos.profit_loss, 0)}
                         </div>
-                        <div style={{ color: isProfit ? BUY_CLR : SELL_CLR, fontSize: 11 }}>
+                        <div style={{ color: isProfit ? PROFIT_CLR : SELL_CLR, fontSize: 11 }}>
                           ({isProfit ? '+' : ''}{fmt(pos.profit_loss_pct)}%)
                         </div>
                       </td>

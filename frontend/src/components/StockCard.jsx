@@ -61,12 +61,23 @@ export default function StockCard({ stock }) {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = '#2a4a7f'
+        e.currentTarget.style.boxShadow = '0 0 20px rgba(14,165,233,0.10)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = THEME.border
+        e.currentTarget.style.boxShadow = 'none'
       }}
     >
       <div
         style={{
           padding: '8px 12px',
+          paddingLeft: 12,
           borderBottom: `1px solid ${THEME.border}`,
+          borderLeft: '3px solid #0ea5e9',
           display: 'flex',
           alignItems: 'center',
           gap: 12,

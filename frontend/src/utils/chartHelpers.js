@@ -1,9 +1,9 @@
-// Shared dark theme colors — Gemini-inspired navy palette
+// Shared dark theme colors — finance terminal palette
 export const THEME = {
-  bg: '#080c14',
-  gridBg: '#0a0f1a',
-  text: '#9aa0a6',
-  border: '#1a2535',
+  bg: '#020813',
+  gridBg: '#060f1e',
+  text: '#94a3b8',
+  border: '#1a2f50',
   up: '#ef5350',
   down: '#26a69a',
   ma5: '#f0e68c',
@@ -89,7 +89,7 @@ export function buildKLineOption(candles, maData, lang = 'zh', upColor = THEME.u
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'cross' },
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: 'rgba(2,8,19,0.95)',
       borderColor: THEME.border,
       textStyle: { color: THEME.text, fontSize: 12 },
       formatter: (params) => {
@@ -153,7 +153,7 @@ export function buildVolumeOption(candles, lang = 'zh', upColor = THEME.up, down
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: 'rgba(2,8,19,0.95)',
       borderColor: THEME.border,
       textStyle: { color: THEME.text, fontSize: 12 },
       formatter: (params) => {
@@ -203,7 +203,7 @@ export function buildMACDOption(macdData) {
     backgroundColor: THEME.gridBg,
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: 'rgba(2,8,19,0.95)',
       borderColor: THEME.border,
       textStyle: { color: THEME.text, fontSize: 11 },
       formatter: (params) => {
@@ -273,7 +273,7 @@ export function buildRSIOption(rsiData) {
     backgroundColor: THEME.gridBg,
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: 'rgba(2,8,19,0.95)',
       borderColor: THEME.border,
       textStyle: { color: THEME.text, fontSize: 11 },
     },
@@ -364,7 +364,7 @@ export function buildOverlayOption(symbolsData, lang = 'zh') {
     backgroundColor: THEME.gridBg,
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: 'rgba(2,8,19,0.95)',
       borderColor: THEME.border,
       textStyle: { color: THEME.text },
       formatter: (params) => {

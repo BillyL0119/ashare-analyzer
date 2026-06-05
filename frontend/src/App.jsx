@@ -18,8 +18,8 @@ import { T } from './i18n/translations'
 import { useMobile } from './hooks/useMobile'
 import { trackVisit, trackFeature } from './utils/analytics'
 
-const ACCENT_BLUE = '#8ab4f8'
-const ACCENT_PURPLE = '#c084fc'
+const ACCENT_BLUE = '#0ea5e9'
+const ACCENT_PURPLE = '#8b5cf6'
 
 export default function App() {
   const { startDate, endDate, setDateRange, market, setMarket, selectedSymbols } = useCompareStore()
@@ -48,14 +48,14 @@ export default function App() {
   }
 
   const dateInputStyle = {
-    background: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(138,180,248,0.18)',
+    background: '#060f1e',
+    border: '1px solid #1a2f50',
     borderRadius: 8,
-    color: '#e8eaed',
+    color: '#e2e8f0',
     padding: '5px 10px',
     fontSize: 13,
     outline: 'none',
-    transition: 'border-color 0.2s',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
     cursor: 'pointer',
   }
 
@@ -68,12 +68,12 @@ export default function App() {
       style={{
         minHeight: '100vh',
         background: `
-          radial-gradient(ellipse 55% 45% at 0% 0%, rgba(138,180,248,0.07) 0%, transparent 70%),
-          radial-gradient(ellipse 50% 45% at 100% 100%, rgba(192,132,252,0.06) 0%, transparent 70%),
-          #080c14
+          radial-gradient(ellipse 55% 45% at 0% 0%, rgba(14,165,233,0.06) 0%, transparent 70%),
+          radial-gradient(ellipse 50% 45% at 100% 100%, rgba(139,92,246,0.05) 0%, transparent 70%),
+          #020813
         `,
         color: '#e8eaed',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif',
+        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         display: 'flex',
         flexDirection: 'column',
         letterSpacing: '0.15px',
@@ -86,11 +86,11 @@ export default function App() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: scrolled ? 'rgba(8, 12, 20, 0.96)' : 'rgba(8, 12, 20, 0.82)',
+          background: scrolled ? 'rgba(2, 8, 19, 0.97)' : 'rgba(2, 8, 19, 0.88)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(138,180,248,0.10)',
-          boxShadow: scrolled ? '0 1px 24px rgba(0,0,0,0.45)' : 'none',
+          borderBottom: 'none',
+          boxShadow: scrolled ? '0 1px 32px rgba(0,0,0,0.6)' : 'none',
           padding: isMobile ? '8px 12px' : '10px 24px',
           display: 'flex',
           alignItems: 'center',
@@ -112,7 +112,7 @@ export default function App() {
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: 16,
-              boxShadow: `0 0 12px rgba(138,180,248,0.3)`,
+              boxShadow: `0 0 16px rgba(14,165,233,0.35)`,
             }}
           >
             📊
@@ -136,8 +136,8 @@ export default function App() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(138,180,248,0.12)',
+            background: '#060f1e',
+            border: '1px solid #1a2f50',
             borderRadius: 24,
             padding: 3,
             gap: 2,
@@ -155,12 +155,10 @@ export default function App() {
                 fontSize: 13,
                 fontWeight: 600,
                 letterSpacing: '0.2px',
-                background: market === key
-                  ? `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`
-                  : 'transparent',
-                color: market === key ? '#fff' : '#9aa0a6',
+                background: market === key ? ACCENT_BLUE : 'transparent',
+                color: market === key ? '#fff' : '#94a3b8',
                 transition: 'all 0.2s ease',
-                boxShadow: market === key ? `0 2px 12px rgba(138,180,248,0.25)` : 'none',
+                boxShadow: market === key ? `0 2px 12px rgba(14,165,233,0.3)` : 'none',
               }}
             >
               {label}
@@ -178,8 +176,8 @@ export default function App() {
             value={`${startDate.slice(0, 4)}-${startDate.slice(4, 6)}-${startDate.slice(6, 8)}`}
             onChange={(e) => setDateRange(e.target.value.replace(/-/g, ''), endDate)}
             style={dateInputStyle}
-            onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE }}
-            onBlur={(e) => { e.target.style.borderColor = 'rgba(138,180,248,0.18)' }}
+            onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE; e.target.style.boxShadow = '0 0 0 3px rgba(14,165,233,0.15)' }}
+            onBlur={(e) => { e.target.style.borderColor = '#1a2f50'; e.target.style.boxShadow = 'none' }}
           />
           <span>{t.to}</span>
           <input
@@ -187,8 +185,8 @@ export default function App() {
             value={`${endDate.slice(0, 4)}-${endDate.slice(4, 6)}-${endDate.slice(6, 8)}`}
             onChange={(e) => setDateRange(startDate, e.target.value.replace(/-/g, ''))}
             style={dateInputStyle}
-            onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE }}
-            onBlur={(e) => { e.target.style.borderColor = 'rgba(138,180,248,0.18)' }}
+            onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE; e.target.style.boxShadow = '0 0 0 3px rgba(14,165,233,0.15)' }}
+            onBlur={(e) => { e.target.style.borderColor = '#1a2f50'; e.target.style.boxShadow = 'none' }}
           />
         </div>
 
@@ -197,8 +195,8 @@ export default function App() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(138,180,248,0.12)',
+            background: '#060f1e',
+            border: '1px solid #1a2f50',
             borderRadius: 24,
             padding: 3,
             marginLeft: 'auto',
@@ -216,8 +214,8 @@ export default function App() {
                 cursor: 'pointer',
                 fontSize: 12,
                 fontWeight: 600,
-                background: lang === l ? `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})` : 'transparent',
-                color: lang === l ? '#fff' : '#9aa0a6',
+                background: lang === l ? ACCENT_BLUE : 'transparent',
+                color: lang === l ? '#fff' : '#94a3b8',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -230,8 +228,8 @@ export default function App() {
         <div
           style={{
             display: 'flex', alignItems: 'center',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(138,180,248,0.12)',
+            background: '#060f1e',
+            border: '1px solid #1a2f50',
             borderRadius: 24, padding: 3, gap: 2,
           }}
         >
@@ -247,13 +245,10 @@ export default function App() {
               style={{
                 padding: '4px 13px', borderRadius: 20, border: 'none',
                 cursor: 'pointer', fontSize: 12, fontWeight: 600,
-                background: appTab === key
-                  ? `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`
-                  : 'transparent',
-                color: appTab === key ? '#fff' : '#9aa0a6',
+                background: appTab === key ? ACCENT_BLUE : 'transparent',
+                color: appTab === key ? '#fff' : '#94a3b8',
                 transition: 'all 0.25s ease', whiteSpace: 'nowrap',
-                transform: appTab === key ? 'scale(1.04)' : 'scale(1)',
-                boxShadow: appTab === key ? '0 2px 10px rgba(138,180,248,0.2)' : 'none',
+                boxShadow: appTab === key ? `0 2px 12px rgba(14,165,233,0.3)` : 'none',
               }}
             >
               {label}
@@ -263,6 +258,11 @@ export default function App() {
 
         <div style={{ color: '#4a5568', fontSize: 11, letterSpacing: '0.3px' }}>{t.dataSource}</div>
       </header>
+      {/* Gradient nav border line */}
+      <div style={{
+        height: 1, flexShrink: 0,
+        background: 'linear-gradient(90deg, transparent, #1a2f50 20%, #2a4a7f 50%, #1a2f50 80%, transparent)',
+      }} />
 
       <main style={{ padding: isMobile ? '6px 12px' : '6px 24px', flex: 1 }}>
         <Suspense fallback={null}>

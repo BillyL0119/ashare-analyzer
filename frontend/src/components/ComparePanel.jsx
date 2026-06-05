@@ -144,8 +144,8 @@ export default function ComparePanel({ onTabChange }) {
           alignItems: 'center',
           flexWrap: isMobile ? 'nowrap' : 'wrap',
           overflowX: isMobile ? 'auto' : 'visible',
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(138,180,248,0.10)',
+          background: '#060f1e',
+          border: '1px solid #1a2f50',
           borderRadius: 16,
           padding: '6px 10px',
         }}
@@ -183,12 +183,10 @@ export default function ComparePanel({ onTabChange }) {
               letterSpacing: '0.2px',
               whiteSpace: 'nowrap',
               flexShrink: 0,
-              background: viewMode === key
-                ? 'linear-gradient(135deg, #8ab4f8, #c084fc)'
-                : 'transparent',
-              color: viewMode === key ? '#fff' : '#9aa0a6',
+              background: 'transparent',
+              color: viewMode === key ? '#0ea5e9' : '#94a3b8',
               transition: 'all 0.2s ease',
-              boxShadow: viewMode === key ? '0 2px 10px rgba(138,180,248,0.25)' : 'none',
+              boxShadow: viewMode === key ? 'inset 0 -2px 0 #0ea5e9' : 'none',
             }}
             onMouseEnter={(e) => {
               if (viewMode !== key) e.currentTarget.style.color = '#e8eaed'

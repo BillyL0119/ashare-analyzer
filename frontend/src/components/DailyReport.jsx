@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
-const ACCENT = '#8ab4f8'
-const ACCENT2 = '#c084fc'
+const ACCENT = '#0ea5e9'
+const ACCENT2 = '#8b5cf6'
 
 function PctBadge({ val }) {
   if (val == null) return <span style={{ color: '#9aa0a6' }}>N/A</span>
@@ -35,12 +35,13 @@ export default function DailyReport({ lang }) {
   if (loading) {
     return (
       <div style={{
-        background: 'rgba(138,180,248,0.04)', border: '1px solid rgba(138,180,248,0.12)',
-        borderRadius: 12, padding: '12px 16px', marginBottom: 16,
+        background: '#060f1e', border: '1px solid #1a2f50',
+        borderLeft: '2px solid #0ea5e9',
+        borderRadius: 10, padding: '12px 16px', marginBottom: 16,
         display: 'flex', alignItems: 'center', gap: 10,
       }}>
         <span style={{ fontSize: 16 }}>📰</span>
-        <div style={{ flex: 1, height: 14, background: 'rgba(255,255,255,0.06)', borderRadius: 6 }} />
+        <div className="skeleton" style={{ flex: 1, height: 14 }} />
       </div>
     )
   }
@@ -54,9 +55,10 @@ export default function DailyReport({ lang }) {
 
   return (
     <div style={{
-      background: 'rgba(8,12,20,0.7)', border: '1px solid rgba(138,180,248,0.15)',
+      background: 'linear-gradient(90deg, #060f1e, #0a1628)',
+      border: '1px solid #1a2f50',
+      borderLeft: '2px solid #0ea5e9',
       borderRadius: 10, marginBottom: 8, overflow: 'hidden',
-      backdropFilter: 'blur(10px)',
     }}>
       {/* Header row */}
       <button
@@ -137,19 +139,37 @@ export default function DailyReport({ lang }) {
           )}
 
           {/* Sentiment */}
-          {sent.cn_score != null && (
+          {(sent.us_score != null || sent.cn_score != null) && (
             <div>
-              <div style={{ fontSize: 11, color: '#4a5568', marginBottom: 6, fontWeight: 600 }}>
+              <div style={{ fontSize: 11, color: '#475569', marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                 {zh ? '市场情绪' : 'Market Mood'}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 22, fontWeight: 700, color: ACCENT }}>
-                  {Math.round(sent.cn_score)}
-                </span>
-                <span style={{ fontSize: 12, color: '#9aa0a6' }}>
-                  {zh ? sent.cn_label_zh : sent.cn_label_en}
-                </span>
-              </div>
+              {sent.us_score != null && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: 22, fontWeight: 800, color: ACCENT, fontFamily: '"JetBrains Mono", monospace' }}>
+                    {Math.round(sent.us_score)}
+                  </span>
+                  <div>
+                    <div style={{ fontSize: 12, color: '#e2e8f0', fontWeight: 600 }}>
+                      {zh ? sent.us_label_zh : sent.us_label_en}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#475569' }}>{zh ? '美股' : 'US Market'}</div>
+                  </div>
+                </div>
+              )}
+              {sent.cn_score != null && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 18, fontWeight: 700, color: '#94a3b8', fontFamily: '"JetBrains Mono", monospace' }}>
+                    {Math.round(sent.cn_score)}
+                  </span>
+                  <div>
+                    <div style={{ fontSize: 11, color: '#94a3b8' }}>
+                      {zh ? sent.cn_label_zh : sent.cn_label_en}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#475569' }}>{zh ? 'A股' : 'CN Market'}</div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
