@@ -218,9 +218,9 @@ function LoadingSkeleton() {
 // ── World choropleth map ──────────────────────────────────────────────────────
 function WorldMap({ indices, lang }) {
   const [tooltip, setTooltip] = useState(null)
+  const hideTimer = useRef(null)
   const zh = lang === 'zh'
 
-  // Build geoId → index data map (symbol lookup → geo ID)
   const countryDataMap = {}
   for (const idx of indices) {
     const geoId = SYMBOL_TO_GEO_ID[idx.symbol]
@@ -228,6 +228,16 @@ function WorldMap({ indices, lang }) {
       countryDataMap[geoId] = idx
     }
   }
+
+  // Small delay prevents flicker when mouse moves between geo fill and dot marker
+  const showTip = (x, y, data) => {
+    if (hideTimer.current) clearTimeout(hideTimer.current)
+    setTooltip({ x, y, data })
+  }
+  const hideTip = () => {
+    hideTimer.current = setTimeout(() => setTooltip(null), 60)
+  }
+
   return (
     <div
       style={{ position: 'relative', background: '#050d1a', borderRadius: 8, overflow: 'hidden', lineHeight: 0, height: '100%' }}
@@ -238,20 +248,16 @@ function WorldMap({ indices, lang }) {
         projectionConfig={{ scale: 140, center: [10, 10] }}
         style={{ width: '100%', height: '100%', display: 'block' }}
       >
-        {/* Ocean */}
         <Sphere id="rsm-sphere-bg" fill="#0a1628" stroke="#1a2a4a" strokeWidth={0.5} />
-        {/* Graticule grid lines */}
         <Graticule stroke="#0f1f3d" strokeWidth={0.4} />
 
-        {/* Country fills — geoId = String(geo.id), no zero-padding */}
         <Geographies geography={GEO_URL}>
           {({ geographies }) =>
             geographies.map(geo => {
               const geoId = String(geo.id)
-              const data = countryDataMap[geoId]
-              const pct = data?.change_pct ?? null
-              const fill = getFillColor(pct)
-
+              const data  = countryDataMap[geoId]
+              const pct   = data?.change_pct ?? null
+              const fill  = getFillColor(pct)
               return (
                 <Geography
                   key={geo.rsmKey}
@@ -264,34 +270,34 @@ function WorldMap({ indices, lang }) {
                     hover:   { fill: getHoverColor(pct), outline: 'none', cursor: data ? 'pointer' : 'default' },
                     pressed: { fill, outline: 'none' },
                   }}
-                  onMouseEnter={(e) => {
-                    if (data) setTooltip({ x: e.clientX, y: e.clientY, data })
-                  }}
-                  onMouseLeave={() => setTooltip(null)}
+                  onMouseEnter={(e) => { if (data) showTip(e.clientX, e.clientY, data) }}
+                  onMouseLeave={hideTip}
                 />
               )
             })
           }
         </Geographies>
 
-        {/* Country labels — only shown when data available */}
+        {/* Glowing dot markers — replace old overlapping text labels.
+            Hover the country fill or the dot to see the tooltip. */}
         {Object.entries(MARKER_META).map(([geoId, meta]) => {
           const data = countryDataMap[geoId]
-          const pct = data?.change_pct
+          const pct  = data?.change_pct
           if (pct === null || pct === undefined) return null
-          const sign = pct >= 0 ? '+' : ''
-          const lbl = zh ? meta.label_zh : meta.label
           const color = getLabelColor(pct)
-          const text = `${lbl} ${sign}${pct.toFixed(2)}%`
-          const w = text.length * 4.6 + 8
           return (
             <Marker key={geoId} coordinates={meta.coords}>
-              <rect x={-w / 2} y="-12" width={w} height="12" rx="2"
-                fill="rgba(5,10,22,0.84)" stroke={color} strokeWidth="0.4" />
-              <text y="-2" textAnchor="middle" fontSize={6.5}
-                fill={color} fontWeight="700" fontFamily="'Courier New', monospace">
-                {text}
-              </text>
+              {/* Soft glow halo */}
+              <circle r={7} fill={color} opacity={0.18} style={{ pointerEvents: 'none' }} />
+              {/* Core dot — interactive */}
+              <circle
+                r={4}
+                fill={color}
+                opacity={0.92}
+                style={{ cursor: 'pointer', filter: `drop-shadow(0 0 3px ${color})` }}
+                onMouseEnter={(e) => showTip(e.clientX, e.clientY, data)}
+                onMouseLeave={hideTip}
+              />
             </Marker>
           )
         })}
@@ -311,50 +317,60 @@ function WorldMap({ indices, lang }) {
         ].map(({ color, label }) => (
           <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
-            <span style={{ fontSize: 8, color: 'rgba(232,234,240,0.4)', fontFamily: 'monospace' }}>
-              {label}
-            </span>
+            <span style={{ fontSize: 8, color: 'rgba(232,234,240,0.4)', fontFamily: 'monospace' }}>{label}</span>
           </div>
         ))}
-        <span style={{ fontSize: 8, color: 'rgba(138,180,248,0.3)', marginLeft: 6 }}>
-          BestFriendStock
-        </span>
+        <span style={{ fontSize: 8, color: 'rgba(138,180,248,0.3)', marginLeft: 6 }}>BestFriendStock</span>
       </div>
 
-      {/* Tooltip */}
-      {tooltip && tooltip.data && (() => {
-        const pct = tooltip.data.change_pct
-        const color = getLabelColor(pct)
-        const name = zh
-          ? (tooltip.data.name_zh || tooltip.data.name)
-          : tooltip.data.name
-        const close = tooltip.data.close != null
-          ? Number(tooltip.data.close).toLocaleString()
-          : '—'
-        const pctStr = pct != null
-          ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`
-          : '—'
+      {/* Hover instruction hint */}
+      <div style={{
+        position: 'absolute', bottom: 6, right: 10,
+        fontSize: 8, color: 'rgba(138,180,248,0.25)',
+        pointerEvents: 'none', fontFamily: 'monospace',
+      }}>
+        {zh ? '悬停查看详情' : 'Hover for details'}
+      </div>
+
+      {/* Tooltip — follows mouse, shows on country or dot hover */}
+      {tooltip?.data && (() => {
+        const pct    = tooltip.data.change_pct
+        const color  = getLabelColor(pct)
+        const name   = zh ? (tooltip.data.name_zh || tooltip.data.name) : tooltip.data.name
+        const close  = tooltip.data.close != null ? Number(tooltip.data.close).toLocaleString() : '—'
+        const pctStr = pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'
+        // find the short label for this index
+        const symbol = tooltip.data.symbol
+        const geoId  = SYMBOL_TO_GEO_ID[symbol] || ''
+        const meta   = MARKER_META[geoId]
+        const shortLabel = meta ? (zh ? meta.label_zh : meta.label) : ''
+
         return (
           <div style={{
             position: 'fixed',
-            left: tooltip.x + 14,
-            top: tooltip.y - 72,
+            left: tooltip.x + 16,
+            top: tooltip.y - 80,
             zIndex: 9999,
             background: 'rgba(5,10,22,0.97)',
-            border: '1px solid rgba(138,180,248,0.3)',
-            borderRadius: 8,
-            padding: '8px 14px',
-            minWidth: 140,
+            border: `1px solid ${color}44`,
+            borderRadius: 10,
+            padding: '10px 16px',
+            minWidth: 160,
             pointerEvents: 'none',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.6)',
+            boxShadow: `0 4px 28px rgba(0,0,0,0.7), 0 0 0 1px ${color}22`,
           }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed', marginBottom: 4 }}>
-              {name}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0,
+                boxShadow: `0 0 6px ${color}` }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed' }}>{name}</span>
+              {shortLabel && (
+                <span style={{ fontSize: 10, color: '#4a5568', fontFamily: 'monospace' }}>{shortLabel}</span>
+              )}
             </div>
-            <div style={{ fontSize: 13, color: 'rgba(232,234,240,0.6)', marginBottom: 3, fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 11, color: 'rgba(232,234,240,0.5)', marginBottom: 4, fontFamily: 'monospace' }}>
               {close}
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color, fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color, fontFamily: 'monospace', letterSpacing: '0.5px' }}>
               {pctStr}
             </div>
           </div>
