@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import ReactECharts from 'echarts-for-react'
+import KLineLesson from './KLineLesson'
 
 const SIDEBAR_BG  = '#0d1120'
 const CONTENT_BG  = '#0b0f1a'
@@ -665,9 +666,9 @@ export default function StudyCenter({ lang }) {
   const examMeta = EXAMS.find((e) => e.key === activeExam) || EXAMS[0]
   const accentColor = examMeta.color
 
-  // Fetch curriculum whenever exam changes (skip for events tab)
+  // Fetch curriculum whenever exam changes (skip for events/stocks tabs)
   useEffect(() => {
-    if (activeExam === 'events') return
+    if (activeExam === 'events' || activeExam === 'stocks') return
     setLoadingCurr(true)
     setCurriculum(null)
     setActiveId(null)
@@ -758,8 +759,11 @@ export default function StudyCenter({ lang }) {
         {/* ── Events timeline special view ── */}
         {activeExam === 'events' && <EventTimeline zh={zh} />}
 
+        {/* ── Stocks K-line lesson ── */}
+        {activeExam === 'stocks' && <KLineLesson zh={zh} />}
+
         {/* ── Left sidebar ── */}
-        {activeExam !== 'events' &&
+        {activeExam !== 'events' && activeExam !== 'stocks' &&
         <div style={{
           width: 260, flexShrink: 0, background: SIDEBAR_BG,
           borderRight: `1px solid ${BDR}`,
@@ -817,7 +821,7 @@ export default function StudyCenter({ lang }) {
         }
 
         {/* ── Right content area ── */}
-        {activeExam !== 'events' &&
+        {activeExam !== 'events' && activeExam !== 'stocks' &&
         <div style={{
           flex: 1, background: CONTENT_BG,
           overflowY: 'auto', display: 'flex', flexDirection: 'column',

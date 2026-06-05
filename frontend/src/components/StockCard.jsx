@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import * as echarts from 'echarts'
 import { useStockData } from '../hooks/useStockData'
 import useCompareStore from '../store/compareStore'
@@ -11,6 +11,7 @@ import MACDChart from './MACDChart'
 import RSIChart from './RSIChart'
 import { THEME } from '../utils/chartHelpers'
 import { useMobile } from '../hooks/useMobile'
+import KLineTip from './KLineTip'
 
 export default function StockCard({ stock }) {
   const { code, name } = stock
@@ -29,6 +30,8 @@ export default function StockCard({ stock }) {
     adjust,
     market,
   })
+
+  const [showKLineTip, setShowKLineTip] = useState(false)
 
   const groupId = `group_${code}`
   useEffect(() => {
@@ -230,8 +233,23 @@ export default function StockCard({ stock }) {
         )}
         {data && !loading && (
           <>
-            <div style={{ height: isMobile ? 220 : 360 }}>
+            <div style={{ position: 'relative', height: isMobile ? 220 : 360 }}>
               <KLineChart candles={data.candles} ma={data.ma} groupId={groupId} market={market} />
+              <button
+                onClick={() => setShowKLineTip(true)}
+                title={lang === 'zh' ? '学习K线图基础知识' : 'Learn candlestick basics'}
+                style={{
+                  position: 'absolute', top: 8, right: 8, zIndex: 10,
+                  padding: '3px 9px', borderRadius: 12, border: '1px solid rgba(138,180,248,0.2)',
+                  background: 'rgba(16,20,31,0.85)', backdropFilter: 'blur(6px)',
+                  color: '#8ab4f8', fontSize: 11, cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.15)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(16,20,31,0.85)' }}
+              >
+                📖 {lang === 'zh' ? '学习K线' : 'Learn K-Line'}
+              </button>
             </div>
             <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}` }}>
               <VolumeChart candles={data.candles} groupId={groupId} market={market} />
@@ -245,6 +263,10 @@ export default function StockCard({ stock }) {
           </>
         )}
       </div>
+
+      {showKLineTip && (
+        <KLineTip zh={lang === 'zh'} onClose={() => setShowKLineTip(false)} />
+      )}
     </div>
   )
 }
