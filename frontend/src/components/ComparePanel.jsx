@@ -22,6 +22,7 @@ import StockDetailPage from './StockDetailPage'
 import ScorePanel from './ScorePanel'
 import BacktestPanel from './BacktestPanel'
 import GlobalNewsPanel from './GlobalNewsPanel'
+import CommentsPanel from './CommentsPanel'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -174,6 +175,7 @@ export default function ComparePanel({ onTabChange }) {
           { key: 'earnings', label: lang === 'zh' ? '财报日历' : 'Earnings' },
           { key: 'score',   label: t.scoreTab || (lang === 'zh' ? '股票打分' : 'Score') },
           { key: 'backtest',label: t.backtestTab || (lang === 'zh' ? '策略回测' : 'Backtest') },
+          { key: 'comments', label: lang === 'zh' ? '💬 评论' : '💬 Comments' },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -231,6 +233,8 @@ export default function ComparePanel({ onTabChange }) {
         <ScorePanel stocks={selectedSymbols} />
       ) : viewMode === 'backtest' ? (
         <BacktestPanel stocks={selectedSymbols} />
+      ) : viewMode === 'comments' ? (
+        <CommentsPanel stocks={selectedSymbols} lang={lang} />
       ) : (
         <div
           style={{
