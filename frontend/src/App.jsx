@@ -15,7 +15,7 @@ const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
-import useThemeStore from './store/themeStore'
+
 import { T } from './i18n/translations'
 import { useMobile } from './hooks/useMobile'
 import { trackVisit, trackFeature } from './utils/analytics'
@@ -26,8 +26,7 @@ const ACCENT_PURPLE = '#8b5cf6'
 export default function App() {
   const { startDate, endDate, setDateRange, market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
-  const { theme, toggleTheme } = useThemeStore()
-  const t = T[lang]
+const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
   const [showStats,    setShowStats]    = useState(false)
@@ -242,25 +241,7 @@ export default function App() {
           ))}
         </div>
 
-        {/* ☀️/🌙 Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          title={theme === 'dark' ? (lang === 'zh' ? '切换浅色模式' : 'Light mode') : (lang === 'zh' ? '切换深色模式' : 'Dark mode')}
-          style={{
-            width: 34, height: 34, borderRadius: '50%',
-            border: '1px solid var(--border-primary)',
-            background: 'transparent',
-            cursor: 'pointer', fontSize: 16,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'all 0.2s ease', flexShrink: 0,
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.4)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.boxShadow = 'none' }}
-        >
-          {theme === 'dark' ? '☀️' : '🌙'}
-        </button>
-
-        {/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}
+{/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}
         {[
           { key: 'insight', icon: '💡', active: showInsight, onClick: () => setShowInsight(v => !v), title: lang === 'zh' ? '每日知识' : 'Daily Insight' },
           { key: 'ai',      icon: '🎓', active: showAIFloat, onClick: () => setShowAIFloat(v => !v), title: lang === 'zh' ? 'AI 老师'  : 'AI Tutor' },
