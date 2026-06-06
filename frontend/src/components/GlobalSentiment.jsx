@@ -430,11 +430,11 @@ export default function GlobalSentiment({ lang }) {
 
   return (
     <div style={{
-      background: 'rgba(5,13,26,0.85)',
-      border: '1px solid rgba(138,180,248,0.11)',
+      background: 'var(--bg-secondary)',
+      border: '1px solid var(--border-primary)',
       borderRadius: 12,
       marginBottom: 10,
-      height: 'calc(100vh - 120px)',
+      height: 'calc(100vh - 112px)',
       minHeight: 420,
       display: 'flex',
       flexDirection: 'column',

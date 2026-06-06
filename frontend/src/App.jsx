@@ -326,7 +326,7 @@ export default function App() {
           ))}
         </div>
 
-        <div style={{ color: '#4a5568', fontSize: 11, letterSpacing: '0.3px' }}>{t.dataSource}</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: 11, letterSpacing: '0.3px' }}>{t.dataSource}</div>
       </header>
       {/* Gradient nav border line */}
       <div style={{
@@ -334,7 +334,7 @@ export default function App() {
         background: 'linear-gradient(90deg, transparent, var(--border-primary) 20%, var(--border-glow) 50%, var(--border-primary) 80%, transparent)',
       }} />
 
-      <main style={{ padding: isMobile ? '6px 12px' : '6px 24px', flex: 1 }}>
+      <main style={{ padding: isMobile ? '2px 12px' : '2px 24px', flex: 1 }}>
         <Suspense fallback={null}>
           {appTab === 'study' ? (
             <StudyCenter lang={lang} />

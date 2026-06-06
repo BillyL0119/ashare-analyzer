@@ -61,7 +61,7 @@ export default function DailyReport({ lang }) {
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
       borderLeft: '2px solid var(--accent-blue)',
-      borderRadius: 10, marginBottom: 8, overflow: 'hidden',
+      borderRadius: 10, marginBottom: 4, overflow: 'hidden',
     }}>
       {/* Header row */}
       <button
