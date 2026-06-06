@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const BG        = '#020813'
-const CARD_BG   = '#060f1e'
-const BDR       = '#1a2f50'
+const BG        = 'var(--bg-primary)'
+const CARD_BG   = 'var(--bg-secondary)'
+const BDR       = 'var(--border-primary)'
 const BUY_CLR   = '#34d399'
 const SELL_CLR  = '#ef4444'
 const PROFIT_CLR = '#f59e0b'  /* gold for positive returns */
-const MUTED     = '#94a3b8'
+const MUTED     = 'var(--text-secondary)'
 
 function getDeviceId() {
   const key = 'bfs_device_id'
@@ -120,7 +120,7 @@ function SellModal({ pos, symbol, lang, market, onConfirm, onClose }) {
               }}
               style={{
                 flex: 1, background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
-                borderRadius: 8, color: '#e8eaed', padding: '8px 12px', fontSize: 14, outline: 'none',
+                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
               }}
             />
             <button onClick={() => setShares(pos.available_shares)}
@@ -132,7 +132,7 @@ function SellModal({ pos, symbol, lang, market, onConfirm, onClose }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, marginBottom: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: MUTED }}>{zhEn('成交金额', 'Trade Amount')}</span>
-            <span style={{ color: '#e8eaed' }}>{currSym}{fmt(amount)}</span>
+            <span style={{ color: 'var(--text-primary)' }}>{currSym}{fmt(amount)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: MUTED }}>{isUS ? zhEn('手续费（零佣金）', 'Commission (zero)') : zhEn('手续费 + 印花税', 'Commission + Stamp Duty')}</span>
@@ -446,7 +446,7 @@ export default function PaperTradingPanel({ lang }) {
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {[
-            { label: zhEn('现金余额', 'Cash'), value: `${currSym}${fmt(cash, 0)}`, color: '#e8eaed' },
+            { label: zhEn('现金余额', 'Cash'), value: `${currSym}${fmt(cash, 0)}`, color: 'var(--text-primary)' },
             { label: zhEn('持仓市值', 'Portfolio Value'), value: `${currSym}${fmt(portfolioValue, 0)}`, color: '#8ab4f8' },
             { label: zhEn('已付手续费', 'Commission Paid'), value: `${currSym}${fmt(commission)}`, color: MUTED },
           ].map(({ label, value, color }) => (
@@ -478,7 +478,7 @@ export default function PaperTradingPanel({ lang }) {
               style={{
                 width: '100%', boxSizing: 'border-box',
                 background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
-                borderRadius: 8, color: '#e8eaed', padding: '8px 12px', fontSize: 14, outline: 'none',
+                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
               }}
             />
             {quoteInfo && (
@@ -506,7 +506,7 @@ export default function PaperTradingPanel({ lang }) {
               style={{
                 width: '100%', boxSizing: 'border-box',
                 background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
-                borderRadius: 8, color: '#e8eaed', padding: '8px 12px', fontSize: 14, outline: 'none',
+                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
               }}
             />
           </div>
@@ -514,7 +514,7 @@ export default function PaperTradingPanel({ lang }) {
           {/* Preview */}
           {quoteInfo && (
             <div style={{ flex: 1, minWidth: 200, fontSize: 12, color: MUTED, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div>{zhEn('预计花费', 'Est. Cost')}: <span style={{ color: '#e8eaed', fontFamily: 'monospace' }}>{currSym}{fmt(buyTotalCost)}</span></div>
+              <div>{zhEn('预计花费', 'Est. Cost')}: <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>{currSym}{fmt(buyTotalCost)}</span></div>
               {!isUS && <div>{zhEn('手续费', 'Commission')}: <span style={{ color: SELL_CLR, fontFamily: 'monospace' }}>{currSym}{fmt(buyCommission)}</span></div>}
               {isUS && <div style={{ color: BUY_CLR }}>{lang === 'zh' ? '零佣金' : 'Zero commission'}</div>}
               <div>{zhEn('买入后剩余现金', 'Cash After')}: <span style={{
@@ -589,7 +589,7 @@ export default function PaperTradingPanel({ lang }) {
                       }}
                     >
                       <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#8ab4f8', fontWeight: 600 }}>{sym}</td>
-                      <td style={{ padding: '10px 10px', color: '#e8eaed' }}>{pos.shares}</td>
+                      <td style={{ padding: '10px 10px', color: 'var(--text-primary)' }}>{pos.shares}</td>
                       <td style={{ padding: '10px 10px' }}>
                         {canSell ? (
                           <span style={{ color: BUY_CLR }}>{pos.available_shares}</span>
@@ -598,8 +598,8 @@ export default function PaperTradingPanel({ lang }) {
                         )}
                       </td>
                       <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: MUTED }}>{currSym}{fmt(pos.avg_cost)}</td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>{currSym}{fmt(pos.current_price)}</td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>{currSym}{fmt(pos.market_value, 0)}</td>
+                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>{currSym}{fmt(pos.current_price)}</td>
+                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>{currSym}{fmt(pos.market_value, 0)}</td>
                       <td style={{ padding: '10px 10px' }}>
                         <div style={{ color: isProfit ? PROFIT_CLR : SELL_CLR, fontWeight: 700, fontFamily: '"JetBrains Mono", monospace', fontSize: 12 }}>
                           {isProfit ? '+' : ''}{currSym}{fmt(pos.profit_loss, 0)}
@@ -667,12 +667,12 @@ export default function PaperTradingPanel({ lang }) {
                             {isBuy ? zhEn('买入','BUY') : zhEn('卖出','SELL')}
                           </Pill>
                         </td>
-                        <td style={{ padding: '8px 10px', color: '#e8eaed' }}>
+                        <td style={{ padding: '8px 10px', color: 'var(--text-primary)' }}>
                           <span style={{ color: '#8ab4f8', fontFamily: 'monospace', marginRight: 6 }}>{tx.symbol}</span>
                           {tx.name}
                         </td>
-                        <td style={{ padding: '8px 10px', color: '#e8eaed' }}>{tx.shares}</td>
-                        <td style={{ padding: '8px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>¥{fmt(tx.price)}</td>
+                        <td style={{ padding: '8px 10px', color: 'var(--text-primary)' }}>{tx.shares}</td>
+                        <td style={{ padding: '8px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>¥{fmt(tx.price)}</td>
                         <td style={{ padding: '8px 10px', fontFamily: 'monospace', color: SELL_CLR }}>¥{fmt(tx.commission)}</td>
                         <td style={{ padding: '8px 10px', fontFamily: 'monospace' }}>
                           {pl != null ? (
@@ -730,11 +730,11 @@ export default function PaperTradingPanel({ lang }) {
                       <td style={{ padding: '9px 10px', fontWeight: 700, color: entry.rank <= 3 ? '#fbbf24' : MUTED }}>
                         {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `#${entry.rank}`}
                       </td>
-                      <td style={{ padding: '9px 10px', color: entry.is_me ? '#8ab4f8' : '#e8eaed', fontWeight: entry.is_me ? 700 : 400 }}>
+                      <td style={{ padding: '9px 10px', color: entry.is_me ? '#8ab4f8' : 'var(--text-primary)', fontWeight: entry.is_me ? 700 : 400 }}>
                         {entry.nickname}
                         {entry.is_me && <span style={{ fontSize: 10, color: '#8ab4f8', marginLeft: 6, background: 'rgba(138,180,248,0.15)', padding: '1px 5px', borderRadius: 4 }}>{zhEn('我', 'ME')}</span>}
                       </td>
-                      <td style={{ padding: '9px 10px', fontFamily: 'monospace', color: '#e8eaed' }}>¥{fmt(entry.total_value, 0)}</td>
+                      <td style={{ padding: '9px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>¥{fmt(entry.total_value, 0)}</td>
                       <td style={{ padding: '9px 10px' }}><PctBadge value={entry.return_pct} /></td>
                     </tr>
                   ))}
@@ -745,7 +745,7 @@ export default function PaperTradingPanel({ lang }) {
         )}
       </Card>
 
-      <div style={{ textAlign: 'center', fontSize: 12, color: '#4a5568', paddingBottom: 8 }}>
+      <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', paddingBottom: 8 }}>
         {zhEn('模拟交易 · 初始资金100万 · T+1规则 · 买0.03%+卖0.13%手续费', 'Paper Trading · ¥1M start · T+1 · Buy 0.03% / Sell 0.13% fee')}
       </div>
     </div>

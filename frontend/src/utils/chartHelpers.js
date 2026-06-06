@@ -27,10 +27,11 @@ export function getChartTheme() {
   }
 }
 
-// Static snapshot — kept for components that import THEME directly.
-// Those components subscribe to useThemeStore to trigger re-render; then
-// getChartTheme() is called again inside each builder on the next render.
-export const THEME = getChartTheme()
+// Live proxy — every THEME.xxx read returns the current theme value.
+// Components still need to subscribe to useThemeStore to trigger re-renders.
+export const THEME = new Proxy({}, {
+  get(_, prop) { return getChartTheme()[prop] },
+})
 
 // ── Shared data zoom (built per call so colours are reactive) ─────────────────
 function makeDataZoom(T) {

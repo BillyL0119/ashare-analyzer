@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const MUTED = '#9aa0a6'
+const MUTED = 'var(--text-muted)'
 const BDR = 'rgba(138,180,248,0.10)'
 
 const MARKET_CFG = {
@@ -45,7 +45,7 @@ function EarningsRow({ item, lang, onStockClick }) {
 
       {/* Company name */}
       <span style={{
-        fontSize: 13, color: '#e8eaed', flex: 1,
+        fontSize: 13, color: 'var(--text-primary)', flex: 1,
         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
       }}>
         {item.name}
@@ -84,7 +84,7 @@ function EarningsRow({ item, lang, onStockClick }) {
             {hasActualEps && (
               <span style={{
                 fontSize: 12, fontWeight: 700,
-                color: epsBeat === 'beat' ? '#34d399' : epsBeat === 'miss' ? '#f87171' : '#e8eaed',
+                color: epsBeat === 'beat' ? '#34d399' : epsBeat === 'miss' ? '#f87171' : 'var(--text-primary)',
               }}>
                 {item.eps_actual}
               </span>
@@ -106,7 +106,7 @@ function EarningsRow({ item, lang, onStockClick }) {
               </span>
             )}
             {hasActualRev && (
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#e8eaed' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)' }}>
                 {item.revenue_actual}
               </span>
             )}
@@ -141,14 +141,14 @@ function DateGroup({ dateStr, items, lang, onStockClick }) {
         </span>
         <span style={{
           fontSize: 11, borderRadius: 6,
-          color: diff <= 1 ? '#ffa726' : '#4a5568',
+          color: diff <= 1 ? '#ffa726' : 'var(--text-muted)',
           background: diff <= 1 ? 'rgba(255,167,38,0.12)' : 'transparent',
           padding: diff <= 1 ? '1px 6px' : 0,
           fontWeight: diff <= 1 ? 600 : 400,
         }}>
           {dayLabel}
         </span>
-        <span style={{ fontSize: 11, color: '#4a5568', marginLeft: 'auto' }}>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
           {items.length} {lang === 'zh' ? '家' : 'companies'}
         </span>
       </div>
@@ -206,7 +206,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
           {zh ? '财报日历 · 未来30天' : 'Earnings Calendar · Next 30 Days'}
         </div>
         {data?.updated_at && (
-          <div style={{ fontSize: 11, color: '#4a5568' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
             {zh ? '更新于' : 'Updated'} {data.updated_at.slice(0, 16).replace('T', ' ')}
           </div>
         )}
@@ -245,7 +245,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
       {loading ? (
         <div style={{ color: MUTED, fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
           {zh ? '加载财报数据...' : 'Loading earnings data...'}
-          <div style={{ fontSize: 12, marginTop: 8, color: '#4a5568' }}>
+          <div style={{ fontSize: 12, marginTop: 8, color: 'var(--text-muted)' }}>
             {zh ? '首次加载需获取实时数据，约需15秒' : 'First load fetches live data, ~15s'}
           </div>
         </div>
@@ -267,7 +267,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
         </div>
       )}
 
-      <div style={{ marginTop: 12, fontSize: 12, color: '#4a5568', textAlign: 'center' }}>
+      <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
         {zh
           ? '点击公司可加载到主分析页 · 美股数据来源：Yahoo Finance · A股数据来源：东方财富'
           : 'Click company to load analysis · US: Yahoo Finance · A-Share: EastMoney'

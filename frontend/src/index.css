@@ -115,9 +115,56 @@ body {
   font-family: var(--sans);
 }
 
+/* ── Light theme (Bloomberg terminal day mode) ───────────── */
+:root[data-theme="light"] {
+  --bg-primary:      #f0f4f8;
+  --bg-secondary:    #ffffff;
+  --bg-tertiary:     #e8edf2;
+  --bg-hover:        #dde3ea;
+  --border-primary:  #c8d0da;
+  --border-glow:     #a0b0c8;
+  --text-primary:    #0d1b2a;
+  --text-secondary:  #3d5166;
+  --text-muted:      #7a8fa0;
+  --card-bg:         #ffffff;
+  --nav-bg:          rgba(240, 244, 248, 0.97);
+  --nav-bg-dim:      rgba(240, 244, 248, 0.92);
+  --map-ocean:       #c8ddf0;
+  --map-sphere:      #b8d0e8;
+  --map-border:      #8aa8c8;
+  --map-graticule:   #d8e8f4;
+  --map-land:        #d8e4ee;
+  --skeleton-base:   #e2e8f0;
+  --skeleton-shine:  #f0f4f8;
+  --chart-bg:        #ffffff;
+  --chart-text:      #3d5166;
+  --chart-border:    #e8edf2;
+  --chart-tooltip:   rgba(255,255,255,0.98);
+
+  --accent-blue:   #0066cc;
+  --accent-purple: #6633cc;
+  --accent-cyan:   #0099aa;
+  --accent-gold:   #cc7700;
+  --green-bright:  #007a3d;
+  --red-bright:    #cc2200;
+}
+
 /* ── Structural overrides ─────────────────────────────────────────────────── */
 body {
   color: var(--text-primary);
+}
+
+/* Light: nav solid + shadow, no glassmorphism */
+:root[data-theme="light"] header {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+}
+/* Light: cards white + elevation */
+:root[data-theme="light"] .bfs-card {
+  background: var(--card-bg) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+:root[data-theme="light"] .bfs-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
 }
 
 /* ── Skeleton shimmer ───────────────────────────────────────────────────── */

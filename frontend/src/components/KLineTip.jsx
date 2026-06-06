@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const MUTED  = '#9aa0a6'
+const MUTED  = 'var(--text-muted)'
 const GREEN  = '#34d399'
 const RED    = '#ef4444'
 const BLUE   = '#8ab4f8'
@@ -141,7 +141,7 @@ export default function KLineTip({ zh, onClose }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, fontWeight: 800, color: '#e8eaed' }}>
+            <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
               {zh ? '📐 K线图速查' : '📐 Candlestick Quick Ref'}
             </div>
             <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>
@@ -183,7 +183,7 @@ export default function KLineTip({ zh, onClose }) {
                 </svg>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed' }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
                       {zh ? pat.name_zh : pat.name_en}
                     </span>
                     <span style={{
@@ -202,7 +202,7 @@ export default function KLineTip({ zh, onClose }) {
           })}
         </div>
 
-        <div style={{ marginTop: 14, fontSize: 10, color: '#4a5568', lineHeight: 1.6 }}>
+        <div style={{ marginTop: 14, fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.6 }}>
           {zh
             ? '* K线形态须结合趋势和成交量综合判断，不可单独作为买卖依据。'
             : '* Always confirm patterns with trend direction and volume. Never use alone as a trading signal.'}

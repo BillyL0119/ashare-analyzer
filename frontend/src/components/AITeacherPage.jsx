@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 const ACCENT  = '#8ab4f8'
 const ACCENT2 = '#c084fc'
 const BDR     = 'rgba(138,180,248,0.10)'
-const MUTED   = '#9aa0a6'
+const MUTED   = 'var(--text-muted)'
 
 // ── Topic categories ──────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -100,7 +100,7 @@ function Bubble({ msg }) {
         border: `1px solid ${isUser ? 'rgba(138,180,248,0.22)' : 'rgba(255,255,255,0.06)'}`,
         borderRadius: isUser ? '16px 16px 4px 16px' : '4px 16px 16px 16px',
         padding: '11px 15px',
-        fontSize: 14, color: '#e8eaed', lineHeight: 1.75,
+        fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.75,
         whiteSpace: 'pre-wrap', wordBreak: 'break-word',
       }}>
         {msg.content}
@@ -233,7 +233,7 @@ export default function AITeacherPage({ lang }) {
     <div style={{
       display: 'flex', flexDirection: 'column',
       height: 'calc(100vh - 60px)',
-      background: '#080c14',
+      background: 'var(--bg-primary)',
       borderRadius: 12, border: `1px solid ${BDR}`,
       overflow: 'hidden',
     }}>
@@ -283,7 +283,7 @@ export default function AITeacherPage({ lang }) {
         {/* ── Left sidebar ── */}
         <div style={{
           width: 240, flexShrink: 0,
-          background: '#0d1120',
+          background: 'var(--bg-tertiary)',
           borderRight: `1px solid ${BDR}`,
           display: 'flex', flexDirection: 'column',
           overflowY: 'auto',
@@ -308,7 +308,7 @@ export default function AITeacherPage({ lang }) {
                 <span style={{ fontSize: 15 }}>{c.icon}</span>
                 <span style={{
                   fontSize: 12, fontWeight: activeCat === i ? 700 : 400,
-                  color: activeCat === i ? '#e8eaed' : MUTED,
+                  color: activeCat === i ? 'var(--text-primary)' : MUTED,
                 }}>
                   {zh ? c.name_zh : c.name_en}
                 </span>
@@ -375,7 +375,7 @@ export default function AITeacherPage({ lang }) {
           <div style={{
             padding: '12px 20px 16px',
             borderTop: `1px solid ${BDR}`,
-            background: 'rgba(255,255,255,0.015)',
+            background: 'var(--bg-tertiary)',
             flexShrink: 0,
           }}>
             <div style={{ display: 'flex', gap: 10 }}>
@@ -389,9 +389,9 @@ export default function AITeacherPage({ lang }) {
                 disabled={busy}
                 style={{
                   flex: 1,
-                  background: 'rgba(255,255,255,0.04)',
+                  background: 'var(--bg-secondary)',
                   border: `1px solid rgba(138,180,248,0.2)`,
-                  borderRadius: 12, color: '#e8eaed',
+                  borderRadius: 12, color: 'var(--text-primary)',
                   padding: '10px 14px', fontSize: 14,
                   resize: 'none', outline: 'none', lineHeight: 1.6,
                   fontFamily: 'inherit',
@@ -417,7 +417,7 @@ export default function AITeacherPage({ lang }) {
                 {busy ? '⟳' : '↑'}
               </button>
             </div>
-            <div style={{ fontSize: 11, color: '#333d4d', marginTop: 6, textAlign: 'right' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
               {zh
                 ? '仅供学习参考，不构成投资建议 · 10次/分钟限流'
                 : 'For educational purposes only, not investment advice · 10 req/min limit'}

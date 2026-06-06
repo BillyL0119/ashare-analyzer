@@ -14,10 +14,12 @@ import VolumeChart from './VolumeChart'
 import MACDChart from './MACDChart'
 import RSIChart from './RSIChart'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 import KLineTip from './KLineTip'
 
 export default function StockCard({ stock }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const { code, name } = stock
   const { period, startDate, endDate, adjust, removeSymbol, setPeriod, setAdjust, market } =
     useCompareStore()
@@ -184,11 +186,11 @@ export default function StockCard({ stock }) {
             cursor: 'pointer',
             fontSize: 11,
             background: 'transparent',
-            color: '#9aa0a6',
+            color: 'var(--text-muted)',
             transition: 'all 0.15s',
           }}
           onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.12)'; e.currentTarget.style.color = '#8ab4f8' }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9aa0a6' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
           {lang === 'zh' ? '导出报告' : 'Export PDF'}
         </button>
@@ -204,11 +206,11 @@ export default function StockCard({ stock }) {
             cursor: 'pointer',
             fontSize: 16,
             background: 'transparent',
-            color: inWatchlist ? '#f6c90e' : '#4a5568',
+            color: inWatchlist ? '#f6c90e' : 'var(--text-muted)',
             transition: 'color 0.15s',
           }}
           onMouseEnter={(e) => { e.currentTarget.style.color = '#f6c90e' }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = inWatchlist ? '#f6c90e' : '#4a5568' }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = inWatchlist ? '#f6c90e' : 'var(--text-muted)' }}
         >
           {inWatchlist ? '★' : '☆'}
         </button>
@@ -222,7 +224,7 @@ export default function StockCard({ stock }) {
             cursor: 'pointer',
             fontSize: 12,
             background: 'transparent',
-            color: '#9aa0a6',
+            color: 'var(--text-muted)',
             transition: 'all 0.15s',
           }}
           onMouseEnter={(e) => {
@@ -231,7 +233,7 @@ export default function StockCard({ stock }) {
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = '#9aa0a6'
+            e.currentTarget.style.color = 'var(--text-muted)'
           }}
         >
           {t.remove}

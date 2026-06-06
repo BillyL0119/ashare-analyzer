@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 const ACCENT  = '#ec4899'
-const MUTED   = '#9aa0a6'
+const MUTED   = 'var(--text-muted)'
 const BDR     = 'rgba(138,180,248,0.10)'
-const CARD    = 'rgba(255,255,255,0.025)'
+const CARD    = 'var(--bg-tertiary)'
 const GREEN   = '#34d399'
 const RED     = '#ef4444'
 const BLUE    = '#8ab4f8'
@@ -77,7 +77,7 @@ function AnatomySVG({ hovered, onHover }) {
         <g key={id} style={{ cursor: 'pointer' }}
           onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
           <line x1={cx + bw/2 + 1} y1={y} x2={cx + bw/2 + 26} y2={y}
-            stroke={c(id, '#4a5568')} strokeWidth={1} strokeDasharray="3,2" />
+            stroke={c(id, 'var(--text-muted)')} strokeWidth={1} strokeDasharray="3,2" />
           <text x={cx + bw/2 + 30} y={y + 4}
             fill={c(id, PARTS.find(p => p.id === id)?.color || MUTED)} fontSize={11}>
             {label}
@@ -94,7 +94,7 @@ function AnatomySVG({ hovered, onHover }) {
         <g key={id} style={{ cursor: 'pointer' }}
           onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
           <line x1={cx - bw/2 - 1} y1={y} x2={cx - bw/2 - 26} y2={y}
-            stroke={c(id, '#4a5568')} strokeWidth={1} strokeDasharray="3,2" />
+            stroke={c(id, 'var(--text-muted)')} strokeWidth={1} strokeDasharray="3,2" />
           <text x={cx - bw/2 - 30} y={y + 4} textAnchor="end"
             fill={c(id, PARTS.find(p => p.id === id)?.color || MUTED)} fontSize={11}>
             {label}
@@ -262,7 +262,7 @@ export default function KLineLesson({ zh }) {
       {/* Section tabs */}
       <div style={{
         display: 'flex', gap: 4, padding: '12px 20px 0',
-        background: '#0d1120', borderBottom: `1px solid ${BDR}`, flexShrink: 0,
+        background: 'var(--bg-tertiary)', borderBottom: `1px solid ${BDR}`, flexShrink: 0,
       }}>
         {SECTIONS.map(s => {
           const active = section === s.id
@@ -288,7 +288,7 @@ export default function KLineLesson({ zh }) {
         {/* ── ANATOMY ── */}
         {section === 'anatomy' && (
           <div>
-            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: '#e8eaed' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
               {zh ? 'K线图解——解读每一根蜡烛' : 'Candlestick Anatomy — Reading Every Candle'}
             </h2>
             <p style={{ margin: '0 0 24px', fontSize: 13, color: MUTED, lineHeight: 1.6 }}>
@@ -349,10 +349,10 @@ export default function KLineLesson({ zh }) {
                       }}
                     >
                       <div style={{ width: 10, height: 10, borderRadius: 2, background: p.color, flexShrink: 0 }} />
-                      <span style={{ fontSize: 12, color: hovered === p.id ? '#e8eaed' : MUTED, fontWeight: hovered === p.id ? 600 : 400 }}>
+                      <span style={{ fontSize: 12, color: hovered === p.id ? 'var(--text-primary)' : MUTED, fontWeight: hovered === p.id ? 600 : 400 }}>
                         {zh ? p.label_zh : p.label_en}
                         {' '}
-                        <span style={{ color: '#4a5568', fontWeight: 400 }}>
+                        <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>
                           {zh ? `— ${p.label_en}` : `— ${p.label_zh}`}
                         </span>
                       </span>
@@ -372,7 +372,7 @@ export default function KLineLesson({ zh }) {
               ].map(card => (
                 <div key={card.icon} style={{ background: CARD, border: `1px solid ${BDR}`, borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 20, marginBottom: 6 }}>{card.icon}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#e8eaed', marginBottom: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
                     {zh ? card.title_zh : card.title_en}
                   </div>
                   <div style={{ fontSize: 12, color: MUTED, lineHeight: 1.6 }}>
@@ -387,7 +387,7 @@ export default function KLineLesson({ zh }) {
         {/* ── PATTERNS ── */}
         {section === 'patterns' && (
           <div>
-            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: '#e8eaed' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
               {zh ? '常见K线形态' : 'Common Candlestick Patterns'}
             </h2>
             <p style={{ margin: '0 0 24px', fontSize: 13, color: MUTED, lineHeight: 1.6 }}>
@@ -429,7 +429,7 @@ export default function KLineLesson({ zh }) {
 
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: '#e8eaed' }}>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
                             {zh ? pat.name_zh : pat.name_en}
                           </span>
                           <span style={{
@@ -490,7 +490,7 @@ export default function KLineLesson({ zh }) {
         {/* ── QUIZ ── */}
         {section === 'quiz' && (
           <div style={{ maxWidth: 600 }}>
-            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: '#e8eaed' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
               {zh ? '小测验——检验一下你的理解' : 'Quick Quiz — Test Your Understanding'}
             </h2>
             <p style={{ margin: '0 0 24px', fontSize: 13, color: MUTED }}>
@@ -506,7 +506,7 @@ export default function KLineLesson({ zh }) {
                 <div style={{ fontSize: 48, marginBottom: 12 }}>
                   {score === QUIZ.length ? '🎉' : score >= 2 ? '👍' : '📖'}
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: '#e8eaed', marginBottom: 8 }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
                   {zh ? `得分：${score} / ${QUIZ.length}` : `Score: ${score} / ${QUIZ.length}`}
                 </div>
                 <div style={{ fontSize: 14, color: MUTED, marginBottom: 24, lineHeight: 1.6 }}>
@@ -527,7 +527,7 @@ export default function KLineLesson({ zh }) {
             ) : (
               <div>
                 <div style={{ background: CARD, border: `1px solid ${BDR}`, borderRadius: 10, padding: '20px 18px', marginBottom: 16 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#e8eaed', lineHeight: 1.7 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.7 }}>
                     {zh ? q.q_zh : q.q_en}
                   </div>
                 </div>

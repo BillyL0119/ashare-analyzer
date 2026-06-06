@@ -5,6 +5,7 @@ import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const STOCK_COLORS = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
 
@@ -30,7 +31,7 @@ function regimeLabel(key, lang) {
 // ── Current regime badge ──────────────────────────────────────────────────────
 
 function RegimeBadge({ regime, duration, lang, t }) {
-  const color = REGIME_COLORS[regime] ?? '#9aa0a6'
+  const color = REGIME_COLORS[regime] ?? 'var(--text-muted)'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <div style={{
@@ -41,11 +42,11 @@ function RegimeBadge({ regime, duration, lang, t }) {
         textAlign: 'center',
       }}>
         <div style={{ color, fontSize: 20, fontWeight: 800 }}>{regimeLabel(regime, lang)}</div>
-        <div style={{ color: '#9aa0a6', fontSize: 11, marginTop: 2 }}>{t.regimeCurrent}</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: 11, marginTop: 2 }}>{t.regimeCurrent}</div>
       </div>
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: THEME.text, fontSize: 22, fontWeight: 700 }}>{duration}</div>
-        <div style={{ color: '#9aa0a6', fontSize: 11 }}>{t.regimeDuration} ({lang === 'en' ? 'd' : '天'})</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{t.regimeDuration} ({lang === 'en' ? 'd' : '天'})</div>
       </div>
     </div>
   )
@@ -63,7 +64,7 @@ function RegimeBreakdown({ stats, lang, t }) {
           <div key={key}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 3 }}>
               <span style={{ color }}>{regimeLabel(key, lang)}</span>
-              <span style={{ color: '#9aa0a6' }}>{s.days}{lang === 'en' ? 'd' : '天'} &nbsp;
+              <span style={{ color: 'var(--text-muted)' }}>{s.days}{lang === 'en' ? 'd' : '天'} &nbsp;
                 <span style={{ color: THEME.text, fontWeight: 600 }}>{s.pct}%</span>
                 &nbsp;| avg {s.avg_daily_return > 0 ? '+' : ''}{s.avg_daily_return.toFixed(3)}%/d
               </span>
@@ -209,7 +210,7 @@ function TransitionTable({ transitions, lang, t }) {
         <thead>
           <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
             {[t.regimeStart, t.regimeEnd, t.regimeCurrent, t.regimeDuration, t.regimeReturn].map(h => (
-              <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: '#9aa0a6', fontWeight: 500 }}>{h}</th>
+              <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{h}</th>
             ))}
           </tr>
         </thead>
@@ -218,8 +219,8 @@ function TransitionTable({ transitions, lang, t }) {
             const color = REGIME_COLORS[tr.regime] ?? THEME.text
             return (
               <tr key={i} style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                <td style={{ padding: '6px 10px', color: '#9aa0a6' }}>{tr.start_date.slice(0, 10)}</td>
-                <td style={{ padding: '6px 10px', color: '#9aa0a6' }}>{tr.end_date.slice(0, 10)}</td>
+                <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{tr.start_date.slice(0, 10)}</td>
+                <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{tr.end_date.slice(0, 10)}</td>
                 <td style={{ padding: '6px 10px' }}>
                   <span style={{ color, background: color + '22', padding: '2px 8px', borderRadius: 4, fontWeight: 600, fontSize: 11 }}>
                     {regimeLabel(tr.regime, lang)}
@@ -248,7 +249,7 @@ function Interpretation({ text }) {
         const renderBold = (str) =>
           str.split(/(\*\*[^*]+\*\*)/).map((part, j) =>
             part.startsWith('**') && part.endsWith('**')
-              ? <strong key={j} style={{ color: '#e8eaed' }}>{part.slice(2, -2)}</strong>
+              ? <strong key={j} style={{ color: 'var(--text-primary)' }}>{part.slice(2, -2)}</strong>
               : part
           )
         return (
@@ -281,15 +282,15 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
-        <span style={{ color: '#9aa0a6', fontSize: 13 }}>{stock.code}</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
         {data && (
-          <span style={{ marginLeft: 'auto', color: '#4a5568', fontSize: 12 }}>
+          <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
             {t.regimeWindow}: {data.window}{lang === 'en' ? 'd' : '天'} &nbsp;|&nbsp; {data.series.length} {lang === 'en' ? 'bars' : '根K线'}
           </span>
         )}
       </div>
 
-      {loading && <div style={{ textAlign: 'center', padding: 40, color: '#9aa0a6' }}>{t.regimeLoading}</div>}
+      {loading && <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>{t.regimeLoading}</div>}
       {error && <div style={{ color: '#ef5350', fontSize: 13 }}>{error}</div>}
 
       {data && (
@@ -326,6 +327,7 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
 // ── Main panel ────────────────────────────────────────────────────────────────
 
 export default function RegimePanel({ stocks }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const { period, startDate, endDate, adjust } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
@@ -340,7 +342,7 @@ export default function RegimePanel({ stocks }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Controls */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: '10px 16px' }}>
-        <span style={{ color: '#9aa0a6', fontSize: 13 }}>{t.regimeWindow}:</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.regimeWindow}:</span>
         {[10, 20, 40, 60].map(w => (
           <button key={w} style={btnStyle(win === w)} onClick={() => setWin(w)}>{w}{lang === 'en' ? 'd' : '天'}</button>
         ))}

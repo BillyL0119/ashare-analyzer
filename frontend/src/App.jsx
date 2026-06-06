@@ -15,7 +15,7 @@ const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
-
+import useThemeStore from './store/themeStore'
 import { T } from './i18n/translations'
 import { useMobile } from './hooks/useMobile'
 import { trackVisit, trackFeature } from './utils/analytics'
@@ -26,7 +26,8 @@ const ACCENT_PURPLE = '#8b5cf6'
 export default function App() {
   const { startDate, endDate, setDateRange, market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
-const t = T[lang]
+  const { theme, toggleTheme } = useThemeStore()
+  const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
   const [showStats,    setShowStats]    = useState(false)
@@ -63,10 +64,10 @@ const t = T[lang]
   }
 
   const dateInputStyle = {
-    background: '#060f1e',
-    border: '1px solid #1a2f50',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-primary)',
     borderRadius: 8,
-    color: '#e2e8f0',
+    color: 'var(--text-primary)',
     padding: '5px 10px',
     fontSize: 13,
     outline: 'none',
@@ -105,7 +106,7 @@ const t = T[lang]
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: 'none',
-          boxShadow: scrolled ? '0 1px 32px rgba(0,0,0,0.6)' : 'none',
+          boxShadow: scrolled ? (theme === 'light' ? '0 1px 4px rgba(0,0,0,0.12)' : '0 1px 32px rgba(0,0,0,0.6)') : 'none',
           padding: isMobile ? '8px 12px' : '10px 24px',
           display: 'flex',
           alignItems: 'center',
@@ -151,8 +152,8 @@ const t = T[lang]
           style={{
             display: 'flex',
             alignItems: 'center',
-            background: '#060f1e',
-            border: '1px solid #1a2f50',
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-primary)',
             borderRadius: 24,
             padding: 3,
             gap: 2,
@@ -171,9 +172,9 @@ const t = T[lang]
                 fontWeight: 600,
                 letterSpacing: '0.2px',
                 background: market === key
-                  ? 'linear-gradient(135deg, #0ea5e9, #38bdf8)'
-                  : 'rgba(255,255,255,0.04)',
-                color: market === key ? '#fff' : '#94a3b8',
+                  ? 'linear-gradient(135deg, var(--accent-blue), #38bdf8)'
+                  : 'transparent',
+                color: market === key ? '#fff' : 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
                 boxShadow: market === key ? `0 2px 12px rgba(14,165,233,0.3)` : 'none',
               }}
@@ -186,7 +187,7 @@ const t = T[lang]
         <SearchBar />
 
         {/* Date range — hidden on mobile (too cramped) */}
-        <div style={{ display: isMobile ? 'none' : 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#9aa0a6' }}>
+        <div style={{ display: isMobile ? 'none' : 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
           <span>{t.from}</span>
           <input
             type="date"
@@ -194,7 +195,7 @@ const t = T[lang]
             onChange={(e) => setDateRange(e.target.value.replace(/-/g, ''), endDate)}
             style={dateInputStyle}
             onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE; e.target.style.boxShadow = '0 0 0 3px rgba(14,165,233,0.15)' }}
-            onBlur={(e) => { e.target.style.borderColor = '#1a2f50'; e.target.style.boxShadow = 'none' }}
+            onBlur={(e) => { e.target.style.borderColor = 'var(--border-primary)'; e.target.style.boxShadow = 'none' }}
           />
           <span>{t.to}</span>
           <input
@@ -203,7 +204,7 @@ const t = T[lang]
             onChange={(e) => setDateRange(startDate, e.target.value.replace(/-/g, ''))}
             style={dateInputStyle}
             onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE; e.target.style.boxShadow = '0 0 0 3px rgba(14,165,233,0.15)' }}
-            onBlur={(e) => { e.target.style.borderColor = '#1a2f50'; e.target.style.boxShadow = 'none' }}
+            onBlur={(e) => { e.target.style.borderColor = 'var(--border-primary)'; e.target.style.boxShadow = 'none' }}
           />
         </div>
 
@@ -212,8 +213,8 @@ const t = T[lang]
           style={{
             display: 'flex',
             alignItems: 'center',
-            background: '#060f1e',
-            border: '1px solid #1a2f50',
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-primary)',
             borderRadius: 24,
             padding: 3,
             marginLeft: 'auto',
@@ -232,7 +233,7 @@ const t = T[lang]
                 fontSize: 12,
                 fontWeight: 600,
                 background: lang === l ? ACCENT_BLUE : 'transparent',
-                color: lang === l ? '#fff' : '#94a3b8',
+                color: lang === l ? '#fff' : 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -241,7 +242,25 @@ const t = T[lang]
           ))}
         </div>
 
-{/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}
+        {/* ☀️/🌙 Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          title={theme === 'dark' ? (lang === 'zh' ? '切换浅色模式' : 'Light mode') : (lang === 'zh' ? '切换深色模式' : 'Dark mode')}
+          style={{
+            width: 34, height: 34, borderRadius: '50%',
+            border: '1px solid var(--border-primary)',
+            background: 'transparent',
+            cursor: 'pointer', fontSize: 16,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all 0.2s ease', flexShrink: 0,
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+
+        {/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}
         {[
           { key: 'insight', icon: '💡', active: showInsight, onClick: () => setShowInsight(v => !v), title: lang === 'zh' ? '每日知识' : 'Daily Insight' },
           { key: 'ai',      icon: '🎓', active: showAIFloat, onClick: () => setShowAIFloat(v => !v), title: lang === 'zh' ? 'AI 老师'  : 'AI Tutor' },
@@ -252,7 +271,7 @@ const t = T[lang]
             title={title}
             style={{
               width: 34, height: 34, borderRadius: '50%',
-              border: `1px solid ${active ? '#0ea5e9' : '#1a2f50'}`,
+              border: `1px solid ${active ? '#0ea5e9' : 'var(--border-primary)'}`,
               background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
               cursor: 'pointer', fontSize: 16,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -260,7 +279,7 @@ const t = T[lang]
               boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#0f1f3d'
+              e.currentTarget.style.background = 'var(--bg-hover)'
               e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)'
             }}
             onMouseLeave={(e) => {
@@ -277,8 +296,8 @@ const t = T[lang]
           className="tab-bar"
           style={{
             display: 'flex', alignItems: 'center',
-            background: '#060f1e',
-            border: '1px solid #1a2f50',
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-primary)',
             borderRadius: 24, padding: 3, gap: 2,
             overflowX: 'auto', flexWrap: 'nowrap', flexShrink: 1,
           }}
@@ -298,7 +317,7 @@ const t = T[lang]
                 padding: '4px 13px', borderRadius: 6, border: 'none',
                 cursor: 'pointer', fontSize: 12, fontWeight: appTab === key ? 600 : 400,
                 background: 'transparent',
-                color: appTab === key ? '#0ea5e9' : '#94a3b8',
+                color: appTab === key ? '#0ea5e9' : 'var(--text-secondary)',
                 transition: 'color 0.2s ease', whiteSpace: 'nowrap',
               }}
             >
@@ -312,7 +331,7 @@ const t = T[lang]
       {/* Gradient nav border line */}
       <div style={{
         height: 1, flexShrink: 0,
-        background: 'linear-gradient(90deg, transparent, #1a2f50 20%, #2a4a7f 50%, #1a2f50 80%, transparent)',
+        background: 'linear-gradient(90deg, transparent, var(--border-primary) 20%, var(--border-glow) 50%, var(--border-primary) 80%, transparent)',
       }} />
 
       <main style={{ padding: isMobile ? '6px 12px' : '6px 24px', flex: 1 }}>

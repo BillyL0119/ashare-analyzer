@@ -30,7 +30,7 @@ function tagColor(tag) {
   for (const [k, v] of Object.entries(SPECIALTY_COLORS)) {
     if (tag.toLowerCase().includes(k.toLowerCase())) return v
   }
-  return '#64748b'
+  return 'var(--text-muted)'
 }
 
 // Generate a deterministic gradient from school name
@@ -49,8 +49,8 @@ function initials(name) {
 function SkeletonCard() {
   return (
     <div style={{
-      background: 'var(--bg-card, #060f1e)',
-      border: '1px solid #1a2f50',
+      background: 'var(--bg-secondary)',
+      border: '1px solid var(--border-primary)',
       borderRadius: 14,
       padding: 20,
       display: 'flex',
@@ -70,7 +70,7 @@ function RankBadge({ rank }) {
   if (!rank) return null
   const isTop10  = rank <= 10
   const isTop50  = rank <= 50
-  const color    = isTop10 ? AMBER : isTop50 ? BLUE : '#64748b'
+  const color    = isTop10 ? AMBER : isTop50 ? BLUE : 'var(--text-muted)'
   return (
     <div style={{
       position: 'absolute', top: 12, left: 12,
@@ -160,8 +160,8 @@ function UniModal({ uni, lang, onClose }) {
       }}
     >
       <div style={{
-        background: '#060f1e',
-        border: '1px solid #1a3060',
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-primary)',
         borderRadius: 18,
         width: '100%', maxWidth: 680,
         maxHeight: '85vh',
@@ -172,21 +172,21 @@ function UniModal({ uni, lang, onClose }) {
         {/* Modal header */}
         <div style={{
           position: 'sticky', top: 0, zIndex: 1,
-          background: '#060f1e',
-          borderBottom: '1px solid #1a2f50',
+          background: 'var(--bg-secondary)',
+          borderBottom: '1px solid var(--border-primary)',
           padding: '18px 22px',
           display: 'flex', alignItems: 'flex-start', gap: 16,
         }}>
           <SchoolLogo name={uni.name} size={52} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.2, marginBottom: 4 }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 4 }}>
               {uni.name}
             </div>
-            <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 6 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}>
               {uni.university}
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: '#64748b' }}>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                 {countryFlag(uni.country)} {uni.city}
               </span>
               {uni.qs_rank && (
@@ -212,15 +212,15 @@ function UniModal({ uni, lang, onClose }) {
           <button
             onClick={onClose}
             style={{
-              background: 'none', border: '1px solid #1a2f50',
-              color: '#64748b', borderRadius: 8,
+              background: 'none', border: '1px solid var(--border-primary)',
+              color: 'var(--text-muted)', borderRadius: 8,
               width: 32, height: 32, cursor: 'pointer',
               fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
               transition: 'all 0.15s',
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#4a5568'; e.currentTarget.style.color = '#94a3b8' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = '#1a2f50'; e.currentTarget.style.color = '#64748b' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-secondary)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
           >
             ×
           </button>
@@ -238,9 +238,9 @@ function UniModal({ uni, lang, onClose }) {
                   onClick={() => setDescLang(l)}
                   style={{
                     padding: '4px 14px', borderRadius: 6,
-                    border: `1px solid ${descLang === l ? BLUE : '#1a2f50'}`,
+                    border: `1px solid ${descLang === l ? BLUE : 'var(--border-primary)'}`,
                     background: descLang === l ? `${BLUE}20` : 'transparent',
-                    color: descLang === l ? BLUE : '#64748b',
+                    color: descLang === l ? BLUE : 'var(--text-muted)',
                     cursor: 'pointer', fontSize: 12, fontWeight: 600,
                     transition: 'all 0.15s',
                   }}
@@ -250,10 +250,10 @@ function UniModal({ uni, lang, onClose }) {
               ))}
             </div>
             <p style={{
-              fontSize: 14, color: '#94a3b8', lineHeight: 1.7,
+              fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7,
               margin: 0,
-              background: '#050d1a',
-              border: '1px solid #0f1f3d',
+              background: 'var(--bg-tertiary)',
+              border: '1px solid var(--border-primary)',
               borderRadius: 10,
               padding: '14px 16px',
             }}>
@@ -266,18 +266,18 @@ function UniModal({ uni, lang, onClose }) {
 
             {/* Programs */}
             <div style={{
-              background: '#050d1a', border: '1px solid #0f1f3d',
+              background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
               borderRadius: 10, padding: '14px 16px',
             }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
                 {t ? '提供项目' : 'Programs'}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {(uni.programs || []).map(p => (
                   <div key={p} style={{
-                    fontSize: 12, color: '#8ab4f8',
+                    fontSize: 12, color: 'var(--accent-blue)',
                     padding: '4px 10px', borderRadius: 5,
-                    background: '#0f1f3d',
+                    background: 'var(--bg-hover)',
                     display: 'inline-block', width: 'fit-content',
                   }}>
                     {p}
@@ -288,12 +288,12 @@ function UniModal({ uni, lang, onClose }) {
 
             {/* Specialties + Key facts */}
             <div style={{
-              background: '#050d1a', border: '1px solid #0f1f3d',
+              background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
               borderRadius: 10, padding: '14px 16px',
               display: 'flex', flexDirection: 'column', gap: 14,
             }}>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                   {t ? '强势专业' : 'Specialties'}
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
@@ -301,7 +301,7 @@ function UniModal({ uni, lang, onClose }) {
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                   {t ? '学费参考' : 'Tuition'}
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: AMBER }}>
@@ -309,19 +309,19 @@ function UniModal({ uni, lang, onClose }) {
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                   {t ? '授课语言' : 'Language'}
                 </div>
-                <div style={{ fontSize: 13, color: '#94a3b8' }}>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                   {uni.language === 'english' ? (t ? '英语授课' : 'English') : (t ? '双语授课' : 'Bilingual')}
                 </div>
               </div>
               {uni.established && (
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                     {t ? '创建年份' : 'Established'}
                   </div>
-                  <div style={{ fontSize: 13, color: '#94a3b8' }}>{uni.established}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{uni.established}</div>
                 </div>
               )}
             </div>
@@ -330,18 +330,18 @@ function UniModal({ uni, lang, onClose }) {
           {/* Notable alumni */}
           {uni.notable_alumni && uni.notable_alumni.length > 0 && (
             <div style={{
-              background: '#050d1a', border: '1px solid #0f1f3d',
+              background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
               borderRadius: 10, padding: '14px 16px',
             }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
                 {t ? '知名校友' : 'Notable Alumni'}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {uni.notable_alumni.map(a => (
                   <span key={a} style={{
-                    fontSize: 12, color: '#94a3b8',
+                    fontSize: 12, color: 'var(--text-secondary)',
                     padding: '4px 12px', borderRadius: 20,
-                    background: '#0f1f3d', border: '1px solid #1a3060',
+                    background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
                   }}>
                     {a}
                   </span>
@@ -392,8 +392,8 @@ function UniCard({ uni, lang, onClick }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         position: 'relative',
-        background: 'var(--bg-card, #060f1e)',
-        border: `1px solid ${hovered ? BLUE + '55' : '#1a2f50'}`,
+        background: 'var(--bg-secondary)',
+        border: `1px solid ${hovered ? BLUE + '55' : 'var(--border-primary)'}`,
         borderRadius: 14,
         padding: '44px 16px 16px',
         cursor: 'pointer',
@@ -412,21 +412,21 @@ function UniCard({ uni, lang, onClick }) {
         <SchoolLogo name={uni.name} size={40} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: 14, fontWeight: 700, color: '#e2e8f0',
+            fontSize: 14, fontWeight: 700, color: 'var(--text-primary)',
             lineHeight: 1.3, marginBottom: 2,
             overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box',
             WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
           }}>
             {uni.name}
           </div>
-          <div style={{ fontSize: 11, color: '#4a5568', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {uni.university}
           </div>
         </div>
       </div>
 
       {/* Location */}
-      <div style={{ fontSize: 12, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
+      <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
         {countryFlag(uni.country)} {uni.city}
       </div>
 
@@ -443,10 +443,10 @@ function UniCard({ uni, lang, onClick }) {
       </div>
 
       {/* Footer: tuition + CTA */}
-      <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid #0f1f3d', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: '#4a5568' }}>{uni.tuition_usd}</span>
+      <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid var(--border-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{uni.tuition_usd}</span>
         <span style={{
-          fontSize: 11, fontWeight: 600, color: hovered ? BLUE : '#4a5568',
+          fontSize: 11, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
           transition: 'color 0.15s',
         }}>
           {t ? '查看详情 →' : 'Details →'}
@@ -493,7 +493,7 @@ function Hero({ lang, stats }) {
         {t ? '全球顶尖商学院指南' : 'Global Business School Guide'}
       </h1>
 
-      <p style={{ fontSize: 15, color: '#64748b', margin: '0 0 28px', lineHeight: 1.6 }}>
+      <p style={{ fontSize: 15, color: 'var(--text-muted)', margin: '0 0 28px', lineHeight: 1.6 }}>
         {t
           ? '全球顶尖大学商学院 · 深度资料 · 专业筛选 · 一站式了解'
           : 'In-depth profiles · specialty filters · everything you need to choose your school'
@@ -516,7 +516,7 @@ function Hero({ lang, stats }) {
               }}>
                 {val}
               </div>
-              <div style={{ fontSize: 12, color: '#4a5568' }}>{label}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{label}</div>
             </div>
           ))}
         </div>
@@ -531,9 +531,9 @@ function StickyFilters({ lang, filters, onChange }) {
 
   const pill = (active) => ({
     padding: '5px 14px', borderRadius: 20, border: 'none',
-    border: `1px solid ${active ? BLUE : '#1a2f50'}`,
+    border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
     background: active ? `${BLUE}22` : 'transparent',
-    color: active ? BLUE : '#64748b',
+    color: active ? BLUE : 'var(--text-muted)',
     cursor: 'pointer', fontSize: 12, fontWeight: active ? 600 : 400,
     transition: 'all 0.15s', whiteSpace: 'nowrap',
   })
@@ -544,14 +544,14 @@ function StickyFilters({ lang, filters, onChange }) {
       background: 'var(--nav-bg, rgba(2,8,19,0.9))',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      borderBottom: '1px solid #1a2f50',
+      borderBottom: '1px solid var(--border-primary)',
       padding: '12px 0',
       marginBottom: 24,
     }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
         {/* Search */}
         <div style={{ position: 'relative', flexShrink: 0 }}>
-          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#4a5568', fontSize: 13, pointerEvents: 'none' }}>
+          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 13, pointerEvents: 'none' }}>
             🔍
           </span>
           <input
@@ -559,12 +559,12 @@ function StickyFilters({ lang, filters, onChange }) {
             onChange={e => onChange({ ...filters, search: e.target.value })}
             placeholder={t ? '搜索学校...' : 'Search schools...'}
             style={{
-              background: '#060f1e', border: '1px solid #1a2f50', borderRadius: 8,
-              color: '#e2e8f0', padding: '7px 12px 7px 32px', fontSize: 13,
+              background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
+              color: 'var(--text-primary)', padding: '7px 12px 7px 32px', fontSize: 13,
               outline: 'none', width: 180,
             }}
             onFocus={e => { e.target.style.borderColor = BLUE }}
-            onBlur={e => { e.target.style.borderColor = '#1a2f50' }}
+            onBlur={e => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
         </div>
 
@@ -599,8 +599,8 @@ function StickyFilters({ lang, filters, onChange }) {
           value={filters.specialty}
           onChange={e => onChange({ ...filters, specialty: e.target.value })}
           style={{
-            background: '#060f1e', border: '1px solid #1a2f50',
-            borderRadius: 8, color: filters.specialty ? '#e2e8f0' : '#64748b',
+            background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+            borderRadius: 8, color: filters.specialty ? 'var(--text-primary)' : 'var(--text-muted)',
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
@@ -609,7 +609,7 @@ function StickyFilters({ lang, filters, onChange }) {
         </select>
 
         {/* Count */}
-        <span style={{ fontSize: 12, color: '#2a3a5c', marginLeft: 'auto' }}>
+        <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>
           {/* filled in parent */}
         </span>
       </div>
@@ -692,7 +692,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
 
         {/* Result count */}
         {!loading && (
-          <div style={{ fontSize: 12, color: '#2a3a5c', marginBottom: 16, textAlign: 'right' }}>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16, textAlign: 'right' }}>
             {t ? `显示 ${displayed.length} / ${allUnis.length} 所学校` : `Showing ${displayed.length} of ${allUnis.length} schools`}
           </div>
         )}
@@ -703,7 +703,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
             {Array.from({ length: 9 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : displayed.length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#4a5568', padding: '80px 0', fontSize: 14 }}>
+          <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '80px 0', fontSize: 14 }}>
             {t ? '没有找到匹配的学校，请调整筛选条件' : 'No schools found — try adjusting filters'}
           </div>
         ) : (
@@ -720,7 +720,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         )}
 
         {/* Footer note */}
-        <div style={{ textAlign: 'center', fontSize: 11, color: '#1a2f50', marginTop: 40, lineHeight: 1.6 }}>
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--border-primary)', marginTop: 40, lineHeight: 1.6 }}>
           {t
             ? '数据参考来源：QS World University Rankings 2024、Financial Times Business School Rankings 2024。学费为参考区间，请以各院校官方网站为准。'
             : 'Data sourced from QS World University Rankings 2024 and FT Business School Rankings 2024. Tuition figures are approximate — always verify with the official school website.'

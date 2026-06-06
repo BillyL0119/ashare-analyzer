@@ -74,10 +74,10 @@ export default function SearchBar() {
           style={{
             width: '100%',
             padding: '8px 14px',
-            background: '#060f1e',
-            border: `1px solid ${focused ? '#0ea5e9' : '#1a2f50'}`,
+            background: 'var(--bg-secondary)',
+            border: `1px solid ${focused ? '#0ea5e9' : 'var(--border-primary)'}`,
             borderRadius: 24,
-            color: '#e2e8f0',
+            color: 'var(--text-primary)',
             fontSize: 13,
             outline: 'none',
             cursor: isFull ? 'not-allowed' : 'text',
@@ -100,8 +100,8 @@ export default function SearchBar() {
             top: 'calc(100% + 6px)',
             left: 0,
             right: 0,
-            background: '#060f1e',
-            border: '1px solid #1a2f50',
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-primary)',
             borderRadius: 12,
             maxHeight: 320,
             overflowY: 'auto',
@@ -118,7 +118,7 @@ export default function SearchBar() {
                 style={{
                   padding: '10px 16px',
                   cursor: alreadyAdded ? 'default' : 'pointer',
-                  color: alreadyAdded ? '#4a5568' : '#e8eaed',
+                  color: alreadyAdded ? 'var(--text-muted)' : 'var(--text-primary)',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
@@ -128,16 +128,16 @@ export default function SearchBar() {
                   letterSpacing: '0.1px',
                 }}
                 onMouseEnter={(e) => {
-                  if (!alreadyAdded) e.currentTarget.style.background = '#0f1f3d'
+                  if (!alreadyAdded) e.currentTarget.style.background = 'var(--bg-hover)'
                 }}
                 onMouseLeave={(e) => {
                   if (!alreadyAdded) e.currentTarget.style.background = 'transparent'
                 }}
               >
                 <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 12 }}>{s.code}</span>
-                <span style={{ color: '#c9d1d9', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
-                {s.exchange && market === 'us' && <span style={{ fontSize: 10, color: '#4a5568' }}>{s.exchange}</span>}
-                {alreadyAdded && <span style={{ fontSize: 11, color: '#4a5568' }}>{t.added}</span>}
+                <span style={{ color: 'var(--text-secondary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
+                {s.exchange && market === 'us' && <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{s.exchange}</span>}
+                {alreadyAdded && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{t.added}</span>}
               </div>
             )
           })}

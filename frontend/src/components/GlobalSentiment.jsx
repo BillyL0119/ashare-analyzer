@@ -54,7 +54,7 @@ function getHoverColor(pct) {
   return pct >= 0 ? '#44ffaa' : '#ff6677'
 }
 function getLabelColor(pct) {
-  if (pct === null || pct === undefined) return '#9aa0a6'
+  if (pct === null || pct === undefined) return 'var(--text-muted)'
   if (pct >  1) return '#00ff88'
   if (pct >= 0) return '#00cc66'
   if (pct > -2) return '#ff6666'
@@ -63,10 +63,10 @@ function getLabelColor(pct) {
 
 // ── Ticker helpers ────────────────────────────────────────────────────────────
 function changePctColor(pct) {
-  if (pct === null || pct === undefined) return '#94a3b8'
+  if (pct === null || pct === undefined) return 'var(--text-secondary)'
   if (pct > 0)  return '#10b981'
   if (pct < 0)  return '#ef4444'
-  return '#94a3b8'
+  return 'var(--text-secondary)'
 }
 function changePctBg(pct) {
   if (pct === null || pct === undefined) return 'rgba(148,163,184,0.06)'
@@ -107,7 +107,7 @@ function buildGauge(score) {
           ],
         },
       },
-      pointer: { length: '62%', width: 4, itemStyle: { color: '#e8eaed' } },
+      pointer: { length: '62%', width: 4, itemStyle: { color: 'var(--text-primary)' } },
       axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
       title: { show: false },
       detail: {
@@ -127,17 +127,17 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh }) {
   const color = scoreColor(score)
   return (
     <div className="bfs-card" style={{
-      background: '#060f1e',
-      border: '1px solid #1a2f50',
+      background: 'var(--bg-secondary)',
+      border: '1px solid var(--border-primary)',
       borderRadius: 10, padding: '10px 8px 8px', textAlign: 'center',
     }}>
-      <div style={{ fontSize: 11, color: '#9aa0a6', marginBottom: 4, letterSpacing: '0.3px' }}>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, letterSpacing: '0.3px' }}>
         {title}
       </div>
       <ReactECharts option={buildGauge(score)} style={{ height: 118 }} opts={{ renderer: 'svg' }} />
       <div style={{ fontSize: 13, fontWeight: 700, color, marginTop: -4 }}>{label}</div>
       {vix != null && (
-        <div style={{ fontSize: 10, color: '#9aa0a6', marginTop: 3 }}>VIX {Number(vix).toFixed(1)}</div>
+        <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>VIX {Number(vix).toFixed(1)}</div>
       )}
     </div>
   )
@@ -176,13 +176,13 @@ function TickerBar({ indices, zh }) {
             background: changePctBg(pct), border: `1px solid ${changePctBorder(pct)}`,
             borderRadius: 8, padding: '4px 10px', textAlign: 'center',
           }}>
-            <div style={{ fontSize: 10, color: '#9aa0a6', marginBottom: 2, whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2, whiteSpace: 'nowrap' }}>
               {zh ? (idx.name_zh || idx.name) : idx.name}
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: changePctColor(pct) }}>
               {pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'}
             </div>
-            <div style={{ fontSize: 10, color: 'rgba(232,234,240,0.5)' }}>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
               {idx.close != null ? Number(idx.close).toLocaleString() : '—'}
             </div>
           </div>
@@ -239,11 +239,11 @@ function WorldMap({ indices, lang }) {
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
   const isLight = theme === 'light'
-  const oceanColor    = isLight ? '#dbeafe' : '#050d1a'
-  const sphereStroke  = isLight ? '#93c5fd' : '#1a2a4a'
-  const graticuleColor = isLight ? '#bfdbfe' : '#0f1f3d'
-  const landEmpty     = isLight ? '#e2e8f0' : '#1a2035'
-  const landBorder    = isLight ? '#94a3b8' : '#2a3a5c'
+  const oceanColor    = getComputedStyle(document.documentElement).getPropertyValue('--map-ocean').trim() || (isLight ? '#c8ddf0' : 'var(--bg-tertiary)')
+  const sphereStroke  = isLight ? 'var(--map-border)' : '#1a2a4a'
+  const graticuleColor = getComputedStyle(document.documentElement).getPropertyValue('--map-graticule').trim() || (isLight ? '#d8e8f4' : '#0f1f3d')
+  const landEmpty     = getComputedStyle(document.documentElement).getPropertyValue('--map-land').trim() || (isLight ? '#d8e4ee' : '#1a2035')
+  const landBorder    = getComputedStyle(document.documentElement).getPropertyValue('--map-border').trim() || (isLight ? '#8aa8c8' : '#2a3a5c')
 
   const countryDataMap = {}
   for (const idx of indices) {
@@ -344,7 +344,7 @@ function WorldMap({ indices, lang }) {
         ].map(({ color, label }) => (
           <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
-            <span style={{ fontSize: 8, color: 'rgba(232,234,240,0.4)', fontFamily: 'monospace' }}>{label}</span>
+            <span style={{ fontSize: 8, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{label}</span>
           </div>
         ))}
         <span style={{ fontSize: 8, color: 'rgba(138,180,248,0.3)', marginLeft: 6 }}>BestFriendStock</span>
@@ -389,9 +389,9 @@ function WorldMap({ indices, lang }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0,
                 boxShadow: `0 0 6px ${color}` }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed' }}>{name}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{name}</span>
               {shortLabel && (
-                <span style={{ fontSize: 10, color: '#4a5568', fontFamily: 'monospace' }}>{shortLabel}</span>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{shortLabel}</span>
               )}
             </div>
             <div style={{ fontSize: 11, color: 'rgba(232,234,240,0.5)', marginBottom: 4, fontFamily: 'monospace' }}>
@@ -465,12 +465,12 @@ export default function GlobalSentiment({ lang }) {
             {zh ? '全球市场情绪' : 'Global Market Sentiment'}
           </span>
           {updTime && !loading && (
-            <span style={{ fontSize: 10, color: '#4a5568' }}>
+            <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
               {zh ? `更新于 ${updTime}` : `Updated ${updTime}`}
             </span>
           )}
         </div>
-        <span className={`bfs-chevron${collapsed ? '' : ' is-open'}`} style={{ fontSize: 11, color: '#4a5568', userSelect: 'none' }}>
+        <span className={`bfs-chevron${collapsed ? '' : ' is-open'}`} style={{ fontSize: 11, color: 'var(--text-muted)', userSelect: 'none' }}>
           ▼
         </span>
       </div>
@@ -492,7 +492,7 @@ export default function GlobalSentiment({ lang }) {
                 {/* Sentiment gauges */}
                 <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8, overflowY: isMobile ? 'visible' : 'auto', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
                   {!isMobile && (
-                    <div style={{ fontSize: 11, color: '#4a5568', textAlign: 'center', letterSpacing: '0.3px' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', letterSpacing: '0.3px' }}>
                       {zh ? '情绪指数 (0-100)' : 'Sentiment Index (0-100)'}
                     </div>
                   )}
@@ -517,7 +517,7 @@ export default function GlobalSentiment({ lang }) {
                   </div>
                   {!isMobile && (
                     <div style={{
-                      fontSize: 10, lineHeight: 1.6, color: '#4a5568',
+                      fontSize: 10, lineHeight: 1.6, color: 'var(--text-muted)',
                       padding: '8px 10px',
                       background: 'rgba(255,255,255,0.02)',
                       borderRadius: 8, border: '1px solid rgba(138,180,248,0.07)',

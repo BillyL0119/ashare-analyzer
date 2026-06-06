@@ -3,6 +3,7 @@ import { create } from 'zustand'
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme)
   localStorage.setItem('bfs_theme', theme)
+  window.dispatchEvent(new Event('themechange'))
 }
 
 // Read saved preference and apply immediately (before React mounts)

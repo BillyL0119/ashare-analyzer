@@ -7,6 +7,7 @@ import { useMobile } from '../hooks/useMobile'
 import StockCard from './StockCard'
 import { useStockData } from '../hooks/useStockData'
 import { buildOverlayOption, THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 import AnalysisPanel from './AnalysisPanel'
 import MonteCarloPanel from './MonteCarloPanel'
 import FactorPanel from './FactorPanel'
@@ -34,6 +35,7 @@ function OverlaySlot({ stock, onData }) {
 }
 
 function OverlayView({ lang }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const { selectedSymbols } = useCompareStore()
   const t = T[lang]
   const [dataMap, setDataMap] = useState({})
@@ -64,7 +66,7 @@ function OverlayView({ lang }) {
       </div>
 
       {!allLoaded ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, color: '#9aa0a6' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, color: 'var(--text-muted)' }}>
           {t.loading}
         </div>
       ) : (
@@ -80,6 +82,7 @@ function OverlayView({ lang }) {
 }
 
 export default function ComparePanel({ onTabChange }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const { selectedSymbols, viewMode, setViewMode, addSymbol, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
@@ -145,13 +148,13 @@ export default function ComparePanel({ onTabChange }) {
           alignItems: 'center',
           flexWrap: isMobile ? 'nowrap' : 'wrap',
           overflowX: isMobile ? 'auto' : 'visible',
-          background: '#060f1e',
-          border: '1px solid #1a2f50',
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-primary)',
           borderRadius: 16,
           padding: '6px 10px',
         }}
       >
-        <span style={{ color: '#4a5568', fontSize: 12, letterSpacing: '0.3px', marginRight: 2 }}>{t.viewMode}</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 12, letterSpacing: '0.3px', marginRight: 2 }}>{t.viewMode}</span>
         {[
           { key: 'sideBySide', label: t.sideBySide },
           { key: 'overlay', label: t.overlay },
@@ -186,15 +189,15 @@ export default function ComparePanel({ onTabChange }) {
               whiteSpace: 'nowrap',
               flexShrink: 0,
               background: 'transparent',
-              color: viewMode === key ? '#0ea5e9' : '#94a3b8',
+              color: viewMode === key ? '#0ea5e9' : 'var(--text-secondary)',
               transition: 'all 0.2s ease',
               boxShadow: viewMode === key ? 'inset 0 -2px 0 #0ea5e9' : 'none',
             }}
             onMouseEnter={(e) => {
-              if (viewMode !== key) e.currentTarget.style.color = '#e8eaed'
+              if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
             }}
             onMouseLeave={(e) => {
-              if (viewMode !== key) e.currentTarget.style.color = '#9aa0a6'
+              if (viewMode !== key) e.currentTarget.style.color = 'var(--text-secondary)'
             }}
           >
             {label}

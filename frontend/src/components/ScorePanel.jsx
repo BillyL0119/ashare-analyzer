@@ -3,6 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import useLangStore from '../store/langStore'
 import { getStockScore } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const ACCENT = '#8ab4f8'
 const ACCENT2 = '#c084fc'
@@ -42,8 +43,8 @@ function ScoreRing({ score, grade }) {
         alignItems: 'center', justifyContent: 'center',
       }}>
         <div style={{ fontSize: 32, fontWeight: 800, color, lineHeight: 1 }}>{grade}</div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#e8eaed', marginTop: 4 }}>{score}</div>
-        <div style={{ fontSize: 10, color: '#9aa0a6' }}>/ 100</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 4 }}>{score}</div>
+        <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>/ 100</div>
       </div>
     </div>
   )
@@ -64,7 +65,7 @@ function RadarChart({ dimensions }) {
       indicator: indicators,
       shape: 'polygon',
       splitNumber: 4,
-      axisName: { color: '#9aa0a6', fontSize: 12 },
+      axisName: { color: 'var(--text-muted)', fontSize: 12 },
       splitLine: { lineStyle: { color: 'rgba(138,180,248,0.1)' } },
       splitArea: { show: false },
       axisLine: { lineStyle: { color: 'rgba(138,180,248,0.15)' } },
@@ -95,7 +96,7 @@ function DimCard({ dimKey, dim, isCN }) {
       borderRadius: 10, padding: '12px 14px',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#e8eaed' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
           {isCN ? label.zh : label.en}
         </span>
         <span style={{ fontSize: 13, fontWeight: 700, color: barColor }}>
@@ -115,10 +116,10 @@ function DimCard({ dimKey, dim, isCN }) {
           padding: '5px 0', borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
           gap: 8,
         }}>
-          <span style={{ fontSize: 11, color: '#9aa0a6', flexShrink: 0 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>
             {isCN ? (d.dim_zh || d.dim) : (d.dim || d.dim_zh)}
           </span>
-          <span style={{ fontSize: 11, color: '#4a5568', textAlign: 'right', flex: 1 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'right', flex: 1 }}>
             {isCN ? d.note_zh : d.note_en}
           </span>
           <span style={{
@@ -134,6 +135,7 @@ function DimCard({ dimKey, dim, isCN }) {
 }
 
 export default function ScorePanel({ stocks }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const lang = useLangStore((s) => s.lang)
   const isCN = lang === 'zh'
   const [dataMap, setDataMap] = useState({})
@@ -160,7 +162,7 @@ export default function ScorePanel({ stocks }) {
   }, [key]) // eslint-disable-line
 
   if (!stocks?.length) return (
-    <div style={{ textAlign: 'center', padding: 40, color: '#4a5568' }}>
+    <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
       {isCN ? '请先搜索并添加股票' : 'Please add a stock first'}
     </div>
   )
@@ -190,7 +192,7 @@ export default function ScorePanel({ stocks }) {
           </div>
         </div>
       ))}
-      <div style={{ fontSize: 11, color: '#4a5568', textAlign: 'center', marginTop: 4 }}>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 4 }}>
         {isCN ? '首次计算约需 10–20 秒' : 'First load may take 10–20s'}
       </div>
     </div>
@@ -217,8 +219,8 @@ export default function ScorePanel({ stocks }) {
           }}>
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#e8eaed' }}>{s.name || s.code}</span>
-              <span style={{ fontSize: 12, color: '#4a5568' }}>{s.code}</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{s.name || s.code}</span>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.code}</span>
               <div style={{
                 marginLeft: 'auto', padding: '2px 12px',
                 background: `${gradeColor}22`, border: `1px solid ${gradeColor}55`,
@@ -237,11 +239,11 @@ export default function ScorePanel({ stocks }) {
                 <ScoreRing score={d.total} grade={d.grade} />
               </div>
               <div style={{
-                flex: '1 1 200px', minWidth: 0, fontSize: 12, lineHeight: 1.7, color: '#9aa0a6',
+                flex: '1 1 200px', minWidth: 0, fontSize: 12, lineHeight: 1.7, color: 'var(--text-muted)',
                 background: 'rgba(255,255,255,0.02)', borderRadius: 8,
                 border: '1px solid rgba(138,180,248,0.07)', padding: '10px 14px',
               }}>
-                <div style={{ fontSize: 11, color: '#4a5568', marginBottom: 6, fontWeight: 600 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
                   {isCN ? '综合评语' : 'Summary'}
                 </div>
                 {isCN ? d.summary_zh : d.summary_en}
@@ -255,7 +257,7 @@ export default function ScorePanel({ stocks }) {
               ))}
             </div>
 
-            <div style={{ fontSize: 10, color: '#4a5568', marginTop: 10, textAlign: 'right' }}>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 10, textAlign: 'right' }}>
               {isCN ? '* 评分仅供参考，不构成投资建议' : '* Scores for reference only, not investment advice'}
             </div>
           </div>

@@ -16,7 +16,7 @@ function WatchlistItem({ stock, onRemove, onClick }) {
   }, [stock.code])
 
   const pct = quote?.pct_change ?? null
-  const pctColor = pct == null ? '#9aa0a6' : pct >= 0 ? '#26a69a' : '#ef5350'
+  const pctColor = pct == null ? 'var(--text-muted)' : pct >= 0 ? '#26a69a' : '#ef5350'
 
   return (
     <div
@@ -38,7 +38,7 @@ function WatchlistItem({ stock, onRemove, onClick }) {
           <span style={{ fontSize: 11, color: ACCENT_BLUE, fontFamily: 'monospace', flexShrink: 0 }}>
             {stock.code}
           </span>
-          <span style={{ fontSize: 12, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 12, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {stock.name}
           </span>
         </div>
@@ -59,7 +59,7 @@ function WatchlistItem({ stock, onRemove, onClick }) {
           background: 'transparent',
           border: 'none',
           cursor: 'pointer',
-          color: '#4a5568',
+          color: 'var(--text-muted)',
           fontSize: 16,
           lineHeight: 1,
           padding: '2px 4px',
@@ -68,7 +68,7 @@ function WatchlistItem({ stock, onRemove, onClick }) {
           flexShrink: 0,
         }}
         onMouseEnter={(e) => { e.currentTarget.style.color = '#ef5350' }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = '#4a5568' }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
       >
         ×
       </button>
@@ -172,7 +172,7 @@ export default function Watchlist({ lang }) {
               borderBottom: '1px solid rgba(138,180,248,0.12)',
               fontSize: 13,
               fontWeight: 700,
-              color: '#e8eaed',
+              color: 'var(--text-primary)',
               background: 'rgba(138,180,248,0.04)',
               letterSpacing: '0.2px',
             }}
@@ -183,7 +183,7 @@ export default function Watchlist({ lang }) {
           {/* List */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {list.length === 0 ? (
-              <div style={{ padding: '28px 14px', color: '#4a5568', fontSize: 12, textAlign: 'center', lineHeight: 1.6 }}>
+              <div style={{ padding: '28px 14px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', lineHeight: 1.6 }}>
                 {isCN
                   ? '暂无收藏\n在股票卡片上点击 ⭐ 添加'
                   : 'No saved stocks.\nClick ⭐ on a stock card to add.'}
@@ -207,7 +207,7 @@ export default function Watchlist({ lang }) {
                 padding: '7px 14px',
                 borderTop: '1px solid rgba(138,180,248,0.08)',
                 fontSize: 11,
-                color: '#4a5568',
+                color: 'var(--text-muted)',
                 textAlign: 'center',
               }}
             >

@@ -3,6 +3,7 @@ import { getFinancial } from '../api/stockApi'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const CARD_SECTIONS = [
   {
@@ -60,13 +61,13 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
         minWidth: 150,
       }}
     >
-      <div style={{ fontSize: 12, color: '#9aa0a6', fontWeight: 500 }}>{label}</div>
+      <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>{label}</div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-        <span style={{ fontSize: 22, fontWeight: 700, color: '#e8eaed' }}>
+        <span style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>
           {fmtVal(value)}
         </span>
-        <span style={{ fontSize: 13, color: '#9aa0a6' }}>{unit}</span>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{unit}</span>
       </div>
 
       {hasYoY && (
@@ -78,10 +79,10 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
             fontSize: 12,
           }}
         >
-          <span style={{ color: '#9aa0a6' }}>{t.financialYoY}:</span>
+          <span style={{ color: 'var(--text-muted)' }}>{t.financialYoY}:</span>
           <span
             style={{
-              color: isPositive ? '#26a69a' : isNegative ? '#ef5350' : '#9aa0a6',
+              color: isPositive ? '#26a69a' : isNegative ? '#ef5350' : 'var(--text-muted)',
               fontWeight: 600,
             }}
           >
@@ -91,7 +92,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
       )}
 
       {date && (
-        <div style={{ fontSize: 11, color: '#4a5568' }}>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
           {t.financialReportDate}: {date}
         </div>
       )}
@@ -108,7 +109,7 @@ function SectionBlock({ titleKey, metrics, data, lang }) {
         style={{
           fontSize: 13,
           fontWeight: 600,
-          color: '#9aa0a6',
+          color: 'var(--text-muted)',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           marginBottom: 10,
@@ -152,6 +153,7 @@ function SectionBlock({ titleKey, metrics, data, lang }) {
 }
 
 export default function FinancialPanel({ stocks }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
 
@@ -219,15 +221,15 @@ export default function FinancialPanel({ stocks }) {
               >
                 {stock.code}
               </span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed' }}>{stock.name}</span>
-              <span style={{ fontSize: 12, color: '#4a5568', marginLeft: 'auto' }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{stock.name}</span>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>
                 {t.financialAnalysis}
               </span>
             </div>
 
             {/* States */}
             {loading && (
-              <div style={{ color: '#9aa0a6', fontSize: 13, padding: '20px 0' }}>
+              <div style={{ color: 'var(--text-muted)', fontSize: 13, padding: '20px 0' }}>
                 {t.financialLoading}
               </div>
             )}

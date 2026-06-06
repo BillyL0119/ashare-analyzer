@@ -4,7 +4,7 @@ const TYPE_CONFIG = {
   earnings: { zh: '财报', en: 'Earnings', color: '#4a90e2', bg: 'rgba(74,144,226,0.15)' },
   dividend: { zh: '分红', en: 'Dividend', color: '#26a69a', bg: 'rgba(38,166,154,0.15)' },
   ipo:      { zh: '新股', en: 'IPO',      color: '#ffa726', bg: 'rgba(255,167,38,0.15)' },
-  holiday:  { zh: '假期', en: 'Holiday',  color: '#9aa0a6', bg: 'rgba(154,160,166,0.12)' },
+  holiday:  { zh: '假期', en: 'Holiday',  color: 'var(--text-muted)', bg: 'rgba(154,160,166,0.12)' },
 }
 
 function TypeTag({ type, lang }) {
@@ -62,7 +62,7 @@ function EventRow({ event, lang, onStockClick }) {
         </button>
       ) : null}
 
-      <span style={{ fontSize: 13, color: '#e8eaed', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {hasStock ? event.name : null}
         {hasStock ? ' · ' : null}
         {lang === 'zh' ? event.title : event.title_en}
@@ -96,7 +96,7 @@ function DateGroup({ dateStr, events, lang, onStockClick }) {
         </span>
         <span style={{
           fontSize: 11,
-          color: diff <= 1 ? '#ffa726' : '#4a5568',
+          color: diff <= 1 ? '#ffa726' : 'var(--text-muted)',
           background: diff <= 1 ? 'rgba(255,167,38,0.12)' : 'transparent',
           borderRadius: 6,
           padding: diff <= 1 ? '1px 6px' : 0,
@@ -104,7 +104,7 @@ function DateGroup({ dateStr, events, lang, onStockClick }) {
         }}>
           {dayLabel}
         </span>
-        <span style={{ fontSize: 11, color: '#4a5568', marginLeft: 'auto' }}>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
           {events.length} {lang === 'zh' ? '件' : 'events'}
         </span>
       </div>
@@ -174,7 +174,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
                   : 'rgba(255,255,255,0.05)',
                 color: active
                   ? (cfg ? cfg.color : '#8ab4f8')
-                  : '#9aa0a6',
+                  : 'var(--text-muted)',
                 transition: 'all 0.15s',
               }}
             >
@@ -189,11 +189,11 @@ export default function CalendarPanel({ lang, onStockSelect }) {
 
       {/* Content */}
       {loading ? (
-        <div style={{ color: '#9aa0a6', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
+        <div style={{ color: 'var(--text-muted)', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
           {lang === 'zh' ? '加载日历数据...' : 'Loading calendar data...'}
         </div>
       ) : dates.length === 0 ? (
-        <div style={{ color: '#9aa0a6', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
+        <div style={{ color: 'var(--text-muted)', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
           {lang === 'zh' ? '未来30天暂无事件' : 'No events in the next 30 days'}
         </div>
       ) : (
@@ -210,7 +210,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
         </div>
       )}
 
-      <div style={{ marginTop: 12, fontSize: 12, color: '#4a5568', textAlign: 'center' }}>
+      <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
         {lang === 'zh'
           ? '点击股票代码可加载到主分析页 · 数据来源：东方财富 / 巨潮资讯'
           : 'Click stock code to load analysis · Source: EastMoney / CNINFO'

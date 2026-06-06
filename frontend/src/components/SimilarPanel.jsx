@@ -4,6 +4,7 @@ import useCompareStore from '../store/compareStore'
 import { T } from '../i18n/translations'
 import { getSimilarStocks, getSimilarCross, getUSSimilarStocks } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -35,7 +36,7 @@ function Sparkline({ data, width = 80, height = 32 }) {
 
 function CorrBar({ value }) {
   const pct = Math.round(((value + 1) / 2) * 100)
-  const color = value >= 0.8 ? '#26a69a' : value >= 0.5 ? '#f0e68c' : '#9aa0a6'
+  const color = value >= 0.8 ? '#26a69a' : value >= 0.5 ? '#f0e68c' : 'var(--text-muted)'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       <div style={{ width: 60, height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
@@ -103,7 +104,7 @@ function ModeToggle({ mode, setMode, t }) {
             background: mode === key
               ? 'linear-gradient(135deg, #8ab4f8, #c084fc)'
               : 'transparent',
-            color: mode === key ? '#fff' : '#9aa0a6',
+            color: mode === key ? '#fff' : 'var(--text-muted)',
             transition: 'all 0.2s ease',
             whiteSpace: 'nowrap',
           }}
@@ -187,7 +188,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
         >
           {stock.code}
         </span>
-        <span style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed' }}>{stock.name}</span>
+        <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{stock.name}</span>
 
         {/* Industry tag (same mode) */}
         {!isCross && data?.industry && (
@@ -195,7 +196,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
             style={{
               marginLeft: 'auto',
               fontSize: 12,
-              color: '#9aa0a6',
+              color: 'var(--text-muted)',
               background: 'rgba(255,255,255,0.06)',
               borderRadius: 4,
               padding: '2px 8px',
@@ -211,7 +212,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
             style={{
               marginLeft: 'auto',
               fontSize: 11,
-              color: '#9aa0a6',
+              color: 'var(--text-muted)',
             }}
           >
             {t.similarScanned(data.scanned_industries, data.results.length)}
@@ -220,7 +221,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       </div>
 
       {loading && (
-        <div style={{ color: '#9aa0a6', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>
+        <div style={{ color: 'var(--text-muted)', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>
           {t.similarLoading}
         </div>
       )}
@@ -258,7 +259,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     borderRadius: 8,
                   }}
                 >
-                  <span style={{ fontSize: 11, color: '#4a5568', fontWeight: 700, minWidth: 18 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, minWidth: 18 }}>
                     {idx + 1}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -269,7 +270,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                       >
                         {item.code}
                       </span>
-                      <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: 13, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {item.name}
                       </span>
                       {isCross && item.industry && (
@@ -293,7 +294,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                   padding: '4px 8px',
                   marginBottom: 4,
                   fontSize: 11,
-                  color: '#4a5568',
+                  color: 'var(--text-muted)',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
@@ -323,7 +324,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                   onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                 >
-                  <span style={{ fontSize: 12, color: '#4a5568', fontWeight: 700 }}>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 700 }}>
                     {idx + 1}
                   </span>
                   <span
@@ -337,7 +338,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                       <IndustryPill label={item.industry} type={item.industry_type} />
                     </span>
                   )}
-                  <span style={{ fontSize: 13, color: '#e8eaed', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 13, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.name}
                   </span>
                   <CorrBar value={item.correlation} />
@@ -348,7 +349,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
           )}
 
           {data.results.length === 0 && (
-            <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', padding: '16px 0' }}>
               {t.similarNoResults}
             </div>
           )}
@@ -361,6 +362,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
 // ── SimilarPanel (outer) ──────────────────────────────────────────────────────
 
 export default function SimilarPanel({ stocks, onOpenDetail }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const lang = useLangStore((s) => s.lang)
   const market = useCompareStore((s) => s.market)
   const t = T[lang]
@@ -369,7 +371,7 @@ export default function SimilarPanel({ stocks, onOpenDetail }) {
 
   if (!stocks || stocks.length === 0) {
     return (
-      <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '40px 0' }}>
+      <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', padding: '40px 0' }}>
         {t.similarNoResults}
       </div>
     )
@@ -381,7 +383,7 @@ export default function SimilarPanel({ stocks, onOpenDetail }) {
       {market !== 'us' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <ModeToggle mode={mode} setMode={setMode} t={t} />
-          <span style={{ fontSize: 12, color: '#4a5568' }}>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
             {mode === 'same' ? t.similarSame : t.similarCross}
           </span>
         </div>

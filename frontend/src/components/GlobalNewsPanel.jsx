@@ -64,7 +64,7 @@ function Pill({ active, onClick, children }) {
         padding: '4px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? 'rgba(14,165,233,0.18)' : 'rgba(255,255,255,0.04)',
-        color: active ? '#0ea5e9' : '#94a3b8',
+        color: active ? '#0ea5e9' : 'var(--text-secondary)',
         transition: 'all 0.18s',
       }}
     >
@@ -103,9 +103,9 @@ function NewsCard({ item, lang }) {
           <SourceBadge name={item.source} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.source}</span>
-              <span style={{ fontSize: 11, color: '#4a5568' }}>·</span>
-              <span style={{ fontSize: 11, color: '#4a5568' }}>{relativeTime(item.published_at, lang)}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{item.source}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, lang)}</span>
               <span style={{
                 fontSize: 10, padding: '1px 6px', borderRadius: 8,
                 background: item.lang === 'cn' ? 'rgba(232,50,30,0.12)' : 'rgba(14,100,233,0.12)',
@@ -116,7 +116,7 @@ function NewsCard({ item, lang }) {
               </span>
             </div>
             <div style={{
-              fontSize: 13, fontWeight: 500, color: '#e2e8f0',
+              fontSize: 13, fontWeight: 500, color: 'var(--text-primary)',
               lineHeight: 1.45, marginBottom: item.summary ? 5 : 0,
               display: '-webkit-box', WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical', overflow: 'hidden',
@@ -125,7 +125,7 @@ function NewsCard({ item, lang }) {
             </div>
             {item.summary && (
               <div style={{
-                fontSize: 12, color: '#64748b', lineHeight: 1.4,
+                fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4,
                 display: '-webkit-box', WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical', overflow: 'hidden',
               }}>
@@ -187,16 +187,16 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
     <div style={{ paddingTop: 8 }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
           {zh ? '全球财经新闻' : 'Global Financial News'}
           {items.length > 0 && (
-            <span style={{ fontSize: 12, fontWeight: 400, color: '#64748b', marginLeft: 8 }}>
+            <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--text-muted)', marginLeft: 8 }}>
               {items.length} {zh ? '条' : 'articles'}
             </span>
           )}
         </div>
         {updatedAt && (
-          <div style={{ fontSize: 11, color: '#4a5568' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
             {zh ? '更新于' : 'Updated'} {relativeTime(updatedAt, lang)}
             <button
               onClick={() => fetchNews(filters)}
@@ -239,7 +239,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onChange={e => applyFilter({ ...filters, source: e.target.value })}
               style={{
                 background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 20, padding: '3px 10px', fontSize: 12, color: '#94a3b8', cursor: 'pointer',
+                borderRadius: 20, padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
               }}
             >
               <option value="all">{zh ? '全部来源' : 'All Sources'}</option>
@@ -261,7 +261,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: '#4a5568', fontSize: 14 }}>
+        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: 14 }}>
           {zh ? '暂无新闻数据，请稍后再试' : 'No news available, please try again later'}
         </div>
       ) : (
@@ -275,7 +275,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               style={{
                 display: 'block', width: '100%', padding: '10px 0',
                 background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 10, color: '#94a3b8', fontSize: 13, cursor: 'pointer',
+                borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
                 marginTop: 4,
               }}
             >

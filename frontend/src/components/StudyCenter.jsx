@@ -3,10 +3,10 @@ import ReactECharts from 'echarts-for-react'
 import KLineLesson from './KLineLesson'
 import { useMobile } from '../hooks/useMobile'
 
-const SIDEBAR_BG  = '#0d1120'
-const CONTENT_BG  = '#0b0f1a'
+const SIDEBAR_BG  = 'var(--bg-tertiary)'
+const CONTENT_BG  = 'var(--bg-primary)'
 const BDR         = 'rgba(138,180,248,0.10)'
-const MUTED       = '#9aa0a6'
+const MUTED       = 'var(--text-muted)'
 const GREEN       = '#34d399'
 const PROGRESS_BG = 'rgba(255,255,255,0.06)'
 
@@ -56,7 +56,7 @@ function TopicRow({ topic, active, read, accentColor, zh, onClick }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
           fontSize: 12, lineHeight: 1.35,
-          color: active ? '#e8eaed' : read ? '#c9d1d9' : MUTED,
+          color: active ? 'var(--text-primary)' : read ? 'var(--text-secondary)' : MUTED,
           fontWeight: active ? 600 : 400,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>
@@ -140,12 +140,12 @@ function SectionBlock({ section, index, total, accentColor, zh }) {
     <div style={{ marginBottom: index < total - 1 ? 32 : 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <div style={{ width: 3, height: 22, background: accentColor, borderRadius: 2, flexShrink: 0 }} />
-        <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: '#e8eaed' }}>
+        <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
           {heading}
         </h3>
       </div>
 
-      <p style={{ fontSize: 14, lineHeight: 1.85, color: '#c9d1d9', margin: '0 0 14px', paddingLeft: 15 }}>
+      <p style={{ fontSize: 14, lineHeight: 1.85, color: 'var(--text-secondary)', margin: '0 0 14px', paddingLeft: 15 }}>
         {body}
       </p>
 
@@ -271,10 +271,10 @@ function AITutor({ topicId, exam, zh, accentColor }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
         <span style={{ fontSize: 20 }}>🤖</span>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#e8eaed' }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
             {zh ? 'AI 导师' : 'Ask AI Tutor'}
           </div>
-          <div style={{ fontSize: 11, color: '#9aa0a6', marginTop: 1 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
             {zh ? '对这个课题有任何问题，都可以问我' : 'Ask anything about this topic'}
           </div>
         </div>
@@ -293,7 +293,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
               borderRadius: '12px 12px 4px 12px',
               padding: '8px 14px',
               maxWidth: '75%',
-              fontSize: 13, color: '#e8eaed', lineHeight: 1.6,
+              fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.6,
             }}>
               {item.q}
             </div>
@@ -324,7 +324,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
           borderRadius: '0 10px 10px 0',
           padding: '12px 16px',
           marginBottom: 16,
-          fontSize: 13, color: '#9aa0a6', fontStyle: 'italic',
+          fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic',
         }}>
           {zh ? 'AI 思考中...' : 'AI is thinking...'}
           <span style={{ marginLeft: 6, opacity: 0.6 }}>●●●</span>
@@ -344,7 +344,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
             background: 'rgba(255,255,255,0.04)',
             border: `1px solid rgba(${hexToRgb(accentColor)},0.25)`,
             borderRadius: 10,
-            color: '#e8eaed',
+            color: 'var(--text-primary)',
             padding: '10px 14px',
             fontSize: 13,
             resize: 'none',
@@ -364,7 +364,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
             border: 'none',
             borderRadius: 10,
             padding: '0 18px',
-            color: input.trim() && !loading ? '#fff' : '#9aa0a6',
+            color: input.trim() && !loading ? '#fff' : 'var(--text-muted)',
             fontSize: 18,
             cursor: input.trim() && !loading ? 'pointer' : 'default',
             transition: 'all 0.2s',
@@ -375,7 +375,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
         </button>
       </div>
       {history.length > 0 && (
-        <div style={{ fontSize: 11, color: '#4a5568', marginTop: 6, textAlign: 'right' }}>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
           {zh ? `显示最近 ${history.length} 条问答` : `Showing last ${history.length} Q&A`}
         </div>
       )}
@@ -420,7 +420,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
         trigger: 'axis',
         backgroundColor: '#1a2035',
         borderColor: 'rgba(138,180,248,0.2)',
-        textStyle: { color: '#e8eaed', fontSize: 12 },
+        textStyle: { color: 'var(--text-primary)', fontSize: 12 },
         formatter: (params) => {
           let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
           params.forEach((p) => {
@@ -434,22 +434,22 @@ function EventPriceChart({ eventId, tickers, zh }) {
       },
       legend: {
         data: tickers.map((t) => t.label),
-        textStyle: { color: '#9aa0a6', fontSize: 12 },
+        textStyle: { color: 'var(--text-muted)', fontSize: 12 },
         top: 8,
       },
       grid: { left: 48, right: 24, top: 40, bottom: 36 },
       xAxis: {
         type: 'time',
         axisLine: { lineStyle: { color: 'rgba(138,180,248,0.15)' } },
-        axisLabel: { color: '#9aa0a6', fontSize: 10 },
+        axisLabel: { color: 'var(--text-muted)', fontSize: 10 },
         splitLine: { show: false },
       },
       yAxis: {
         type: 'value',
         name: zh ? '相对指数 (=100)' : 'Normalised (=100)',
-        nameTextStyle: { color: '#9aa0a6', fontSize: 10 },
+        nameTextStyle: { color: 'var(--text-muted)', fontSize: 10 },
         axisLine: { show: false },
-        axisLabel: { color: '#9aa0a6', fontSize: 10 },
+        axisLabel: { color: 'var(--text-muted)', fontSize: 10 },
         splitLine: { lineStyle: { color: 'rgba(138,180,248,0.07)' } },
       },
       series,
@@ -457,14 +457,14 @@ function EventPriceChart({ eventId, tickers, zh }) {
   }, [prices, tickers, zh])
 
   if (loading) return (
-    <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6', fontSize: 13 }}>
+    <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
       {zh ? '加载价格数据...' : 'Loading price data...'}
     </div>
   )
   if (!prices) return null
   const allEmpty = tickers.every((t) => !(prices[t.symbol]?.length))
   if (allEmpty) return (
-    <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6', fontSize: 13 }}>
+    <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
       {zh ? '暂无价格数据' : 'Price data unavailable'}
     </div>
   )
@@ -558,7 +558,7 @@ function EventTimeline({ zh }) {
                   <div style={{ fontSize: 11, color: isActive ? ACCENT : 'rgba(6,182,212,0.5)', fontWeight: 700, marginBottom: 2 }}>
                     {ev.year}
                   </div>
-                  <div style={{ fontSize: 12, color: isActive ? '#e8eaed' : MUTED, lineHeight: 1.4, fontWeight: isActive ? 600 : 400 }}>
+                  <div style={{ fontSize: 12, color: isActive ? 'var(--text-primary)' : MUTED, lineHeight: 1.4, fontWeight: isActive ? 600 : 400 }}>
                     {zh ? ev.title : ev.title_en}
                   </div>
                   <div style={{ fontSize: 10, color: 'rgba(154,160,166,0.45)', marginTop: 2 }}>
@@ -591,10 +591,10 @@ function EventTimeline({ zh }) {
                   {active.date_range}
                 </span>
               </div>
-              <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 800, color: '#e8eaed' }}>
+              <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
                 {zh ? active.title : active.title_en}
               </h1>
-              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.8, color: '#c9d1d9' }}>
+              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.8, color: 'var(--text-secondary)' }}>
                 {zh ? active.description : active.description_en}
               </p>
             </div>
@@ -718,7 +718,7 @@ export default function StudyCenter({ lang }) {
     <div style={{
       display: 'flex', flexDirection: 'column',
       height: 'calc(100vh - 60px)',
-      background: '#080c14', borderRadius: 12,
+      background: 'var(--bg-primary)', borderRadius: 12,
       border: `1px solid ${BDR}`, overflow: 'hidden',
     }}>
 
@@ -846,7 +846,7 @@ export default function StudyCenter({ lang }) {
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '10px 14px', background: SIDEBAR_BG,
                 border: 'none', borderBottom: `1px solid ${BDR}`,
-                color: '#9aa0a6', fontSize: 13, cursor: 'pointer',
+                color: 'var(--text-muted)', fontSize: 13, cursor: 'pointer',
                 flexShrink: 0,
               }}
             >
@@ -880,7 +880,7 @@ export default function StudyCenter({ lang }) {
               {/* Topic header */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                  <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#e8eaed', lineHeight: 1.2 }}>
+                  <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>
                     {(!zh && topicData.title_en) ? topicData.title_en : topicData.title}
                   </h1>
                   {isRead && (

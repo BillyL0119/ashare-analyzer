@@ -4,11 +4,13 @@ import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { getRadarScore } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 
 const COLORS = ['#8ab4f8', '#c084fc', '#26a69a', '#ffa726']
 
 export default function RadarPanel({ stocks }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
@@ -47,7 +49,7 @@ export default function RadarPanel({ stocks }) {
 
   if (!stocks || stocks.length === 0) {
     return (
-      <div style={{ color: '#9aa0a6', textAlign: 'center', padding: '40px 0', fontSize: 13 }}>
+      <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px 0', fontSize: 13 }}>
         {t.radarNoStocks}
       </div>
     )
@@ -76,7 +78,7 @@ export default function RadarPanel({ stocks }) {
       radius: isMobile ? '52%' : '62%',
       splitNumber: 4,
       axisName: {
-        color: '#9aa0a6',
+        color: 'var(--text-muted)',
         fontSize: isMobile ? 10 : 11,
       },
       splitLine: {
@@ -108,7 +110,7 @@ export default function RadarPanel({ stocks }) {
       trigger: 'item',
       backgroundColor: 'rgba(10,15,26,0.95)',
       borderColor: 'rgba(138,180,248,0.2)',
-      textStyle: { color: '#e8eaed', fontSize: 12 },
+      textStyle: { color: 'var(--text-primary)', fontSize: 12 },
       formatter: (params) => {
         const vals = params.value
         return [
@@ -139,7 +141,7 @@ export default function RadarPanel({ stocks }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#9aa0a6',
+            color: 'var(--text-muted)',
             fontSize: 13,
           }}
         >
@@ -167,7 +169,7 @@ export default function RadarPanel({ stocks }) {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                 <thead>
                   <tr>
-                    <th style={{ textAlign: 'left', color: '#4a5568', fontWeight: 600, padding: '4px 8px', whiteSpace: 'nowrap' }}>
+                    <th style={{ textAlign: 'left', color: 'var(--text-muted)', fontWeight: 600, padding: '4px 8px', whiteSpace: 'nowrap' }}>
                       {isCN ? '维度' : 'Dimension'}
                     </th>
                     {validStocks.map((s, i) => (
@@ -180,7 +182,7 @@ export default function RadarPanel({ stocks }) {
                 <tbody>
                   {indicators.map((ind) => (
                     <tr key={ind.key}>
-                      <td style={{ color: '#9aa0a6', padding: '5px 8px', whiteSpace: 'nowrap' }}>{ind.name}</td>
+                      <td style={{ color: 'var(--text-muted)', padding: '5px 8px', whiteSpace: 'nowrap' }}>{ind.name}</td>
                       {validStocks.map((s) => {
                         const score = dataMap[s.code]?.scores?.[ind.key]
                         const color = score >= 70 ? '#26a69a' : score >= 40 ? '#e8c34a' : '#ef5350'

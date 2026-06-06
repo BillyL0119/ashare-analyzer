@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import ReactECharts from 'echarts-for-react'
 
 const BDR   = 'rgba(138,180,248,0.12)'
-const MUTED = '#9aa0a6'
+const MUTED = 'var(--text-muted)'
 
 const FEATURE_LABELS = {
   similar:       { zh: '相似走势', en: 'Similar Trend' },
@@ -23,7 +23,7 @@ const FEATURE_LABELS = {
 function BigStatCard({ icon, label, value, sub, gradient, exportMode }) {
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.03)',
+      background: 'var(--bg-tertiary)',
       border: `1px solid ${BDR}`,
       borderRadius: 16,
       padding: exportMode ? '16px 20px' : '20px 24px',
@@ -82,7 +82,7 @@ export default function StatsDisplay({ lang, onClose }) {
       trigger: 'axis',
       backgroundColor: 'rgba(10,15,26,0.95)',
       borderColor: BDR,
-      textStyle: { color: '#e8eaed', fontSize: 12 },
+      textStyle: { color: 'var(--text-primary)', fontSize: 12 },
       formatter: (params) => {
         const d = params[0]
         return `${d.axisValue}<br/>${zh ? '访问' : 'Visits'}: <b>${d.data}</b>`
@@ -107,8 +107,8 @@ export default function StatsDisplay({ lang, onClose }) {
       smooth: true,
       symbol: 'circle',
       symbolSize: 4,
-      lineStyle: { width: 2.5, color: '#8ab4f8' },
-      itemStyle: { color: '#8ab4f8' },
+      lineStyle: { width: 2.5, color: 'var(--accent-blue)' },
+      itemStyle: { color: 'var(--accent-blue)' },
       areaStyle: {
         color: {
           type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
@@ -136,7 +136,7 @@ export default function StatsDisplay({ lang, onClose }) {
         trigger: 'item',
         backgroundColor: 'rgba(10,15,26,0.95)',
         borderColor: BDR,
-        textStyle: { color: '#e8eaed', fontSize: 12 },
+        textStyle: { color: 'var(--text-primary)', fontSize: 12 },
         formatter: (p) => `${p.name}: <b>${p.value}</b> (${p.percent}%)`,
       },
       legend: {
@@ -150,7 +150,7 @@ export default function StatsDisplay({ lang, onClose }) {
         center: ['38%', '50%'],
         avoidLabelOverlap: false,
         label: { show: false },
-        emphasis: { label: { show: true, fontSize: 12, fontWeight: 700, color: '#e8eaed' } },
+        emphasis: { label: { show: true, fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' } },
         data: entries.map(([key, val], i) => ({
           name: (FEATURE_LABELS[key]?.[lang] ?? key),
           value: val,
@@ -163,7 +163,7 @@ export default function StatsDisplay({ lang, onClose }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: exportMode ? '#080c14' : 'rgba(0,0,0,0.8)',
+      background: exportMode ? 'var(--bg-primary)' : 'rgba(0,0,0,0.8)',
       backdropFilter: exportMode ? 'none' : 'blur(6px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 16,
@@ -173,7 +173,7 @@ export default function StatsDisplay({ lang, onClose }) {
       <div
         ref={containerRef}
         style={{
-          background: '#080c14',
+          background: 'var(--bg-primary)',
           border: '1px solid rgba(138,180,248,0.18)',
           borderRadius: 20,
           width: '100%',
@@ -225,7 +225,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {!exportMode && (
               <button onClick={onClose} style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                color: 'rgba(232,234,240,0.4)', fontSize: 20, padding: '2px 8px',
+                color: 'var(--text-muted)', fontSize: 20, padding: '2px 8px',
               }}>✕</button>
             )}
           </div>
@@ -279,10 +279,10 @@ export default function StatsDisplay({ lang, onClose }) {
 
             {/* ── 30-day chart ── */}
             <div style={{
-              background: 'rgba(255,255,255,0.02)', border: `1px solid ${BDR}`,
+              background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
               borderRadius: 12, padding: '16px 12px', marginBottom: 16,
             }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#8ab4f8', marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-blue)', marginBottom: 10 }}>
                 {zh ? '过去30天访问量' : 'Visitor Trend — Last 30 Days'}
               </div>
               {lineOption
@@ -294,7 +294,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {/* ── Bottom two columns ── */}
             <div style={{ display: 'grid', gridTemplateColumns: pieOption ? '1fr 1fr' : '1fr', gap: 16, marginBottom: 16 }}>
               {/* Top 5 stocks */}
-              <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px' }}>
+              <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px' }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#fbbf24', marginBottom: 12 }}>
                   {zh ? '最热门股票 TOP 5' : 'Top 5 Searched Stocks'}
                 </div>
@@ -309,9 +309,9 @@ export default function StatsDisplay({ lang, onClose }) {
                           <span style={{ fontSize: 12, color: i < 3 ? '#fbbf24' : MUTED, fontWeight: 700, minWidth: 18, textAlign: 'right' }}>
                             {i + 1}
                           </span>
-                          <span style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace', minWidth: 52 }}>{s.symbol}</span>
+                          <span style={{ fontSize: 12, color: 'var(--accent-blue)', fontFamily: 'monospace', minWidth: 52 }}>{s.symbol}</span>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 12, color: '#e8eaed', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontSize: 12, color: 'var(--text-primary)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {s.name}
                             </div>
                             <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
@@ -330,8 +330,8 @@ export default function StatsDisplay({ lang, onClose }) {
 
               {/* Feature usage pie */}
               {pieOption && (
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 12px' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#c084fc', marginBottom: 10 }}>
+                <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 12px' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-purple)', marginBottom: 10 }}>
                     {zh ? '功能使用分布' : 'Feature Usage'}
                   </div>
                   <ReactECharts option={pieOption} style={{ height: 180 }} opts={{ renderer: 'canvas' }} />

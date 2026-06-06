@@ -5,6 +5,7 @@ import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const COLORS = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
 
@@ -197,7 +198,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 
   if (loading) {
     return (
-      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa0a6' }}>
+      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
         {t.loading}
       </div>
     )
@@ -205,14 +206,14 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 
   if (!result) {
     return (
-      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4a5568', fontSize: 13 }}>
+      <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
         {t.loading}
       </div>
     )
   }
 
   const statStyle = { textAlign: 'center', flex: 1 }
-  const statLabel = { color: '#9aa0a6', fontSize: 11, marginBottom: 4 }
+  const statLabel = { color: 'var(--text-muted)', fontSize: 11, marginBottom: 4 }
   const statVal = (color) => ({ color, fontWeight: 700, fontSize: 18 })
 
   return (
@@ -220,8 +221,8 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
-        <span style={{ color: '#9aa0a6', fontSize: 13 }}>{stock.code}</span>
-        <span style={{ marginLeft: 'auto', color: '#4a5568', fontSize: 12 }}>
+        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
+        <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
           {t.mcCurrentPrice}: {result.lastPrice.toFixed(2)} &nbsp;|&nbsp;
           {lang === 'en' ? 'Ann. Vol' : '年化波动率'}: {result.sigma}%
         </span>
@@ -264,6 +265,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 }
 
 export default function MonteCarloPanel({ stocks }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const [nSims, setNSims] = useState(500)
@@ -304,13 +306,13 @@ export default function MonteCarloPanel({ stocks }) {
         flexWrap: 'wrap',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: '#9aa0a6', fontSize: 13 }}>{t.mcSims}:</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.mcSims}:</span>
           {[100, 500, 1000].map((n) => (
             <button key={n} style={btnStyle(nSims === n)} onClick={() => setNSims(n)}>{n}</button>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: '#9aa0a6', fontSize: 13 }}>{t.mcDays}:</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.mcDays}:</span>
           {[60, 125, 252].map((n) => (
             <button key={n} style={btnStyle(nDays === n)} onClick={() => setNDays(n)}>{n}d</button>
           ))}
@@ -326,7 +328,7 @@ export default function MonteCarloPanel({ stocks }) {
             fontSize: 13,
             fontWeight: 600,
             background: running ? 'rgba(255,255,255,0.06)' : 'linear-gradient(135deg, #8ab4f8, #c084fc)',
-            color: running ? '#9aa0a6' : '#fff',
+            color: running ? 'var(--text-muted)' : '#fff',
             transition: 'all 0.15s',
           }}
         >

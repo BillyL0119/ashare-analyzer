@@ -49,7 +49,7 @@ function Bubble({ msg, accent }) {
         borderRadius: isUser ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
         padding: '9px 13px',
         fontSize: 13,
-        color: '#e8eaed',
+        color: 'var(--text-primary)',
         lineHeight: 1.7,
         whiteSpace: 'pre-wrap',
         wordBreak: 'break-word',
@@ -205,7 +205,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                 }}>
                   {zh ? 'AI 老师' : 'AI Tutor'}
                 </div>
-                <div style={{ fontSize: 10, color: '#4a5568' }}>Gemini · {zh ? '免费' : 'Free'}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Gemini · {zh ? '免费' : 'Free'}</div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
@@ -214,14 +214,14 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                 title={zh ? '清空对话' : 'Clear chat'}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: 14, color: '#4a5568', padding: '2px 4px', borderRadius: 4,
+                  fontSize: 14, color: 'var(--text-muted)', padding: '2px 4px', borderRadius: 4,
                 }}
               >🗑</button>
               <button
                 onClick={onClose}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: 16, color: '#4a5568', padding: '2px 4px', borderRadius: 4,
+                  fontSize: 16, color: 'var(--text-muted)', padding: '2px 4px', borderRadius: 4,
                 }}
               >✕</button>
             </div>
@@ -276,7 +276,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               style={{
                 flex: 1, background: 'rgba(255,255,255,0.05)',
                 border: `1px solid rgba(138,180,248,0.2)`, borderRadius: 10,
-                color: '#e8eaed', padding: '8px 11px', fontSize: 13,
+                color: 'var(--text-primary)', padding: '8px 11px', fontSize: 13,
                 resize: 'none', outline: 'none', lineHeight: 1.55,
                 fontFamily: 'inherit',
               }}
@@ -289,7 +289,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
                   : 'rgba(255,255,255,0.06)',
                 border: 'none', borderRadius: 10, padding: '0 14px',
-                color: input.trim() && !busy ? '#fff' : '#4a5568',
+                color: input.trim() && !busy ? '#fff' : 'var(--text-muted)',
                 fontSize: 18, cursor: input.trim() && !busy ? 'pointer' : 'default',
                 transition: 'all 0.2s', flexShrink: 0,
               }}

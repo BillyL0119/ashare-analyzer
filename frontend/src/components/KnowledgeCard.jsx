@@ -33,18 +33,18 @@ function CardPanel({ item, lang }) {
         }}>
           {item.category}
         </span>
-        <span style={{ fontSize: 11, color: '#9aa0a6' }}>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
           {'⭐'.repeat(Number(item.difficulty) || 1)}
         </span>
       </div>
 
       {/* Topic */}
-      <div style={{ fontSize: 14, fontWeight: 700, color: '#e8eaed', marginBottom: 6 }}>
+      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
         {topic}
       </div>
 
       {/* Content */}
-      <div style={{ fontSize: 12, color: '#c0c6d0', lineHeight: 1.65, marginBottom: 8 }}>
+      <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 8 }}>
         {content}
       </div>
 
@@ -58,7 +58,7 @@ function CardPanel({ item, lang }) {
           <div style={{ fontSize: 10, color: '#8ab4f8', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Formula
           </div>
-          <div style={{ fontSize: 11, color: '#c0c6d0', fontFamily: 'monospace', lineHeight: 1.5 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'monospace', lineHeight: 1.5 }}>
             {item.key_formula}
           </div>
         </div>
@@ -70,7 +70,7 @@ function CardPanel({ item, lang }) {
           <div style={{ fontSize: 10, color: '#26a69a', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Example
           </div>
-          <div style={{ fontSize: 11, color: '#9aa0a6', lineHeight: 1.55 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.55 }}>
             {item.example}
           </div>
         </div>
@@ -81,7 +81,7 @@ function CardPanel({ item, lang }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
           {item.tags.map((tag) => (
             <span key={tag} style={{
-              fontSize: 10, color: '#9aa0a6',
+              fontSize: 10, color: 'var(--text-muted)',
               background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: 5, padding: '2px 6px',
@@ -123,8 +123,8 @@ export default function KnowledgeCard({ lang, open, onClose }) {
     <div style={{
       position: 'fixed', top: 56, right: 16, zIndex: 900,
       width: 320,
-      background: 'rgba(6, 15, 30, 0.98)',
-      border: '1px solid #1a2f50',
+      background: 'var(--bg-secondary)',
+      border: '1px solid var(--border-primary)',
       borderRadius: 14,
       boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px #2a4a7f',
       overflow: 'hidden',
@@ -132,15 +132,15 @@ export default function KnowledgeCard({ lang, open, onClose }) {
       {/* Header */}
       <div style={{
         background: 'linear-gradient(135deg, rgba(14,165,233,0.12), rgba(139,92,246,0.12))',
-        borderBottom: '1px solid #1a2f50',
+        borderBottom: '1px solid var(--border-primary)',
         padding: '10px 14px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
           💡 {t.knowledgeBtn}
         </span>
         <button onClick={onClose} style={{
-          background: 'none', border: 'none', color: '#94a3b8',
+          background: 'none', border: 'none', color: 'var(--text-muted)',
           cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 2px',
         }}>
           {t.knowledgeClose}
@@ -148,7 +148,7 @@ export default function KnowledgeCard({ lang, open, onClose }) {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #1a2f50' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border-primary)' }}>
         {['economics', 'finance'].map((key) => (
           <button
             key={key}
@@ -157,7 +157,7 @@ export default function KnowledgeCard({ lang, open, onClose }) {
               flex: 1, padding: '7px 0', fontSize: 12, fontWeight: tab === key ? 700 : 400,
               border: 'none', cursor: 'pointer',
               background: tab === key ? 'rgba(14,165,233,0.08)' : 'transparent',
-              color: tab === key ? '#0ea5e9' : '#94a3b8',
+              color: tab === key ? '#0ea5e9' : 'var(--text-muted)',
               borderBottom: tab === key ? '2px solid #0ea5e9' : '2px solid transparent',
               transition: 'all 0.15s',
             }}
@@ -169,7 +169,7 @@ export default function KnowledgeCard({ lang, open, onClose }) {
 
       <div style={{ padding: '12px 14px 14px' }}>
         {loading && (
-          <div style={{ color: '#94a3b8', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
             ...
           </div>
         )}

@@ -4,6 +4,7 @@ import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const COLORS = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
 
@@ -11,7 +12,7 @@ function GaugeBar({ value, label, color }) {
   const pct = Math.round(((value + 1) / 2) * 100)
   return (
     <div style={{ marginBottom: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#9aa0a6', marginBottom: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
         <span>{label}</span>
         <span style={{ color, fontWeight: 600 }}>{value.toFixed(2)}</span>
       </div>
@@ -25,7 +26,7 @@ function GaugeBar({ value, label, color }) {
 function StatRow({ label, v1, v2, highlight = false }) {
   return (
     <tr style={{ borderBottom: `1px solid ${THEME.border}` }}>
-      <td style={{ padding: '7px 10px', color: '#9aa0a6', fontSize: 12, whiteSpace: 'nowrap' }}>{label}</td>
+      <td style={{ padding: '7px 10px', color: 'var(--text-muted)', fontSize: 12, whiteSpace: 'nowrap' }}>{label}</td>
       <td style={{
         padding: '7px 10px', textAlign: 'right', fontSize: 12, fontWeight: highlight ? 600 : 400,
         color: highlight ? (parseFloat(v1) > parseFloat(v2) ? '#ef5350' : parseFloat(v1) < parseFloat(v2) ? '#26a69a' : THEME.text) : THEME.text,
@@ -52,7 +53,7 @@ function InterpretationBlock({ text }) {
         const renderBold = (str) =>
           str.split(/(\*\*[^*]+\*\*)/).map((part, j) =>
             part.startsWith('**') && part.endsWith('**')
-              ? <strong key={j} style={{ color: '#e8eaed' }}>{part.slice(2, -2)}</strong>
+              ? <strong key={j} style={{ color: 'var(--text-primary)' }}>{part.slice(2, -2)}</strong>
               : part
           )
         return (
@@ -67,6 +68,7 @@ function InterpretationBlock({ text }) {
 }
 
 export default function AnalysisPanel({ stocks }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const { period, startDate, endDate, adjust } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
@@ -96,12 +98,12 @@ export default function AnalysisPanel({ stocks }) {
   }, [stocks, period, startDate, endDate, adjust, lang])
 
   if (stocks.length < 2) {
-    return <div style={{ textAlign: 'center', padding: 40, color: '#4a5568', fontSize: 14 }}>{t.needTwoStocks}</div>
+    return <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)', fontSize: 14 }}>{t.needTwoStocks}</div>
   }
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300, gap: 10, color: '#9aa0a6' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300, gap: 10, color: 'var(--text-muted)' }}>
         {t.calculating}
       </div>
     )
@@ -117,12 +119,12 @@ export default function AnalysisPanel({ stocks }) {
           <div key={idx} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               <span style={{ color: colorA, fontWeight: 700, fontSize: 15 }}>{a.name}</span>
-              <span style={{ color: '#9aa0a6', fontSize: 13 }}>{a.code}</span>
-              <span style={{ color: '#4a5568', margin: '0 4px' }}>vs</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{a.code}</span>
+              <span style={{ color: 'var(--text-muted)', margin: '0 4px' }}>vs</span>
               <span style={{ color: colorB, fontWeight: 700, fontSize: 15 }}>{b.name}</span>
-              <span style={{ color: '#9aa0a6', fontSize: 13 }}>{b.code}</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{b.code}</span>
               {data && (
-                <span style={{ marginLeft: 'auto', color: '#4a5568', fontSize: 12 }}>
+                <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
                   {t.tradingDays(data.trading_days)}
                 </span>
               )}
@@ -141,7 +143,7 @@ export default function AnalysisPanel({ stocks }) {
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                     <thead>
                       <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
-                        <th style={{ padding: '8px 10px', textAlign: 'left', color: '#9aa0a6', fontWeight: 500 }}>{t.metric}</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{t.metric}</th>
                         <th style={{ padding: '8px 10px', textAlign: 'right', color: colorA, fontWeight: 600 }}>{data.stock1.name} ({a.code})</th>
                         <th style={{ padding: '8px 10px', textAlign: 'right', color: colorB, fontWeight: 600 }}>{data.stock2.name} ({b.code})</th>
                       </tr>
@@ -155,7 +157,7 @@ export default function AnalysisPanel({ stocks }) {
                       <StatRow label={t.support} v1={data.stock1.support_resistance.support} v2={data.stock2.support_resistance.support} />
                       <StatRow label={t.resistance} v1={data.stock1.support_resistance.resistance} v2={data.stock2.support_resistance.resistance} />
                       <tr style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                        <td style={{ padding: '7px 10px', color: '#9aa0a6', fontSize: 12 }}>{t.patterns}</td>
+                        <td style={{ padding: '7px 10px', color: 'var(--text-muted)', fontSize: 12 }}>{t.patterns}</td>
                         <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 12, color: THEME.text }}>
                           {data.stock1.patterns.length ? data.stock1.patterns.join('、') : t.none}
                         </td>

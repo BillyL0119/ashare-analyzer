@@ -5,6 +5,7 @@ import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const COLORS = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
 
@@ -17,7 +18,7 @@ function pctColor(v, invert = false) {
 }
 
 function Pill({ value, suffix = '%', invert = false, decimals = 2 }) {
-  if (value == null) return <span style={{ color: '#4a5568' }}>—</span>
+  if (value == null) return <span style={{ color: 'var(--text-muted)' }}>—</span>
   const color = pctColor(value, invert)
   return <span style={{ color, fontWeight: 600 }}>{value > 0 && !invert ? '+' : ''}{Number(value).toFixed(decimals)}{suffix}</span>
 }
@@ -25,9 +26,9 @@ function Pill({ value, suffix = '%', invert = false, decimals = 2 }) {
 function MetricRow({ label, value, suffix = '', decimals = 2, invert = false, hint }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: `1px solid ${THEME.border}` }}>
-      <span style={{ color: '#9aa0a6', fontSize: 12 }}>
+      <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>
         {label}
-        {hint && <span style={{ color: '#4a5568', fontSize: 11, marginLeft: 4 }}>({hint})</span>}
+        {hint && <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 4 }}>({hint})</span>}
       </span>
       <Pill value={value} suffix={suffix} invert={invert} decimals={decimals} />
     </div>
@@ -59,14 +60,14 @@ function VaRTable({ varCvar, t }) {
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
       <thead>
         <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
-          <th style={{ padding: '7px 10px', textAlign: 'left', color: '#9aa0a6', fontWeight: 500 }}>{t.metric}</th>
+          <th style={{ padding: '7px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{t.metric}</th>
           {cols.map(c => <th key={c.key} style={{ padding: '7px 10px', textAlign: 'right', color: '#64b5f6', fontWeight: 600 }}>{c.label}</th>)}
         </tr>
       </thead>
       <tbody>
         {rows.map(r => (
           <tr key={r.field} style={{ borderBottom: `1px solid ${THEME.border}` }}>
-            <td style={{ padding: '6px 10px', color: '#9aa0a6' }}>{r.label}</td>
+            <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{r.label}</td>
             {cols.map(c => {
               const v = varCvar[c.key]?.[r.field]
               return (
@@ -164,11 +165,11 @@ function StressTable({ tests, t, lang }) {
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
       <thead>
         <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
-          <th style={{ padding: '7px 10px', textAlign: 'left', color: '#9aa0a6', fontWeight: 500 }}>{t.riskScenario}</th>
-          <th style={{ padding: '7px 10px', textAlign: 'right', color: '#9aa0a6', fontWeight: 500 }}>{t.riskShock}</th>
-          <th style={{ padding: '7px 10px', textAlign: 'right', color: '#9aa0a6', fontWeight: 500 }}>{t.riskPrice}</th>
-          <th style={{ padding: '7px 10px', textAlign: 'right', color: '#9aa0a6', fontWeight: 500 }}>{t.riskZScore}</th>
-          <th style={{ padding: '7px 10px', textAlign: 'right', color: '#9aa0a6', fontWeight: 500 }}>{t.riskProb}</th>
+          <th style={{ padding: '7px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{t.riskScenario}</th>
+          <th style={{ padding: '7px 10px', textAlign: 'right', color: 'var(--text-muted)', fontWeight: 500 }}>{t.riskShock}</th>
+          <th style={{ padding: '7px 10px', textAlign: 'right', color: 'var(--text-muted)', fontWeight: 500 }}>{t.riskPrice}</th>
+          <th style={{ padding: '7px 10px', textAlign: 'right', color: 'var(--text-muted)', fontWeight: 500 }}>{t.riskZScore}</th>
+          <th style={{ padding: '7px 10px', textAlign: 'right', color: 'var(--text-muted)', fontWeight: 500 }}>{t.riskProb}</th>
         </tr>
       </thead>
       <tbody>
@@ -181,8 +182,8 @@ function StressTable({ tests, t, lang }) {
                 {s.shock_pct > 0 ? '+' : ''}{s.shock_pct}%
               </td>
               <td style={{ padding: '6px 10px', textAlign: 'right', color: THEME.text }}>{s.stressed_price}</td>
-              <td style={{ padding: '6px 10px', textAlign: 'right', color: '#9aa0a6' }}>{s.z_score ?? '—'}</td>
-              <td style={{ padding: '6px 10px', textAlign: 'right', color: '#9aa0a6' }}>{s.prob_pct != null ? `${s.prob_pct}%` : '—'}</td>
+              <td style={{ padding: '6px 10px', textAlign: 'right', color: 'var(--text-muted)' }}>{s.z_score ?? '—'}</td>
+              <td style={{ padding: '6px 10px', textAlign: 'right', color: 'var(--text-muted)' }}>{s.prob_pct != null ? `${s.prob_pct}%` : '—'}</td>
             </tr>
           )
         })}
@@ -211,11 +212,11 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
-        <span style={{ color: '#9aa0a6', fontSize: 13 }}>{stock.code}</span>
-        {data && <span style={{ marginLeft: 'auto', color: '#4a5568', fontSize: 12 }}>{data.trading_days} {lang === 'en' ? 'days' : '个交易日'} | {lang === 'en' ? 'Price' : '当前价'}: {data.current_price}</span>}
+        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
+        {data && <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>{data.trading_days} {lang === 'en' ? 'days' : '个交易日'} | {lang === 'en' ? 'Price' : '当前价'}: {data.current_price}</span>}
       </div>
 
-      {loading && <div style={{ textAlign: 'center', padding: 40, color: '#9aa0a6' }}>{t.riskLoading}</div>}
+      {loading && <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>{t.riskLoading}</div>}
       {error && <div style={{ color: '#ef5350', fontSize: 13 }}>{error}</div>}
 
       {data && (
@@ -229,7 +230,7 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
               { label: t.riskSortino, v: data.tail_metrics.sortino, s: '' },
             ].map(({ label, v, s, invert }) => (
               <div key={label} style={{ textAlign: 'center' }}>
-                <div style={{ color: '#9aa0a6', fontSize: 11, marginBottom: 3 }}>{label}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 11, marginBottom: 3 }}>{label}</div>
                 <Pill value={v} suffix={s} invert={invert} decimals={2} />
               </div>
             ))}
@@ -292,6 +293,7 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
 // ── Main panel ────────────────────────────────────────────────────────────────
 
 export default function RiskPanel({ stocks }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const { period, startDate, endDate, adjust } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]

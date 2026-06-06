@@ -50,7 +50,7 @@ function FeatureCard({ feature, lang, index }) {
       }}>{feature.icon}</div>
       <div style={{
         fontSize: 14, fontWeight: 700,
-        color: hover ? ACCENT_BLUE : '#e8eaed',
+        color: hover ? ACCENT_BLUE : 'var(--text-primary)',
         marginBottom: 8, transition: 'color 0.3s',
       }}>
         {lang === 'zh' ? feature.zh : feature.en}
@@ -81,7 +81,7 @@ export default function MarketOverview({ lang, onTabChange }) {
       {/* ── Hero ── */}
       <div className="bfs-hero" style={{ textAlign: 'center', marginBottom: 44 }}>
         <div style={{
-          fontSize: 11, letterSpacing: '0.15em', color: '#4a5568',
+          fontSize: 11, letterSpacing: '0.15em', color: 'var(--text-muted)',
           textTransform: 'uppercase', marginBottom: 18,
         }}>
           bestfriendstock.com

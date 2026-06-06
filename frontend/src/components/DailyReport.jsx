@@ -4,7 +4,7 @@ const ACCENT = '#0ea5e9'
 const ACCENT2 = '#8b5cf6'
 
 function PctBadge({ val }) {
-  if (val == null) return <span style={{ color: '#9aa0a6' }}>N/A</span>
+  if (val == null) return <span style={{ color: 'var(--text-muted)' }}>N/A</span>
   const pos = val >= 0
   const color = pos ? '#22c55e' : '#ef4444'
   const bg    = pos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'
@@ -35,8 +35,8 @@ export default function DailyReport({ lang }) {
   if (loading) {
     return (
       <div className="skeleton-appear" style={{
-        background: '#060f1e', border: '1px solid #1a2f50',
-        borderLeft: '2px solid #0ea5e9',
+        background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+        borderLeft: '2px solid var(--accent-blue)',
         borderRadius: 10, padding: '10px 16px', marginBottom: 8,
         display: 'flex', alignItems: 'center', gap: 10,
       }}>
@@ -58,9 +58,9 @@ export default function DailyReport({ lang }) {
 
   return (
     <div style={{
-      background: 'linear-gradient(90deg, #060f1e, #0a1628)',
-      border: '1px solid #1a2f50',
-      borderLeft: '2px solid #0ea5e9',
+      background: 'var(--bg-secondary)',
+      border: '1px solid var(--border-primary)',
+      borderLeft: '2px solid var(--accent-blue)',
       borderRadius: 10, marginBottom: 8, overflow: 'hidden',
     }}>
       {/* Header row */}
@@ -82,12 +82,12 @@ export default function DailyReport({ lang }) {
           {zh ? '今日日报' : 'Daily Brief'}
         </span>
         <span style={{
-          fontSize: 12, color: '#9aa0a6', flex: 1,
+          fontSize: 12, color: 'var(--text-muted)', flex: 1,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>
           {summary}
         </span>
-        <span className={`bfs-chevron${open ? ' is-open' : ''}`} style={{ fontSize: 12, color: '#4a5568', flexShrink: 0 }}>
+        <span className={`bfs-chevron${open ? ' is-open' : ''}`} style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>
           ▼
         </span>
       </button>
@@ -102,7 +102,7 @@ export default function DailyReport({ lang }) {
           {/* CN Indices */}
           {Object.keys(cn).length > 0 && (
             <div>
-              <div style={{ fontSize: 11, color: '#4a5568', marginBottom: 6, fontWeight: 600 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
                 {zh ? 'A股指数' : 'A-Share Indices'}
               </div>
               {Object.values(cn).map(idx => (
@@ -110,9 +110,9 @@ export default function DailyReport({ lang }) {
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   marginBottom: 5,
                 }}>
-                  <span style={{ fontSize: 12, color: '#9aa0a6' }}>{idx.name}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{idx.name}</span>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, color: '#e8eaed' }}>{idx.close?.toLocaleString()}</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-primary)' }}>{idx.close?.toLocaleString()}</span>
                     <PctBadge val={idx.change_pct} />
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export default function DailyReport({ lang }) {
           {/* US Indices */}
           {Object.keys(us).length > 0 && (
             <div>
-              <div style={{ fontSize: 11, color: '#4a5568', marginBottom: 6, fontWeight: 600 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
                 {zh ? '美股指数' : 'US Indices'}
               </div>
               {Object.values(us).map(idx => (
@@ -131,9 +131,9 @@ export default function DailyReport({ lang }) {
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   marginBottom: 5,
                 }}>
-                  <span style={{ fontSize: 12, color: '#9aa0a6' }}>{zh ? idx.name_zh : idx.name_en}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{zh ? idx.name_zh : idx.name_en}</span>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, color: '#e8eaed' }}>{idx.close?.toLocaleString()}</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-primary)' }}>{idx.close?.toLocaleString()}</span>
                     <PctBadge val={idx.change_pct} />
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function DailyReport({ lang }) {
           {/* Sentiment */}
           {(sent.us_score != null || sent.cn_score != null) && (
             <div>
-              <div style={{ fontSize: 11, color: '#475569', marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                 {zh ? '市场情绪' : 'Market Mood'}
               </div>
               {sent.us_score != null && (
@@ -153,23 +153,23 @@ export default function DailyReport({ lang }) {
                     {Math.round(sent.us_score)}
                   </span>
                   <div>
-                    <div style={{ fontSize: 12, color: '#e2e8f0', fontWeight: 600 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>
                       {zh ? sent.us_label_zh : sent.us_label_en}
                     </div>
-                    <div style={{ fontSize: 10, color: '#475569' }}>{zh ? '美股' : 'US Market'}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{zh ? '美股' : 'US Market'}</div>
                   </div>
                 </div>
               )}
               {sent.cn_score != null && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 18, fontWeight: 700, color: '#94a3b8', fontFamily: '"JetBrains Mono", monospace' }}>
+                  <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: '"JetBrains Mono", monospace' }}>
                     {Math.round(sent.cn_score)}
                   </span>
                   <div>
-                    <div style={{ fontSize: 11, color: '#94a3b8' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                       {zh ? sent.cn_label_zh : sent.cn_label_en}
                     </div>
-                    <div style={{ fontSize: 10, color: '#475569' }}>{zh ? 'A股' : 'CN Market'}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{zh ? 'A股' : 'CN Market'}</div>
                   </div>
                 </div>
               )}

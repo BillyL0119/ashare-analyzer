@@ -4,17 +4,18 @@ import useCompareStore from '../store/compareStore'
 import { T } from '../i18n/translations'
 import { getNews } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const SENT_COLOR = {
   positive: '#26a69a',
-  neutral: '#9aa0a6',
+  neutral: 'var(--text-muted)',
   negative: '#ef5350',
 }
 
 const IMPACT_STYLE = {
   high:   { bg: 'rgba(239,83,80,0.14)',   color: '#ef5350' },
   medium: { bg: 'rgba(255,167,38,0.14)',  color: '#ffa726' },
-  low:    { bg: 'rgba(154,160,166,0.10)', color: '#9aa0a6' },
+  low:    { bg: 'rgba(154,160,166,0.10)', color: 'var(--text-muted)' },
 }
 
 // ── News skeleton ─────────────────────────────────────────────────────────────
@@ -60,7 +61,7 @@ function SentimentBar({ positive, neutral, negative, t }) {
       <div style={{ display: 'flex', gap: 16, fontSize: 12 }}>
         {segments.map(({ key, value, color, label }) => (
           <span key={key} style={{ color, fontWeight: 600 }}>
-            {label} <span style={{ color: '#e8eaed' }}>{value}</span>
+            {label} <span style={{ color: 'var(--text-primary)' }}>{value}</span>
           </span>
         ))}
       </div>
@@ -79,7 +80,7 @@ function SentimentGauge({ score, t }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 80 }}>
-      <div style={{ fontSize: 11, color: '#9aa0a6', marginBottom: 2 }}>{t.newsSentimentScore}</div>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>{t.newsSentimentScore}</div>
       <svg width="80" height="46" viewBox="0 0 80 46">
         {/* Track */}
         <path
@@ -157,7 +158,7 @@ function NewsItem({ item, t }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
             fontSize: 13,
-            color: '#e8eaed',
+            color: 'var(--text-primary)',
             lineHeight: 1.45,
             marginBottom: ai.summary ? 4 : 0,
             overflow: 'hidden',
@@ -168,11 +169,11 @@ function NewsItem({ item, t }) {
             {item.title}
           </div>
           {ai.summary && (
-            <div style={{ fontSize: 12, color: '#9aa0a6', lineHeight: 1.4 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
               {ai.summary}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 10, marginTop: 5, fontSize: 11, color: '#4a5568' }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 5, fontSize: 11, color: 'var(--text-muted)' }}>
             <span>{item.source}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
@@ -197,7 +198,7 @@ function NewsItem({ item, t }) {
         )}
 
         {/* Expand arrow */}
-        <span style={{ fontSize: 10, color: '#4a5568', marginLeft: 2, flexShrink: 0, marginTop: 2 }}>
+        <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 2, flexShrink: 0, marginTop: 2 }}>
           {expanded ? '▲' : '▼'}
         </span>
       </div>
@@ -211,7 +212,7 @@ function NewsItem({ item, t }) {
           border: '1px solid rgba(138,180,248,0.10)',
           borderRadius: 6,
           fontSize: 12,
-          color: '#9aa0a6',
+          color: 'var(--text-muted)',
           lineHeight: 1.6,
         }}>
           {ai.reason && (
@@ -222,7 +223,7 @@ function NewsItem({ item, t }) {
           )}
           <div style={{ marginTop: 6, display: 'flex', gap: 12, alignItems: 'center' }}>
             <span>
-              <span style={{ color: '#4a5568' }}>{t.newsSource}：</span>
+              <span style={{ color: 'var(--text-muted)' }}>{t.newsSource}：</span>
               {item.source}
             </span>
             {item.url && item.url !== 'nan' && item.url.startsWith('http') && (
@@ -258,7 +259,7 @@ function FilterPill({ active, color, onClick, children }) {
         background: active
           ? `${color || 'rgba(138,180,248,0.25)'}30`
           : 'rgba(255,255,255,0.05)',
-        color: active ? (color || '#8ab4f8') : '#9aa0a6',
+        color: active ? (color || '#8ab4f8') : 'var(--text-muted)',
         transition: 'all 0.15s',
         letterSpacing: '0.2px',
       }}
@@ -324,14 +325,14 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
         </span>
         <span
           onClick={() => onOpenDetail && onOpenDetail(stock.code, stock.name)}
-          style={{ fontSize: 15, fontWeight: 600, color: '#e8eaed', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+          style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
         >
           {stock.name}
         </span>
         <span style={{
           marginLeft: 'auto',
           fontSize: 11,
-          color: '#4a5568',
+          color: 'var(--text-muted)',
           background: 'rgba(255,255,255,0.04)',
           borderRadius: 4,
           padding: '2px 8px',
@@ -373,7 +374,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
               gap: 20,
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, color: '#4a5568', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10, textTransform: 'uppercase' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10, textTransform: 'uppercase' }}>
                   {t.newsOverview}
                 </div>
                 <SentimentBar
@@ -434,7 +435,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
 
           {/* ── News list ── */}
           {filtered.length === 0 ? (
-            <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', padding: '24px 0' }}>
               {t.newsNoData}
             </div>
           ) : (
@@ -452,6 +453,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
 
 // ── Panel (one block per compared stock) ─────────────────────────────────────
 export default function NewsPanel({ stocks, onOpenDetail }) {
+  useThemeStore((s) => s.theme) // re-render on theme toggle
   const lang = useLangStore((s) => s.lang)
   const market = useCompareStore((s) => s.market)
   return (

@@ -7,7 +7,7 @@ const BG   = 'rgba(255,255,255,0.03)'
 
 const SENT_COLOR = {
   positive: '#26a69a',
-  neutral:  '#9aa0a6',
+  neutral:  'var(--text-muted)',
   negative: '#ef5350',
 }
 
@@ -17,8 +17,8 @@ function MetricCard({ label, value }) {
       background: BG, border: `1px solid ${BDR}`, borderRadius: 8,
       padding: '10px 14px', minWidth: 100, flex: 1,
     }}>
-      <div style={{ fontSize: 11, color: '#4a5568', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: '#e8eaed', fontFamily: 'monospace' }}>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>
         {value ?? '--'}
       </div>
     </div>
@@ -39,7 +39,7 @@ function MiniSimilarRow({ item, onStockClick }) {
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <span style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
-      <span style={{ fontSize: 13, color: '#e8eaed', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.name}
       </span>
       <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#c084fc', flexShrink: 0 }}>
@@ -67,12 +67,12 @@ function MiniNewsRow({ item }) {
           {sent === 'positive' ? '正面' : sent === 'negative' ? '负面' : '中性'}
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 12, color: '#e8eaed', lineHeight: 1.4,
+          <div style={{ fontSize: 12, color: 'var(--text-primary)', lineHeight: 1.4,
             overflow: 'hidden', display: '-webkit-box',
             WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
             {item.title}
           </div>
-          <div style={{ fontSize: 11, color: '#4a5568', marginTop: 3 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
             {item.source} {item.time ? `· ${item.time.slice(0, 10)}` : ''}
           </div>
         </div>
@@ -160,11 +160,11 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
                 }}>
                   {symbol}
                 </span>
-                <span style={{ fontSize: 20, fontWeight: 700, color: '#e8eaed' }}>
+                <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
                   {name || q?.name || symbol}
                 </span>
                 {q?.industry && (
-                  <span style={{ fontSize: 11, color: '#9aa0a6', background: 'rgba(255,255,255,0.06)', borderRadius: 4, padding: '2px 7px' }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'rgba(255,255,255,0.06)', borderRadius: 4, padding: '2px 7px' }}>
                     {q.industry}
                   </span>
                 )}
@@ -200,7 +200,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
 
           {/* Loading */}
           {loading && (
-            <div style={{ color: '#9aa0a6', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
               {lang === 'zh' ? '加载数据中...' : 'Loading...'}
             </div>
           )}
@@ -215,12 +215,12 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
                   {lang === 'zh' ? '相似走势 TOP5' : 'Similar Stocks TOP5'}
                 </div>
                 {simResults.length === 0 ? (
-                  <div style={{ padding: '16px', color: '#4a5568', fontSize: 12, textAlign: 'center' }}>
+                  <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center' }}>
                     {lang === 'zh' ? '暂无数据' : 'No data'}
                   </div>
                 ) : (
                   <div>
-                    <div style={{ display: 'flex', padding: '5px 10px', fontSize: 10, color: '#4a5568',
+                    <div style={{ display: 'flex', padding: '5px 10px', fontSize: 10, color: 'var(--text-muted)',
                       fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em',
                       borderBottom: '1px solid rgba(138,180,248,0.07)' }}>
                       <span style={{ minWidth: 56 }}>CODE</span>
@@ -244,7 +244,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
                   {lang === 'zh' ? '新闻舆情（最新3条）' : 'Latest News (Top 3)'}
                 </div>
                 {newsItems.length === 0 ? (
-                  <div style={{ padding: '16px', color: '#4a5568', fontSize: 12, textAlign: 'center' }}>
+                  <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center' }}>
                     {lang === 'zh' ? '暂无新闻' : 'No news'}
                   </div>
                 ) : (
