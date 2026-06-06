@@ -123,7 +123,7 @@ export default function App() {
               width: 30,
               height: 30,
               borderRadius: 8,
-              background: `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`,
+              background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -137,7 +137,7 @@ export default function App() {
             style={{
               fontSize: 17,
               fontWeight: 700,
-              background: 'linear-gradient(135deg, #38bdf8, #818cf8)',
+              background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               letterSpacing: '0.3px',
@@ -242,10 +242,10 @@ export default function App() {
           ))}
         </div>
 
-        {/* 🌙/🔥 Theme toggle */}
+        {/* ☀️/🌙 Theme toggle */}
         <button
           onClick={toggleTheme}
-          title={theme === 'dark' ? (lang === 'zh' ? '切换暖色模式' : 'Warm mode') : (lang === 'zh' ? '切换冷色模式' : 'Cool mode')}
+          title={theme === 'dark' ? (lang === 'zh' ? '切换浅色模式' : 'Light mode') : (lang === 'zh' ? '切换深色模式' : 'Dark mode')}
           style={{
             width: 34, height: 34, borderRadius: '50%',
             border: '1px solid var(--border-primary)',
@@ -257,7 +257,7 @@ export default function App() {
           onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.4)' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.boxShadow = 'none' }}
         >
-          {theme === 'dark' ? '🔥' : '🌙'}
+          {theme === 'dark' ? '☀️' : '🌙'}
         </button>
 
         {/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}

@@ -34,38 +34,38 @@
   --red-bright:    #ef4444;
 }
 
-/* ── Warm dark theme ("fire" mode) ───────────────────────── */
+/* ── Light theme (Bloomberg terminal day mode) ───────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #0f0e17;
-  --bg-secondary:    #1a1a2e;
-  --bg-tertiary:     #16213e;
-  --bg-hover:        #1f2b47;
-  --border-primary:  #2d3561;
-  --border-glow:     #e53170;
-  --text-primary:    #fffffe;
-  --text-secondary:  #a7a9be;
-  --text-muted:      #6b6f8a;
-  --card-bg:         #1a1a2e;
-  --nav-bg:          rgba(15, 14, 23, 0.95);
-  --nav-bg-dim:      rgba(15, 14, 23, 0.88);
-  --map-ocean:       #16213e;
-  --map-sphere:      #0f0e17;
-  --map-border:      #3d4178;
-  --map-graticule:   #1f2b47;
-  --map-land:        #252242;
-  --skeleton-base:   #1a1a2e;
-  --skeleton-shine:  #2d3561;
-  --chart-bg:        #1a1a2e;
-  --chart-text:      #a7a9be;
-  --chart-border:    #2d3561;
-  --chart-tooltip:   rgba(15,14,23,0.95);
+  --bg-primary:      #f0f4f8;
+  --bg-secondary:    #ffffff;
+  --bg-tertiary:     #e8edf2;
+  --bg-hover:        #dde3ea;
+  --border-primary:  #c8d0da;
+  --border-glow:     #a0b0c8;
+  --text-primary:    #0d1b2a;
+  --text-secondary:  #3d5166;
+  --text-muted:      #7a8fa0;
+  --card-bg:         #ffffff;
+  --nav-bg:          rgba(240, 244, 248, 0.97);
+  --nav-bg-dim:      rgba(240, 244, 248, 0.92);
+  --map-ocean:       #c8ddf0;
+  --map-sphere:      #b8d0e8;
+  --map-border:      #8aa8c8;
+  --map-graticule:   #d8e8f4;
+  --map-land:        #d8e4ee;
+  --skeleton-base:   #e2e8f0;
+  --skeleton-shine:  #f0f4f8;
+  --chart-bg:        #ffffff;
+  --chart-text:      #3d5166;
+  --chart-border:    #e8edf2;
+  --chart-tooltip:   rgba(255,255,255,0.98);
 
-  --accent-blue:   #ff8906;
-  --accent-purple: #e53170;
-  --accent-cyan:   #f25f4c;
-  --accent-gold:   #ff8906;
-  --green-bright:  #10b981;
-  --red-bright:    #ef4444;
+  --accent-blue:   #0066cc;
+  --accent-purple: #6633cc;
+  --accent-cyan:   #0099aa;
+  --accent-gold:   #cc7700;
+  --green-bright:  #007a3d;
+  --red-bright:    #cc2200;
 }
 
 :root {
@@ -151,6 +151,29 @@ body {
 /* ── Light-mode structural overrides ─────────────────────────────────────── */
 :root[data-theme="light"] body {
   color: var(--text-primary);
+}
+
+/* Nav: solid white + soft shadow instead of dark glassmorphism */
+:root[data-theme="light"] header {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Cards: white bg + elevation shadow */
+:root[data-theme="light"] .bfs-card {
+  background: var(--card-bg) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+:root[data-theme="light"] .bfs-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
+  border-color: var(--border-glow) !important;
+}
+
+/* Ticker bar: light bg, white cards */
+:root[data-theme="light"] .bfs-ticker-item {
+  background: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 /* ── Skeleton shimmer ───────────────────────────────────────────────────── */
@@ -248,7 +271,7 @@ body {
   transition: background 0.2s ease;
 }
 .bfs-nav-tab.is-active::after {
-  background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
 }
 
 /* ── Card entrance ──────────────────────────────────────────────────────── */
