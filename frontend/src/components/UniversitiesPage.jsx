@@ -1,86 +1,114 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
-// ── palette ─────────────────────────────────────────────────────────────────
+// ── palette ──────────────────────────────────────────────────────────────────
 const BLUE   = '#0ea5e9'
 const PURPLE = '#8b5cf6'
 const GREEN  = '#10b981'
 const AMBER  = '#f59e0b'
 
-const COUNTRY_OPTIONS = [
-  { key: 'us', label: 'United States', label_cn: '美国', flag: '🇺🇸' },
-  { key: 'uk', label: 'United Kingdom', label_cn: '英国', flag: '🇬🇧' },
-  { key: 'ca', label: 'Canada', label_cn: '加拿大', flag: '🇨🇦' },
-  { key: 'hk', label: 'Hong Kong', label_cn: '香港', flag: '🇭🇰' },
-  { key: 'cn', label: 'Mainland China', label_cn: '中国大陆', flag: '🇨🇳' },
-  { key: 'au', label: 'Australia', label_cn: '澳大利亚', flag: '🇦🇺' },
-  { key: 'sg', label: 'Singapore', label_cn: '新加坡', flag: '🇸🇬' },
+const REGIONS = [
+  { key: '',              label: 'All',        label_cn: '全部' },
+  { key: 'north_america', label: 'North America', label_cn: '北美' },
+  { key: 'uk',            label: 'UK',         label_cn: '英国' },
+  { key: 'europe',        label: 'Europe',     label_cn: '欧洲' },
+  { key: 'asia',          label: 'Asia',       label_cn: '亚洲' },
+  { key: 'oceania',       label: 'Oceania',    label_cn: '大洋洲' },
 ]
 
-const SPECIALTY_OPTIONS = ['Finance', 'Accounting', 'Economics', 'Marketing', 'Consulting']
+const SPECIALTIES = ['Finance', 'Accounting', 'Economics', 'Consulting', 'Tech']
 
-// Get initials for logo placeholder
+const SPECIALTY_COLORS = {
+  Finance: '#0ea5e9', Accounting: '#8b5cf6', Economics: '#10b981',
+  Marketing: '#f59e0b', Consulting: '#ef4444', Strategy: '#06b6d4',
+  MBA: '#6366f1', Undergraduate: '#84cc16', Tech: '#f97316',
+  Analytics: '#a78bfa', Entrepreneurship: '#34d399', STEM: '#fb923c',
+}
+
+function tagColor(tag) {
+  for (const [k, v] of Object.entries(SPECIALTY_COLORS)) {
+    if (tag.toLowerCase().includes(k.toLowerCase())) return v
+  }
+  return '#64748b'
+}
+
+// Generate a deterministic gradient from school name
+function schoolGradient(name) {
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360
+  return `linear-gradient(135deg, hsl(${h},55%,30%), hsl(${(h + 55) % 360},55%,20%))`
+}
+
 function initials(name) {
-  return name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase()
+  const words = name.split(/[\s\-]+/).filter(w => w.length > 2)
+  return words.slice(0, 2).map(w => w[0].toUpperCase()).join('')
 }
 
-// Match % color
-function matchColor(pct) {
-  if (pct >= 80) return GREEN
-  if (pct >= 55) return AMBER
-  return '#94a3b8'
-}
-
-// ── Skeleton ─────────────────────────────────────────────────────────────────
-function CardSkeleton() {
+// ── Skeleton card ─────────────────────────────────────────────────────────────
+function SkeletonCard() {
   return (
     <div style={{
       background: 'var(--bg-card, #060f1e)',
       border: '1px solid #1a2f50',
       borderRadius: 14,
       padding: 20,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10,
     }}>
-      {[80, 55, 95, 40, 70].map((w, i) => (
-        <div key={i} className="skeleton" style={{
-          width: `${w}%`, height: i === 0 ? 18 : 12,
-          borderRadius: 6, marginBottom: 10,
-          background: 'var(--skeleton-base, #0a1628)',
-        }} />
+      <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 8 }} />
+      {[85, 60, 95, 50].map((w, i) => (
+        <div key={i} className="skeleton" style={{ width: `${w}%`, height: i === 0 ? 16 : 12, borderRadius: 6 }} />
       ))}
     </div>
   )
 }
 
-// ── School Logo ──────────────────────────────────────────────────────────────
-function SchoolLogo({ name, size = 44 }) {
-  const letters = initials(name)
-  const hue = (letters.charCodeAt(0) * 17 + (letters.charCodeAt(1) || 0) * 31) % 360
+// ── QS Rank badge ─────────────────────────────────────────────────────────────
+function RankBadge({ rank }) {
+  if (!rank) return null
+  const isTop10  = rank <= 10
+  const isTop50  = rank <= 50
+  const color    = isTop10 ? AMBER : isTop50 ? BLUE : '#64748b'
   return (
     <div style={{
-      width: size, height: size, borderRadius: 10, flexShrink: 0,
-      background: `linear-gradient(135deg, hsl(${hue},60%,35%), hsl(${(hue + 60) % 360},60%,25%))`,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: size * 0.36, fontWeight: 700, color: '#fff',
-      boxShadow: `0 2px 12px rgba(0,0,0,0.4)`,
+      position: 'absolute', top: 12, left: 12,
+      background: `${color}22`,
+      border: `1px solid ${color}66`,
+      borderRadius: 6,
+      padding: '2px 8px',
+      fontSize: 11, fontWeight: 700, color,
     }}>
-      {letters}
+      QS #{rank}
     </div>
   )
 }
 
-// ── Tag pill ─────────────────────────────────────────────────────────────────
-function Tag({ label }) {
-  const colors = {
-    Finance: '#0ea5e9', Accounting: '#8b5cf6', Economics: '#10b981',
-    Marketing: '#f59e0b', Consulting: '#ef4444', Strategy: '#06b6d4',
-    MBA: '#6366f1', Undergraduate: '#84cc16', STEM: '#f97316',
-  }
-  const color = colors[label] || '#64748b'
+// ── School logo ───────────────────────────────────────────────────────────────
+function SchoolLogo({ name, size = 44 }) {
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: 10, flexShrink: 0,
+      background: schoolGradient(name),
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: size * 0.34, fontWeight: 800, color: 'rgba(255,255,255,0.9)',
+      letterSpacing: '-0.5px',
+    }}>
+      {initials(name)}
+    </div>
+  )
+}
+
+// ── Tag pill ──────────────────────────────────────────────────────────────────
+function TagPill({ label }) {
+  const color = tagColor(label)
   return (
     <span style={{
-      fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
-      background: `${color}22`, color, border: `1px solid ${color}44`,
+      fontSize: 11, fontWeight: 600,
+      padding: '2px 8px', borderRadius: 20,
+      background: `${color}20`, color,
+      border: `1px solid ${color}40`,
       whiteSpace: 'nowrap',
     }}>
       {label}
@@ -88,114 +116,263 @@ function Tag({ label }) {
   )
 }
 
-// ── Match badge ──────────────────────────────────────────────────────────────
-function MatchBadge({ pct }) {
-  const color = matchColor(pct)
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
-    }}>
-      <div style={{
-        width: 48, height: 48, borderRadius: '50%',
-        background: `conic-gradient(${color} ${pct * 3.6}deg, #1a2f50 0deg)`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: `0 0 12px ${color}44`,
-      }}>
-        <div style={{
-          width: 36, height: 36, borderRadius: '50%',
-          background: '#020813',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 11, fontWeight: 700, color,
-        }}>
-          {pct}%
-        </div>
-      </div>
-    </div>
-  )
+// ── Country flag helper ───────────────────────────────────────────────────────
+function countryFlag(country) {
+  const map = {
+    'United States': '🇺🇸', 'Canada': '🇨🇦', 'United Kingdom': '🇬🇧',
+    'France': '🇫🇷', 'France / Singapore': '🇫🇷🇸🇬',
+    'Switzerland': '🇨🇭', 'Denmark': '🇩🇰', 'Netherlands': '🇳🇱',
+    'Spain': '🇪🇸', 'Sweden': '🇸🇪',
+    'Hong Kong': '🇭🇰', 'Singapore': '🇸🇬',
+    'China': '🇨🇳', 'Japan': '🇯🇵', 'South Korea': '🇰🇷', 'Taiwan': '🇹🇼',
+    'Australia': '🇦🇺', 'New Zealand': '🇳🇿',
+  }
+  return map[country] || '🌐'
 }
 
-// ── Expanded detail panel ────────────────────────────────────────────────────
-function SchoolDetail({ uni, lang, onClose }) {
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function UniModal({ uni, lang, onClose }) {
+  const [descLang, setDescLang] = useState(lang)
   const t = lang === 'zh'
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  // Prevent body scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
   return (
-    <div style={{
-      marginTop: 12,
-      background: '#050d1a',
-      border: '1px solid #1a2f50',
-      borderRadius: 12,
-      padding: 20,
-      animation: 'bfsPageFadeIn 0.2s ease both',
-    }}>
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {/* Description */}
-        <div style={{ flex: '1 1 280px' }}>
-          <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.6, marginBottom: 14 }}>
-            {t ? uni.description_cn : uni.description}
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9000,
+        background: 'rgba(0,0,0,0.75)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '20px 16px',
+        backdropFilter: 'blur(4px)',
+      }}
+    >
+      <div style={{
+        background: '#060f1e',
+        border: '1px solid #1a3060',
+        borderRadius: 18,
+        width: '100%', maxWidth: 680,
+        maxHeight: '85vh',
+        overflowY: 'auto',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(14,165,233,0.1)',
+        animation: 'bfsPageFadeIn 0.18s ease both',
+      }}>
+        {/* Modal header */}
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 1,
+          background: '#060f1e',
+          borderBottom: '1px solid #1a2f50',
+          padding: '18px 22px',
+          display: 'flex', alignItems: 'flex-start', gap: 16,
+        }}>
+          <SchoolLogo name={uni.name} size={52} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', lineHeight: 1.2, marginBottom: 4 }}>
+              {uni.name}
+            </div>
+            <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 6 }}>
+              {uni.university}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: 12, color: '#64748b' }}>
+                {countryFlag(uni.country)} {uni.city}
+              </span>
+              {uni.qs_rank && (
+                <span style={{
+                  fontSize: 11, fontWeight: 700, padding: '2px 8px',
+                  borderRadius: 6, background: `${AMBER}20`, color: AMBER,
+                  border: `1px solid ${AMBER}40`,
+                }}>
+                  QS #{uni.qs_rank}
+                </span>
+              )}
+              {uni.business_rank && (
+                <span style={{
+                  fontSize: 11, fontWeight: 600, padding: '2px 8px',
+                  borderRadius: 6, background: `${BLUE}20`, color: BLUE,
+                  border: `1px solid ${BLUE}40`,
+                }}>
+                  {uni.business_rank}
+                </span>
+              )}
+            </div>
           </div>
-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>
-            {t ? '知名校友' : 'Notable Alumni'}
-          </div>
-          <div style={{ fontSize: 13, color: '#e2e8f0' }}>
-            {uni.notable_alumni.join(' · ')}
-          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none', border: '1px solid #1a2f50',
+              color: '#64748b', borderRadius: 8,
+              width: 32, height: 32, cursor: 'pointer',
+              fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              transition: 'all 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#4a5568'; e.currentTarget.style.color = '#94a3b8' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#1a2f50'; e.currentTarget.style.color = '#64748b' }}
+          >
+            ×
+          </button>
         </div>
 
-        {/* Programs + Requirements */}
-        <div style={{ flex: '1 1 200px' }}>
-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 6 }}>
-            {t ? '提供项目' : 'Programs'}
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 14 }}>
-            {uni.programs.map(p => (
-              <span key={p} style={{
-                fontSize: 11, padding: '2px 8px', borderRadius: 4,
-                background: '#0f1f3d', color: '#8ab4f8',
-                border: '1px solid #1a3060',
-              }}>{p}</span>
-            ))}
-          </div>
+        {/* Modal body */}
+        <div style={{ padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 6 }}>
-            {t ? '入学要求' : 'Requirements'}
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
-            {[
-              ['GPA', uni.requirements.gpa],
-              ['GMAT', uni.requirements.gmat],
-              ['IELTS', uni.requirements.ielts],
-              ['TOEFL', uni.requirements.toefl],
-            ].map(([k, v]) => v && (
-              <div key={k} style={{ fontSize: 12, color: '#94a3b8' }}>
-                <span style={{ color: '#64748b' }}>{k}: </span>
-                <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{v}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Tuition + link */}
-        <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* Description with lang tabs */}
           <div>
-            <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>
-              {t ? '学费参考' : 'Tuition'}
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+              {['en', 'zh'].map(l => (
+                <button
+                  key={l}
+                  onClick={() => setDescLang(l)}
+                  style={{
+                    padding: '4px 14px', borderRadius: 6,
+                    border: `1px solid ${descLang === l ? BLUE : '#1a2f50'}`,
+                    background: descLang === l ? `${BLUE}20` : 'transparent',
+                    color: descLang === l ? BLUE : '#64748b',
+                    cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {l === 'en' ? 'English' : '中文'}
+                </button>
+              ))}
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: AMBER }}>
-              {uni.tuition}
+            <p style={{
+              fontSize: 14, color: '#94a3b8', lineHeight: 1.7,
+              margin: 0,
+              background: '#050d1a',
+              border: '1px solid #0f1f3d',
+              borderRadius: 10,
+              padding: '14px 16px',
+            }}>
+              {descLang === 'en' ? uni.description_en : uni.description_cn}
+            </p>
+          </div>
+
+          {/* Two-column info grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
+            {/* Programs */}
+            <div style={{
+              background: '#050d1a', border: '1px solid #0f1f3d',
+              borderRadius: 10, padding: '14px 16px',
+            }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
+                {t ? '提供项目' : 'Programs'}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {(uni.programs || []).map(p => (
+                  <div key={p} style={{
+                    fontSize: 12, color: '#8ab4f8',
+                    padding: '4px 10px', borderRadius: 5,
+                    background: '#0f1f3d',
+                    display: 'inline-block', width: 'fit-content',
+                  }}>
+                    {p}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Specialties + Key facts */}
+            <div style={{
+              background: '#050d1a', border: '1px solid #0f1f3d',
+              borderRadius: 10, padding: '14px 16px',
+              display: 'flex', flexDirection: 'column', gap: 14,
+            }}>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                  {t ? '强势专业' : 'Specialties'}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                  {(uni.specialties || []).map(s => <TagPill key={s} label={s} />)}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                  {t ? '学费参考' : 'Tuition'}
+                </div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: AMBER }}>
+                  {uni.tuition_usd}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                  {t ? '授课语言' : 'Language'}
+                </div>
+                <div style={{ fontSize: 13, color: '#94a3b8' }}>
+                  {uni.language === 'english' ? (t ? '英语授课' : 'English') : (t ? '双语授课' : 'Bilingual')}
+                </div>
+              </div>
+              {uni.established && (
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                    {t ? '创建年份' : 'Established'}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#94a3b8' }}>{uni.established}</div>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Notable alumni */}
+          {uni.notable_alumni && uni.notable_alumni.length > 0 && (
+            <div style={{
+              background: '#050d1a', border: '1px solid #0f1f3d',
+              borderRadius: 10, padding: '14px 16px',
+            }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#4a5568', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
+                {t ? '知名校友' : 'Notable Alumni'}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {uni.notable_alumni.map(a => (
+                  <span key={a} style={{
+                    fontSize: 12, color: '#94a3b8',
+                    padding: '4px 12px', borderRadius: 20,
+                    background: '#0f1f3d', border: '1px solid #1a3060',
+                  }}>
+                    {a}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tags */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {(uni.tags || []).map(tag => <TagPill key={tag} label={tag} />)}
+          </div>
+
+          {/* Visit button */}
           <a
             href={uni.url}
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              display: 'inline-block', padding: '8px 18px', borderRadius: 8,
+              display: 'block', textAlign: 'center',
+              padding: '12px 28px', borderRadius: 10,
               background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
-              color: '#fff', fontSize: 13, fontWeight: 600,
-              textDecoration: 'none', textAlign: 'center',
-              boxShadow: '0 2px 12px rgba(14,165,233,0.3)',
+              color: '#fff', fontSize: 14, fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 2px 20px rgba(14,165,233,0.3)',
+              transition: 'opacity 0.15s',
             }}
+            onMouseEnter={e => { e.currentTarget.style.opacity = '0.9' }}
+            onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
           >
-            {t ? '访问官网' : 'Official Website'}
+            {t ? '访问官方网站' : 'Visit Official Website'} →
           </a>
         </div>
       </div>
@@ -203,502 +380,355 @@ function SchoolDetail({ uni, lang, onClose }) {
   )
 }
 
-// ── University Card ──────────────────────────────────────────────────────────
-function UniCard({ uni, lang, expanded, onToggle, onCompareToggle, inCompare, matchPct, matchReasons }) {
-  const t = lang === 'zh'
+// ── University card ───────────────────────────────────────────────────────────
+function UniCard({ uni, lang, onClick }) {
   const [hovered, setHovered] = useState(false)
+  const t = lang === 'zh'
 
   return (
     <div
+      onClick={() => onClick(uni)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
+        position: 'relative',
         background: 'var(--bg-card, #060f1e)',
-        border: `1px solid ${hovered || expanded ? BLUE + '66' : '#1a2f50'}`,
+        border: `1px solid ${hovered ? BLUE + '55' : '#1a2f50'}`,
         borderRadius: 14,
-        padding: '16px 18px',
+        padding: '44px 16px 16px',
         cursor: 'pointer',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
-        boxShadow: hovered || expanded ? `0 0 24px rgba(14,165,233,0.12)` : 'none',
+        transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.15s',
+        boxShadow: hovered ? `0 0 28px rgba(14,165,233,0.12), 0 4px 20px rgba(0,0,0,0.3)` : '0 2px 8px rgba(0,0,0,0.2)',
+        transform: hovered ? 'translateY(-2px)' : 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
       }}
     >
-      {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-        <SchoolLogo name={uni.name} />
+      <RankBadge rank={uni.qs_rank} />
 
+      {/* School identity */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <SchoolLogo name={uni.name} size={40} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: '#e2e8f0' }}>
-              {t ? uni.name_cn : uni.name}
-            </span>
-            <span style={{ fontSize: 12, color: '#4a5568' }}>
-              {t ? uni.name_cn === uni.name ? '' : uni.name : uni.name_cn}
-            </span>
+          <div style={{
+            fontSize: 14, fontWeight: 700, color: '#e2e8f0',
+            lineHeight: 1.3, marginBottom: 2,
+            overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box',
+            WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+          }}>
+            {uni.name}
           </div>
-          <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
-            {COUNTRY_OPTIONS.find(c => c.key === uni.country)?.flag} {uni.city}
-            &nbsp;·&nbsp;
-            <span style={{ color: AMBER }}>
-              #{uni.ranking} {t ? '排名' : 'Ranked'}
-            </span>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 8 }}>
-            {uni.specialties.slice(0, 3).map(s => <Tag key={s} label={s} />)}
+          <div style={{ fontSize: 11, color: '#4a5568', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {uni.university}
           </div>
         </div>
+      </div>
 
-        {/* Right side: match badge / tuition / compare */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
-          {matchPct !== undefined && <MatchBadge pct={matchPct} />}
-          <div style={{ fontSize: 12, color: '#64748b', textAlign: 'right' }}>
-            {uni.tuition}
-          </div>
-          <button
-            onClick={(e) => { e.stopPropagation(); onCompareToggle(uni) }}
-            style={{
-              fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 6,
-              border: `1px solid ${inCompare ? PURPLE : '#1a2f50'}`,
-              background: inCompare ? `${PURPLE}22` : 'transparent',
-              color: inCompare ? PURPLE : '#64748b',
-              cursor: 'pointer', transition: 'all 0.15s',
-            }}
-          >
-            {inCompare ? (t ? '取消对比' : '− Compare') : (t ? '+对比' : '+ Compare')}
-          </button>
+      {/* Location */}
+      <div style={{ fontSize: 12, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
+        {countryFlag(uni.country)} {uni.city}
+      </div>
+
+      {/* Business rank */}
+      {uni.business_rank && (
+        <div style={{ fontSize: 11, color: BLUE, fontWeight: 600 }}>
+          {uni.business_rank}
         </div>
+      )}
+
+      {/* Specialties */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        {(uni.specialties || []).slice(0, 3).map(s => <TagPill key={s} label={s} />)}
       </div>
 
-      {/* Expand toggle */}
-      <div
-        onClick={() => onToggle(uni.id)}
-        style={{
-          marginTop: 12, fontSize: 12, color: expanded ? BLUE : '#4a5568',
-          display: 'flex', alignItems: 'center', gap: 4,
-          userSelect: 'none',
-        }}
-      >
-        <span style={{ transform: expanded ? 'rotate(90deg)' : 'none', display: 'inline-block', transition: 'transform 0.2s' }}>▶</span>
-        {expanded ? (t ? '收起详情' : 'Hide Details') : (t ? '展开详情' : 'Show Details')}
-        {matchReasons && matchReasons.length > 0 && !expanded && (
-          <span style={{ marginLeft: 8, color: GREEN, fontStyle: 'italic' }}>
-            · {matchReasons[0]}
-          </span>
-        )}
-      </div>
-
-      {expanded && <SchoolDetail uni={uni} lang={lang} />}
-    </div>
-  )
-}
-
-// ── Compare Table ────────────────────────────────────────────────────────────
-function CompareTable({ unis, lang, onRemove }) {
-  const t = lang === 'zh'
-  if (unis.length === 0) return null
-
-  const rows = [
-    { key: 'country_name', label: t ? '国家/地区' : 'Country' },
-    { key: 'city',         label: t ? '城市' : 'City' },
-    { key: 'ranking',      label: t ? '排名' : 'Ranking', fmt: v => `#${v}` },
-    { key: 'tuition',      label: t ? '学费' : 'Tuition' },
-    { key: '_gpa',         label: 'GPA', fmt: (_, u) => u.requirements.gpa },
-    { key: '_gmat',        label: 'GMAT', fmt: (_, u) => u.requirements.gmat },
-    { key: '_ielts',       label: 'IELTS', fmt: (_, u) => u.requirements.ielts },
-    { key: '_programs',    label: t ? '项目' : 'Programs', fmt: (_, u) => u.programs.slice(0, 3).join(', ') },
-    { key: '_specialties', label: t ? '强势专业' : 'Specialties', fmt: (_, u) => u.specialties.slice(0, 3).join(', ') },
-  ]
-
-  return (
-    <div style={{
-      background: '#060f1e',
-      border: '1px solid #1a2f50',
-      borderRadius: 14,
-      overflow: 'hidden',
-      marginBottom: 24,
-    }}>
-      <div style={{ padding: '14px 18px', borderBottom: '1px solid #1a2f50', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#e2e8f0' }}>
-          {t ? '学校对比' : 'School Comparison'}
+      {/* Footer: tuition + CTA */}
+      <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid #0f1f3d', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 11, color: '#4a5568' }}>{uni.tuition_usd}</span>
+        <span style={{
+          fontSize: 11, fontWeight: 600, color: hovered ? BLUE : '#4a5568',
+          transition: 'color 0.15s',
+        }}>
+          {t ? '查看详情 →' : 'Details →'}
         </span>
-        <span style={{ fontSize: 12, color: '#64748b' }}>
-          {t ? `已选 ${unis.length}/3 所` : `${unis.length}/3 selected`}
-        </span>
-      </div>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr style={{ background: '#050d1a' }}>
-              <th style={{ textAlign: 'left', padding: '10px 16px', color: '#64748b', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                {t ? '指标' : 'Metric'}
-              </th>
-              {unis.map(u => (
-                <th key={u.id} style={{ padding: '10px 16px', minWidth: 160 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <SchoolLogo name={u.name} size={28} />
-                      <span style={{ fontSize: 12, color: '#e2e8f0', fontWeight: 600, textAlign: 'left' }}>
-                        {lang === 'zh' ? u.name_cn : u.name}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => onRemove(u.id)}
-                      style={{ background: 'none', border: 'none', color: '#4a5568', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
-                    >×</button>
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, ri) => (
-              <tr key={row.key} style={{ background: ri % 2 === 0 ? 'transparent' : '#050d1a' }}>
-                <td style={{ padding: '9px 16px', color: '#94a3b8', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                  {row.label}
-                </td>
-                {unis.map(u => {
-                  const val = row.fmt
-                    ? row.fmt(u[row.key.replace('_', '')], u)
-                    : u[row.key]
-                  return (
-                    <td key={u.id} style={{ padding: '9px 16px', color: '#e2e8f0', textAlign: 'center' }}>
-                      {val ?? '—'}
-                    </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   )
 }
 
-// ── Recommend Form ────────────────────────────────────────────────────────────
-function RecommendForm({ lang, onResults }) {
+// ── Hero ──────────────────────────────────────────────────────────────────────
+function Hero({ lang, stats }) {
   const t = lang === 'zh'
-  const [gpa, setGpa] = useState('')
-  const [testScore, setTestScore] = useState('')
-  const [interests, setInterests] = useState([])
-  const [countries, setCountries] = useState([])
-  const [loading, setLoading] = useState(false)
-
-  const toggleInterest = (s) => setInterests(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
-  const toggleCountry  = (c) => setCountries(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c])
-
-  const handleSubmit = async () => {
-    setLoading(true)
-    const params = new URLSearchParams()
-    if (gpa) params.set('gpa', gpa)
-    if (testScore) params.set('test_score', testScore)
-    if (interests.length) params.set('interests', interests.join(','))
-    if (countries.length) params.set('preferred_countries', countries.join(','))
-    try {
-      const res = await fetch(`${API}/api/universities/recommend?${params}`)
-      const data = await res.json()
-      onResults(data)
-    } catch {
-      onResults([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const inputStyle = {
-    background: '#060f1e',
-    border: '1px solid #1a2f50',
-    borderRadius: 8,
-    color: '#e2e8f0',
-    padding: '8px 12px',
-    fontSize: 14,
-    outline: 'none',
-    width: '100%',
-    boxSizing: 'border-box',
-  }
-
-  const pillStyle = (active) => ({
-    padding: '5px 14px',
-    borderRadius: 20,
-    border: `1px solid ${active ? BLUE : '#1a2f50'}`,
-    background: active ? `${BLUE}22` : 'transparent',
-    color: active ? BLUE : '#64748b',
-    cursor: 'pointer',
-    fontSize: 13,
-    fontWeight: active ? 600 : 400,
-    transition: 'all 0.15s',
-  })
-
   return (
     <div style={{
-      background: '#060f1e',
-      border: '1px solid #1a2f50',
-      borderRadius: 16,
-      padding: 24,
-      marginBottom: 28,
+      textAlign: 'center',
+      padding: '40px 0 32px',
+      position: 'relative',
     }}>
-      <div style={{ fontSize: 17, fontWeight: 700, color: '#e2e8f0', marginBottom: 18,
-        background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+      {/* Background glow */}
+      <div style={{
+        position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+        width: 500, height: 200,
+        background: `radial-gradient(ellipse, rgba(14,165,233,0.08) 0%, transparent 70%)`,
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{
+        display: 'inline-block',
+        fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
+        color: BLUE, textTransform: 'uppercase',
+        background: `${BLUE}15`, border: `1px solid ${BLUE}30`,
+        borderRadius: 20, padding: '4px 14px', marginBottom: 16,
       }}>
-        {t ? '智能推荐：为我选出最合适的商学院' : 'Smart Recommender: Find Your Best-Fit Business Schools'}
+        {t ? 'QS 世界大学前100 商学院' : 'QS Top-Ranked University Business Schools'}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 18 }}>
-        <div>
-          <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 6 }}>
-            GPA (0–4.0)
-          </label>
-          <input
-            type="number" min="0" max="4" step="0.1"
-            value={gpa} onChange={e => setGpa(e.target.value)}
-            placeholder="3.5"
-            style={inputStyle}
-          />
-        </div>
-        <div>
-          <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 6 }}>
-            {t ? 'GMAT / SAT 分数' : 'GMAT / SAT Score'}
-          </label>
-          <input
-            type="number" min="200" max="1600"
-            value={testScore} onChange={e => setTestScore(e.target.value)}
-            placeholder={t ? 'GMAT: 700, SAT: 1400' : 'GMAT: 700, SAT: 1400'}
-            style={inputStyle}
-          />
-        </div>
-      </div>
+      <h1 style={{
+        fontSize: 'clamp(24px,4vw,38px)', fontWeight: 900,
+        margin: '0 0 12px',
+        background: `linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%)`,
+        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        lineHeight: 1.15,
+      }}>
+        {t ? '全球顶尖商学院指南' : 'Global Business School Guide'}
+      </h1>
 
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>
-          {t ? '感兴趣专业（可多选）' : 'Interested Specialties (multi-select)'}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {SPECIALTY_OPTIONS.map(s => (
-            <button key={s} onClick={() => toggleInterest(s)} style={pillStyle(interests.includes(s))}>
-              {s}
-            </button>
+      <p style={{ fontSize: 15, color: '#64748b', margin: '0 0 28px', lineHeight: 1.6 }}>
+        {t
+          ? '全球顶尖大学商学院 · 深度资料 · 专业筛选 · 一站式了解'
+          : 'In-depth profiles · specialty filters · everything you need to choose your school'
+        }
+      </p>
+
+      {/* Stats row */}
+      {stats && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 32, flexWrap: 'wrap' }}>
+          {[
+            { val: stats.total,     label: t ? '所学校' : 'Schools' },
+            { val: stats.countries, label: t ? '个国家/地区' : 'Countries' },
+            { val: stats.languages, label: t ? '种语言' : 'Languages' },
+          ].map(({ val, label }) => (
+            <div key={label} style={{ textAlign: 'center' }}>
+              <div style={{
+                fontSize: 28, fontWeight: 800,
+                background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}>
+                {val}
+              </div>
+              <div style={{ fontSize: 12, color: '#4a5568' }}>{label}</div>
+            </div>
           ))}
         </div>
-      </div>
-
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>
-          {t ? '目标国家/地区（可多选）' : 'Target Countries (multi-select)'}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {COUNTRY_OPTIONS.map(c => (
-            <button key={c.key} onClick={() => toggleCountry(c.key)} style={pillStyle(countries.includes(c.key))}>
-              {c.flag} {t ? c.label_cn : c.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        style={{
-          padding: '10px 28px', borderRadius: 10,
-          background: loading ? '#1a2f50' : `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
-          color: '#fff', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-          fontSize: 14, fontWeight: 700,
-          boxShadow: loading ? 'none' : '0 2px 16px rgba(14,165,233,0.35)',
-          transition: 'all 0.2s',
-        }}
-      >
-        {loading ? (t ? '推荐中...' : 'Finding matches...') : (t ? '为我推荐' : 'Recommend Schools')}
-      </button>
+      )}
     </div>
   )
 }
 
-// ── Main Page ────────────────────────────────────────────────────────────────
-export default function UniversitiesPage({ lang = 'zh' }) {
+// ── Sticky filters ────────────────────────────────────────────────────────────
+function StickyFilters({ lang, filters, onChange }) {
   const t = lang === 'zh'
-  const [allUnis, setAllUnis]     = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [filterCountry, setFilterCountry] = useState('')
-  const [filterSpec,    setFilterSpec]    = useState('')
-  const [search,        setSearch]        = useState('')
-  const [expanded,      setExpanded]      = useState(null)
-  const [compareList,   setCompareList]   = useState([])
-  const [recommended,   setRecommended]   = useState(null)  // null = not yet queried
 
-  useEffect(() => {
-    setLoading(true)
-    fetch(`${API}/api/universities`)
-      .then(r => r.json())
-      .then(d => { setAllUnis(d); setLoading(false) })
-      .catch(() => setLoading(false))
-  }, [])
-
-  // Client-side filter (on top of server data)
-  const displayed = useMemo(() => {
-    let list = recommended !== null ? recommended : allUnis
-    if (filterCountry) list = list.filter(u => u.country === filterCountry)
-    if (filterSpec) list = list.filter(u =>
-      u.specialties.some(s => s.toLowerCase().includes(filterSpec.toLowerCase())) ||
-      u.tags.some(s => s.toLowerCase().includes(filterSpec.toLowerCase()))
-    )
-    if (search) {
-      const kw = search.toLowerCase()
-      list = list.filter(u =>
-        u.name.toLowerCase().includes(kw) ||
-        u.name_cn.includes(kw) ||
-        u.city.toLowerCase().includes(kw)
-      )
-    }
-    return list
-  }, [allUnis, recommended, filterCountry, filterSpec, search])
-
-  const toggleExpand = (id) => setExpanded(prev => prev === id ? null : id)
-
-  const toggleCompare = (uni) => {
-    setCompareList(prev => {
-      if (prev.find(u => u.id === uni.id)) return prev.filter(u => u.id !== uni.id)
-      if (prev.length >= 3) return prev
-      return [...prev, uni]
-    })
-  }
-  const removeCompare = (id) => setCompareList(prev => prev.filter(u => u.id !== id))
-
-  const clearRecommended = () => setRecommended(null)
-
-  const pillStyle = (active) => ({
-    padding: '5px 14px', borderRadius: 20,
+  const pill = (active) => ({
+    padding: '5px 14px', borderRadius: 20, border: 'none',
     border: `1px solid ${active ? BLUE : '#1a2f50'}`,
     background: active ? `${BLUE}22` : 'transparent',
     color: active ? BLUE : '#64748b',
     cursor: 'pointer', fontSize: 12, fontWeight: active ? 600 : 400,
-    transition: 'all 0.15s',
+    transition: 'all 0.15s', whiteSpace: 'nowrap',
   })
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 0 48px' }}>
-
-      {/* Page title */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{
-          fontSize: 26, fontWeight: 800, margin: 0,
-          background: `linear-gradient(135deg, #38bdf8, #818cf8)`,
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-        }}>
-          {t ? '全球商学院推荐' : 'Global Business School Guide'}
-        </h1>
-        <p style={{ fontSize: 14, color: '#64748b', margin: '6px 0 0' }}>
-          {t
-            ? `收录 ${allUnis.length} 所顶尖商学院 · 智能匹配 · 横向对比`
-            : `${allUnis.length} top schools · Smart matching · Side-by-side comparison`
-          }
-        </p>
-      </div>
-
-      {/* Recommender */}
-      <RecommendForm lang={lang} onResults={data => { setRecommended(data); setExpanded(null) }} />
-
-      {/* Compare table */}
-      {compareList.length > 0 && (
-        <CompareTable unis={compareList} lang={lang} onRemove={removeCompare} />
-      )}
-
-      {/* If showing recommendations, show banner */}
-      {recommended !== null && (
-        <div style={{
-          background: `${GREEN}18`,
-          border: `1px solid ${GREEN}44`,
-          borderRadius: 10, padding: '12px 18px', marginBottom: 18,
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        }}>
-          <span style={{ fontSize: 13, color: GREEN }}>
-            {t
-              ? `为你推荐了 ${recommended.length} 所学校，按匹配度排序`
-              : `Showing ${recommended.length} recommended schools, sorted by match score`
-            }
-          </span>
-          <button onClick={clearRecommended} style={{
-            background: 'none', border: `1px solid ${GREEN}66`,
-            color: GREEN, borderRadius: 6, padding: '4px 12px',
-            cursor: 'pointer', fontSize: 12,
-          }}>
-            {t ? '查看全部' : 'View All Schools'}
-          </button>
-        </div>
-      )}
-
-      {/* Filter bar */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 20, alignItems: 'center' }}>
+    <div style={{
+      position: 'sticky', top: 0, zIndex: 200,
+      background: 'var(--nav-bg, rgba(2,8,19,0.9))',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      borderBottom: '1px solid #1a2f50',
+      padding: '12px 0',
+      marginBottom: 24,
+    }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
         {/* Search */}
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder={t ? '搜索学校名称或城市...' : 'Search school name or city...'}
-          style={{
-            background: '#060f1e', border: '1px solid #1a2f50', borderRadius: 8,
-            color: '#e2e8f0', padding: '7px 14px', fontSize: 13, outline: 'none',
-            width: 220,
-          }}
-        />
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#4a5568', fontSize: 13, pointerEvents: 'none' }}>
+            🔍
+          </span>
+          <input
+            value={filters.search}
+            onChange={e => onChange({ ...filters, search: e.target.value })}
+            placeholder={t ? '搜索学校...' : 'Search schools...'}
+            style={{
+              background: '#060f1e', border: '1px solid #1a2f50', borderRadius: 8,
+              color: '#e2e8f0', padding: '7px 12px 7px 32px', fontSize: 13,
+              outline: 'none', width: 180,
+            }}
+            onFocus={e => { e.target.style.borderColor = BLUE }}
+            onBlur={e => { e.target.style.borderColor = '#1a2f50' }}
+          />
+        </div>
 
-        {/* Country filter */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-          <button onClick={() => setFilterCountry('')} style={pillStyle(!filterCountry)}>
-            {t ? '全部' : 'All'}
-          </button>
-          {COUNTRY_OPTIONS.map(c => (
-            <button key={c.key} onClick={() => setFilterCountry(c.key === filterCountry ? '' : c.key)} style={pillStyle(filterCountry === c.key)}>
-              {c.flag} {t ? c.label_cn : c.label}
+        {/* Region pills */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {REGIONS.map(r => (
+            <button
+              key={r.key}
+              onClick={() => onChange({ ...filters, region: r.key })}
+              style={pill(filters.region === r.key)}
+            >
+              {t ? r.label_cn : r.label}
             </button>
           ))}
         </div>
 
-        {/* Specialty filter */}
+        {/* Language */}
+        <div style={{ display: 'flex', gap: 5 }}>
+          <button onClick={() => onChange({ ...filters, language: '' })} style={pill(!filters.language)}>
+            {t ? '全语言' : 'All Lang'}
+          </button>
+          <button onClick={() => onChange({ ...filters, language: filters.language === 'english' ? '' : 'english' })} style={pill(filters.language === 'english')}>
+            {t ? '英语' : 'English'}
+          </button>
+          <button onClick={() => onChange({ ...filters, language: filters.language === 'bilingual' ? '' : 'bilingual' })} style={pill(filters.language === 'bilingual')}>
+            {t ? '双语' : 'Bilingual'}
+          </button>
+        </div>
+
+        {/* Specialty */}
         <select
-          value={filterSpec}
-          onChange={e => setFilterSpec(e.target.value)}
+          value={filters.specialty}
+          onChange={e => onChange({ ...filters, specialty: e.target.value })}
           style={{
-            background: '#060f1e', border: '1px solid #1a2f50', borderRadius: 8,
-            color: filterSpec ? '#e2e8f0' : '#64748b', padding: '7px 12px', fontSize: 13, outline: 'none', cursor: 'pointer',
+            background: '#060f1e', border: '1px solid #1a2f50',
+            borderRadius: 8, color: filters.specialty ? '#e2e8f0' : '#64748b',
+            padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
-          <option value="">{t ? '所有专业方向' : 'All Specialties'}</option>
-          {SPECIALTY_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+          <option value="">{t ? '所有专业' : 'All Specialties'}</option>
+          {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-      </div>
 
-      {/* School grid */}
-      {loading ? (
-        <div style={{ display: 'grid', gap: 14 }}>
-          {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)}
-        </div>
-      ) : displayed.length === 0 ? (
-        <div style={{ textAlign: 'center', color: '#4a5568', padding: '60px 0', fontSize: 14 }}>
-          {t ? '没有找到匹配的学校' : 'No schools found'}
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gap: 14 }}>
-          {displayed.map(uni => (
-            <UniCard
-              key={uni.id}
-              uni={uni}
-              lang={lang}
-              expanded={expanded === uni.id}
-              onToggle={toggleExpand}
-              onCompareToggle={toggleCompare}
-              inCompare={!!compareList.find(u => u.id === uni.id)}
-              matchPct={uni.match_pct}
-              matchReasons={uni.match_reasons}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Footer note */}
-      <div style={{ textAlign: 'center', fontSize: 12, color: '#2a3a5c', marginTop: 32 }}>
-        {t
-          ? '排名数据来源：QS World University Rankings / Financial Times MBA Rankings（参考值，请以官方最新数据为准）'
-          : 'Rankings reference: QS World University Rankings / Financial Times MBA Rankings (indicative only)'
-        }
+        {/* Count */}
+        <span style={{ fontSize: 12, color: '#2a3a5c', marginLeft: 'auto' }}>
+          {/* filled in parent */}
+        </span>
       </div>
     </div>
+  )
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
+export default function UniversitiesPage({ lang = 'zh' }) {
+  const t = lang === 'zh'
+  const [allUnis,  setAllUnis]  = useState([])
+  const [stats,    setStats]    = useState(null)
+  const [loading,  setLoading]  = useState(true)
+  const [selected, setSelected] = useState(null)
+  const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '' })
+
+  // Fetch all data once
+  useEffect(() => {
+    setLoading(true)
+    Promise.all([
+      fetch(`${API}/api/universities`).then(r => r.json()),
+      fetch(`${API}/api/universities/stats`).then(r => r.json()),
+    ])
+      .then(([unis, statsData]) => {
+        setAllUnis(unis)
+        setStats(statsData)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  // Client-side filtering
+  const displayed = useMemo(() => {
+    let list = allUnis
+    if (filters.region) list = list.filter(u => u.region === filters.region)
+    if (filters.language) list = list.filter(u => u.language === filters.language)
+    if (filters.specialty) {
+      const kw = filters.specialty.toLowerCase()
+      list = list.filter(u =>
+        (u.specialties || []).some(s => s.toLowerCase().includes(kw)) ||
+        (u.tags || []).some(s => s.toLowerCase().includes(kw))
+      )
+    }
+    if (filters.search) {
+      const kw = filters.search.toLowerCase()
+      list = list.filter(u =>
+        u.name.toLowerCase().includes(kw) ||
+        u.university.toLowerCase().includes(kw) ||
+        u.city.toLowerCase().includes(kw) ||
+        u.country.toLowerCase().includes(kw)
+      )
+    }
+    return list
+  }, [allUnis, filters])
+
+  const handleCardClick = useCallback((uni) => setSelected(uni), [])
+  const handleClose = useCallback(() => setSelected(null), [])
+
+  return (
+    <>
+      <style>{`
+        .uni-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+        @media (max-width: 900px) {
+          .uni-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 580px) {
+          .uni-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
+
+      <div style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 60 }}>
+        <Hero lang={lang} stats={stats} />
+
+        <StickyFilters lang={lang} filters={filters} onChange={setFilters} />
+
+        {/* Result count */}
+        {!loading && (
+          <div style={{ fontSize: 12, color: '#2a3a5c', marginBottom: 16, textAlign: 'right' }}>
+            {t ? `显示 ${displayed.length} / ${allUnis.length} 所学校` : `Showing ${displayed.length} of ${allUnis.length} schools`}
+          </div>
+        )}
+
+        {/* Grid */}
+        {loading ? (
+          <div className="uni-grid">
+            {Array.from({ length: 9 }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : displayed.length === 0 ? (
+          <div style={{ textAlign: 'center', color: '#4a5568', padding: '80px 0', fontSize: 14 }}>
+            {t ? '没有找到匹配的学校，请调整筛选条件' : 'No schools found — try adjusting filters'}
+          </div>
+        ) : (
+          <div className="uni-grid">
+            {displayed.map(uni => (
+              <UniCard
+                key={uni.id}
+                uni={uni}
+                lang={lang}
+                onClick={handleCardClick}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Footer note */}
+        <div style={{ textAlign: 'center', fontSize: 11, color: '#1a2f50', marginTop: 40, lineHeight: 1.6 }}>
+          {t
+            ? '数据参考来源：QS World University Rankings 2024、Financial Times Business School Rankings 2024。学费为参考区间，请以各院校官方网站为准。'
+            : 'Data sourced from QS World University Rankings 2024 and FT Business School Rankings 2024. Tuition figures are approximate — always verify with the official school website.'
+          }
+        </div>
+      </div>
+
+      {/* Modal */}
+      {selected && <UniModal uni={selected} lang={lang} onClose={handleClose} />}
+    </>
   )
 }
