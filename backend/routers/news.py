@@ -7,6 +7,7 @@ Results cached 30 min; AI results cached 2 hours.
 """
 
 from fastapi import APIRouter, HTTPException, Query
+from typing import Optional
 import akshare as ak
 import requests
 import json
