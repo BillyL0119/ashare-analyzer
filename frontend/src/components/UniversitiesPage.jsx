@@ -572,7 +572,7 @@ function StickyFilters({ lang, filters, onChange }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {REGIONS.map(r => (
             <button
-              key={r.key}
+              key={r.label}
               onClick={() => onChange({ ...filters, region: r.key })}
               style={pill(filters.region === r.key)}
             >
@@ -626,19 +626,20 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   const [selected, setSelected] = useState(null)
   const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '' })
 
-  // Fetch all data once
+  // Fetch all data once — split into two independent fetches so a stats
+  // failure never prevents the main school list from loading.
   useEffect(() => {
     setLoading(true)
-    Promise.all([
-      fetch(`${API}/api/universities`).then(r => r.json()),
-      fetch(`${API}/api/universities/stats`).then(r => r.json()),
-    ])
-      .then(([unis, statsData]) => {
-        setAllUnis(unis)
-        setStats(statsData)
-      })
+    fetch(`${API}/api/universities`)
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setAllUnis(data) })
       .catch(() => {})
       .finally(() => setLoading(false))
+
+    fetch(`${API}/api/universities/stats`)
+      .then(r => r.json())
+      .then(data => { if (data && data.total) setStats(data) })
+      .catch(() => {})
   }, [])
 
   // Client-side filtering
