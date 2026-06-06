@@ -20,6 +20,7 @@ import EarningsPanel from './EarningsPanel'
 import StockDetailPage from './StockDetailPage'
 import ScorePanel from './ScorePanel'
 import BacktestPanel from './BacktestPanel'
+import GlobalNewsPanel from './GlobalNewsPanel'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -97,7 +98,7 @@ export default function ComparePanel({ onTabChange }) {
     addSymbol({ code, name: name || code })
   }
 
-  if (selectedSymbols.length === 0 && viewMode !== 'calendar' && viewMode !== 'earnings') {
+  if (selectedSymbols.length === 0 && viewMode !== 'calendar' && viewMode !== 'earnings' && viewMode !== 'global_news') {
     return (
       <>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 8 }}>
@@ -163,6 +164,7 @@ export default function ComparePanel({ onTabChange }) {
           ] : []),
           { key: 'similar', label: t.similarTrend },
           { key: 'news', label: t.newsSentiment },
+          { key: 'global_news', label: lang === 'zh' ? '全球新闻' : 'Global News' },
           { key: 'radar', label: t.radarTab },
           // calendar is A-share only
           ...(market !== 'us' ? [{ key: 'calendar', label: lang === 'zh' ? 'A股日历' : 'Calendar' }] : []),
@@ -214,6 +216,8 @@ export default function ComparePanel({ onTabChange }) {
         <SimilarPanel stocks={selectedSymbols} onOpenDetail={openDetail} />
       ) : viewMode === 'news' ? (
         <NewsPanel stocks={selectedSymbols} onOpenDetail={openDetail} />
+      ) : viewMode === 'global_news' ? (
+        <GlobalNewsPanel lang={lang} />
       ) : viewMode === 'radar' ? (
         <RadarPanel stocks={selectedSymbols} />
       ) : viewMode === 'calendar' ? (

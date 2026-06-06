@@ -46,6 +46,9 @@ export const getSimilarCross = (symbol) =>
 export const getNews = (symbol, market = 'cn') =>
   api.get(`/news/${symbol}`, { params: { market } })
 
+export const getGlobalNews = (params = {}) =>
+  api.get('/news/global', { params })
+
 export const getRadarScore = (symbol) =>
   api.get(`/radar/${symbol}`)
 

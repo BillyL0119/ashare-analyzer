@@ -10,11 +10,13 @@ from fastapi import APIRouter, HTTPException, Query
 import akshare as ak
 import requests
 import json
+import re
 import time
 import logging
 import hashlib
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger("news")
 router = APIRouter()
@@ -230,6 +232,150 @@ def _fetch_yahoo_rss(symbol: str) -> list[dict]:
     except Exception as exc:
         logger.debug("Yahoo RSS failed for %s: %s", symbol, exc)
         return []
+
+
+# ── Global news sources & cache ───────────────────────────────────────────────
+
+_global_cache: dict = {}   # 'global' -> (ts, data)
+_GLOBAL_TTL = 1800         # 30 min
+
+_RSS_SOURCES = [
+    ('Reuters Business', 'https://feeds.reuters.com/reuters/businessNews', 'en'),
+    ('Yahoo Finance',    'https://finance.yahoo.com/news/rssindex',        'en'),
+    ('MarketWatch',      'https://feeds.marketwatch.com/marketwatch/topstories', 'en'),
+    ('CNBC',             'https://www.cnbc.com/id/100003114/device/rss/rss.html', 'en'),
+]
+
+_CAT_KW = {
+    'market':  ['stock', 'market', 'shares', 'equity', 'rally', 'selloff', 'index', 'dow', 'nasdaq',
+                 's&p', '股市', '涨', '跌', '大盘', '沪深', '指数'],
+    'economy': ['economy', 'gdp', 'inflation', 'fed', 'interest rate', 'jobs', 'unemployment',
+                 'trade', 'tariff', '经济', 'gdp', '通胀', '美联储', '利率', '就业', '贸易'],
+    'company': ['earnings', 'revenue', 'profit', 'ceo', 'merger', 'acquisition', 'ipo', 'quarterly',
+                 '财报', '营收', '利润', '并购', '上市'],
+    'crypto':  ['bitcoin', 'crypto', 'ethereum', 'blockchain', 'defi', 'nft', 'binance',
+                 '比特币', '加密', '以太坊', '区块链'],
+}
+
+
+def _classify(text: str) -> str:
+    low = text.lower()
+    for cat, kws in _CAT_KW.items():
+        if any(kw in low for kw in kws):
+            return cat
+    return 'market'
+
+
+def _rss_time_to_iso(s: str) -> str:
+    if not s:
+        return datetime.utcnow().isoformat() + 'Z'
+    try:
+        import email.utils
+        return email.utils.parsedate_to_datetime(s).isoformat()
+    except Exception:
+        return s
+
+
+def _fetch_rss_source(name: str, url: str, lang: str, limit: int = 10) -> list[dict]:
+    try:
+        import feedparser
+        feed = feedparser.parse(url)
+        items = []
+        for entry in feed.entries[:limit]:
+            title = (entry.get('title') or '').strip()
+            if not title:
+                continue
+            raw_summary = entry.get('summary') or entry.get('description') or ''
+            summary = re.sub(r'<[^>]+>', '', raw_summary).strip()[:300]
+            pub_iso = _rss_time_to_iso(entry.get('published') or entry.get('updated') or '')
+            items.append({
+                'title': title,
+                'summary': summary,
+                'source': name,
+                'published_at': pub_iso,
+                'url': (entry.get('link') or '').strip(),
+                'lang': lang,
+                'category': _classify(title + ' ' + summary),
+            })
+        return items
+    except Exception as exc:
+        logger.warning("RSS fetch failed [%s]: %s", name, exc)
+        return []
+
+
+def _fetch_sina_global(limit: int = 15) -> list[dict]:
+    try:
+        r = requests.get(
+            'https://feed.mix.sina.com.cn/api/roll/get',
+            params={'pageid': 153, 'lid': 2513, 'k': '', 'num': limit, 'page': 1},
+            headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://finance.sina.com.cn'},
+            timeout=8,
+        )
+        data = r.json()
+        items_raw = data.get('result', {}).get('data', [])
+        result = []
+        for item in items_raw:
+            title = (item.get('title') or '').strip()
+            if not title:
+                continue
+            mtime = item.get('mtime', '')
+            try:
+                pub_iso = datetime.fromtimestamp(int(mtime)).isoformat()
+            except Exception:
+                pub_iso = datetime.utcnow().isoformat()
+            result.append({
+                'title': title,
+                'summary': (item.get('intro') or '')[:300],
+                'source': '新浪财经',
+                'published_at': pub_iso,
+                'url': (item.get('url') or '').strip(),
+                'lang': 'cn',
+                'category': _classify(title),
+            })
+        return result
+    except Exception as exc:
+        logger.warning("Sina Finance fetch failed: %s", exc)
+        return []
+
+
+@router.get('/global')
+def get_global_news(
+    lang:     Optional[str] = Query('all', description='all / cn / en'),
+    category: Optional[str] = Query('all', description='all / market / economy / company / crypto'),
+):
+    """Aggregate global financial news from RSS + Sina Finance. Cached 30 min."""
+    now = time.time()
+    ck = 'global'
+
+    if ck not in _global_cache or now - _global_cache[ck][0] >= _GLOBAL_TTL:
+        all_items: list[dict] = []
+        with ThreadPoolExecutor(max_workers=6) as ex:
+            futures = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
+            futures.append(ex.submit(_fetch_sina_global, 15))
+            for f in as_completed(futures):
+                try:
+                    all_items.extend(f.result())
+                except Exception:
+                    pass
+
+        all_items.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+        payload = {
+            'items': all_items,
+            'total': len(all_items),
+            'updated_at': datetime.utcnow().isoformat() + 'Z',
+            'sources': sorted({i['source'] for i in all_items}),
+        }
+        _global_cache[ck] = (now, payload)
+    else:
+        payload = _global_cache[ck][1]
+
+    items = payload['items']
+    if lang and lang != 'all':
+        items = [i for i in items if i['lang'] == lang]
+    if category and category != 'all':
+        items = [i for i in items if i['category'] == category]
+
+    return {**payload, 'items': items, 'count': len(items)}
 
 
 # ── Route ─────────────────────────────────────────────────────────────────────
