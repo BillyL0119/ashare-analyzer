@@ -540,7 +540,7 @@ function StickyFilters({ lang, filters, onChange }) {
 
   return (
     <div style={{
-      position: 'sticky', top: 0, zIndex: 200,
+      position: 'sticky', top: 54, zIndex: 99,
       background: 'var(--nav-bg, rgba(2,8,19,0.9))',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',

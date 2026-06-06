@@ -242,10 +242,10 @@ export default function App() {
           ))}
         </div>
 
-        {/* 🌙/☀️ Theme toggle */}
+        {/* 🌙/🔥 Theme toggle */}
         <button
           onClick={toggleTheme}
-          title={theme === 'dark' ? (lang === 'zh' ? '切换浅色' : 'Light mode') : (lang === 'zh' ? '切换深色' : 'Dark mode')}
+          title={theme === 'dark' ? (lang === 'zh' ? '切换暖色模式' : 'Warm mode') : (lang === 'zh' ? '切换冷色模式' : 'Cool mode')}
           style={{
             width: 34, height: 34, borderRadius: '50%',
             border: '1px solid var(--border-primary)',
@@ -257,7 +257,7 @@ export default function App() {
           onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.4)' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.boxShadow = 'none' }}
         >
-          {theme === 'dark' ? '☀️' : '🌙'}
+          {theme === 'dark' ? '🔥' : '🌙'}
         </button>
 
         {/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}

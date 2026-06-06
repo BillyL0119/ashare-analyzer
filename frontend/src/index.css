@@ -34,38 +34,38 @@
   --red-bright:    #ef4444;
 }
 
-/* ── Light theme ─────────────────────────────────────────── */
+/* ── Warm dark theme ("fire" mode) ───────────────────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #f8fafc;
-  --bg-secondary:    #ffffff;
-  --bg-tertiary:     #f1f5f9;
-  --bg-hover:        #e2e8f0;
-  --border-primary:  #cbd5e1;
-  --border-glow:     #93c5fd;
-  --text-primary:    #0f172a;
-  --text-secondary:  #475569;
-  --text-muted:      #94a3b8;
-  --card-bg:         #ffffff;
-  --nav-bg:          rgba(248, 250, 252, 0.97);
-  --nav-bg-dim:      rgba(248, 250, 252, 0.92);
-  --map-ocean:       #dbeafe;
-  --map-sphere:      #bfdbfe;
-  --map-border:      #94a3b8;
-  --map-graticule:   #cbd5e1;
-  --map-land:        #e2e8f0;
-  --skeleton-base:   #e2e8f0;
-  --skeleton-shine:  #f1f5f9;
-  --chart-bg:        #ffffff;
-  --chart-text:      #475569;
-  --chart-border:    #e2e8f0;
-  --chart-tooltip:   rgba(255,255,255,0.97);
+  --bg-primary:      #0f0e17;
+  --bg-secondary:    #1a1a2e;
+  --bg-tertiary:     #16213e;
+  --bg-hover:        #1f2b47;
+  --border-primary:  #2d3561;
+  --border-glow:     #e53170;
+  --text-primary:    #fffffe;
+  --text-secondary:  #a7a9be;
+  --text-muted:      #6b6f8a;
+  --card-bg:         #1a1a2e;
+  --nav-bg:          rgba(15, 14, 23, 0.95);
+  --nav-bg-dim:      rgba(15, 14, 23, 0.88);
+  --map-ocean:       #16213e;
+  --map-sphere:      #0f0e17;
+  --map-border:      #3d4178;
+  --map-graticule:   #1f2b47;
+  --map-land:        #252242;
+  --skeleton-base:   #1a1a2e;
+  --skeleton-shine:  #2d3561;
+  --chart-bg:        #1a1a2e;
+  --chart-text:      #a7a9be;
+  --chart-border:    #2d3561;
+  --chart-tooltip:   rgba(15,14,23,0.95);
 
-  --accent-blue:   #0284c7;
-  --accent-purple: #7c3aed;
-  --accent-cyan:   #0891b2;
-  --accent-gold:   #d97706;
-  --green-bright:  #059669;
-  --red-bright:    #dc2626;
+  --accent-blue:   #ff8906;
+  --accent-purple: #e53170;
+  --accent-cyan:   #f25f4c;
+  --accent-gold:   #ff8906;
+  --green-bright:  #10b981;
+  --red-bright:    #ef4444;
 }
 
 :root {
