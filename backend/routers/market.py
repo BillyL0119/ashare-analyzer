@@ -442,7 +442,8 @@ def _do_fetch_sentiment() -> dict:
         cn_components = []
 
         try:
-            spot_df = ak.stock_zh_a_spot_em()
+            with ThreadPoolExecutor(max_workers=1) as _spot_ex:
+                spot_df = _spot_ex.submit(ak.stock_zh_a_spot_em).result(timeout=10)
             pct_col = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
             adv = int((pct_col > 0).sum())
             dec = int((pct_col < 0).sum())
@@ -460,7 +461,8 @@ def _do_fetch_sentiment() -> dict:
             sh_hist = None
         if sh_hist is None:
             try:
-                sh_df = ak.stock_zh_index_daily(symbol="sh000001")
+                with ThreadPoolExecutor(max_workers=1) as _sh_ex:
+                    sh_df = _sh_ex.submit(ak.stock_zh_index_daily, "sh000001").result(timeout=10)
                 sh_df = sh_df.rename(columns={"close": "Close"}).tail(60)
                 if len(sh_df) >= 16:
                     sh_hist = sh_df

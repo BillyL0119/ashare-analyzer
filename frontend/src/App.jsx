@@ -119,7 +119,7 @@ export default function App() {
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
           <img
-            src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'}
+            src="/logo-dark.png"
             alt="Best Friend Stock"
             style={{
               height: 32,
