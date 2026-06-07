@@ -117,34 +117,16 @@ export default function App() {
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-          <div
+        <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <img
+            src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'}
+            alt="Best Friend Stock"
             style={{
-              width: 30,
-              height: 30,
-              borderRadius: 8,
-              background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 16,
-              boxShadow: `0 0 16px rgba(14,165,233,0.35)`,
+              height: 32,
+              width: 'auto',
+              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
             }}
-          >
-            📊
-          </div>
-          <span
-            style={{
-              fontSize: 17,
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              letterSpacing: '0.3px',
-            }}
-          >
-            {t.appTitle}
-          </span>
+          />
         </div>
 
         {/* Market toggle — pill style */}
