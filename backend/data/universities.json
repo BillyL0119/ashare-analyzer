@@ -9,15 +9,107 @@
     "qs_rank": 1,
     "business_rank": "FT MBA #3 / QS Business #4",
     "established": 1914,
-    "programs": ["Master of Finance", "MBA", "PhD", "MOT", "Executive Education"],
-    "specialties": ["Finance", "Analytics", "Technology Management", "Entrepreneurship"],
+    "programs": [
+      "Master of Finance",
+      "MBA",
+      "PhD",
+      "MOT",
+      "Executive Education"
+    ],
+    "specialties": [
+      "Finance",
+      "Analytics",
+      "Technology Management",
+      "Entrepreneurship"
+    ],
     "description_en": "MIT Sloan is one of the world's premier management schools, celebrated for its rigorous quantitative curriculum and deep integration with MIT's science and engineering ecosystem. It produces global leaders in finance, technology, and operations research. The school is home to multiple Nobel Prize winners and pioneering research centers including the MIT Media Lab.",
     "description_cn": "麻省理工斯隆管理学院是全球顶尖管理学院之一，以严格的定量课程和与MIT科学工程生态系统的深度融合著称。培养了金融、科技和运营研究领域的全球领袖，拥有多位诺贝尔奖得主和MIT媒体实验室等前沿研究机构。",
     "tuition_usd": "~$80,400/year",
     "language": "english",
-    "notable_alumni": ["Kofi Annan", "Carly Fiorina", "Robin Chase"],
+    "notable_alumni": [
+      "Kofi Annan",
+      "Carly Fiorina",
+      "Robin Chase"
+    ],
     "url": "https://mitsloan.mit.edu",
-    "tags": ["Finance", "Analytics", "Tech", "Top 5", "MBA", "MFin"]
+    "tags": [
+      "Finance",
+      "Analytics",
+      "Tech",
+      "Top 5",
+      "MBA",
+      "MFin"
+    ],
+    "requirements": {
+      "gpa": "3.5+ recommended",
+      "gmat_median": 720,
+      "gre_accepted": true,
+      "toefl": 100,
+      "ielts": 7.5,
+      "deadlines": {
+        "r1": "Sep 18, 2025",
+        "r2": "Jan 22, 2026",
+        "r3": "Apr 8, 2026"
+      },
+      "acceptance_rate": "~15%"
+    },
+    "employment": [
+      "Technology 34%",
+      "Consulting 26%",
+      "Finance / PE 20%",
+      "Healthcare 7%",
+      "Entrepreneurship 6%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Action-learning MBA with cross-functional labs and global immersion. Access MIT's full ecosystem.",
+        "description_cn": "行动学习型MBA，配备跨职能实验室和全球沉浸项目，充分融入MIT创新生态。"
+      },
+      {
+        "name": "Master of Finance (MFin)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Quantitative finance degree targeting asset management, IBD, and risk roles.",
+        "description_cn": "定量金融硕士，面向资产管理、投资银行和风险管理职位。"
+      },
+      {
+        "name": "Management of Technology (MOT)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "For engineers and scientists moving into business leadership roles at tech companies.",
+        "description_cn": "面向工程师和科学家向科技公司管理层转型而设计的专项项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Kofi Annan",
+        "role": "7th UN Secretary-General",
+        "year": 1972
+      },
+      {
+        "name": "Carly Fiorina",
+        "role": "Former CEO, Hewlett-Packard",
+        "year": 1980
+      },
+      {
+        "name": "Robin Chase",
+        "role": "Co-founder & CEO, Zipcar",
+        "year": 2000
+      },
+      {
+        "name": "David Autor",
+        "role": "Economist, MIT Professor; MacArthur Fellow",
+        "year": null
+      },
+      {
+        "name": "Jim Simons",
+        "role": "Founder, Renaissance Technologies (hedge fund)",
+        "year": null
+      }
+    ]
   },
   {
     "id": "stanford-gsb",
@@ -29,15 +121,105 @@
     "qs_rank": 5,
     "business_rank": "FT MBA #2 / QS Business #2",
     "established": 1925,
-    "programs": ["MBA", "MSx", "PhD", "Executive Education"],
-    "specialties": ["Entrepreneurship", "Finance", "Social Innovation", "Technology"],
+    "programs": [
+      "MBA",
+      "MSx",
+      "PhD",
+      "Executive Education"
+    ],
+    "specialties": [
+      "Entrepreneurship",
+      "Finance",
+      "Social Innovation",
+      "Technology"
+    ],
     "description_en": "Stanford GSB is the most selective business school in the world, accepting under 7% of MBA applicants. Located in the heart of Silicon Valley, it shapes the leaders of the world's most influential companies and social enterprises. Its culture of 'change lives, change organizations, change the world' attracts exceptional talent globally.",
     "description_cn": "斯坦福商学院是全球录取率最低的商学院，MBA录取率不足7%。坐落于硅谷腹地，培养了全球最具影响力企业和社会企业的领导者。其「改变生活、改变组织、改变世界」的理念吸引了全球顶尖人才。",
     "tuition_usd": "~$74,706/year",
     "language": "english",
-    "notable_alumni": ["Phil Knight", "Reid Hoffman", "Mary Barra"],
+    "notable_alumni": [
+      "Phil Knight",
+      "Reid Hoffman",
+      "Mary Barra"
+    ],
     "url": "https://www.gsb.stanford.edu",
-    "tags": ["Entrepreneurship", "Finance", "Top 5", "MBA", "Silicon Valley"]
+    "tags": [
+      "Entrepreneurship",
+      "Finance",
+      "Top 5",
+      "MBA",
+      "Silicon Valley"
+    ],
+    "requirements": {
+      "gpa": "3.7+ recommended",
+      "gmat_median": 738,
+      "gre_accepted": true,
+      "toefl": 100,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Sep 10, 2025",
+        "r2": "Jan 7, 2026",
+        "r3": "Apr 8, 2026"
+      },
+      "acceptance_rate": "~6.9%"
+    },
+    "employment": [
+      "Entrepreneurship / VC 22%",
+      "Technology 18%",
+      "Consulting 16%",
+      "Finance / PE 15%",
+      "Social Impact 10%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "The world's most selective MBA. Emphasizes personal leadership, with unrivalled Silicon Valley access.",
+        "description_cn": "全球最难录取的MBA项目，强调个人领导力，拥有无与伦比的硅谷资源。"
+      },
+      {
+        "name": "MSx (Master of Science in Management)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Accelerated programme for mid-career leaders with 8+ years of experience.",
+        "description_cn": "面向8年以上工作经验的中层管理者的加速项目。"
+      },
+      {
+        "name": "PhD",
+        "duration": "5 years",
+        "language": "English",
+        "description_en": "Research doctorate across Accounting, Economics, Finance, Marketing, Operations, OB.",
+        "description_cn": "覆盖会计、经济、金融、市场、运营、组织行为的研究型博士项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Phil Knight",
+        "role": "Co-founder & Chairman, Nike",
+        "year": 1962
+      },
+      {
+        "name": "Reid Hoffman",
+        "role": "Co-founder, LinkedIn",
+        "year": 1994
+      },
+      {
+        "name": "Mary Barra",
+        "role": "CEO, General Motors",
+        "year": 1990
+      },
+      {
+        "name": "Vinod Khosla",
+        "role": "Co-founder, Sun Microsystems; Founder, Khosla Ventures",
+        "year": 1980
+      },
+      {
+        "name": "Sheryl Sandberg",
+        "role": "Former COO, Meta (Facebook)",
+        "year": null
+      }
+    ]
   },
   {
     "id": "harvard-hbs",
@@ -49,15 +231,106 @@
     "qs_rank": 4,
     "business_rank": "FT MBA #5 / QS Business #1",
     "established": 1908,
-    "programs": ["MBA", "PhD", "Executive Education", "HBX CORe"],
-    "specialties": ["General Management", "Finance", "Strategy", "Entrepreneurship"],
+    "programs": [
+      "MBA",
+      "PhD",
+      "Executive Education",
+      "HBX CORe"
+    ],
+    "specialties": [
+      "General Management",
+      "Finance",
+      "Strategy",
+      "Entrepreneurship"
+    ],
     "description_en": "Harvard Business School is the world's most recognizable business brand, pioneering the case method of teaching that is now used by business schools worldwide. Its 116-year history, 80,000+ alumni network, and the Harvard brand make it the gold standard for general management education. The school's Baker Library holds one of the world's largest business research collections.",
     "description_cn": "哈佛商学院是全球最知名的商业品牌，开创了如今被全球商学院广泛采用的案例教学法。116年历史、8万余名校友网络和哈佛品牌使其成为通用管理教育的黄金标准。学院的贝克图书馆拥有全球最大的商业研究馆藏之一。",
     "tuition_usd": "~$73,440/year",
     "language": "english",
-    "notable_alumni": ["Michael Bloomberg", "Sheryl Sandberg", "George W. Bush"],
+    "notable_alumni": [
+      "Michael Bloomberg",
+      "Sheryl Sandberg",
+      "George W. Bush"
+    ],
     "url": "https://www.hbs.edu",
-    "tags": ["Finance", "Strategy", "Top 5", "MBA", "Case Method", "Ivy League"]
+    "tags": [
+      "Finance",
+      "Strategy",
+      "Top 5",
+      "MBA",
+      "Case Method",
+      "Ivy League"
+    ],
+    "requirements": {
+      "gpa": "3.67 median",
+      "gmat_median": 730,
+      "gre_accepted": true,
+      "toefl": 109,
+      "ielts": 7.5,
+      "deadlines": {
+        "r1": "Sep 4, 2025",
+        "r2": "Jan 5, 2026",
+        "r3": "Apr 2, 2026"
+      },
+      "acceptance_rate": "~11%"
+    },
+    "employment": [
+      "Finance / PE 27%",
+      "Consulting 25%",
+      "Technology 18%",
+      "General Management 13%",
+      "Entrepreneurship 7%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Case-method MBA with 500+ cases per year, creating decisive general managers.",
+        "description_cn": "每年超过500个案例的案例教学MBA，培养果断的通才管理者。"
+      },
+      {
+        "name": "HBX CORe (online)",
+        "duration": "3 months",
+        "language": "English",
+        "description_en": "Online certificate in business fundamentals: analytics, economics, financial accounting.",
+        "description_cn": "在线商业基础证书：数据分析、经济学、财务会计。"
+      },
+      {
+        "name": "Executive Education",
+        "duration": "1–8 weeks",
+        "language": "English",
+        "description_en": "World's top executive programmes for senior leaders across industries.",
+        "description_cn": "面向各行业高级领导者的全球顶尖高管教育项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Michael Bloomberg",
+        "role": "Founder, Bloomberg L.P.; Former NYC Mayor",
+        "year": 1966
+      },
+      {
+        "name": "Sheryl Sandberg",
+        "role": "Former COO, Meta (Facebook)",
+        "year": 1995
+      },
+      {
+        "name": "Jamie Dimon",
+        "role": "CEO, JPMorgan Chase",
+        "year": 1982
+      },
+      {
+        "name": "Mitt Romney",
+        "role": "US Senator; Former Massachusetts Governor",
+        "year": 1975
+      },
+      {
+        "name": "George W. Bush",
+        "role": "43rd President of the United States",
+        "year": 1975
+      }
+    ]
   },
   {
     "id": "chicago-booth",
@@ -69,15 +342,112 @@
     "qs_rank": 11,
     "business_rank": "FT MBA #4 / QS Business #6",
     "established": 1898,
-    "programs": ["MBA", "PhD", "EMBA", "Evening MBA"],
-    "specialties": ["Finance", "Economics", "Accounting", "Consulting"],
+    "programs": [
+      "MBA",
+      "PhD",
+      "EMBA",
+      "Evening MBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Economics",
+      "Accounting",
+      "Consulting"
+    ],
     "description_en": "UChicago Booth is home to more Nobel laureates in Economics than any other institution, making it the intellectual epicenter of modern financial theory. The Fama-French factor model, efficient market hypothesis, and Black-Scholes model all have roots here. Its flexible curriculum is a hallmark that attracts analytically rigorous students.",
     "description_cn": "芝加哥大学布斯商学院拥有比任何其他机构都多的诺贝尔经济学奖得主，是现代金融理论的思想中心。法马-弗伦奇因子模型、有效市场假说和Black-Scholes期权定价模型均源于此。灵活的课程设置吸引了注重分析能力的优秀学生。",
     "tuition_usd": "~$76,845/year",
     "language": "english",
-    "notable_alumni": ["Eugene Fama", "Richard Thaler", "Paul Volcker"],
+    "notable_alumni": [
+      "Eugene Fama",
+      "Richard Thaler",
+      "Paul Volcker"
+    ],
     "url": "https://www.chicagobooth.edu",
-    "tags": ["Finance", "Economics", "Top 10", "MBA", "Nobel Prize"]
+    "tags": [
+      "Finance",
+      "Economics",
+      "Top 10",
+      "MBA",
+      "Nobel Prize"
+    ],
+    "requirements": {
+      "gpa": "3.6 median",
+      "gmat_median": 729,
+      "gre_accepted": true,
+      "toefl": 104,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Sep 17, 2025",
+        "r2": "Jan 7, 2026",
+        "r3": "Apr 8, 2026"
+      },
+      "acceptance_rate": "~24%"
+    },
+    "employment": [
+      "Finance / PE 35%",
+      "Consulting 26%",
+      "Technology 16%",
+      "Healthcare 7%",
+      "Real Estate 5%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA (Full-Time)",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Highly flexible curriculum — choose any sequence of electives. Strongest finance faculty globally.",
+        "description_cn": "高度灵活的课程体系，任意选择选修顺序。全球最强的金融学师资阵容。"
+      },
+      {
+        "name": "EMBA",
+        "duration": "21 months",
+        "language": "English",
+        "description_en": "Weekend Executive MBA across Chicago, London, and Hong Kong campuses.",
+        "description_cn": "周末高管MBA，在芝加哥、伦敦和香港三地校区开设。"
+      },
+      {
+        "name": "Evening MBA",
+        "duration": "3 years",
+        "language": "English",
+        "description_en": "Part-time MBA for Chicago-based professionals continuing to work full-time.",
+        "description_cn": "面向芝加哥地区在职人士的在职MBA项目。"
+      },
+      {
+        "name": "PhD",
+        "duration": "5 years",
+        "language": "English",
+        "description_en": "Research PhD across Accounting, Economics, Econometrics & Statistics, Finance, Marketing.",
+        "description_cn": "覆盖会计、经济学、计量经济学与统计、金融、市场营销的研究型博士项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Eugene Fama",
+        "role": "Nobel Laureate; Pioneer of Efficient Market Hypothesis",
+        "year": 1964
+      },
+      {
+        "name": "Richard Thaler",
+        "role": "Nobel Laureate in Economics; Behavioral Finance pioneer",
+        "year": 1974
+      },
+      {
+        "name": "Paul Volcker",
+        "role": "Former Chairman, US Federal Reserve",
+        "year": null
+      },
+      {
+        "name": "David Booth",
+        "role": "Co-founder, Dimensional Fund Advisors",
+        "year": 1971
+      },
+      {
+        "name": "Myron Scholes",
+        "role": "Nobel Laureate; co-creator of Black-Scholes model",
+        "year": 1969
+      }
+    ]
   },
   {
     "id": "penn-wharton",
@@ -89,15 +459,113 @@
     "qs_rank": 12,
     "business_rank": "FT MBA #6 / QS Business #3",
     "established": 1881,
-    "programs": ["Undergraduate (BSc Econ)", "MBA", "PhD", "Executive MBA"],
-    "specialties": ["Finance", "Accounting", "Real Estate", "Statistics"],
+    "programs": [
+      "Undergraduate (BSc Econ)",
+      "MBA",
+      "PhD",
+      "Executive MBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Real Estate",
+      "Statistics"
+    ],
     "description_en": "Wharton is the world's first collegiate business school and the global gold standard for finance education. Its undergraduate and MBA programs are consistently ranked among the very best, and it has produced more billionaires than any other business school. The Joseph H. Lauder Institute integrates MBA education with international studies.",
     "description_cn": "沃顿商学院是全球第一所大学商科院校，也是金融教育的世界黄金标准。其本科和MBA项目始终跻身全球最顶尖行列，培养了比任何其他商学院都多的亿万富翁。约瑟夫·劳德国际研究与商业管理学院将MBA教育与国际研究深度融合。",
     "tuition_usd": "~$85,738/year",
     "language": "english",
-    "notable_alumni": ["Elon Musk", "Warren Buffett", "Sundar Pichai"],
+    "notable_alumni": [
+      "Elon Musk",
+      "Warren Buffett",
+      "Sundar Pichai"
+    ],
     "url": "https://www.wharton.upenn.edu",
-    "tags": ["Finance", "Accounting", "Top 5", "MBA", "Undergraduate", "Ivy League"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "Top 5",
+      "MBA",
+      "Undergraduate",
+      "Ivy League"
+    ],
+    "requirements": {
+      "gpa": "3.6 median",
+      "gmat_median": 733,
+      "gre_accepted": true,
+      "toefl": 100,
+      "ielts": 7.5,
+      "deadlines": {
+        "r1": "Sep 17, 2025",
+        "r2": "Jan 7, 2026",
+        "r3": "Mar 18, 2026"
+      },
+      "acceptance_rate": "~23%"
+    },
+    "employment": [
+      "Finance / PE 36%",
+      "Consulting 24%",
+      "Technology 19%",
+      "Healthcare 7%",
+      "Real Estate 4%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Oldest US business school MBA. Unrivalled finance, accounting, and real estate depth.",
+        "description_cn": "美国历史最悠久商学院的MBA项目，在金融、会计和房地产领域深度无可比拟。"
+      },
+      {
+        "name": "BSc in Economics (Undergraduate)",
+        "duration": "4 years",
+        "language": "English",
+        "description_en": "World's most selective undergraduate business program. Produces more Wall Street analysts than any other.",
+        "description_cn": "全球最难录取的本科商科项目，是华尔街分析师的最大单一来源。"
+      },
+      {
+        "name": "EMBA (Philadelphia / San Francisco / Global)",
+        "duration": "24 months",
+        "language": "English",
+        "description_en": "Executive MBA offered across three locations, including a global cohort with INSEAD.",
+        "description_cn": "三地高管MBA，包括与INSEAD联合开设的全球项目。"
+      },
+      {
+        "name": "MBA / JD",
+        "duration": "4 years",
+        "language": "English",
+        "description_en": "Joint degree with Penn Law; ideal for finance law, private equity, or policy careers.",
+        "description_cn": "与宾大法学院联合学位，适合金融法律、私募股权或政策职业。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Elon Musk",
+        "role": "CEO, Tesla & SpaceX; Owner, X (Twitter)",
+        "year": 1997
+      },
+      {
+        "name": "Warren Buffett",
+        "role": "Chairman & CEO, Berkshire Hathaway",
+        "year": 1951
+      },
+      {
+        "name": "Sundar Pichai",
+        "role": "CEO, Alphabet (Google)",
+        "year": null
+      },
+      {
+        "name": "Donald Trump",
+        "role": "45th & 47th US President",
+        "year": 1968
+      },
+      {
+        "name": "Ivanka Trump",
+        "role": "Entrepreneur; former White House advisor",
+        "year": 2004
+      }
+    ]
   },
   {
     "id": "columbia-cbs",
@@ -109,15 +577,114 @@
     "qs_rank": 13,
     "business_rank": "FT MBA #9 / QS Business #7",
     "established": 1916,
-    "programs": ["MBA", "EMBA", "PhD", "MS Finance", "MS Marketing Science"],
-    "specialties": ["Finance", "Investment Management", "Real Estate", "Media"],
+    "programs": [
+      "MBA",
+      "EMBA",
+      "PhD",
+      "MS Finance",
+      "MS Marketing Science"
+    ],
+    "specialties": [
+      "Finance",
+      "Investment Management",
+      "Real Estate",
+      "Media"
+    ],
     "description_en": "Columbia Business School sits in New York City, providing unmatched access to Wall Street and global finance. Warren Buffett studied under Benjamin Graham here, and the school's legendary Value Investing program continues that tradition. Its location in Morningside Heights gives students proximity to the financial, media, and technology capital of the world.",
     "description_cn": "哥伦比亚大学商学院坐落于纽约市，提供无可比拟的华尔街和全球金融资源。沃伦·巴菲特曾在此师从本杰明·格雷厄姆，学院享誉全球的价值投资项目延续着这一传统。地处晨边高地，学生近距离接触全球金融、媒体和科技的中心。",
     "tuition_usd": "~$82,176/year",
     "language": "english",
-    "notable_alumni": ["Warren Buffett (alumni)", "Henry Kravis", "Mario Gabelli"],
+    "notable_alumni": [
+      "Warren Buffett (alumni)",
+      "Henry Kravis",
+      "Mario Gabelli"
+    ],
     "url": "https://business.columbia.edu",
-    "tags": ["Finance", "Investment", "Top 10", "MBA", "Wall Street", "Ivy League"]
+    "tags": [
+      "Finance",
+      "Investment",
+      "Top 10",
+      "MBA",
+      "Wall Street",
+      "Ivy League"
+    ],
+    "requirements": {
+      "gpa": "3.5 recommended",
+      "gmat_median": 728,
+      "gre_accepted": true,
+      "toefl": 101,
+      "ielts": 7.5,
+      "deadlines": {
+        "r1": "Oct 1, 2025",
+        "r2": "Jan 7, 2026",
+        "r3": "Apr 2, 2026"
+      },
+      "acceptance_rate": "~20%"
+    },
+    "employment": [
+      "Finance / PE 44%",
+      "Consulting 26%",
+      "Technology 13%",
+      "Media 5%",
+      "Real Estate 4%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "NYC-based MBA with the world's strongest Wall Street recruitment pipeline.",
+        "description_cn": "纽约MBA项目，拥有全球最强的华尔街招聘渠道。"
+      },
+      {
+        "name": "EMBA (NY / Paris)",
+        "duration": "20 months",
+        "language": "English",
+        "description_en": "Executive MBA offered with bi-weekly Friday–Saturday sessions; Paris cohort via ESCP.",
+        "description_cn": "每两周一次周五至周六上课的高管MBA，巴黎班与ESCP联合开设。"
+      },
+      {
+        "name": "MS in Financial Economics",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Quantitative master's bridging economics theory and financial market practice.",
+        "description_cn": "连接经济学理论与金融市场实践的定量金融经济学硕士。"
+      },
+      {
+        "name": "MS in Marketing Science",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Analytical marketing master leveraging CBS's strength in data-driven strategy.",
+        "description_cn": "依托CBS数据驱动战略优势的分析型市场营销硕士。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Warren Buffett",
+        "role": "Chairman & CEO, Berkshire Hathaway (studied under Graham)",
+        "year": 1951
+      },
+      {
+        "name": "Henry Kravis",
+        "role": "Co-founder, KKR (private equity)",
+        "year": 1969
+      },
+      {
+        "name": "Mario Gabelli",
+        "role": "Founder & CEO, GAMCO Investors",
+        "year": 1967
+      },
+      {
+        "name": "Vikram Pandit",
+        "role": "Former CEO, Citigroup",
+        "year": 1976
+      },
+      {
+        "name": "Paul Nardelli",
+        "role": "Former CEO, Home Depot",
+        "year": null
+      }
+    ]
   },
   {
     "id": "yale-som",
@@ -129,15 +696,113 @@
     "qs_rank": 16,
     "business_rank": "FT MBA #22 / QS Business #10",
     "established": 1976,
-    "programs": ["MBA", "PhD", "EMBA", "MAM (Arts Management)", "MEM (Environmental)"],
-    "specialties": ["Social Enterprise", "Finance", "Healthcare", "Sustainability"],
+    "programs": [
+      "MBA",
+      "PhD",
+      "EMBA",
+      "MAM (Arts Management)",
+      "MEM (Environmental)"
+    ],
+    "specialties": [
+      "Social Enterprise",
+      "Finance",
+      "Healthcare",
+      "Sustainability"
+    ],
     "description_en": "Yale SOM distinguishes itself through a focus on business in society, public and non-profit management, and global leadership. Its integrated MBA curriculum breaks down functional silos to foster systems thinking. Students benefit from Yale's unparalleled resources across law, medicine, the arts, and public policy.",
     "description_cn": "耶鲁管理学院以关注商业与社会、公共和非营利管理及全球领导力而独树一帜。整合式MBA课程打破功能壁垒，培养系统性思维。学生得益于耶鲁大学在法律、医学、艺术和公共政策等领域无与伦比的资源。",
     "tuition_usd": "~$76,200/year",
     "language": "english",
-    "notable_alumni": ["Janet Yellen", "Stephen Schwarzman", "Indra Nooyi"],
+    "notable_alumni": [
+      "Janet Yellen",
+      "Stephen Schwarzman",
+      "Indra Nooyi"
+    ],
     "url": "https://som.yale.edu",
-    "tags": ["Finance", "Social Enterprise", "Top 15", "MBA", "Ivy League"]
+    "tags": [
+      "Finance",
+      "Social Enterprise",
+      "Top 15",
+      "MBA",
+      "Ivy League"
+    ],
+    "requirements": {
+      "gpa": "3.6 median",
+      "gmat_median": 720,
+      "gre_accepted": true,
+      "toefl": 100,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Sep 10, 2025",
+        "r2": "Jan 5, 2026",
+        "r3": "Apr 2, 2026"
+      },
+      "acceptance_rate": "~29%"
+    },
+    "employment": [
+      "Finance / PE 28%",
+      "Consulting 22%",
+      "Technology 14%",
+      "Social Enterprise 12%",
+      "Healthcare 9%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Integrated curriculum focusing on business and society. Exceptional for social impact careers.",
+        "description_cn": "以商业与社会为主线的整合式课程，在社会影响力职业发展方面尤为突出。"
+      },
+      {
+        "name": "MBA / JD",
+        "duration": "4 years",
+        "language": "English",
+        "description_en": "Joint degree with Yale Law — the world's top-ranked law school.",
+        "description_cn": "与全球顶尖的耶鲁法学院联合开设的双学位项目。"
+      },
+      {
+        "name": "MAM (Arts Management)",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Joint program with the Yale School of Drama for arts and cultural managers.",
+        "description_cn": "与耶鲁戏剧学院联合开设，面向艺术和文化管理者。"
+      },
+      {
+        "name": "MEM (Environment)",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Joint program with Yale School of the Environment for sustainability leaders.",
+        "description_cn": "与耶鲁环境学院联合开设，面向可持续发展领导者。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Janet Yellen",
+        "role": "US Secretary of the Treasury; Former Fed Chair",
+        "year": null
+      },
+      {
+        "name": "Stephen Schwarzman",
+        "role": "Co-founder & CEO, Blackstone Group",
+        "year": 1972
+      },
+      {
+        "name": "Indra Nooyi",
+        "role": "Former CEO, PepsiCo",
+        "year": 1980
+      },
+      {
+        "name": "Jeffrey Immelt",
+        "role": "Former CEO, General Electric",
+        "year": 1982
+      },
+      {
+        "name": "Ted Turner",
+        "role": "Founder, CNN; Media mogul",
+        "year": null
+      }
+    ]
   },
   {
     "id": "northwestern-kellogg",
@@ -149,15 +814,105 @@
     "qs_rank": 21,
     "business_rank": "FT MBA #7 / QS Business #8",
     "established": 1908,
-    "programs": ["MBA", "MMM", "PhD", "Executive MBA"],
-    "specialties": ["Marketing", "Finance", "Strategy", "Consulting"],
+    "programs": [
+      "MBA",
+      "MMM",
+      "PhD",
+      "Executive MBA"
+    ],
+    "specialties": [
+      "Marketing",
+      "Finance",
+      "Strategy",
+      "Consulting"
+    ],
     "description_en": "Kellogg is globally ranked #1 in Marketing and is renowned for its highly collaborative culture and team-oriented approach to management education. It consistently leads in consulting placements and produces exceptional general managers. The school's MMM program, run jointly with Northwestern's McCormick School of Engineering, is ideal for design and technology leaders.",
     "description_cn": "凯洛格管理学院全球市场营销排名第一，以高度协作的文化和团队导向的管理教育著称，咨询行业就业名列前茅，培养了出色的通才管理者。与西北大学麦考密克工程学院联合开设的MMM项目是设计和科技领袖的理想选择。",
     "tuition_usd": "~$75,028/year",
     "language": "english",
-    "notable_alumni": ["Sanjay Jha", "Ellen Kullman", "James Gorman"],
+    "notable_alumni": [
+      "Sanjay Jha",
+      "Ellen Kullman",
+      "James Gorman"
+    ],
     "url": "https://www.kellogg.northwestern.edu",
-    "tags": ["Marketing", "Consulting", "Top 10", "MBA", "Strategy"]
+    "tags": [
+      "Marketing",
+      "Consulting",
+      "Top 10",
+      "MBA",
+      "Strategy"
+    ],
+    "requirements": {
+      "gpa": "3.6 recommended",
+      "gmat_median": 727,
+      "gre_accepted": true,
+      "toefl": 101,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Sep 10, 2025",
+        "r2": "Jan 7, 2026",
+        "r3": "Apr 8, 2026"
+      },
+      "acceptance_rate": "~25%"
+    },
+    "employment": [
+      "Consulting 35%",
+      "Finance / PE 22%",
+      "Technology 18%",
+      "Marketing 10%",
+      "Healthcare 7%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "#1 global MBA for Marketing and Consulting. Highly team-oriented culture.",
+        "description_cn": "全球营销与咨询方向排名第一的MBA，以高度团队协作的文化著称。"
+      },
+      {
+        "name": "MMM (MBA + MEM)",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Joint MBA + Master of Engineering Management with Northwestern's McCormick School.",
+        "description_cn": "与西北大学麦考密克工程学院联合开设的MBA+工程管理硕士双学位。"
+      },
+      {
+        "name": "EMBA (Evanston / Miami / Global)",
+        "duration": "24 months",
+        "language": "English",
+        "description_en": "Highly ranked executive MBA with campuses across North America and a global offering.",
+        "description_cn": "在北美多地及全球开设的高排名高管MBA项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "James Gorman",
+        "role": "Former CEO, Morgan Stanley",
+        "year": 1987
+      },
+      {
+        "name": "Ellen Kullman",
+        "role": "Former CEO, DuPont; CEO, Carbon",
+        "year": 1983
+      },
+      {
+        "name": "Sanjay Jha",
+        "role": "Former CEO, Motorola Mobility",
+        "year": 1989
+      },
+      {
+        "name": "William Daley",
+        "role": "Former White House Chief of Staff",
+        "year": null
+      },
+      {
+        "name": "Sam Yagan",
+        "role": "Co-founder, OkCupid; CEO, SpotHero",
+        "year": null
+      }
+    ]
   },
   {
     "id": "duke-fuqua",
@@ -169,15 +924,35 @@
     "qs_rank": 53,
     "business_rank": "FT MBA #12 / QS Business #15",
     "established": 1969,
-    "programs": ["MBA", "MMS", "PhD", "MQM", "Weekend Executive MBA"],
-    "specialties": ["Strategy", "Finance", "Healthcare", "Consulting"],
+    "programs": [
+      "MBA",
+      "MMS",
+      "PhD",
+      "MQM",
+      "Weekend Executive MBA"
+    ],
+    "specialties": [
+      "Strategy",
+      "Finance",
+      "Healthcare",
+      "Consulting"
+    ],
     "description_en": "Duke Fuqua is celebrated for its 'Team Fuqua' spirit — a uniquely collaborative community. The school excels in healthcare and energy management alongside finance and strategy. Its Cross Continent MBA and Accelerator programs offer highly flexible delivery options for working professionals.",
     "description_cn": "杜克富卡商学院以\"Team Fuqua\"精神著称，拥有独特的协作社区文化。学院在医疗保健和能源管理领域与金融、战略并驾齐驱。其跨大陆MBA和加速器项目为在职人士提供高度灵活的学习方式。",
     "tuition_usd": "~$68,000/year",
     "language": "english",
-    "notable_alumni": ["Melinda French Gates", "Tim Cook (advisor)"],
+    "notable_alumni": [
+      "Melinda French Gates",
+      "Tim Cook (advisor)"
+    ],
     "url": "https://www.fuqua.duke.edu",
-    "tags": ["Strategy", "Finance", "Healthcare", "Top 20", "MBA"]
+    "tags": [
+      "Strategy",
+      "Finance",
+      "Healthcare",
+      "Top 20",
+      "MBA"
+    ]
   },
   {
     "id": "michigan-ross",
@@ -189,15 +964,114 @@
     "qs_rank": 23,
     "business_rank": "FT MBA #15 / QS Business #16",
     "established": 1924,
-    "programs": ["BBA (Undergraduate)", "MBA", "MAcc", "PhD", "Global MBA"],
-    "specialties": ["Finance", "Accounting", "Strategy", "Operations"],
+    "programs": [
+      "BBA (Undergraduate)",
+      "MBA",
+      "MAcc",
+      "PhD",
+      "Global MBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Strategy",
+      "Operations"
+    ],
     "description_en": "Michigan Ross is consistently ranked among the very best public business schools globally. Its signature MAP (Multidisciplinary Action Project) gives every MBA student a 7-week real-world consulting project. Exceptional value for a top-tier education, Ross attracts students from over 80 countries.",
     "description_cn": "密歇根罗斯商学院持续跻身全球最顶尖公立商学院之列。其标志性的MAP（多学科行动项目）为每位MBA学生提供7周真实咨询项目实践。以顶级教育的卓越性价比，罗斯吸引了来自80多个国家的学生。",
     "tuition_usd": "~$55,602/year",
     "language": "english",
-    "notable_alumni": ["Stephen Ross", "Larry Page (Undergraduate)", "PepsiCo CEO"],
+    "notable_alumni": [
+      "Stephen Ross",
+      "Larry Page (Undergraduate)",
+      "PepsiCo CEO"
+    ],
     "url": "https://michiganross.umich.edu",
-    "tags": ["Finance", "Accounting", "Top 15", "MBA", "Undergraduate", "Public School"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "Top 15",
+      "MBA",
+      "Undergraduate",
+      "Public School"
+    ],
+    "requirements": {
+      "gpa": "3.4 median",
+      "gmat_median": 716,
+      "gre_accepted": true,
+      "toefl": 102,
+      "ielts": 6.5,
+      "deadlines": {
+        "r1": "Oct 1, 2025",
+        "r2": "Jan 7, 2026",
+        "r3": "Mar 4, 2026"
+      },
+      "acceptance_rate": "~31%"
+    },
+    "employment": [
+      "Consulting 30%",
+      "Finance / PE 22%",
+      "Technology 24%",
+      "Manufacturing 10%",
+      "Healthcare 6%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Strong public school MBA with MAP consulting project and Ford Motor Co. ties.",
+        "description_cn": "出色的公立商学院MBA，以MAP咨询项目和与福特汽车的紧密关系著称。"
+      },
+      {
+        "name": "BBA (Undergraduate)",
+        "duration": "4 years",
+        "language": "English",
+        "description_en": "Top-ranked undergraduate business program with deep career networks in auto, finance, and consulting.",
+        "description_cn": "顶尖本科商科项目，在汽车、金融和咨询行业拥有深厚的职业网络。"
+      },
+      {
+        "name": "MAcc",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Master of Accounting with exceptional Big 4 placement rates.",
+        "description_cn": "会计硕士，四大会计师事务所录取率极为出色。"
+      },
+      {
+        "name": "Global MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "MBA with mandatory international business module and global cohort focus.",
+        "description_cn": "包含必修国际商务模块的全球化MBA项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Stephen Ross",
+        "role": "Founder, Related Companies (real estate); school donor",
+        "year": 1962
+      },
+      {
+        "name": "Larry Page",
+        "role": "Co-founder, Google (undergrad alumnus)",
+        "year": 1995
+      },
+      {
+        "name": "Mike Ilitch",
+        "role": "Founder, Little Caesars Pizza; Detroit Tigers owner",
+        "year": null
+      },
+      {
+        "name": "Ahmet Ertegun",
+        "role": "Co-founder, Atlantic Records (honorary)",
+        "year": null
+      },
+      {
+        "name": "William Clay Ford Jr.",
+        "role": "Executive Chairman, Ford Motor Company",
+        "year": null
+      }
+    ]
   },
   {
     "id": "nyu-stern",
@@ -209,15 +1083,114 @@
     "qs_rank": 39,
     "business_rank": "FT MBA #17 / QS Business #11",
     "established": 1900,
-    "programs": ["Undergraduate (BS)", "MBA", "PhD", "MS Finance", "MS Quantitative Finance"],
-    "specialties": ["Finance", "Accounting", "Fintech", "Economics"],
+    "programs": [
+      "Undergraduate (BS)",
+      "MBA",
+      "PhD",
+      "MS Finance",
+      "MS Quantitative Finance"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Fintech",
+      "Economics"
+    ],
     "description_en": "NYU Stern is situated in the heart of Greenwich Village, steps from Wall Street, making it one of the world's most finance-focused schools. Its undergraduate business program and MS in Quantitative Finance are globally recognized. Stern's deep NYC connections provide unparalleled access to finance, media, and technology internships.",
     "description_cn": "纽约大学斯特恩商学院坐落于格林威治村，距华尔街咫尺之遥，是全球金融导向最强的商学院之一。其本科商科项目和量化金融硕士项目享誉全球，凭借深厚的纽约资源，提供无与伦比的金融、媒体和科技实习机会。",
     "tuition_usd": "~$76,752/year",
     "language": "english",
-    "notable_alumni": ["Alan Greenspan", "Jim Cramer", "Henry Kaufman"],
+    "notable_alumni": [
+      "Alan Greenspan",
+      "Jim Cramer",
+      "Henry Kaufman"
+    ],
     "url": "https://www.stern.nyu.edu",
-    "tags": ["Finance", "Accounting", "Fintech", "Top 20", "MBA", "Undergraduate"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "Fintech",
+      "Top 20",
+      "MBA",
+      "Undergraduate"
+    ],
+    "requirements": {
+      "gpa": "3.5 median",
+      "gmat_median": 729,
+      "gre_accepted": true,
+      "toefl": 100,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Oct 15, 2025",
+        "r2": "Jan 15, 2026",
+        "r3": "Mar 15, 2026"
+      },
+      "acceptance_rate": "~23%"
+    },
+    "employment": [
+      "Finance / PE 40%",
+      "Consulting 22%",
+      "Technology 17%",
+      "Fintech 8%",
+      "Real Estate 5%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "NYC finance-focused MBA with unparalleled Wall Street and media industry access.",
+        "description_cn": "以金融为核心的纽约MBA，华尔街和媒体行业资源无与伦比。"
+      },
+      {
+        "name": "BS in Business (Undergraduate)",
+        "duration": "4 years",
+        "language": "English",
+        "description_en": "Top-ranked undergraduate business program with specializations in finance, accounting, and fintech.",
+        "description_cn": "顶尖本科商科项目，提供金融、会计和金融科技专业方向。"
+      },
+      {
+        "name": "MS in Quantitative Finance",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Quant finance master for derivatives, risk, and algorithmic trading roles.",
+        "description_cn": "面向衍生品、风险管理和量化交易职位的量化金融硕士。"
+      },
+      {
+        "name": "MS Finance",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Pre-experience finance master targeting corporate finance and investment management.",
+        "description_cn": "面向企业金融和投资管理职位的应届生金融硕士。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Alan Greenspan",
+        "role": "Former Chairman, US Federal Reserve",
+        "year": 1950
+      },
+      {
+        "name": "Alan 'Ace' Greenberg",
+        "role": "Former CEO, Bear Stearns",
+        "year": 1949
+      },
+      {
+        "name": "L. Jay Tenenbaum",
+        "role": "Founding partner, Blue Ridge Capital",
+        "year": null
+      },
+      {
+        "name": "Richard Fuld",
+        "role": "Former CEO, Lehman Brothers",
+        "year": 1973
+      },
+      {
+        "name": "Martin Gruenberg",
+        "role": "Chairman, FDIC",
+        "year": null
+      }
+    ]
   },
   {
     "id": "ucla-anderson",
@@ -229,15 +1202,37 @@
     "qs_rank": 44,
     "business_rank": "FT MBA #19 / QS Business #18",
     "established": 1935,
-    "programs": ["MBA", "FEMBA", "EMBA", "PhD", "MFE"],
-    "specialties": ["Finance", "Entertainment", "Tech Management", "Entrepreneurship"],
+    "programs": [
+      "MBA",
+      "FEMBA",
+      "EMBA",
+      "PhD",
+      "MFE"
+    ],
+    "specialties": [
+      "Finance",
+      "Entertainment",
+      "Tech Management",
+      "Entrepreneurship"
+    ],
     "description_en": "UCLA Anderson is uniquely positioned at the intersection of technology, entertainment, and finance in Los Angeles. Its strong ties to Hollywood, Silicon Beach, and the broader LA tech ecosystem create extraordinary opportunities. The school is known for its collaborative culture and the Applied Management Research (AMR) program.",
     "description_cn": "加州大学洛杉矶分校安德森管理学院独特地处于洛杉矶的科技、娱乐和金融交汇处，与好莱坞、硅滩及更广泛的洛杉矶科技生态系统的紧密联系创造了非凡机遇。学院以协作文化和应用管理研究（AMR）项目闻名。",
     "tuition_usd": "~$60,000/year",
     "language": "english",
-    "notable_alumni": ["Tony Lair", "Andrea Mitchell", "David Geffen (no MBA but donor)"],
+    "notable_alumni": [
+      "Tony Lair",
+      "Andrea Mitchell",
+      "David Geffen (no MBA but donor)"
+    ],
     "url": "https://www.anderson.ucla.edu",
-    "tags": ["Finance", "Entertainment", "Tech", "Top 25", "MBA", "Public School"]
+    "tags": [
+      "Finance",
+      "Entertainment",
+      "Tech",
+      "Top 25",
+      "MBA",
+      "Public School"
+    ]
   },
   {
     "id": "cmu-tepper",
@@ -249,15 +1244,37 @@
     "qs_rank": 52,
     "business_rank": "FT MBA #20 / QS Business #20",
     "established": 1949,
-    "programs": ["MBA", "MSCF", "PhD", "Part-time MBA"],
-    "specialties": ["Finance", "Analytics", "Operations Research", "AI & Machine Learning"],
+    "programs": [
+      "MBA",
+      "MSCF",
+      "PhD",
+      "Part-time MBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Analytics",
+      "Operations Research",
+      "AI & Machine Learning"
+    ],
     "description_en": "Carnegie Mellon Tepper pioneered quantitative management education and was the first school to use operations research methods in business. Its MS in Computational Finance (MSCF) is consistently ranked #1 globally. Located in Pittsburgh's thriving tech hub, Tepper graduates are highly sought by finance and technology firms.",
     "description_cn": "卡内基梅隆大学泰珀商学院开创了定量管理教育，是第一所将运筹学方法应用于商业的学校。其计算金融硕士（MSCF）项目持续荣登全球第一。坐落于匹兹堡蓬勃发展的科技中心，泰珀毕业生深受金融和科技公司追捧。",
     "tuition_usd": "~$72,000/year",
     "language": "english",
-    "notable_alumni": ["David Tepper", "Raj Subramaniam", "Robert Mehrabian"],
+    "notable_alumni": [
+      "David Tepper",
+      "Raj Subramaniam",
+      "Robert Mehrabian"
+    ],
     "url": "https://www.cmu.edu/tepper",
-    "tags": ["Finance", "Analytics", "AI", "Top 25", "MBA", "MSCF", "STEM"]
+    "tags": [
+      "Finance",
+      "Analytics",
+      "AI",
+      "Top 25",
+      "MBA",
+      "MSCF",
+      "STEM"
+    ]
   },
   {
     "id": "georgetown-mcd",
@@ -269,15 +1286,36 @@
     "qs_rank": 189,
     "business_rank": "FT MBA #38 / QS Business #36",
     "established": 1957,
-    "programs": ["Undergraduate", "MBA", "EMBA", "PhD", "MS Finance"],
-    "specialties": ["Finance", "International Business", "Consulting", "Government Relations"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "EMBA",
+      "PhD",
+      "MS Finance"
+    ],
+    "specialties": [
+      "Finance",
+      "International Business",
+      "Consulting",
+      "Government Relations"
+    ],
     "description_en": "Georgetown McDonough benefits from its unique Washington D.C. location at the nexus of global politics, policy, and finance. Its Jesuit tradition emphasizes ethics and service alongside business excellence. Exceptional consulting, finance, and international business placements leverage DC's proximity to government agencies, think tanks, and international organizations.",
     "description_cn": "乔治城大学麦克多诺商学院依托华盛顿特区这一全球政治、政策和金融交汇点的独特地理优势，耶稣会传统强调商业卓越与伦理服务并重。出色的咨询、金融和国际商务就业成绩得益于邻近政府机构、智库和国际组织。",
     "tuition_usd": "~$67,680/year",
     "language": "english",
-    "notable_alumni": ["Meg Whitman", "Al Gore (Law)", "CNN anchors"],
+    "notable_alumni": [
+      "Meg Whitman",
+      "Al Gore (Law)",
+      "CNN anchors"
+    ],
     "url": "https://msb.georgetown.edu",
-    "tags": ["Finance", "Consulting", "International", "MBA", "Undergraduate"]
+    "tags": [
+      "Finance",
+      "Consulting",
+      "International",
+      "MBA",
+      "Undergraduate"
+    ]
   },
   {
     "id": "toronto-rotman",
@@ -289,15 +1327,36 @@
     "qs_rank": 17,
     "business_rank": "FT MBA #42 / QS Business #22",
     "established": 1950,
-    "programs": ["MBA", "MFin", "PhD", "EMBA", "Morning/Evening MBA"],
-    "specialties": ["Finance", "Strategy", "Accounting", "Consulting"],
+    "programs": [
+      "MBA",
+      "MFin",
+      "PhD",
+      "EMBA",
+      "Morning/Evening MBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Strategy",
+      "Accounting",
+      "Consulting"
+    ],
     "description_en": "Rotman is Canada's top-ranked business school and sits in Toronto's Bay Street financial district, Canada's equivalent of Wall Street. Roger Martin, the school's former dean, created the influential Integrative Thinking methodology. Strong in finance and consulting, Rotman graduates are highly competitive across North American markets.",
     "description_cn": "罗特曼管理学院是加拿大排名第一的商学院，坐落于加拿大华尔街——多伦多湾街金融区。前院长罗杰·马丁创造了颇具影响力的整合性思维方法论。在金融和咨询领域实力强劲，毕业生在北美市场极具竞争力。",
     "tuition_usd": "~CAD $47,700/year",
     "language": "english",
-    "notable_alumni": ["Patricia Meredith", "Frank Stronach", "Scott Reid"],
+    "notable_alumni": [
+      "Patricia Meredith",
+      "Frank Stronach",
+      "Scott Reid"
+    ],
     "url": "https://www.rotman.utoronto.ca",
-    "tags": ["Finance", "Consulting", "Top 20", "MBA", "Canada"]
+    "tags": [
+      "Finance",
+      "Consulting",
+      "Top 20",
+      "MBA",
+      "Canada"
+    ]
   },
   {
     "id": "mcgill-desautels",
@@ -309,15 +1368,36 @@
     "qs_rank": 31,
     "business_rank": "QS Business #35",
     "established": 1906,
-    "programs": ["BCom (Undergraduate)", "MBA", "MSc", "PhD"],
-    "specialties": ["Finance", "Marketing", "Accounting", "Strategy"],
+    "programs": [
+      "BCom (Undergraduate)",
+      "MBA",
+      "MSc",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Marketing",
+      "Accounting",
+      "Strategy"
+    ],
     "description_en": "McGill Desautels is one of Canada's most prestigious business schools, located in the cosmopolitan city of Montreal. Its BCom is the most selective undergraduate business program in Quebec. As part of McGill University — one of the world's top research universities — students benefit from extraordinary interdisciplinary resources.",
     "description_cn": "麦吉尔大学德萨泰斯管理学院是加拿大最负盛名的商学院之一，坐落于国际化都市蒙特利尔。其商学学士（BCom）是魁北克竞争最激烈的本科商科项目。作为全球顶尖研究型大学麦吉尔的组成部分，学生享有非凡的跨学科资源。",
     "tuition_usd": "~CAD $35,000/year",
     "language": "english",
-    "notable_alumni": ["John Molson", "Dominic D'Alessandro", "Hartland Molson"],
+    "notable_alumni": [
+      "John Molson",
+      "Dominic D'Alessandro",
+      "Hartland Molson"
+    ],
     "url": "https://www.mcgill.ca/desautels",
-    "tags": ["Finance", "Accounting", "Undergraduate", "MBA", "Canada", "Bilingual City"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "Undergraduate",
+      "MBA",
+      "Canada",
+      "Bilingual City"
+    ]
   },
   {
     "id": "ubc-sauder",
@@ -329,15 +1409,36 @@
     "qs_rank": 47,
     "business_rank": "QS Business #40",
     "established": 1956,
-    "programs": ["BCom (Undergraduate)", "MBA", "MAcc", "PhD"],
-    "specialties": ["Finance", "Real Estate", "Marketing", "Sustainability"],
+    "programs": [
+      "BCom (Undergraduate)",
+      "MBA",
+      "MAcc",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Real Estate",
+      "Marketing",
+      "Sustainability"
+    ],
     "description_en": "UBC Sauder sits on the Pacific coast of Canada, just a 2-hour flight from major Asian financial centres. This geographic advantage, combined with Vancouver's vibrant tech and resources sectors, creates unique Asia-Pacific business opportunities. The Centre for Urban Economics and Real Estate is among the best globally.",
     "description_cn": "UBC商学院位于加拿大太平洋海岸，距亚洲主要金融中心仅两小时航程。这一地理优势，结合温哥华蓬勃发展的科技和资源产业，创造了独特的亚太商业机遇。其城市经济和房地产研究中心跻身全球最佳之列。",
     "tuition_usd": "~CAD $33,700/year",
     "language": "english",
-    "notable_alumni": ["Jeff Mallett", "Haig Farris", "Percy Norman"],
+    "notable_alumni": [
+      "Jeff Mallett",
+      "Haig Farris",
+      "Percy Norman"
+    ],
     "url": "https://www.sauder.ubc.ca",
-    "tags": ["Finance", "Real Estate", "Undergraduate", "MBA", "Canada", "Asia-Pacific"]
+    "tags": [
+      "Finance",
+      "Real Estate",
+      "Undergraduate",
+      "MBA",
+      "Canada",
+      "Asia-Pacific"
+    ]
   },
   {
     "id": "western-ivey",
@@ -349,15 +1450,36 @@
     "qs_rank": 172,
     "business_rank": "FT MBA Emerging #1 Canada",
     "established": 1922,
-    "programs": ["HBA (Undergraduate)", "MBA", "EMBA", "PhD"],
-    "specialties": ["General Management", "Finance", "Consulting", "Strategy"],
+    "programs": [
+      "HBA (Undergraduate)",
+      "MBA",
+      "EMBA",
+      "PhD"
+    ],
+    "specialties": [
+      "General Management",
+      "Finance",
+      "Consulting",
+      "Strategy"
+    ],
     "description_en": "Ivey is Canada's premier case-method business school, modelled after Harvard. Its 2-year HBA (Honors Business Administration) undergraduate degree is widely regarded as the most prestigious business degree in Canada. Ivey alumni hold more C-suite positions in Canada's largest companies than graduates of any other Canadian school.",
     "description_cn": "艾维商学院是加拿大最顶尖的案例教学商学院，以哈佛为蓝本建立。其两年制荣誉工商管理（HBA）本科学位被广泛认为是加拿大最负盛名的商科学位，艾维校友在加拿大最大企业担任高管职位的比例超过任何其他加拿大商学院。",
     "tuition_usd": "~CAD $58,000/year",
     "language": "english",
-    "notable_alumni": ["Galen Weston", "James Smith", "Ken Field"],
+    "notable_alumni": [
+      "Galen Weston",
+      "James Smith",
+      "Ken Field"
+    ],
     "url": "https://www.ivey.uwo.ca",
-    "tags": ["Consulting", "Finance", "Undergraduate", "MBA", "Canada", "Case Method"]
+    "tags": [
+      "Consulting",
+      "Finance",
+      "Undergraduate",
+      "MBA",
+      "Canada",
+      "Case Method"
+    ]
   },
   {
     "id": "oxford-said",
@@ -369,15 +1491,115 @@
     "qs_rank": 3,
     "business_rank": "FT MBA #10 / QS Business #5",
     "established": 1996,
-    "programs": ["MBA", "1+1 MBA", "MSc Finance", "MSc Financial Economics", "PhD", "EMBA"],
-    "specialties": ["Finance", "Entrepreneurship", "Economics", "Social Innovation"],
+    "programs": [
+      "MBA",
+      "1+1 MBA",
+      "MSc Finance",
+      "MSc Financial Economics",
+      "PhD",
+      "EMBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Entrepreneurship",
+      "Economics",
+      "Social Innovation"
+    ],
     "description_en": "Oxford Saïd is built on the foundation of one of the world's oldest and most prestigious universities, founded in 1096. The unique 1+1 MBA allows students to combine the MBA with another Oxford Master's degree. Oxford's vast interdisciplinary resources in law, medicine, government, and policy make it exceptional for those seeking broader impact.",
     "description_cn": "牛津赛德商学院依托创建于1096年的世界最古老最负盛名的大学。独特的1+1 MBA允许学生将MBA与牛津另一个硕士学位相结合。牛津在法律、医学、政府和政策领域无与伦比的跨学科资源，使其在追求更广泛影响力的学生中尤为出色。",
     "tuition_usd": "~£62,430/year",
     "language": "english",
-    "notable_alumni": ["Tej Kohli", "Walter Kwok", "Bob Diamond"],
+    "notable_alumni": [
+      "Tej Kohli",
+      "Walter Kwok",
+      "Bob Diamond"
+    ],
     "url": "https://www.sbs.ox.ac.uk",
-    "tags": ["Finance", "Top 10", "MBA", "MSc", "UK", "Oxford"]
+    "tags": [
+      "Finance",
+      "Top 10",
+      "MBA",
+      "MSc",
+      "UK",
+      "Oxford"
+    ],
+    "requirements": {
+      "gpa": "Upper second-class degree",
+      "gmat_median": 690,
+      "gre_accepted": true,
+      "toefl": 110,
+      "ielts": 7.5,
+      "deadlines": {
+        "r1": "Oct 2025",
+        "r2": "Jan 2026",
+        "r3": "Mar 2026"
+      },
+      "acceptance_rate": "~25%"
+    },
+    "employment": [
+      "Finance / PE 30%",
+      "Consulting 25%",
+      "Technology 16%",
+      "Social Enterprise 10%",
+      "Government 7%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Intensive 12-month Oxford MBA with unparalleled interdisciplinary access.",
+        "description_cn": "密集12个月牛津MBA，拥有无可比拟的跨学科资源。"
+      },
+      {
+        "name": "1+1 MBA",
+        "duration": "2 years",
+        "language": "English",
+        "description_en": "Combine the Oxford MBA with any other Oxford Master's degree (Law, Policy, Computer Science, etc.).",
+        "description_cn": "将牛津MBA与任何其他牛津硕士学位（法律、政策、计算机科学等）相结合。"
+      },
+      {
+        "name": "MSc Financial Economics",
+        "duration": "9 months",
+        "language": "English",
+        "description_en": "Top-ranked Oxford economics master with deep financial modelling and econometrics.",
+        "description_cn": "全球顶尖的牛津经济学硕士，深入学习金融建模和计量经济学。"
+      },
+      {
+        "name": "MSc Finance",
+        "duration": "10 months",
+        "language": "English",
+        "description_en": "Finance-focused master with strong investment management and corporate finance coverage.",
+        "description_cn": "以投资管理和企业金融为重点的金融硕士。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Bob Diamond",
+        "role": "Former CEO, Barclays",
+        "year": null
+      },
+      {
+        "name": "Walter Kwok",
+        "role": "Former Chairman, Sun Hung Kai Properties",
+        "year": null
+      },
+      {
+        "name": "Tej Kohli",
+        "role": "Technology entrepreneur and philanthropist",
+        "year": null
+      },
+      {
+        "name": "Baroness Shriti Vadera",
+        "role": "Former UK Government Minister",
+        "year": null
+      },
+      {
+        "name": "Kaveh Zand",
+        "role": "Founder, Integrated Merchant Partners",
+        "year": null
+      }
+    ]
   },
   {
     "id": "cambridge-judge",
@@ -389,15 +1611,115 @@
     "qs_rank": 2,
     "business_rank": "FT MBA #14 / QS Business #9",
     "established": 1990,
-    "programs": ["MBA", "MFin", "EMBA", "PhD", "MPhil"],
-    "specialties": ["Finance", "Strategy", "Entrepreneurship", "Technology"],
+    "programs": [
+      "MBA",
+      "MFin",
+      "EMBA",
+      "PhD",
+      "MPhil"
+    ],
+    "specialties": [
+      "Finance",
+      "Strategy",
+      "Entrepreneurship",
+      "Technology"
+    ],
     "description_en": "Cambridge Judge is one of the fastest-rising business schools globally, leveraging Cambridge University's 800-year heritage and extraordinary research network. Its MFin (Master of Finance) programme is consistently ranked among Europe's best. Cambridge's ties to Silicon Fen, the UK's technology cluster, create exceptional tech and startup opportunities.",
     "description_cn": "剑桥贾奇商学院是全球排名上升最快的商学院之一，依托剑桥大学800年的历史传承和卓越的研究网络。其金融硕士（MFin）项目持续跻身欧洲最佳之列。剑桥与英国科技产业集群「硅沼」的紧密联系为学生创造了非凡的科技和创业机遇。",
     "tuition_usd": "~£65,000/year",
     "language": "english",
-    "notable_alumni": ["Michael Tobin", "David Gill", "Gautam Adani (Oxford alumnus)"],
+    "notable_alumni": [
+      "Michael Tobin",
+      "David Gill",
+      "Gautam Adani (Oxford alumnus)"
+    ],
     "url": "https://www.jbs.cam.ac.uk",
-    "tags": ["Finance", "Top 15", "MBA", "MFin", "UK", "Cambridge"]
+    "tags": [
+      "Finance",
+      "Top 15",
+      "MBA",
+      "MFin",
+      "UK",
+      "Cambridge"
+    ],
+    "requirements": {
+      "gpa": "Upper second-class degree (2:1)",
+      "gmat_median": 693,
+      "gre_accepted": true,
+      "toefl": 110,
+      "ielts": 7.5,
+      "deadlines": {
+        "r1": "Nov 2025",
+        "r2": "Jan 2026",
+        "r3": "Mar 2026",
+        "r4": "May 2026"
+      },
+      "acceptance_rate": "~24%"
+    },
+    "employment": [
+      "Finance / PE 28%",
+      "Consulting 26%",
+      "Technology 20%",
+      "Entrepreneurship 12%",
+      "Healthcare 6%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Full-time 1-year MBA drawing on 800+ years of Cambridge tradition and Silicon Fen tech links.",
+        "description_cn": "全日制一年制MBA，依托剑桥800多年的历史传承和硅沼科技产业联系。"
+      },
+      {
+        "name": "Master of Finance (MFin)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Europe's top-ranked finance master, consistently #1 in FT rankings.",
+        "description_cn": "欧洲顶尖金融硕士，持续荣获《金融时报》排名第一。"
+      },
+      {
+        "name": "EMBA",
+        "duration": "20 months",
+        "language": "English",
+        "description_en": "Executive MBA for senior leaders combining Cambridge rigour with global peer network.",
+        "description_cn": "面向高级领导者的高管MBA，融合剑桥严谨学术与全球同伴网络。"
+      },
+      {
+        "name": "MPhil in Finance",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Research-oriented pre-doctoral master in finance and financial economics.",
+        "description_cn": "面向金融和金融经济学领域的科研型预博士硕士项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Michael Tobin OBE",
+        "role": "Former CEO, Telecity Group",
+        "year": null
+      },
+      {
+        "name": "David Gill",
+        "role": "Former CEO, Manchester United FC",
+        "year": null
+      },
+      {
+        "name": "Ratan Tata",
+        "role": "Chairman Emeritus, Tata Group (Cambridge alumnus)",
+        "year": null
+      },
+      {
+        "name": "Emma Walmsley",
+        "role": "CEO, GlaxoSmithKline (Cambridge alumna)",
+        "year": null
+      },
+      {
+        "name": "Prince Charles (King Charles III)",
+        "role": "Former Prince of Wales (Cambridge alumnus)",
+        "year": 1970
+      }
+    ]
   },
   {
     "id": "imperial-business",
@@ -409,15 +1731,115 @@
     "qs_rank": 6,
     "business_rank": "FT MSc Finance #1 UK",
     "established": 2004,
-    "programs": ["MSc Finance", "MSc Accounting", "MBA", "PhD", "MiM", "EMBA"],
-    "specialties": ["Finance", "Fintech", "Analytics", "Economics"],
+    "programs": [
+      "MSc Finance",
+      "MSc Accounting",
+      "MBA",
+      "PhD",
+      "MiM",
+      "EMBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Fintech",
+      "Analytics",
+      "Economics"
+    ],
     "description_en": "Imperial College Business School sits within one of the world's top science and engineering universities, making it uniquely positioned to produce finance and technology leaders. Its MSc Finance programme is ranked #1 in the UK by the Financial Times. Strong ties to London's FinTech ecosystem and deep quantitative emphasis attract global top talent.",
     "description_cn": "帝国理工商学院坐落于全球顶尖理工大学之中，拥有独特优势，培养金融和科技领袖。其金融硕士项目荣获《金融时报》英国第一。与伦敦金融科技生态系统的紧密联系和深厚的量化研究传统，吸引了全球顶尖人才。",
     "tuition_usd": "~£40,000/year",
     "language": "english",
-    "notable_alumni": ["Lord Browne", "Rona Fairhead", "Akbar Al Baker"],
+    "notable_alumni": [
+      "Lord Browne",
+      "Rona Fairhead",
+      "Akbar Al Baker"
+    ],
     "url": "https://www.imperial.ac.uk/business-school",
-    "tags": ["Finance", "Fintech", "MSc", "STEM", "UK", "London"]
+    "tags": [
+      "Finance",
+      "Fintech",
+      "MSc",
+      "STEM",
+      "UK",
+      "London"
+    ],
+    "requirements": {
+      "gpa": "2:1 degree (UK equivalent)",
+      "gmat_median": 680,
+      "gre_accepted": true,
+      "toefl": 92,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Nov 2025",
+        "r2": "Jan 2026",
+        "r3": "Mar 2026"
+      },
+      "acceptance_rate": "~25%"
+    },
+    "employment": [
+      "Finance 35%",
+      "Technology 28%",
+      "Consulting 20%",
+      "Fintech 10%",
+      "Energy 5%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MSc Finance (FT #1 UK)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "FT-ranked #1 Finance MSc in UK; deep quant curriculum for IBD, asset management, trading.",
+        "description_cn": "英国金融时报排名第一的金融硕士，深度量化课程，面向投行、资管和交易职位。"
+      },
+      {
+        "name": "MBA",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "1-year MBA at world-leading science & engineering university with strong tech sector links.",
+        "description_cn": "全球顶尖理工大学的一年制MBA，与科技产业紧密联系。"
+      },
+      {
+        "name": "MSc Accounting",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Rigorous accounting master with strong Big 4 and financial services placement.",
+        "description_cn": "严格的会计硕士，在四大和金融服务行业的就业表现卓越。"
+      },
+      {
+        "name": "MSc Innovation & Entrepreneurship",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Startup-focused master embedded within Imperial's innovation ecosystem.",
+        "description_cn": "嵌入帝国理工创新生态系统的以初创企业为核心的硕士项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Lord John Browne",
+        "role": "Former CEO, BP; venture capitalist",
+        "year": null
+      },
+      {
+        "name": "Rona Fairhead",
+        "role": "Former Chair, BBC Trust; UK Government minister",
+        "year": null
+      },
+      {
+        "name": "Akbar Al Baker",
+        "role": "CEO, Qatar Airways",
+        "year": null
+      },
+      {
+        "name": "Robin Saxby",
+        "role": "Founder & CEO, ARM Holdings",
+        "year": null
+      },
+      {
+        "name": "Gerry Murphy",
+        "role": "Former CEO, Tesco (interim)",
+        "year": null
+      }
+    ]
   },
   {
     "id": "lse-management",
@@ -429,15 +1851,114 @@
     "qs_rank": 45,
     "business_rank": "QS Business #12",
     "established": 1895,
-    "programs": ["BSc Management", "MSc Management", "MSc Finance", "MPA", "PhD"],
-    "specialties": ["Economics", "Finance", "Accounting", "Strategy"],
+    "programs": [
+      "BSc Management",
+      "MSc Management",
+      "MSc Finance",
+      "MPA",
+      "PhD"
+    ],
+    "specialties": [
+      "Economics",
+      "Finance",
+      "Accounting",
+      "Strategy"
+    ],
     "description_en": "LSE is globally recognised as the leading social science university, producing numerous Nobel Prize winners in Economics. Its finance and economics programmes are world-renowned, and its alumni hold leadership positions in central banks, governments, and top financial institutions worldwide. The school's central London location is unbeatable for networking.",
     "description_cn": "伦敦政治经济学院是全球公认的顶尖社会科学大学，培养了众多诺贝尔经济学奖得主。其金融和经济学项目享誉全球，校友在全球各地央行、政府机构和顶尖金融机构担任领导职位。学院位于伦敦市中心，人脉资源无可比拟。",
     "tuition_usd": "~£32,000/year",
     "language": "english",
-    "notable_alumni": ["George Soros", "Mick Jagger", "John F. Kennedy (briefly)"],
+    "notable_alumni": [
+      "George Soros",
+      "Mick Jagger",
+      "John F. Kennedy (briefly)"
+    ],
     "url": "https://www.lse.ac.uk/departments/management",
-    "tags": ["Economics", "Finance", "Accounting", "UK", "London", "Undergraduate"]
+    "tags": [
+      "Economics",
+      "Finance",
+      "Accounting",
+      "UK",
+      "London",
+      "Undergraduate"
+    ],
+    "requirements": {
+      "gpa": "Upper second-class (2:1)",
+      "gmat_median": 700,
+      "gre_accepted": true,
+      "toefl": 107,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Nov 2025",
+        "r2": "Jan 2026",
+        "r3": "Mar 2026"
+      },
+      "acceptance_rate": "~15%"
+    },
+    "employment": [
+      "Finance 38%",
+      "Consulting 22%",
+      "Government / Policy 18%",
+      "Technology 12%",
+      "NGO / Social 7%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MSc Management",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Rigorous management master drawing on LSE's world-leading social science research.",
+        "description_cn": "严格的管理硕士，依托LSE世界顶尖的社会科学研究积淀。"
+      },
+      {
+        "name": "MSc Finance",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Finance master grounded in economic theory, targeting banking, asset management, and research.",
+        "description_cn": "以经济理论为基础的金融硕士，面向银行、资产管理和研究职位。"
+      },
+      {
+        "name": "BSc Management",
+        "duration": "3 years",
+        "language": "English",
+        "description_en": "Highly selective undergraduate programme combining management, economics, and social science.",
+        "description_cn": "竞争激烈的本科项目，融合管理学、经济学和社会科学。"
+      },
+      {
+        "name": "MPA (Master of Public Administration)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Leading public policy master attracting future government and international organisation leaders.",
+        "description_cn": "顶尖公共政策硕士，吸引未来政府和国际组织领导者。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "George Soros",
+        "role": "Founder, Soros Fund Management; philanthropist",
+        "year": 1954
+      },
+      {
+        "name": "Mick Jagger",
+        "role": "Lead vocalist, The Rolling Stones",
+        "year": 1963
+      },
+      {
+        "name": "Jomo Kenyatta",
+        "role": "First President of Kenya",
+        "year": 1935
+      },
+      {
+        "name": "John F. Kennedy",
+        "role": "35th US President (briefly attended)",
+        "year": 1936
+      },
+      {
+        "name": "Cherie Blair",
+        "role": "QC; prominent human rights barrister",
+        "year": 1975
+      }
+    ]
   },
   {
     "id": "ucl-management",
@@ -449,15 +1970,35 @@
     "qs_rank": 9,
     "business_rank": "QS Business #14",
     "established": 2000,
-    "programs": ["BSc Management Science", "MSc Management", "MBA", "PhD"],
-    "specialties": ["Finance", "Consulting", "Analytics", "Technology Management"],
+    "programs": [
+      "BSc Management Science",
+      "MSc Management",
+      "MBA",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Consulting",
+      "Analytics",
+      "Technology Management"
+    ],
     "description_en": "UCL School of Management is one of the newest but fastest-growing business schools in the world, benefiting from UCL's top-10 global university status. Based in London's Knowledge Quarter near the British Library and the Francis Crick Institute, it is at the heart of London's innovation ecosystem. Strong links to UCL's science, engineering, and health faculties create unique interdisciplinary opportunities.",
     "description_cn": "UCL管理学院是全球最新但发展最快的商学院之一，依托UCL全球前十大学的地位。坐落于伦敦知识区，毗邻大英图书馆和弗朗西斯·克里克研究所，处于伦敦创新生态系统的核心。与UCL理工和医学院的紧密联系创造了独特的跨学科机遇。",
     "tuition_usd": "~£28,000/year",
     "language": "english",
-    "notable_alumni": ["Various tech entrepreneurs", "Mahatma Gandhi (UCL)"],
+    "notable_alumni": [
+      "Various tech entrepreneurs",
+      "Mahatma Gandhi (UCL)"
+    ],
     "url": "https://www.ucl.ac.uk/management",
-    "tags": ["Finance", "Consulting", "Analytics", "UK", "London", "Undergraduate"]
+    "tags": [
+      "Finance",
+      "Consulting",
+      "Analytics",
+      "UK",
+      "London",
+      "Undergraduate"
+    ]
   },
   {
     "id": "edinburgh-business",
@@ -469,15 +2010,37 @@
     "qs_rank": 22,
     "business_rank": "QS Business #26",
     "established": 1919,
-    "programs": ["Undergraduate", "MBA", "MSc Finance", "MSc Accounting", "PhD"],
-    "specialties": ["Finance", "Accounting", "Economics", "Strategy"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "MSc Finance",
+      "MSc Accounting",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Economics",
+      "Strategy"
+    ],
     "description_en": "Edinburgh Business School sits within one of the world's oldest and most respected universities, with a history dating back to 1583. Scotland's capital offers a vibrant financial services sector and an exceptionally liveable city. The school is known for its research excellence and strong ties to Scotland's growing financial and technology sectors.",
     "description_cn": "爱丁堡大学商学院所在的爱丁堡大学历史可追溯至1583年，是全球最古老、最受尊重的大学之一。苏格兰首府爱丁堡拥有充满活力的金融服务业和极宜居的城市环境，学院以卓越的科研成果和与苏格兰金融及科技产业的紧密联系著称。",
     "tuition_usd": "~£28,000/year",
     "language": "english",
-    "notable_alumni": ["Gordon Brown", "Tony Blair (Edinburgh Law)", "James Watt (historical)"],
+    "notable_alumni": [
+      "Gordon Brown",
+      "Tony Blair (Edinburgh Law)",
+      "James Watt (historical)"
+    ],
     "url": "https://www.business-school.ed.ac.uk",
-    "tags": ["Finance", "Accounting", "UK", "Scotland", "Undergraduate", "MBA"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "UK",
+      "Scotland",
+      "Undergraduate",
+      "MBA"
+    ]
   },
   {
     "id": "manchester-mbs",
@@ -489,15 +2052,37 @@
     "qs_rank": 28,
     "business_rank": "FT MBA #28 / QS Business #23",
     "established": 1965,
-    "programs": ["Undergraduate", "MBA", "MSc Finance", "PhD", "EMBA"],
-    "specialties": ["Finance", "Marketing", "Accounting", "Operations"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "MSc Finance",
+      "PhD",
+      "EMBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Marketing",
+      "Accounting",
+      "Operations"
+    ],
     "description_en": "Alliance Manchester Business School is one of the largest and most internationally diverse business schools in the UK. Home to the world's original MBA programme (founded 1965), it has a proud heritage in management education. Manchester's thriving economy — the UK's second city — offers exceptional industry connections across manufacturing, fintech, and creative industries.",
     "description_cn": "曼彻斯特商学院是英国规模最大、国际化程度最高的商学院之一。作为全球最早MBA项目（1965年）的发源地，在管理教育领域颇具历史地位。英国第二大城市曼彻斯特蓬勃的经济体提供了横跨制造业、金融科技和创意产业的卓越行业资源。",
     "tuition_usd": "~£33,000/year",
     "language": "english",
-    "notable_alumni": ["Sir Terry Leahy", "Lord Alliance", "Mike Brearley"],
+    "notable_alumni": [
+      "Sir Terry Leahy",
+      "Lord Alliance",
+      "Mike Brearley"
+    ],
     "url": "https://www.alliancembs.manchester.ac.uk",
-    "tags": ["Finance", "Marketing", "Accounting", "UK", "MBA", "Undergraduate"]
+    "tags": [
+      "Finance",
+      "Marketing",
+      "Accounting",
+      "UK",
+      "MBA",
+      "Undergraduate"
+    ]
   },
   {
     "id": "warwick-business",
@@ -509,15 +2094,37 @@
     "qs_rank": 67,
     "business_rank": "FT MBA #34 / QS Business #27",
     "established": 1967,
-    "programs": ["Undergraduate", "MSc Finance", "MBA", "PhD", "DBA"],
-    "specialties": ["Finance", "Accounting", "Marketing", "Economics"],
+    "programs": [
+      "Undergraduate",
+      "MSc Finance",
+      "MBA",
+      "PhD",
+      "DBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Marketing",
+      "Economics"
+    ],
     "description_en": "Warwick Business School is the largest business school in the UK and triple-accredited (AACSB, EQUIS, AMBA). Known for world-class Finance and Accounting research, it also runs one of Europe's most respected distance-learning MBA programmes. Its distinctive London base complements the main campus in Coventry.",
     "description_cn": "华威大学商学院是英国规模最大的商学院，获AACSB、EQUIS、AMBA三重认证。以世界级金融和会计研究著称，同时开设欧洲最受尊敬的远程MBA项目之一。伦敦教学基地与考文垂主校区相辅相成。",
     "tuition_usd": "~£28,950/year",
     "language": "english",
-    "notable_alumni": ["Stuart Rose", "Charles Allen", "Dave Thomas"],
+    "notable_alumni": [
+      "Stuart Rose",
+      "Charles Allen",
+      "Dave Thomas"
+    ],
     "url": "https://www.wbs.ac.uk",
-    "tags": ["Finance", "Accounting", "UK", "MBA", "Undergraduate", "Triple-Accredited"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "UK",
+      "MBA",
+      "Undergraduate",
+      "Triple-Accredited"
+    ]
   },
   {
     "id": "eth-zurich",
@@ -529,15 +2136,36 @@
     "qs_rank": 7,
     "business_rank": "QS Business #13",
     "established": 1855,
-    "programs": ["MSc Management, Technology & Economics", "PhD", "Executive Education"],
-    "specialties": ["Technology Management", "Finance", "Innovation", "Analytics"],
+    "programs": [
+      "MSc Management, Technology & Economics",
+      "PhD",
+      "Executive Education"
+    ],
+    "specialties": [
+      "Technology Management",
+      "Finance",
+      "Innovation",
+      "Analytics"
+    ],
     "description_en": "ETH Zurich's D-MTEC department combines the world's #3-ranked university for engineering with rigorous management and economics education. Its unique approach bridges hard science and business, making it ideal for those at the frontier of technology management and quantitative finance. Located in one of the world's most competitive financial centres.",
     "description_cn": "苏黎世联邦理工学院管理、技术与经济系将全球工程排名前三的大学与严格的管理和经济教育相结合。其独特的方法桥接了硬科学和商业，使其成为科技管理和量化金融前沿人才的理想选择。坐落于全球最具竞争力的金融中心之一。",
     "tuition_usd": "~CHF 1,460/semester (very low!)",
     "language": "english",
-    "notable_alumni": ["Albert Einstein", "John von Neumann", "Countless tech founders"],
+    "notable_alumni": [
+      "Albert Einstein",
+      "John von Neumann",
+      "Countless tech founders"
+    ],
     "url": "https://mtec.ethz.ch",
-    "tags": ["Tech", "Finance", "Analytics", "Top 10", "Europe", "STEM", "Switzerland"]
+    "tags": [
+      "Tech",
+      "Finance",
+      "Analytics",
+      "Top 10",
+      "Europe",
+      "STEM",
+      "Switzerland"
+    ]
   },
   {
     "id": "hec-paris",
@@ -549,15 +2177,115 @@
     "qs_rank": null,
     "business_rank": "FT MBA #9 / FT MiM #1 World",
     "established": 1881,
-    "programs": ["Grande École (MSc)", "MBA", "EMBA", "PhD", "Specialized Masters"],
-    "specialties": ["Finance", "Consulting", "Entrepreneurship", "Luxury Management"],
+    "programs": [
+      "Grande École (MSc)",
+      "MBA",
+      "EMBA",
+      "PhD",
+      "Specialized Masters"
+    ],
+    "specialties": [
+      "Finance",
+      "Consulting",
+      "Entrepreneurship",
+      "Luxury Management"
+    ],
     "description_en": "HEC Paris is France's and one of Europe's most prestigious business schools, consistently ranked in the world's top 10 for MBA. Its Grande École programme is the pinnacle of French business education. HEC produces an extraordinary proportion of France's top executives and CAC 40 CEOs, and its consulting and finance placements are unmatched in Europe.",
     "description_cn": "巴黎高商（HEC Paris）是法国乃至欧洲最负盛名的商学院之一，MBA持续跻身全球前十。其大学院项目是法国商科教育的顶尖项目。HEC培养了法国极高比例的顶级高管和CAC 40 CEO，在欧洲的咨询和金融就业成绩无可匹敌。",
     "tuition_usd": "~€73,000 (MBA total)",
     "language": "english",
-    "notable_alumni": ["Bernard Arnault", "François-Henri Pinault", "Carlos Ghosn"],
+    "notable_alumni": [
+      "Bernard Arnault",
+      "François-Henri Pinault",
+      "Carlos Ghosn"
+    ],
     "url": "https://www.hec.edu",
-    "tags": ["Finance", "Consulting", "Top 10 MBA", "Europe", "France", "Luxury Management"]
+    "tags": [
+      "Finance",
+      "Consulting",
+      "Top 10 MBA",
+      "Europe",
+      "France",
+      "Luxury Management"
+    ],
+    "requirements": {
+      "gpa": "Strong academic record",
+      "gmat_median": 690,
+      "gre_accepted": true,
+      "toefl": 105,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Oct 2025",
+        "r2": "Jan 2026",
+        "r3": "Mar 2026",
+        "r4": "May 2026"
+      },
+      "acceptance_rate": "~24%"
+    },
+    "employment": [
+      "Consulting 30%",
+      "Finance / PE 28%",
+      "Technology 17%",
+      "Consumer Goods 10%",
+      "Industry 8%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "16 months",
+        "language": "English",
+        "description_en": "Europe's top MBA; strong consulting and luxury goods placement in Paris ecosystem.",
+        "description_cn": "欧洲顶尖MBA，在巴黎生态圈的咨询和奢侈品行业就业表现突出。"
+      },
+      {
+        "name": "Masters in Management (MiM)",
+        "duration": "2 years",
+        "language": "English / French",
+        "description_en": "Grande École MiM, consistently ranked #1 globally by FT. For pre-experience graduates.",
+        "description_cn": "《金融时报》持续全球排名第一的大学校管理硕士，面向应届毕业生。"
+      },
+      {
+        "name": "MSc Finance",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Specialized finance master targeting investment banking, M&A, and asset management.",
+        "description_cn": "面向投资银行、并购和资产管理的专项金融硕士。"
+      },
+      {
+        "name": "MSc Sustainability & Social Innovation",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Unique program at the frontier of impact investing and ESG strategy.",
+        "description_cn": "影响力投资和ESG战略前沿的独特项目。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "François-Henri Pinault",
+        "role": "CEO, Kering (Gucci, YSL, Balenciaga)",
+        "year": 1990
+      },
+      {
+        "name": "Jacques Chirac",
+        "role": "Former President of France",
+        "year": 1959
+      },
+      {
+        "name": "Gilles Pélisson",
+        "role": "Former CEO, TF1; Former CEO, Accor Hotels",
+        "year": null
+      },
+      {
+        "name": "Pierre Kosciusko-Morizet",
+        "role": "Co-founder, PriceMinister (Rakuten France)",
+        "year": 1997
+      },
+      {
+        "name": "Nicolas Bazire",
+        "role": "Managing Director, LVMH",
+        "year": null
+      }
+    ]
   },
   {
     "id": "insead",
@@ -569,15 +2297,113 @@
     "qs_rank": null,
     "business_rank": "FT MBA #2 World / FT EMBA #1 World",
     "established": 1957,
-    "programs": ["MBA (10 months)", "EMBA", "PhD", "Executive Education"],
-    "specialties": ["General Management", "Finance", "Consulting", "Entrepreneurship"],
+    "programs": [
+      "MBA (10 months)",
+      "EMBA",
+      "PhD",
+      "Executive Education"
+    ],
+    "specialties": [
+      "General Management",
+      "Finance",
+      "Consulting",
+      "Entrepreneurship"
+    ],
     "description_en": "INSEAD is 'The Business School for the World', running its 10-month MBA simultaneously across campuses in Fontainebleau (France) and Singapore (with an additional campus in Abu Dhabi). With 95+ nationalities per class, it offers the most international MBA experience anywhere. Consistently ranked #1 or #2 globally for MBA by the Financial Times.",
     "description_cn": "欧洲工商管理学院被称为「世界的商学院」，其10个月MBA项目同步在法国枫丹白露和新加坡校区（另有阿布扎比校区）进行。每届学员涵盖95+国籍，提供全球最国际化的MBA体验，连续荣获《金融时报》全球MBA排名第一或第二。",
     "tuition_usd": "~€107,000 (MBA total)",
     "language": "english",
-    "notable_alumni": ["Tidjane Thiam", "Olaf Swantee", "Ilham Kadri"],
+    "notable_alumni": [
+      "Tidjane Thiam",
+      "Olaf Swantee",
+      "Ilham Kadri"
+    ],
     "url": "https://www.insead.edu",
-    "tags": ["Finance", "Consulting", "Top 5 MBA", "International", "Europe", "Singapore"]
+    "tags": [
+      "Finance",
+      "Consulting",
+      "Top 5 MBA",
+      "International",
+      "Europe",
+      "Singapore"
+    ],
+    "requirements": {
+      "gpa": "Strong academic record",
+      "gmat_median": 708,
+      "gre_accepted": true,
+      "toefl": 105,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Sep 2025",
+        "r2": "Oct 2025",
+        "r3": "Jan 2026"
+      },
+      "acceptance_rate": "~30%"
+    },
+    "employment": [
+      "Consulting 32%",
+      "Finance / PE 24%",
+      "Technology 18%",
+      "Consumer Goods 9%",
+      "Entrepreneurship 7%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "10 months",
+        "language": "English",
+        "description_en": "The world's most international MBA. Campuses in Fontainebleau, Singapore, and Abu Dhabi.",
+        "description_cn": "全球国际化程度最高的MBA，在枫丹白露、新加坡和阿布扎比均设有校区。"
+      },
+      {
+        "name": "EMBA (Europe / Asia)",
+        "duration": "14-17 months",
+        "language": "English",
+        "description_en": "Executive MBA with European and Asian tracks; modular format for senior leaders.",
+        "description_cn": "设有欧洲和亚洲分轨的高管MBA，模块化设计适合高级管理者。"
+      },
+      {
+        "name": "Global EMBA (with Wharton)",
+        "duration": "17 months",
+        "language": "English",
+        "description_en": "Joint Executive MBA with Wharton — an unparalleled dual-credential for global executives.",
+        "description_cn": "与沃顿联合高管MBA，为全球高管提供无与伦比的双证书。"
+      },
+      {
+        "name": "Master in Finance (MiF)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Pre- and post-experience finance master offered across INSEAD campuses.",
+        "description_cn": "在INSEAD各校区开设的适合应届和在职人士的金融硕士。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Tidjane Thiam",
+        "role": "Former CEO, Credit Suisse; CEO, BPCE",
+        "year": null
+      },
+      {
+        "name": "Lindsay Owen-Jones",
+        "role": "Former CEO, L'Oréal",
+        "year": 1969
+      },
+      {
+        "name": "Wee Cho Yaw",
+        "role": "Chairman Emeritus, United Overseas Bank (UOB)",
+        "year": null
+      },
+      {
+        "name": "Ilian Mihov",
+        "role": "Dean, INSEAD; leading macroeconomist",
+        "year": null
+      },
+      {
+        "name": "Andrés Iniesta",
+        "role": "Football legend (honorary); INSEAD ambassador",
+        "year": null
+      }
+    ]
   },
   {
     "id": "ie-business",
@@ -589,15 +2415,37 @@
     "qs_rank": null,
     "business_rank": "FT MBA #16 / QS Business #50",
     "established": 1973,
-    "programs": ["MBA", "MiM", "MFA", "PhD", "Executive Education"],
-    "specialties": ["Entrepreneurship", "Finance", "Consulting", "Technology"],
+    "programs": [
+      "MBA",
+      "MiM",
+      "MFA",
+      "PhD",
+      "Executive Education"
+    ],
+    "specialties": [
+      "Entrepreneurship",
+      "Finance",
+      "Consulting",
+      "Technology"
+    ],
     "description_en": "IE Business School in Madrid is one of Europe's most entrepreneurial business schools, known for innovation in pedagogy and a strong startup culture. It attracts a highly international student body from 130+ countries and places graduates across top firms globally. Madrid's growing tech and startup scene provides an exciting backdrop.",
     "description_cn": "马德里IE商学院是欧洲最具创业精神的商学院之一，以教学法创新和浓厚的创业文化著称。吸引来自130多个国家的高度国际化学生，毕业生遍布全球顶尖企业。马德里日益蓬勃的科技和创业生态提供了充满活力的学习环境。",
     "tuition_usd": "~€88,500 (MBA total)",
     "language": "english",
-    "notable_alumni": ["Emilio Pera", "Ignacio Galán", "Alicia Pérez"],
+    "notable_alumni": [
+      "Emilio Pera",
+      "Ignacio Galán",
+      "Alicia Pérez"
+    ],
     "url": "https://www.ie.edu",
-    "tags": ["Entrepreneurship", "Finance", "MBA", "Europe", "Spain", "International"]
+    "tags": [
+      "Entrepreneurship",
+      "Finance",
+      "MBA",
+      "Europe",
+      "Spain",
+      "International"
+    ]
   },
   {
     "id": "cbs-copenhagen",
@@ -609,15 +2457,36 @@
     "qs_rank": 112,
     "business_rank": "FT EMBA #15 / QS Business #55",
     "established": 1917,
-    "programs": ["Undergraduate", "MSc Finance", "MBA", "PhD", "EMBA"],
-    "specialties": ["Finance", "Economics", "Strategy", "Sustainability"],
+    "programs": [
+      "Undergraduate",
+      "MSc Finance",
+      "MBA",
+      "PhD",
+      "EMBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Economics",
+      "Strategy",
+      "Sustainability"
+    ],
     "description_en": "Copenhagen Business School is one of the largest business schools in Europe and the flagship of Scandinavian management education. Denmark's commitment to sustainability, work-life balance, and progressive governance makes CBS an ideal setting for studying responsible business. Strong in finance, economics, and sustainability management.",
     "description_cn": "哥本哈根商学院是欧洲规模最大的商学院之一，也是斯堪的纳维亚管理教育的旗帜。丹麦对可持续发展、工作与生活平衡及进步治理的承诺，使CBS成为研究负责任商业的理想场所，在金融、经济学和可持续管理领域实力强劲。",
     "tuition_usd": "~DKK 260,000 (MBA total)",
     "language": "english",
-    "notable_alumni": ["Jørgen Vig Knudstorp (LEGO CEO)", "Lars Rebien Sørensen"],
+    "notable_alumni": [
+      "Jørgen Vig Knudstorp (LEGO CEO)",
+      "Lars Rebien Sørensen"
+    ],
     "url": "https://www.cbs.dk",
-    "tags": ["Finance", "Economics", "Sustainability", "MBA", "Europe", "Denmark"]
+    "tags": [
+      "Finance",
+      "Economics",
+      "Sustainability",
+      "MBA",
+      "Europe",
+      "Denmark"
+    ]
   },
   {
     "id": "amsterdam-business",
@@ -629,15 +2498,35 @@
     "qs_rank": 55,
     "business_rank": "QS Business #45",
     "established": 1632,
-    "programs": ["BSc Business Administration", "MSc Finance", "MBA", "PhD"],
-    "specialties": ["Finance", "Economics", "Marketing", "Strategy"],
+    "programs": [
+      "BSc Business Administration",
+      "MSc Finance",
+      "MBA",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Economics",
+      "Marketing",
+      "Strategy"
+    ],
     "description_en": "Amsterdam Business School sits within one of Europe's most beautiful and liveable cities and one of its oldest universities. Amsterdam serves as the European hub for hundreds of multinationals, including ASML, ING, Heineken, and Booking.com, giving students extraordinary internship and career access. Strong research tradition in finance, marketing, and economics.",
     "description_cn": "阿姆斯特丹商学院所在的阿姆斯特丹大学是欧洲最古老的大学之一，城市美丽宜居。阿姆斯特丹是数百家跨国公司的欧洲总部所在地，包括ASML、ING、喜力和Booking.com，为学生提供非凡的实习和职业机会。在金融、营销和经济学领域拥有深厚的研究传统。",
     "tuition_usd": "~€22,000/year (EU) / €32,000 (non-EU)",
     "language": "english",
-    "notable_alumni": ["Various Dutch business leaders", "Multiple Heineken executives"],
+    "notable_alumni": [
+      "Various Dutch business leaders",
+      "Multiple Heineken executives"
+    ],
     "url": "https://abs.uva.nl",
-    "tags": ["Finance", "Economics", "Marketing", "MBA", "Europe", "Netherlands"]
+    "tags": [
+      "Finance",
+      "Economics",
+      "Marketing",
+      "MBA",
+      "Europe",
+      "Netherlands"
+    ]
   },
   {
     "id": "hku-business",
@@ -649,15 +2538,37 @@
     "qs_rank": 26,
     "business_rank": "FT MBA #36 / QS Business #28",
     "established": 1913,
-    "programs": ["Undergraduate", "MBA", "MSc Finance", "MSc Accounting", "PhD"],
-    "specialties": ["Finance", "Accounting", "Economics", "International Business"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "MSc Finance",
+      "MSc Accounting",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Economics",
+      "International Business"
+    ],
     "description_en": "HKU Business School is the oldest and one of the most prestigious business schools in Hong Kong, combining British academic tradition with deep Chinese market knowledge. Hong Kong's status as Asia's premier international financial centre, combined with its unique role as the gateway between East and West, creates unparalleled learning and career opportunities.",
     "description_cn": "香港大学经管学院是香港历史最悠久、最负盛名的商学院之一，融合英国学术传统与深厚的中国市场知识。香港作为亚洲首要国际金融中心的地位，以及其沟通东西方的独特角色，创造了无可比拟的学习和职业机遇。",
     "tuition_usd": "~HKD $280,000/year",
     "language": "english",
-    "notable_alumni": ["Peter Woo", "Victor Li", "Ronnie Chan"],
+    "notable_alumni": [
+      "Peter Woo",
+      "Victor Li",
+      "Ronnie Chan"
+    ],
     "url": "https://www.business.hku.hk",
-    "tags": ["Finance", "Accounting", "Top 30", "MBA", "Hong Kong", "Asia"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "Top 30",
+      "MBA",
+      "Hong Kong",
+      "Asia"
+    ]
   },
   {
     "id": "hkust-business",
@@ -669,15 +2580,38 @@
     "qs_rank": 40,
     "business_rank": "FT MBA #26 / QS Business #30",
     "established": 1991,
-    "programs": ["Undergraduate", "MBA", "MSc Finance", "MSc Investment Management", "PhD"],
-    "specialties": ["Finance", "Analytics", "Accounting", "Technology Management"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "MSc Finance",
+      "MSc Investment Management",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Analytics",
+      "Accounting",
+      "Technology Management"
+    ],
     "description_en": "HKUST Business School is consistently ranked among Asia's top 3 business schools. Its MBA programme has been ranked in the FT global top 30 for over a decade. Founded in 1991, HKUST quickly rose to global prominence through research excellence and close ties with mainland China's technology and financial sectors.",
     "description_cn": "香港科技大学商学院长期跻身亚洲前三大商学院之列，MBA项目连续十余年荣登《金融时报》全球前30。创建于1991年的香港科大凭借卓越的科研成果和与中国内地科技及金融产业的紧密联系，迅速跻身全球知名行列。",
     "tuition_usd": "~HKD $310,000/year",
     "language": "english",
-    "notable_alumni": ["Tony Leung", "Roy Kwok", "Charles Li"],
+    "notable_alumni": [
+      "Tony Leung",
+      "Roy Kwok",
+      "Charles Li"
+    ],
     "url": "https://bm.hkust.edu.hk",
-    "tags": ["Finance", "Analytics", "Top 30", "MBA", "MSc", "Hong Kong", "Asia"]
+    "tags": [
+      "Finance",
+      "Analytics",
+      "Top 30",
+      "MBA",
+      "MSc",
+      "Hong Kong",
+      "Asia"
+    ]
   },
   {
     "id": "cuhk-business",
@@ -689,15 +2623,37 @@
     "qs_rank": 38,
     "business_rank": "FT MBA #50 / QS Business #34",
     "established": 1963,
-    "programs": ["Undergraduate", "MBA", "MSc Finance", "MAcc", "PhD"],
-    "specialties": ["Finance", "Accounting", "Marketing", "Strategy"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "MSc Finance",
+      "MAcc",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Marketing",
+      "Strategy"
+    ],
     "description_en": "CUHK Business School has the largest alumni network in Hong Kong and strong connections to mainland China's business community. It was the first school in Hong Kong to offer an MBA programme. Strong partnerships with leading mainland Chinese universities enable dual-degree and exchange opportunities not available elsewhere in Hong Kong.",
     "description_cn": "香港中文大学商学院拥有香港最大的校友网络和与中国内地商界的紧密联系。是香港第一所开设MBA项目的商学院，与国内顶尖高校的合作伙伴关系提供了香港其他院校无法比拟的双学位和交流机会。",
     "tuition_usd": "~HKD $265,000/year",
     "language": "english",
-    "notable_alumni": ["Gao Xiqing", "David Li", "Ricky Wong"],
+    "notable_alumni": [
+      "Gao Xiqing",
+      "David Li",
+      "Ricky Wong"
+    ],
     "url": "https://www.bschool.cuhk.edu.hk",
-    "tags": ["Finance", "Accounting", "MBA", "Hong Kong", "Asia", "China Connections"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "MBA",
+      "Hong Kong",
+      "Asia",
+      "China Connections"
+    ]
   },
   {
     "id": "cityu-cb",
@@ -709,15 +2665,35 @@
     "qs_rank": 62,
     "business_rank": "QS Business #56",
     "established": 1984,
-    "programs": ["Undergraduate", "MBA", "MSc Finance", "MSc Accounting", "PhD"],
-    "specialties": ["Finance", "Accounting", "Marketing", "Information Systems"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "MSc Finance",
+      "MSc Accounting",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Marketing",
+      "Information Systems"
+    ],
     "description_en": "CityU College of Business is known for its strong industry connections and practical, career-focused programmes. Its accounting and finance programmes are particularly strong, and the school enjoys excellent links to Hong Kong's business community. An accessible entry point to Hong Kong's competitive financial and professional services sectors.",
     "description_cn": "香港城市大学商学院以其强大的行业联系和注重实践的职业导向项目著称。会计和金融项目尤为突出，与香港商界拥有出色的联系，是进入香港竞争激烈的金融和专业服务业的理想起点。",
     "tuition_usd": "~HKD $140,000/year",
     "language": "english",
-    "notable_alumni": ["Various HK finance professionals"],
+    "notable_alumni": [
+      "Various HK finance professionals"
+    ],
     "url": "https://www.cb.cityu.edu.hk",
-    "tags": ["Finance", "Accounting", "MBA", "Undergraduate", "Hong Kong", "Asia"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "MBA",
+      "Undergraduate",
+      "Hong Kong",
+      "Asia"
+    ]
   },
   {
     "id": "nus-business",
@@ -729,15 +2705,115 @@
     "qs_rank": 8,
     "business_rank": "FT MBA #23 / QS Business #8",
     "established": 1965,
-    "programs": ["Undergraduate (BBA)", "MBA", "MSc Finance", "PhD", "EMBA"],
-    "specialties": ["Finance", "Accounting", "Strategy", "Real Estate"],
+    "programs": [
+      "Undergraduate (BBA)",
+      "MBA",
+      "MSc Finance",
+      "PhD",
+      "EMBA"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Strategy",
+      "Real Estate"
+    ],
     "description_en": "NUS Business School is consistently ranked Asia's #1 or #2 business school. Singapore's position as the financial hub of Southeast Asia, combined with NUS's top-8 global university ranking, makes it exceptional for those targeting Asian markets. Its Asia-focused MBA curriculum provides unmatched regional market insights.",
     "description_cn": "新加坡国立大学商学院长期蝉联亚洲第一或第二商学院。新加坡作为东南亚金融枢纽的地位，结合NUS全球前八大学的排名，使其成为目标亚洲市场人才的卓越选择。以亚洲为导向的MBA课程提供无可比拟的区域市场洞察。",
     "tuition_usd": "~SGD $47,000/year",
     "language": "english",
-    "notable_alumni": ["Ho Ching", "Tony Tan", "Tharman Shanmugaratnam"],
+    "notable_alumni": [
+      "Ho Ching",
+      "Tony Tan",
+      "Tharman Shanmugaratnam"
+    ],
     "url": "https://biz.nus.edu.sg",
-    "tags": ["Finance", "Accounting", "Top Asia", "MBA", "Undergraduate", "Singapore", "Southeast Asia"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "Top Asia",
+      "MBA",
+      "Undergraduate",
+      "Singapore",
+      "Southeast Asia"
+    ],
+    "requirements": {
+      "gpa": "3.0+ (4.0 scale)",
+      "gmat_median": 660,
+      "gre_accepted": true,
+      "toefl": 100,
+      "ielts": 6.5,
+      "deadlines": {
+        "r1": "Oct 2025",
+        "r2": "Jan 2026",
+        "r3": "Mar 2026"
+      },
+      "acceptance_rate": "~25%"
+    },
+    "employment": [
+      "Finance 32%",
+      "Consulting 22%",
+      "Technology 24%",
+      "Government 8%",
+      "Consumer / FMCG 8%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Asia's gateway MBA with exceptional China, India, and ASEAN business exposure.",
+        "description_cn": "亚洲门户MBA，深度融入中国、印度和东南亚商业生态。"
+      },
+      {
+        "name": "MBA (Finance Specialisation)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "MBA track tailored for banking, trading, and investment management careers in Asia.",
+        "description_cn": "专为亚洲银行、交易和投资管理职业定制的MBA专业方向。"
+      },
+      {
+        "name": "BBA (Undergraduate)",
+        "duration": "4 years",
+        "language": "English",
+        "description_en": "Top-ranked Asian undergraduate business degree with dual-degree options across 30+ partner universities.",
+        "description_cn": "亚洲顶尖本科商科学位，可与30多所合作大学联合开设双学位。"
+      },
+      {
+        "name": "MSc Finance",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "Quantitative finance master targeting Singapore and regional financial hubs.",
+        "description_cn": "面向新加坡和地区金融中心职位的量化金融硕士。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Goh Chok Tong",
+        "role": "Former Prime Minister of Singapore (NUS alumnus)",
+        "year": null
+      },
+      {
+        "name": "Josephine Teo",
+        "role": "Singapore Minister for Digital Development (NUS)",
+        "year": null
+      },
+      {
+        "name": "Ho Ching",
+        "role": "Former CEO, Temasek Holdings (NUS alumna)",
+        "year": null
+      },
+      {
+        "name": "Peter Seah",
+        "role": "Chairman, DBS Group Holdings",
+        "year": null
+      },
+      {
+        "name": "Loh Chin Hua",
+        "role": "CEO, Keppel Corporation",
+        "year": null
+      }
+    ]
   },
   {
     "id": "ntu-nanyang",
@@ -749,15 +2825,38 @@
     "qs_rank": 26,
     "business_rank": "FT MBA #38 / QS Business #18",
     "established": 1991,
-    "programs": ["Undergraduate (Accountancy/Business)", "MBA", "MSc Finance", "MSc Accountancy", "PhD"],
-    "specialties": ["Finance", "Accounting", "Marketing", "Analytics"],
+    "programs": [
+      "Undergraduate (Accountancy/Business)",
+      "MBA",
+      "MSc Finance",
+      "MSc Accountancy",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Marketing",
+      "Analytics"
+    ],
     "description_en": "Nanyang Business School at NTU is known for its analytics-integrated curriculum and strong STEM foundation. NTU itself is one of the world's fastest-rising universities. The school's strong links to Singapore's deep pool of MNCs and its proximity to the ASEAN economic zone create exceptional graduate career opportunities.",
     "description_cn": "南洋理工大学商学院以其全面整合数据分析的课程和强大的STEM基础著称。NTU本身是全球排名上升最快的大学之一。学院与新加坡众多跨国公司的紧密联系及毗邻东盟经济区的地理优势，为毕业生创造了非凡的职业机遇。",
     "tuition_usd": "~SGD $42,000/year",
     "language": "english",
-    "notable_alumni": ["Lim Swee Say", "Heng Swee Keat", "Wong Ngit Liong"],
+    "notable_alumni": [
+      "Lim Swee Say",
+      "Heng Swee Keat",
+      "Wong Ngit Liong"
+    ],
     "url": "https://www.ntu.edu.sg/nbs",
-    "tags": ["Finance", "Analytics", "Accounting", "Undergraduate", "MBA", "Singapore", "STEM"]
+    "tags": [
+      "Finance",
+      "Analytics",
+      "Accounting",
+      "Undergraduate",
+      "MBA",
+      "Singapore",
+      "STEM"
+    ]
   },
   {
     "id": "smu-lkcsb",
@@ -769,15 +2868,34 @@
     "qs_rank": 511,
     "business_rank": "QS Business #86",
     "established": 2000,
-    "programs": ["Undergraduate (BSc)", "MBA", "MSc Finance", "PhD"],
-    "specialties": ["Finance", "Marketing", "Accounting", "Innovation"],
+    "programs": [
+      "Undergraduate (BSc)",
+      "MBA",
+      "MSc Finance",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Marketing",
+      "Accounting",
+      "Innovation"
+    ],
     "description_en": "SMU Lee Kong Chian School of Business is located in the heart of Singapore's civic and cultural district, steps from the financial CBD. Unlike NUS and NTU, SMU uses a seminar-style interactive pedagogy. Its city campus model and strong industry integration make it particularly effective for developing real-world business skills.",
     "description_cn": "新加坡管理大学李光前商学院坐落于新加坡市政文化区核心，距金融中央商务区咫尺之遥。与NUS和NTU不同，SMU采用研讨会式互动教学法。城市校区模式和强大的行业整合使其在培养现实商业技能方面尤为有效。",
     "tuition_usd": "~SGD $39,000/year",
     "language": "english",
-    "notable_alumni": ["Various Singapore finance executives"],
+    "notable_alumni": [
+      "Various Singapore finance executives"
+    ],
     "url": "https://business.smu.edu.sg",
-    "tags": ["Finance", "Marketing", "Accounting", "Undergraduate", "MBA", "Singapore"]
+    "tags": [
+      "Finance",
+      "Marketing",
+      "Accounting",
+      "Undergraduate",
+      "MBA",
+      "Singapore"
+    ]
   },
   {
     "id": "tsinghua-sem",
@@ -789,15 +2907,115 @@
     "qs_rank": 14,
     "business_rank": "FT EMBA #1 Asia / QS Business #16",
     "established": 1984,
-    "programs": ["Undergraduate", "MBA", "EMBA", "MiMM", "PhD"],
-    "specialties": ["Finance", "Economics", "Strategy", "Technology Management"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "EMBA",
+      "MiMM",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Economics",
+      "Strategy",
+      "Technology Management"
+    ],
     "description_en": "Tsinghua SEM is China's most prestigious business school, benefiting from 'China's MIT' reputation. Its EMBA program is the most sought-after in China, attracting the country's top business leaders. Deep connections to China's government, tech giants (Huawei, Tencent, Alibaba), and the Beijing financial community make it essential for anyone targeting China's market.",
     "description_cn": "清华大学经管学院是中国最负盛名的商学院，依托「中国麻省理工」的声誉。其EMBA项目是中国最受追捧的高管教育项目，吸引了中国顶级商业领袖。与中国政府、科技巨头（华为、腾讯、阿里巴巴）及北京金融界的深厚联系，使其成为目标中国市场人才不可或缺的选择。",
     "tuition_usd": "~RMB 88,000/year",
     "language": "bilingual",
-    "notable_alumni": ["Zhu Rongji", "Chen Dongsheng", "Liu Mingkang"],
+    "notable_alumni": [
+      "Zhu Rongji",
+      "Chen Dongsheng",
+      "Liu Mingkang"
+    ],
     "url": "https://www.sem.tsinghua.edu.cn",
-    "tags": ["Finance", "Economics", "Top China", "MBA", "EMBA", "Undergraduate", "Mainland China"]
+    "tags": [
+      "Finance",
+      "Economics",
+      "Top China",
+      "MBA",
+      "EMBA",
+      "Undergraduate",
+      "Mainland China"
+    ],
+    "requirements": {
+      "gpa": "3.0+ (domestic); strong academics",
+      "gmat_median": 680,
+      "gre_accepted": true,
+      "toefl": 100,
+      "ielts": 7.0,
+      "deadlines": {
+        "r1": "Nov 2025",
+        "r2": "Feb 2026",
+        "r3": "Apr 2026"
+      },
+      "acceptance_rate": "~20%"
+    },
+    "employment": [
+      "Technology 35%",
+      "Finance / PE 28%",
+      "Consulting 18%",
+      "Government / SOE 10%",
+      "Entrepreneurship 7%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA (中英双语)",
+        "duration": "2 years",
+        "language": "Bilingual",
+        "description_en": "China's top MBA at Tsinghua; bilingual programme with US and European exchange partnerships.",
+        "description_cn": "清华大学中国顶尖MBA，双语项目，与美国和欧洲顶尖院校设有交换合作。"
+      },
+      {
+        "name": "MBA (Global)",
+        "duration": "1 year",
+        "language": "English",
+        "description_en": "English-language MBA attracting international students and senior returning professionals.",
+        "description_cn": "英语授课MBA，面向国际学生和有海外经验的归国职业人士。"
+      },
+      {
+        "name": "Master of Finance (MFin)",
+        "duration": "2 years",
+        "language": "Bilingual",
+        "description_en": "Quantitative finance master with deep links to Beijing's financial regulators and state institutions.",
+        "description_cn": "定量金融硕士，与北京金融监管机构和国家机构紧密联系。"
+      },
+      {
+        "name": "EMBA",
+        "duration": "2 years",
+        "language": "Chinese",
+        "description_en": "Executive MBA designed for senior Chinese executives, with world-class faculty.",
+        "description_cn": "面向中国高级管理人员的EMBA，配备世界级师资阵容。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Zhu Rongji",
+        "role": "Former Premier of China; founded the school",
+        "year": null
+      },
+      {
+        "name": "Hu Jintao",
+        "role": "Former President of China (Tsinghua Engineering)",
+        "year": null
+      },
+      {
+        "name": "Wang Xing",
+        "role": "Founder & CEO, Meituan (food delivery giant)",
+        "year": null
+      },
+      {
+        "name": "Zhang Yiming",
+        "role": "Founder, ByteDance / TikTok (Nankai, not Tsinghua MBA)",
+        "year": null
+      },
+      {
+        "name": "Neil Shen",
+        "role": "Founding Managing Partner, Sequoia China (Yale/HBS)",
+        "year": null
+      }
+    ]
   },
   {
     "id": "pku-guanghua",
@@ -809,15 +3027,37 @@
     "qs_rank": 17,
     "business_rank": "QS Business #19",
     "established": 1978,
-    "programs": ["Undergraduate", "MBA", "EMBA", "MSc", "PhD"],
-    "specialties": ["Finance", "Accounting", "Marketing", "Economics"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "EMBA",
+      "MSc",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Marketing",
+      "Economics"
+    ],
     "description_en": "PKU Guanghua is backed by Peking University, China's foremost liberal arts and research university. Particularly strong in Finance, Economics, and Accounting research, Guanghua has close ties to China's policymaking circles and central bank. Located in the Zhongguancun tech hub of Beijing, students have direct access to China's innovation leaders.",
     "description_cn": "北京大学光华管理学院依托中国最重要的文理研究型大学北京大学。在金融、经济学和会计研究领域尤为出色，与中国政策圈和央行联系紧密。坐落于北京中关村科技园，学生可直接接触中国创新领袖。",
     "tuition_usd": "~RMB 80,000/year",
     "language": "bilingual",
-    "notable_alumni": ["Ma Weihua", "Lu Guanqiu", "Chen Zhiwu"],
+    "notable_alumni": [
+      "Ma Weihua",
+      "Lu Guanqiu",
+      "Chen Zhiwu"
+    ],
     "url": "https://www.gsm.pku.edu.cn",
-    "tags": ["Finance", "Accounting", "Economics", "MBA", "Undergraduate", "Mainland China"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "Economics",
+      "MBA",
+      "Undergraduate",
+      "Mainland China"
+    ]
   },
   {
     "id": "fudan-management",
@@ -829,15 +3069,38 @@
     "qs_rank": 50,
     "business_rank": "QS Business #38",
     "established": 1985,
-    "programs": ["Undergraduate", "MBA", "EMBA", "MSc", "PhD"],
-    "specialties": ["Finance", "Marketing", "Strategy", "Information Systems"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "EMBA",
+      "MSc",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Marketing",
+      "Strategy",
+      "Information Systems"
+    ],
     "description_en": "Fudan School of Management benefits from Shanghai's position as China's financial capital. Strong in Marketing, Strategy, and Finance, the school has been building its international reputation rapidly through partnerships with global institutions. Shanghai's cosmopolitan environment, deep financial sector, and vibrant startup ecosystem create exceptional career prospects.",
     "description_cn": "复旦大学管理学院得益于上海作为中国金融中心的地位，在营销、战略和金融领域实力雄厚。通过与全球机构的合作，学院正在快速提升国际声誉。上海的国际化环境、深厚的金融业和活跃的创业生态创造了非凡的职业前景。",
     "tuition_usd": "~RMB 68,000/year",
     "language": "bilingual",
-    "notable_alumni": ["Dong Mingzhu", "Chen Xiaodong", "Li Shufu"],
+    "notable_alumni": [
+      "Dong Mingzhu",
+      "Chen Xiaodong",
+      "Li Shufu"
+    ],
     "url": "https://www.fdsm.fudan.edu.cn",
-    "tags": ["Finance", "Marketing", "Strategy", "MBA", "Undergraduate", "Mainland China", "Shanghai"]
+    "tags": [
+      "Finance",
+      "Marketing",
+      "Strategy",
+      "MBA",
+      "Undergraduate",
+      "Mainland China",
+      "Shanghai"
+    ]
   },
   {
     "id": "sjtu-antai",
@@ -849,15 +3112,37 @@
     "qs_rank": 47,
     "business_rank": "QS Business #42",
     "established": 1903,
-    "programs": ["Undergraduate", "MBA", "EMBA", "MSc Finance", "PhD"],
-    "specialties": ["Finance", "Economics", "Accounting", "Operations Management"],
+    "programs": [
+      "Undergraduate",
+      "MBA",
+      "EMBA",
+      "MSc Finance",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Economics",
+      "Accounting",
+      "Operations Management"
+    ],
     "description_en": "SJTU Antai combines the strengths of one of China's top engineering universities with comprehensive management education. AACSB-accredited, the school emphasises quantitative methods and China business strategy. Its engineering alumni network provides unique cross-disciplinary career pathways in finance, technology, and manufacturing.",
     "description_cn": "上海交通大学安泰经济与管理学院将中国顶尖理工大学的优势与全面的管理教育相结合，获AACSB认证，强调定量方法和中国商业战略。理工科校友网络为金融、科技和制造业提供了独特的跨学科职业路径。",
     "tuition_usd": "~RMB 72,000/year",
     "language": "bilingual",
-    "notable_alumni": ["Jiang Mianheng", "Various COMAC executives"],
+    "notable_alumni": [
+      "Jiang Mianheng",
+      "Various COMAC executives"
+    ],
     "url": "https://www.acem.sjtu.edu.cn",
-    "tags": ["Finance", "Economics", "MBA", "Undergraduate", "Mainland China", "Shanghai", "AACSB"]
+    "tags": [
+      "Finance",
+      "Economics",
+      "MBA",
+      "Undergraduate",
+      "Mainland China",
+      "Shanghai",
+      "AACSB"
+    ]
   },
   {
     "id": "ceibs",
@@ -869,15 +3154,116 @@
     "qs_rank": null,
     "business_rank": "FT MBA #9 (Asia #1) 2024",
     "established": 1994,
-    "programs": ["MBA", "EMBA", "Executive Education", "DBA", "Global EMBA"],
-    "specialties": ["General Management", "Finance", "Strategy", "China Business"],
+    "programs": [
+      "MBA",
+      "EMBA",
+      "Executive Education",
+      "DBA",
+      "Global EMBA"
+    ],
+    "specialties": [
+      "General Management",
+      "Finance",
+      "Strategy",
+      "China Business"
+    ],
     "description_en": "CEIBS is Asia's #1-ranked business school (FT 2024) and unique as a joint venture between the Chinese government and the EU. It offers the gold standard for business education combining China market expertise with global management principles. Its EMBA is the most expensive and most coveted in China. Essential for global executives targeting the Chinese market.",
     "description_cn": "中欧国际工商学院荣登亚洲商学院第一（FT 2024），是中国政府与欧盟合资的独特机构，提供融合中国市场专业知识与全球管理原则的黄金标准商业教育。其EMBA是中国最昂贵、最受追捧的高管课程，是目标中国市场的全球高管的必选之路。",
     "tuition_usd": "~RMB 498,000 (full MBA)",
     "language": "english",
-    "notable_alumni": ["Li Rongrong", "Wang Shengyi", "Pedro Nueno"],
+    "notable_alumni": [
+      "Li Rongrong",
+      "Wang Shengyi",
+      "Pedro Nueno"
+    ],
     "url": "https://www.ceibs.edu",
-    "tags": ["Finance", "Strategy", "FT Asia #1", "MBA", "EMBA", "Mainland China", "International"]
+    "tags": [
+      "Finance",
+      "Strategy",
+      "FT Asia #1",
+      "MBA",
+      "EMBA",
+      "Mainland China",
+      "International"
+    ],
+    "requirements": {
+      "gpa": "3.0+ recommended",
+      "gmat_median": 620,
+      "gre_accepted": true,
+      "toefl": 90,
+      "ielts": 6.5,
+      "deadlines": {
+        "r1": "Oct 2025",
+        "r2": "Dec 2025",
+        "r3": "Feb 2026",
+        "r4": "Apr 2026"
+      },
+      "acceptance_rate": "~30%"
+    },
+    "employment": [
+      "Finance / PE 26%",
+      "Technology 25%",
+      "Consulting 20%",
+      "Industry / Manufacturing 14%",
+      "Consumer 9%"
+    ],
+    "programs_detail": [
+      {
+        "name": "MBA",
+        "duration": "17 months",
+        "language": "English / Chinese",
+        "description_en": "Asia's highest-ranked MBA in FT rankings, combining Chinese market expertise with global perspective.",
+        "description_cn": "亚洲《金融时报》排名最高的MBA，融合中国市场专业知识与全球视野。"
+      },
+      {
+        "name": "Global EMBA (GEMBA)",
+        "duration": "14 months",
+        "language": "English",
+        "description_en": "Executive MBA entirely in English for senior professionals with significant international exposure.",
+        "description_cn": "面向具有丰富国际经验的高级专业人士的全英语高管MBA。"
+      },
+      {
+        "name": "EMBA (中英双语)",
+        "duration": "16 months",
+        "language": "Bilingual",
+        "description_en": "Bilingual EMBA covering China business strategy for senior executives.",
+        "description_cn": "面向高级管理人员的双语EMBA，深度涵盖中国商业战略。"
+      },
+      {
+        "name": "Finance MBA (FiMBA)",
+        "duration": "17 months",
+        "language": "English",
+        "description_en": "Specialised MBA for finance professionals targeting China's capital markets and banking sector.",
+        "description_cn": "面向金融专业人士的专项MBA，聚焦中国资本市场和银行业。"
+      }
+    ],
+    "alumni_detail": [
+      {
+        "name": "Jim Hemerling",
+        "role": "Senior Partner, Boston Consulting Group (BCG)",
+        "year": null
+      },
+      {
+        "name": "Wang Jingbo",
+        "role": "CEO, Noah Holdings (wealth management)",
+        "year": null
+      },
+      {
+        "name": "Xu Jing",
+        "role": "CFO, Alibaba (former)",
+        "year": null
+      },
+      {
+        "name": "Zhang Jianlong",
+        "role": "Minister, National Forestry and Grassland Administration",
+        "year": null
+      },
+      {
+        "name": "Mary Ma",
+        "role": "Former CFO, Lenovo Group",
+        "year": null
+      }
+    ]
   },
   {
     "id": "utokyo-gsfs",
@@ -889,15 +3275,35 @@
     "qs_rank": 28,
     "business_rank": "QS Business #67",
     "established": 1877,
-    "programs": ["Master of Finance", "MBA (EMBA format)", "PhD", "MSc Economics"],
-    "specialties": ["Finance", "Economics", "Strategy", "Public Policy"],
+    "programs": [
+      "Master of Finance",
+      "MBA (EMBA format)",
+      "PhD",
+      "MSc Economics"
+    ],
+    "specialties": [
+      "Finance",
+      "Economics",
+      "Strategy",
+      "Public Policy"
+    ],
     "description_en": "The University of Tokyo — Japan's most prestigious university — offers management and economics programmes that attract Japan's brightest minds. Tokyo's status as the world's 3rd-largest financial market and Japan's deep corporate sector provide extraordinary career opportunities. The school is increasingly offering English-language programmes to attract international talent.",
     "description_cn": "东京大学是日本最负盛名的大学，提供吸引日本最优秀人才的管理和经济学项目。东京是全球第三大金融市场，日本深厚的企业资源提供了非凡的职业机遇。学院正在增加英语授课项目以吸引国际人才。",
     "tuition_usd": "~JPY 535,800/year (very affordable)",
     "language": "bilingual",
-    "notable_alumni": ["Shinzo Abe (Law)", "Haruhiko Kuroda", "Masayoshi Son (Keio)"],
+    "notable_alumni": [
+      "Shinzo Abe (Law)",
+      "Haruhiko Kuroda",
+      "Masayoshi Son (Keio)"
+    ],
     "url": "https://www.e.u-tokyo.ac.jp",
-    "tags": ["Finance", "Economics", "Japan", "Asia", "MBA"]
+    "tags": [
+      "Finance",
+      "Economics",
+      "Japan",
+      "Asia",
+      "MBA"
+    ]
   },
   {
     "id": "kyoto-gsm",
@@ -909,15 +3315,34 @@
     "qs_rank": 46,
     "business_rank": "QS Business #75",
     "established": 1897,
-    "programs": ["MBA", "MSc Business Administration", "PhD"],
-    "specialties": ["General Management", "Innovation", "Strategy", "Finance"],
+    "programs": [
+      "MBA",
+      "MSc Business Administration",
+      "PhD"
+    ],
+    "specialties": [
+      "General Management",
+      "Innovation",
+      "Strategy",
+      "Finance"
+    ],
     "description_en": "Kyoto University's Graduate School of Management is one of Japan's most respected business programmes. Japan's ancient capital provides a unique cultural backdrop for studying business, innovation, and sustainability. The school has a particular strength in connecting business education with Kyoto's world-class technology and pharmaceutical industries.",
     "description_cn": "京都大学管理学院是日本最受尊敬的商科项目之一。日本古都为研究商业、创新和可持续发展提供了独特的文化背景，学院在将商业教育与京都世界级科技和制药产业相结合方面具有独特优势。",
     "tuition_usd": "~JPY 535,800/year",
     "language": "bilingual",
-    "notable_alumni": ["Various Kyocera executives", "Omron leadership"],
+    "notable_alumni": [
+      "Various Kyocera executives",
+      "Omron leadership"
+    ],
     "url": "https://www.gsm.kyoto-u.ac.jp",
-    "tags": ["Finance", "Strategy", "Innovation", "Japan", "Asia", "MBA"]
+    "tags": [
+      "Finance",
+      "Strategy",
+      "Innovation",
+      "Japan",
+      "Asia",
+      "MBA"
+    ]
   },
   {
     "id": "yonsei-business",
@@ -929,15 +3354,35 @@
     "qs_rank": 79,
     "business_rank": "QS Business #80",
     "established": 1885,
-    "programs": ["Undergraduate (Business)", "MBA", "MSc Finance", "PhD"],
-    "specialties": ["Finance", "Accounting", "Marketing", "International Business"],
+    "programs": [
+      "Undergraduate (Business)",
+      "MBA",
+      "MSc Finance",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Marketing",
+      "International Business"
+    ],
     "description_en": "Yonsei is one of Korea's three most prestigious universities (SKY universities), and its Business School is among the country's most selective. Seoul's emergence as a global hub for finance, technology, and K-culture creates vibrant career opportunities. Strong ties to Korea's chaebols (Samsung, LG, Hyundai) provide excellent corporate connections.",
     "description_cn": "延世大学是韩国最负盛名的三所大学（SKY）之一，其商学院是韩国竞争最激烈的商科院校之一。首尔作为金融、科技和韩流文化全球中心的崛起创造了充满活力的职业机遇。与韩国财阀（三星、LG、现代）的紧密联系提供了出色的企业资源。",
     "tuition_usd": "~KRW 9,000,000/year (~$7,000)",
     "language": "bilingual",
-    "notable_alumni": ["Syngman Rhee", "Various Samsung executives"],
+    "notable_alumni": [
+      "Syngman Rhee",
+      "Various Samsung executives"
+    ],
     "url": "https://biz.yonsei.ac.kr",
-    "tags": ["Finance", "Accounting", "MBA", "Undergraduate", "Korea", "Asia"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "MBA",
+      "Undergraduate",
+      "Korea",
+      "Asia"
+    ]
   },
   {
     "id": "melbourne-business",
@@ -949,15 +3394,36 @@
     "qs_rank": 33,
     "business_rank": "FT MBA #47 / QS Business #32",
     "established": 1963,
-    "programs": ["MBA", "Master of Management", "PhD", "Executive Education"],
-    "specialties": ["Finance", "Marketing", "Strategy", "Leadership"],
+    "programs": [
+      "MBA",
+      "Master of Management",
+      "PhD",
+      "Executive Education"
+    ],
+    "specialties": [
+      "Finance",
+      "Marketing",
+      "Strategy",
+      "Leadership"
+    ],
     "description_en": "Melbourne Business School is Australia's most internationally recognised business school, consistently ranked in the global top 50. Melbourne is regularly voted one of the world's most liveable cities, and its diverse, cosmopolitan economy provides exceptional career opportunities across finance, healthcare, and technology. Strong links to the Asia-Pacific region are a key differentiator.",
     "description_cn": "墨尔本商学院是澳大利亚国际知名度最高的商学院，持续跻身全球前50。墨尔本多次荣获全球最宜居城市，其多元化、国际化的经济体在金融、医疗和科技领域提供非凡的职业机遇，与亚太地区的紧密联系是其关键竞争优势。",
     "tuition_usd": "~AUD $68,500/year",
     "language": "english",
-    "notable_alumni": ["Lindsay Fox", "Gail Kelly", "Marc Besen"],
+    "notable_alumni": [
+      "Lindsay Fox",
+      "Gail Kelly",
+      "Marc Besen"
+    ],
     "url": "https://mbs.edu",
-    "tags": ["Finance", "Marketing", "MBA", "Australia", "Asia-Pacific", "Top 50"]
+    "tags": [
+      "Finance",
+      "Marketing",
+      "MBA",
+      "Australia",
+      "Asia-Pacific",
+      "Top 50"
+    ]
   },
   {
     "id": "unsw-agsm",
@@ -969,15 +3435,37 @@
     "qs_rank": 19,
     "business_rank": "FT MBA #51 / QS Business #24",
     "established": 1949,
-    "programs": ["Undergraduate (BCom)", "MBA", "MBAX", "Master of Commerce", "PhD"],
-    "specialties": ["Finance", "Accounting", "Marketing", "Economics"],
+    "programs": [
+      "Undergraduate (BCom)",
+      "MBA",
+      "MBAX",
+      "Master of Commerce",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Marketing",
+      "Economics"
+    ],
     "description_en": "UNSW Business School is Sydney's highest-ranked business faculty and one of Asia-Pacific's most comprehensive. Its location in Australia's largest city, home to the ASX and a thriving financial services sector, creates outstanding finance career pathways. AGSM (Australian Graduate School of Management) runs top-ranked postgraduate programmes.",
     "description_cn": "新南威尔士大学商学院是悉尼排名最高的商学院，也是亚太地区最全面的商学院之一。坐落于澳大利亚最大城市，毗邻澳大利亚证券交易所（ASX）和蓬勃的金融服务业，提供出色的金融职业路径。澳大利亚管理研究生院（AGSM）开设顶尖研究生项目。",
     "tuition_usd": "~AUD $56,000/year",
     "language": "english",
-    "notable_alumni": ["Tony Shepherd", "Carolyn Hewson", "Various ASX executives"],
+    "notable_alumni": [
+      "Tony Shepherd",
+      "Carolyn Hewson",
+      "Various ASX executives"
+    ],
     "url": "https://www.agsm.edu.au",
-    "tags": ["Finance", "Accounting", "MBA", "Undergraduate", "Australia", "Sydney"]
+    "tags": [
+      "Finance",
+      "Accounting",
+      "MBA",
+      "Undergraduate",
+      "Australia",
+      "Sydney"
+    ]
   },
   {
     "id": "sydney-business",
@@ -989,15 +3477,35 @@
     "qs_rank": 41,
     "business_rank": "QS Business #37",
     "established": 1858,
-    "programs": ["Undergraduate (BCom)", "MBA", "MComm", "PhD"],
-    "specialties": ["Finance", "Marketing", "Accounting", "Entrepreneurship"],
+    "programs": [
+      "Undergraduate (BCom)",
+      "MBA",
+      "MComm",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Marketing",
+      "Accounting",
+      "Entrepreneurship"
+    ],
     "description_en": "The University of Sydney is Australia's oldest and most prestigious university, and its Business School carries that heritage. Located on a stunning heritage campus in the heart of Sydney, students benefit from extraordinary institutional prestige and a vibrant alumni network spanning finance, law, and technology sectors across the Asia-Pacific.",
     "description_cn": "悉尼大学是澳大利亚历史最悠久、最负盛名的大学，其商学院传承这一荣誉。坐落于悉尼市中心美丽的历史校园，学生得益于非凡的院校声望和横跨亚太地区金融、法律和科技领域的活跃校友网络。",
     "tuition_usd": "~AUD $48,000/year",
     "language": "english",
-    "notable_alumni": ["Gough Whitlam (Law)", "Various Australian business leaders"],
+    "notable_alumni": [
+      "Gough Whitlam (Law)",
+      "Various Australian business leaders"
+    ],
     "url": "https://www.sydney.edu.au/business",
-    "tags": ["Finance", "Marketing", "Accounting", "Undergraduate", "MBA", "Australia"]
+    "tags": [
+      "Finance",
+      "Marketing",
+      "Accounting",
+      "Undergraduate",
+      "MBA",
+      "Australia"
+    ]
   },
   {
     "id": "monash-business",
@@ -1009,14 +3517,35 @@
     "qs_rank": 57,
     "business_rank": "QS Business #46",
     "established": 1958,
-    "programs": ["Undergraduate (BCom)", "Master of Finance", "MBA", "PhD"],
-    "specialties": ["Finance", "Accounting", "Economics", "Marketing"],
+    "programs": [
+      "Undergraduate (BCom)",
+      "Master of Finance",
+      "MBA",
+      "PhD"
+    ],
+    "specialties": [
+      "Finance",
+      "Accounting",
+      "Economics",
+      "Marketing"
+    ],
     "description_en": "Monash Business School is one of the largest and most internationally diverse business schools in Australia. It attracts a highly multicultural student cohort reflecting Melbourne's global character. Research excellence in finance and economics, combined with a large global alumni network across Asia-Pacific, makes Monash an attractive option for international students.",
     "description_cn": "莫纳什大学商学院是澳大利亚规模最大、国际化程度最高的商学院之一，吸引了彰显墨尔本国际化特色的高度多元文化学生群体。在金融和经济学领域的研究卓越，加上遍布亚太地区的庞大全球校友网络，使莫纳什成为国际学生的理想选择。",
     "tuition_usd": "~AUD $48,000/year",
     "language": "english",
-    "notable_alumni": ["Richard Goyder", "Andrew Mackenzie", "Helen Coonan"],
+    "notable_alumni": [
+      "Richard Goyder",
+      "Andrew Mackenzie",
+      "Helen Coonan"
+    ],
     "url": "https://www.monash.edu/business",
-    "tags": ["Finance", "Economics", "Accounting", "Undergraduate", "MBA", "Australia"]
+    "tags": [
+      "Finance",
+      "Economics",
+      "Accounting",
+      "Undergraduate",
+      "MBA",
+      "Australia"
+    ]
   }
 ]

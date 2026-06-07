@@ -130,23 +130,44 @@ function countryFlag(country) {
   return map[country] || '🌐'
 }
 
+// ── Modal tabs ────────────────────────────────────────────────────────────────
+const MODAL_TABS = [
+  { key: 'overview',     en: 'Overview',     zh: '概览' },
+  { key: 'programs',     en: 'Programs',     zh: '项目' },
+  { key: 'requirements', en: 'Requirements', zh: '申请要求' },
+  { key: 'alumni',       en: 'Alumni',       zh: '知名校友' },
+]
+
+function InfoRow({ label, value, valueColor }) {
+  if (!value) return null
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+      padding: '9px 0', borderBottom: '1px solid var(--border-primary)', gap: 12 }}>
+      <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 600, color: valueColor || 'var(--text-primary)', textAlign: 'right' }}>{value}</span>
+    </div>
+  )
+}
+
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function UniModal({ uni, lang, onClose }) {
-  const [descLang, setDescLang] = useState(lang)
-  const t = lang === 'zh'
+  const [tab, setTab] = useState('overview')
+  const zh = lang === 'zh'
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
 
-  // Prevent body scroll
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [])
+
+  const req = uni.requirements || {}
+  const alumni = uni.alumni_detail || uni.notable_alumni || []
+  const programs = uni.programs_detail || []
 
   return (
     <div
@@ -155,7 +176,7 @@ function UniModal({ uni, lang, onClose }) {
         position: 'fixed', inset: 0, zIndex: 9000,
         background: 'rgba(0,0,0,0.75)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '20px 16px',
+        padding: '16px',
         backdropFilter: 'blur(4px)',
       }}
     >
@@ -163,217 +184,305 @@ function UniModal({ uni, lang, onClose }) {
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
         borderRadius: 18,
-        width: '100%', maxWidth: 680,
-        maxHeight: '85vh',
-        overflowY: 'auto',
+        width: '100%', maxWidth: 800,
+        maxHeight: '90vh',
+        display: 'flex', flexDirection: 'column',
         boxShadow: '0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(14,165,233,0.1)',
         animation: 'bfsPageFadeIn 0.18s ease both',
       }}>
-        {/* Modal header */}
+
+        {/* ── Hero header ── */}
         <div style={{
-          position: 'sticky', top: 0, zIndex: 1,
+          flexShrink: 0,
           background: 'var(--bg-secondary)',
           borderBottom: '1px solid var(--border-primary)',
-          padding: '18px 22px',
-          display: 'flex', alignItems: 'flex-start', gap: 16,
+          borderRadius: '18px 18px 0 0',
+          padding: '20px 24px 0',
         }}>
-          <SchoolLogo name={uni.name} size={52} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 4 }}>
-              {uni.name}
-            </div>
-            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}>
-              {uni.university}
-            </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                {countryFlag(uni.country)} {uni.city}
-              </span>
-              {uni.qs_rank && (
-                <span style={{
-                  fontSize: 11, fontWeight: 700, padding: '2px 8px',
-                  borderRadius: 6, background: `${AMBER}20`, color: AMBER,
-                  border: `1px solid ${AMBER}40`,
-                }}>
-                  QS #{uni.qs_rank}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 16 }}>
+            <SchoolLogo name={uni.name} size={60} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 4 }}>
+                {uni.name}
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
+                {uni.university}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                  {countryFlag(uni.country)} {uni.city}
                 </span>
-              )}
-              {uni.business_rank && (
-                <span style={{
-                  fontSize: 11, fontWeight: 600, padding: '2px 8px',
-                  borderRadius: 6, background: `${BLUE}20`, color: BLUE,
-                  border: `1px solid ${BLUE}40`,
-                }}>
-                  {uni.business_rank}
-                </span>
-              )}
+                {uni.language && (
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', padding: '1px 7px', borderRadius: 4,
+                    border: '1px solid var(--border-primary)' }}>
+                    {uni.language === 'english' ? (zh ? '英语授课' : 'English') : (zh ? '双语授课' : 'Bilingual')}
+                  </span>
+                )}
+                {uni.established && (
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    Est. {uni.established}
+                  </span>
+                )}
+                {uni.qs_rank && (
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
+                    background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
+                    QS #{uni.qs_rank}
+                  </span>
+                )}
+                {uni.business_rank && (
+                  <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 6,
+                    background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}44` }}>
+                    {uni.business_rank}
+                  </span>
+                )}
+                <a href={uni.url} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 6,
+                    background: `${GREEN}18`, color: GREEN, border: `1px solid ${GREEN}44`,
+                    textDecoration: 'none', marginLeft: 2 }}>
+                  {zh ? '官网 →' : 'Website →'}
+                </a>
+              </div>
             </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
+            <button onClick={onClose} style={{
               background: 'none', border: '1px solid var(--border-primary)',
               color: 'var(--text-muted)', borderRadius: 8,
-              width: 32, height: 32, cursor: 'pointer',
-              fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-              transition: 'all 0.15s',
+              width: 32, height: 32, cursor: 'pointer', fontSize: 18, flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-secondary)' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-primary)' }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
-          >
-            ×
-          </button>
+            >×</button>
+          </div>
+
+          {/* Tab bar */}
+          <div style={{ display: 'flex', gap: 0 }}>
+            {MODAL_TABS.map(({ key, en, zh: zhLabel }) => (
+              <button key={key} onClick={() => setTab(key)} style={{
+                padding: '10px 18px', background: 'none', border: 'none',
+                cursor: 'pointer', fontSize: 13, fontWeight: tab === key ? 700 : 400,
+                color: tab === key ? BLUE : 'var(--text-muted)',
+                borderBottom: tab === key ? `2px solid ${BLUE}` : '2px solid transparent',
+                transition: 'all 0.15s', whiteSpace: 'nowrap',
+              }}>
+                {zh ? zhLabel : en}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Modal body */}
-        <div style={{ padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+        {/* ── Tab body (scrollable) ── */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          {/* Description with lang tabs */}
-          <div>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-              {['en', 'zh'].map(l => (
-                <button
-                  key={l}
-                  onClick={() => setDescLang(l)}
-                  style={{
-                    padding: '4px 14px', borderRadius: 6,
-                    border: `1px solid ${descLang === l ? BLUE : 'var(--border-primary)'}`,
-                    background: descLang === l ? `${BLUE}20` : 'transparent',
-                    color: descLang === l ? BLUE : 'var(--text-muted)',
-                    cursor: 'pointer', fontSize: 12, fontWeight: 600,
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {l === 'en' ? 'English' : '中文'}
-                </button>
-              ))}
-            </div>
-            <p style={{
-              fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7,
-              margin: 0,
-              background: 'var(--bg-tertiary)',
-              border: '1px solid var(--border-primary)',
-              borderRadius: 10,
-              padding: '14px 16px',
-            }}>
-              {descLang === 'en' ? uni.description_en : uni.description_cn}
-            </p>
-          </div>
+          {/* ── Overview ── */}
+          {tab === 'overview' && (
+            <>
+              <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75, margin: 0,
+                background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                borderRadius: 10, padding: '14px 16px' }}>
+                {zh ? uni.description_cn : uni.description_en}
+              </p>
 
-          {/* Two-column info grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              {/* 2×2 data cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {/* Tuition */}
+                <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                    textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                    {zh ? '学费参考' : 'Tuition'}
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: AMBER }}>{uni.tuition_usd || '—'}</div>
+                </div>
 
-            {/* Programs */}
-            <div style={{
-              background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-              borderRadius: 10, padding: '14px 16px',
-            }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
-                {t ? '提供项目' : 'Programs'}
+                {/* Acceptance rate */}
+                <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                    textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                    {zh ? '录取率' : 'Acceptance Rate'}
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: GREEN }}>
+                    {req.acceptance_rate || (zh ? '详见官网' : 'See website')}
+                  </div>
+                </div>
+
+                {/* Specialties */}
+                <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                    textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                    {zh ? '强势专业' : 'Specialties'}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                    {(uni.specialties || []).map(s => <TagPill key={s} label={s} />)}
+                  </div>
+                </div>
+
+                {/* Employment */}
+                <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                    textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                    {zh ? '就业去向' : 'Top Employment'}
+                  </div>
+                  {uni.employment ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {uni.employment.slice(0, 4).map(e => (
+                        <div key={e} style={{ fontSize: 12, color: 'var(--text-secondary)' }}>• {e}</div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>—</div>
+                  )}
+                </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {(uni.programs || []).map(p => (
-                  <div key={p} style={{
-                    fontSize: 12, color: 'var(--accent-blue)',
-                    padding: '4px 10px', borderRadius: 5,
-                    background: 'var(--bg-hover)',
-                    display: 'inline-block', width: 'fit-content',
-                  }}>
+
+              {/* Tags */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {(uni.tags || []).map(tag => <TagPill key={tag} label={tag} />)}
+              </div>
+            </>
+          )}
+
+          {/* ── Programs ── */}
+          {tab === 'programs' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {programs.length > 0 ? programs.map((p, i) => (
+                <div key={i} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 8 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{p.name}</div>
+                    <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
+                        background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33` }}>
+                        {p.duration}
+                      </span>
+                      {p.language && p.language !== 'English' && (
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
+                          background: `${PURPLE}18`, color: PURPLE, border: `1px solid ${PURPLE}33` }}>
+                          {p.language}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65 }}>
+                    {zh ? p.description_cn : p.description_en}
+                  </div>
+                </div>
+              )) : (
+                /* Fallback to simple programs list */
+                (uni.programs || []).map(p => (
+                  <div key={p} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                    borderRadius: 10, padding: '12px 16px',
+                    fontSize: 14, fontWeight: 600, color: BLUE }}>
                     {p}
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Specialties + Key facts */}
-            <div style={{
-              background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-              borderRadius: 10, padding: '14px 16px',
-              display: 'flex', flexDirection: 'column', gap: 14,
-            }}>
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
-                  {t ? '强势专业' : 'Specialties'}
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                  {(uni.specialties || []).map(s => <TagPill key={s} label={s} />)}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
-                  {t ? '学费参考' : 'Tuition'}
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: AMBER }}>
-                  {uni.tuition_usd}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
-                  {t ? '授课语言' : 'Language'}
-                </div>
-                <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                  {uni.language === 'english' ? (t ? '英语授课' : 'English') : (t ? '双语授课' : 'Bilingual')}
-                </div>
-              </div>
-              {uni.established && (
-                <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
-                    {t ? '创建年份' : 'Established'}
-                  </div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{uni.established}</div>
-                </div>
+                ))
               )}
-            </div>
-          </div>
-
-          {/* Notable alumni */}
-          {uni.notable_alumni && uni.notable_alumni.length > 0 && (
-            <div style={{
-              background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-              borderRadius: 10, padding: '14px 16px',
-            }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 10 }}>
-                {t ? '知名校友' : 'Notable Alumni'}
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {uni.notable_alumni.map(a => (
-                  <span key={a} style={{
-                    fontSize: 12, color: 'var(--text-secondary)',
-                    padding: '4px 12px', borderRadius: 20,
-                    background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
-                  }}>
-                    {a}
-                  </span>
-                ))}
-              </div>
             </div>
           )}
 
-          {/* Tags */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {(uni.tags || []).map(tag => <TagPill key={tag} label={tag} />)}
-          </div>
+          {/* ── Requirements ── */}
+          {tab === 'requirements' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {Object.keys(req).length > 0 ? (
+                <>
+                  <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                    borderRadius: 10, padding: '14px 16px' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                      textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                      {zh ? '学术成绩' : 'Academic'}
+                    </div>
+                    <InfoRow label={zh ? '本科 GPA' : 'Undergraduate GPA'} value={req.gpa} />
+                    <InfoRow label={zh ? 'GMAT 中位数' : 'GMAT Median'} value={req.gmat_median} valueColor={BLUE} />
+                    <InfoRow label={zh ? 'GRE 可接受' : 'GRE Accepted'} value={req.gre_accepted ? (zh ? '是' : 'Yes') : (zh ? '否' : 'No')} />
+                    <InfoRow label={zh ? '录取率' : 'Acceptance Rate'} value={req.acceptance_rate} valueColor={GREEN} />
+                  </div>
 
-          {/* Visit button */}
-          <a
-            href={uni.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'block', textAlign: 'center',
-              padding: '12px 28px', borderRadius: 10,
-              background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
-              color: '#fff', fontSize: 14, fontWeight: 700,
-              textDecoration: 'none',
-              boxShadow: '0 2px 20px rgba(14,165,233,0.3)',
-              transition: 'opacity 0.15s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.opacity = '0.9' }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-          >
-            {t ? '访问官方网站' : 'Visit Official Website'} →
-          </a>
+                  <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                    borderRadius: 10, padding: '14px 16px' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                      textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                      {zh ? '语言要求' : 'Language Requirements'}
+                    </div>
+                    <InfoRow label="TOEFL" value={req.toefl ? `${req.toefl}+` : null} valueColor={PURPLE} />
+                    <InfoRow label="IELTS" value={req.ielts ? `${req.ielts}+` : null} valueColor={PURPLE} />
+                  </div>
+
+                  {req.deadlines && (
+                    <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                      borderRadius: 10, padding: '14px 16px' }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                        textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                        {zh ? '申请截止日期' : 'Application Deadlines'}
+                      </div>
+                      {['r1','r2','r3','r4'].map(r => req.deadlines[r] && (
+                        <InfoRow key={r} label={`Round ${r[1]}`} value={req.deadlines[r]} valueColor={AMBER} />
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '48px 0', fontSize: 14 }}>
+                  {zh ? '详细申请要求请访问官方网站' : 'Please visit the official website for detailed requirements'}
+                  <br />
+                  <a href={uni.url} target="_blank" rel="noopener noreferrer"
+                    style={{ color: BLUE, fontSize: 13, marginTop: 8, display: 'inline-block' }}>
+                    {uni.url}
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Alumni ── */}
+          {tab === 'alumni' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {alumni.length > 0 ? (
+                typeof alumni[0] === 'string' ? (
+                  /* Fallback: simple string list */
+                  alumni.map(a => (
+                    <div key={a} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                      borderRadius: 10, padding: '12px 16px',
+                      fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
+                      {a}
+                    </div>
+                  ))
+                ) : (
+                  /* Rich alumni_detail format */
+                  alumni.map((a, i) => (
+                    <div key={i} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                      borderRadius: 10, padding: '14px 16px',
+                      display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                      <div style={{
+                        width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                        background: schoolGradient(a.name),
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 15, fontWeight: 800, color: 'rgba(255,255,255,0.9)',
+                      }}>
+                        {a.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{a.name}</div>
+                          {a.year && (
+                            <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>
+                              {zh ? `${a.year}届` : `Class of ${a.year}`}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 3 }}>{a.role}</div>
+                      </div>
+                    </div>
+                  ))
+                )
+              ) : (
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '48px 0', fontSize: 14 }}>
+                  {zh ? '暂无校友数据' : 'No alumni data available'}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
