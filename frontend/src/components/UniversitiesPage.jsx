@@ -755,7 +755,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   const displayed = useMemo(() => {
     let list = allUnis
     if (filters.region) list = list.filter(u => u.region === filters.region)
-    if (filters.language) list = list.filter(u => u.language === filters.language)
+    if (filters.language !== '') list = list.filter(u => (u.language || 'english') === filters.language)
     if (filters.specialty) {
       const kw = filters.specialty.toLowerCase()
       list = list.filter(u =>
@@ -772,6 +772,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         u.country.toLowerCase().includes(kw)
       )
     }
+    // Sort by QS rank ascending; schools without a rank go to the end
+    list = [...list].sort((a, b) => (a.qs_rank || 9999) - (b.qs_rank || 9999))
     return list
   }, [allUnis, filters])
 
