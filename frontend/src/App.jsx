@@ -117,16 +117,19 @@ export default function App() {
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
           <img
             src="/logo-dark.png"
             alt="Best Friend Stock"
             style={{
-              height: 32,
+              height: 40,
               width: 'auto',
               filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
             }}
           />
+          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.2px' }}>
+            Best Friend Stock
+          </span>
         </div>
 
         {/* Market toggle — pill style */}
