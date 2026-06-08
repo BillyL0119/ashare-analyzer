@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime, timedelta
+import time
+import requests as _req
+import akshare as ak
 
 from models.schemas import (
     StockInfo,
@@ -25,14 +28,139 @@ from services.factor_service import analyze_factors
 
 router = APIRouter()
 
+# ── Hot stocks cache ──────────────────────────────────────────────────────────
+_HOT_TTL = 1800  # 30 min
+_hot_cn_ts: float = 0
+_hot_cn_data: list | None = None
+_hot_us_ts: float = 0
+_hot_us_data: list | None = None
+
+_SINA_HDRS = {"Referer": "https://finance.sina.com.cn", "User-Agent": "Mozilla/5.0"}
+
+_US_HOT = [
+    ("AAPL", "Apple"), ("NVDA", "NVIDIA"), ("TSLA", "Tesla"),
+    ("MSFT", "Microsoft"), ("GOOGL", "Alphabet"), ("META", "Meta"),
+    ("AMZN", "Amazon"), ("AMD", "AMD"), ("TSM", "TSMC"), ("NFLX", "Netflix"),
+]
 
 
+def _cn_code(raw: str) -> str:
+    """Strip exchange prefix: SZ000725 -> 000725."""
+    if len(raw) > 6 and raw[:2].upper() in ("SH", "SZ", "BJ"):
+        return raw[2:]
+    return raw
 
-@router.get("/search", response_model=List[StockInfo])
+
+def _sina_sym(code: str) -> str:
+    c = code.strip().lower()
+    if c.startswith(("sh", "sz", "bj")):
+        return c
+    if c[:1] in ("6", "9"):
+        return f"sh{c}"
+    if c[:1] in ("4", "8"):
+        return f"bj{c}"
+    return f"sz{c}"
+
+
+def _fetch_pct_batch(codes: list) -> dict:
+    """Batch-fetch change_pct for A-share codes via Sina HQ API (single request)."""
+    if not codes:
+        return {}
+    try:
+        syms = ",".join(_sina_sym(c) for c in codes)
+        r = _req.get(f"http://hq.sinajs.cn/list={syms}", headers=_SINA_HDRS, timeout=4)
+        r.encoding = "gbk"
+        out: dict = {}
+        for line in r.text.splitlines():
+            if '="' not in line:
+                continue
+            key = line.split('"')[0].split("_")[-1]   # e.g. sh600519
+            code = key[2:] if len(key) > 2 else key
+            vals = line.split('"')[1].split(",")
+            if len(vals) > 3:
+                try:
+                    yest = float(vals[2])
+                    cur  = float(vals[3])
+                    if yest > 0 and cur > 0:
+                        out[code] = round((cur - yest) / yest * 100, 2)
+                except Exception:
+                    pass
+        return out
+    except Exception:
+        return {}
+
+
+@router.get("/search")
 def search(q: str = Query(..., min_length=1)):
-    """Search stocks by code or name."""
-    results = search_stocks(q)
-    return [StockInfo(code=s["code"], name=s["name"]) for s in results]
+    """Search A-share stocks; returns code/name/change_pct."""
+    results = search_stocks(q)[:20]
+    codes = [s["code"] for s in results[:8]]
+    pct_map = _fetch_pct_batch(codes)
+    return [
+        {"code": s["code"], "name": s["name"],
+         "change_pct": pct_map.get(s["code"]), "market": "cn"}
+        for s in results
+    ]
+
+
+@router.get("/hot")
+def hot_stocks(market: str = Query("cn", pattern="^(cn|us)$")):
+    """Return hot/trending stocks. Cached 30 min."""
+    global _hot_cn_ts, _hot_cn_data, _hot_us_ts, _hot_us_data
+    now = time.time()
+
+    if market == "cn":
+        if _hot_cn_data is not None and now - _hot_cn_ts < _HOT_TTL:
+            return _hot_cn_data
+        try:
+            df = ak.stock_hot_rank_em()
+            result = []
+            for _, row in df.head(20).iterrows():
+                code = _cn_code(str(row.get("代码", "")))
+                try:
+                    pct = round(float(row.get("涨跌幅", 0)), 2)
+                except Exception:
+                    pct = None
+                result.append({
+                    "code": code,
+                    "name": str(row.get("股票名称", "")),
+                    "change_pct": pct,
+                    "rank": int(row.get("当前排名", 0)),
+                    "market": "cn",
+                })
+            _hot_cn_data = result
+            _hot_cn_ts = now
+            return result
+        except Exception:
+            return _hot_cn_data or []
+
+    else:  # us
+        if _hot_us_data is not None and now - _hot_us_ts < _HOT_TTL:
+            return _hot_us_data
+        pct_map: dict = {}
+        try:
+            import yfinance as yf
+            syms = " ".join(s for s, _ in _US_HOT)
+            data = yf.download(syms, period="2d", group_by="ticker",
+                               progress=False, threads=False, auto_adjust=True)
+            for sym, _ in _US_HOT:
+                try:
+                    hist = (data[sym] if len(_US_HOT) > 1 else data).dropna(subset=["Close"])
+                    if len(hist) >= 2:
+                        last, prev = float(hist["Close"].iloc[-1]), float(hist["Close"].iloc[-2])
+                        pct_map[sym] = round((last - prev) / prev * 100, 2) if prev else None
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        result = [
+            {"code": sym, "name": name,
+             "change_pct": pct_map.get(sym), "rank": i + 1, "market": "us"}
+            for i, (sym, name) in enumerate(_US_HOT)
+        ]
+        _hot_us_data = result
+        _hot_us_ts = now
+        return result
 
 
 @router.get("/{symbol}/history", response_model=StockHistoryResponse)

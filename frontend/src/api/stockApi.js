@@ -60,3 +60,6 @@ export const getStockScore = (symbol) =>
 
 export const getBacktest = (symbol, strategy, period) =>
   api.get(`/stock/backtest/${symbol}`, { params: { strategy, period } })
+
+export const getHotStocks = (market = 'cn') =>
+  api.get('/stocks/hot', { params: { market } })
