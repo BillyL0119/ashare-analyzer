@@ -26,7 +26,7 @@ function WatchlistItem({ stock, onRemove, onClick }) {
         alignItems: 'center',
         gap: 8,
         padding: '9px 12px',
-        borderBottom: '1px solid rgba(138,180,248,0.07)',
+        borderBottom: '1px solid var(--border-primary)',
         cursor: 'pointer',
         transition: 'background 0.15s',
       }}
@@ -76,146 +76,86 @@ function WatchlistItem({ stock, onRemove, onClick }) {
   )
 }
 
-export default function Watchlist({ lang }) {
-  const [open, setOpen] = useState(false)
+export default function Watchlist({ lang, open, onClose }) {
   const { list, remove } = useWatchlistStore()
   const { addSymbol } = useCompareStore()
   const isCN = lang === 'zh'
 
   const handleClick = (stock) => {
     addSymbol(stock)
-    setOpen(false)
+    onClose?.()
   }
 
+  if (!open) return null
+
   return (
-    <>
-      {/* Floating trigger button */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        title={isCN ? '收藏夹' : 'Watchlist'}
+    <div
+      style={{
+        position: 'fixed',
+        right: 20,
+        top: 60,
+        zIndex: 499,
+        width: 260,
+        maxHeight: '70vh',
+        background: 'var(--bg-secondary)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid var(--border-primary)',
+        borderRadius: 14,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Header */}
+      <div
         style={{
-          position: 'fixed',
-          right: 20,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          zIndex: 500,
-          width: 44,
-          height: 44,
-          borderRadius: '50%',
-          background: open
-            ? `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`
-            : 'rgba(16, 20, 36, 0.95)',
-          border: `1px solid ${open ? 'transparent' : 'rgba(138,180,248,0.25)'}`,
-          cursor: 'pointer',
-          fontSize: 20,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-          transition: 'all 0.2s ease',
+          padding: '11px 14px',
+          borderBottom: '1px solid var(--border-primary)',
+          fontSize: 13,
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          letterSpacing: '0.2px',
         }}
       >
-        {list.length > 0 && !open ? '★' : open ? '★' : '☆'}
-      </button>
+        ⭐ {isCN ? '收藏夹' : 'Watchlist'}
+      </div>
 
-      {/* Badge count */}
+      {/* List */}
+      <div style={{ flex: 1, overflowY: 'auto' }}>
+        {list.length === 0 ? (
+          <div style={{ padding: '28px 14px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', lineHeight: 1.6 }}>
+            {isCN
+              ? '暂无收藏\n在股票卡片上点击 ⭐ 添加'
+              : 'No saved stocks.\nClick ⭐ on a stock card to add.'}
+          </div>
+        ) : (
+          list.map((stock) => (
+            <WatchlistItem
+              key={stock.code}
+              stock={stock}
+              onRemove={remove}
+              onClick={() => handleClick(stock)}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Footer */}
       {list.length > 0 && (
         <div
           style={{
-            position: 'fixed',
-            right: 14,
-            top: 'calc(50% - 26px)',
-            zIndex: 501,
-            background: `linear-gradient(135deg, ${ACCENT_BLUE}, ${ACCENT_PURPLE})`,
-            color: '#fff',
-            fontSize: 10,
-            fontWeight: 700,
-            width: 16,
-            height: 16,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            pointerEvents: 'none',
+            padding: '7px 14px',
+            borderTop: '1px solid var(--border-primary)',
+            fontSize: 11,
+            color: 'var(--text-muted)',
+            textAlign: 'center',
           }}
         >
-          {list.length}
+          {isCN ? `共 ${list.length} 只股票` : `${list.length} stock${list.length !== 1 ? 's' : ''}`}
         </div>
       )}
-
-      {/* Panel */}
-      {open && (
-        <div
-          style={{
-            position: 'fixed',
-            right: 72,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 499,
-            width: 260,
-            maxHeight: '70vh',
-            background: 'rgba(14, 18, 32, 0.97)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(138,180,248,0.18)',
-            borderRadius: 14,
-            boxShadow: '0 8px 40px rgba(0,0,0,0.7)',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              padding: '11px 14px',
-              borderBottom: '1px solid rgba(138,180,248,0.12)',
-              fontSize: 13,
-              fontWeight: 700,
-              color: 'var(--text-primary)',
-              background: 'rgba(138,180,248,0.04)',
-              letterSpacing: '0.2px',
-            }}
-          >
-            ⭐ {isCN ? '收藏夹' : 'Watchlist'}
-          </div>
-
-          {/* List */}
-          <div style={{ flex: 1, overflowY: 'auto' }}>
-            {list.length === 0 ? (
-              <div style={{ padding: '28px 14px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', lineHeight: 1.6 }}>
-                {isCN
-                  ? '暂无收藏\n在股票卡片上点击 ⭐ 添加'
-                  : 'No saved stocks.\nClick ⭐ on a stock card to add.'}
-              </div>
-            ) : (
-              list.map((stock) => (
-                <WatchlistItem
-                  key={stock.code}
-                  stock={stock}
-                  onRemove={remove}
-                  onClick={() => handleClick(stock)}
-                />
-              ))
-            )}
-          </div>
-
-          {/* Footer */}
-          {list.length > 0 && (
-            <div
-              style={{
-                padding: '7px 14px',
-                borderTop: '1px solid rgba(138,180,248,0.08)',
-                fontSize: 11,
-                color: 'var(--text-muted)',
-                textAlign: 'center',
-              }}
-            >
-              {isCN ? `共 ${list.length} 只股票` : `${list.length} stock${list.length !== 1 ? 's' : ''}`}
-            </div>
-          )}
-        </div>
-      )}
-    </>
+    </div>
   )
 }

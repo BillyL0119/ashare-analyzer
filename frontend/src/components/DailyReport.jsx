@@ -95,7 +95,7 @@ export default function DailyReport({ lang }) {
       {/* Expanded content */}
       {open && (
         <div style={{
-          borderTop: '1px solid rgba(138,180,248,0.08)',
+          borderTop: '1px solid var(--border-primary)',
           padding: '12px 16px',
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12,
         }}>

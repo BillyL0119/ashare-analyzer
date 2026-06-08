@@ -16,6 +16,7 @@ const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
+import useWatchlistStore from './store/watchlistStore'
 import { T } from './i18n/translations'
 import { useMobile } from './hooks/useMobile'
 import { trackVisit, trackFeature } from './utils/analytics'
@@ -30,10 +31,12 @@ export default function App() {
   const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
-  const [showStats,    setShowStats]    = useState(false)
-  const [scrolled,     setScrolled]     = useState(false)
-  const [showInsight,  setShowInsight]  = useState(false)
-  const [showAIFloat,  setShowAIFloat]  = useState(false)
+  const [showStats,     setShowStats]     = useState(false)
+  const [scrolled,      setScrolled]      = useState(false)
+  const [showInsight,   setShowInsight]   = useState(false)
+  const [showAIFloat,   setShowAIFloat]   = useState(false)
+  const [showWatchlist, setShowWatchlist] = useState(false)
+  const watchlistCount = useWatchlistStore((s) => s.list.length)
 
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
@@ -78,7 +81,7 @@ export default function App() {
   return (
     <>
     <WelcomeModal onLangSelect={(lang) => setLang(lang)} />
-    <Watchlist lang={lang} />
+    <Watchlist lang={lang} open={showWatchlist} onClose={() => setShowWatchlist(false)} />
     <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
     <div
       style={{
@@ -245,35 +248,49 @@ export default function App() {
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
 
-        {/* 💡 Daily Insight + 🎓 AI Tutor navbar buttons */}
+        {/* 💡 Daily Insight + 🎓 AI Tutor + ⭐ Watchlist navbar buttons */}
         {[
-          { key: 'insight', icon: '💡', active: showInsight, onClick: () => setShowInsight(v => !v), title: lang === 'zh' ? '每日知识' : 'Daily Insight' },
-          { key: 'ai',      icon: '🎓', active: showAIFloat, onClick: () => setShowAIFloat(v => !v), title: lang === 'zh' ? 'AI 老师'  : 'AI Tutor' },
-        ].map(({ key, icon, active, onClick, title }) => (
-          <button
-            key={key}
-            onClick={onClick}
-            title={title}
-            style={{
-              width: 34, height: 34, borderRadius: '50%',
-              border: `1px solid ${active ? '#0ea5e9' : 'var(--border-primary)'}`,
-              background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
-              cursor: 'pointer', fontSize: 16,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'all 0.2s ease', flexShrink: 0,
-              boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--bg-hover)'
-              e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = active ? 'rgba(14,165,233,0.15)' : 'transparent'
-              e.currentTarget.style.boxShadow = active ? '0 0 10px rgba(14,165,233,0.25)' : 'none'
-            }}
-          >
-            {icon}
-          </button>
+          { key: 'insight',   icon: '💡', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: lang === 'zh' ? '每日知识' : 'Daily Insight', badge: null },
+          { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: lang === 'zh' ? 'AI 老师'  : 'AI Tutor',     badge: null },
+          { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: lang === 'zh' ? '收藏夹'   : 'Watchlist',     badge: watchlistCount > 0 ? watchlistCount : null },
+        ].map(({ key, icon, active, onClick, title, badge }) => (
+          <div key={key} style={{ position: 'relative', flexShrink: 0 }}>
+            <button
+              onClick={onClick}
+              title={title}
+              style={{
+                width: 34, height: 34, borderRadius: '50%',
+                border: `1px solid ${active ? '#0ea5e9' : 'var(--border-primary)'}`,
+                background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
+                cursor: 'pointer', fontSize: 16,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--bg-hover)'
+                e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = active ? 'rgba(14,165,233,0.15)' : 'transparent'
+                e.currentTarget.style.boxShadow = active ? '0 0 10px rgba(14,165,233,0.25)' : 'none'
+              }}
+            >
+              {icon}
+            </button>
+            {badge != null && (
+              <div style={{
+                position: 'absolute', top: -4, right: -4,
+                background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
+                color: '#fff', fontSize: 9, fontWeight: 700,
+                width: 15, height: 15, borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                pointerEvents: 'none',
+              }}>
+                {badge}
+              </div>
+            )}
+          </div>
         ))}
 
         {/* App tab toggle */}
@@ -348,12 +365,12 @@ export default function App() {
         <button
           onClick={() => setShowStats(true)}
           style={{
-            background: 'rgba(22,27,46,0.9)',
-            border: '0.5px solid rgba(138,180,248,0.2)',
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-primary)',
             borderRadius: 20,
             padding: '6px 12px',
             fontSize: 12,
-            color: 'rgba(232,234,240,0.4)',
+            color: 'var(--text-muted)',
             cursor: 'pointer',
             backdropFilter: 'blur(8px)',
           }}

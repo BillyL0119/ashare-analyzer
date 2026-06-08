@@ -394,7 +394,7 @@ function WorldMap({ indices, lang }) {
                 <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{shortLabel}</span>
               )}
             </div>
-            <div style={{ fontSize: 11, color: 'rgba(232,234,240,0.5)', marginBottom: 4, fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, fontFamily: 'monospace' }}>
               {close}
             </div>
             <div style={{ fontSize: 18, fontWeight: 800, color, fontFamily: 'monospace', letterSpacing: '0.5px' }}>
@@ -447,7 +447,7 @@ export default function GlobalSentiment({ lang }) {
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '6px 14px', cursor: 'pointer',
-          borderBottom: collapsed ? 'none' : '1px solid rgba(138,180,248,0.07)',
+          borderBottom: collapsed ? 'none' : '1px solid var(--border-primary)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -477,7 +477,7 @@ export default function GlobalSentiment({ lang }) {
 
       {/* ── Body ── */}
       {!collapsed && (
-        <div style={{ padding: '4px 14px 6px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ padding: '0 14px 6px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {loading ? (
             <LoadingSkeleton />
           ) : (
@@ -519,8 +519,8 @@ export default function GlobalSentiment({ lang }) {
                     <div style={{
                       fontSize: 10, lineHeight: 1.6, color: 'var(--text-muted)',
                       padding: '8px 10px',
-                      background: 'rgba(255,255,255,0.02)',
-                      borderRadius: 8, border: '1px solid rgba(138,180,248,0.07)',
+                      background: 'var(--bg-secondary)',
+                      borderRadius: 8, border: '1px solid var(--border-primary)',
                     }}>
                       {zh
                         ? '综合RSI、52周高点及涨跌比计算，仅供参考，不构成投资建议。'
