@@ -264,13 +264,13 @@ function WorldMap({ indices, lang }) {
 
   return (
     <div
-      style={{ position: 'relative', background: oceanColor, borderRadius: 8, overflow: 'hidden', lineHeight: 0, height: '100%' }}
+      style={{ position: 'relative', background: oceanColor, borderRadius: 8, overflow: 'hidden', lineHeight: 0 }}
       onMouseMove={(e) => setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)}
     >
       <ComposableMap
         projection="geoNaturalEarth1"
         projectionConfig={{ scale: 140, center: [10, 10] }}
-        style={{ width: '100%', height: '100%', display: 'block' }}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
       >
         <Sphere id="rsm-sphere-bg" fill={oceanColor} stroke={sphereStroke} strokeWidth={0.5} />
         <Graticule stroke={graticuleColor} strokeWidth={0.4} />
@@ -434,8 +434,8 @@ export default function GlobalSentiment({ lang }) {
       border: '1px solid var(--border-primary)',
       borderRadius: 12,
       marginBottom: 10,
-      height: 'calc(100vh - 112px)',
-      minHeight: 420,
+      maxHeight: 'calc(100vh - 160px)',
+      minHeight: 320,
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
@@ -483,9 +483,9 @@ export default function GlobalSentiment({ lang }) {
           ) : (
             <div style={{ animation: 'fadeIn 0.5s ease both', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               {/* Map + Gauges */}
-              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 14, alignItems: 'stretch', flex: 1, minHeight: 0, flexWrap: 'nowrap' }}>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 14, alignItems: 'flex-start', flexWrap: 'nowrap' }}>
                 {/* World map */}
-                <div style={{ flex: isMobile ? 'none' : '1 1 0', height: isMobile ? 250 : undefined, minWidth: 0, overflow: 'hidden' }}>
+                <div style={{ flex: isMobile ? 'none' : '1 1 0', minWidth: 0, overflow: 'hidden' }}>
                   <WorldMap indices={indices} lang={lang} />
                 </div>
 

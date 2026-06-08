@@ -6,7 +6,6 @@ northbound flow, and sector performance. Data cached 5 minutes.
 """
 
 from fastapi import APIRouter, BackgroundTasks
-import asyncio
 import akshare as ak
 import pandas as pd
 import json
@@ -410,10 +409,10 @@ def _do_fetch_sentiment() -> dict:
             # Global indices via index_global_hist_sina (10 days — change_pct only)
             for yf_sym, zh_name in _AK_GLOBAL_SINA_MAP.items():
                 futures[pool.submit(_ak_global_index, zh_name)] = yf_sym
-            for fut in as_completed(futures):
+            for fut in as_completed(futures, timeout=30):
                 yf_sym = futures[fut]
                 try:
-                    raw[yf_sym] = fut.result()
+                    raw[yf_sym] = fut.result(timeout=12)
                     if raw[yf_sym]:
                         logger.info("fetched %s ok close=%.2f", yf_sym, raw[yf_sym]["close"])
                 except Exception as e:
@@ -583,24 +582,10 @@ async def market_sentiment(background_tasks: BackgroundTasks):
     if _sentiment_data is not None and now - _sentiment_ts < _SENTIMENT_TTL:
         return _sentiment_data
 
-    # Stale cache — return stale data now, refresh in background
-    if _sentiment_data is not None:
-        if not _sentiment_fetching:
-            background_tasks.add_task(_do_fetch_sentiment)
-        return _sentiment_data
-
-    # No cache — fetch with 8-second timeout, fall back to default
-    try:
-        loop = asyncio.get_running_loop()
-        result = await asyncio.wait_for(
-            loop.run_in_executor(None, _do_fetch_sentiment),
-            timeout=8.0,
-        )
-        return result
-    except asyncio.TimeoutError:
-        logger.warning("sentiment fetch timed out, returning default")
+    # Stale or no cache — kick off background refresh and return current data immediately
+    if not _sentiment_fetching:
         background_tasks.add_task(_do_fetch_sentiment)
-        return _DEFAULT_SENTIMENT
+    return _sentiment_data or _DEFAULT_SENTIMENT
 
 
 # ── Daily Market Report ───────────────────────────────────────────────────────
