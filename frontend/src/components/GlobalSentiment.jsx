@@ -235,6 +235,7 @@ function LoadingSkeleton() {
 // ── World choropleth map ──────────────────────────────────────────────────────
 function WorldMap({ indices, lang }) {
   const [tooltip, setTooltip] = useState(null)
+  const mousePosRef = useRef({ x: 0, y: 0 })
   const hideTimer = useRef(null)
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
@@ -254,18 +255,32 @@ function WorldMap({ indices, lang }) {
   }
 
   // Small delay prevents flicker when mouse moves between geo fill and dot marker
-  const showTip = (x, y, data) => {
+  const showTip = (data) => {
     if (hideTimer.current) clearTimeout(hideTimer.current)
-    setTooltip({ x, y, data })
+    setTooltip(data)
   }
   const hideTip = () => {
-    hideTimer.current = setTimeout(() => setTooltip(null), 60)
+    hideTimer.current = setTimeout(() => setTooltip(null), 80)
+  }
+
+  // Compute tooltip position with edge detection
+  const getTipPos = () => {
+    const { x, y } = mousePosRef.current
+    const W = window.innerWidth
+    const H = window.innerHeight
+    const TIP_W = 180
+    const TIP_H = 110
+    const OFFSET = 15
+    return {
+      left: x + OFFSET + TIP_W > W - 8 ? x - TIP_W - OFFSET : x + OFFSET,
+      top:  y + OFFSET + TIP_H > H - 8 ? y - TIP_H - OFFSET : y + OFFSET,
+    }
   }
 
   return (
     <div
       style={{ position: 'relative', background: oceanColor, borderRadius: 8, overflow: 'hidden', lineHeight: 0 }}
-      onMouseMove={(e) => setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)}
+      onMouseMove={(e) => { mousePosRef.current = { x: e.clientX, y: e.clientY } }}
     >
       <ComposableMap
         projection="geoNaturalEarth1"
@@ -294,7 +309,7 @@ function WorldMap({ indices, lang }) {
                     hover:   { fill: getHoverColor(pct), outline: 'none', cursor: data ? 'pointer' : 'default' },
                     pressed: { fill, outline: 'none' },
                   }}
-                  onMouseEnter={(e) => { if (data) showTip(e.clientX, e.clientY, data) }}
+                  onMouseEnter={() => { if (data) showTip(data) }}
                   onMouseLeave={hideTip}
                 />
               )
@@ -322,7 +337,7 @@ function WorldMap({ indices, lang }) {
                 fill={color}
                 opacity={0.92}
                 style={{ cursor: 'pointer', filter: `drop-shadow(0 0 3px ${color})` }}
-                onMouseEnter={(e) => showTip(e.clientX, e.clientY, data)}
+                onMouseEnter={() => showTip(data)}
                 onMouseLeave={hideTip}
               />
             </Marker>
@@ -360,44 +375,43 @@ function WorldMap({ indices, lang }) {
       </div>
 
       {/* Tooltip — follows mouse, shows on country or dot hover */}
-      {tooltip?.data && (() => {
-        const pct    = tooltip.data.change_pct
-        const color  = getLabelColor(pct)
-        const name   = zh ? (tooltip.data.name_zh || tooltip.data.name) : tooltip.data.name
-        const close  = tooltip.data.close != null ? Number(tooltip.data.close).toLocaleString() : '—'
-        const pctStr = pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'
-        // find the short label for this index
-        const symbol = tooltip.data.symbol
-        const geoId  = SYMBOL_TO_GEO_ID[symbol] || ''
-        const meta   = MARKER_META[geoId]
+      {tooltip && (() => {
+        const pct      = tooltip.change_pct
+        const color    = getLabelColor(pct)
+        const name     = zh ? (tooltip.name_zh || tooltip.name) : tooltip.name
+        const close    = tooltip.close != null ? Number(tooltip.close).toLocaleString() : '—'
+        const pctStr   = pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'
+        const symbol   = tooltip.symbol
+        const geoId    = SYMBOL_TO_GEO_ID[symbol] || ''
+        const meta     = MARKER_META[geoId]
         const shortLabel = meta ? (zh ? meta.label_zh : meta.label) : ''
+        const { left, top } = getTipPos()
 
         return (
           <div style={{
             position: 'fixed',
-            left: tooltip.x + 16,
-            top: tooltip.y - 80,
+            left,
+            top,
             zIndex: 9999,
-            background: 'rgba(5,10,22,0.97)',
-            border: `1px solid ${color}44`,
-            borderRadius: 10,
-            padding: '10px 16px',
-            minWidth: 160,
+            background: 'rgba(6,15,30,0.95)',
+            border: `1px solid ${color}55`,
+            borderRadius: 6,
+            padding: '8px 12px',
+            minWidth: 150,
             pointerEvents: 'none',
-            boxShadow: `0 4px 28px rgba(0,0,0,0.7), 0 0 0 1px ${color}22`,
+            boxShadow: `0 4px 24px rgba(0,0,0,0.6), 0 0 0 1px ${color}22`,
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0,
-                boxShadow: `0 0 6px ${color}` }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{name}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+              <div style={{ width: 7, height: 7, borderRadius: '50%', background: color, flexShrink: 0, boxShadow: `0 0 5px ${color}` }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{name}</span>
               {shortLabel && (
-                <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{shortLabel}</span>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontFamily: 'monospace' }}>{shortLabel}</span>
               )}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 3, fontFamily: 'monospace' }}>
               {close}
             </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color, fontFamily: 'monospace', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: 17, fontWeight: 800, color, fontFamily: 'monospace', letterSpacing: '0.5px' }}>
               {pctStr}
             </div>
           </div>
