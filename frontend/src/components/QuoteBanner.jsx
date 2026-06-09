@@ -14,7 +14,6 @@ function getAvatarColor(name) {
 export default function QuoteBanner({ lang }) {
   const [quote, setQuote] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [open, setOpen] = useState(false)
   const zh = lang === 'zh'
 
   useEffect(() => {
@@ -49,8 +48,6 @@ export default function QuoteBanner({ lang }) {
   const title = zh ? quote.title_cn : quote.title
   const initial = (quote.author || '?')[0].toUpperCase()
   const avatarColor = getAvatarColor(quote.author || '')
-  const preview = text.length > 60 ? text.slice(0, 60) + '…' : text
-  const needsExpand = text.length > 60
 
   return (
     <div style={{
@@ -59,102 +56,57 @@ export default function QuoteBanner({ lang }) {
       borderLeft: '2px solid var(--accent-gold)',
       borderRadius: 10,
       marginBottom: 4,
-      overflow: 'hidden',
-      cursor: needsExpand ? 'pointer' : 'default',
-    }}
-      onClick={() => needsExpand && setOpen(v => !v)}
-    >
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        padding: open ? '10px 14px 6px' : '8px 14px',
-        minHeight: 40,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      padding: '8px 14px',
+    }}>
+      {/* Left quote mark */}
+      <span style={{
+        fontSize: 28, lineHeight: 1,
+        background: 'linear-gradient(135deg, var(--accent-gold), #f97316)',
+        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        flexShrink: 0, userSelect: 'none', alignSelf: 'flex-start', marginTop: 2,
       }}>
-        {/* Left quote mark */}
-        <span style={{
-          fontSize: 28, lineHeight: 1,
-          background: 'linear-gradient(135deg, var(--accent-gold), #f97316)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          flexShrink: 0, userSelect: 'none', marginTop: -4,
-        }}>
-          "
-        </span>
+        "
+      </span>
 
-        {/* Quote text */}
-        <span style={{
-          flex: 1,
-          fontSize: 12,
-          color: 'var(--text-secondary)',
-          lineHeight: 1.5,
-          fontStyle: 'italic',
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: open ? 'unset' : 2,
-          WebkitBoxOrient: 'vertical',
-          letterSpacing: '0.1px',
-        }}>
-          {open ? text : preview}
-        </span>
+      {/* Quote text — full, no truncation, up to 3 lines via lineClamp */}
+      <span style={{
+        flex: 1,
+        fontSize: 12,
+        color: 'var(--text-secondary)',
+        lineHeight: 1.6,
+        fontStyle: 'italic',
+        letterSpacing: '0.1px',
+        display: '-webkit-box',
+        WebkitLineClamp: 3,
+        WebkitBoxOrient: 'vertical',
+        overflow: 'hidden',
+      }}>
+        {text}
+      </span>
 
-        {/* Author badge */}
+      {/* Author badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0, marginLeft: 4 }}>
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 7,
-          flexShrink: 0, marginLeft: 4,
+          width: 28, height: 28, borderRadius: '50%',
+          background: avatarColor,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 12, fontWeight: 800, color: '#fff', flexShrink: 0,
+          boxShadow: `0 0 0 2px ${avatarColor}33`,
         }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: '50%',
-            background: avatarColor,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 12, fontWeight: 800, color: '#fff',
-            flexShrink: 0,
-            boxShadow: `0 0 0 2px ${avatarColor}33`,
-          }}>
-            {initial}
+          {initial}
+        </div>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+            {author}
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
-              {author}
-            </div>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {title}
-            </div>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {title}
           </div>
         </div>
-
-        {/* Expand chevron */}
-        {needsExpand && (
-          <span className={`bfs-chevron${open ? ' is-open' : ''}`} style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>▼</span>
-        )}
       </div>
-
-      {/* Expanded full view */}
-      {open && (
-        <div style={{
-          borderTop: '1px solid var(--border-primary)',
-          padding: '10px 14px 12px 14px',
-          display: 'flex', flexDirection: 'column', gap: 8,
-        }}>
-          <p style={{
-            margin: 0, fontSize: 13, color: 'var(--text-primary)',
-            lineHeight: 1.7, fontStyle: 'italic',
-          }}>
-            "{text}"
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: '50%',
-              background: avatarColor,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 13, fontWeight: 800, color: '#fff', flexShrink: 0,
-            }}>
-              {initial}
-            </div>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{author}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{title}</div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -565,5 +565,482 @@
     "author_cn": "彼得·林奇",
     "title": "Former Manager, Magellan Fund",
     "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 64,
+    "quote_en": "Some people get rich studying artificial intelligence. Me, I make money studying natural stupidity.",
+    "quote_cn": "有些人靠研究人工智能致富，而我靠研究自然愚蠢赚钱。",
+    "author": "Carl Icahn",
+    "author_cn": "卡尔·伊坎",
+    "title": "Founder, Icahn Enterprises",
+    "title_cn": "伊坎企业创始人"
+  },
+  {
+    "id": 65,
+    "quote_en": "In life and business, there are two cardinal sins. The first is to act precipitously without thought and the second is to not act at all.",
+    "quote_cn": "在生活和商业中，有两大罪孽：一是不假思索鲁莽行事，二是完全不行动。",
+    "author": "Carl Icahn",
+    "author_cn": "卡尔·伊坎",
+    "title": "Founder, Icahn Enterprises",
+    "title_cn": "伊坎企业创始人"
+  },
+  {
+    "id": 66,
+    "quote_en": "If you want a friend on Wall Street, get a dog.",
+    "quote_cn": "如果你想在华尔街交到朋友，去养条狗吧。",
+    "author": "Carl Icahn",
+    "author_cn": "卡尔·伊坎",
+    "title": "Founder, Icahn Enterprises",
+    "title_cn": "伊坎企业创始人"
+  },
+  {
+    "id": 67,
+    "quote_en": "I enjoy the hunt much more than the kill.",
+    "quote_cn": "我享受追逐的过程远多于最终的猎获。",
+    "author": "Carl Icahn",
+    "author_cn": "卡尔·伊坎",
+    "title": "Founder, Icahn Enterprises",
+    "title_cn": "伊坎企业创始人"
+  },
+  {
+    "id": 68,
+    "quote_en": "Your work is going to fill a large part of your life, and the only way to be truly satisfied is to do what you believe is great work.",
+    "quote_cn": "工作将占据你生命的很大一部分，真正满足的唯一方式是做你认为伟大的工作。",
+    "author": "Steve Jobs",
+    "author_cn": "史蒂夫·乔布斯",
+    "title": "Co-Founder, Apple Inc.",
+    "title_cn": "苹果公司联合创始人"
+  },
+  {
+    "id": 69,
+    "quote_en": "Innovation distinguishes between a leader and a follower.",
+    "quote_cn": "创新区分了领导者和跟随者。",
+    "author": "Steve Jobs",
+    "author_cn": "史蒂夫·乔布斯",
+    "title": "Co-Founder, Apple Inc.",
+    "title_cn": "苹果公司联合创始人"
+  },
+  {
+    "id": 70,
+    "quote_en": "Stay hungry, stay foolish.",
+    "quote_cn": "求知若渴，虚怀若愚。",
+    "author": "Steve Jobs",
+    "author_cn": "史蒂夫·乔布斯",
+    "title": "Co-Founder, Apple Inc.",
+    "title_cn": "苹果公司联合创始人"
+  },
+  {
+    "id": 71,
+    "quote_en": "The people who are crazy enough to think they can change the world are the ones who do.",
+    "quote_cn": "那些疯狂到认为自己能改变世界的人，才是真正改变世界的人。",
+    "author": "Steve Jobs",
+    "author_cn": "史蒂夫·乔布斯",
+    "title": "Co-Founder, Apple Inc.",
+    "title_cn": "苹果公司联合创始人"
+  },
+  {
+    "id": 72,
+    "quote_en": "Simple can be harder than complex. You have to work hard to get your thinking clean to make it simple.",
+    "quote_cn": "简单可能比复杂更难。你必须努力思考，使其清晰，才能变得简单。",
+    "author": "Steve Jobs",
+    "author_cn": "史蒂夫·乔布斯",
+    "title": "Co-Founder, Apple Inc.",
+    "title_cn": "苹果公司联合创始人"
+  },
+  {
+    "id": 73,
+    "quote_en": "When something is important enough, you do it even if the odds are not in your favor.",
+    "quote_cn": "当某件事足够重要时，即使胜算不在你这边，你也要去做。",
+    "author": "Elon Musk",
+    "author_cn": "埃隆·马斯克",
+    "title": "CEO, Tesla & SpaceX",
+    "title_cn": "特斯拉和SpaceX CEO"
+  },
+  {
+    "id": 74,
+    "quote_en": "The first step is to establish that something is possible; then probability will occur.",
+    "quote_cn": "第一步是确认某事是可能的，然后概率就会发生。",
+    "author": "Elon Musk",
+    "author_cn": "埃隆·马斯克",
+    "title": "CEO, Tesla & SpaceX",
+    "title_cn": "特斯拉和SpaceX CEO"
+  },
+  {
+    "id": 75,
+    "quote_en": "I think it's very important to have a feedback loop, where you're constantly thinking about what you've done and how you could be doing it better.",
+    "quote_cn": "我认为建立反馈循环非常重要，不断思考你做了什么，以及如何做得更好。",
+    "author": "Elon Musk",
+    "author_cn": "埃隆·马斯克",
+    "title": "CEO, Tesla & SpaceX",
+    "title_cn": "特斯拉和SpaceX CEO"
+  },
+  {
+    "id": 76,
+    "quote_en": "Failure is an option here. If things are not failing, you are not innovating enough.",
+    "quote_cn": "失败在这里是可以的。如果事情没有失败，你就没有足够地创新。",
+    "author": "Elon Musk",
+    "author_cn": "埃隆·马斯克",
+    "title": "CEO, Tesla & SpaceX",
+    "title_cn": "特斯拉和SpaceX CEO"
+  },
+  {
+    "id": 77,
+    "quote_en": "Work like hell. I mean you just have to put in 80 to 100 hour weeks every week.",
+    "quote_cn": "拼命工作。我的意思是你每周都要投入80到100个小时。",
+    "author": "Elon Musk",
+    "author_cn": "埃隆·马斯克",
+    "title": "CEO, Tesla & SpaceX",
+    "title_cn": "特斯拉和SpaceX CEO"
+  },
+  {
+    "id": 78,
+    "quote_en": "We are stubborn on vision. We are flexible on details.",
+    "quote_cn": "我们在愿景上固执，在细节上灵活。",
+    "author": "Jeff Bezos",
+    "author_cn": "杰夫·贝佐斯",
+    "title": "Founder, Amazon",
+    "title_cn": "亚马逊创始人"
+  },
+  {
+    "id": 79,
+    "quote_en": "Your margin is my opportunity.",
+    "quote_cn": "你的利润空间，就是我的机会。",
+    "author": "Jeff Bezos",
+    "author_cn": "杰夫·贝佐斯",
+    "title": "Founder, Amazon",
+    "title_cn": "亚马逊创始人"
+  },
+  {
+    "id": 80,
+    "quote_en": "In the long run, the market is going to be right. The stock price will reflect the intrinsic value of the business.",
+    "quote_cn": "从长远来看，市场总是对的。股价将反映企业的内在价值。",
+    "author": "Jeff Bezos",
+    "author_cn": "杰夫·贝佐斯",
+    "title": "Founder, Amazon",
+    "title_cn": "亚马逊创始人"
+  },
+  {
+    "id": 81,
+    "quote_en": "I knew that if I failed I wouldn't regret that, but I knew the one thing I might regret is not trying.",
+    "quote_cn": "我知道如果我失败了，我不会后悔，但我知道我唯一可能后悔的是没有尝试。",
+    "author": "Jeff Bezos",
+    "author_cn": "杰夫·贝佐斯",
+    "title": "Founder, Amazon",
+    "title_cn": "亚马逊创始人"
+  },
+  {
+    "id": 82,
+    "quote_en": "Life is too short to hang out with people who aren't resourceful.",
+    "quote_cn": "生命太短暂，不要和那些没有才能的人共度时光。",
+    "author": "Jeff Bezos",
+    "author_cn": "杰夫·贝佐斯",
+    "title": "Founder, Amazon",
+    "title_cn": "亚马逊创始人"
+  },
+  {
+    "id": 83,
+    "quote_en": "Move fast and break things. Unless you are breaking stuff, you are not moving fast enough.",
+    "quote_cn": "快速行动，打破常规。除非你正在打破一些东西，否则你的速度还不够快。",
+    "author": "Mark Zuckerberg",
+    "author_cn": "马克·扎克伯格",
+    "title": "CEO, Meta Platforms",
+    "title_cn": "Meta Platforms CEO"
+  },
+  {
+    "id": 84,
+    "quote_en": "The biggest risk is not taking any risk. In a world that's changing really quickly, the only strategy that is guaranteed to fail is not taking risks.",
+    "quote_cn": "最大的风险是不承担任何风险。在一个变化如此之快的世界，唯一注定失败的策略是不承担风险。",
+    "author": "Mark Zuckerberg",
+    "author_cn": "马克·扎克伯格",
+    "title": "CEO, Meta Platforms",
+    "title_cn": "Meta Platforms CEO"
+  },
+  {
+    "id": 85,
+    "quote_en": "People don't care about what you say, they care about what you build.",
+    "quote_cn": "人们不在乎你说什么，他们在乎你建造了什么。",
+    "author": "Mark Zuckerberg",
+    "author_cn": "马克·扎克伯格",
+    "title": "CEO, Meta Platforms",
+    "title_cn": "Meta Platforms CEO"
+  },
+  {
+    "id": 86,
+    "quote_en": "Ideas don't come out fully formed. They only become clear as you work on them.",
+    "quote_cn": "想法不会以完整形式出现，只有当你付诸实践时才会逐渐清晰。",
+    "author": "Mark Zuckerberg",
+    "author_cn": "马克·扎克伯格",
+    "title": "CEO, Meta Platforms",
+    "title_cn": "Meta Platforms CEO"
+  },
+  {
+    "id": 87,
+    "quote_en": "Doing business is like growing vegetables. You must invest in the soil first before you can harvest.",
+    "quote_cn": "做生意就像种菜，必须先投入土地，才能收获。",
+    "author": "Cao Dewang",
+    "author_cn": "曹德旺",
+    "title": "Founder, Fuyao Glass",
+    "title_cn": "福耀玻璃创始人"
+  },
+  {
+    "id": 88,
+    "quote_en": "Chinese entrepreneurs must be willing to endure hardship; it is the foundation of our success.",
+    "quote_cn": "中国企业家必须愿意吃苦，这是我们成功的基础。",
+    "author": "Cao Dewang",
+    "author_cn": "曹德旺",
+    "title": "Founder, Fuyao Glass",
+    "title_cn": "福耀玻璃创始人"
+  },
+  {
+    "id": 89,
+    "quote_en": "Honesty is the most valuable asset in business. Once you lose credibility, everything else becomes worthless.",
+    "quote_cn": "诚信是商业中最宝贵的资产。一旦失去信誉，其他一切都变得毫无价值。",
+    "author": "Cao Dewang",
+    "author_cn": "曹德旺",
+    "title": "Founder, Fuyao Glass",
+    "title_cn": "福耀玻璃创始人"
+  },
+  {
+    "id": 90,
+    "quote_en": "Someone is sitting in the shade today because someone planted a tree a long time ago.",
+    "quote_cn": "今天有人坐在树荫下，是因为很久以前有人种下了一棵树。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 91,
+    "quote_en": "I don't look to jump over 7-foot bars; I look around for 1-foot bars that I can step over.",
+    "quote_cn": "我不会去跨越7英尺高的横杆，我会找那些1英尺高的横杆跨过去。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 92,
+    "quote_en": "It takes 20 years to build a reputation and five minutes to ruin it.",
+    "quote_cn": "建立声誉需要20年，毁掉它只需要5分钟。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 93,
+    "quote_en": "It's not supposed to be easy. Anyone who finds it easy is stupid.",
+    "quote_cn": "这本来就不该是容易的。任何觉得容易的人都是愚蠢的。",
+    "author": "Charlie Munger",
+    "author_cn": "查理·芒格",
+    "title": "Vice Chairman, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦副主席"
+  },
+  {
+    "id": 94,
+    "quote_en": "All I want to know is where I'm going to die, so I'll never go there.",
+    "quote_cn": "我只想知道我会在哪里死去，这样我就永远不会去那里。",
+    "author": "Charlie Munger",
+    "author_cn": "查理·芒格",
+    "title": "Vice Chairman, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦副主席"
+  },
+  {
+    "id": 95,
+    "quote_en": "To get what you want, you have to deserve what you want. The world is not yet a crazy enough place to reward a whole bunch of undeserving people.",
+    "quote_cn": "要得到你想要的，你必须配得上你想要的。世界还没有疯狂到奖励一大批不值得的人。",
+    "author": "Charlie Munger",
+    "author_cn": "查理·芒格",
+    "title": "Vice Chairman, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦副主席"
+  },
+  {
+    "id": 96,
+    "quote_en": "Pain plus reflection equals progress.",
+    "quote_cn": "痛苦加反思等于进步。",
+    "author": "Ray Dalio",
+    "author_cn": "瑞·达利欧",
+    "title": "Founder, Bridgewater Associates",
+    "title_cn": "桥水基金创始人"
+  },
+  {
+    "id": 97,
+    "quote_en": "Don't worry about looking good; worry about achieving your goals.",
+    "quote_cn": "不要担心看起来好看，要担心实现你的目标。",
+    "author": "Ray Dalio",
+    "author_cn": "瑞·达利欧",
+    "title": "Founder, Bridgewater Associates",
+    "title_cn": "桥水基金创始人"
+  },
+  {
+    "id": 98,
+    "quote_en": "Once we realize that imperfect understanding is the human condition there is no shame in being wrong, only in failing to correct our mistakes.",
+    "quote_cn": "一旦我们意识到认知不完美是人类的状态，犯错就没什么丢人的，只有不改正错误才丢人。",
+    "author": "George Soros",
+    "author_cn": "乔治·索罗斯",
+    "title": "Founder, Soros Fund Management",
+    "title_cn": "索罗斯基金管理公司创始人"
+  },
+  {
+    "id": 99,
+    "quote_en": "The financial markets generally are unpredictable. So that one has to have different scenarios.",
+    "quote_cn": "金融市场总体上是不可预测的，因此需要准备不同的情景预案。",
+    "author": "George Soros",
+    "author_cn": "乔治·索罗斯",
+    "title": "Founder, Soros Fund Management",
+    "title_cn": "索罗斯基金管理公司创始人"
+  },
+  {
+    "id": 100,
+    "quote_en": "Successful investing requires thoughtful attention to many separate aspects, all at the same time.",
+    "quote_cn": "成功的投资需要同时对许多独立方面进行周全的关注。",
+    "author": "Howard Marks",
+    "author_cn": "霍华德·马克斯",
+    "title": "Co-Founder, Oaktree Capital",
+    "title_cn": "橡树资本联合创始人"
+  },
+  {
+    "id": 101,
+    "quote_en": "The most important thing isn't finding great investments. It's avoiding the losers.",
+    "quote_cn": "最重要的不是找到好的投资，而是避免失败者。",
+    "author": "Howard Marks",
+    "author_cn": "霍华德·马克斯",
+    "title": "Co-Founder, Oaktree Capital",
+    "title_cn": "橡树资本联合创始人"
+  },
+  {
+    "id": 102,
+    "quote_en": "Investing in stocks is an art, not a science, and people who've been trained to rigidly quantify everything have a big disadvantage.",
+    "quote_cn": "投资股票是一门艺术，不是科学，那些被训练去严格量化一切的人处于很大的劣势。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 103,
+    "quote_en": "You get recessions, you have stock market declines. If you don't understand that's going to happen, then you're not ready, you won't do well in the markets.",
+    "quote_cn": "经济衰退会发生，股市会下跌。如果你不明白这会发生，你就没有准备好，在市场上表现不会好。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 104,
+    "quote_en": "Do not compare yourself to others. If you do so, you are insulting yourself.",
+    "quote_cn": "不要与别人比较，那样做是在侮辱你自己。",
+    "author": "Li Ka-shing",
+    "author_cn": "李嘉诚",
+    "title": "Founder, CK Hutchison Holdings",
+    "title_cn": "长和实业创始人"
+  },
+  {
+    "id": 105,
+    "quote_en": "A man must first learn to control himself before he can control others.",
+    "quote_cn": "一个人必须先学会控制自己，然后才能控制他人。",
+    "author": "Li Ka-shing",
+    "author_cn": "李嘉诚",
+    "title": "Founder, CK Hutchison Holdings",
+    "title_cn": "长和实业创始人"
+  },
+  {
+    "id": 106,
+    "quote_en": "Alibaba is not a company, it is a philosophy. Our dream is to build an ecosystem.",
+    "quote_cn": "阿里巴巴不是一家公司，它是一种哲学。我们的梦想是建造一个生态系统。",
+    "author": "Jack Ma",
+    "author_cn": "马云",
+    "title": "Co-Founder, Alibaba Group",
+    "title_cn": "阿里巴巴集团联合创始人"
+  },
+  {
+    "id": 107,
+    "quote_en": "Opportunity lies in the place where the complaints are.",
+    "quote_cn": "机会就藏在抱怨最多的地方。",
+    "author": "Jack Ma",
+    "author_cn": "马云",
+    "title": "Co-Founder, Alibaba Group",
+    "title_cn": "阿里巴巴集团联合创始人"
+  },
+  {
+    "id": 108,
+    "quote_en": "Focus on the things that matter and stop doing the things that don't. This is the essence of running a business.",
+    "quote_cn": "专注于重要的事，停止做不重要的事。这就是经营企业的本质。",
+    "author": "Duan Yongping",
+    "author_cn": "段永平",
+    "title": "Founder, BBK Electronics",
+    "title_cn": "步步高电子创始人"
+  },
+  {
+    "id": 109,
+    "quote_en": "The best investment you can make is in yourself. Knowledge compounds faster than money.",
+    "quote_cn": "你能做的最好投资就是投资自己。知识的复利增长比金钱更快。",
+    "author": "Duan Yongping",
+    "author_cn": "段永平",
+    "title": "Founder, BBK Electronics",
+    "title_cn": "步步高电子创始人"
+  },
+  {
+    "id": 110,
+    "quote_en": "Keep the direction right, and do not be confused by small gains and losses.",
+    "quote_cn": "保持方向正确，不要被细小的得失所迷惑。",
+    "author": "Ren Zhengfei",
+    "author_cn": "任正非",
+    "title": "Founder, Huawei",
+    "title_cn": "华为创始人"
+  },
+  {
+    "id": 111,
+    "quote_en": "Self-criticism is the first step to progress. A company that cannot reflect on itself cannot improve.",
+    "quote_cn": "自我批评是进步的第一步。不能反思自己的公司无法进步。",
+    "author": "Ren Zhengfei",
+    "author_cn": "任正非",
+    "title": "Founder, Huawei",
+    "title_cn": "华为创始人"
+  },
+  {
+    "id": 112,
+    "quote_en": "Buy land, they're not making it anymore.",
+    "quote_cn": "买土地吧，他们已经不再制造土地了。",
+    "author": "Mark Twain",
+    "author_cn": "马克·吐温",
+    "title": "Author & Investor",
+    "title_cn": "作家和投资者"
+  },
+  {
+    "id": 113,
+    "quote_en": "The individual investor should act consistently as an investor and not as a speculator.",
+    "quote_cn": "个人投资者应该始终作为投资者而不是投机者行事。",
+    "author": "Benjamin Graham",
+    "author_cn": "本杰明·格雷厄姆",
+    "title": "Father of Value Investing",
+    "title_cn": "价值投资之父"
+  },
+  {
+    "id": 114,
+    "quote_en": "Everyone has the brainpower to make money in stocks. Not everyone has the stomach.",
+    "quote_cn": "每个人都有从股票中赚钱的脑力，但不是每个人都有这个胆量。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 115,
+    "quote_en": "October. This is one of the peculiarly dangerous months to speculate in stocks. Others are July, January, September, April, November, May, March, June, December, August and February.",
+    "quote_cn": "十月，这是炒股特别危险的月份之一，其他月份还有七月、一月、九月、四月、十一月、五月……实际上每个月都危险。",
+    "author": "Mark Twain",
+    "author_cn": "马克·吐温",
+    "title": "Author & Investor",
+    "title_cn": "作家和投资者"
+  },
+  {
+    "id": 116,
+    "quote_en": "The secret of getting ahead is getting started.",
+    "quote_cn": "超越他人的秘诀是先行动起来。",
+    "author": "Mark Twain",
+    "author_cn": "马克·吐温",
+    "title": "Author & Investor",
+    "title_cn": "作家和投资者"
   }
 ]
