@@ -1,0 +1,569 @@
+[
+  {
+    "id": 1,
+    "quote_en": "The stock market is a device for transferring money from the impatient to the patient.",
+    "quote_cn": "股市是将钱从没有耐心的人那里转移到有耐心的人手中的装置。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 2,
+    "quote_en": "Price is what you pay. Value is what you get.",
+    "quote_cn": "价格是你付出的，价值是你得到的。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 3,
+    "quote_en": "It's far better to buy a wonderful company at a fair price than a fair company at a wonderful price.",
+    "quote_cn": "以合理的价格买入一家出色的公司，远胜于以出色的价格买入一家平庸的公司。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 4,
+    "quote_en": "Be fearful when others are greedy and greedy when others are fearful.",
+    "quote_cn": "别人贪婪时我恐惧，别人恐惧时我贪婪。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 5,
+    "quote_en": "Rule No. 1: Never lose money. Rule No. 2: Never forget Rule No. 1.",
+    "quote_cn": "第一条规则：永远不要亏钱。第二条规则：永远不要忘记第一条。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 6,
+    "quote_en": "Invert, always invert. Turn a situation or problem upside down. Look at it backwards.",
+    "quote_cn": "反转，永远反转。把问题颠倒过来，从反面看待它。",
+    "author": "Charlie Munger",
+    "author_cn": "查理·芒格",
+    "title": "Vice Chairman, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦副主席"
+  },
+  {
+    "id": 7,
+    "quote_en": "Show me the incentive and I'll show you the outcome.",
+    "quote_cn": "告诉我激励机制，我就能告诉你结果。",
+    "author": "Charlie Munger",
+    "author_cn": "查理·芒格",
+    "title": "Vice Chairman, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦副主席"
+  },
+  {
+    "id": 8,
+    "quote_en": "The best thing a human being can do is to help another human being know more.",
+    "quote_cn": "人类所能做的最好的事，就是帮助另一个人了解更多。",
+    "author": "Charlie Munger",
+    "author_cn": "查理·芒格",
+    "title": "Vice Chairman, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦副主席"
+  },
+  {
+    "id": 9,
+    "quote_en": "I never attempt to make money on the stock market. I buy on the assumption that they could close the market the next day and not reopen it for five years.",
+    "quote_cn": "我从不试图在股市上赚钱。我买入时假设他们明天就可以关闭市场，五年内不会重开。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 10,
+    "quote_en": "Know what you own, and know why you own it.",
+    "quote_cn": "了解你持有什么，以及为什么持有它。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 11,
+    "quote_en": "The person that turns over the most rocks wins the game. And that's always been my philosophy.",
+    "quote_cn": "翻开最多石头的人赢得游戏。这一直是我的哲学。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 12,
+    "quote_en": "In this business if you're good, you're right six times out of ten. You're never going to be right nine times out of ten.",
+    "quote_cn": "在这行，如果你足够优秀，十次中能对六次就已经很好了。你永远不可能十次中对九次。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 13,
+    "quote_en": "The biggest mistake investors make is to believe that what happened in the recent past is likely to persist.",
+    "quote_cn": "投资者最大的错误，是相信近期发生的事情会持续下去。",
+    "author": "Ray Dalio",
+    "author_cn": "瑞·达利欧",
+    "title": "Founder, Bridgewater Associates",
+    "title_cn": "桥水基金创始人"
+  },
+  {
+    "id": 14,
+    "quote_en": "He who lives by the crystal ball will eat shattered glass.",
+    "quote_cn": "依靠水晶球生活的人，终将以碎玻璃果腹。",
+    "author": "Ray Dalio",
+    "author_cn": "瑞·达利欧",
+    "title": "Founder, Bridgewater Associates",
+    "title_cn": "桥水基金创始人"
+  },
+  {
+    "id": 15,
+    "quote_en": "Radical transparency and radical open-mindedness are the two tools I've found most important for making better decisions.",
+    "quote_cn": "极度透明和极度开放的心态，是我发现的对做出更好决策最重要的两个工具。",
+    "author": "Ray Dalio",
+    "author_cn": "瑞·达利欧",
+    "title": "Founder, Bridgewater Associates",
+    "title_cn": "桥水基金创始人"
+  },
+  {
+    "id": 16,
+    "quote_en": "Markets are not driven by fundamentals, they're driven by fear and greed.",
+    "quote_cn": "市场不是由基本面驱动的，而是由恐惧和贪婪驱动的。",
+    "author": "George Soros",
+    "author_cn": "乔治·索罗斯",
+    "title": "Founder, Soros Fund Management",
+    "title_cn": "索罗斯基金管理公司创始人"
+  },
+  {
+    "id": 17,
+    "quote_en": "It's not whether you're right or wrong that's important, but how much money you make when you're right and how much you lose when you're wrong.",
+    "quote_cn": "重要的不是你对还是错，而是你对的时候赚了多少，错的时候亏了多少。",
+    "author": "George Soros",
+    "author_cn": "乔治·索罗斯",
+    "title": "Founder, Soros Fund Management",
+    "title_cn": "索罗斯基金管理公司创始人"
+  },
+  {
+    "id": 18,
+    "quote_en": "In the short run, the market is a voting machine. In the long run, it is a weighing machine.",
+    "quote_cn": "短期内，市场是一台投票机；长期来看，它是一台称重机。",
+    "author": "Benjamin Graham",
+    "author_cn": "本杰明·格雷厄姆",
+    "title": "Father of Value Investing",
+    "title_cn": "价值投资之父"
+  },
+  {
+    "id": 19,
+    "quote_en": "The intelligent investor is a realist who sells to optimists and buys from pessimists.",
+    "quote_cn": "聪明的投资者是现实主义者，向乐观者卖出，向悲观者买入。",
+    "author": "Benjamin Graham",
+    "author_cn": "本杰明·格雷厄姆",
+    "title": "Father of Value Investing",
+    "title_cn": "价值投资之父"
+  },
+  {
+    "id": 20,
+    "quote_en": "The individual investor should act consistently as an investor and not as a speculator.",
+    "quote_cn": "个人投资者应始终如一地作为投资者而非投机者行事。",
+    "author": "Benjamin Graham",
+    "author_cn": "本杰明·格雷厄姆",
+    "title": "Father of Value Investing",
+    "title_cn": "价值投资之父"
+  },
+  {
+    "id": 21,
+    "quote_en": "The market is a pendulum that forever swings between unsustainable optimism and unjustified pessimism.",
+    "quote_cn": "市场是一个钟摆，永远在不可持续的乐观和无根据的悲观之间摆动。",
+    "author": "Benjamin Graham",
+    "author_cn": "本杰明·格雷厄姆",
+    "title": "Father of Value Investing",
+    "title_cn": "价值投资之父"
+  },
+  {
+    "id": 22,
+    "quote_en": "The goal of a successful trader is to make the best trades. Money is secondary.",
+    "quote_cn": "成功交易者的目标是做出最好的交易，金钱是次要的。",
+    "author": "Jesse Livermore",
+    "author_cn": "杰西·利弗莫尔",
+    "title": "Wall Street Legend",
+    "title_cn": "华尔街传奇交易员"
+  },
+  {
+    "id": 23,
+    "quote_en": "There is nothing new in Wall Street. There can't be because speculation is as old as the hills.",
+    "quote_cn": "华尔街没有新鲜事，因为投机和丘陵一样古老。",
+    "author": "Jesse Livermore",
+    "author_cn": "杰西·利弗莫尔",
+    "title": "Wall Street Legend",
+    "title_cn": "华尔街传奇交易员"
+  },
+  {
+    "id": 24,
+    "quote_en": "Men who can both be right and sit tight are uncommon.",
+    "quote_cn": "既能判断正确又能坚守仓位的人是罕见的。",
+    "author": "Jesse Livermore",
+    "author_cn": "杰西·利弗莫尔",
+    "title": "Wall Street Legend",
+    "title_cn": "华尔街传奇交易员"
+  },
+  {
+    "id": 25,
+    "quote_en": "Bull markets are born on pessimism, grow on skepticism, mature on optimism and die on euphoria.",
+    "quote_cn": "牛市诞生于悲观，成长于怀疑，成熟于乐观，消亡于狂喜。",
+    "author": "John Templeton",
+    "author_cn": "约翰·邓普顿",
+    "title": "Founder, Templeton Funds",
+    "title_cn": "邓普顿基金创始人"
+  },
+  {
+    "id": 26,
+    "quote_en": "The four most dangerous words in investing are: 'This time it's different.'",
+    "quote_cn": "投资中最危险的四个字是：'这次不一样。'",
+    "author": "John Templeton",
+    "author_cn": "约翰·邓普顿",
+    "title": "Founder, Templeton Funds",
+    "title_cn": "邓普顿基金创始人"
+  },
+  {
+    "id": 27,
+    "quote_en": "The time to buy is when there's blood in the streets.",
+    "quote_cn": "当街头血流成河时，正是买入的时机。",
+    "author": "Baron Rothschild",
+    "author_cn": "罗斯柴尔德男爵",
+    "title": "18th Century Banker",
+    "title_cn": "18世纪银行家"
+  },
+  {
+    "id": 28,
+    "quote_en": "Don't fight the tape. Don't fight the Fed.",
+    "quote_cn": "不要和市场对抗。不要和美联储对抗。",
+    "author": "Paul Tudor Jones",
+    "author_cn": "保罗·都铎·琼斯",
+    "title": "Founder, Tudor Investment Corp",
+    "title_cn": "都铎投资公司创始人"
+  },
+  {
+    "id": 29,
+    "quote_en": "Losers average losers.",
+    "quote_cn": "输家越摊越输。",
+    "author": "Paul Tudor Jones",
+    "author_cn": "保罗·都铎·琼斯",
+    "title": "Founder, Tudor Investment Corp",
+    "title_cn": "都铎投资公司创始人"
+  },
+  {
+    "id": 30,
+    "quote_en": "The most important thing is to be able to distinguish between risk and uncertainty.",
+    "quote_cn": "最重要的是能够区分风险和不确定性。",
+    "author": "Howard Marks",
+    "author_cn": "霍华德·马克斯",
+    "title": "Co-Founder, Oaktree Capital",
+    "title_cn": "橡树资本联合创始人"
+  },
+  {
+    "id": 31,
+    "quote_en": "You can't predict. You can prepare.",
+    "quote_cn": "你无法预测，但你可以准备。",
+    "author": "Howard Marks",
+    "author_cn": "霍华德·马克斯",
+    "title": "Co-Founder, Oaktree Capital",
+    "title_cn": "橡树资本联合创始人"
+  },
+  {
+    "id": 32,
+    "quote_en": "Being too far ahead of your time is indistinguishable from being wrong.",
+    "quote_cn": "过于超前于你的时代与犯错无异。",
+    "author": "Howard Marks",
+    "author_cn": "霍华德·马克斯",
+    "title": "Co-Founder, Oaktree Capital",
+    "title_cn": "橡树资本联合创始人"
+  },
+  {
+    "id": 33,
+    "quote_en": "Risk means more things can happen than will happen.",
+    "quote_cn": "风险意味着可能发生的事情比将要发生的更多。",
+    "author": "Elroy Dimson",
+    "author_cn": "埃尔罗伊·迪姆森",
+    "title": "Finance Professor, London Business School",
+    "title_cn": "伦敦商学院金融教授"
+  },
+  {
+    "id": 34,
+    "quote_en": "Diversification is the only free lunch in investing.",
+    "quote_cn": "分散化投资是投资中唯一的免费午餐。",
+    "author": "Harry Markowitz",
+    "author_cn": "哈里·马科维茨",
+    "title": "Nobel Laureate in Economics",
+    "title_cn": "诺贝尔经济学奖得主"
+  },
+  {
+    "id": 35,
+    "quote_en": "An investment in knowledge pays the best interest.",
+    "quote_cn": "对知识的投资回报最丰厚。",
+    "author": "Benjamin Franklin",
+    "author_cn": "本杰明·富兰克林",
+    "title": "Founding Father, USA",
+    "title_cn": "美国开国元勋"
+  },
+  {
+    "id": 36,
+    "quote_en": "Time is the friend of the wonderful business, the enemy of the mediocre.",
+    "quote_cn": "时间是优秀企业的朋友，是平庸企业的敌人。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 37,
+    "quote_en": "Only buy something that you'd be perfectly happy to hold if the market shut down for 10 years.",
+    "quote_cn": "只买那些即使市场关闭10年你也完全愿意持有的东西。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 38,
+    "quote_en": "The business schools reward difficult complex behavior more than simple behavior, but simple behavior is more effective.",
+    "quote_cn": "商学院对复杂行为的奖励多于简单行为，但简单行为更有效。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 39,
+    "quote_en": "The wise man does at once what the fool does finally.",
+    "quote_cn": "智者立刻做的事，愚者最终才会去做。",
+    "author": "Niccolo Machiavelli",
+    "author_cn": "尼科洛·马基雅维利",
+    "title": "Renaissance Political Thinker",
+    "title_cn": "文艺复兴时期政治思想家"
+  },
+  {
+    "id": 40,
+    "quote_en": "Compound interest is the eighth wonder of the world. He who understands it, earns it; he who doesn't, pays it.",
+    "quote_cn": "复利是世界第八大奇迹。懂得复利的人赚取它，不懂的人则支付它。",
+    "author": "Albert Einstein",
+    "author_cn": "阿尔伯特·爱因斯坦",
+    "title": "Nobel Laureate in Physics",
+    "title_cn": "诺贝尔物理学奖得主"
+  },
+  {
+    "id": 41,
+    "quote_en": "If you have trouble imagining a 20% loss in the stock market, you shouldn't be in stocks.",
+    "quote_cn": "如果你很难想象股市下跌20%，你就不应该投资股票。",
+    "author": "John Bogle",
+    "author_cn": "约翰·博格",
+    "title": "Founder, Vanguard Group",
+    "title_cn": "先锋集团创始人"
+  },
+  {
+    "id": 42,
+    "quote_en": "Don't look for the needle in the haystack. Just buy the haystack!",
+    "quote_cn": "不要在草堆里找针，直接买下整个草堆！",
+    "author": "John Bogle",
+    "author_cn": "约翰·博格",
+    "title": "Founder, Vanguard Group",
+    "title_cn": "先锋集团创始人"
+  },
+  {
+    "id": 43,
+    "quote_en": "Every accomplishment starts with the decision to try.",
+    "quote_cn": "每一项成就都始于尝试的决定。",
+    "author": "Li Ka-shing",
+    "author_cn": "李嘉诚",
+    "title": "Founder, CK Hutchison Holdings",
+    "title_cn": "长和实业创始人"
+  },
+  {
+    "id": 44,
+    "quote_en": "Before taking action, consider the consequences three times.",
+    "quote_cn": "行事之前，三思后行。",
+    "author": "Li Ka-shing",
+    "author_cn": "李嘉诚",
+    "title": "Founder, CK Hutchison Holdings",
+    "title_cn": "长和实业创始人"
+  },
+  {
+    "id": 45,
+    "quote_en": "Give more than you take, and you will always have more than enough.",
+    "quote_cn": "付出多于索取，你就会永远绰绰有余。",
+    "author": "Li Ka-shing",
+    "author_cn": "李嘉诚",
+    "title": "Founder, CK Hutchison Holdings",
+    "title_cn": "长和实业创始人"
+  },
+  {
+    "id": 46,
+    "quote_en": "Customers are the reason for our existence. Satisfying customers is the fundamental goal of our business.",
+    "quote_cn": "客户是我们存在的理由。满足客户是我们经营的根本目标。",
+    "author": "Ren Zhengfei",
+    "author_cn": "任正非",
+    "title": "Founder, Huawei",
+    "title_cn": "华为创始人"
+  },
+  {
+    "id": 47,
+    "quote_en": "A company that does not innovate will die. Innovation is our lifeline.",
+    "quote_cn": "不创新的企业将死亡。创新是我们的生命线。",
+    "author": "Ren Zhengfei",
+    "author_cn": "任正非",
+    "title": "Founder, Huawei",
+    "title_cn": "华为创始人"
+  },
+  {
+    "id": 48,
+    "quote_en": "Today is cruel, tomorrow is crueler, and the day after tomorrow is beautiful.",
+    "quote_cn": "今天很残酷，明天更残酷，后天很美好。",
+    "author": "Jack Ma",
+    "author_cn": "马云",
+    "title": "Co-Founder, Alibaba Group",
+    "title_cn": "阿里巴巴集团联合创始人"
+  },
+  {
+    "id": 49,
+    "quote_en": "Never give up. Today is hard, tomorrow will be worse, but the day after tomorrow will be sunshine.",
+    "quote_cn": "永不放弃。今天很艰难，明天更艰难，但后天阳光灿烂。",
+    "author": "Jack Ma",
+    "author_cn": "马云",
+    "title": "Co-Founder, Alibaba Group",
+    "title_cn": "阿里巴巴集团联合创始人"
+  },
+  {
+    "id": 50,
+    "quote_en": "If you don't give up, you still have a chance. Giving up is the greatest failure.",
+    "quote_cn": "只要不放弃，就还有机会。放弃才是最大的失败。",
+    "author": "Jack Ma",
+    "author_cn": "马云",
+    "title": "Co-Founder, Alibaba Group",
+    "title_cn": "阿里巴巴集团联合创始人"
+  },
+  {
+    "id": 51,
+    "quote_en": "I believe that the real estate business is a sunrise industry. The market demand is enormous.",
+    "quote_cn": "我相信房地产是朝阳产业，市场需求巨大。",
+    "author": "Wang Jianlin",
+    "author_cn": "王健林",
+    "title": "Founder, Wanda Group",
+    "title_cn": "万达集团创始人"
+  },
+  {
+    "id": 52,
+    "quote_en": "Set a small goal first—for example, let's first make 100 million.",
+    "quote_cn": "先定一个小目标，比如先挣一个亿。",
+    "author": "Wang Jianlin",
+    "author_cn": "王健林",
+    "title": "Founder, Wanda Group",
+    "title_cn": "万达集团创始人"
+  },
+  {
+    "id": 53,
+    "quote_en": "Being right means nothing if you can't hold your position.",
+    "quote_cn": "如果你无法坚守仓位，判断正确也毫无意义。",
+    "author": "Duan Yongping",
+    "author_cn": "段永平",
+    "title": "Founder, BBK Electronics; Early Investor in Apple/OPPO",
+    "title_cn": "步步高电子创始人；苹果/OPPO早期投资人"
+  },
+  {
+    "id": 54,
+    "quote_en": "Do the right thing, do things right. These are the two most important principles in business.",
+    "quote_cn": "做正确的事，把事情做对。这是商业中最重要的两个原则。",
+    "author": "Duan Yongping",
+    "author_cn": "段永平",
+    "title": "Founder, BBK Electronics; Early Investor in Apple/OPPO",
+    "title_cn": "步步高电子创始人；苹果/OPPO早期投资人"
+  },
+  {
+    "id": 55,
+    "quote_en": "The stock market is designed to transfer money from the Active to the Patient.",
+    "quote_cn": "股市的设计是将钱从活跃者转移到耐心者手中。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 56,
+    "quote_en": "In investing, what is comfortable is rarely profitable.",
+    "quote_cn": "在投资中，舒适的往往不是盈利的。",
+    "author": "Robert Arnott",
+    "author_cn": "罗伯特·阿诺特",
+    "title": "Founder, Research Affiliates",
+    "title_cn": "Research Affiliates 创始人"
+  },
+  {
+    "id": 57,
+    "quote_en": "Wide diversification is only required when investors do not understand what they are doing.",
+    "quote_cn": "只有当投资者不了解自己在做什么时，才需要广泛分散投资。",
+    "author": "Warren Buffett",
+    "author_cn": "沃伦·巴菲特",
+    "title": "CEO, Berkshire Hathaway",
+    "title_cn": "伯克希尔·哈撒韦 CEO"
+  },
+  {
+    "id": 58,
+    "quote_en": "The market can stay irrational longer than you can stay solvent.",
+    "quote_cn": "市场保持非理性的时间，可以比你保持偿债能力的时间更长。",
+    "author": "John Maynard Keynes",
+    "author_cn": "约翰·梅纳德·凯恩斯",
+    "title": "Economist",
+    "title_cn": "经济学家"
+  },
+  {
+    "id": 59,
+    "quote_en": "The investor's chief problem—and even his worst enemy—is likely to be himself.",
+    "quote_cn": "投资者最大的问题——甚至是最大的敌人——很可能是他自己。",
+    "author": "Benjamin Graham",
+    "author_cn": "本杰明·格雷厄姆",
+    "title": "Father of Value Investing",
+    "title_cn": "价值投资之父"
+  },
+  {
+    "id": 60,
+    "quote_en": "Behind every stock is a company. Find out what it's doing.",
+    "quote_cn": "每只股票背后都有一家公司，找出它在做什么。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 61,
+    "quote_en": "Go for a business that any idiot can run—because sooner or later, any idiot probably is going to run it.",
+    "quote_cn": "选择任何蠢货都能经营的生意——因为迟早会有蠢货来经营它。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  },
+  {
+    "id": 62,
+    "quote_en": "Investment success accrues not so much to the brilliant as to the disciplined.",
+    "quote_cn": "投资成功不那么属于聪明人，而更多属于自律的人。",
+    "author": "William Bernstein",
+    "author_cn": "威廉·伯恩斯坦",
+    "title": "Financial Theorist & Author",
+    "title_cn": "金融理论家和作家"
+  },
+  {
+    "id": 63,
+    "quote_en": "The key to making money in stocks is not to get scared out of them.",
+    "quote_cn": "股票赚钱的关键，是不要被吓跑。",
+    "author": "Peter Lynch",
+    "author_cn": "彼得·林奇",
+    "title": "Former Manager, Magellan Fund",
+    "title_cn": "前麦哲伦基金经理"
+  }
+]

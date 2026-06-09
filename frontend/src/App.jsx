@@ -6,7 +6,7 @@ import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
 import GlobalSentiment from './components/GlobalSentiment'
 import StatsDisplay from './components/StatsDisplay'
-import DailyReport from './components/DailyReport'
+import QuoteBanner from './components/QuoteBanner'
 
 const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
 const StudyCenter        = lazy(() => import('./components/StudyCenter'))
@@ -349,7 +349,7 @@ export default function App() {
           ) : (
             <>
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><DailyReport lang={lang} /></div>
+                <div className="bfs-enter-1"><QuoteBanner lang={lang} /></div>
               )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><GlobalSentiment lang={lang} /></div>
