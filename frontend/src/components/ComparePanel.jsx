@@ -83,7 +83,7 @@ function OverlayView({ lang }) {
   )
 }
 
-export default function ComparePanel({ onTabChange }) {
+export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
   const { selectedSymbols, viewMode, setViewMode, addSymbol, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
@@ -128,7 +128,7 @@ export default function ComparePanel({ onTabChange }) {
             {lang === 'zh' ? '财报日历' : 'Earnings Calendar'}
           </button>
         </div>
-        <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} />
+        <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} onOpenKnowledge={onOpenKnowledge} />
         {detailSymbol && (
           <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang}
             onClose={closeDetail} onLoadMain={handleLoadMain} />

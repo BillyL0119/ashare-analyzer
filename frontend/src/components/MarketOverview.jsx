@@ -1,26 +1,31 @@
 import { useState } from 'react'
 import { useMobile } from '../hooks/useMobile'
+import useCompareStore from '../store/compareStore'
 
 const ACCENT_BLUE   = '#8ab4f8'
 const ACCENT_PURPLE = '#c084fc'
 const BDR           = 'rgba(138,180,248,0.10)'
 
+// action.appTab  → switch the main app tab
+// action.viewMode → switch ComparePanel viewMode (sub-tab)
+// action.openKnowledge → open the daily knowledge popup
 const FEATURES = [
-  { icon: '📈', zh: '相似走势分析', en: 'Similar Trends',   descZh: '找到与目标股票走势高度相关的同行，判断行业性行情还是个股独立行情', descEn: 'Find stocks moving in sync with your target to identify sector vs individual momentum' },
-  { icon: '🤖', zh: 'AI 智能分析',  en: 'AI Analysis',      descZh: 'Claude AI 一键生成投资洞察，分析技术面、基本面与市场情绪', descEn: 'Claude AI generates investment insights instantly — technicals, fundamentals, and sentiment' },
-  { icon: '📰', zh: '新闻舆情',     en: 'News Sentiment',   descZh: '实时中英文新闻 AI 情感评分，快速把握市场对个股的看法', descEn: 'Real-time Chinese & English news with AI sentiment scoring for each stock' },
-  { icon: '🎮', zh: '模拟炒股',     en: 'Paper Trading',    descZh: '100万虚拟资金，T+1规则，真实手续费，练好再用真钱', descEn: 'Practice with ¥1,000,000 virtual money, T+1 rules, and real commission fees' },
-  { icon: '📚', zh: '备考学习',     en: 'Exam Study',       descZh: 'A-Level、IB、IGCSE、AP 经济学全套内容，含真实市场案例', descEn: 'A-Level, IB, IGCSE, AP Economics content with real A-share market examples' },
-  { icon: '💡', zh: '每日知识',     en: 'Daily Knowledge',  descZh: '每天一个经济学概念 + 一个金融知识，积少成多', descEn: 'One economics concept + one finance insight delivered daily' },
+  { icon: '📈', zh: '相似走势分析', en: 'Similar Trends',   descZh: '找到与目标股票走势高度相关的同行，判断行业性行情还是个股独立行情', descEn: 'Find stocks moving in sync with your target to identify sector vs individual momentum', action: { appTab: 'analysis', viewMode: 'similar' } },
+  { icon: '🤖', zh: 'AI 智能分析',  en: 'AI Analysis',      descZh: 'Claude AI 一键生成投资洞察，分析技术面、基本面与市场情绪', descEn: 'Claude AI generates investment insights instantly — technicals, fundamentals, and sentiment', action: { appTab: 'analysis', viewMode: 'analysis' } },
+  { icon: '📰', zh: '新闻舆情',     en: 'News Sentiment',   descZh: '实时中英文新闻 AI 情感评分，快速把握市场对个股的看法', descEn: 'Real-time Chinese & English news with AI sentiment scoring for each stock', action: { appTab: 'analysis', viewMode: 'news' } },
+  { icon: '🎮', zh: '模拟炒股',     en: 'Paper Trading',    descZh: '100万虚拟资金，T+1规则，真实手续费，练好再用真钱', descEn: 'Practice with ¥1,000,000 virtual money, T+1 rules, and real commission fees', action: { appTab: 'paper' } },
+  { icon: '📚', zh: '备考学习',     en: 'Exam Study',       descZh: 'A-Level、IB、IGCSE、AP 经济学全套内容，含真实市场案例', descEn: 'A-Level, IB, IGCSE, AP Economics content with real A-share market examples', action: { appTab: 'study' } },
+  { icon: '💡', zh: '每日知识',     en: 'Daily Knowledge',  descZh: '每天一个经济学概念 + 一个金融知识，积少成多', descEn: 'One economics concept + one finance insight delivered daily', action: { openKnowledge: true } },
 ]
 
-function FeatureCard({ feature, lang, index }) {
+function FeatureCard({ feature, lang, index, onClick }) {
   const [hover, setHover] = useState(false)
   const [pressed, setPressed] = useState(false)
 
   return (
     <div
       className="bfs-feature-card"
+      onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => { setHover(false); setPressed(false) }}
       onMouseDown={() => setPressed(true)}
@@ -37,9 +42,10 @@ function FeatureCard({ feature, lang, index }) {
         boxShadow: hover
           ? '0 8px 32px rgba(138,180,248,0.13), 0 0 0 1px rgba(138,180,248,0.08), 0 0 24px rgba(192,132,252,0.07)'
           : 'none',
-        cursor: 'default',
+        cursor: 'pointer',
         animationDelay: `${index * 0.08}s`,
         animationFillMode: 'both',
+        position: 'relative',
       }}
     >
       <div style={{
@@ -49,11 +55,21 @@ function FeatureCard({ feature, lang, index }) {
         display: 'inline-block',
       }}>{feature.icon}</div>
       <div style={{
-        fontSize: 14, fontWeight: 700,
-        color: hover ? ACCENT_BLUE : 'var(--text-primary)',
-        marginBottom: 8, transition: 'color 0.3s',
+        display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8,
       }}>
-        {lang === 'zh' ? feature.zh : feature.en}
+        <span style={{
+          fontSize: 14, fontWeight: 700,
+          color: hover ? ACCENT_BLUE : 'var(--text-primary)',
+          transition: 'color 0.3s',
+        }}>
+          {lang === 'zh' ? feature.zh : feature.en}
+        </span>
+        <span style={{
+          fontSize: 13, color: ACCENT_BLUE,
+          opacity: hover ? 1 : 0,
+          transform: hover ? 'translateX(3px)' : 'translateX(-4px)',
+          transition: 'opacity 0.25s ease, transform 0.25s ease',
+        }}>→</span>
       </div>
       <div style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>
         {lang === 'zh' ? feature.descZh : feature.descEn}
@@ -62,9 +78,20 @@ function FeatureCard({ feature, lang, index }) {
   )
 }
 
-export default function MarketOverview({ lang, onTabChange }) {
+export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
   const zh = lang === 'zh'
   const isMobile = useMobile()
+  const { setViewMode } = useCompareStore()
+
+  const handleCardClick = (action) => {
+    if (!action) return
+    if (action.openKnowledge) {
+      onOpenKnowledge?.()
+      return
+    }
+    if (action.appTab) onTabChange?.(action.appTab)
+    if (action.viewMode) setViewMode(action.viewMode)
+  }
 
   const focusSearch = () => {
     const input = document.querySelector('header input[type="text"]') ||
@@ -149,7 +176,7 @@ export default function MarketOverview({ lang, onTabChange }) {
         gap: isMobile ? 10 : 14, width: '100%', marginBottom: 36,
       }}>
         {FEATURES.map((f, i) => (
-          <FeatureCard key={f.zh} feature={f} lang={lang} index={i} />
+          <FeatureCard key={f.zh} feature={f} lang={lang} index={i} onClick={() => handleCardClick(f.action)} />
         ))}
       </div>
 

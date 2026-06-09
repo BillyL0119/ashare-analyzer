@@ -354,7 +354,7 @@ export default function App() {
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><GlobalSentiment lang={lang} /></div>
               )}
-              <div className="bfs-enter-3"><ComparePanel onTabChange={handleTabChange} /></div>
+              <div className="bfs-enter-3"><ComparePanel onTabChange={handleTabChange} onOpenKnowledge={() => setShowInsight(true)} /></div>
             </>
           )}
         </Suspense>
