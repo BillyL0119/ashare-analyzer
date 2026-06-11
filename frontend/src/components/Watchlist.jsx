@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useWatchlistStore from '../store/watchlistStore'
 import useCompareStore from '../store/compareStore'
 import { getRealtimeQuote } from '../api/stockApi'
@@ -76,10 +76,24 @@ function WatchlistItem({ stock, onRemove, onClick }) {
   )
 }
 
-export default function Watchlist({ lang, open, onClose }) {
+export default function Watchlist({ lang, open, onClose, anchorRef }) {
   const { list, remove } = useWatchlistStore()
   const { addSymbol } = useCompareStore()
   const isCN = lang === 'zh'
+  const panelRef = useRef(null)
+
+  // Click outside to close
+  useEffect(() => {
+    if (!open) return
+    const handler = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target) &&
+          anchorRef?.current && !anchorRef.current.contains(e.target)) {
+        onClose?.()
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open, onClose, anchorRef])
 
   const handleClick = (stock) => {
     addSymbol(stock)
@@ -90,13 +104,14 @@ export default function Watchlist({ lang, open, onClose }) {
 
   return (
     <div
+      ref={panelRef}
       style={{
-        position: 'fixed',
-        right: 20,
-        top: 60,
+        position: 'absolute',
+        right: 0,
+        top: 42,
         zIndex: 499,
-        width: 260,
-        maxHeight: '70vh',
+        width: 280,
+        maxHeight: 400,
         background: 'var(--bg-secondary)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',

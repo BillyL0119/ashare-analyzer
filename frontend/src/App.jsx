@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
 import WelcomeModal from './components/WelcomeModal'
@@ -37,6 +37,7 @@ export default function App() {
   const [showAIFloat,   setShowAIFloat]   = useState(false)
   const [showWatchlist, setShowWatchlist] = useState(false)
   const watchlistCount = useWatchlistStore((s) => s.list.length)
+  const watchlistBtnRef = useRef(null)
 
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
@@ -81,7 +82,6 @@ export default function App() {
   return (
     <>
     <WelcomeModal onLangSelect={(lang) => setLang(lang)} />
-    <Watchlist lang={lang} open={showWatchlist} onClose={() => setShowWatchlist(false)} />
     <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
     <div
       style={{
@@ -254,7 +254,7 @@ export default function App() {
           { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: lang === 'zh' ? 'AI 老师'  : 'AI Tutor',     badge: null },
           { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: lang === 'zh' ? '收藏夹'   : 'Watchlist',     badge: watchlistCount > 0 ? watchlistCount : null },
         ].map(({ key, icon, active, onClick, title, badge }) => (
-          <div key={key} style={{ position: 'relative', flexShrink: 0 }}>
+          <div key={key} ref={key === 'watchlist' ? watchlistBtnRef : undefined} style={{ position: 'relative', flexShrink: 0 }}>
             <button
               onClick={onClick}
               title={title}
@@ -289,6 +289,9 @@ export default function App() {
               }}>
                 {badge}
               </div>
+            )}
+            {key === 'watchlist' && (
+              <Watchlist lang={lang} open={showWatchlist} onClose={() => setShowWatchlist(false)} anchorRef={watchlistBtnRef} />
             )}
           </div>
         ))}

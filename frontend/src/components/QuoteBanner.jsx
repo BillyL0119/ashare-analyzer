@@ -43,11 +43,11 @@ export default function QuoteBanner({ lang }) {
 
   if (!quote) return null
 
-  const text = zh ? quote.quote_cn : quote.quote_en
-  const author = zh ? quote.author_cn : quote.author
-  const title = zh ? quote.title_cn : quote.title
-  const initial = (quote.author || '?')[0].toUpperCase()
-  const avatarColor = getAvatarColor(quote.author || '')
+  const text = zh ? (quote.quote_cn || quote.quote_en) : (quote.quote_en || quote.quote_cn)
+  const author = zh ? (quote.author_cn || quote.author) : (quote.author || quote.author_cn)
+  const title = zh ? (quote.title_cn || quote.title) : (quote.title || quote.title_cn)
+  const initial = (quote.author || quote.author_cn || '?')[0].toUpperCase()
+  const avatarColor = getAvatarColor(quote.author || quote.author_cn || '')
 
   return (
     <div style={{
@@ -88,25 +88,29 @@ export default function QuoteBanner({ lang }) {
       </span>
 
       {/* Author badge */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0, marginLeft: 4 }}>
-        <div style={{
-          width: 28, height: 28, borderRadius: '50%',
-          background: avatarColor,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 12, fontWeight: 800, color: '#fff', flexShrink: 0,
-          boxShadow: `0 0 0 2px ${avatarColor}33`,
-        }}>
-          {initial}
-        </div>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
-            {author}
+      {author && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0, marginLeft: 4 }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: '50%',
+            background: avatarColor,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 12, fontWeight: 800, color: '#fff', flexShrink: 0,
+            boxShadow: `0 0 0 2px ${avatarColor}33`,
+          }}>
+            {initial}
           </div>
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {title}
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+              {author}
+            </div>
+            {title && (
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {title}
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
