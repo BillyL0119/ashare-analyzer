@@ -1,35 +1,142 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo-light.png" />
     <link rel="apple-touch-icon" href="/logo-light.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Best Friend Stock | 股市里，有我陪你</title>
-    <meta name="description" content="Best Friend Stock is a free AI-powered A-share analysis platform for students. Get stock insights, technical indicators, AI teacher, and more." />
-    <meta name="keywords" content="A股分析,股票分析,AI股票,技术指标,Best Friend Stock,A-share,stock analysis" />
-    <meta name="author" content="Best Friend Stock" />
+    <title>Best Friend Stock | 免费A股美股分析 · AI智能投资 · 模拟炒股 · 经济学学习</title>
+    <meta name="description" content="BestFriendStock.com - 专为学生设计的免费股票分析平台。支持A股、美股K线图、AI智能分析（Claude AI）、模拟炒股（百万虚拟资金T+1）、A-Level/IB/AP/IGCSE经济学学习中心、全球商学院指南（QS前100）。完全免费，由高中生开发。" />
+    <meta name="keywords" content="A股分析,美股分析,股票K线图,AI股票分析,模拟炒股,虚拟炒股,A-Level经济学,IB经济学,AP经济学,IGCSE经济学,商学院指南,QS排名,技术指标,MACD,RSI,bestfriendstock,免费股票,学生炒股,全球市场,情绪指数" />
+    <meta name="author" content="Best Friend Stock - Billy &amp; Frank" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://bestfriendstock.com/" />
-    <meta property="og:title" content="Best Friend Stock | Your Best Friend in the Market" />
-    <meta property="og:description" content="Free AI-powered A-share analysis platform for students. Stock insights, technical indicators, AI teacher, and more." />
+    <meta property="og:title" content="Best Friend Stock | 免费A股美股分析平台 · 专为学生设计" />
+    <meta property="og:description" content="免费股票分析平台：A股/美股K线、AI智能分析、模拟炒股（百万虚拟资金）、A-Level/IB/AP经济学学习中心、全球商学院指南。完全免费。" />
     <meta property="og:site_name" content="Best Friend Stock" />
+    <meta property="og:locale" content="zh_CN" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Best Friend Stock | Your Best Friend in the Market" />
-    <meta name="twitter:description" content="Free AI-powered A-share analysis platform for students." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Best Friend Stock | 免费A股美股分析平台" />
+    <meta name="twitter:description" content="专为学生设计的免费股票分析平台：AI智能分析、模拟炒股、经济学学习中心。" />
 
     <!-- Canonical -->
     <link rel="canonical" href="https://bestfriendstock.com/" />
-    <!-- Fonts: Inter (body) + JetBrains Mono (numbers/code) -->
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Best Friend Stock",
+      "alternateName": "BestFriendStock.com",
+      "url": "https://bestfriendstock.com",
+      "description": "专为学生设计的免费A股美股分析平台。支持AI智能分析、模拟炒股、经济学学习中心、全球商学院指南。",
+      "inLanguage": ["zh-CN", "en"],
+      "author": {
+        "@type": "Organization",
+        "name": "Best Friend Stock",
+        "url": "https://bestfriendstock.com"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://bestfriendstock.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Best Friend Stock",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "url": "https://bestfriendstock.com",
+      "description": "免费A股美股分析平台，AI智能分析、模拟炒股、经济学学习中心、全球商学院指南",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      },
+      "featureList": [
+        "A股和美股K线图分析（MA、MACD、RSI、布林带）",
+        "AI智能分析（Claude AI生成投资洞察）",
+        "新闻舆情分析（中英文AI情感评分）",
+        "模拟炒股（100万虚拟资金，T+1规则）",
+        "A-Level Economics学习中心",
+        "IB Economics SL/HL学习中心",
+        "AP Macroeconomics & Microeconomics",
+        "全球商学院指南（QS前100大学）",
+        "全球市场情绪地图"
+      ]
+    }
+    </script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <!-- Static content for search engine crawlers (shown when JS is disabled) -->
+    <noscript>
+      <div style="font-family:sans-serif;max-width:860px;margin:0 auto;padding:24px;">
+        <h1>Best Friend Stock - 免费A股美股分析平台</h1>
+        <p><strong>Your Best Friend in the Market</strong> — 专为学生设计的股票分析和经济学学习平台，完全免费。由两名高中生 Billy 和 Frank 开发。</p>
+
+        <h2>主要功能</h2>
+        <ul>
+          <li><strong>A股和美股K线图分析</strong> — 支持MA均线、MACD、RSI、布林带、成交量等技术指标</li>
+          <li><strong>AI智能分析</strong> — 基于 Claude AI 一键生成投资洞察，分析技术面、基本面与市场情绪</li>
+          <li><strong>新闻舆情分析</strong> — 实时中英文新闻 AI 情感评分，快速把握市场对个股的看法</li>
+          <li><strong>相似走势分析</strong> — 找到与目标股票走势高度相关的同行，判断行业性行情还是个股独立行情</li>
+          <li><strong>模拟炒股</strong> — 100万虚拟资金，T+1规则，真实手续费，练好再用真钱</li>
+          <li><strong>策略回测</strong> — 对自定义交易策略进行历史数据回测</li>
+          <li><strong>全球市场情绪地图</strong> — 实时全球股指涨跌地图，美股/A股恐慌贪婪指数</li>
+          <li><strong>财报日历</strong> — 美股财报日历，A股分红派息日历</li>
+          <li><strong>蒙特卡洛模拟</strong> — 基于历史波动率模拟股价未来走势</li>
+          <li><strong>板块轮动分析</strong> — 实时板块资金流向，热门板块追踪</li>
+        </ul>
+
+        <h2>经济学学习中心</h2>
+        <p>支持四大国际课程体系，结合真实A股/美股市场案例讲解：</p>
+        <ul>
+          <li><strong>A-Level Economics</strong>（Cambridge 9708）— 微观经济学、宏观经济学全套内容</li>
+          <li><strong>IB Economics SL/HL</strong> — 供需分析、市场失灵、国际贸易、发展经济学</li>
+          <li><strong>AP Macroeconomics &amp; Microeconomics</strong> — 美联储政策、GDP、CPI、IS-LM模型</li>
+          <li><strong>IGCSE Economics</strong> — 基础经济学概念、价格机制、生产成本</li>
+          <li><strong>AI经济学老师</strong> — 随时提问，实时解答经济学和金融知识</li>
+        </ul>
+
+        <h2>全球商学院指南</h2>
+        <p>收录90+所全球顶尖商学院，涵盖27个国家和地区：</p>
+        <ul>
+          <li>美国：哈佛商学院、沃顿商学院、斯坦福GSB、MIT斯隆、哥大商学院、芝加哥布斯、凯洛格等</li>
+          <li>英国：LBS、牛津赛德、剑桥Judge、帝国理工、华威商学院</li>
+          <li>中国：北大汇丰、清华经管、交大安泰、复旦管理、浙大管理</li>
+          <li>亚洲：新加坡国大NUS、港大HKU、香港中大CUHK、早稻田、庆应义塾</li>
+          <li>欧洲：INSEAD、HEC Paris、IE Madrid、博科尼、圣加仑大学</li>
+        </ul>
+
+        <h2>数据来源</h2>
+        <p>AkShare · Yahoo Finance · Sina Finance · 实时更新</p>
+
+        <h2>免费 · 无需注册</h2>
+        <p>完全免费使用，无需注册账号，无广告。仅供学习用途，不构成投资建议。</p>
+
+        <nav>
+          <a href="https://bestfriendstock.com/">首页</a> |
+          <a href="https://bestfriendstock.com/universities">全球商学院指南</a> |
+          <a href="https://bestfriendstock.com/ai-teacher">AI经济学老师</a>
+        </nav>
+      </div>
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
