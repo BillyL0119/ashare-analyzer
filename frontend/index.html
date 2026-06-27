@@ -27,6 +27,22 @@
     <!-- Canonical -->
     <link rel="canonical" href="https://bestfriendstock.com/" />
 
+    <!-- Path-based canonical/title update for SPA sub-pages -->
+    <script>
+    (function() {
+      var p = window.location.pathname;
+      var canon = document.querySelector('link[rel="canonical"]');
+      var t = document.querySelector('title');
+      if (p === '/universities') {
+        if (canon) canon.setAttribute('href', 'https://bestfriendstock.com/universities');
+        if (t) t.textContent = 'Best Friend Stock | 全球商学院指南 - 90+顶尖商学院数据库';
+      } else if (p === '/ai-teacher') {
+        if (canon) canon.setAttribute('href', 'https://bestfriendstock.com/ai-teacher');
+        if (t) t.textContent = 'Best Friend Stock | AI经济学老师 - 免费AI经济学辅导';
+      }
+    })();
+    </script>
+
     <!-- Open Graph Image -->
     <meta property="og:image" content="https://bestfriendstock.com/logo-light.png" />
     <meta property="og:image:width" content="512" />
@@ -110,6 +126,108 @@
         "AP Macroeconomics & Microeconomics",
         "全球商学院指南（QS前100大学）",
         "全球市场情绪地图"
+      ]
+    }
+    </script>
+
+    <!-- BreadcrumbList Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Best Friend Stock 首页",
+          "item": "https://bestfriendstock.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "全球商学院指南",
+          "item": "https://bestfriendstock.com/universities"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "AI经济学老师",
+          "item": "https://bestfriendstock.com/ai-teacher"
+        }
+      ]
+    }
+    </script>
+
+    <!-- FAQPage Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Best Friend Stock 是什么？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Best Friend Stock（bestfriendstock.com）是一个完全免费的股票分析和经济学学习平台，专为学生设计。由两名高中生 Billy 和 Frank 开发，支持A股和美股分析、AI智能分析、模拟炒股、A-Level/IB/AP/IGCSE经济学学习中心和全球商学院指南。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Best Friend Stock 支持哪些股票市场？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Best Friend Stock 支持中国A股和美国股票市场（美股）。可以查看K线图、MA均线、MACD、RSI、布林带等技术指标，以及AI智能分析、新闻舆情分析、相似走势分析、板块轮动等功能。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Best Friend Stock 是免费的吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "是的，Best Friend Stock 完全免费，无需注册账号，无广告。所有功能包括AI智能分析、模拟炒股、经济学学习中心和全球商学院指南均免费使用。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "如何使用 Best Friend Stock 的模拟炒股功能？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Best Friend Stock 提供100万元人民币虚拟资金，遵循真实的A股T+1交易规则和真实手续费。学生可以在零风险环境下练习股票交易，建立正确的投资习惯，是练习炒股的最佳工具。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Best Friend Stock 支持哪些经济学课程？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Best Friend Stock 支持四大国际课程体系：A-Level Economics（Cambridge 9708）、IB Economics SL/HL、AP Macroeconomics & Microeconomics、IGCSE Economics。结合真实A股/美股市场案例讲解经济学原理，是备考经济学的最佳学习工具。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Best Friend Stock 的全球商学院指南包含哪些院校？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Best Friend Stock 收录90+所全球顶尖商学院，涵盖27个国家和地区，包括美国哈佛商学院、沃顿商学院、斯坦福GSB，英国LBS、牛津赛德，中国北大汇丰、清华经管，以及INSEAD、HEC Paris等欧洲顶尖院校。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Best Friend Stock 的 AI 经济学老师是什么？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Best Friend Stock 内置基于 Claude AI 的经济学老师，可以随时回答学生关于经济学、金融知识和股票分析的问题。适合备考A-Level、IB、AP、IGCSE经济学的学生使用，完全免费，访问 bestfriendstock.com/ai-teacher 即可使用。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Best Friend Stock 适合哪些学生使用？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Best Friend Stock 适合所有对投资和经济学感兴趣的学生：备考A-Level经济学的中学生、IB Economics学生、AP经济学学生、IGCSE经济学学生、以及对A股美股感兴趣的大学生和初学者。完全免费，无需任何基础。"
+          }
+        }
       ]
     }
     </script>
@@ -213,6 +331,111 @@
 
       <h2>数据来源</h2>
       <p>Best Friend Stock 数据来源：AkShare · Yahoo Finance · Sina Finance · 实时更新</p>
+
+      <!-- /universities 页面专属内容 -->
+      <h2>全球商学院指南 - Best Friend Stock</h2>
+      <p>
+        Best Friend Stock（bestfriendstock.com）的全球商学院指南收录 90+ 所顶尖商学院，
+        涵盖 27 个国家和地区，帮助中学生和大学生了解全球最优秀的商科院校，
+        规划留学和申请路径。Best Friend Stock 商学院指南完全免费，
+        访问 bestfriendstock.com/universities 查看完整数据库。
+      </p>
+      <ul>
+        <li>美国顶尖商学院：哈佛商学院（HBS）、沃顿商学院、斯坦福GSB、MIT斯隆、哥大商学院、芝加哥布斯、凯洛格、达顿商学院、麦克唐纳商学院</li>
+        <li>英国顶尖商学院：伦敦商学院（LBS）、牛津赛德商学院、剑桥Judge商学院、帝国理工商学院、华威商学院、曼彻斯特商学院</li>
+        <li>中国顶尖商学院：北大汇丰商学院、清华经济管理学院、上海交大安泰经管学院、复旦管理学院、浙大管理学院、中欧国际工商学院</li>
+        <li>亚洲顶尖商学院：新加坡国大商学院（NUS Business）、港大经济及工商管理学院（HKU）、香港中大商学院（CUHK）、早稻田大学、庆应义塾大学</li>
+        <li>欧洲顶尖商学院：INSEAD、HEC Paris、IE Business School、博科尼大学、圣加仑大学、鹿特丹管理学院（RSM）</li>
+      </ul>
+
+      <!-- /ai-teacher 页面专属内容 -->
+      <h2>AI经济学老师 - Best Friend Stock</h2>
+      <p>
+        Best Friend Stock（bestfriendstock.com）的 AI 经济学老师基于 Claude AI 构建，
+        是专为学生设计的免费经济学辅导工具。无论你在备考 A-Level 经济学、IB Economics、
+        AP Macroeconomics 还是 IGCSE Economics，AI 经济学老师都能即时解答你的问题。
+        访问 bestfriendstock.com/ai-teacher 免费使用 Best Friend Stock AI 经济学老师。
+      </p>
+      <ul>
+        <li>A-Level Economics 辅导：供给需求、市场失灵、国民收入、货币政策、财政政策</li>
+        <li>IB Economics 辅导：微观经济学、宏观经济学、国际经济学、发展经济学</li>
+        <li>AP Economics 辅导：美联储政策、GDP、CPI、IS-LM模型、完全竞争与垄断</li>
+        <li>股票与金融知识问答：K线图解读、技术指标含义、投资组合理论</li>
+        <li>结合 Best Friend Stock 的真实市场数据，用案例讲解经济学原理</li>
+      </ul>
+
+      <!-- FAQ 常见问题 -->
+      <h2>常见问题</h2>
+
+      <h3>Best Friend Stock 是什么？</h3>
+      <p>
+        Best Friend Stock（bestfriendstock.com）是一个完全免费的股票分析和经济学学习平台，
+        专为正在学习 A-Level、IB、AP、IGCSE 经济学的学生设计。由两名高中生 Billy 和 Frank 开发，
+        Your Best Friend in the Market，Best Friend Stock 是陪伴学生学习投资和经济学的好朋友。
+      </p>
+
+      <h3>Best Friend Stock 支持哪些股票市场？</h3>
+      <p>
+        Best Friend Stock 支持中国A股和美国股票市场（美股）。用户可以在 bestfriendstock.com 查看
+        A股和美股的 K线图分析，包括 MA均线、MACD、RSI、布林带、成交量等技术指标，
+        还可以查看 AI 智能分析报告、新闻舆情评分、相似走势对比和板块轮动数据。
+      </p>
+
+      <h3>Best Friend Stock 是免费的吗？</h3>
+      <p>
+        是的，Best Friend Stock 完全免费，无需注册账号，无广告，无隐藏收费。
+        包括 AI 智能分析、模拟炒股、经济学学习中心和全球商学院指南在内的所有功能
+        均对所有用户免费开放。Best Friend Stock 由高中生开发，初心就是让每个学生都能
+        免费学习投资知识。
+      </p>
+
+      <h3>如何使用 Best Friend Stock 的模拟炒股功能？</h3>
+      <p>
+        Best Friend Stock 的模拟炒股系统提供 100 万元人民币虚拟资金，严格遵循 A股 T+1 交易规则
+        和真实手续费计算。学生可以在零风险环境下练习买入和卖出股票，查看持仓盈亏，
+        积累真实的交易经验。在 Best Friend Stock 练好了交易技能，再考虑使用真实资金。
+      </p>
+
+      <h3>Best Friend Stock 支持哪些经济学课程？</h3>
+      <p>
+        Best Friend Stock 的经济学学习中心支持四大国际课程体系：
+        A-Level Economics（Cambridge 9708）涵盖微观和宏观经济学全套内容；
+        IB Economics SL/HL 覆盖供需分析、市场失灵、国际贸易和发展经济学；
+        AP Macroeconomics &amp; Microeconomics 讲解美联储政策、GDP、CPI 和 IS-LM 模型；
+        IGCSE Economics 解析基础经济学概念、价格机制和生产成本。
+        Best Friend Stock 结合真实 A股/美股 市场案例讲解，让经济学更生动易懂。
+      </p>
+
+      <h3>Best Friend Stock 的全球商学院指南包含哪些院校？</h3>
+      <p>
+        Best Friend Stock 在 bestfriendstock.com/universities 收录了全球 90+ 所顶尖商学院，
+        涵盖 27 个国家和地区。包括美国哈佛商学院、沃顿商学院、斯坦福GSB、MIT斯隆，
+        英国 LBS、牛津赛德、剑桥Judge，中国北大汇丰、清华经管，
+        以及 INSEAD、HEC Paris 等欧洲顶尖院校，帮助学生规划商科留学路径。
+      </p>
+
+      <h3>Best Friend Stock 的 AI 经济学老师是什么？</h3>
+      <p>
+        Best Friend Stock 的 AI 经济学老师基于 Claude AI 构建，可以随时回答学生关于
+        经济学、金融知识和股票分析的各类问题。无论是备考 A-Level、IB、AP、IGCSE 经济学，
+        还是想了解某只股票的技术指标含义，AI 经济学老师都能给出清晰的解答。
+        访问 bestfriendstock.com/ai-teacher 即可免费使用。
+      </p>
+
+      <h3>Best Friend Stock 适合哪些学生使用？</h3>
+      <p>
+        Best Friend Stock 适合所有对投资和经济学感兴趣的学生：备考 A-Level 经济学的中学生、
+        IB Economics SL/HL 学生、AP Macroeconomics 或 Microeconomics 学生、
+        IGCSE Economics 学生、以及对 A股美股 感兴趣的大学生和初学者。
+        Best Friend Stock 完全免费，无需任何基础，立即访问 bestfriendstock.com 开始使用。
+      </p>
+
+      <h3>Best Friend Stock 的数据来自哪里？</h3>
+      <p>
+        Best Friend Stock 的股票数据来源包括 AkShare（A股数据）、Yahoo Finance（美股数据）
+        和 Sina Finance（新浪财经）。数据实时更新，为学生提供最新的市场行情和分析数据。
+        Best Friend Stock 仅供学习用途，不构成投资建议。
+      </p>
 
       <nav>
         <a href="https://bestfriendstock.com/">Best Friend Stock 首页</a> |

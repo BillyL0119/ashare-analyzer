@@ -59,6 +59,23 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Update document title and canonical on tab change for SEO
+  useEffect(() => {
+    const titles = {
+      analysis:     'Best Friend Stock | 免费A股美股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
+      paper:        'Best Friend Stock | 模拟炒股 - 100万虚拟资金T+1练习',
+      study:        'Best Friend Stock | 经济学学习中心 - A-Level IB AP IGCSE',
+      ai_teacher:   'Best Friend Stock | AI经济学老师 - 免费AI经济学辅导',
+      universities: 'Best Friend Stock | 全球商学院指南 - 90+顶尖商学院数据库',
+    }
+    document.title = titles[appTab] || titles.analysis
+    let canonical = document.querySelector('link[rel="canonical"]')
+    if (canonical) {
+      const paths = { ai_teacher: '/ai-teacher', universities: '/universities' }
+      canonical.setAttribute('href', 'https://bestfriendstock.com' + (paths[appTab] || '/'))
+    }
+  }, [appTab])
+
   const handleTabChange = (tab) => {
     setAppTab(tab)
     if (tab === 'paper') trackFeature('paper_trading')
