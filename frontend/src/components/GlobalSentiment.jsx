@@ -287,7 +287,7 @@ function WorldMap({ indices, lang }) {
         projectionConfig={{ rotate: [-10, 0, 0], scale: 130, center: [0, 10] }}
         width={800}
         height={420}
-        style={{ width: '100%', height: 'auto', display: 'block' }}
+        style={{ width: '100%', height: 'auto', display: 'block', marginTop: -10 }}
       >
         <Sphere id="rsm-sphere-bg" fill={oceanColor} stroke={sphereStroke} strokeWidth={0.5} />
         <Graticule stroke={graticuleColor} strokeWidth={0.4} />

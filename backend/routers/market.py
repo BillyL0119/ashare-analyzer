@@ -561,6 +561,7 @@ def _do_fetch_sentiment() -> dict:
         return result
     except Exception as e:
         logger.error("sentiment fetch failed: %s", e)
+        _sentiment_ts = time.time()  # prevent immediate hammering on next request
         return _sentiment_data or _DEFAULT_SENTIMENT
     finally:
         _sentiment_fetching = False
@@ -578,11 +579,18 @@ async def market_sentiment(background_tasks: BackgroundTasks):
     global _sentiment_ts, _sentiment_data
     now = time.time()
 
-    # Fresh cache — return immediately
-    if _sentiment_data is not None and now - _sentiment_ts < _SENTIMENT_TTL:
+    # Cache is considered valid only if it is fresh AND has real scores (not defaults)
+    def _cache_is_real(d: dict) -> bool:
+        us = d.get("us_sentiment", {}).get("score", 50.0)
+        cn = d.get("cn_sentiment", {}).get("score", 50.0)
+        return not (us == 50.0 and cn == 50.0)
+
+    if (_sentiment_data is not None
+            and now - _sentiment_ts < _SENTIMENT_TTL
+            and _cache_is_real(_sentiment_data)):
         return _sentiment_data
 
-    # Stale or no cache — kick off background refresh and return current data immediately
+    # Stale, missing, or default (score=50) — kick off background refresh
     if not _sentiment_fetching:
         background_tasks.add_task(_do_fetch_sentiment)
     return _sentiment_data or _DEFAULT_SENTIMENT
