@@ -285,7 +285,7 @@ function WorldMap({ indices, lang }) {
       <ComposableMap
         projection="geoNaturalEarth1"
         projectionConfig={{ rotate: [-10, 0, 0], scale: 155, center: [0, 20] }}
-        style={{ width: '100%', height: 'auto', display: 'block' }}
+        style={{ width: '100%', height: 'auto', display: 'block', marginTop: -14, marginBottom: -14 }}
       >
         <Sphere id="rsm-sphere-bg" fill={oceanColor} stroke={sphereStroke} strokeWidth={0.5} />
         <Graticule stroke={graticuleColor} strokeWidth={0.4} />
