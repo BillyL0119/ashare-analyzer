@@ -284,8 +284,10 @@ function WorldMap({ indices, lang }) {
     >
       <ComposableMap
         projection="geoNaturalEarth1"
-        projectionConfig={{ rotate: [-10, 0, 0], scale: 155, center: [0, 20] }}
-        style={{ width: '100%', height: 'auto', display: 'block', marginTop: -14, marginBottom: -14 }}
+        projectionConfig={{ rotate: [-10, 0, 0], scale: 130, center: [0, 10] }}
+        width={800}
+        height={420}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
       >
         <Sphere id="rsm-sphere-bg" fill={oceanColor} stroke={sphereStroke} strokeWidth={0.5} />
         <Graticule stroke={graticuleColor} strokeWidth={0.4} />
@@ -448,8 +450,7 @@ export default function GlobalSentiment({ lang }) {
       border: '1px solid var(--border-primary)',
       borderRadius: 12,
       marginBottom: 10,
-      maxHeight: 'calc(100vh - 160px)',
-      minHeight: 320,
+      height: 'calc(100vh - 130px)',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
@@ -460,7 +461,7 @@ export default function GlobalSentiment({ lang }) {
         onClick={() => setCollapsed(v => !v)}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '6px 14px', cursor: 'pointer',
+          padding: '4px 14px', cursor: 'pointer', flexShrink: 0, height: 36,
           borderBottom: collapsed ? 'none' : '1px solid var(--border-primary)',
         }}
       >
@@ -491,15 +492,15 @@ export default function GlobalSentiment({ lang }) {
 
       {/* ── Body ── */}
       {!collapsed && (
-        <div style={{ padding: '0 14px 6px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ padding: '0 8px 4px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
           {loading ? (
             <LoadingSkeleton />
           ) : (
-            <div style={{ animation: 'fadeIn 0.5s ease both', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ animation: 'fadeIn 0.5s ease both', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
               {/* Map + Gauges */}
-              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 14, alignItems: 'flex-start', flexWrap: 'nowrap' }}>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 8, flex: 1, minHeight: 0, alignItems: 'stretch' }}>
                 {/* World map */}
-                <div style={{ flex: isMobile ? 'none' : '1 1 0', minWidth: 0, overflow: 'hidden' }}>
+                <div style={{ flex: isMobile ? 'none' : '1 1 0', minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <WorldMap indices={indices} lang={lang} />
                 </div>
 
