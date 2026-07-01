@@ -290,11 +290,39 @@ def _polygon_get(path: str, params: dict = None) -> dict:
 
 # ── Core data fetchers ────────────────────────────────────────────────────────
 
+def _find_recent_history_cache(sym: str, max_days: int = 7) -> list:
+    """Return the most recently cached history for sym within max_days, or []."""
+    prefix = f"{sym}_history_"
+    best_path = None
+    best_age = max_days + 1
+    try:
+        for fname in os.listdir(CACHE_DIR):
+            if fname.startswith(prefix) and fname.endswith(".json"):
+                date_str = fname[len(prefix):-5]
+                try:
+                    file_date = datetime.strptime(date_str, "%Y-%m-%d")
+                    age = (datetime.now() - file_date).days
+                    if age < best_age:
+                        best_age = age
+                        best_path = os.path.join(CACHE_DIR, fname)
+                except Exception:
+                    pass
+    except Exception:
+        pass
+    if best_path:
+        try:
+            with open(best_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return []
+
+
 def _fetch_history_candles(sym: str, days: int = 365) -> list:
     """
     Fetch daily OHLCV from Polygon aggregates.
     Returns list of candle dicts sorted by date ASC.
-    Cached until next calendar day.
+    Cached until next calendar day. Falls back to recent stale cache on API error.
     """
     today = datetime.now().strftime("%Y-%m-%d")
     cache_key = f"{sym}_history_{today}"
@@ -305,30 +333,36 @@ def _fetch_history_candles(sym: str, days: int = 365) -> list:
     to_date = datetime.now().strftime("%Y-%m-%d")
     from_date = (datetime.now() - timedelta(days=max(days, 365))).strftime("%Y-%m-%d")
 
-    data = _polygon_get(
-        f"/v2/aggs/ticker/{sym}/range/1/day/{from_date}/{to_date}",
-        {"adjusted": "true", "sort": "asc", "limit": 365},
-    )
+    try:
+        data = _polygon_get(
+            f"/v2/aggs/ticker/{sym}/range/1/day/{from_date}/{to_date}",
+            {"adjusted": "true", "sort": "asc", "limit": 365},
+        )
 
-    results = data.get("results", [])
-    if not results:
-        return []
+        results = data.get("results", [])
+        if not results:
+            # No data from API — fall back to recent stale cache
+            return _find_recent_history_cache(sym, max_days=7)
 
-    candles = []
-    for bar in results:
-        ts_ms = bar.get("t", 0)
-        date_str = datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d")
-        candles.append({
-            "date":   date_str,
-            "open":   round(bar.get("o", 0), 4),
-            "high":   round(bar.get("h", 0), 4),
-            "low":    round(bar.get("l", 0), 4),
-            "close":  round(bar.get("c", 0), 4),
-            "volume": int(bar.get("v", 0)),
-        })
+        candles = []
+        for bar in results:
+            ts_ms = bar.get("t", 0)
+            date_str = datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d")
+            candles.append({
+                "date":   date_str,
+                "open":   round(bar.get("o", 0), 4),
+                "high":   round(bar.get("h", 0), 4),
+                "low":    round(bar.get("l", 0), 4),
+                "close":  round(bar.get("c", 0), 4),
+                "volume": int(bar.get("v", 0)),
+            })
 
-    write_cache(cache_key, candles)
-    return candles
+        write_cache(cache_key, candles)
+        return candles
+
+    except Exception:
+        # API failed (rate limit, network, etc.) — use most recent stale cache
+        return _find_recent_history_cache(sym, max_days=7)
 
 
 def _fetch_company_info(sym: str) -> dict:
@@ -569,47 +603,50 @@ def get_us_similar(symbol: str):
 
         candidates = candidates[:15]
 
-        def _get_closes(ticker_sym: str):
+        def _get_series_and_sparkline(ticker_sym: str):
+            """Return (date-indexed returns Series, sparkline list)."""
             try:
                 all_c = _fetch_history_candles(ticker_sym, 365)
-                recent   = all_c[-252:] if len(all_c) > 252 else all_c
-                closes   = [c["close"] for c in recent if c.get("close")]
+                recent = all_c[-252:] if len(all_c) > 252 else all_c
+                valid = [(c["date"], c["close"]) for c in recent if c.get("date") and c.get("close")]
                 sparkline = [c["close"] for c in all_c[-20:] if c.get("close")]
-                return closes, sparkline
+                if not valid:
+                    return None, []
+                dates, closes = zip(*valid)
+                series = pd.Series(list(closes), index=pd.to_datetime(list(dates)), dtype=float).pct_change().dropna()
+                return series, sparkline
             except Exception:
-                return [], []
+                return None, []
 
-        ref_closes, _ = _get_closes(sym)
-        if len(ref_closes) < 20:
+        ref_series, _ = _get_series_and_sparkline(sym)
+        if ref_series is None or len(ref_series) < 20:
             return {"symbol": sym, "industry": sector or "", "results": []}
-
-        ref_series = pd.Series(ref_closes, dtype=float).pct_change().dropna()
 
         results = []
         for peer in candidates:
-            peer_closes, sparkline = _get_closes(peer)
-            if len(peer_closes) < 20:
+            peer_series, sparkline = _get_series_and_sparkline(peer)
+            if peer_series is None or len(peer_series) < 20:
                 continue
-            peer_series = pd.Series(peer_closes, dtype=float).pct_change().dropna()
-            min_len = min(len(ref_series), len(peer_series))
-            combined = pd.DataFrame({
-                "ref":  ref_series.iloc[-min_len:].values,
-                "peer": peer_series.iloc[-min_len:].values,
-            }).dropna()
+            # Align by date — overlapping trading days only
+            combined = pd.DataFrame({"ref": ref_series, "peer": peer_series}).dropna()
             if len(combined) < 20:
                 continue
             corr = float(combined["ref"].corr(combined["peer"]))
             if np.isnan(corr):
                 continue
+            # Name lookup: POPULAR_TICKERS → fresh Polygon → stale cache → symbol code
             peer_name = next(
                 (tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), None
             )
             if not peer_name:
                 try:
                     info = _fetch_company_info(peer)
-                    peer_name = info.get("name") or peer
+                    peer_name = info.get("name") or None
                 except Exception:
-                    peer_name = peer
+                    peer_name = None
+            if not peer_name:
+                stale_info = read_cache(f"{peer}_info", max_age_hours=9999) or {}
+                peer_name = stale_info.get("name") or peer
             results.append({
                 "code":        peer,
                 "name":        peer_name,
