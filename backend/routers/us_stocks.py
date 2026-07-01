@@ -318,11 +318,12 @@ def _find_recent_history_cache(sym: str, max_days: int = 7) -> list:
     return []
 
 
-def _fetch_history_candles(sym: str, days: int = 365) -> list:
+def _fetch_history_candles(sym: str, days: int = 365, stale_fallback_days: int = 30) -> list:
     """
     Fetch daily OHLCV from Polygon aggregates.
     Returns list of candle dicts sorted by date ASC.
     Cached until next calendar day. Falls back to recent stale cache on API error.
+    stale_fallback_days: how old a cached file can be before we ignore it as fallback.
     """
     today = datetime.now().strftime("%Y-%m-%d")
     cache_key = f"{sym}_history_{today}"
@@ -342,7 +343,7 @@ def _fetch_history_candles(sym: str, days: int = 365) -> list:
         results = data.get("results", [])
         if not results:
             # No data from API — fall back to recent stale cache
-            return _find_recent_history_cache(sym, max_days=7)
+            return _find_recent_history_cache(sym, max_days=stale_fallback_days)
 
         candles = []
         for bar in results:
@@ -362,7 +363,7 @@ def _fetch_history_candles(sym: str, days: int = 365) -> list:
 
     except Exception:
         # API failed (rate limit, network, etc.) — use most recent stale cache
-        return _find_recent_history_cache(sym, max_days=7)
+        return _find_recent_history_cache(sym, max_days=stale_fallback_days)
 
 
 def _fetch_company_info(sym: str) -> dict:
@@ -604,9 +605,10 @@ def get_us_similar(symbol: str):
         candidates = candidates[:15]
 
         def _get_series_and_sparkline(ticker_sym: str):
-            """Return (date-indexed returns Series, sparkline list)."""
+            """Return (date-indexed returns Series, sparkline list).
+            Uses up to 30-day-old stale cache as fallback to avoid rate limiting."""
             try:
-                all_c = _fetch_history_candles(ticker_sym, 365)
+                all_c = _fetch_history_candles(ticker_sym, 365, stale_fallback_days=30)
                 recent = all_c[-252:] if len(all_c) > 252 else all_c
                 valid = [(c["date"], c["close"]) for c in recent if c.get("date") and c.get("close")]
                 sparkline = [c["close"] for c in all_c[-20:] if c.get("close")]
