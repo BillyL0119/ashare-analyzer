@@ -403,6 +403,22 @@ export default function App() {
       <Suspense fallback={null}>
         <AITeacherFloat lang={lang} open={showAIFloat} onClose={() => setShowAIFloat(false)} />
       </Suspense>
+      <footer style={{
+        textAlign: 'center',
+        padding: '12px 24px',
+        fontSize: 11,
+        color: 'var(--text-muted)',
+        borderTop: '1px solid var(--border-primary)',
+        flexShrink: 0,
+      }}>
+        <a
+          href="mailto:billyl090119@gmail.com"
+          style={{ color: '#9ca3af', textDecoration: 'none' }}
+        >
+          {lang === 'zh' ? '有问题请联系：billyl090119@gmail.com' : 'Contact: billyl090119@gmail.com'}
+        </a>
+      </footer>
+
       <style>{`
         @keyframes bfsPageFadeIn {
           from { opacity: 0; }

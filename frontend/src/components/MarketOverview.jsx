@@ -189,6 +189,13 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
         {zh
           ? '由两名高中生 Billy 和 Frank 合作开发 · 仅供学习用途'
           : 'Built by two high school students, Billy & Frank · For educational use only'}
+        <br />
+        <a
+          href="mailto:billyl090119@gmail.com"
+          style={{ color: '#9ca3af', fontSize: 10, textDecoration: 'none' }}
+        >
+          {zh ? '网站有问题？请联系：billyl090119@gmail.com' : 'Issues? Contact: billyl090119@gmail.com'}
+        </a>
       </div>
 
       <style>{`
