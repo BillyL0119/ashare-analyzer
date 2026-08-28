@@ -120,7 +120,7 @@ function Bubble({ msg }) {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function AITeacherPage({ lang }) {
+export default function AITeacherPage({ lang, initialQuestion, embedded }) {
   const [messages,  setMessages]  = useState([])
   const [input,     setInput]     = useState('')
   const [busy,      setBusy]      = useState(false)
@@ -138,6 +138,10 @@ export default function AITeacherPage({ lang }) {
         : 'Hello! I\'m the BestFriendStock AI Tutor 🎓\n\nI can help you:\n• Explain technical indicators (K-line, MACD, RSI)\n• Analyse fundamentals (P/E, financial statements)\n• Cover A-Level / AP / IB Economics exam points\n• Connect real market cases to economic theory\n\nPick a topic from the left, or type your question!',
     }])
   }, [lang]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (initialQuestion) setInput(initialQuestion)
+  }, [initialQuestion])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -232,7 +236,7 @@ export default function AITeacherPage({ lang }) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
-      height: 'calc(100vh - 60px)',
+      height: embedded ? '100%' : 'calc(100vh - 60px)',
       background: 'var(--bg-primary)',
       borderRadius: 12, border: `1px solid ${BDR}`,
       overflow: 'hidden',

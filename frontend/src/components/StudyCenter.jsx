@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react'
 import ReactECharts from 'echarts-for-react'
 import KLineLesson from './KLineLesson'
 import { useMobile } from '../hooks/useMobile'
+const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
 const CONTENT_BG  = 'var(--bg-primary)'
@@ -18,6 +19,7 @@ const EXAMS = [
   { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#8b5cf6', board: 'IB SL/HL'       },
   { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '股票知识入门',       title_en: 'Stock Market Basics',    color: '#ec4899', board: 'Stock Basics'   },
   { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#06b6d4', board: 'Timeline' },
+  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#8ab4f8', board: 'Google Gemini' },
 ]
 
 function storageKey(exam) { return `bfs_study_${exam}` }
@@ -665,6 +667,7 @@ export default function StudyCenter({ lang }) {
   const [loadingTopic,  setLoadingTopic]  = useState(false)
   const [loadingCurr,   setLoadingCurr]   = useState(false)
   const [mobileView,    setMobileView]    = useState('list') // 'list' | 'content'
+  const [aiInitialMsg,  setAiInitialMsg]  = useState('')
 
   const examMeta = EXAMS.find((e) => e.key === activeExam) || EXAMS[0]
   const accentColor = examMeta.color
@@ -735,7 +738,7 @@ export default function StudyCenter({ lang }) {
           return (
             <button
               key={exam.key}
-              onClick={() => setActiveExam(exam.key)}
+              onClick={() => { if (exam.key === 'ai_teacher') setAiInitialMsg(''); setActiveExam(exam.key) }}
               style={{
                 padding: '7px 18px',
                 borderRadius: '8px 8px 0 0',
@@ -767,8 +770,15 @@ export default function StudyCenter({ lang }) {
         {/* ── Stocks K-line lesson ── */}
         {activeExam === 'stocks' && <KLineLesson zh={zh} />}
 
+        {/* ── AI Teacher (full embedded) ── */}
+        {activeExam === 'ai_teacher' && (
+          <Suspense fallback={null}>
+            <AITeacherPage lang={lang} initialQuestion={aiInitialMsg} embedded />
+          </Suspense>
+        )}
+
         {/* ── Left sidebar ── */}
-        {activeExam !== 'events' && activeExam !== 'stocks' &&
+        {activeExam !== 'events' && activeExam !== 'stocks' && activeExam !== 'ai_teacher' &&
         (!isMobile || mobileView === 'list') &&
         <div style={{
           width: isMobile ? '100%' : 260, flexShrink: 0, background: SIDEBAR_BG,
@@ -832,7 +842,7 @@ export default function StudyCenter({ lang }) {
         }
 
         {/* ── Right content area ── */}
-        {activeExam !== 'events' && activeExam !== 'stocks' &&
+        {activeExam !== 'events' && activeExam !== 'stocks' && activeExam !== 'ai_teacher' &&
         (!isMobile || mobileView === 'content') &&
         <div style={{
           flex: 1, background: CONTENT_BG,
@@ -911,7 +921,26 @@ export default function StudyCenter({ lang }) {
                 />
               ))}
 
-              {/* AI Tutor */}
+              {/* Link to full AI Teacher tab */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                <button
+                  onClick={() => {
+                    const title = (!zh && topicData?.title_en) ? topicData.title_en : topicData?.title
+                    setAiInitialMsg(zh ? `请深入讲解：${title}` : `Please explain in depth: ${title}`)
+                    setActiveExam('ai_teacher')
+                  }}
+                  style={{
+                    background: 'rgba(138,180,248,0.08)',
+                    border: '1px solid rgba(138,180,248,0.20)',
+                    borderRadius: 8, padding: '5px 14px', fontSize: 12,
+                    color: '#8ab4f8', cursor: 'pointer',
+                  }}
+                >
+                  🎓 {zh ? '在AI老师中深入探讨 →' : 'Discuss with AI Tutor →'}
+                </button>
+              </div>
+
+              {/* AI Tutor (inline quick-ask) */}
               <AITutor
                 topicId={activeId}
                 exam={activeExam}
