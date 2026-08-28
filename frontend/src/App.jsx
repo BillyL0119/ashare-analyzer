@@ -137,7 +137,12 @@ export default function App() {
         }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        <div
+          onClick={() => handleTabChange('analysis')}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, cursor: 'pointer', opacity: 1, transition: 'opacity 0.15s' }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.72'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+        >
           <img
             src="/logo-dark.png"
             alt="Best Friend Stock"
