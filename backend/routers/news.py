@@ -241,10 +241,12 @@ _global_cache: dict = {}   # 'global' -> (ts, data)
 _GLOBAL_TTL = 1800         # 30 min
 
 _RSS_SOURCES = [
-    ('Reuters Business', 'https://feeds.reuters.com/reuters/businessNews', 'en'),
-    ('Yahoo Finance',    'https://finance.yahoo.com/news/rssindex',        'en'),
-    ('MarketWatch',      'https://feeds.marketwatch.com/marketwatch/topstories', 'en'),
-    ('CNBC',             'https://www.cnbc.com/id/100003114/device/rss/rss.html', 'en'),
+    ('Reuters Business',  'https://feeds.reuters.com/reuters/businessNews',           'en'),
+    ('Yahoo Finance',     'https://finance.yahoo.com/news/rssindex',                  'en'),
+    ('MarketWatch',       'https://feeds.marketwatch.com/marketwatch/topstories',     'en'),
+    ('CNBC',              'https://www.cnbc.com/id/100003114/device/rss/rss.html',    'en'),
+    ('BBC Business',      'https://feeds.bbci.co.uk/news/business/rss.xml',           'en'),
+    ('Guardian Business', 'https://www.theguardian.com/uk/business/rss',              'en'),
 ]
 
 _CAT_KW = {
@@ -484,6 +486,120 @@ def _fetch_em_market_flash() -> list[dict]:
         return []
 
 
+def _fetch_sina_cn_stock() -> list[dict]:
+    """新浪财经 A股行情频道（lid=2514，与综合财经 lid=2513 内容不同）."""
+    try:
+        r = requests.get(
+            'https://feed.mix.sina.com.cn/api/roll/get',
+            params={'pageid': 153, 'lid': 2514, 'k': '', 'num': 20, 'page': 1},
+            headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://finance.sina.com.cn'},
+            timeout=8,
+        )
+        data = r.json()
+        items_raw = data.get('result', {}).get('data', [])
+        result = []
+        for item in items_raw:
+            title = (item.get('title') or '').strip()
+            if not title:
+                continue
+            mtime = item.get('mtime', '')
+            try:
+                pub_iso = datetime.fromtimestamp(int(mtime)).isoformat()
+            except Exception:
+                pub_iso = datetime.utcnow().isoformat()
+            result.append({
+                'title': title,
+                'summary': (item.get('intro') or '')[:300],
+                'source': '新浪A股',
+                'published_at': pub_iso,
+                'url': (item.get('url') or '').strip(),
+                'lang': 'cn',
+                'category': _classify_daily(title),
+            })
+        logger.info("Sina A股 (lid=2514) returned %d items", len(result))
+        return result
+    except Exception as exc:
+        logger.warning("Sina A股 fetch failed: %s", exc)
+        return []
+
+
+def _fetch_eastmoney_market() -> list[dict]:
+    """东方财富市场要闻（独立数据源）."""
+    try:
+        r = requests.get(
+            'https://np-listapi.eastmoney.com/comm/web/getListInfo',
+            params={
+                'client': 'web', 'type': '1',
+                'mTypeAndCode': '99|99',
+                'pageSize': '20', 'pageIndex': '1',
+            },
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Referer': 'https://www.eastmoney.com',
+                'Origin': 'https://www.eastmoney.com',
+            },
+            timeout=8,
+        )
+        data = r.json()
+        items_raw = (data.get('data') or {}).get('list') or []
+        result = []
+        for item in items_raw:
+            title = (item.get('title') or '').strip()
+            if not title:
+                continue
+            content = re.sub(r'<[^>]+>', '', item.get('digest') or item.get('content') or '').strip()[:300]
+            pub_str = item.get('showTime') or item.get('pub_date') or ''
+            try:
+                pub_iso = datetime.strptime(pub_str, '%Y-%m-%d %H:%M:%S').isoformat()
+            except Exception:
+                pub_iso = datetime.utcnow().isoformat()
+            result.append({
+                'title': title,
+                'summary': content,
+                'source': '东方财富',
+                'published_at': pub_iso,
+                'url': (item.get('url') or item.get('Art_Url') or '').strip(),
+                'lang': 'cn',
+                'category': _classify_daily(title + ' ' + content),
+            })
+        logger.info("Eastmoney market news returned %d items", len(result))
+        return result
+    except Exception as exc:
+        logger.warning("Eastmoney market news fetch failed: %s", exc)
+        return []
+
+
+# ── Deduplication ─────────────────────────────────────────────────────────────
+
+def _titles_similar(t1: str, t2: str, threshold: float = 0.55) -> bool:
+    """
+    Token-overlap similarity: true when two titles likely report the same event.
+    Works for both Chinese (character n-grams) and English (words).
+    """
+    # Fast exact-prefix check first
+    if t1[:25].lower() == t2[:25].lower():
+        return True
+    a = set(re.findall(r'[\w\u4e00-\u9fa5]{2,}', t1.lower()))
+    b = set(re.findall(r'[\w\u4e00-\u9fa5]{2,}', t2.lower()))
+    if not a or not b:
+        return False
+    return len(a & b) / min(len(a), len(b)) >= threshold
+
+
+def _deduplicate_news(items: list[dict]) -> list[dict]:
+    """
+    Remove near-duplicate items.
+    Keeps the first occurrence (highest-priority source after time-sort).
+    O(n²) but fine for ~200 items.
+    """
+    kept: list[dict] = []
+    for item in items:
+        title = item['title']
+        if not any(_titles_similar(title, k['title']) for k in kept):
+            kept.append(item)
+    return kept
+
+
 @router.get('/daily')
 def get_daily_market_news(
     lang:     Optional[str] = Query('all', description='all / cn / en'),
@@ -496,11 +612,13 @@ def get_daily_market_news(
     now = time.time()
     if 'daily' not in _daily_cache or now - _daily_cache['daily'][0] >= _DAILY_TTL:
         all_items: list[dict] = []
-        with ThreadPoolExecutor(max_workers=7) as ex:
+        with ThreadPoolExecutor(max_workers=12) as ex:
             futures = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
             futures.append(ex.submit(_fetch_sina_global, 20))
+            futures.append(ex.submit(_fetch_sina_cn_stock))
             futures.append(ex.submit(_fetch_cls_market))
             futures.append(ex.submit(_fetch_em_market_flash))
+            futures.append(ex.submit(_fetch_eastmoney_market))
             for f in as_completed(futures):
                 try:
                     items = f.result()
@@ -513,16 +631,10 @@ def get_daily_market_news(
                 except Exception:
                     pass
 
-        # Deduplicate by title prefix
-        seen: set = set()
-        deduped = []
-        for item in all_items:
-            key = item['title'][:40]
-            if key not in seen:
-                seen.add(key)
-                deduped.append(item)
+        # Sort by time first so we keep the earliest/canonical version on dedup
+        all_items.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+        deduped = _deduplicate_news(all_items)
 
-        deduped.sort(key=lambda x: x.get('published_at', ''), reverse=True)
         payload = {
             'items': deduped,
             'total': len(deduped),
