@@ -22,10 +22,9 @@ import { useMobile } from './hooks/useMobile'
 import { trackVisit, trackFeature } from './utils/analytics'
 
 const ACCENT_BLUE = '#0ea5e9'
-const ACCENT_PURPLE = '#8b5cf6'
 
 export default function App() {
-  const { startDate, endDate, setDateRange, market, setMarket, selectedSymbols } = useCompareStore()
+  const { market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme } = useThemeStore()
   const t = T[lang]
@@ -82,18 +81,6 @@ export default function App() {
     else if (tab === 'study') trackFeature('study')
     else if (tab === 'universities') trackFeature('universities')
     else trackFeature('analysis')
-  }
-
-  const dateInputStyle = {
-    background: 'var(--bg-secondary)',
-    border: '1px solid var(--border-primary)',
-    borderRadius: 8,
-    color: 'var(--text-primary)',
-    padding: '5px 10px',
-    fontSize: 13,
-    outline: 'none',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
-    cursor: 'pointer',
   }
 
   return (
@@ -195,28 +182,6 @@ export default function App() {
         </div>
 
         <SearchBar />
-
-        {/* Date range — hidden on mobile (too cramped) */}
-        <div style={{ display: isMobile ? 'none' : 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
-          <span>{t.from}</span>
-          <input
-            type="date"
-            value={`${startDate.slice(0, 4)}-${startDate.slice(4, 6)}-${startDate.slice(6, 8)}`}
-            onChange={(e) => setDateRange(e.target.value.replace(/-/g, ''), endDate)}
-            style={dateInputStyle}
-            onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE; e.target.style.boxShadow = '0 0 0 3px rgba(14,165,233,0.15)' }}
-            onBlur={(e) => { e.target.style.borderColor = 'var(--border-primary)'; e.target.style.boxShadow = 'none' }}
-          />
-          <span>{t.to}</span>
-          <input
-            type="date"
-            value={`${endDate.slice(0, 4)}-${endDate.slice(4, 6)}-${endDate.slice(6, 8)}`}
-            onChange={(e) => setDateRange(startDate, e.target.value.replace(/-/g, ''))}
-            style={dateInputStyle}
-            onFocus={(e) => { e.target.style.borderColor = ACCENT_BLUE; e.target.style.boxShadow = '0 0 0 3px rgba(14,165,233,0.15)' }}
-            onBlur={(e) => { e.target.style.borderColor = 'var(--border-primary)'; e.target.style.boxShadow = 'none' }}
-          />
-        </div>
 
         {/* Language toggle */}
         <div

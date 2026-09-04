@@ -83,9 +83,13 @@ function OverlayView({ lang }) {
   )
 }
 
+// View modes where the date range is irrelevant
+const _NO_DATE_MODES = new Set(['news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments'])
+
 export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
-  const { selectedSymbols, viewMode, setViewMode, addSymbol, market } = useCompareStore()
+  const { selectedSymbols, viewMode, setViewMode, addSymbol, market,
+          startDate, endDate, setDateRange } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
@@ -208,6 +212,44 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           </button>
         ))}
       </div>
+
+      {/* Date range — shown only for chart/analysis modes, hidden on mobile */}
+      {!isMobile && !_NO_DATE_MODES.has(viewMode) && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          fontSize: 12, color: 'var(--text-muted)',
+          padding: '4px 2px',
+        }}>
+          <span>{lang === 'zh' ? '起始:' : 'From:'}</span>
+          <input
+            type="date"
+            value={`${startDate.slice(0, 4)}-${startDate.slice(4, 6)}-${startDate.slice(6, 8)}`}
+            onChange={(e) => setDateRange(e.target.value.replace(/-/g, ''), endDate)}
+            style={{
+              background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+              borderRadius: 8, color: 'var(--text-primary)', padding: '4px 8px',
+              fontSize: 12, outline: 'none', cursor: 'pointer',
+              transition: 'border-color 0.2s',
+            }}
+            onFocus={(e) => { e.target.style.borderColor = '#0ea5e9' }}
+            onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
+          />
+          <span>{lang === 'zh' ? '至:' : 'To:'}</span>
+          <input
+            type="date"
+            value={`${endDate.slice(0, 4)}-${endDate.slice(4, 6)}-${endDate.slice(6, 8)}`}
+            onChange={(e) => setDateRange(startDate, e.target.value.replace(/-/g, ''))}
+            style={{
+              background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+              borderRadius: 8, color: 'var(--text-primary)', padding: '4px 8px',
+              fontSize: 12, outline: 'none', cursor: 'pointer',
+              transition: 'border-color 0.2s',
+            }}
+            onFocus={(e) => { e.target.style.borderColor = '#0ea5e9' }}
+            onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
+          />
+        </div>
+      )}
 
       {viewMode === 'overlay' ? (
         <OverlayView lang={lang} />
