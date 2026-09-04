@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import SplashScreen, { shouldShowSplash } from './components/SplashScreen'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
 import WelcomeModal from './components/WelcomeModal'
@@ -37,6 +38,11 @@ export default function App() {
   const [showWatchlist, setShowWatchlist] = useState(false)
   const watchlistCount = useWatchlistStore((s) => s.list.length)
   const watchlistBtnRef = useRef(null)
+
+  // Splash screen — computed once at mount, stable for this session
+  const [hadSplash]      = useState(shouldShowSplash)
+  const [splashActive,   setSplashActive]   = useState(hadSplash)
+  const [contentVisible, setContentVisible] = useState(!hadSplash)
 
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
@@ -85,6 +91,17 @@ export default function App() {
 
   return (
     <>
+    {/* Splash screen — renders above everything, unmounts after animation */}
+    {splashActive && (
+      <SplashScreen
+        onContentVisible={() => setContentVisible(true)}
+        onDone={() => setSplashActive(false)}
+      />
+    )}
+    {/* WelcomeModal and KnowledgeCard stay outside the opacity wrapper
+        because they are position:fixed — wrapping them in an opacity<1 div
+        would break their viewport positioning. They are revealed naturally
+        as the splash overlay fades out. */}
     <WelcomeModal onLangSelect={(lang) => setLang(lang)} />
     <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
     <div
@@ -100,7 +117,14 @@ export default function App() {
         display: 'flex',
         flexDirection: 'column',
         letterSpacing: '0.15px',
-        animation: 'bfsPageFadeIn 0.35s ease both',
+        // When splash plays: opacity transition for seamless cross-fade.
+        // Without splash: keep the original bfsPageFadeIn animation.
+        ...(hadSplash ? {
+          opacity: contentVisible ? 1 : 0,
+          transition: 'opacity 0.45s ease',
+        } : {
+          animation: 'bfsPageFadeIn 0.35s ease both',
+        }),
       }}
     >
       {/* Glassmorphism header */}
