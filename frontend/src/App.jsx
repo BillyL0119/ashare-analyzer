@@ -11,7 +11,6 @@ import QuoteBanner from './components/QuoteBanner'
 const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
 const StudyCenter        = lazy(() => import('./components/StudyCenter'))
 const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
-const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
 import useCompareStore from './store/compareStore'
@@ -67,13 +66,12 @@ export default function App() {
       news:         'Best Friend Stock | 每日大事件 - 市场重大新闻',
       paper:        'Best Friend Stock | 模拟炒股 - 100万虚拟资金T+1练习',
       study:        'Best Friend Stock | 经济学学习中心 - A-Level IB AP IGCSE',
-      ai_teacher:   'Best Friend Stock | AI经济学老师 - 免费AI经济学辅导',
       universities: 'Best Friend Stock | 全球商学院指南 - 90+顶尖商学院数据库',
     }
     document.title = titles[appTab] || titles.analysis
     let canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
-      const paths = { ai_teacher: '/ai-teacher', universities: '/universities' }
+      const paths = { universities: '/universities' }
       canonical.setAttribute('href', 'https://bestfriendstock.com' + (paths[appTab] || '/'))
     }
   }, [appTab])
@@ -336,7 +334,6 @@ export default function App() {
             { key: 'news',          label: lang === 'zh' ? '每日新闻' : 'Daily News' },
             { key: 'paper',         label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
             { key: 'study',         label: lang === 'zh' ? '学习中心' : 'Study' },
-            { key: 'ai_teacher',    label: lang === 'zh' ? 'AI老师' : 'AI Tutor' },
             { key: 'universities',  label: lang === 'zh' ? '大学推荐' : 'Universities' },
           ].map(({ key, label }) => (
             <button
@@ -370,8 +367,6 @@ export default function App() {
             <StudyCenter lang={lang} />
           ) : appTab === 'paper' ? (
             <PaperTradingPanel lang={lang} />
-          ) : appTab === 'ai_teacher' ? (
-            <AITeacherPage lang={lang} />
           ) : appTab === 'universities' ? (
             <UniversitiesPage lang={lang} />
           ) : appTab === 'news' ? (
