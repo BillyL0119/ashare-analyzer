@@ -379,6 +379,169 @@ def get_global_news(
     return {**payload, 'items': items, 'count': len(items)}
 
 
+# ── Daily market news (A-share focused, richer Chinese sources) ───────────────
+
+_daily_cache: dict = {}
+_DAILY_TTL = 1200  # 20 min
+
+# 5 categories for the daily page
+_DAILY_CAT_KW = {
+    'macro':    ['央行', '货币政策', '财政政策', '降准', '降息', '加息', 'gdp', 'cpi', 'ppi',
+                 '宏观', '政策', '进出口', '汇率', '通胀', '就业', '财政',
+                 'fed', 'interest rate', 'inflation', 'tariff', 'trade war'],
+    'company':  ['营收', '利润', '财报', '并购', '重组', '增发', '回购', '分红', '高管',
+                 '董事长', 'ceo', '任命', '公告', '业绩', '收购',
+                 'earnings', 'revenue', 'profit', 'merger', 'acquisition', 'ipo'],
+    'industry': ['行业', '板块', '芯片', '新能源', '医药', '房地产', '银行', '券商',
+                 '汽车', '消费', '军工', '能源', '互联网', '半导体',
+                 'sector', 'industry', 'tech', 'energy', 'semiconductor'],
+    'breaking': ['突发', '紧急', '重大', '危机', '暴跌', '熔断', '违约', '制裁', '战争',
+                 'breaking', 'urgent', 'crash', 'crisis', 'war', 'sanctions'],
+}
+
+
+def _classify_daily(text: str) -> str:
+    low = text.lower()
+    for cat, kws in _DAILY_CAT_KW.items():
+        if any(kw in low for kw in kws):
+            return cat
+    return 'market'
+
+
+def _fetch_cls_market() -> list[dict]:
+    """财联社市场快讯（全市场，无需股票代码）."""
+    try:
+        r = requests.get(
+            'https://www.cls.cn/nodeapi/updateTelegraph',
+            params={'app': 'CLS', 'os': 'android', 'sv': '7.7.5',
+                    'last_time': 0, 'rn': 20, 'cls_tag_id': 0},
+            headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://www.cls.cn'},
+            timeout=8,
+        )
+        data = r.json()
+        items_raw = (data.get('data') or {}).get('telegraph_list') or []
+        result = []
+        for item in items_raw[:20]:
+            title = (item.get('title') or item.get('brief') or '').strip()
+            if not title:
+                continue
+            content = re.sub(r'<[^>]+>', '', item.get('content') or '').strip()[:300]
+            pub_ts = item.get('ctime', 0)
+            try:
+                pub_iso = datetime.fromtimestamp(int(pub_ts)).isoformat()
+            except Exception:
+                pub_iso = datetime.utcnow().isoformat()
+            result.append({
+                'title': title,
+                'summary': content,
+                'source': '财联社',
+                'published_at': pub_iso,
+                'url': (item.get('share_url') or '').strip(),
+                'lang': 'cn',
+                'category': _classify_daily(title + ' ' + content),
+            })
+        logger.info("CLS market flash returned %d items", len(result))
+        return result
+    except Exception as exc:
+        logger.warning("CLS market fetch failed: %s", exc)
+        return []
+
+
+def _fetch_em_market_flash() -> list[dict]:
+    """东方财富市场快讯（全市场要闻）."""
+    try:
+        r = requests.get(
+            'https://feed.mix.sina.com.cn/api/roll/get',
+            params={'pageid': 153, 'lid': 2516, 'k': '', 'num': 20, 'page': 1},
+            headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://finance.sina.com.cn'},
+            timeout=8,
+        )
+        data = r.json()
+        items_raw = data.get('result', {}).get('data', [])
+        result = []
+        for item in items_raw:
+            title = (item.get('title') or '').strip()
+            if not title:
+                continue
+            mtime = item.get('mtime', '')
+            try:
+                pub_iso = datetime.fromtimestamp(int(mtime)).isoformat()
+            except Exception:
+                pub_iso = datetime.utcnow().isoformat()
+            result.append({
+                'title': title,
+                'summary': (item.get('intro') or '')[:300],
+                'source': '新浪财经要闻',
+                'published_at': pub_iso,
+                'url': (item.get('url') or '').strip(),
+                'lang': 'cn',
+                'category': _classify_daily(title),
+            })
+        logger.info("Sina market flash (lid=2516) returned %d items", len(result))
+        return result
+    except Exception as exc:
+        logger.warning("Sina market flash fetch failed: %s", exc)
+        return []
+
+
+@router.get('/daily')
+def get_daily_market_news(
+    lang:     Optional[str] = Query('all', description='all / cn / en'),
+    category: Optional[str] = Query('all', description='all / market / macro / company / industry / breaking'),
+):
+    """
+    Aggregate daily major market news from CLS flash, Sina Finance + RSS sources.
+    Cached 20 min. Categories: market / macro / company / industry / breaking.
+    """
+    now = time.time()
+    if 'daily' not in _daily_cache or now - _daily_cache['daily'][0] >= _DAILY_TTL:
+        all_items: list[dict] = []
+        with ThreadPoolExecutor(max_workers=7) as ex:
+            futures = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
+            futures.append(ex.submit(_fetch_sina_global, 20))
+            futures.append(ex.submit(_fetch_cls_market))
+            futures.append(ex.submit(_fetch_em_market_flash))
+            for f in as_completed(futures):
+                try:
+                    items = f.result()
+                    # re-classify with daily categories
+                    for item in items:
+                        item['category'] = _classify_daily(
+                            item.get('title', '') + ' ' + item.get('summary', '')
+                        )
+                    all_items.extend(items)
+                except Exception:
+                    pass
+
+        # Deduplicate by title prefix
+        seen: set = set()
+        deduped = []
+        for item in all_items:
+            key = item['title'][:40]
+            if key not in seen:
+                seen.add(key)
+                deduped.append(item)
+
+        deduped.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+        payload = {
+            'items': deduped,
+            'total': len(deduped),
+            'updated_at': datetime.utcnow().isoformat() + 'Z',
+            'sources': sorted({i['source'] for i in deduped}),
+        }
+        _daily_cache['daily'] = (now, payload)
+    else:
+        payload = _daily_cache['daily'][1]
+
+    items = payload['items']
+    if lang and lang != 'all':
+        items = [i for i in items if i.get('lang') == lang]
+    if category and category != 'all':
+        items = [i for i in items if i.get('category') == category]
+
+    return {**payload, 'items': items, 'count': len(items)}
+
+
 # ── Route ─────────────────────────────────────────────────────────────────────
 
 _POS_KW_EN = [

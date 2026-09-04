@@ -13,6 +13,7 @@ const StudyCenter        = lazy(() => import('./components/StudyCenter'))
 const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
+const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -63,6 +64,7 @@ export default function App() {
   useEffect(() => {
     const titles = {
       analysis:     'Best Friend Stock | 免费A股美股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
+      news:         'Best Friend Stock | 每日大事件 - 市场重大新闻',
       paper:        'Best Friend Stock | 模拟炒股 - 100万虚拟资金T+1练习',
       study:        'Best Friend Stock | 经济学学习中心 - A-Level IB AP IGCSE',
       ai_teacher:   'Best Friend Stock | AI经济学老师 - 免费AI经济学辅导',
@@ -331,6 +333,7 @@ export default function App() {
         >
           {[
             { key: 'analysis',      label: lang === 'zh' ? '行情分析' : 'Analysis' },
+            { key: 'news',          label: lang === 'zh' ? '每日新闻' : 'Daily News' },
             { key: 'paper',         label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
             { key: 'study',         label: lang === 'zh' ? '学习中心' : 'Study' },
             { key: 'ai_teacher',    label: lang === 'zh' ? 'AI老师' : 'AI Tutor' },
@@ -371,6 +374,8 @@ export default function App() {
             <AITeacherPage lang={lang} />
           ) : appTab === 'universities' ? (
             <UniversitiesPage lang={lang} />
+          ) : appTab === 'news' ? (
+            <DailyNewsPage lang={lang} />
           ) : (
             <>
               {selectedSymbols.length === 0 && (
