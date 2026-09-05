@@ -125,6 +125,25 @@ function NewsCard({ item, zh }) {
           <ActionBadge type={item.action_type} zh={zh} />
         </div>
 
+        {/* AI summary */}
+        {item.ai_summary && (
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: 6,
+            background: 'rgba(14,165,233,0.07)',
+            border: '1px solid rgba(14,165,233,0.15)',
+            borderRadius: 8, padding: '5px 10px', marginBottom: 8,
+          }}>
+            <span style={{
+              fontSize: 10, fontWeight: 700, color: '#0ea5e9',
+              background: 'rgba(14,165,233,0.15)',
+              padding: '1px 5px', borderRadius: 4, flexShrink: 0, marginTop: 1,
+            }}>AI速读</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.4 }}>
+              {item.ai_summary}
+            </span>
+          </div>
+        )}
+
         {/* Title */}
         <div style={{
           fontSize: 14, fontWeight: 500, color: 'var(--text-primary)',
