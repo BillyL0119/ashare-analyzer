@@ -264,8 +264,8 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {zh ? '市场：' : 'Market:'}
         </span>
         {[
-          { key: 'cn', label: zh ? '🇨🇳 A股' : '🇨🇳 A-Share' },
-          { key: 'us', label: zh ? '🇺🇸 美股' : '🇺🇸 US' },
+          { key: 'cn', label: zh ? 'A股' : 'A-Share' },
+          { key: 'us', label: zh ? '美股' : 'US' },
         ].map(({ key, label }) => (
           <button key={key} onClick={() => setMarket(key)} style={pillBtn(market === key)}>
             {label}

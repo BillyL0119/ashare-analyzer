@@ -127,7 +127,7 @@ function NewsCard({ item }) {
                 background: item.lang === 'cn' ? 'rgba(232,50,30,0.1)' : 'rgba(14,100,233,0.1)',
                 color: item.lang === 'cn' ? '#e8321e' : '#5b9cf6', fontWeight: 500,
               }}>
-                {item.lang === 'cn' ? '🇨🇳' : '🇺🇸'}
+                {item.lang === 'cn' ? '中' : 'EN'}
               </span>
               <CategoryDot category={item.category} />
             </div>

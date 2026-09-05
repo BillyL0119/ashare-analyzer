@@ -183,7 +183,7 @@ export default function SearchBar() {
               {/* CN column */}
               <div style={{ borderRight: '1px solid var(--border-primary)' }}>
                 <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
-                  🇨🇳 {zh ? 'A股' : 'A-Share'}
+                  {zh ? 'A股' : 'A-Share'}
                 </div>
                 {hotCN.map((s, i) => {
                   const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
@@ -205,7 +205,7 @@ export default function SearchBar() {
               {/* US column */}
               <div>
                 <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
-                  🇺🇸 {zh ? '美股' : 'US'}
+                  {zh ? '美股' : 'US'}
                 </div>
                 {hotUS.map((s, i) => {
                   const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)

@@ -112,7 +112,7 @@ function NewsCard({ item, lang }) {
                 color: item.lang === 'cn' ? '#e8321e' : '#5b9cf6',
                 fontWeight: 500,
               }}>
-                {item.lang === 'cn' ? '🇨🇳' : '🇺🇸'}
+                {item.lang === 'cn' ? '中' : 'EN'}
               </span>
             </div>
             <div style={{
