@@ -654,6 +654,136 @@ def get_daily_market_news(
     return {**payload, 'items': items, 'count': len(items)}
 
 
+# ── Bank views (investment bank opinion aggregator) ───────────────────────────
+#
+# Pulls from the same public RSS/API sources as daily news, then filters to
+# articles that (a) mention a named investment bank AND (b) contain
+# view/opinion/rating language.  No proprietary research platforms accessed.
+
+_BANKS = [
+    {'en': 'Goldman Sachs',   'zh': '高盛',       'kw': ['goldman sachs', 'goldman', '高盛']},
+    {'en': 'JPMorgan',        'zh': '摩根大通',   'kw': ['jpmorgan', 'jp morgan', 'j.p. morgan', 'jamie dimon', '摩根大通']},
+    {'en': 'Morgan Stanley',  'zh': '摩根士丹利', 'kw': ['morgan stanley', '摩根士丹利']},
+    {'en': 'Bank of America', 'zh': '美银美林',   'kw': ['bank of america', 'bofa', 'merrill lynch', '美银']},
+    {'en': 'Citi',            'zh': '花旗',       'kw': ['citigroup', 'citibank', '花旗']},
+    {'en': 'UBS',             'zh': '瑞银',       'kw': ['ubs', '瑞银']},
+    {'en': 'Barclays',        'zh': '巴克莱',     'kw': ['barclays', '巴克莱']},
+    {'en': 'Deutsche Bank',   'zh': '德意志银行', 'kw': ['deutsche bank', '德意志银行']},
+    {'en': 'HSBC',            'zh': '汇丰',       'kw': ['hsbc', '汇丰']},
+    {'en': 'Nomura',          'zh': '野村',       'kw': ['nomura', '野村']},
+    {'en': 'BlackRock',       'zh': '贝莱德',     'kw': ['blackrock', '贝莱德']},
+    {'en': 'Wells Fargo',     'zh': '富国银行',   'kw': ['wells fargo', '富国银行']},
+]
+
+# Keywords that signal a view/opinion rather than a passing mention
+_VIEW_KW = [
+    'upgrade', 'downgrade', 'outperform', 'underperform',
+    'overweight', 'underweight', 'buy rating', 'sell rating',
+    'target price', 'price target', 'raises target', 'cuts target', 'lifts target',
+    'bullish', 'bearish', 'sees ', 'forecasts', 'expects ', 'warns ',
+    'recommends', 'outlook', 'strategy note', 'research note', 'earnings estimate',
+    '评级', '目标价', '目标股价', '上调', '下调',
+    '买入评级', '卖出评级', '增持', '减持', '看多', '看空',
+    '预测', '展望', '认为', '预期',
+]
+
+_BANK_ACTION_KW = {
+    'rating':   ['upgrade', 'downgrade', 'outperform', 'underperform',
+                 'overweight', 'underweight', 'buy rating', 'sell rating',
+                 '评级', '上调评级', '下调评级', '增持', '减持'],
+    'target':   ['target price', 'price target', 'raises target', 'cuts target', 'lifts target',
+                 '目标价', '目标股价', '上调目标', '下调目标'],
+    'macro':    ['gdp', 'inflation', 'interest rate', 'fed', 'recession',
+                 'growth forecast', 'earnings estimate',
+                 '宏观', '通胀', '利率', '经济', '美联储'],
+    'strategy': ['bullish', 'bearish', 'strategy', 'outlook', 'recommends', 'allocation',
+                 '看多', '看空', '策略', '展望', '配置'],
+}
+
+
+def _detect_banks(text: str) -> tuple[list[str], list[str]]:
+    """Return (names_en, names_zh) of investment banks mentioned in text."""
+    low = text.lower()
+    names_en: list[str] = []
+    names_zh: list[str] = []
+    for bank in _BANKS:
+        for kw in bank['kw']:
+            is_chinese = bool(re.search(r'[\u4e00-\u9fa5]', kw))
+            found = (kw in low) if is_chinese else bool(re.search(r'\b' + re.escape(kw) + r'\b', low))
+            if found:
+                names_en.append(bank['en'])
+                names_zh.append(bank['zh'])
+                break
+    return names_en, names_zh
+
+
+def _detect_bank_action(text: str) -> str:
+    low = text.lower()
+    for action, kws in _BANK_ACTION_KW.items():
+        if any(kw in low for kw in kws):
+            return action
+    return 'outlook'
+
+
+_bank_views_cache: dict = {}
+_BANK_VIEWS_TTL = 1200  # 20 min
+
+
+@router.get('/bank-views')
+def get_bank_views(bank: Optional[str] = Query('all')):
+    """
+    Filter public news for investment bank opinion articles. Cached 20 min.
+    Sources: same RSS + Sina/Eastmoney APIs as daily news — all public.
+    """
+    now = time.time()
+    if 'bv' not in _bank_views_cache or now - _bank_views_cache['bv'][0] >= _BANK_VIEWS_TTL:
+        all_raw: list[dict] = []
+        with ThreadPoolExecutor(max_workers=10) as ex:
+            futures = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
+            futures.append(ex.submit(_fetch_sina_global, 20))
+            futures.append(ex.submit(_fetch_em_market_flash))
+            futures.append(ex.submit(_fetch_eastmoney_market))
+            for f in as_completed(futures):
+                try:
+                    all_raw.extend(f.result())
+                except Exception:
+                    pass
+
+        filtered: list[dict] = []
+        for item in all_raw:
+            search = (item.get('title', '') + ' ' + item.get('summary', '')).lower()
+            names_en, names_zh = _detect_banks(search)
+            if not names_en:
+                continue
+            if not any(kw in search for kw in _VIEW_KW):
+                continue
+            entry = dict(item)
+            entry['banks']       = names_en
+            entry['banks_zh']    = names_zh
+            entry['action_type'] = _detect_bank_action(search)
+            filtered.append(entry)
+
+        filtered.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+        deduped = _deduplicate_news(filtered)
+        all_banks = sorted({b for it in deduped for b in it.get('banks', [])})
+
+        payload = {
+            'items':      deduped,
+            'total':      len(deduped),
+            'updated_at': datetime.utcnow().isoformat() + 'Z',
+            'banks':      all_banks,
+        }
+        _bank_views_cache['bv'] = (now, payload)
+    else:
+        payload = _bank_views_cache['bv'][1]
+
+    items = payload['items']
+    if bank and bank != 'all':
+        items = [i for i in items if bank in i.get('banks', [])]
+
+    return {**payload, 'items': items, 'count': len(items)}
+
+
 # ── Route ─────────────────────────────────────────────────────────────────────
 
 _POS_KW_EN = [

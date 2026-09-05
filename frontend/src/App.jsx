@@ -14,6 +14,7 @@ const StudyCenter        = lazy(() => import('./components/StudyCenter'))
 const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
 const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
+const BankViewsPage      = lazy(() => import('./components/BankViewsPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -321,6 +322,7 @@ export default function App() {
           {[
             { key: 'analysis',      label: lang === 'zh' ? '行情分析' : 'Analysis' },
             { key: 'news',          label: lang === 'zh' ? '每日新闻' : 'Daily News' },
+            { key: 'bank_views',    label: lang === 'zh' ? '大行观点' : 'Bank Views' },
             { key: 'paper',         label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
             { key: 'study',         label: lang === 'zh' ? '学习中心' : 'Study' },
             { key: 'universities',  label: lang === 'zh' ? '大学推荐' : 'Universities' },
@@ -360,6 +362,8 @@ export default function App() {
             <UniversitiesPage lang={lang} />
           ) : appTab === 'news' ? (
             <DailyNewsPage lang={lang} />
+          ) : appTab === 'bank_views' ? (
+            <BankViewsPage lang={lang} />
           ) : (
             <>
               {selectedSymbols.length === 0 && (

@@ -52,6 +52,9 @@ export const getGlobalNews = (params = {}) =>
 export const getDailyMarketNews = (params = {}) =>
   api.get('/news/daily', { params })
 
+export const getBankViews = (params = {}) =>
+  api.get('/news/bank-views', { params })
+
 export const getRadarScore = (symbol) =>
   api.get(`/radar/${symbol}`)
 
