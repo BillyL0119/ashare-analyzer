@@ -675,6 +675,23 @@ _BANKS = [
     {'en': 'Wells Fargo',     'zh': '富国银行',   'kw': ['wells fargo', '富国银行']},
 ]
 
+# Per-ticker Yahoo Finance RSS — bypasses the blocked generic yahoo/reuters domains
+# News fetched for a bank's own ticker is by definition about that bank
+_BANK_TICKERS = [
+    {'en': 'Goldman Sachs',   'zh': '高盛',       'ticker': 'GS'},
+    {'en': 'JPMorgan',        'zh': '摩根大通',   'ticker': 'JPM'},
+    {'en': 'Morgan Stanley',  'zh': '摩根士丹利', 'ticker': 'MS'},
+    {'en': 'Bank of America', 'zh': '美银美林',   'ticker': 'BAC'},
+    {'en': 'Citi',            'zh': '花旗',       'ticker': 'C'},
+    {'en': 'UBS',             'zh': '瑞银',       'ticker': 'UBS'},
+    {'en': 'Barclays',        'zh': '巴克莱',     'ticker': 'BARC.L'},
+    {'en': 'Deutsche Bank',   'zh': '德意志银行', 'ticker': 'DB'},
+    {'en': 'HSBC',            'zh': '汇丰',       'ticker': 'HSBC'},
+    {'en': 'Nomura',          'zh': '野村',       'ticker': 'NMR'},
+    {'en': 'BlackRock',       'zh': '贝莱德',     'ticker': 'BLK'},
+    {'en': 'Wells Fargo',     'zh': '富国银行',   'ticker': 'WFC'},
+]
+
 # Keywords that signal a view/opinion rather than a passing mention
 _VIEW_KW = [
     'upgrade', 'downgrade', 'outperform', 'underperform',
@@ -699,6 +716,55 @@ _BANK_ACTION_KW = {
     'strategy': ['bullish', 'bearish', 'strategy', 'outlook', 'recommends', 'allocation',
                  '看多', '看空', '策略', '展望', '配置'],
 }
+
+
+def _fetch_bank_ticker_news(bank_en: str, bank_zh: str, ticker: str) -> list[dict]:
+    """
+    Fetch Yahoo Finance per-ticker RSS for one bank stock.
+    Articles about the bank's own ticker are naturally about that bank's actions/views.
+    This endpoint works even when the generic yahoo.com domain is blocked on the server.
+    """
+    url = (
+        f'https://feeds.finance.yahoo.com/rss/2.0/headline'
+        f'?s={ticker}&region=US&lang=en-US'
+    )
+    try:
+        r = requests.get(url, timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
+        if r.status_code != 200:
+            return []
+        root = ET.fromstring(r.text)
+        result = []
+        for item in root.findall('.//item')[:15]:
+            title = (item.findtext('title') or '').strip()
+            if not title:
+                continue
+            pub_raw = (item.findtext('pubDate') or '').strip()
+            try:
+                import email.utils as _eu
+                pub_iso = _eu.parsedate_to_datetime(pub_raw).isoformat()
+            except Exception:
+                pub_iso = datetime.utcnow().isoformat()
+            search = title.lower()
+            # Detect additional banks mentioned in title
+            extra_en, extra_zh = _detect_banks(search)
+            banks_en = list({bank_en} | set(extra_en))
+            banks_zh = list({bank_zh} | set(extra_zh))
+            result.append({
+                'title':        title,
+                'summary':      (item.findtext('description') or '')[:300].strip(),
+                'source':       'Yahoo Finance',
+                'published_at': pub_iso,
+                'url':          (item.findtext('link') or '').strip(),
+                'lang':         'en',
+                'banks':        banks_en,
+                'banks_zh':     banks_zh,
+                'action_type':  _detect_bank_action(search),
+            })
+        logger.info("Bank ticker RSS [%s/%s]: %d items", ticker, bank_en, len(result))
+        return result
+    except Exception as exc:
+        logger.warning("Bank ticker RSS failed [%s/%s]: %s", ticker, bank_en, exc)
+        return []
 
 
 def _detect_banks(text: str) -> tuple[list[str], list[str]]:
@@ -732,25 +798,46 @@ _BANK_VIEWS_TTL = 1200  # 20 min
 @router.get('/bank-views')
 def get_bank_views(bank: Optional[str] = Query('all')):
     """
-    Filter public news for investment bank opinion articles. Cached 20 min.
-    Sources: same RSS + Sina/Eastmoney APIs as daily news — all public.
+    Aggregate investment bank view articles. Cached 20 min.
+
+    Primary: per-ticker Yahoo Finance RSS for each major bank (GS, JPM, MS…).
+    These work even when the generic yahoo.com RSS domain is blocked on the server.
+    Secondary: existing RSS/Sina/Eastmoney pool filtered for bank+view keywords.
+    No proprietary research platforms accessed.
     """
     now = time.time()
     if 'bv' not in _bank_views_cache or now - _bank_views_cache['bv'][0] >= _BANK_VIEWS_TTL:
-        all_raw: list[dict] = []
-        with ThreadPoolExecutor(max_workers=10) as ex:
-            futures = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
-            futures.append(ex.submit(_fetch_sina_global, 20))
-            futures.append(ex.submit(_fetch_em_market_flash))
-            futures.append(ex.submit(_fetch_eastmoney_market))
-            for f in as_completed(futures):
+
+        # ── Primary: per-ticker Yahoo Finance (reliable, bank-focused by design) ──
+        ticker_items: list[dict] = []
+        with ThreadPoolExecutor(max_workers=12) as ex:
+            futs = [
+                ex.submit(_fetch_bank_ticker_news, b['en'], b['zh'], b['ticker'])
+                for b in _BANK_TICKERS
+            ]
+            for f in as_completed(futs):
                 try:
-                    all_raw.extend(f.result())
+                    ticker_items.extend(f.result())
                 except Exception:
                     pass
 
-        filtered: list[dict] = []
-        for item in all_raw:
+        # ── Secondary: general pool filtered for bank + view keyword ──
+        pool_raw: list[dict] = []
+        with ThreadPoolExecutor(max_workers=10) as ex:
+            futs2 = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
+            futs2 += [
+                ex.submit(_fetch_sina_global, 20),
+                ex.submit(_fetch_em_market_flash),
+                ex.submit(_fetch_eastmoney_market),
+            ]
+            for f in as_completed(futs2):
+                try:
+                    pool_raw.extend(f.result())
+                except Exception:
+                    pass
+
+        pool_filtered: list[dict] = []
+        for item in pool_raw:
             search = (item.get('title', '') + ' ' + item.get('summary', '')).lower()
             names_en, names_zh = _detect_banks(search)
             if not names_en:
@@ -761,12 +848,17 @@ def get_bank_views(bank: Optional[str] = Query('all')):
             entry['banks']       = names_en
             entry['banks_zh']    = names_zh
             entry['action_type'] = _detect_bank_action(search)
-            filtered.append(entry)
+            pool_filtered.append(entry)
 
-        filtered.sort(key=lambda x: x.get('published_at', ''), reverse=True)
-        deduped = _deduplicate_news(filtered)
+        all_items = ticker_items + pool_filtered
+        all_items.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+        deduped = _deduplicate_news(all_items)
         all_banks = sorted({b for it in deduped for b in it.get('banks', [])})
 
+        logger.info(
+            "bank-views: ticker=%d pool_raw=%d pool_filtered=%d deduped=%d",
+            len(ticker_items), len(pool_raw), len(pool_filtered), len(deduped),
+        )
         payload = {
             'items':      deduped,
             'total':      len(deduped),
