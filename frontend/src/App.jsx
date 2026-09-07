@@ -15,6 +15,7 @@ const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
 const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
 const BankViewsPage      = lazy(() => import('./components/BankViewsPage'))
+const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -326,6 +327,7 @@ export default function App() {
             { key: 'paper',         label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
             { key: 'study',         label: lang === 'zh' ? '学习中心' : 'Study' },
             { key: 'universities',  label: lang === 'zh' ? '大学推荐' : 'Universities' },
+            { key: 'career',        label: lang === 'zh' ? '求职指南' : 'Career Guide' },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -364,6 +366,8 @@ export default function App() {
             <DailyNewsPage lang={lang} />
           ) : appTab === 'bank_views' ? (
             <BankViewsPage lang={lang} />
+          ) : appTab === 'career' ? (
+            <CareerGuidePage lang={lang} />
           ) : (
             <>
               {selectedSymbols.length === 0 && (
