@@ -56,13 +56,14 @@ function AIText({ text }) {
   )
 }
 
-export default function KLineSegmentPanel({ symbol, name, startDate, endDate, previewStats, onClose, lang }) {
+export default function KLineSegmentPanel({ symbol, name, market, startDate, endDate, previewStats, onClose, lang }) {
   useThemeStore((s) => s.theme)
   const [loading,  setLoading]  = useState(false)
   const [result,   setResult]   = useState(null)
   const [error,    setError]    = useState(null)
 
   const zh = lang !== 'en'
+  const isUS = market === 'us'
 
   const handleAnalyze = async () => {
     setLoading(true)
@@ -73,6 +74,7 @@ export default function KLineSegmentPanel({ symbol, name, startDate, endDate, pr
         stock_name: name || symbol,
         start_date: startDate,
         end_date:   endDate,
+        market:     market || 'cn',
       })
       setResult(res.data)
     } catch (err) {
@@ -131,9 +133,16 @@ export default function KLineSegmentPanel({ symbol, name, startDate, endDate, pr
         />
       </div>
 
-      {/* Error */}
+      {/* Error — muted info style, not alarming red */}
       {error && (
-        <div style={{ color: '#ef5350', fontSize: 12, padding: '4px 0 8px' }}>{error}</div>
+        <div style={{
+          fontSize: 12, padding: '6px 10px', marginBottom: 6,
+          background: 'rgba(255,255,255,0.04)',
+          border: `1px solid ${THEME.border}`,
+          borderRadius: 5, color: 'var(--text-muted)',
+        }}>
+          ⚠ {error}
+        </div>
       )}
 
       {/* AI result section */}
@@ -178,17 +187,17 @@ export default function KLineSegmentPanel({ symbol, name, startDate, endDate, pr
             </div>
           )}
 
-          {/* No-news notice */}
+          {/* No-news notice — neutral info style */}
           {!result.has_news && (
             <div style={{
               fontSize: 11, color: 'var(--text-muted)',
-              padding: '4px 8px',
+              padding: '4px 10px',
               border: `1px solid ${THEME.border}`, borderRadius: 4,
-              background: 'rgba(239,83,80,0.05)',
+              background: 'rgba(255,255,255,0.03)',
             }}>
               {zh
-                ? '未查到该时段具体新闻，AI解读仅基于技术面数据'
-                : 'No news found for this period — AI analysis is technical only'}
+                ? '该时段未查到相关新闻，AI解读仅基于技术面数据'
+                : 'No news found for this period — AI analysis based on technicals only'}
             </div>
           )}
 
@@ -221,8 +230,23 @@ export default function KLineSegmentPanel({ symbol, name, startDate, endDate, pr
         </div>
       )}
 
-      {/* Analyze button — shown before result */}
-      {!result && (
+      {/* US stock notice — AI segment analysis only supports A-shares */}
+      {isUS && !result && (
+        <div style={{
+          fontSize: 12, color: 'var(--text-muted)',
+          padding: '8px 12px',
+          background: 'rgba(255,255,255,0.03)',
+          border: `1px solid ${THEME.border}`,
+          borderRadius: 6,
+        }}>
+          {zh
+            ? '区间AI解读暂不支持美股，仅适用A股。以上基础统计数据可正常使用。'
+            : 'AI segment analysis is only available for A-share (CN) stocks at this time.'}
+        </div>
+      )}
+
+      {/* Analyze button — shown before result, only for CN stocks */}
+      {!result && !isUS && (
         <button
           onClick={handleAnalyze}
           disabled={loading}

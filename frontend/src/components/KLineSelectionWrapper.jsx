@@ -281,6 +281,7 @@ export default function KLineSelectionWrapper({ candles, ma, groupId, market, co
         <KLineSegmentPanel
           symbol={code}
           name={name}
+          market={market}
           startDate={selectedRange.startDate}
           endDate={selectedRange.endDate}
           previewStats={selectedRange.previewStats}
