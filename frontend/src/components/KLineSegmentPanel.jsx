@@ -63,7 +63,6 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
   const [error,    setError]    = useState(null)
 
   const zh = lang !== 'en'
-  const isUS = market === 'us'
 
   const handleAnalyze = async () => {
     setLoading(true)
@@ -230,23 +229,8 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
         </div>
       )}
 
-      {/* US stock notice — AI segment analysis only supports A-shares */}
-      {isUS && !result && (
-        <div style={{
-          fontSize: 12, color: 'var(--text-muted)',
-          padding: '8px 12px',
-          background: 'rgba(255,255,255,0.03)',
-          border: `1px solid ${THEME.border}`,
-          borderRadius: 6,
-        }}>
-          {zh
-            ? '区间AI解读暂不支持美股，仅适用A股。以上基础统计数据可正常使用。'
-            : 'AI segment analysis is only available for A-share (CN) stocks at this time.'}
-        </div>
-      )}
-
-      {/* Analyze button — shown before result, only for CN stocks */}
-      {!result && !isUS && (
+      {/* Analyze button — shown before result */}
+      {!result && (
         <button
           onClick={handleAnalyze}
           disabled={loading}

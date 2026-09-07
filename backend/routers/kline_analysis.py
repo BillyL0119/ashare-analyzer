@@ -1,14 +1,14 @@
 """
 K-line segment analysis — POST /api/analysis/kline-segment
 
-Given a stock symbol + date range the user selected on the chart, returns:
+Given a stock symbol + date range, returns:
   - Basic stats: period return, high/low, amplitude, vol change, volatility
   - Technical indicator summary (MACD / RSI / MA state at end of range)
-  - News within the date range (fetched from East Money, may be empty)
-  - AI interpretation: strictly distinguishes news-backed analysis from
-    pure technical description when no news is found
+  - News within the date range (EM for CN; Yahoo RSS best-effort for US)
+  - AI interpretation: distinguishes news-backed from pure technical analysis
 
-AI priority: Gemini (GEMINI_API_KEY) → DeepSeek (DEEPSEEK_API_KEY) → error msg
+Supports both A-share (CN, via AkShare) and US stocks (via Polygon.io cache).
+AI priority: Gemini (GEMINI_API_KEY) → DeepSeek (DEEPSEEK_API_KEY).
 """
 
 from fastapi import APIRouter, HTTPException
@@ -55,10 +55,10 @@ def _macd_state(macd_data: list) -> str:
         return "数据不足"
     last = macd_data[-1]
     prev = macd_data[-2]
-    dif      = last.get("dif")  or 0
-    dea      = last.get("dea")  or 0
-    hist     = last.get("macd") or 0
-    prev_h   = prev.get("macd") or 0
+    dif    = last.get("dif")  or 0
+    dea    = last.get("dea")  or 0
+    hist   = last.get("macd") or 0
+    prev_h = prev.get("macd") or 0
     if dif > dea:
         if hist > 0 and hist >= prev_h:
             return "金叉上扬，多头趋势增强"
@@ -94,8 +94,33 @@ def _ma_state(ma_data: list, last_close: float) -> str:
     return "；".join(parts[:2]) if parts else "均线状态不足"
 
 
-def _fetch_news_in_range(symbol: str, start_date: str, end_date: str) -> list:
-    """Fetch East Money stock news and filter to the given date range."""
+# ── Data fetching ─────────────────────────────────────────────────────────────
+
+def _get_us_all_candles(symbol: str) -> list:
+    """
+    Return up to 365 days of daily candles for a US symbol via Polygon.io.
+    Reuses the same disk cache used by the /api/us/* routes — no extra API calls
+    if the user has already viewed this stock's chart.
+    """
+    try:
+        from routers.us_stocks import _fetch_history_candles
+        return _fetch_history_candles(symbol, 365)
+    except Exception as exc:
+        logger.warning("US candle fetch failed for %s: %s", symbol, exc)
+        return []
+
+
+def _candles_to_df(candles: list) -> pd.DataFrame:
+    """Convert a list of OHLCV candle dicts to a DataFrame expected by indicator_service."""
+    if not candles:
+        return pd.DataFrame()
+    return pd.DataFrame(candles)
+
+
+# ── News fetching ─────────────────────────────────────────────────────────────
+
+def _fetch_news_cn(symbol: str, start_date: str, end_date: str) -> list:
+    """East Money news filtered to date range. CN stocks only."""
     try:
         import akshare as ak
         df = ak.stock_news_em(symbol=symbol)
@@ -119,13 +144,59 @@ def _fetch_news_in_range(symbol: str, start_date: str, end_date: str) -> list:
                     result.append({"title": title, "source": source, "date": time_str[:10]})
         return result[:10]
     except Exception as exc:
-        logger.warning("segment news fetch failed for %s: %s", symbol, exc)
+        logger.warning("CN news fetch failed for %s: %s", symbol, exc)
         return []
 
 
+def _fetch_news_us(symbol: str, start_date: str, end_date: str) -> list:
+    """
+    Attempt Yahoo Finance RSS for US symbols, filtered to the date range.
+    Yahoo RSS only carries recent headlines, so historical ranges typically
+    return [] — that's fine; the AI falls back to technical-only analysis.
+    """
+    import requests
+    import xml.etree.ElementTree as ET
+    import email.utils
+    url = (
+        f"https://feeds.finance.yahoo.com/rss/2.0/headline"
+        f"?s={symbol}&region=US&lang=en-US"
+    )
+    try:
+        r = requests.get(url, timeout=8, headers={"User-Agent": "Mozilla/5.0"})
+        if r.status_code != 200:
+            return []
+        root  = ET.fromstring(r.text)
+        start = datetime.strptime(start_date, "%Y-%m-%d")
+        end   = datetime.strptime(end_date,   "%Y-%m-%d")
+        result = []
+        for item in root.findall(".//item"):
+            title   = (item.findtext("title") or "").strip()
+            pub_raw = (item.findtext("pubDate") or "").strip()
+            if not title:
+                continue
+            try:
+                pub = email.utils.parsedate_to_datetime(pub_raw).replace(tzinfo=None)
+                if not (start <= pub <= end):
+                    continue
+            except Exception:
+                continue
+            result.append({
+                "title":  title,
+                "source": "Yahoo Finance",
+                "date":   pub.strftime("%Y-%m-%d"),
+            })
+        return result[:10]
+    except Exception as exc:
+        logger.debug("US Yahoo RSS failed for %s: %s", symbol, exc)
+        return []
+
+
+# ── Prompt building ───────────────────────────────────────────────────────────
+
 def _build_prompt(symbol: str, stock_name: str, start_date: str, end_date: str,
-                  stats: dict, tech: dict, news: list) -> str:
-    has_news = bool(news)
+                  stats: dict, tech: dict, news: list, is_us: bool = False) -> str:
+    has_news  = bool(news)
+    market_lbl = "美股" if is_us else "A股"
 
     if has_news:
         news_block = "\n【同期相关新闻（请直接引用原标题）】\n"
@@ -144,7 +215,7 @@ def _build_prompt(symbol: str, stock_name: str, start_date: str, end_date: str,
             "严禁虚构任何公司公告、新闻事件或分析师观点。"
         )
 
-    return f"""你是专业的A股技术分析师，请根据以下数据对选定K线区间做走势解读。
+    return f"""你是专业的股票技术分析师（{market_lbl}方向），请根据以下数据对选定K线区间做走势解读。
 
 股票：{symbol}（{stock_name}）
 选定时段：{start_date} 至 {end_date}（共{stats['bars']}根K线）
@@ -178,6 +249,8 @@ def _build_prompt(symbol: str, stock_name: str, start_date: str, end_date: str,
 以上分析基于历史数据生成，仅供学习参考，不构成投资建议。"""
 
 
+# ── AI call ───────────────────────────────────────────────────────────────────
+
 def _call_ai(prompt: str) -> tuple:
     """Try Gemini first, then DeepSeek. Returns (text, source_name)."""
     if GEMINI_KEY:
@@ -199,7 +272,7 @@ def _call_ai(prompt: str) -> tuple:
                 max_tokens=800,
                 temperature=0.3,
                 messages=[
-                    {"role": "system", "content": "你是专业的A股技术分析师。"},
+                    {"role": "system", "content": "你是专业的股票技术分析师，熟悉A股和美股市场。"},
                     {"role": "user",   "content": prompt},
                 ],
             )
@@ -215,33 +288,35 @@ def _call_ai(prompt: str) -> tuple:
 @router.post("/kline-segment")
 def analyze_kline_segment(req: SegmentRequest):
     """
-    Analyze a user-selected K-line time range.
-    Returns stats, technical indicators, news in range, and AI interpretation.
-    Strictly distinguishes news-backed from pure technical analysis in the prompt.
+    Analyze a user-selected K-line time range for both CN (A-share) and US stocks.
+    CN uses AkShare; US uses Polygon.io (same cache as /api/us/* routes).
+    No news for US stocks is expected and handled gracefully (technical-only AI).
     """
-    from services.stock_service import get_stock_history
     from services.indicator_service import calc_macd, calc_rsi, calc_ma
 
-    symbol    = req.symbol.strip()
-    start_fmt = req.start_date.replace("-", "")
-    end_fmt   = req.end_date.replace("-", "")
+    is_us  = req.market == "us"
+    symbol = req.symbol.strip().upper() if is_us else req.symbol.strip()
 
-    if req.market == "us":
-        raise HTTPException(status_code=400, detail="暂不支持美股区间分析")
+    # ── Fetch OHLCV ───────────────────────────────────────────────────────────
+    if is_us:
+        all_us = _get_us_all_candles(symbol)
+        seg_candles = [c for c in all_us if req.start_date <= c["date"] <= req.end_date]
+        df = _candles_to_df(seg_candles)
+    else:
+        from services.stock_service import get_stock_history
+        start_fmt = req.start_date.replace("-", "")
+        end_fmt   = req.end_date.replace("-", "")
+        df = get_stock_history(symbol, "daily", start_fmt, end_fmt, "qfq")
 
-    # ── Fetch OHLCV for the selected range ────────────────────────────────────
-    df = get_stock_history(symbol, "daily", start_fmt, end_fmt, "qfq")
     if df is None or df.empty:
-        raise HTTPException(
-            status_code=404,
-            detail=f"未找到 {symbol} 在 {req.start_date}~{req.end_date} 的数据",
-        )
+        label = f"{symbol} ({req.start_date} ~ {req.end_date})"
+        raise HTTPException(status_code=404, detail=f"No data found for {label}")
 
     bars = len(df)
     if bars < 3:
         raise HTTPException(
             status_code=400,
-            detail=f"选中区间仅 {bars} 根K线，数据不足，请选择更长的时间段（至少需要3根K线）",
+            detail=f"Only {bars} bar(s) in the selected range — please select a longer period (min 3 bars)",
         )
 
     close_arr = df["close"].tolist()
@@ -263,16 +338,28 @@ def analyze_kline_segment(req: SegmentRequest):
     ]
     volatility = float(np.std(rets) * np.sqrt(252) * 100) if len(rets) >= 2 else 0.0
 
-    # Compare volume to prior period of equal length
+    # ── Volume change vs prior period of equal length ─────────────────────────
     vol_change = 0.0
     try:
-        prior_end   = (datetime.strptime(req.start_date, "%Y-%m-%d")
-                       - pd.Timedelta(days=1)).strftime("%Y%m%d")
-        prior_start = (datetime.strptime(req.start_date, "%Y-%m-%d")
-                       - pd.Timedelta(days=bars * 2 + 10)).strftime("%Y%m%d")
-        df_prior = get_stock_history(symbol, "daily", prior_start, prior_end, "qfq")
+        prior_end_dt   = datetime.strptime(req.start_date, "%Y-%m-%d") - pd.Timedelta(days=1)
+        prior_start_dt = prior_end_dt - pd.Timedelta(days=bars * 2 + 10)
+        prior_end_str   = prior_end_dt.strftime("%Y-%m-%d")
+        prior_start_str = prior_start_dt.strftime("%Y-%m-%d")
+
+        if is_us:
+            prior_candles = [c for c in all_us if prior_start_str <= c["date"] <= prior_end_str]
+            df_prior = _candles_to_df(prior_candles)
+        else:
+            from services.stock_service import get_stock_history
+            df_prior = get_stock_history(
+                symbol, "daily",
+                prior_start_dt.strftime("%Y%m%d"),
+                prior_end_dt.strftime("%Y%m%d"),
+                "qfq",
+            )
+
         if df_prior is not None and len(df_prior) >= bars:
-            prior_vol  = float(np.mean(df_prior["volume"].tail(bars).tolist()))
+            prior_vol = float(np.mean(df_prior["volume"].tail(bars).tolist()))
             if prior_vol > 0:
                 vol_change = (avg_vol - prior_vol) / prior_vol * 100
     except Exception:
@@ -302,17 +389,24 @@ def analyze_kline_segment(req: SegmentRequest):
     }
 
     # ── News in selected range ────────────────────────────────────────────────
-    news = _fetch_news_in_range(symbol, req.start_date, req.end_date)
+    if is_us:
+        news = _fetch_news_us(symbol, req.start_date, req.end_date)
+    else:
+        news = _fetch_news_cn(symbol, req.start_date, req.end_date)
 
     # ── AI interpretation ─────────────────────────────────────────────────────
-    prompt             = _build_prompt(symbol, req.stock_name or symbol,
-                                       req.start_date, req.end_date, stats, tech, news)
+    prompt             = _build_prompt(
+        symbol, req.stock_name or symbol,
+        req.start_date, req.end_date,
+        stats, tech, news, is_us,
+    )
     ai_text, ai_source = _call_ai(prompt)
 
     return {
         "symbol":      symbol,
         "start_date":  req.start_date,
         "end_date":    req.end_date,
+        "market":      req.market,
         "stats":       stats,
         "tech":        tech,
         "news":        news,
