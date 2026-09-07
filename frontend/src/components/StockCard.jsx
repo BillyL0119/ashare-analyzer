@@ -10,6 +10,7 @@ import useLangStore from '../store/langStore'
 import useWatchlistStore from '../store/watchlistStore'
 import { T } from '../i18n/translations'
 import KLineChart from './KLineChart'
+import KLineSelectionWrapper from './KLineSelectionWrapper'
 import VolumeChart from './VolumeChart'
 import MACDChart from './MACDChart'
 import RSIChart from './RSIChart'
@@ -291,9 +292,16 @@ export default function StockCard({ stock }) {
         )}
         {data && !loading && (
           <>
-            <div style={{ height: isMobile ? 300 : 360 }}>
-              <KLineChart candles={data.candles} ma={data.ma} groupId={groupId} market={market} />
-            </div>
+            <KLineSelectionWrapper
+              candles={data.candles}
+              ma={data.ma}
+              groupId={groupId}
+              market={market}
+              code={code}
+              name={name}
+              lang={lang}
+              isMobile={isMobile}
+            />
             <div style={{ height: isMobile ? 80 : 120, borderTop: `1px solid ${THEME.border}` }}>
               <VolumeChart candles={data.candles} groupId={groupId} market={market} />
             </div>

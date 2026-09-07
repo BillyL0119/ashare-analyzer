@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import ReactECharts from 'echarts-for-react'
 import useLangStore from '../store/langStore'
 import useThemeStore from '../store/themeStore'
@@ -6,7 +7,7 @@ import { buildKLineOption } from '../utils/chartHelpers'
 const US_UP = '#4caf50'
 const US_DOWN = '#ef5350'
 
-export default function KLineChart({ candles, ma, groupId, market = 'cn' }) {
+const KLineChart = forwardRef(function KLineChart({ candles, ma, groupId, market = 'cn' }, ref) {
   if (!candles || candles.length === 0) return null
 
   const lang = useLangStore((s) => s.lang)
@@ -17,6 +18,7 @@ export default function KLineChart({ candles, ma, groupId, market = 'cn' }) {
 
   return (
     <ReactECharts
+      ref={ref}
       option={option}
       style={{ height: '100%', width: '100%' }}
       opts={{ renderer: 'canvas' }}
@@ -25,4 +27,6 @@ export default function KLineChart({ candles, ma, groupId, market = 'cn' }) {
       lazyUpdate={true}
     />
   )
-}
+})
+
+export default KLineChart

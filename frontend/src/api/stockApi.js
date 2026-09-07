@@ -69,3 +69,6 @@ export const getBacktest = (symbol, strategy, period) =>
 
 export const getHotStocks = (market = 'cn') =>
   api.get('/stocks/hot', { params: { market } })
+
+export const analyzeKlineSegment = (params) =>
+  api.post('/analysis/kline-segment', params)
