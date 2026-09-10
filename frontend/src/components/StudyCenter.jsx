@@ -147,7 +147,7 @@ function DiagramWrap({ title, caption, children }) {
       <div style={{ fontSize: 10, fontWeight: 700, color: '#f59e0b', letterSpacing: '0.08em', marginBottom: 8, textTransform: 'uppercase' }}>
         📊 {title}
       </div>
-      <svg viewBox="0 0 440 260" style={{ width: '100%', display: 'block', maxWidth: 500 }}>
+      <svg viewBox="0 0 440 278" style={{ width: '100%', display: 'block', maxWidth: 500 }}>
         {children}
       </svg>
       {caption && (
@@ -166,7 +166,7 @@ function ChartAxes({ xlabel, ylabel }) {
       <polygon points="418,231 426,235 418,239" fill={DA}/>
       <line x1="55" y1="235" x2="55" y2="18" stroke={DA} strokeWidth="1.5"/>
       <polygon points="51,20 55,12 59,20" fill={DA}/>
-      <text x="237" y="254" textAnchor="middle" fill={DL} fontSize="11" fontWeight="600">{xlabel}</text>
+      <text x="237" y="270" textAnchor="middle" fill={DL} fontSize="11" fontWeight="600">{xlabel}</text>
       <text x="15" y="127" textAnchor="middle" fill={DL} fontSize="11" fontWeight="600" transform="rotate(-90,15,127)">{ylabel}</text>
     </>
   )
@@ -204,7 +204,7 @@ function ASModelDiagram() {
       <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
       <line x1="268" y1="235" x2="268" y2="18" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="6,4"/>
       <text x="271" y="14" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRAS</text>
-      <text x="262" y="250" fill="#a78bfa" fontSize="10">Yf</text>
+      <text x="262" y="254" fill="#a78bfa" fontSize="10">Yf</text>
       <line x1="75" y1="55" x2="390" y2="228" stroke="#f59e0b" strokeWidth="1.8" opacity="0.72"/>
       <text x="73" y="51" fill="#f59e0b" fontSize="10.5" fontWeight="700">AD</text>
       <line x1="68" y1="228" x2="385" y2="52" stroke="#34d399" strokeWidth="2.2"/>
@@ -213,13 +213,13 @@ function ASModelDiagram() {
       <text x="348" y="38" fill="#34d399" fontSize="10" opacity="0.62">SRAS₂</text>
       <circle cx="228" cy="139" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="236" y="134" fill={DT} fontSize="10">E₁</text>
-      <circle cx="180" cy="116" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
-      <text x="148" y="112" fill="#f87171" fontSize="10">E₂ (stagflation)</text>
-      <path d="M 224,136 L 183,120" stroke="rgba(248,113,113,0.55)" strokeWidth="1.3" strokeDasharray="3,3"/>
+      <circle cx="195" cy="121" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
+      <text x="130" y="115" fill="#f87171" fontSize="10">E₂ (stagflation)</text>
+      <path d="M 224,136 L 198,122" stroke="rgba(248,113,113,0.55)" strokeWidth="1.3" strokeDasharray="3,3"/>
       <line x1="52" y1="139" x2="228" y2="139" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="36" y="143" fill="rgba(232,234,240,0.5)" fontSize="10">P₁</text>
-      <line x1="52" y1="116" x2="180" y2="116" stroke="rgba(248,113,113,0.14)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="36" y="120" fill="rgba(248,113,113,0.55)" fontSize="10">P₂↑</text>
+      <line x1="52" y1="121" x2="195" y2="121" stroke="rgba(248,113,113,0.14)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="36" y="125" fill="rgba(248,113,113,0.55)" fontSize="10">P₂↑</text>
     </DiagramWrap>
   )
 }
@@ -233,15 +233,15 @@ function ADASDiagram() {
       <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
       <line x1="285" y1="235" x2="285" y2="18" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
       <text x="288" y="14" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRAS</text>
-      <text x="279" y="250" fill="#a78bfa" fontSize="10">Yf</text>
+      <text x="279" y="254" fill="#a78bfa" fontSize="10">Yf</text>
       <line x1="68" y1="228" x2="390" y2="50" stroke="#34d399" strokeWidth="2"/>
       <text x="393" y="47" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS</text>
       <line x1="68" y1="52" x2="375" y2="228" stroke="#60a5fa" strokeWidth="2"/>
       <text x="65" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">AD₁</text>
       <line x1="130" y1="52" x2="418" y2="215" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
       <text x="393" y="210" fill="#60a5fa" fontSize="10" opacity="0.62">AD₂</text>
-      <path d="M 220,140 L 265,118" stroke="#60a5fa" strokeWidth="1.3" fill="none" opacity="0.58"/>
-      <polygon points="263,112 270,118 262,123" fill="#60a5fa" opacity="0.58"/>
+      <path d="M 224,141 L 257,124" stroke="#60a5fa" strokeWidth="1.3" fill="none" opacity="0.58"/>
+      <polygon points="251,118 259,124 251,130" fill="#60a5fa" opacity="0.58"/>
       <circle cx="224" cy="141" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="232" y="136" fill={DT} fontSize="10">E₁</text>
       <line x1="224" y1="235" x2="224" y2="241" stroke={DA} strokeWidth="1.5"/>
@@ -264,7 +264,7 @@ function MoneyMarketDiagram() {
       <ChartAxes xlabel="Quantity of Money →" ylabel="Nominal Interest Rate (i) →"/>
       <line x1="225" y1="235" x2="225" y2="22" stroke="#34d399" strokeWidth="2.2"/>
       <text x="228" y="18" fill="#34d399" fontSize="10.5" fontWeight="700">Ms₁</text>
-      <text x="219" y="250" fill="rgba(232,234,240,0.52)" fontSize="10">M*</text>
+      <text x="219" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">M*</text>
       <line x1="290" y1="235" x2="290" y2="22" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.48"/>
       <text x="293" y="18" fill="#34d399" fontSize="10" opacity="0.52">Ms₂</text>
       <line x1="72" y1="52" x2="398" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
@@ -300,15 +300,15 @@ function LoanableFundsDiagram() {
       <circle cx="230" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="230" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">r*</text>
-      <circle cx="265" cy="118" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
-      <line x1="55" y1="118" x2="265" y2="118" stroke="rgba(248,113,113,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="32" y="122" fill="rgba(248,113,113,0.65)" fontSize="10">r₂↑</text>
-      <text x="278" y="133" fill="#f87171" fontSize="10">Crowding</text>
-      <text x="278" y="145" fill="#f87171" fontSize="10">out ↑r</text>
-      <path d="M 50,137 L 50,121" stroke="rgba(248,113,113,0.5)" strokeWidth="1.3"/>
-      <polygon points="46,124 50,117 54,124" fill="rgba(248,113,113,0.5)"/>
-      <path d="M 228,137 L 257,123" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="255,117 262,123 254,128" fill="#60a5fa" opacity="0.52"/>
+      <circle cx="260" cy="124" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
+      <line x1="55" y1="124" x2="260" y2="124" stroke="rgba(248,113,113,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="32" y="128" fill="rgba(248,113,113,0.65)" fontSize="10">r₂↑</text>
+      <text x="275" y="138" fill="#f87171" fontSize="10">Crowding</text>
+      <text x="275" y="150" fill="#f87171" fontSize="10">out ↑r</text>
+      <path d="M 50,137 L 50,127" stroke="rgba(248,113,113,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,130 50,123 54,130" fill="rgba(248,113,113,0.5)"/>
+      <path d="M 228,137 L 257,122" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="255,118 262,124 254,130" fill="#60a5fa" opacity="0.52"/>
     </DiagramWrap>
   )
 }
@@ -322,20 +322,20 @@ function PhillipsDiagram() {
       <ChartAxes xlabel="Unemployment Rate (%) →" ylabel="Inflation Rate (%) →"/>
       <line x1="232" y1="235" x2="232" y2="20" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
       <text x="236" y="16" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRPC</text>
-      <text x="219" y="250" fill="#a78bfa" fontSize="10">NAIRU</text>
+      <text x="219" y="263" fill="#a78bfa" fontSize="10">NAIRU</text>
       <path d="M 95,52 Q 200,130 390,220" fill="none" stroke="#f59e0b" strokeWidth="2.2"/>
       <text x="92" y="48" fill="#f59e0b" fontSize="10.5" fontWeight="700">SRPC₁</text>
       <path d="M 158,52 Q 265,130 420,208" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
       <text x="398" y="204" fill="#f59e0b" fontSize="10" opacity="0.62">SRPC₂</text>
-      <path d="M 262,130 L 300,120" stroke="#f87171" strokeWidth="1.3" fill="none"/>
-      <polygon points="299,114 306,120 298,125" fill="#f87171"/>
+      <path d="M 262,130 L 300,130" stroke="#f87171" strokeWidth="1.3" fill="none"/>
+      <polygon points="299,126 306,130 299,134" fill="#f87171"/>
       <text x="308" y="118" fill="#f87171" fontSize="10">Stagflation /</text>
       <text x="308" y="130" fill="#f87171" fontSize="10">↑ expectations</text>
       <circle cx="148" cy="88" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="156" y="84" fill={DT} fontSize="10.5">A (low u, high π)</text>
-      <circle cx="320" cy="183" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
-      <text x="328" y="179" fill={DT} fontSize="10.5">B (high u, low π)</text>
-      <path d="M 314,180 L 159,91" stroke="rgba(232,234,240,0.18)" strokeWidth="1.2" strokeDasharray="3,3"/>
+      <circle cx="320" cy="186" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
+      <text x="328" y="182" fill={DT} fontSize="10.5">B (high u, low π)</text>
+      <path d="M 314,183 L 159,91" stroke="rgba(232,234,240,0.18)" strokeWidth="1.2" strokeDasharray="3,3"/>
       <text x="222" y="148" fill="rgba(232,234,240,0.38)" fontSize="9.5" transform="rotate(-33,222,148)">trade-off</text>
     </DiagramWrap>
   )
@@ -357,16 +357,16 @@ function ForexDiagram() {
       <circle cx="232" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="232" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="31" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">e*</text>
-      <text x="226" y="250" fill="rgba(232,234,240,0.52)" fontSize="10">Q*</text>
-      <circle cx="268" cy="118" r="4.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
-      <line x1="55" y1="118" x2="268" y2="118" stroke="rgba(96,165,250,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="20" y="122" fill="rgba(96,165,250,0.65)" fontSize="10">e₂↑</text>
-      <text x="282" y="130" fill="rgba(96,165,250,0.72)" fontSize="10">USD</text>
-      <text x="282" y="142" fill="rgba(96,165,250,0.72)" fontSize="10">appreciates</text>
-      <path d="M 50,137 L 50,121" stroke="rgba(96,165,250,0.5)" strokeWidth="1.3"/>
-      <polygon points="46,124 50,117 54,124" fill="rgba(96,165,250,0.5)"/>
-      <path d="M 228,137 L 260,122" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="258,116 265,122 257,127" fill="#60a5fa" opacity="0.52"/>
+      <text x="226" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">Q*</text>
+      <circle cx="263" cy="123" r="4.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
+      <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(96,165,250,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="28" y="127" fill="rgba(96,165,250,0.65)" fontSize="10">e₂↑</text>
+      <text x="282" y="136" fill="rgba(96,165,250,0.72)" fontSize="10">USD</text>
+      <text x="282" y="148" fill="rgba(96,165,250,0.72)" fontSize="10">appreciates</text>
+      <path d="M 50,137 L 50,126" stroke="rgba(96,165,250,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,129 50,122 54,129" fill="rgba(96,165,250,0.5)"/>
+      <path d="M 228,137 L 260,121" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="258,117 265,123 257,129" fill="#60a5fa" opacity="0.52"/>
     </DiagramWrap>
   )
 }
