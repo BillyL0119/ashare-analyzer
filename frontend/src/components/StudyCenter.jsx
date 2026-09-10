@@ -131,6 +131,259 @@ function KeyTermPill({ term }) {
   )
 }
 
+// ── Economic Diagrams (AP Macro) ───────────────────────────────────────────────
+const DA = 'rgba(138,180,248,0.45)'   // axis
+const DL = 'rgba(154,160,166,0.8)'    // axis label
+const DT = 'rgba(232,234,240,0.88)'   // text on diagram
+
+function DiagramWrap({ title, caption, children }) {
+  return (
+    <div style={{
+      background: 'rgba(245,158,11,0.04)',
+      border: '1px solid rgba(245,158,11,0.18)',
+      borderRadius: 10, padding: '12px 14px 10px',
+      marginLeft: 15, marginBottom: 14,
+    }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: '#f59e0b', letterSpacing: '0.08em', marginBottom: 8, textTransform: 'uppercase' }}>
+        📊 {title}
+      </div>
+      <svg viewBox="0 0 440 260" style={{ width: '100%', display: 'block', maxWidth: 500 }}>
+        {children}
+      </svg>
+      {caption && (
+        <div style={{ fontSize: 11, color: 'rgba(154,160,166,0.72)', marginTop: 6, lineHeight: 1.5 }}>
+          {caption}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ChartAxes({ xlabel, ylabel }) {
+  return (
+    <>
+      <line x1="55" y1="235" x2="420" y2="235" stroke={DA} strokeWidth="1.5"/>
+      <polygon points="418,231 426,235 418,239" fill={DA}/>
+      <line x1="55" y1="235" x2="55" y2="18" stroke={DA} strokeWidth="1.5"/>
+      <polygon points="51,20 55,12 59,20" fill={DA}/>
+      <text x="237" y="254" textAnchor="middle" fill={DL} fontSize="11" fontWeight="600">{xlabel}</text>
+      <text x="15" y="127" textAnchor="middle" fill={DL} fontSize="11" fontWeight="600" transform="rotate(-90,15,127)">{ylabel}</text>
+    </>
+  )
+}
+
+function PPCDiagram() {
+  return (
+    <DiagramWrap
+      title="Production Possibilities Curve (PPC)"
+      caption="Concave shape = increasing opportunity costs. Points ON curve = productive efficiency. Outward shift = long-run economic growth (better technology or more resources)."
+    >
+      <ChartAxes xlabel="Good X →" ylabel="Good Y →"/>
+      <path d="M 393,235 C 388,118 173,24 58,24" fill="none" stroke="#f59e0b" strokeWidth="2.5"/>
+      <path d="M 416,235 C 411,140 202,46 83,46" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.42"/>
+      <text x="62" y="37" fill="#f59e0b" fontSize="11" fontWeight="700">PPC</text>
+      <text x="87" y="58" fill="#f59e0b" fontSize="10" opacity="0.52">PPC' (growth)</text>
+      <circle cx="268" cy="88" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
+      <text x="278" y="83" fill={DT} fontSize="10.5">A: Efficient</text>
+      <circle cx="220" cy="155" r="5.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="2"/>
+      <text x="230" y="150" fill={DT} fontSize="10.5">B: Inefficient</text>
+      <circle cx="320" cy="68" r="5.5" fill="#f87171" stroke="#0f1117" strokeWidth="2"/>
+      <text x="330" y="63" fill={DT} fontSize="10.5">C: Unattainable</text>
+      <path d="M 326,90 Q 342,72 358,74" stroke="#f59e0b" strokeWidth="1.3" fill="none" opacity="0.5"/>
+      <polygon points="357,68 364,74 356,79" fill="#f59e0b" opacity="0.5"/>
+    </DiagramWrap>
+  )
+}
+
+function ASModelDiagram() {
+  return (
+    <DiagramWrap
+      title="Aggregate Supply — SRAS & LRAS"
+      caption="SRAS slopes up: sticky wages in short run. LRAS is vertical at Yf (potential output). A leftward SRAS shift (e.g. oil shock) causes stagflation: ↑P and ↓Y simultaneously."
+    >
+      <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
+      <line x1="268" y1="235" x2="268" y2="18" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="6,4"/>
+      <text x="271" y="14" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRAS</text>
+      <text x="262" y="250" fill="#a78bfa" fontSize="10">Yf</text>
+      <line x1="75" y1="55" x2="390" y2="228" stroke="#f59e0b" strokeWidth="1.8" opacity="0.72"/>
+      <text x="73" y="51" fill="#f59e0b" fontSize="10.5" fontWeight="700">AD</text>
+      <line x1="68" y1="228" x2="385" y2="52" stroke="#34d399" strokeWidth="2.2"/>
+      <text x="388" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS₁</text>
+      <line x1="68" y1="188" x2="345" y2="42" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="348" y="38" fill="#34d399" fontSize="10" opacity="0.62">SRAS₂</text>
+      <circle cx="228" cy="139" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
+      <text x="236" y="134" fill={DT} fontSize="10">E₁</text>
+      <circle cx="180" cy="116" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
+      <text x="148" y="112" fill="#f87171" fontSize="10">E₂ (stagflation)</text>
+      <path d="M 224,136 L 183,120" stroke="rgba(248,113,113,0.55)" strokeWidth="1.3" strokeDasharray="3,3"/>
+      <line x1="52" y1="139" x2="228" y2="139" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="36" y="143" fill="rgba(232,234,240,0.5)" fontSize="10">P₁</text>
+      <line x1="52" y1="116" x2="180" y2="116" stroke="rgba(248,113,113,0.14)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="36" y="120" fill="rgba(248,113,113,0.55)" fontSize="10">P₂↑</text>
+    </DiagramWrap>
+  )
+}
+
+function ADASDiagram() {
+  return (
+    <DiagramWrap
+      title="AD-AS Model — Recessionary Gap & Self-Correction"
+      caption="Y₁ < Yf → recessionary gap. Self-correction: excess unemployment → wages fall → SRAS shifts right → economy returns to Yf at lower P. Active policy: fiscal/monetary stimulus shifts AD₁→AD₂."
+    >
+      <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
+      <line x1="285" y1="235" x2="285" y2="18" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
+      <text x="288" y="14" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRAS</text>
+      <text x="279" y="250" fill="#a78bfa" fontSize="10">Yf</text>
+      <line x1="68" y1="228" x2="390" y2="50" stroke="#34d399" strokeWidth="2"/>
+      <text x="393" y="47" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS</text>
+      <line x1="68" y1="52" x2="375" y2="228" stroke="#60a5fa" strokeWidth="2"/>
+      <text x="65" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">AD₁</text>
+      <line x1="130" y1="52" x2="418" y2="215" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="393" y="210" fill="#60a5fa" fontSize="10" opacity="0.62">AD₂</text>
+      <path d="M 220,140 L 265,118" stroke="#60a5fa" strokeWidth="1.3" fill="none" opacity="0.58"/>
+      <polygon points="263,112 270,118 262,123" fill="#60a5fa" opacity="0.58"/>
+      <circle cx="224" cy="141" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
+      <text x="232" y="136" fill={DT} fontSize="10">E₁</text>
+      <line x1="224" y1="235" x2="224" y2="241" stroke={DA} strokeWidth="1.5"/>
+      <text x="218" y="252" fill="rgba(232,234,240,0.52)" fontSize="10">Y₁</text>
+      <line x1="224" y1="244" x2="285" y2="244" stroke="rgba(248,113,113,0.58)" strokeWidth="1.5"/>
+      <polygon points="283,240 290,244 283,248" fill="rgba(248,113,113,0.58)"/>
+      <text x="250" y="258" fill="rgba(248,113,113,0.72)" textAnchor="middle" fontSize="9.5">gap</text>
+      <line x1="55" y1="141" x2="224" y2="141" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="38" y="145" fill="rgba(232,234,240,0.52)" fontSize="10">P*</text>
+    </DiagramWrap>
+  )
+}
+
+function MoneyMarketDiagram() {
+  return (
+    <DiagramWrap
+      title="Money Market — Nominal Interest Rate Determination"
+      caption="Ms is vertical (Fed-controlled). Md slopes down: lower i → hold more money. Fed buys bonds (OMO) → Ms shifts right → i falls → investment rises → AD shifts right."
+    >
+      <ChartAxes xlabel="Quantity of Money →" ylabel="Nominal Interest Rate (i) →"/>
+      <line x1="225" y1="235" x2="225" y2="22" stroke="#34d399" strokeWidth="2.2"/>
+      <text x="228" y="18" fill="#34d399" fontSize="10.5" fontWeight="700">Ms₁</text>
+      <text x="219" y="250" fill="rgba(232,234,240,0.52)" fontSize="10">M*</text>
+      <line x1="290" y1="235" x2="290" y2="22" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.48"/>
+      <text x="293" y="18" fill="#34d399" fontSize="10" opacity="0.52">Ms₂</text>
+      <line x1="72" y1="52" x2="398" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
+      <text x="70" y="48" fill="#60a5fa" fontSize="11" fontWeight="700">Md</text>
+      <circle cx="225" cy="135" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
+      <line x1="55" y1="135" x2="225" y2="135" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="32" y="139" fill="rgba(232,234,240,0.62)" fontSize="10">i*</text>
+      <circle cx="290" cy="170" r="4.5" fill="#34d399" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
+      <line x1="55" y1="170" x2="290" y2="170" stroke="rgba(52,211,153,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="32" y="174" fill="rgba(52,211,153,0.62)" fontSize="10">i₂↓</text>
+      <path d="M 50,138 L 50,166" stroke="rgba(52,211,153,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,163 50,170 54,163" fill="rgba(52,211,153,0.5)"/>
+      <text x="308" y="152" fill="rgba(52,211,153,0.65)" fontSize="10">Fed buys</text>
+      <text x="308" y="164" fill="rgba(52,211,153,0.65)" fontSize="10">bonds →</text>
+      <text x="308" y="176" fill="rgba(52,211,153,0.65)" fontSize="10">i falls</text>
+    </DiagramWrap>
+  )
+}
+
+function LoanableFundsDiagram() {
+  return (
+    <DiagramWrap
+      title="Loanable Funds Market — Real Interest Rate"
+      caption="S_LF = household saving + capital inflows. D_LF = private investment + gov't borrowing. Gov't deficit shifts D right → r rises → private investment is crowded out."
+    >
+      <ChartAxes xlabel="Quantity of Loanable Funds →" ylabel="Real Interest Rate (r) →"/>
+      <line x1="68" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
+      <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_LF</text>
+      <line x1="68" y1="52" x2="392" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
+      <text x="65" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">D_LF</text>
+      <line x1="130" y1="52" x2="418" y2="210" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="388" y="206" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
+      <circle cx="230" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
+      <line x1="55" y1="140" x2="230" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="32" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">r*</text>
+      <circle cx="265" cy="118" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
+      <line x1="55" y1="118" x2="265" y2="118" stroke="rgba(248,113,113,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="32" y="122" fill="rgba(248,113,113,0.65)" fontSize="10">r₂↑</text>
+      <text x="278" y="133" fill="#f87171" fontSize="10">Crowding</text>
+      <text x="278" y="145" fill="#f87171" fontSize="10">out ↑r</text>
+      <path d="M 50,137 L 50,121" stroke="rgba(248,113,113,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,124 50,117 54,124" fill="rgba(248,113,113,0.5)"/>
+      <path d="M 228,137 L 257,123" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="255,117 262,123 254,128" fill="#60a5fa" opacity="0.52"/>
+    </DiagramWrap>
+  )
+}
+
+function PhillipsDiagram() {
+  return (
+    <DiagramWrap
+      title="Phillips Curve — SRPC & LRPC"
+      caption="SRPC: short-run trade-off (↓ unemployment → ↑ inflation). LRPC: vertical at NAIRU — no long-run trade-off. Supply shock or rising expectations shifts SRPC right: stagflation."
+    >
+      <ChartAxes xlabel="Unemployment Rate (%) →" ylabel="Inflation Rate (%) →"/>
+      <line x1="232" y1="235" x2="232" y2="20" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
+      <text x="236" y="16" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRPC</text>
+      <text x="219" y="250" fill="#a78bfa" fontSize="10">NAIRU</text>
+      <path d="M 95,52 Q 200,130 390,220" fill="none" stroke="#f59e0b" strokeWidth="2.2"/>
+      <text x="92" y="48" fill="#f59e0b" fontSize="10.5" fontWeight="700">SRPC₁</text>
+      <path d="M 158,52 Q 265,130 420,208" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="398" y="204" fill="#f59e0b" fontSize="10" opacity="0.62">SRPC₂</text>
+      <path d="M 262,130 L 300,120" stroke="#f87171" strokeWidth="1.3" fill="none"/>
+      <polygon points="299,114 306,120 298,125" fill="#f87171"/>
+      <text x="308" y="118" fill="#f87171" fontSize="10">Stagflation /</text>
+      <text x="308" y="130" fill="#f87171" fontSize="10">↑ expectations</text>
+      <circle cx="148" cy="88" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
+      <text x="156" y="84" fill={DT} fontSize="10.5">A (low u, high π)</text>
+      <circle cx="320" cy="183" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
+      <text x="328" y="179" fill={DT} fontSize="10.5">B (high u, low π)</text>
+      <path d="M 314,180 L 159,91" stroke="rgba(232,234,240,0.18)" strokeWidth="1.2" strokeDasharray="3,3"/>
+      <text x="222" y="148" fill="rgba(232,234,240,0.38)" fontSize="9.5" transform="rotate(-33,222,148)">trade-off</text>
+    </DiagramWrap>
+  )
+}
+
+function ForexDiagram() {
+  return (
+    <DiagramWrap
+      title="Foreign Exchange Market — USD"
+      caption="D_USD from foreigners buying US goods/assets. S_USD from Americans buying foreign goods/assets. Fed raises rates → D shifts right → USD appreciates (e rises) → NX falls → AD shifts left."
+    >
+      <ChartAxes xlabel="Quantity of USD →" ylabel="Exchange Rate (e = $/USD) →"/>
+      <line x1="72" y1="52" x2="392" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
+      <text x="68" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">D_USD</text>
+      <line x1="72" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
+      <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_USD</text>
+      <line x1="138" y1="52" x2="416" y2="210" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="392" y="206" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
+      <circle cx="232" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
+      <line x1="55" y1="140" x2="232" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="31" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">e*</text>
+      <text x="226" y="250" fill="rgba(232,234,240,0.52)" fontSize="10">Q*</text>
+      <circle cx="268" cy="118" r="4.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
+      <line x1="55" y1="118" x2="268" y2="118" stroke="rgba(96,165,250,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="20" y="122" fill="rgba(96,165,250,0.65)" fontSize="10">e₂↑</text>
+      <text x="282" y="130" fill="rgba(96,165,250,0.72)" fontSize="10">USD</text>
+      <text x="282" y="142" fill="rgba(96,165,250,0.72)" fontSize="10">appreciates</text>
+      <path d="M 50,137 L 50,121" stroke="rgba(96,165,250,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,124 50,117 54,124" fill="rgba(96,165,250,0.5)"/>
+      <path d="M 228,137 L 260,122" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="258,116 265,122 257,127" fill="#60a5fa" opacity="0.52"/>
+    </DiagramWrap>
+  )
+}
+
+function EconDiagram({ type }) {
+  switch (type) {
+    case 'ppc':            return <PPCDiagram />
+    case 'as_model':       return <ASModelDiagram />
+    case 'ad_as_gap':      return <ADASDiagram />
+    case 'money_market':   return <MoneyMarketDiagram />
+    case 'loanable_funds': return <LoanableFundsDiagram />
+    case 'phillips':       return <PhillipsDiagram />
+    case 'forex':          return <ForexDiagram />
+    default:               return null
+  }
+}
+
 // ── Section block ─────────────────────────────────────────────────────────────
 function SectionBlock({ section, index, total, accentColor, zh }) {
   const heading   = (!zh && section.heading_en)   ? section.heading_en   : section.heading
@@ -150,6 +403,8 @@ function SectionBlock({ section, index, total, accentColor, zh }) {
       <p style={{ fontSize: 14, lineHeight: 1.85, color: 'var(--text-secondary)', margin: '0 0 14px', paddingLeft: 15 }}>
         {body}
       </p>
+
+      {section.diagram_type && <EconDiagram type={section.diagram_type} />}
 
       {(() => {
         const terms = (!zh && section.key_terms_en?.length > 0)

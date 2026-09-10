@@ -362,6 +362,7 @@ AP_MACRO_CURRICULUM = {
                             "key_terms": ["scarcity", "trade-off", "PPC", "opportunity cost", "productive efficiency", "economic growth", "law of increasing opportunity costs"],
                             "real_world": "During COVID-19 in 2020, the US economy operated inside its PPC as factories shut down and unemployment surged to 14.7%. The $2.2 trillion CARES Act stimulus aimed to push the economy back toward its PPC. Long-run PPC shifts outward through investment in technology and human capital — the US PPC has shifted dramatically rightward since 1950 due to productivity gains.",
                             "exam_tip": "AP free-response always requires correctly labelled graphs. For PPC: label axes with specific goods (not just X and Y), mark efficient points ON the curve, show points inside and outside. Outward PPC shift from technology affects only one end if only one sector benefits — the curve rotates rather than shifts parallel.",
+                            "diagram_type": "ppc",
                         },
                         {
                             "heading": "Opportunity Cost and Economic Decision-Making",
@@ -441,6 +442,7 @@ AP_MACRO_CURRICULUM = {
                             "key_terms": ["SRAS", "LRAS", "sticky wages", "potential output", "full employment output", "supply shock", "SRAS shifters", "LRAS shifters", "stagflation"],
                             "real_world": "The 1973 OPEC oil embargo caused a dramatic leftward shift in SRAS for the US economy — oil prices quadrupled, raising costs for virtually every industry. The result was stagflation: higher prices AND lower output simultaneously. The 2022 global energy crisis after Russia invaded Ukraine replicated this: energy price spikes shifted SRAS left across Europe, causing both inflation and recession (stagflation). These supply shocks cannot be fixed by demand-side policy alone.",
                             "exam_tip": "Stagflation is the hardest AD-AS scenario for AP. A leftward SRAS shift raises the price level AND reduces real output. If the Fed responds with expansionary monetary policy (shift AD right), it restores output but worsens inflation. If contractionary policy is used to fight inflation, output falls further. Draw the stagflation scenario carefully: SRAS shifts left, new equilibrium has higher P and lower Y, with two possible policy responses shown.",
+                            "diagram_type": "as_model",
                         },
                         {
                             "heading": "AD-AS Equilibrium: Output Gaps and Self-Correction",
@@ -448,6 +450,7 @@ AP_MACRO_CURRICULUM = {
                             "key_terms": ["short-run equilibrium", "long-run equilibrium", "recessionary gap", "inflationary gap", "self-correction", "potential output", "output gap", "crowding out", "Keynesian", "classical"],
                             "real_world": "US CARES Act 2020 — $2.2 trillion stimulus shifted AD right to close the recessionary gap. GDP recovered by Q4 2020, but critics argued the stimulus was too large and too prolonged: by 2021, the economy was in an inflationary gap, contributing to 9.1% inflation in 2022. This real-world sequence perfectly illustrates the AD-AS model: recession (recessionary gap) → fiscal stimulus (AD shifts right) → recovery → overshoot (inflationary gap) → inflation.",
                             "exam_tip": "AP free-response always asks: draw the current AD-AS situation, identify the gap type, show the policy response, and explain the long-run self-correction. Practice this five-step sequence: (1) draw initial equilibrium at potential output, (2) show the shock shifting AD or SRAS, (3) identify the gap, (4) show the policy response, (5) show the long-run self-correction. Each step earns separate marks.",
+                            "diagram_type": "ad_as_gap",
                         },
                         {
                             "heading": "The Multiplier Effect and Fiscal Policy",
@@ -477,6 +480,7 @@ AP_MACRO_CURRICULUM = {
                             "key_terms": ["money demand", "money supply", "interest rate", "transactions demand", "precautionary demand", "speculative demand", "liquidity preference", "nominal interest rate", "real interest rate"],
                             "real_world": "The Federal Reserve raised the federal funds rate from 0.25% to 5.5% between March 2022 and July 2023 — the fastest tightening cycle since the 1980s. This was achieved by selling bonds (open market sales), reducing the money supply. The money market diagram shows: Ms shifts left, interest rate rises. Effect: higher borrowing costs slowed the housing market (mortgage rates hit 7-8%), reduced business investment, and eventually brought inflation from 9.1% to near 3%.",
                             "exam_tip": "Money market diagram: draw vertical Ms and downward-sloping Md. Interest rate on y-axis, quantity of money on x-axis. Open market purchase: Ms shifts right, interest rate falls. Open market sale: Ms shifts left, interest rate rises. A key AP connection: the money market determines the interest rate, which then affects investment, which shifts AD. Always trace the full chain: money supply change → interest rate change → investment change → AD shift → output and price level change.",
+                            "diagram_type": "money_market",
                         },
                         {
                             "heading": "The Loanable Funds Market",
@@ -484,6 +488,7 @@ AP_MACRO_CURRICULUM = {
                             "key_terms": ["loanable funds", "real interest rate", "nominal interest rate", "supply of loanable funds", "demand for loanable funds", "crowding out", "budget deficit", "private saving", "Fisher equation"],
                             "real_world": "The US government ran a $1.7 trillion deficit in FY2023, absorbing a massive share of available loanable funds. This crowding out effect contributed to the rise in long-term interest rates — the 10-year Treasury yield rose from 1.5% in 2021 to over 5% in late 2023. Each dollar of government borrowing displaced some private investment. Japan illustrates the opposite: despite massive government debt (250% of GDP), interest rates stayed near zero because Japan's high household saving rate kept loanable funds supply abundant.",
                             "exam_tip": "AP often tests the loanable funds market alongside the money market in the same question. Remember: loanable funds shows real interest rates determined by saving and investment flows. Money market shows nominal interest rates determined by Fed policy and money demand. The Fisher equation connects them: real interest rate = nominal interest rate minus expected inflation. If the Fed raises nominal rates faster than inflation expectations, real rates rise, crowding out investment more.",
+                            "diagram_type": "loanable_funds",
                         },
                         {
                             "heading": "Federal Reserve Tools and Monetary Policy",
@@ -513,6 +518,7 @@ AP_MACRO_CURRICULUM = {
                             "key_terms": ["LRPC", "NAIRU", "natural rate of unemployment", "adaptive expectations", "rational expectations", "inflation expectations", "accelerationist Phillips curve", "non-accelerating inflation rate"],
                             "real_world": "The Volcker disinflation (1979-1983) shows the LRPC in action. Fed Chairman Volcker raised the federal funds rate to 20% to break inflation expectations. Unemployment soared to 10.8% as the economy was pushed far right of NAIRU along the SRPC. Once inflation expectations fell, the SRPC shifted left, allowing lower inflation with lower unemployment. The short-term cost was severe recession; the long-term gain was price stability that allowed strong 1980s-1990s growth.",
                             "exam_tip": "AP test question: an economy is at NAIRU with 2% inflation. The government runs expansionary fiscal policy. Trace the short-run and long-run effects using both AD-AS and Phillips curve diagrams. Short run: AD shifts right, output rises above potential, unemployment falls below NAIRU, inflation rises above 2%. Long run: inflation expectations adjust, SRAS shifts left, SRPC shifts right, economy returns to NAIRU with higher inflation. Draw four diagrams total for full marks.",
+                            "diagram_type": "phillips",
                         },
                         {
                             "heading": "Inflation, Debt and Fiscal Sustainability",
@@ -549,6 +555,7 @@ AP_MACRO_CURRICULUM = {
                             "key_terms": ["exchange rate", "appreciation", "depreciation", "foreign exchange market", "currency demand", "currency supply", "real exchange rate", "nominal exchange rate", "purchasing power parity"],
                             "real_world": "When the Fed raised rates aggressively in 2022-2023, the US dollar appreciated sharply against most currencies — the DXY dollar index hit a 20-year high. Higher US rates attracted capital inflows (demand for dollars rose). This hurt emerging market economies: dollar-denominated debt became more expensive to service, and capital flowed out of developing countries to the US. The RMB depreciated from 6.3 to 7.3 per dollar as the interest rate differential shifted capital toward dollar assets.",
                             "exam_tip": "AP forex market question: draw supply and demand for a specific currency (e.g. USD). When the Fed raises interest rates: demand for USD rises (foreigners want US assets) AND supply of USD falls (Americans buy fewer foreign assets since domestic returns are higher). Both effects cause USD to appreciate. For AP, draw both curves shifting and show the new higher equilibrium exchange rate. Always specify which currency is on the y-axis.",
+                            "diagram_type": "forex",
                         },
                         {
                             "heading": "Exchange Rates and the Macro Economy",
