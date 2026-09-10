@@ -214,7 +214,7 @@ function ASModelDiagram() {
       <circle cx="228" cy="139" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="236" y="134" fill={DT} fontSize="10">E₁</text>
       <circle cx="195" cy="121" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
-      <text x="130" y="115" fill="#f87171" fontSize="10">E₂ (stagflation)</text>
+      <text x="190" y="110" textAnchor="end" fill="#f87171" fontSize="10">E₂ (stagflation)</text>
       <path d="M 224,136 L 198,122" stroke="rgba(248,113,113,0.55)" strokeWidth="1.3" strokeDasharray="3,3"/>
       <line x1="52" y1="139" x2="228" y2="139" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="36" y="143" fill="rgba(232,234,240,0.5)" fontSize="10">P₁</text>
@@ -233,7 +233,7 @@ function ADASDiagram() {
       <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
       <line x1="285" y1="235" x2="285" y2="18" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
       <text x="288" y="14" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRAS</text>
-      <text x="279" y="254" fill="#a78bfa" fontSize="10">Yf</text>
+      <text x="279" y="250" fill="#a78bfa" fontSize="10">Yf</text>
       <line x1="68" y1="228" x2="390" y2="50" stroke="#34d399" strokeWidth="2"/>
       <text x="393" y="47" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS</text>
       <line x1="68" y1="52" x2="375" y2="228" stroke="#60a5fa" strokeWidth="2"/>
@@ -244,11 +244,11 @@ function ADASDiagram() {
       <polygon points="251,118 259,124 251,130" fill="#60a5fa" opacity="0.58"/>
       <circle cx="224" cy="141" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="232" y="136" fill={DT} fontSize="10">E₁</text>
-      <line x1="224" y1="235" x2="224" y2="241" stroke={DA} strokeWidth="1.5"/>
-      <text x="218" y="252" fill="rgba(232,234,240,0.52)" fontSize="10">Y₁</text>
-      <line x1="224" y1="244" x2="285" y2="244" stroke="rgba(248,113,113,0.58)" strokeWidth="1.5"/>
-      <polygon points="283,240 290,244 283,248" fill="rgba(248,113,113,0.58)"/>
-      <text x="250" y="258" fill="rgba(248,113,113,0.72)" textAnchor="middle" fontSize="9.5">gap</text>
+      <line x1="224" y1="235" x2="224" y2="240" stroke={DA} strokeWidth="1.5"/>
+      <line x1="224" y1="242" x2="285" y2="242" stroke="rgba(248,113,113,0.58)" strokeWidth="1.5"/>
+      <polygon points="283,238 290,242 283,246" fill="rgba(248,113,113,0.58)"/>
+      <text x="218" y="250" fill="rgba(232,234,240,0.52)" fontSize="10">Y₁</text>
+      <text x="254" y="250" fill="rgba(248,113,113,0.72)" textAnchor="middle" fontSize="9.5">gap</text>
       <line x1="55" y1="141" x2="224" y2="141" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="38" y="145" fill="rgba(232,234,240,0.52)" fontSize="10">P*</text>
     </DiagramWrap>
@@ -322,7 +322,7 @@ function PhillipsDiagram() {
       <ChartAxes xlabel="Unemployment Rate (%) →" ylabel="Inflation Rate (%) →"/>
       <line x1="232" y1="235" x2="232" y2="20" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
       <text x="236" y="16" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRPC</text>
-      <text x="219" y="263" fill="#a78bfa" fontSize="10">NAIRU</text>
+      <text x="219" y="252" fill="#a78bfa" fontSize="10">NAIRU</text>
       <path d="M 95,52 Q 200,130 390,220" fill="none" stroke="#f59e0b" strokeWidth="2.2"/>
       <text x="92" y="48" fill="#f59e0b" fontSize="10.5" fontWeight="700">SRPC₁</text>
       <path d="M 158,52 Q 265,130 420,208" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
@@ -334,7 +334,7 @@ function PhillipsDiagram() {
       <circle cx="148" cy="88" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="156" y="84" fill={DT} fontSize="10.5">A (low u, high π)</text>
       <circle cx="320" cy="186" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
-      <text x="328" y="182" fill={DT} fontSize="10.5">B (high u, low π)</text>
+      <text x="432" y="182" textAnchor="end" fill={DT} fontSize="10.5">B (high u, low π)</text>
       <path d="M 314,183 L 159,91" stroke="rgba(232,234,240,0.18)" strokeWidth="1.2" strokeDasharray="3,3"/>
       <text x="222" y="148" fill="rgba(232,234,240,0.38)" fontSize="9.5" transform="rotate(-33,222,148)">trade-off</text>
     </DiagramWrap>
