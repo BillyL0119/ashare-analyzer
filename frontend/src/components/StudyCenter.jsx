@@ -147,7 +147,7 @@ function DiagramWrap({ title, caption, children }) {
       <div style={{ fontSize: 10, fontWeight: 700, color: '#f59e0b', letterSpacing: '0.08em', marginBottom: 8, textTransform: 'uppercase' }}>
         📊 {title}
       </div>
-      <svg viewBox="0 0 440 278" style={{ width: '100%', display: 'block', maxWidth: 500 }}>
+      <svg viewBox="0 0 500 295" overflow="visible" style={{ width: '100%', display: 'block', maxWidth: 520 }}>
         {children}
       </svg>
       {caption && (
@@ -239,7 +239,7 @@ function ADASDiagram() {
       <line x1="68" y1="52" x2="375" y2="228" stroke="#60a5fa" strokeWidth="2"/>
       <text x="65" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">AD₁</text>
       <line x1="130" y1="52" x2="418" y2="215" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="393" y="210" fill="#60a5fa" fontSize="10" opacity="0.62">AD₂</text>
+      <text x="422" y="219" fill="#60a5fa" fontSize="10" opacity="0.62">AD₂</text>
       <path d="M 224,141 L 257,124" stroke="#60a5fa" strokeWidth="1.3" fill="none" opacity="0.58"/>
       <polygon points="251,118 259,124 251,130" fill="#60a5fa" opacity="0.58"/>
       <circle cx="224" cy="141" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
@@ -296,7 +296,7 @@ function LoanableFundsDiagram() {
       <line x1="68" y1="52" x2="392" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
       <text x="65" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">D_LF</text>
       <line x1="130" y1="52" x2="418" y2="210" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="388" y="206" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
+      <text x="422" y="214" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="230" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="230" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">r*</text>
@@ -326,7 +326,7 @@ function PhillipsDiagram() {
       <path d="M 95,52 Q 200,130 390,220" fill="none" stroke="#f59e0b" strokeWidth="2.2"/>
       <text x="92" y="48" fill="#f59e0b" fontSize="10.5" fontWeight="700">SRPC₁</text>
       <path d="M 158,52 Q 265,130 420,208" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="398" y="204" fill="#f59e0b" fontSize="10" opacity="0.62">SRPC₂</text>
+      <text x="424" y="212" fill="#f59e0b" fontSize="10" opacity="0.62">SRPC₂</text>
       <path d="M 262,130 L 300,130" stroke="#f87171" strokeWidth="1.3" fill="none"/>
       <polygon points="299,126 306,130 299,134" fill="#f87171"/>
       <text x="308" y="118" fill="#f87171" fontSize="10">Stagflation /</text>
@@ -353,7 +353,7 @@ function ForexDiagram() {
       <line x1="72" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
       <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_USD</text>
       <line x1="138" y1="52" x2="416" y2="210" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="392" y="206" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
+      <text x="420" y="214" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="232" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="232" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="31" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">e*</text>
