@@ -7,227 +7,10 @@
  */
 import { useState, useRef, useEffect, useCallback } from 'react'
 import useThemeStore from '../store/themeStore'
+import { ROLES } from './careerData'
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
-const ROLES = [
-  {
-    id: 'IBD',
-    title: '投资银行部 (IBD)',
-    titleEn: 'Investment Banking (IBD)',
-    icon: '🏦',
-    color: '#0ea5e9',
-    tagline: '资本市场的核心枢纽，交易撮合与财务顾问',
-    taglineEn: 'The core of capital markets — deal-making and financial advisory',
-    description:
-      'IBD帮助企业进行IPO、债券发行、并购（M&A）等重大资本运作。分析师每天深度参与财务建模、尽职调查和客户提案材料（Pitch Book）的制作，是最高强度也最受认可的入门岗位之一。',
-    descriptionEn:
-      'IBD advises corporations on IPOs, debt issuances, and M&A transactions. Analysts build detailed financial models, conduct due diligence, and produce pitch books — one of the most demanding yet prestigious entry-level finance roles.',
-    skills: ['DCF估值建模', 'LBO模型', '并购财务分析', 'Pitch Book制作', '资本市场结构', 'Excel / PowerPoint精通', '会计三表联动'],
-    skillsEn: ['DCF valuation modeling', 'LBO modeling', 'M&A financial analysis', 'Pitch book creation', 'Capital markets structure', 'Advanced Excel / PowerPoint', 'Three-statement modeling'],
-    certs: ['CFA（进阶推荐）', 'FINRA Series 7/63（美国）', '保荐代表人（中国）'],
-    certsEn: ['CFA (recommended for advancement)', 'FINRA Series 7/63 (US)', 'Sponsor Representative (China)'],
-    entry: '顶尖商学院/经济学/金融学本科；GPA 3.5+；暑期实习至关重要；超模型（super-day）流程',
-    entryEn: 'Target school finance/economics degree; GPA 3.5+; summer internship is critical; super-day interview process',
-    career: '分析师(2-3年) → 副总裁(Associate) → 副总裁(VP) → 董事总经理(MD)；常见出路：PE、对冲基金、公司BD',
-    careerEn: 'Analyst (2-3y) → Associate → VP → MD; common exits: PE, hedge fund, corporate development',
-    salary: '初级分析师：¥30–50万/年（国内）；$100–150K（美国）；奖金占比可达50–100%基本工资',
-    salaryEn: 'Junior Analyst: RMB 300-500K/yr (China); $100-150K base (US); bonus can equal 50-100% of base',
-    disclaimer: '以上薪资为市场估算区间，因机构规模、城市及个人绩效差异显著，仅供参考，不构成任何承诺。',
-    disclaimerEn: 'Salary ranges are market estimates only. Actual compensation varies significantly by firm, location, and performance. Not a guarantee.',
-    typical: '收到客户指令 → 更新财务模型 → 整理尽调材料 → 深夜修改Pitch → 会议准备',
-    typicalEn: 'Receive client mandate → update financial model → organize due diligence → late-night pitch revisions → prep for client meeting',
-  },
-  {
-    id: 'EquityResearch',
-    title: '股票研究 (Equity Research)',
-    titleEn: 'Equity Research',
-    icon: '🔍',
-    color: '#8b5cf6',
-    tagline: '深度挖掘上市公司价值，发布买/卖/持有评级',
-    taglineEn: 'Deep-dive on public companies, publishing Buy/Sell/Hold ratings',
-    description:
-      '研究分析师覆盖特定行业的上市公司，通过基本面分析发布研究报告，给出目标价和投资评级。需要同时掌握行业洞察、财务建模与写作能力，是同时接触买方和卖方视角的岗位。',
-    descriptionEn:
-      'Research analysts cover listed companies within a sector, publishing reports with target prices and ratings. Requires industry expertise, financial modeling, and clear writing — a unique vantage point across both buy-side and sell-side.',
-    skills: ['行业深度研究', '财务建模（DCF/相对估值）', '调研与草根调查', '报告写作', '数据分析', '管理层访谈', '投资逻辑构建'],
-    skillsEn: ['Deep industry research', 'Financial modeling (DCF / relative valuation)', 'Channel checks & scuttlebutt', 'Report writing', 'Data analysis', 'Management interviews', 'Investment thesis building'],
-    certs: ['CFA（强烈推荐，行业标配）', 'FRM（金融风险管理）'],
-    certsEn: ['CFA (strongly recommended — industry standard)', 'FRM (Financial Risk Manager)'],
-    entry: '金融/会计/相关行业本科；行业经验加分；Bloomberg操作能力；部分要求MBA',
-    entryEn: 'Finance/accounting/relevant sector background; industry experience a plus; Bloomberg proficiency; some roles require MBA',
-    career: '研究助理 → 初级分析师 → 高级分析师 → 首席分析师（明星分析师）；出路：对冲基金/公募基金买方',
-    careerEn: 'Research Associate → Junior Analyst → Senior Analyst → Lead Analyst (star analyst); exits: hedge funds / long-only buy-side',
-    salary: '初级：¥25–40万（国内）；$80–120K（美国）；卖方奖金与佣金收入挂钩',
-    salaryEn: 'Junior: RMB 250-400K (China); $80-120K (US); sell-side bonus linked to commission revenue',
-    disclaimer: '以上薪资为市场估算区间，仅供参考。',
-    disclaimerEn: 'Salary ranges are market estimates only. For reference only.',
-    typical: '阅读行业新闻 → 更新财务模型 → 联系公司IR → 撰写研究观点 → 与销售团队沟通推送',
-    typicalEn: 'Read industry news → update models → call company IR → write research notes → brief sales team on thesis',
-  },
-  {
-    id: 'ST',
-    title: '销售与交易 (Sales & Trading)',
-    titleEn: 'Sales & Trading',
-    icon: '📈',
-    color: '#26a69a',
-    tagline: '市场实时博弈，做市商与机构客户之间的桥梁',
-    taglineEn: 'Real-time market execution — bridging market-making and institutional clients',
-    description:
-      'Sales负责与机构客户沟通，理解其需求并推荐交易策略；Trading负责在市场中执行交易、管理风险敞口。该岗位节奏极快，要求极强的数字敏感度、抗压能力和对市场结构的深刻理解。',
-    descriptionEn:
-      'Sales communicates with institutional clients to understand needs and pitch trading ideas; Trading executes positions and manages risk exposure. Ultra fast-paced, demanding sharp numerics, composure under pressure, and deep market structure knowledge.',
-    skills: ['市场微观结构', '衍生品定价基础', '风险管理（delta/gamma对冲）', '产品知识（股票/债券/FX/商品）', '快速决策', '客户关系管理'],
-    skillsEn: ['Market microstructure', 'Derivatives pricing basics', 'Risk management (delta/gamma hedging)', 'Product knowledge (equities/FI/FX/commodities)', 'Rapid decision-making', 'Client relationship management'],
-    certs: ['CFA', 'FINRA Series 7/63（美国）', '期货从业资格（国内）'],
-    certsEn: ['CFA', 'FINRA Series 7/63 (US)', 'Futures Practitioner License (China)'],
-    entry: '数学/物理/CS/金融本科；心理素质稳定；在校模拟交易经历加分；部分岗位技术测试',
-    entryEn: 'Math/physics/CS/finance background; emotional stability; simulated trading experience a plus; some roles include technical tests',
-    career: '初级交易员/销售 → 高级交易员 → 做市主管 → 交易主管；出路：对冲基金、自营交易公司(Prop Firm)',
-    careerEn: 'Junior Trader/Sales → Senior Trader → Head of Desk → Head of Trading; exits: hedge funds, prop trading firms',
-    salary: '初级：¥20–40万（国内）；$85–130K（美国）；交易台奖金与PnL强相关',
-    salaryEn: 'Junior: RMB 200-400K (China); $85-130K base (US); desk bonus highly correlated with P&L',
-    disclaimer: '以上薪资为市场估算区间，仅供参考。',
-    disclaimerEn: 'Salary ranges are market estimates only. For reference only.',
-    typical: '开市前查看隔夜市场 → 接受客户询价 → 管理日内风险 → 收市后盘点PnL → 准备明日策略',
-    typicalEn: 'Pre-market review of overnight flows → take client inquiries → manage intraday risk → EOD P&L review → prep next-day strategy',
-  },
-  {
-    id: 'AM',
-    title: '资产管理 (Asset Management)',
-    titleEn: 'Asset Management',
-    icon: '💼',
-    color: '#f6c90e',
-    tagline: '为机构或个人管理资金组合，实现长期稳健回报',
-    taglineEn: 'Managing institutional or individual portfolios for long-term risk-adjusted returns',
-    description:
-      '资产管理公司（公募基金、私募、养老金等）负责管理客户资产，基于宏观判断和个股研究构建投资组合。岗位分工多样：组合经理负责最终决策，研究员负责标的深挖，销售负责AUM扩张。',
-    descriptionEn:
-      'Asset managers (mutual funds, private funds, pensions) manage client capital, constructing portfolios based on macro views and stock-level research. Diverse roles: portfolio managers make final calls, analysts dig deep, sales expands AUM.',
-    skills: ['投资组合构建', '因子分析（价值/成长/动量）', '宏观分析', '风险收益优化', '客户沟通', 'Bloomberg/Wind操作', '量化筛选'],
-    skillsEn: ['Portfolio construction', 'Factor analysis (value/growth/momentum)', 'Macro analysis', 'Risk-return optimization', 'Client communication', 'Bloomberg/Wind proficiency', 'Quantitative screening'],
-    certs: ['CFA（几乎必备）', 'FRM', '基金从业资格（国内）'],
-    certsEn: ['CFA (near-essential)', 'FRM', 'Fund Practitioner License (China)'],
-    entry: '金融/经济学/理工科本科或硕士；CFA进阶必要；部分要求投资研究背景',
-    entryEn: 'Finance/economics/STEM undergrad or master; CFA increasingly required; some roles need prior research experience',
-    career: '研究助理 → 行业研究员 → 高级研究员 → 基金经理助理 → 基金经理',
-    careerEn: 'Research Associate → Sector Analyst → Senior Analyst → Junior PM → Portfolio Manager',
-    salary: '初级研究员：¥20–35万（国内公募）；$75–110K（美国）；绩效奖金与基金收益挂钩',
-    salaryEn: 'Junior Analyst: RMB 200-350K (China mutual fund); $75-110K (US); performance bonus tied to fund returns',
-    disclaimer: '以上薪资为市场估算区间，仅供参考。',
-    disclaimerEn: 'Salary ranges are market estimates only. For reference only.',
-    typical: '晨会讨论市场 → 跟踪持仓标的 → 阅读公司公告 → 调研新标的 → 更新组合归因分析',
-    typicalEn: 'Morning meeting on markets → monitor existing holdings → read company announcements → research new ideas → update portfolio attribution',
-  },
-  {
-    id: 'PE',
-    title: '私募股权 (Private Equity)',
-    titleEn: 'Private Equity',
-    icon: '🦅',
-    color: '#ef5350',
-    tagline: '收购未上市企业，通过价值创造实现超额回报',
-    taglineEn: 'Acquire private companies, create value, and realize outsized returns',
-    description:
-      'PE基金通过杠杆收购（LBO）或成长型投资持有私有企业股权，在3-7年内通过改善运营、战略并购或IPO退出实现回报。对候选人的建模能力、行业判断和尽职调查经验要求极高，招聘竞争激烈。',
-    descriptionEn:
-      'PE funds acquire stakes in private companies through LBOs or growth equity, creating value over 3-7 years via operational improvement, add-on acquisitions, or IPO exits. Highly competitive hiring — demands strong modeling, sector conviction, and due diligence skills.',
-    skills: ['LBO建模', '运营价值提升分析', '尽职调查（财务/法律/运营）', '投资备忘录（IC Memo）', '行业深度判断', '管理层访谈', 'IRR/MOIC计算'],
-    skillsEn: ['LBO modeling', 'Operational value creation analysis', 'Due diligence (financial/legal/operational)', 'Investment committee memo', 'Sector conviction', 'Management interviews', 'IRR / MOIC calculations'],
-    certs: ['CFA（进阶推荐）', 'MBA（中后期晋升路径）'],
-    certsEn: ['CFA (recommended for advancement)', 'MBA (mid-career promotion path)'],
-    entry: '通常由IBD分析师转岗（2年IBD经验）；极少直接招本科；招聘流程包括建模测试+案例分析',
-    entryEn: 'Typically sourced from IBD analysts (2 years IBD experience); rarely hire undergrads directly; process includes modeling test + case study',
-    career: '助理(Associate) → 高级助理 → 副总裁(VP) → 合伙人；部分回读MBA再重新进入',
-    careerEn: 'Associate → Senior Associate → VP → Partner; some exit for MBA then re-enter',
-    salary: '初级助理：¥40–80万（国内顶级机构）；$150–200K（美国中型PE）；carry是主要长期激励',
-    salaryEn: 'Junior Associate: RMB 400-800K (top China PE); $150-200K (US mid-market PE); carried interest is the key long-term incentive',
-    disclaimer: '以上薪资为市场估算区间，仅供参考。',
-    disclaimerEn: 'Salary ranges are market estimates only. For reference only.',
-    typical: '审阅交易材料 → 更新LBO模型 → 行业尽调电话 → 撰写IC备忘录 → 投委会报告',
-    typicalEn: 'Review deal materials → update LBO model → industry diligence calls → write IC memo → present to investment committee',
-  },
-  {
-    id: 'Quant',
-    title: '量化金融 (Quant)',
-    titleEn: 'Quantitative Finance',
-    icon: '🤖',
-    color: '#38bdf8',
-    tagline: '用数学与算法在市场中寻找可持续的统计套利机会',
-    taglineEn: 'Using math and algorithms to find sustainable statistical edges in markets',
-    description:
-      'Quant角色涵盖量化研究员（开发Alpha因子）、量化交易员（执行策略）和量化开发工程师（系统搭建）。需要极强的数理背景，是近年来竞争最激烈的金融岗位之一，薪资天花板极高。',
-    descriptionEn:
-      'Quant roles span quantitative researchers (developing alpha signals), quant traders (executing strategies), and quant developers (building infrastructure). Requires elite math skills — now one of the most competitive finance roles with a very high compensation ceiling.',
-    skills: ['Python / C++编程', '统计学与概率论', '机器学习（ML）', '时间序列分析', '回测框架搭建', '因子挖掘与组合优化', '随机过程/Black-Scholes'],
-    skillsEn: ['Python / C++ programming', 'Statistics and probability theory', 'Machine learning', 'Time series analysis', 'Backtesting framework design', 'Factor mining & portfolio optimization', 'Stochastic processes / Black-Scholes'],
-    certs: ['FRM', 'CFA（部分岗位要求）', '数学/CS/物理博士学历（顶级机构）'],
-    certsEn: ['FRM', 'CFA (some roles)', 'Math/CS/Physics PhD (elite firms)'],
-    entry: '数学/物理/CS/统计学顶尖本科或博士；编程能力必须；Leetcode中等及以上；数理测试',
-    entryEn: 'Top math/physics/CS/stats undergraduate or PhD; strong programming required; LeetCode medium+ level; quantitative assessment tests',
-    career: '初级研究员 → 高级研究员 → 策略主管 → 合伙人/PM；顶级薪资在市场中极具竞争力',
-    careerEn: 'Junior Researcher → Senior Researcher → Strategy Lead → Partner/PM; top-tier comp among all finance roles',
-    salary: '初级：¥40–100万（国内顶级量化私募）；$150–250K+（美国顶级对冲基金）；Citadel/TwoSigma等可达$500K+',
-    salaryEn: 'Junior: RMB 400K-1M (top China quant funds); $150-250K+ (top US hedge funds); elite firms like Citadel/Two Sigma can reach $500K+',
-    disclaimer: '以上薪资为市场估算区间，仅供参考。顶级量化机构薪资明显高于行业均值。',
-    disclaimerEn: 'Salary ranges are market estimates only. Elite quant firms pay significantly above market average.',
-    typical: '阅读学术论文 → 构建新因子 → 历史回测 → 代码Review → 策略容量分析 → 模拟盘验证',
-    typicalEn: 'Read academic papers → build new signals → historical backtesting → code review → strategy capacity analysis → paper trading validation',
-  },
-  {
-    id: 'CorpFinance',
-    title: '企业财务 (Corporate Finance)',
-    titleEn: 'Corporate Finance / FP&A',
-    icon: '🏢',
-    color: '#a78bfa',
-    tagline: '企业内部的财务规划、资本结构与战略决策支持',
-    taglineEn: 'Internal financial planning, capital structure, and strategic decision support',
-    description:
-      '企业财务涵盖FP&A（财务规划与分析）、资金管理（Treasury）、财务会计和企业并购（Corp Dev）等职能。与投行相比，工作与生活的平衡更好，但薪资天花板相对较低。是金融学生进入实体行业的重要通道。',
-    descriptionEn:
-      'Corporate finance covers FP&A, treasury, accounting, and corporate development (M&A). Better work-life balance versus banking but a lower comp ceiling. An important entry point for finance students into the corporate world.',
-    skills: ['财务规划与预算', '财务报表分析', '资金管理', '成本分析', '项目NPV评估', 'ERP系统（SAP/Oracle）', '汇报与沟通'],
-    skillsEn: ['Financial planning & budgeting', 'Financial statement analysis', 'Treasury management', 'Cost analysis', 'Project NPV evaluation', 'ERP systems (SAP/Oracle)', 'Reporting & communication'],
-    certs: ['CPA（注册会计师，国内高度认可）', 'CMA（注册管理会计师）', 'CFA（进阶路径）'],
-    certsEn: ['CPA (highly valued in China)', 'CMA (Certified Management Accountant)', 'CFA (for advancement)'],
-    entry: '会计/金融/经济学本科；大型企业更倾向会计专业；实习经历重要',
-    entryEn: 'Accounting/finance/economics degree; large corporations prefer accounting majors; internship experience important',
-    career: '财务分析师 → 高级分析师 → 财务经理 → 财务总监(CFO路径)；或横向进入投行/咨询',
-    careerEn: 'Financial Analyst → Senior Analyst → Finance Manager → CFO track; or lateral to banking/consulting',
-    salary: '初级：¥15–30万（国内）；$60–90K（美国）；稳定性强，工时相对合理',
-    salaryEn: 'Junior: RMB 150-300K (China); $60-90K (US); stable with reasonable working hours',
-    disclaimer: '以上薪资为市场估算区间，仅供参考。',
-    disclaimerEn: 'Salary ranges are market estimates only. For reference only.',
-    typical: '整理月度财务报表 → 更新预算对比实际 → 准备管理层汇报 → 分析业务部门成本 → 现金流预测',
-    typicalEn: 'Prepare monthly financials → update budget vs actuals → prep management presentation → analyze business unit costs → cash flow forecasting',
-  },
-  {
-    id: 'Risk',
-    title: '风险管理与合规 (Risk & Compliance)',
-    titleEn: 'Risk Management & Compliance',
-    icon: '🛡️',
-    color: '#fb923c',
-    tagline: '识别、量化并管控金融机构的各类风险敞口',
-    taglineEn: 'Identify, quantify, and manage the full spectrum of financial institution risk exposures',
-    description:
-      '风险管理岗位涵盖市场风险（Market Risk）、信用风险（Credit Risk）、流动性风险和操作风险。合规岗位确保机构遵守监管要求（如巴塞尔协议III、MiFID II、证监会规定）。监管日趋严格，该领域需求持续增长。',
-    descriptionEn:
-      'Risk roles span market risk, credit risk, liquidity risk, and operational risk. Compliance ensures adherence to regulations (Basel III, MiFID II, CSRC requirements). Growing demand as regulatory scrutiny intensifies globally.',
-    skills: ['VaR/CVaR计算', '压力测试', '信用评估模型', '监管资本框架（巴塞尔III）', '衍生品风险建模', '合规政策解读', '内部控制'],
-    skillsEn: ['VaR / CVaR calculation', 'Stress testing', 'Credit scoring models', 'Regulatory capital framework (Basel III)', 'Derivatives risk modeling', 'Compliance policy interpretation', 'Internal controls'],
-    certs: ['FRM（金融风险管理师，该领域黄金认证）', 'PRM', 'CFA', '合规从业资格（国内）'],
-    certsEn: ['FRM (Financial Risk Manager — gold standard for this field)', 'PRM (Professional Risk Manager)', 'CFA', 'Compliance Practitioner License (China)'],
-    entry: '数学/统计/金融/工程本科；编程加分（Python/R）；FRM考取对求职帮助极大',
-    entryEn: 'Math/stats/finance/engineering background; programming a plus (Python/R); FRM certification significantly boosts employability',
-    career: '风险分析师 → 高级分析师 → 风险经理 → 首席风险官（CRO）路径',
-    careerEn: 'Risk Analyst → Senior Analyst → Risk Manager → Chief Risk Officer (CRO) track',
-    salary: '初级：¥18–32万（国内银行）；$70–100K（美国）；监管专家溢价明显',
-    salaryEn: 'Junior: RMB 180-320K (China banks); $70-100K (US); regulatory specialists command a significant premium',
-    disclaimer: '以上薪资为市场估算区间，仅供参考。',
-    disclaimerEn: 'Salary ranges are market estimates only. For reference only.',
-    typical: '查看隔夜市场敞口 → 运行压力测试 → 审查交易限额 → 监管报告整理 → 与前台业务沟通',
-    typicalEn: 'Review overnight risk exposures → run stress tests → review trading limits → prepare regulatory reports → communicate with front office',
-  },
-]
 
 const QUESTIONS = [
   // ── Technical ──────────────────────────────────────────────────────────────
@@ -368,6 +151,78 @@ const QUESTIONS = [
     framework: '排查路径：1）数据质量检查（历史数据是否包含极端市场状态？代理数据是否恰当？）；2）模型假设审视（正态分布假设？相关性矩阵是否过时？持有期假设？）；3）回测分析（P&L归因：模型捕捉到的风险因子 vs. 实际驱动亏损的因子）；4）尾部风险检验（极端情景压力测试）；5）与交易台沟通（是否有新增头寸/策略变化未纳入模型）。解决方案：更新模型、增加风险因子覆盖、引入CVaR/ES作为补充度量。',
     frameworkEn: 'Investigation path: 1) Data quality check (does historical data include stress periods? Are proxies appropriate?); 2) Model assumption review (normal distribution assumption? Stale correlation matrix? Holding period assumption?); 3) Back-testing (P&L attribution: which risk factors does the model capture vs. what actually drove losses?); 4) Tail risk analysis (extreme scenario stress testing); 5) Trading desk communication (new positions or strategy changes not in model?). Solution: update model, expand risk factor coverage, introduce CVaR/ES as complementary measure.',
   },
+  {
+    id: 16,
+    type: 'technical',
+    roles: ['IBD', 'PE', 'EquityResearch', 'AM'],
+    q: 'WACC的各组成部分如何计算？哪些情境下WACC不适合用作折现率？',
+    qEn: 'How is each component of WACC calculated? In what situations is WACC inappropriate as a discount rate?',
+    framework: 'WACC = Wd×Kd×(1-t) + We×Ke。Kd=税前债务成本（用当前市场利率，不用历史成本）；Ke用CAPM计算（Ke = Rf + β×ERP，其中β从可比公司去杠杆后再重新加杠杆）；权重用市值而非账面价值。WACC不适用的情况：①目标公司资本结构与收购方差异极大（杠杆率大幅变化时WACC本身在变）；②公司处于财务困境（预期资本结构难以确定）；③多元化公司中不同业务的风险差异显著（应对每个分部用独立WACC）。替代方法：APV（调整后现值法）——将无杠杆基础NPV与融资税盾分开计算，更适用于高度杠杆或资本结构变化的场景（如LBO）。',
+    frameworkEn: 'WACC = Wd×Kd×(1-t) + We×Ke. Kd = current market cost of debt (not historical); Ke via CAPM (Ke = Rf + β×ERP, with β unlevered from comps then re-levered); use market value weights, not book value. When WACC is inappropriate: ① target\'s capital structure differs significantly from acquirer (WACC itself shifts during a leveraged deal); ② company in financial distress (future capital structure unknowable); ③ conglomerate with divisions of very different risk profiles (use division-specific WACCs). Alternative: APV (Adjusted Present Value) — separates unlevered base NPV from financing tax shield; more suitable for highly leveraged or capital-structure-changing scenarios (e.g., LBOs).',
+  },
+  {
+    id: 17,
+    type: 'technical',
+    roles: ['IBD', 'CorpFinance', 'Risk'],
+    q: '商誉（Goodwill）是如何产生的？减值测试如何进行，分析师为何高度关注商誉减值公告？',
+    qEn: 'How is goodwill created? How is impairment testing conducted, and why do analysts pay close attention to goodwill impairment announcements?',
+    framework: '商誉 = 收购价格 − 被收购方可辨认净资产公允价值（IFRS/GAAP均适用）。产生原因：代表收购方为品牌、客户关系、协同效应等无法单独确认的无形价值所支付的溢价。减值测试（不摊销，每年至少一次）：以报告单元（Reporting Unit）的账面价值 vs. 公允价值对比——若账面价值 > 公允价值，直接确认差额为减值损失（IFRS 9采用单步法，ASC 350过去为两步法，现已简化）。分析师关注原因：①商誉减值通常意味着早期收购定价过高（溢价无法实现），是管理层战略判断失误的信号；②减值为非现金支出但直接冲击净利润（影响EPS）；③大额商誉的公司在估值时，应将商誉单独剔除分析（EV/EBITDA比P/E更能规避商誉减值噪音）。',
+    frameworkEn: 'Goodwill = acquisition price − fair value of identifiable net assets (both IFRS and GAAP). Created as a premium for brand, customer relationships, and synergies that cannot be separately recognized. Impairment testing (no amortization, at least annually): compare reporting unit\'s carrying amount vs. fair value — if carrying > fair value, recognize the difference as impairment loss immediately (IFRS uses single-step; ASC 350 simplified from two-step). Why analysts pay attention: ① impairment signals original acquisition was overpriced (premium failed to materialize) — a strategic judgment red flag; ② non-cash charge that directly reduces net income (EPS impact); ③ companies with large goodwill balances should be analyzed with goodwill stripped out (EV/EBITDA is less distorted by goodwill impairment than P/E).',
+  },
+  {
+    id: 18,
+    type: 'technical',
+    roles: ['AM', 'Risk', 'ST', 'EquityResearch'],
+    q: '利率上升对股票、债券、房地产三类资产的影响机制是什么？不同行业的股票受影响程度有何差异？',
+    qEn: 'What are the transmission mechanisms through which rising rates affect equities, bonds, and real estate? How does the impact differ across equity sectors?',
+    framework: '债券：利率上升→债券价格下跌（反向关系），修正久期决定敏感度（ΔP/P ≈ −D×Δy），久期越长影响越大（30年期国债远敏于2年期）。股票：双重冲击——①折现率提高→DCF内在价值直接下降；②无风险利率上升→股票风险溢价（ERP）相对收窄，压制估值倍数。成长股（高PE、远期现金流占比高=高"隐含久期"）受影响大于价值股；金融股（银行NIM扩大）、资源股（大宗商品上涨预期）相对防御。房地产：房贷利率上升→购房需求下降；商业地产Capitalization Rate（Cap Rate）随利率上升→估值下降。REITs因高杠杆+现金流折现敏感性，通常随利率上升大幅下跌。综合：利率上升周期中超配顺序通常为：能源>金融>消费必需品>科技/成长。',
+    frameworkEn: 'Bonds: rising rates → falling prices (inverse relationship); modified duration governs sensitivity (ΔP/P ≈ −D×Δy) — longer duration = greater impact (30-yr far more sensitive than 2-yr). Equities: dual channels — ① higher discount rate → direct reduction in DCF intrinsic value; ② higher risk-free rate → equity risk premium (ERP) narrows, compressing valuation multiples. Growth stocks (high P/E, cash flows far in the future = high "implied duration") hurt more than value; financials (bank NIM expansion) and energy (inflation pass-through) are relatively defensive. Real estate: higher mortgage rates → weaker demand; commercial cap rates rise → valuations fall; REITs (high leverage + long-duration cash flows) typically underperform sharply. General rotation in rate-rising cycles: Energy > Financials > Consumer Staples > Tech/Growth.',
+  },
+  {
+    id: 19,
+    type: 'technical',
+    roles: ['EquityResearch', 'IBD', 'AM'],
+    q: 'P/E估值有哪些根本局限性？什么情境下EV/EBITDA比P/E更适合？EV/EBITDA本身的局限又是什么？',
+    qEn: 'What are the fundamental limitations of P/E valuation? When is EV/EBITDA more appropriate than P/E, and what are EV/EBITDA\'s own limitations?',
+    framework: 'P/E局限性：①受资本结构影响（高杠杆公司利息支出压低净利，P/E失真）；②净利润可被盈余管理操纵（折旧政策/一次性项目/应计利润）；③亏损公司无法适用；④不同行业折旧政策差异大导致跨行业不可比。EV/EBITDA适用场景：①行业资本密集度差异大（折旧差异显著）；②跨国或跨税率比较（EBITDA排除税率差异）；③并购分析（收购方要支付整个EV包含债务）；④含高额债务公司（代表经营现金流生成能力）。EV/EBITDA自身局限：①EBITDA忽略资本支出（高CapEx行业如半导体/航空，EBITDA严重高估经营现金流）→改用EV/EBIT或EV/FCF；②不考虑营运资本变化；③含大量折旧的公司（摊销不需要现金支出），EBITDA可能混淆盈利质量。',
+    frameworkEn: 'P/E limitations: ① capital structure-dependent (high debt → high interest expense → lower net income → distorted P/E); ② manipulable via earnings management (depreciation policy, one-time items, accruals); ③ inapplicable for loss-making companies; ④ cross-industry comparisons distorted by different depreciation policies. EV/EBITDA preferred when: ① capital intensity varies across comparables (differing D&A); ② cross-border or cross-tax-rate comparisons; ③ M&A analysis (acquirer assumes entire EV including debt); ④ highly levered companies (EBITDA better proxies operating cash generation). EV/EBITDA limitations: ① ignores capex — high-capex sectors (semiconductors/airlines) severely overstate cash generation → use EV/EBIT or EV/FCF instead; ② ignores working capital changes; ③ large amortization companies: EBITDA may mask earnings quality differences.',
+  },
+  {
+    id: 20,
+    type: 'technical',
+    roles: ['Risk', 'AM', 'ST'],
+    q: '什么是久期（Duration）和凸度（Convexity）？它们在固定收益组合管理和利率对冲中如何应用？',
+    qEn: 'What are duration and convexity? How are they applied in fixed income portfolio management and interest rate hedging?',
+    framework: '修正久期（Modified Duration）：债券价格对利率变化的一阶敏感度。近似公式：ΔP/P ≈ −D×Δy。久期越长=利率风险越大（30年期国债久期约18-20，2年期约1.9）。凸度（Convexity）：二阶修正，捕捉久期本身随利率变化的非线性关系：完整公式：ΔP/P ≈ −D×Δy + ½×C×(Δy)²。高凸度债券（含权债券/可赎回债的"负凸度"需注意）在利率下降时涨得更多、上升时跌得更少，对投资者更有利。应用：①利率对冲：匹配资产和负债的久期（资产负债管理ALM）；②凸度对冲：多头久期+卖空凸度（常见的凸度套利策略）；③关键利率久期（KRD）：比单一久期更精确地捕捉收益率曲线各期限的非平行移动。重要：久期中性策略能消除平行移动风险，但无法消除曲线形变（steepening/flattening）风险。',
+    frameworkEn: 'Modified Duration: first-order sensitivity of bond price to rate changes. Approximation: ΔP/P ≈ −D×Δy. Longer duration = more rate risk (30-yr Treasury ≈ 18-20; 2-yr ≈ 1.9). Convexity: second-order correction, capturing the non-linearity of duration itself as rates change: full formula: ΔP/P ≈ −D×Δy + ½×C×(Δy)². High-convexity bonds rise more when rates fall and fall less when rates rise (favorable for investors); callable bonds exhibit "negative convexity" — be careful. Applications: ① rate hedging: match asset and liability duration (ALM); ② convexity hedging: long duration + short convexity (classic convexity arbitrage); ③ Key Rate Duration (KRD): more precise than single duration — captures non-parallel shifts at specific maturities. Important: duration-neutral strategy eliminates parallel shift risk but not curve reshaping risk (steepening/flattening).',
+  },
+  {
+    id: 21,
+    type: 'technical',
+    roles: ['Quant', 'AM', 'EquityResearch'],
+    q: '什么是有效市场假说（EMH）的三种形式？量化投资和基本面投资的逻辑分别对应哪种EMH假设？',
+    qEn: 'What are the three forms of the Efficient Market Hypothesis (EMH)? Which form does quantitative investing vs. fundamental investing implicitly challenge?',
+    framework: '弱式有效（Weak Form）：价格已反映所有历史价格信息，纯技术分析无法持续超额。半强式有效（Semi-strong Form）：价格已反映所有公开信息（财报/新闻/分析师报告），基本面分析也无法持续超额。强式有效（Strong Form）：价格反映包括内幕信息在内的所有信息，任何策略均无法超额。量化投资通常假设市场"整体有效但存在短期局部无效性"——试图挖掘统计意义上的系统性价格规律（挑战弱式），部分量化也挑战半强式（NLP解析公告情绪）。基本面投资假设市场对公司长期价值存在系统性误判（挑战半强式）——需要更深度的定性判断（护城河/管理层）才能获得非共识信息优势。重要补充：行为金融学为市场无效性提供了理论基础（过度反应/惯性/锚定效应），但同时也提醒Alpha难以持续——当Alpha被发现并广泛交易时，它会因被套利而消失。',
+    frameworkEn: 'Weak Form: prices reflect all historical price data — pure technical analysis cannot consistently outperform. Semi-strong Form: prices reflect all public information (earnings, news, analyst reports) — fundamental analysis also cannot consistently outperform. Strong Form: prices reflect all information including insider knowledge — no strategy generates alpha. Quantitative investing assumes markets are "broadly efficient with local short-term inefficiencies" — seeks statistically significant systematic patterns (challenges weak form); some quant also challenges semi-strong (NLP on filings/sentiment). Fundamental investing assumes systematic mispricing of long-term value (challenges semi-strong) — requires deeper qualitative judgment (moats/management) to develop non-consensus informational edge. Key addendum: behavioral finance provides the theoretical basis for market inefficiency (overreaction/momentum/anchoring), but also warns that alpha is fleeting — when discovered and widely traded, it gets arbitraged away.',
+  },
+  {
+    id: 22,
+    type: 'technical',
+    roles: ['Risk', 'AM', 'ST', 'EquityResearch'],
+    q: '收益率曲线倒挂（Inverted Yield Curve）意味着什么？对银行盈利能力有何具体影响？',
+    qEn: 'What does an inverted yield curve signal? What is its specific impact on bank profitability?',
+    framework: '倒挂定义：短期利率（2年期国债）> 长期利率（10年期国债），即"2s10s利差"为负。经济含义：市场预期未来经济将放缓，中央银行将被迫降息，因此长端利率提前下行。历史意义：美国1980年以来每次倒挂后均出现经济衰退（通常有6-24个月滞后），是最受关注的宏观领先指标之一。对银行盈利的具体影响：银行商业模式本质是"借短贷长"——吸收短期存款（低息）、发放长期贷款（高息），赚取净息差（NIM）。曲线倒挂时：①NIM被压缩甚至为负；②银行倾向于收紧信贷标准（贷款利润率下降→减少风险放贷）；③信贷收缩进一步加剧经济衰退压力（自我强化）。分析框架：关注NIM趋势+信贷增速+拨备覆盖率，三者结合判断银行股估值是否已充分反映衰退预期。',
+    frameworkEn: 'Inverted curve: short-term rates (2-yr Treasury) > long-term rates (10-yr Treasury) — the "2s10s spread" is negative. Economic signal: markets expect growth to slow and central banks will eventually cut, pulling long-end yields lower in advance. Historical significance: every US recession since 1980 was preceded by inversion (typically 6-24 month lead time) — one of the most watched macro leading indicators. Specific bank profitability impact: banks are inherently "borrow short, lend long" — taking in short-term deposits (low rate) to fund long-term loans (high rate), earning Net Interest Margin (NIM). During inversion: ① NIM compressed or negative; ② banks tighten lending standards (falling loan margins → less risk-taking); ③ credit contraction amplifies economic slowdown (self-reinforcing). Analytical framework: track NIM trend + credit growth + provision coverage ratio together — this combination determines whether bank valuations already reflect recession expectations.',
+  },
+  {
+    id: 23,
+    type: 'technical',
+    roles: ['IBD', 'PE', 'EquityResearch'],
+    q: 'DCF中终值（Terminal Value）通常占整体估值的60-80%，这有什么隐患？如何正确构建敏感性分析？',
+    qEn: 'Terminal Value typically represents 60-80% of total DCF value. What are the risks, and how should sensitivity analysis be properly constructed?',
+    framework: '隐患核心：终值由两个高度假设性参数决定——①永续增长率g（通常设2-3%，但不能超过长期名义GDP增速，否则公司将最终超过整个经济体）；②退出倍数（EV/EBITDA）。这两个参数的微小变化可导致终值剧烈波动，使整个估值结论可以"任意调整"——即"垃圾进垃圾出"（GIGO）风险。敏感性分析的正确做法：①双重终值验证：Gordon增长模型 vs. 退出倍数法两种方式交叉验证，若结果差距大于30%则需重新审视假设；②构建二维敏感性矩阵（Sensitivity Table）：以WACC（行，通常±1%区间，步长0.5%）× 永续增长率g（列，通常±0.5%区间）制作；③同时检验终值比例——若终值占比 > 80%，说明显性预测期（DCF的前5-7年）的价值创建过弱，模型依赖性过高；④结合可比公司分析（Comps）和先例交易做"足球场图"（Football Field）交叉验证，防止DCF成为唯一锚点。',
+    frameworkEn: 'Core risk: terminal value is driven by two highly assumptive parameters — ① perpetuity growth rate g (typically 2-3%, must not exceed long-run nominal GDP growth or the company eventually exceeds the entire economy); ② exit multiple (EV/EBITDA). Small changes to these can swing terminal value dramatically, making the overall valuation malleable — the classic "garbage in, garbage out" (GIGO) risk. Proper sensitivity analysis: ① dual terminal value validation: cross-check Gordon Growth Model vs. Exit Multiple Method — if results diverge >30%, revisit assumptions; ② two-dimensional sensitivity matrix: WACC (rows, ±1% range, 0.5% steps) × perpetuity growth g (columns, ±0.5% range); ③ check the terminal value proportion — if >80%, the explicit forecast period (years 1-7) generates too little value, indicating over-reliance on unprovable long-run assumptions; ④ combine with Comps and precedent transactions in a "Football Field" chart — prevents DCF from becoming the sole valuation anchor.',
+  },
 ]
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -432,7 +287,9 @@ function JobCard({ role, zh }) {
   const career = zh ? role.career : role.careerEn
   const salary = zh ? role.salary : role.salaryEn
   const disclaimer = zh ? role.disclaimer : role.disclaimerEn
-  const typical = zh ? role.typical : role.typicalEn
+  const coreScenario = zh ? (role.coreScenario || '') : (role.coreScenarioEn || '')
+  const differentiators = zh ? (role.differentiators || []) : (role.differentiatorsEn || [])
+  const typicalDay = zh ? (role.typicalDay || null) : (role.typicalDayEn || null)
 
   return (
     <div
@@ -461,15 +318,38 @@ function JobCard({ role, zh }) {
           {/* Description */}
           <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 12 }}>{desc}</p>
 
+          {/* Core Scenario */}
+          {coreScenario && (
+            <Section title={zh ? '典型工作场景' : 'Typical Work Scenario'}>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.8, margin: 0 }}>{coreScenario}</p>
+            </Section>
+          )}
+
           {/* Core skills */}
           <div style={{ marginBottom: 10 }}>
             <div style={{ fontSize: 11, color: role.color, fontWeight: 700, marginBottom: 6 }}>
-              {zh ? '核心技能' : 'Core Skills'}
+              {zh ? '核心技能工具' : 'Core Skills & Tools'}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
               {skills.map((s, i) => <Tag key={i} label={s} color={role.color} />)}
             </div>
           </div>
+
+          {/* Differentiators */}
+          {differentiators.length > 0 && (
+            <Section title={zh ? '与相近岗位的区别' : 'How This Role Differs'}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {differentiators.map((d, i) => (
+                  <div key={i} style={{
+                    fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7,
+                    paddingLeft: 10, borderLeft: `2px solid ${role.color}55`,
+                  }}>
+                    {d}
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
 
           <Section title={zh ? '推荐证书' : 'Recommended Certifications'}>
             <ul style={{ margin: 0, padding: '0 0 0 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.9 }}>
@@ -490,8 +370,20 @@ function JobCard({ role, zh }) {
             <p style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4, margin: '4px 0 0' }}>{disclaimer}</p>
           </Section>
 
-          <Section title={zh ? '日常工作一天' : 'A Typical Day'}>
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0, fontFamily: 'monospace' }}>{typical}</p>
+          <Section title={zh ? '典型一天工作流' : 'A Typical Day'}>
+            {typicalDay && Array.isArray(typicalDay) ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {typicalDay.map((item, i) => (
+                  <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace', padding: '2px 0' }}>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0, fontFamily: 'monospace' }}>
+                {zh ? (role.typical || '') : (role.typicalEn || '')}
+              </p>
+            )}
           </Section>
         </div>
       )}

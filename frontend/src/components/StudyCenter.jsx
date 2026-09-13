@@ -180,9 +180,9 @@ function PPCDiagram() {
     >
       <ChartAxes xlabel="Good X →" ylabel="Good Y →"/>
       <path d="M 393,235 C 388,118 173,24 58,24" fill="none" stroke="#f59e0b" strokeWidth="2.5"/>
-      <path d="M 416,235 C 411,140 202,46 83,46" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.42"/>
+      <path d="M 427,235 C 421,106 185,3 58,3" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.55"/>
       <text x="62" y="37" fill="#f59e0b" fontSize="11" fontWeight="700">PPC</text>
-      <text x="87" y="58" fill="#f59e0b" fontSize="10" opacity="0.52">PPC' (growth)</text>
+      <text x="70" y="13" fill="#f59e0b" fontSize="10" opacity="0.62">PPC' (growth)</text>
       <circle cx="268" cy="88" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="278" y="83" fill={DT} fontSize="10.5">A: Efficient</text>
       <circle cx="220" cy="155" r="5.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="2"/>
