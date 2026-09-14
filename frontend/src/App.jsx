@@ -9,6 +9,8 @@ import KnowledgeCard from './components/KnowledgeCard'
 import GlobalSentiment from './components/GlobalSentiment'
 import StatsDisplay from './components/StatsDisplay'
 import QuoteBanner from './components/QuoteBanner'
+import AuthModal from './components/AuthModal'
+import useAuthStore from './store/authStore'
 
 const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
 const StudyCenter        = lazy(() => import('./components/StudyCenter'))
@@ -31,6 +33,7 @@ export default function App() {
   const { market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme } = useThemeStore()
+  const { user, init: initAuth, signOut } = useAuthStore()
   const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
@@ -39,6 +42,8 @@ export default function App() {
   const [showInsight,   setShowInsight]   = useState(false)
   const [showAIFloat,   setShowAIFloat]   = useState(false)
   const [showWatchlist, setShowWatchlist] = useState(false)
+  const [showAuth,      setShowAuth]      = useState(false)
+  const [showUserMenu,  setShowUserMenu]  = useState(false)
   const watchlistCount = useWatchlistStore((s) => s.list.length)
   const watchlistBtnRef = useRef(null)
 
@@ -46,6 +51,13 @@ export default function App() {
   const [hadSplash]      = useState(shouldShowSplash)
   const [splashActive,   setSplashActive]   = useState(hadSplash)
   const [contentVisible, setContentVisible] = useState(!hadSplash)
+
+  // Initialize Supabase Auth listener once on mount
+  useEffect(() => {
+    let cleanup
+    initAuth().then(fn => { cleanup = fn })
+    return () => { cleanup?.() }
+  }, []) // eslint-disable-line
 
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
@@ -109,6 +121,7 @@ export default function App() {
         as the splash overlay fades out. */}
     <WelcomeModal onLangSelect={(lang) => setLang(lang)} />
     <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
+    <AuthModal open={showAuth} onClose={() => setShowAuth(false)} lang={lang} />
     <div
       style={{
         position: 'relative',
@@ -309,6 +322,78 @@ export default function App() {
             )}
           </div>
         ))}
+
+        {/* Auth button / user avatar */}
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          {user ? (
+            <>
+              <button
+                onClick={() => setShowUserMenu(v => !v)}
+                title={user.email}
+                style={{
+                  width: 34, height: 34, borderRadius: '50%',
+                  border: '1px solid rgba(14,165,233,0.4)',
+                  background: 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))',
+                  cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                  color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))' }}
+              >
+                {(user.email?.[0] ?? '?').toUpperCase()}
+              </button>
+              {showUserMenu && (
+                <div
+                  style={{
+                    position: 'absolute', top: 40, right: 0,
+                    background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+                    borderRadius: 10, minWidth: 200, zIndex: 9000,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '8px 0',
+                    animation: 'bfsPageFadeIn 0.15s ease both',
+                  }}
+                  onMouseLeave={() => setShowUserMenu(false)}
+                >
+                  <div style={{ padding: '8px 16px 10px', borderBottom: '1px solid var(--border-primary)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {user.email}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                      {lang === 'zh' ? '已登录' : 'Signed in'}
+                    </div>
+                  </div>
+                  <button
+                    onClick={async () => { setShowUserMenu(false); await signOut() }}
+                    style={{
+                      display: 'block', width: '100%', textAlign: 'left',
+                      padding: '9px 16px', background: 'none', border: 'none',
+                      cursor: 'pointer', fontSize: 13, color: '#ef5350',
+                      transition: 'background 0.12s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                  >
+                    {lang === 'zh' ? '退出登录' : 'Sign Out'}
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <button
+              onClick={() => setShowAuth(true)}
+              style={{
+                padding: '5px 14px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.35)',
+                background: 'rgba(14,165,233,0.08)',
+                cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#0ea5e9',
+                whiteSpace: 'nowrap', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.18)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)' }}
+            >
+              {lang === 'zh' ? '登录 / 注册' : 'Sign In'}
+            </button>
+          )}
+        </div>
 
         {/* App tab toggle */}
         <div
