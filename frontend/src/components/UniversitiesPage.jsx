@@ -897,17 +897,21 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
     await fetchAI(next)
   }
 
-  const MSG_AI = {
-    alignSelf: 'flex-start', maxWidth: '82%',
+  const bubbleAI = {
+    maxWidth: '80%',
     background: `${BLUE}14`, border: `1px solid ${BLUE}30`,
     borderRadius: '4px 14px 14px 14px', padding: '10px 14px',
     fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
   }
-  const MSG_USER = {
-    alignSelf: 'flex-end', maxWidth: '82%',
-    background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+  const bubbleUser = {
+    maxWidth: '80%',
+    background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.27)',
     borderRadius: '14px 4px 14px 14px', padding: '10px 14px',
     fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
+  }
+  const avatarBase = {
+    width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14,
   }
 
   return (
@@ -943,19 +947,38 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
         padding: '4px 0', minHeight: 0,
       }}>
         {chatHistory.map((m, i) => (
-          <div key={i} style={m.role === 'assistant' ? MSG_AI : MSG_USER}>
-            {m.content}
+          <div key={i} style={{
+            display: 'flex',
+            flexDirection: m.role === 'user' ? 'row-reverse' : 'row',
+            gap: 8, alignItems: 'flex-start',
+          }}>
+            <div style={{
+              ...avatarBase,
+              background: m.role === 'user' ? 'rgba(139,92,246,0.2)' : `${BLUE}22`,
+              border: `1px solid ${m.role === 'user' ? 'rgba(139,92,246,0.4)' : `${BLUE}44`}`,
+            }}>
+              {m.role === 'user' ? '👤' : '🎓'}
+            </div>
+            <div style={m.role === 'assistant' ? bubbleAI : bubbleUser}>
+              {m.content}
+            </div>
           </div>
         ))}
         {streaming && (
-          <div style={{ ...MSG_AI }}>
-            {streaming}
-            <span style={{ display: 'inline-block', width: 8, height: 14, background: BLUE,
-              marginLeft: 2, verticalAlign: 'middle', animation: 'bfsCursorBlink 1s infinite' }} />
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}>🎓</div>
+            <div style={{ ...bubbleAI }}>
+              {streaming}
+              <span style={{ display: 'inline-block', width: 8, height: 14, background: BLUE,
+                marginLeft: 2, verticalAlign: 'middle', animation: 'bfsCursorBlink 1s infinite' }} />
+            </div>
           </div>
         )}
         {isBusy && !streaming && (
-          <div style={{ ...MSG_AI, opacity: 0.5 }}>…</div>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}>🎓</div>
+            <div style={{ ...bubbleAI, opacity: 0.5 }}>…</div>
+          </div>
         )}
         {error && (
           <div style={{ fontSize: 12, color: '#f87171', padding: '8px 12px',

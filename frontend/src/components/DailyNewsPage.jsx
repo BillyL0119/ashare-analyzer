@@ -157,11 +157,7 @@ function NewsCard({ item }) {
 
 function SkeletonCard() {
   return (
-    <div style={{
-      height: 90, borderRadius: 12, marginBottom: 8,
-      background: 'var(--bg-tertiary)',
-      animation: 'pulse 1.5s ease-in-out infinite',
-    }} />
+    <div className="skeleton" style={{ height: 90, borderRadius: 12, marginBottom: 8 }} />
   )
 }
 
@@ -216,7 +212,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
   const hasMore   = displayed.length < items.length
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', paddingTop: 24, paddingBottom: 48 }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', paddingTop: 24, paddingBottom: 48 }}>
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
@@ -362,12 +358,6 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         </>
       )}
 
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.5; }
-          50%       { opacity: 0.9; }
-        }
-      `}</style>
     </div>
   )
 }

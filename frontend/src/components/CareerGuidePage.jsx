@@ -918,22 +918,45 @@ export default function CareerGuidePage({ lang }) {
   ]
 
   return (
-    <div style={{ paddingTop: 16, paddingBottom: 40 }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', paddingTop: 24, paddingBottom: 48 }}>
       {/* Page header */}
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={{
-          margin: 0, fontSize: 22, fontWeight: 700,
-          background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-        }}>
-          {zh ? '金融求职指南' : 'Finance Career Guide'}
-        </h2>
-        <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-          {zh
-            ? '8大金融岗位详解 · 精选面试题库 · AI模拟面试练习，助你在求职路上更有底气'
-            : '8 finance roles in depth · curated interview question bank · AI mock interview practice'}
-        </p>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 12 }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
+            {zh ? '金融求职指南' : 'Finance Career Guide'}
+          </h1>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
+            {zh
+              ? '8大金融岗位深度解析 · 精选面试题库 · AI模拟面试练习'
+              : '8 finance roles in depth · curated question bank · AI mock interview practice'}
+          </p>
+          {/* Stat chips */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+            {[
+              { icon: '💼', label: zh ? '8 大岗位' : '8 Roles' },
+              { icon: '📝', label: zh ? '精选题库' : 'Question Bank' },
+              { icon: '🤖', label: zh ? 'AI 模拟面试' : 'AI Mock Interview' },
+              { icon: '🌐', label: zh ? '中英双语' : 'Bilingual' },
+            ].map(chip => (
+              <span key={chip.label} style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                fontSize: 11, padding: '3px 9px', borderRadius: 20,
+                background: 'rgba(14,165,233,0.08)',
+                border: '1px solid rgba(14,165,233,0.18)',
+                color: 'var(--text-secondary)',
+              }}>
+                <span>{chip.icon}</span>{chip.label}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Divider */}
+      <div style={{
+        height: 1, marginBottom: 18,
+        background: 'linear-gradient(90deg, rgba(14,165,233,0.4) 0%, rgba(139,92,246,0.3) 50%, transparent 100%)',
+      }} />
 
       {/* Sub-tab nav */}
       <div style={{

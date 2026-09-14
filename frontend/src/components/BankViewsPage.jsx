@@ -181,11 +181,7 @@ function NewsCard({ item, zh }) {
 
 function SkeletonCard() {
   return (
-    <div style={{
-      height: 110, borderRadius: 12, marginBottom: 8,
-      background: 'var(--bg-tertiary)',
-      animation: 'bvPulse 1.5s ease-in-out infinite',
-    }} />
+    <div className="skeleton" style={{ height: 110, borderRadius: 12, marginBottom: 8 }} />
   )
 }
 
@@ -244,7 +240,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
   const hasMore   = displayed.length < visibleItems.length
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', paddingTop: 24, paddingBottom: 48 }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', paddingTop: 24, paddingBottom: 48 }}>
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 12 }}>
         <div>
@@ -357,12 +353,6 @@ export default function BankViewsPage({ lang = 'zh' }) {
         </>
       )}
 
-      <style>{`
-        @keyframes bvPulse {
-          0%, 100% { opacity: 0.5; }
-          50%       { opacity: 0.9; }
-        }
-      `}</style>
     </div>
   )
 }
