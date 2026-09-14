@@ -190,7 +190,7 @@ function PPCDiagram() {
       <text x="70" y="22" fill="#f59e0b" fontSize="10" opacity="0.62">PPC' (growth)</text>
       {/* A: Efficient — on PPC at t=45°: (55+290·cos45°, 235−180·sin45°)=(260,108) */}
       <circle cx="260" cy="108" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
-      <text x="270" y="103" fill={DT} fontSize="10.5">A: Efficient</text>
+      <text x="252" y="100" textAnchor="end" fill={DT} fontSize="10.5">A: Efficient</text>
       {/* B: Inefficient — inside PPC; (155/290)²+(70/180)²=0.44<1 ✓ */}
       <circle cx="210" cy="165" r="5.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="2"/>
       <text x="220" y="160" fill={DT} fontSize="10.5">B: Inefficient</text>
