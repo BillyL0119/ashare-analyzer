@@ -287,14 +287,22 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Liquid background blobs ─────────────────────────────────────────────── */
+/* ── Liquid / Gooey background ───────────────────────────────────────────── */
 /*
- * Layer model:
- *   .bfs-liquid-bg  – position:fixed, z-index:0, pointer-events:none
- *   App main wrapper – position:relative, z-index:1, background:transparent
- *   Cards / charts   – opaque var(--bg-secondary) backgrounds; blobs never
- *                      bleed through them.
+ * Two-layer model:
+ *   Layer 1 (.bfs-blob)      – 3 large, very blurry ambient blobs; pure atmosphere.
+ *   Layer 2 (.bfs-goo-layer) – 6 solid-colour blobs behind an SVG gooey filter.
+ *     The SVG feGaussianBlur + feColorMatrix alpha-boost makes blobs that come
+ *     within ~200 px of each other merge into a single liquid droplet shape and
+ *     re-separate cleanly when they drift apart – the classic metaball effect.
+ *
+ * Stacking:
+ *   .bfs-liquid-bg  position:fixed z-index:0  pointer-events:none
+ *   App main wrapper position:relative z-index:1 background:transparent
+ *   Cards / charts  opaque var(--bg-secondary) – blobs never bleed through.
  */
+
+/* ── Container ── */
 .bfs-liquid-bg {
   position: fixed;
   inset: 0;
@@ -303,6 +311,17 @@ body {
   overflow: hidden;
 }
 
+/* ── SVG filter element (zero-size, invisible) ── */
+.bfs-svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   LAYER 1 – Ambient blobs (soft atmospheric glow)
+   ═══════════════════════════════════════════════ */
 .bfs-blob {
   position: absolute;
   border-radius: 50%;
@@ -311,104 +330,202 @@ body {
   animation-iteration-count: infinite;
   animation-direction: alternate;
   animation-fill-mode: both;
-  /* Exempt from the blanket body * transition */
   transition: none !important;
 }
 
-/* ── Blob 1 – sky blue, top-left anchor ── */
+/* Blue – top-left */
 .bfs-b1 {
-  width: 560px; height: 560px;
-  top: -200px; left: -120px;
-  background: radial-gradient(circle, rgba(14,165,233,0.18) 0%, transparent 68%);
+  width: 600px; height: 600px;
+  top: -220px; left: -140px;
+  background: radial-gradient(circle, rgba(14,165,233,0.16) 0%, transparent 68%);
   filter: blur(90px);
-  animation-name: bfsBlob1;
-  animation-duration: 24s;
+  animation-name: bfsAmb1;
+  animation-duration: 26s;
 }
-/* ── Blob 2 – violet, bottom-right anchor ── */
+/* Violet – bottom-right */
 .bfs-b2 {
-  width: 500px; height: 500px;
-  bottom: -180px; right: -100px;
-  background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 68%);
+  width: 540px; height: 540px;
+  bottom: -200px; right: -120px;
+  background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 68%);
   filter: blur(100px);
-  animation-name: bfsBlob2;
-  animation-duration: 31s;
-  animation-delay: -10s;
+  animation-name: bfsAmb2;
+  animation-duration: 33s;
+  animation-delay: -11s;
 }
-/* ── Blob 3 – cyan, mid-right ── */
+/* Cyan – mid-screen */
 .bfs-b3 {
-  width: 380px; height: 380px;
-  top: 38%; right: 4%;
-  background: radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 68%);
-  filter: blur(75px);
-  animation-name: bfsBlob3;
-  animation-duration: 22s;
+  width: 420px; height: 420px;
+  top: 36%; left: 40%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 68%);
+  filter: blur(80px);
+  animation-name: bfsAmb3;
+  animation-duration: 24s;
+  animation-delay: -7s;
+}
+
+@keyframes bfsAmb1 {
+  from { transform: translate(0, 0)      scale(1);    }
+  to   { transform: translate(90px, 110px) scale(1.08); }
+}
+@keyframes bfsAmb2 {
+  from { transform: translate(0, 0)        scale(1);    }
+  to   { transform: translate(-80px,-95px) scale(0.93); }
+}
+@keyframes bfsAmb3 {
+  from { transform: translate(-50%,-50%) translate(0, 0)       scale(0.94); }
+  to   { transform: translate(-50%,-50%) translate(-70px, 80px) scale(1.06); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LAYER 2 – Gooey metaball blobs
+   The filter on .bfs-goo-layer is applied to all children
+   simultaneously so their blurred halos interact → merging.
+   ═══════════════════════════════════════════════════════════ */
+
+.bfs-goo-layer {
+  position: absolute;
+  inset: 0;
+  /* SVG gooey filter (defined inline in LiquidBackground.jsx) */
+  filter: url(#bfs-goo);
+  /* Overall layer opacity keeps the effect subtle */
+  opacity: 0.22;
+  transition: none !important;
+}
+
+.bfs-gblob {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-fill-mode: both;
+  transition: none !important;
+}
+
+/*
+ * Blob placement strategy:
+ *   – Centers are set via top/left with -½-size offset so % = centre position.
+ *   – Animations move blobs toward partner blobs so they merge mid-cycle.
+ *   – Pair targets: (bg1↔bg2), (bg3↔bg5), (bg4↔bg6).
+ *   – Because animation durations differ, pairs drift in and out of contact
+ *     asynchronously, giving organic unpredictable liquid behaviour.
+ */
+
+/* bg1 – blue, upper-left  (centre ≈ 15%, 18%) */
+.bg1 {
+  width: 270px; height: 270px;
+  top: calc(18% - 135px); left: calc(15% - 135px);
+  background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
+  animation-name: bfsGoo1;
+  animation-duration: 20s;
+}
+/* bg2 – violet, upper-center  (centre ≈ 44%, 24%) — drifts toward bg1 */
+.bg2 {
+  width: 260px; height: 260px;
+  top: calc(24% - 130px); left: calc(44% - 130px);
+  background: radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 68%);
+  animation-name: bfsGoo2;
+  animation-duration: 25s;
   animation-delay: -6s;
 }
-/* ── Blob 4 – blue, top-right ── */
-.bfs-b4 {
-  width: 440px; height: 440px;
-  top: -80px; right: -80px;
-  background: radial-gradient(circle, rgba(14,165,233,0.10) 0%, transparent 68%);
-  filter: blur(110px);
-  animation-name: bfsBlob4;
+/* bg3 – blue, upper-right  (centre ≈ 74%, 32%) — drifts toward bg5 */
+.bg3 {
+  width: 280px; height: 280px;
+  top: calc(32% - 140px); left: calc(74% - 140px);
+  background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
+  animation-name: bfsGoo3;
+  animation-duration: 22s;
+  animation-delay: -11s;
+}
+/* bg4 – cyan, lower-left  (centre ≈ 20%, 66%) — drifts toward bg6 */
+.bg4 {
+  width: 260px; height: 260px;
+  top: calc(66% - 130px); left: calc(20% - 130px);
+  background: radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 68%);
+  animation-name: bfsGoo4;
   animation-duration: 27s;
+  animation-delay: -4s;
+}
+/* bg5 – violet, lower-center  (centre ≈ 54%, 60%) — drifts toward bg3 */
+.bg5 {
+  width: 270px; height: 270px;
+  top: calc(60% - 135px); left: calc(54% - 135px);
+  background: radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 68%);
+  animation-name: bfsGoo5;
+  animation-duration: 19s;
+  animation-delay: -9s;
+}
+/* bg6 – blue, lower-right  (centre ≈ 80%, 74%) — drifts toward bg4 */
+.bg6 {
+  width: 260px; height: 260px;
+  top: calc(74% - 130px); left: calc(80% - 130px);
+  background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
+  animation-name: bfsGoo6;
+  animation-duration: 23s;
   animation-delay: -15s;
 }
-/* ── Blob 5 – violet, lower-left ── */
-.bfs-b5 {
-  width: 350px; height: 350px;
-  top: 55%; left: 6%;
-  background: radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 68%);
-  filter: blur(75px);
-  animation-name: bfsBlob5;
-  animation-duration: 20s;
-  animation-delay: -8s;
-}
 
-/* ── Keyframes – only transform, no reflow ── */
-@keyframes bfsBlob1 {
+/*
+ * Keyframe vectors are designed so partner blobs converge at the `to` end:
+ *   bg1 moves +160px right / +110px down  →  approaches bg2's starting area
+ *   bg2 moves −130px left  / +90px down   →  approaches bg1's `to` position
+ *   bg3 moves −140px left  / +100px down  →  approaches bg5's starting area
+ *   bg5 moves +80px right  / −100px up    →  approaches bg3's `to` position
+ *   bg4 moves +170px right / −90px up     →  approaches bg6's starting area
+ *   bg6 moves −160px left  / −100px up    →  approaches bg4's `to` position
+ */
+@keyframes bfsGoo1 {
   from { transform: translate(0,     0)     scale(1);    }
-  to   { transform: translate(80px,  100px) scale(1.10); }
+  to   { transform: translate(160px, 110px) scale(1.08); }
 }
-@keyframes bfsBlob2 {
+@keyframes bfsGoo2 {
+  from { transform: translate(0,      0)    scale(1);    }
+  to   { transform: translate(-130px, 90px) scale(0.95); }
+}
+@keyframes bfsGoo3 {
+  from { transform: translate(0,      0)    scale(1);    }
+  to   { transform: translate(-140px, 100px) scale(1.06); }
+}
+@keyframes bfsGoo4 {
+  from { transform: translate(0,     0)    scale(1);    }
+  to   { transform: translate(170px, -90px) scale(1.05); }
+}
+@keyframes bfsGoo5 {
+  from { transform: translate(0,    0)     scale(0.94); }
+  to   { transform: translate(80px, -100px) scale(1.08); }
+}
+@keyframes bfsGoo6 {
   from { transform: translate(0,      0)     scale(1);    }
-  to   { transform: translate(-70px, -90px) scale(0.94); }
-}
-@keyframes bfsBlob3 {
-  from { transform: translate(0,      0)    scale(0.92); }
-  to   { transform: translate(-90px, 70px) scale(1.08); }
-}
-@keyframes bfsBlob4 {
-  from { transform: translate(0,    0)    scale(1);    }
-  to   { transform: translate(55px, 85px) scale(1.06); }
-}
-@keyframes bfsBlob5 {
-  from { transform: translate(0,     0)     scale(1);    }
-  to   { transform: translate(65px, -80px) scale(1.12); }
+  to   { transform: translate(-160px, -100px) scale(0.96); }
 }
 
-/* ── Mobile – fewer blobs, lighter blur, smaller sizes ── */
+/* ── Mobile: lighter filter, fewer/smaller blobs ── */
 @media (max-width: 768px) {
-  /* Drop blobs 4 & 5 on small screens */
-  .bfs-b4, .bfs-b5 { display: none; }
-  .bfs-b1 { width: 340px; height: 340px; filter: blur(55px); }
-  .bfs-b2 { width: 300px; height: 300px; filter: blur(60px); }
-  .bfs-b3 { width: 240px; height: 240px; filter: blur(45px); }
+  /* Drop lower 3 goo blobs – keep only top 3 */
+  .bg4, .bg5, .bg6 { display: none; }
+  /* Switch to lighter mobile filter (stdDeviation 9 instead of 14) */
+  .bfs-goo-layer { filter: url(#bfs-goo-sm); opacity: 0.18; }
+  /* Shrink ambient blobs */
+  .bfs-b1 { width: 360px; height: 360px; filter: blur(55px); }
+  .bfs-b2 { width: 320px; height: 320px; filter: blur(60px); }
+  .bfs-b3 { width: 260px; height: 260px; filter: blur(45px); }
+  /* Smaller goo blobs – re-centre to match reduced size */
+  .bg1 { width: 190px; height: 190px; top: calc(18% - 95px); left: calc(15% - 95px); }
+  .bg2 { width: 190px; height: 190px; top: calc(24% - 95px); left: calc(44% - 95px); }
+  .bg3 { width: 190px; height: 190px; top: calc(32% - 95px); left: calc(74% - 95px); }
 }
 
-/* ── Light theme – very subtle tint, keep blobs visible but restrained ── */
-:root[data-theme="light"] .bfs-liquid-bg { opacity: 0.30; }
-
-/* ── Reduced motion – freeze all blob animations ── */
-@media (prefers-reduced-motion: reduce) {
-  .bfs-blob {
-    animation: none !important;
-    will-change: auto;
-  }
-}
+/* ── Light theme – tone down substantially ── */
+:root[data-theme="light"] .bfs-liquid-bg { opacity: 0.28; }
 
 /* ── Reduced motion ─────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  /* Freeze liquid background */
+  .bfs-blob,
+  .bfs-gblob { animation: none !important; will-change: auto; }
+  /* Page entrance / UI animations */
   .bfs-enter-1, .bfs-enter-2, .bfs-enter-3, .bfs-enter-4 {
     animation: none !important;
   }
