@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import LiquidBackground from './components/LiquidBackground'
 import SplashScreen, { shouldShowSplash } from './components/SplashScreen'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
@@ -93,6 +94,8 @@ export default function App() {
 
   return (
     <>
+    {/* Liquid background — fixed layer, sits below all content (z-index:0) */}
+    <LiquidBackground />
     {/* Splash screen — renders above everything, unmounts after animation */}
     {splashActive && (
       <SplashScreen
@@ -108,12 +111,10 @@ export default function App() {
     <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
     <div
       style={{
+        position: 'relative',
+        zIndex: 1,
         minHeight: '100vh',
-        background: `
-          radial-gradient(ellipse 55% 45% at 0% 0%, rgba(14,165,233,0.06) 0%, transparent 70%),
-          radial-gradient(ellipse 50% 45% at 100% 100%, rgba(139,92,246,0.05) 0%, transparent 70%),
-          var(--bg-primary)
-        `,
+        background: 'transparent',
         color: 'var(--text-primary)',
         fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         display: 'flex',
