@@ -205,10 +205,17 @@ body {
 .bfs-enter-3 { animation: bfsSlideUp 0.4s ease 0.24s both; }
 .bfs-enter-4 { animation: bfsSlideUp 0.4s ease 0.36s both; }
 
-/* ── Cursor blink ───────────────────────────────────────────────────────── */
+/* ── Cursor / typing animations ─────────────────────────────────────────── */
 @keyframes bfsCursorBlink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1.0); opacity: 1; }
 }
 
 /* ── Card hover lift ────────────────────────────────────────────────────── */

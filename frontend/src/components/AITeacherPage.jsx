@@ -430,15 +430,6 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
         </div>
       </div>
 
-      <style>{`
-        @keyframes bounce {
-          0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-          40% { transform: scale(1.0); opacity: 1; }
-        }
-        @keyframes blink {
-          50% { opacity: 0; }
-        }
-      `}</style>
     </div>
   )
 }

@@ -63,7 +63,7 @@ function Pill({ active, onClick, children }) {
       style={{
         padding: '4px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
-        background: active ? 'rgba(14,165,233,0.18)' : 'rgba(255,255,255,0.04)',
+        background: active ? 'rgba(14,165,233,0.18)' : 'var(--bg-tertiary)',
         color: active ? '#0ea5e9' : 'var(--text-secondary)',
         transition: 'all 0.18s',
       }}
@@ -81,22 +81,15 @@ function NewsCard({ item, lang }) {
       rel="noopener noreferrer"
       style={{ textDecoration: 'none', display: 'block' }}
     >
-      <div style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 10,
-        padding: '12px 14px',
-        cursor: 'pointer',
-        transition: 'border-color 0.2s, background 0.2s',
-        marginBottom: 8,
-      }}
-        onMouseEnter={e => {
-          e.currentTarget.style.borderColor = 'rgba(14,165,233,0.4)'
-          e.currentTarget.style.background = 'rgba(14,165,233,0.05)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
-          e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
+      <div
+        className="bfs-card"
+        style={{
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-primary)',
+          borderRadius: 10,
+          padding: '12px 14px',
+          cursor: 'pointer',
+          marginBottom: 8,
         }}
       >
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>

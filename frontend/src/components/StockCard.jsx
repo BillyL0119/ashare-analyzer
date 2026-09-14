@@ -119,16 +119,16 @@ export default function StockCard({ stock }) {
             style={{
               padding: '3px 9px',
               borderRadius: 4,
-              border: '1px solid rgba(138,180,248,0.35)',
+              border: '1px solid rgba(14,165,233,0.35)',
               cursor: 'pointer',
               fontSize: 11,
-              background: 'rgba(138,180,248,0.08)',
-              color: '#8ab4f8',
+              background: 'rgba(14,165,233,0.08)',
+              color: '#0ea5e9',
               transition: 'all 0.15s',
               whiteSpace: 'nowrap',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.2)'; e.currentTarget.style.borderColor = '#8ab4f8' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.08)'; e.currentTarget.style.borderColor = 'rgba(138,180,248,0.35)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)'; e.currentTarget.style.borderColor = '#0ea5e9' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)'; e.currentTarget.style.borderColor = 'rgba(14,165,233,0.35)' }}
           >
             📖 {lang === 'zh' ? 'K线教学' : 'Learn'}
           </button>
@@ -143,7 +143,7 @@ export default function StockCard({ stock }) {
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 12,
-                background: period === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'rgba(255,255,255,0.06)',
+                background: period === key ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'var(--bg-hover)',
                 color: period === key ? '#fff' : THEME.text,
                 transition: 'background 0.15s',
               }}
@@ -165,7 +165,7 @@ export default function StockCard({ stock }) {
                   border: 'none',
                   cursor: 'pointer',
                   fontSize: 11,
-                  background: adjust === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'rgba(255,255,255,0.06)',
+                  background: adjust === key ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'var(--bg-hover)',
                   color: adjust === key ? '#fff' : THEME.text,
                   transition: 'background 0.15s',
                 }}
@@ -183,14 +183,14 @@ export default function StockCard({ stock }) {
           style={{
             padding: '3px 8px',
             borderRadius: 4,
-            border: '1px solid rgba(138,180,248,0.18)',
+            border: '1px solid rgba(14,165,233,0.18)',
             cursor: 'pointer',
             fontSize: 11,
             background: 'transparent',
             color: 'var(--text-muted)',
             transition: 'all 0.15s',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.12)'; e.currentTarget.style.color = '#8ab4f8' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.12)'; e.currentTarget.style.color = '#0ea5e9' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
           {lang === 'zh' ? '导出报告' : 'Export PDF'}

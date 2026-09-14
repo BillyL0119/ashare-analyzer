@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 
 const UP   = '#ef5350'
 const DOWN = '#26a69a'
-const BDR  = 'rgba(138,180,248,0.12)'
-const BG   = 'rgba(255,255,255,0.03)'
+const BDR  = 'var(--border-primary)'
+const BG   = 'var(--bg-tertiary)'
 
 const SENT_COLOR = {
   positive: '#26a69a',
@@ -32,17 +32,17 @@ function MiniSimilarRow({ item, onStockClick }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '8px 10px', cursor: 'pointer',
-        borderBottom: '1px solid rgba(138,180,248,0.07)',
+        borderBottom: '1px solid var(--border-primary)',
         transition: 'background 0.12s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.07)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.07)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
-      <span style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
+      <span style={{ fontSize: 11, color: '#0ea5e9', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
       <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.name}
       </span>
-      <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#c084fc', flexShrink: 0 }}>
+      <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#8b5cf6', flexShrink: 0 }}>
         {item.correlation?.toFixed(3)}
       </span>
     </div>
@@ -55,7 +55,7 @@ function MiniNewsRow({ item }) {
   return (
     <div style={{
       padding: '8px 10px',
-      borderBottom: '1px solid rgba(138,180,248,0.07)',
+      borderBottom: '1px solid var(--border-primary)',
       borderLeft: `3px solid ${color}`,
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
@@ -133,7 +133,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
     onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div style={{
-        background: '#0d1117', border: `1px solid ${BDR}`,
+        background: 'var(--bg-secondary)', border: `1px solid ${BDR}`,
         borderRadius: 16, width: '100%', maxWidth: 880,
         maxHeight: '90vh', overflowY: 'auto',
         position: 'relative',
@@ -144,7 +144,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
           style={{
             position: 'absolute', top: 14, right: 16,
             background: 'none', border: 'none', cursor: 'pointer',
-            color: 'rgba(232,234,240,0.4)', fontSize: 20, zIndex: 1,
+            color: 'var(--text-muted)', fontSize: 20, zIndex: 1,
           }}
         >✕</button>
 
@@ -155,8 +155,8 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{
-                  background: 'rgba(138,180,248,0.1)', border: '1px solid rgba(138,180,248,0.3)',
-                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: '#8ab4f8', fontFamily: 'monospace',
+                  background: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.3)',
+                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: '#0ea5e9', fontFamily: 'monospace',
                 }}>
                   {symbol}
                 </span>
@@ -164,7 +164,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
                   {name || q?.name || symbol}
                 </span>
                 {q?.industry && (
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'rgba(255,255,255,0.06)', borderRadius: 4, padding: '2px 7px' }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--bg-hover)', borderRadius: 4, padding: '2px 7px' }}>
                     {q.industry}
                   </span>
                 )}
@@ -222,7 +222,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
                   <div>
                     <div style={{ display: 'flex', padding: '5px 10px', fontSize: 10, color: 'var(--text-muted)',
                       fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em',
-                      borderBottom: '1px solid rgba(138,180,248,0.07)' }}>
+                      borderBottom: '1px solid var(--border-primary)' }}>
                       <span style={{ minWidth: 56 }}>CODE</span>
                       <span style={{ flex: 1 }}>NAME</span>
                       <span>CORR</span>
