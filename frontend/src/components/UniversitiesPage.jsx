@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -489,6 +489,795 @@ function UniModal({ uni, lang, onClose }) {
   )
 }
 
+// ── Interview: constants ───────────────────────────────────────────────────────
+const IV_PROGRAMS = [
+  '本科申请 Undergraduate', '预MBA Pre-MBA', 'MBA', '理学硕士 Master\'s / MSc',
+  '金融硕士 MFin / MiF', '会计硕士 MAcc', '管理学硕士 MiM', '博士 PhD / DBA',
+]
+const IV_TESTS = ['SAT', 'ACT', 'A-Level', 'IB', 'GMAT', 'GRE', '高考', 'Other']
+
+const DEVICE_ID = (() => {
+  let id = localStorage.getItem('bfs_did')
+  if (!id) { id = Math.random().toString(36).slice(2); localStorage.setItem('bfs_did', id) }
+  return id
+})()
+
+// ── Interview: SSE helper ──────────────────────────────────────────────────────
+async function streamSSE(url, payload, onChunk, onDone, onError) {
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      onError(err.detail || `HTTP ${res.status}`)
+      return
+    }
+    const reader = res.body.getReader()
+    const dec = new TextDecoder()
+    let buf = ''
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += dec.decode(value, { stream: true })
+      const lines = buf.split('\n')
+      buf = lines.pop()
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue
+        const raw = line.slice(6)
+        try {
+          const obj = JSON.parse(raw)
+          if (obj.done) { onDone(); return }
+          if (obj.text) onChunk(obj.text)
+          if (obj.error) { onError(obj.error); return }
+        } catch (_) {}
+      }
+    }
+    onDone()
+  } catch (e) {
+    onError(e.message)
+  }
+}
+
+// ── Interview: inline markdown renderer ───────────────────────────────────────
+function MdLine({ text }) {
+  const parts = text.split(/\*\*(.+?)\*\*/)
+  return <>{parts.map((p, i) =>
+    i % 2 === 1
+      ? <strong key={i} style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{p}</strong>
+      : p
+  )}</>
+}
+
+function RenderReport({ text }) {
+  if (!text) return null
+  const lines = text.split('\n')
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {lines.map((line, i) => {
+        if (line.startsWith('## ')) {
+          return (
+            <div key={i} style={{
+              fontSize: 14, fontWeight: 800, color: BLUE,
+              marginTop: i > 0 ? 18 : 4, marginBottom: 6, lineHeight: 1.3,
+            }}>
+              {line.slice(3)}
+            </div>
+          )
+        }
+        if (line === '---') {
+          return <div key={i} style={{ borderTop: '1px solid var(--border-primary)', margin: '10px 0' }} />
+        }
+        if (line.startsWith('⚠️')) {
+          return (
+            <div key={i} style={{
+              background: `${AMBER}12`, border: `1px solid ${AMBER}35`,
+              borderRadius: 8, padding: '10px 14px',
+              fontSize: 12, color: `${AMBER}dd`, lineHeight: 1.65, margin: '6px 0',
+            }}>
+              <MdLine text={line} />
+            </div>
+          )
+        }
+        if (line.startsWith('- ')) {
+          return (
+            <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', padding: '2px 0' }}>
+              <span style={{ color: BLUE, flexShrink: 0, lineHeight: '1.65', fontSize: 13 }}>•</span>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65 }}>
+                <MdLine text={line.slice(2)} />
+              </span>
+            </div>
+          )
+        }
+        if (line === '') return <div key={i} style={{ height: 4 }} />
+        if (line.startsWith('**区间')) {
+          // probability range line — highlight it prominently
+          const match = line.match(/(\d+%–\d+%)/)
+          return (
+            <div key={i} style={{
+              background: `${AMBER}18`, border: `1px solid ${AMBER}44`,
+              borderRadius: 10, padding: '14px 18px', margin: '8px 0',
+              fontSize: 18, fontWeight: 800, color: AMBER, letterSpacing: '0.5px',
+            }}>
+              <MdLine text={line} />
+              {match && (
+                <div style={{ fontSize: 11, fontWeight: 400, color: `${AMBER}99`, marginTop: 4 }}>
+                  粗略参考估算 · 非官方数据 · 仅供策略参考
+                </div>
+              )}
+            </div>
+          )
+        }
+        return (
+          <p key={i} style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '3px 0', lineHeight: 1.7 }}>
+            <MdLine text={line} />
+          </p>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── Interview: input field helper ─────────────────────────────────────────────
+function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, hint }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
+      {as === 'textarea' ? (
+        <textarea
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          rows={rows}
+          style={{
+            background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+            borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+            fontSize: 13, outline: 'none', resize: 'vertical', fontFamily: 'inherit',
+          }}
+          onFocus={e => { e.target.style.borderColor = BLUE }}
+          onBlur={e => { e.target.style.borderColor = 'var(--border-primary)' }}
+        />
+      ) : (
+        <input
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={{
+            background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+            borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+            fontSize: 13, outline: 'none',
+          }}
+          onFocus={e => { e.target.style.borderColor = BLUE }}
+          onBlur={e => { e.target.style.borderColor = 'var(--border-primary)' }}
+        />
+      )}
+      {hint && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{hint}</span>}
+    </div>
+  )
+}
+
+function IvSelect({ label, value, onChange, options }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        style={{
+          background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+          borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+          fontSize: 13, outline: 'none', cursor: 'pointer',
+        }}
+        onFocus={e => { e.target.style.borderColor = BLUE }}
+        onBlur={e => { e.target.style.borderColor = 'var(--border-primary)' }}
+      >
+        {options.map(o => <option key={o} value={o}>{o}</option>)}
+      </select>
+    </div>
+  )
+}
+
+// ── Interview: school autocomplete ────────────────────────────────────────────
+function SchoolInput({ value, onChange, unis }) {
+  const [open, setOpen] = useState(false)
+  const suggestions = value.length > 0
+    ? unis.filter(u => u.name.toLowerCase().includes(value.toLowerCase())).slice(0, 6)
+    : []
+
+  return (
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
+        目标学校 Target School *
+      </label>
+      <input
+        value={value}
+        onChange={e => { onChange(e.target.value); setOpen(true) }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        placeholder="输入学校名称（如 Harvard Business School）"
+        style={{
+          background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+          borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+          fontSize: 13, outline: 'none',
+        }}
+        onFocus_real={e => { e.target.style.borderColor = BLUE }}
+      />
+      {open && suggestions.length > 0 && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,
+          background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+          borderRadius: 8, boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          overflow: 'hidden', marginTop: 4,
+        }}>
+          {suggestions.map(u => (
+            <div
+              key={u.id}
+              onMouseDown={() => { onChange(u.name); setOpen(false) }}
+              style={{
+                padding: '8px 12px', cursor: 'pointer', fontSize: 13,
+                color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-primary)',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = `${BLUE}15` }}
+              onMouseLeave={e => { e.currentTarget.style.background = '' }}
+            >
+              <SchoolLogo name={u.name} size={22} />
+              <span>{u.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Interview: step 1 — profile form ─────────────────────────────────────────
+function ProfileForm({ unis, profile, setProfile, onStart }) {
+  const set = (k) => (v) => setProfile(p => ({ ...p, [k]: v }))
+  const canStart = profile.school.trim().length > 0
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{
+        background: `${BLUE}10`, border: `1px solid ${BLUE}30`,
+        borderRadius: 10, padding: '12px 16px',
+        fontSize: 12, color: `${BLUE}cc`, lineHeight: 1.65,
+      }}>
+        🎓 填写你的背景信息，AI面试官将结合这些内容进行有针对性的追问。
+        成绩为必填项，课外活动选填但建议填写以获得更准确的评估。
+      </div>
+
+      <SchoolInput value={profile.school} onChange={set('school')} unis={unis} />
+
+      <IvSelect
+        label="申请项目 Programme"
+        value={profile.program}
+        onChange={set('program')}
+        options={IV_PROGRAMS}
+      />
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <IvInput
+          label="GPA / 学业成绩 *"
+          value={profile.gpa}
+          onChange={set('gpa')}
+          placeholder="如 3.8/4.0 · A*AA · 40/45"
+          hint="支持不同评分体系"
+        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
+            标化考试 Standardised Test
+          </label>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <select
+              value={profile.test_type}
+              onChange={e => set('test_type')(e.target.value)}
+              style={{
+                background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 10px',
+                fontSize: 13, outline: 'none', cursor: 'pointer', width: 90,
+              }}
+            >
+              {IV_TESTS.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+            <input
+              value={profile.test_score}
+              onChange={e => set('test_score')(e.target.value)}
+              placeholder="分数"
+              style={{
+                flex: 1, background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 10px', fontSize: 13, outline: 'none',
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <IvInput
+        label="相关科目成绩（选填）"
+        value={profile.subjects}
+        onChange={set('subjects')}
+        placeholder="如 AP Calculus AB 5分 · IB Math AA HL 7分 · A-Level Economics A*"
+        hint="商学院重点关注数学、经济、商科类科目"
+      />
+
+      <IvInput
+        label="课外活动与经历（选填但强烈建议填写）"
+        value={profile.activities}
+        onChange={set('activities')}
+        placeholder={'示例：\n• 商业计划大赛 全国季军，团队负责市场分析\n• 学生会财务官，管理年度预算$5000\n• 某机构3个月实习，协助整理财务报告'}
+        as="textarea"
+        rows={5}
+        hint="AI面试官会针对这里的活动进行深度追问"
+      />
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>面试语言：</span>
+        {[['zh', '🇨🇳 中文'], ['en', '🇺🇸 English']].map(([val, label]) => (
+          <button
+            key={val}
+            onClick={() => set('lang')(val)}
+            style={{
+              padding: '5px 14px', borderRadius: 20, border: 'none',
+              border: `1px solid ${profile.lang === val ? BLUE : 'var(--border-primary)'}`,
+              background: profile.lang === val ? `${BLUE}22` : 'transparent',
+              color: profile.lang === val ? BLUE : 'var(--text-muted)',
+              cursor: 'pointer', fontSize: 12, fontWeight: profile.lang === val ? 600 : 400,
+              transition: 'all 0.15s',
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={onStart}
+        disabled={!canStart}
+        style={{
+          padding: '12px 0', borderRadius: 10, border: 'none',
+          background: canStart
+            ? `linear-gradient(135deg, ${BLUE}, ${PURPLE})`
+            : 'var(--border-primary)',
+          color: canStart ? '#fff' : 'var(--text-muted)',
+          fontSize: 14, fontWeight: 700, cursor: canStart ? 'pointer' : 'not-allowed',
+          transition: 'opacity 0.15s',
+          marginTop: 4,
+        }}
+      >
+        开始模拟面试 →
+      </button>
+    </div>
+  )
+}
+
+// ── Interview: step 2 — chat ──────────────────────────────────────────────────
+function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
+  const [userInput, setUserInput]   = useState('')
+  const [streaming, setStreaming]   = useState('')   // AI response being streamed
+  const [isBusy, setIsBusy]         = useState(false)
+  const [error, setError]           = useState('')
+  const chatEndRef                  = useRef(null)
+  const aiRounds = chatHistory.filter(m => m.role === 'assistant').length
+
+  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [chatHistory, streaming])
+
+  // On mount, trigger the opening question from the interviewer
+  useEffect(() => {
+    if (chatHistory.length === 0) fetchAI([])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function fetchAI(history) {
+    setIsBusy(true)
+    setError('')
+    setStreaming('')
+    let acc = ''
+    await streamSSE(
+      `${API}/api/universities/interview/chat`,
+      { profile, history, device_id: DEVICE_ID },
+      (chunk) => { acc += chunk; setStreaming(acc) },
+      () => {
+        const msg = { role: 'assistant', content: acc }
+        setChatHistory(h => [...h, msg])
+        setStreaming('')
+        setIsBusy(false)
+      },
+      (err) => { setError(err); setIsBusy(false) },
+    )
+  }
+
+  async function handleSend() {
+    if (!userInput.trim() || isBusy) return
+    const userMsg = { role: 'user', content: userInput.trim() }
+    const next = [...chatHistory, userMsg]
+    setChatHistory(next)
+    setUserInput('')
+    await fetchAI(next)
+  }
+
+  const MSG_AI = {
+    alignSelf: 'flex-start', maxWidth: '82%',
+    background: `${BLUE}14`, border: `1px solid ${BLUE}30`,
+    borderRadius: '4px 14px 14px 14px', padding: '10px 14px',
+    fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
+  }
+  const MSG_USER = {
+    alignSelf: 'flex-end', maxWidth: '82%',
+    background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+    borderRadius: '14px 4px 14px 14px', padding: '10px 14px',
+    fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      {/* Interviewer persona header */}
+      <div style={{
+        padding: '10px 16px', marginBottom: 8, flexShrink: 0,
+        background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10,
+        display: 'flex', alignItems: 'center', gap: 12,
+      }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+          background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 16,
+        }}>🎓</div>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+            {profile.school} 招生面试官
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+            严格但专业 · 会追问细节 · {profile.lang === 'zh' ? '中文面试' : 'English interview'}
+          </div>
+        </div>
+        <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>
+          第 {aiRounds}/{aiRounds < 4 ? '4-6' : aiRounds} 轮
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div style={{
+        flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12,
+        padding: '4px 0', minHeight: 0,
+      }}>
+        {chatHistory.map((m, i) => (
+          <div key={i} style={m.role === 'assistant' ? MSG_AI : MSG_USER}>
+            {m.content}
+          </div>
+        ))}
+        {streaming && (
+          <div style={{ ...MSG_AI }}>
+            {streaming}
+            <span style={{ display: 'inline-block', width: 8, height: 14, background: BLUE,
+              marginLeft: 2, verticalAlign: 'middle', animation: 'bfsCursorBlink 1s infinite' }} />
+          </div>
+        )}
+        {isBusy && !streaming && (
+          <div style={{ ...MSG_AI, opacity: 0.5 }}>…</div>
+        )}
+        {error && (
+          <div style={{ fontSize: 12, color: '#f87171', padding: '8px 12px',
+            background: 'rgba(248,113,113,0.1)', borderRadius: 8 }}>
+            ⚠️ {error}
+          </div>
+        )}
+        <div ref={chatEndRef} />
+      </div>
+
+      {/* Input row */}
+      <div style={{ flexShrink: 0, paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <textarea
+            value={userInput}
+            onChange={e => setUserInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
+            placeholder="输入你的回答… (Enter 发送 · Shift+Enter 换行)"
+            disabled={isBusy}
+            rows={2}
+            style={{
+              flex: 1, background: 'var(--bg-tertiary)', border: `1px solid ${BLUE}55`,
+              borderRadius: 10, color: 'var(--text-primary)', padding: '10px 14px',
+              fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit',
+              opacity: isBusy ? 0.5 : 1,
+            }}
+          />
+          <button
+            onClick={handleSend}
+            disabled={isBusy || !userInput.trim()}
+            style={{
+              width: 44, borderRadius: 10, border: 'none', flexShrink: 0,
+              background: (isBusy || !userInput.trim()) ? 'var(--border-primary)' : BLUE,
+              color: '#fff', cursor: (isBusy || !userInput.trim()) ? 'not-allowed' : 'pointer',
+              fontSize: 18, transition: 'background 0.15s',
+            }}
+          >↑</button>
+        </div>
+        {/* Generate report button — show after 3+ AI rounds */}
+        {aiRounds >= 3 && !isBusy && (
+          <button
+            onClick={onGenerateReport}
+            style={{
+              padding: '10px 0', borderRadius: 10, border: 'none',
+              background: `linear-gradient(135deg, ${GREEN}, ${BLUE})`,
+              color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+              transition: 'opacity 0.15s',
+            }}
+          >
+            📊 面试结束，生成综合评估报告 →
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Interview: step 3 — report ────────────────────────────────────────────────
+function ReportView({ profile, chatHistory, onReset }) {
+  const [report, setReport]   = useState('')
+  const [isReady, setIsReady] = useState(false)
+  const [error, setError]     = useState('')
+  const endRef                = useRef(null)
+
+  useEffect(() => {
+    let acc = ''
+    streamSSE(
+      `${API}/api/universities/interview/report`,
+      { profile, history: chatHistory, device_id: DEVICE_ID },
+      (chunk) => { acc += chunk; setReport(acc) },
+      () => { setIsReady(true) },
+      (err) => { setError(err) },
+    )
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [report])
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* Disclaimer banner */}
+      <div style={{
+        background: `${AMBER}12`, border: `1px solid ${AMBER}40`,
+        borderRadius: 10, padding: '12px 16px',
+        fontSize: 12, color: `${AMBER}cc`, lineHeight: 1.65,
+      }}>
+        ⚠️ <strong>免责声明：</strong>
+        此评估基于公开录取数据的一般规律和AI分析，<strong>不代表官方立场，不构成录取保证，仅供申请策略参考。</strong>
+        实际录取受文书质量、推荐信、面试表现、申请年份竞争情况等AI无法评估的因素影响——这些因素可能比成绩本身影响更大。
+        概率区间为粗略估算，请以区间范围理解，而非精确数值。
+      </div>
+
+      {/* Report body */}
+      {report ? (
+        <div style={{
+          background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+          borderRadius: 12, padding: '16px 20px',
+        }}>
+          <RenderReport text={report} />
+          {!isReady && (
+            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8,
+              fontSize: 12, color: 'var(--text-muted)' }}>
+              <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
+                background: BLUE, animation: 'bfsCursorBlink 1s infinite' }} />
+              生成中…
+            </div>
+          )}
+        </div>
+      ) : !error ? (
+        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: 13 }}>
+          <div style={{ display: 'inline-block', width: 24, height: 24, border: `2px solid ${BLUE}`,
+            borderTopColor: 'transparent', borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite', marginBottom: 12 }} />
+          <div>正在生成综合评估报告…</div>
+        </div>
+      ) : null}
+
+      {error && (
+        <div style={{ color: '#f87171', fontSize: 13, padding: '12px 16px',
+          background: 'rgba(248,113,113,0.1)', borderRadius: 8 }}>
+          ⚠️ {error}
+        </div>
+      )}
+
+      {isReady && (
+        <button
+          onClick={onReset}
+          style={{
+            padding: '10px 0', borderRadius: 10, border: `1px solid var(--border-primary)`,
+            background: 'transparent', color: 'var(--text-muted)',
+            fontSize: 13, cursor: 'pointer', transition: 'all 0.15s', marginTop: 4,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = BLUE; e.currentTarget.style.color = BLUE }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+        >
+          ↩ 重新评估 / New Assessment
+        </button>
+      )}
+      <div ref={endRef} />
+    </div>
+  )
+}
+
+// ── Interview: main modal ─────────────────────────────────────────────────────
+function InterviewModal({ unis, lang, onClose }) {
+  const [step, setStep]               = useState(1)   // 1 | 2 | 3
+  const [profile, setProfile]         = useState({
+    school: '', program: IV_PROGRAMS[0],
+    gpa: '', test_type: 'SAT', test_score: '',
+    subjects: '', activities: '', lang: lang === 'zh' ? 'zh' : 'en',
+  })
+  const [chatHistory, setChatHistory] = useState([])
+
+  useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', h)
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', h); document.body.style.overflow = '' }
+  }, [onClose])
+
+  const STEPS = [
+    { n: 1, label: '填写背景' },
+    { n: 2, label: '模拟面试' },
+    { n: 3, label: '评估报告' },
+  ]
+
+  return (
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9100,
+        background: 'rgba(0,0,0,0.8)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16, backdropFilter: 'blur(6px)',
+      }}
+    >
+      <div style={{
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-primary)',
+        borderRadius: 18, width: '100%', maxWidth: 680,
+        maxHeight: '92vh',
+        display: 'flex', flexDirection: 'column',
+        boxShadow: `0 24px 80px rgba(0,0,0,0.7), 0 0 40px ${PURPLE}18`,
+        animation: 'bfsPageFadeIn 0.18s ease both',
+      }}>
+
+        {/* Header */}
+        <div style={{
+          flexShrink: 0, padding: '18px 22px 0',
+          borderBottom: '1px solid var(--border-primary)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>
+                🎓 商学院模拟面试 & 录取评估
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                AI严格模拟面试官 · 综合录取概率参考（粗略估算）
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              style={{
+                background: 'none', border: '1px solid var(--border-primary)',
+                color: 'var(--text-muted)', borderRadius: 8,
+                width: 32, height: 32, cursor: 'pointer', fontSize: 18,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >×</button>
+          </div>
+
+          {/* Step indicator */}
+          <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
+            {STEPS.map(({ n, label }) => (
+              <div
+                key={n}
+                style={{
+                  flex: 1, textAlign: 'center', padding: '8px 4px',
+                  borderBottom: step === n ? `2px solid ${BLUE}` : '2px solid transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                }}
+              >
+                <div style={{
+                  width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                  background: step > n ? GREEN : step === n ? BLUE : 'var(--border-primary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 700, color: '#fff',
+                }}>
+                  {step > n ? '✓' : n}
+                </div>
+                <span style={{
+                  fontSize: 12, fontWeight: step === n ? 700 : 400,
+                  color: step === n ? BLUE : 'var(--text-muted)',
+                }}>
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Body */}
+        <div style={{
+          flex: 1, overflowY: step === 2 ? 'hidden' : 'auto',
+          padding: step === 2 ? '16px 22px' : '20px 22px',
+          display: 'flex', flexDirection: 'column',
+        }}>
+          {step === 1 && (
+            <ProfileForm
+              unis={unis}
+              profile={profile}
+              setProfile={setProfile}
+              onStart={() => { setChatHistory([]); setStep(2) }}
+            />
+          )}
+          {step === 2 && (
+            <ChatView
+              profile={profile}
+              chatHistory={chatHistory}
+              setChatHistory={setChatHistory}
+              onGenerateReport={() => setStep(3)}
+            />
+          )}
+          {step === 3 && (
+            <ReportView
+              profile={profile}
+              chatHistory={chatHistory}
+              onReset={() => { setStep(1); setProfile(p => ({ ...p, school: '' })); setChatHistory([]) }}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Interview: entry card ─────────────────────────────────────────────────────
+function InterviewEntryCard({ lang, onOpen }) {
+  const t = lang === 'zh'
+  const [hov, setHov] = useState(false)
+  return (
+    <div
+      onClick={onOpen}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        marginBottom: 24,
+        background: hov
+          ? `linear-gradient(135deg, ${PURPLE}22, ${BLUE}18)`
+          : `linear-gradient(135deg, ${PURPLE}14, ${BLUE}10)`,
+        border: `1px solid ${hov ? PURPLE + '66' : PURPLE + '33'}`,
+        borderRadius: 14, padding: '18px 24px',
+        cursor: 'pointer', transition: 'all 0.18s',
+        boxShadow: hov ? `0 4px 24px ${PURPLE}25` : 'none',
+        display: 'flex', alignItems: 'center', gap: 18,
+      }}
+    >
+      <div style={{
+        width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+        background: `linear-gradient(135deg, ${PURPLE}, ${BLUE})`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 22,
+      }}>🎓</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>
+          {t ? '商学院模拟面试 & 录取概率评估' : 'Business School Mock Interview & Admission Assessment'}
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+          {t
+            ? 'AI扮演严格招生面试官，结合你的成绩与面试表现，给出录取概率区间参考（粗略估算）和详细改进建议'
+            : 'AI acts as a rigorous admissions interviewer. Combines your scores & interview to estimate admission probability (rough range) and provide actionable feedback'
+          }
+        </div>
+      </div>
+      <div style={{
+        fontSize: 20, color: hov ? PURPLE : 'var(--text-muted)',
+        transition: 'color 0.15s', flexShrink: 0,
+      }}>→</div>
+    </div>
+  )
+}
+
 // ── University card ───────────────────────────────────────────────────────────
 function UniCard({ uni, lang, onClick }) {
   const [hovered, setHovered] = useState(false)
@@ -777,6 +1566,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
     return list
   }, [allUnis, filters])
 
+  const [showInterview, setShowInterview] = useState(false)
+
   const handleCardClick = useCallback((uni) => setSelected(uni), [])
   const handleClose = useCallback(() => setSelected(null), [])
 
@@ -798,6 +1589,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
 
       <div style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 60 }}>
         <Hero lang={lang} stats={stats} />
+
+        <InterviewEntryCard lang={lang} onOpen={() => setShowInterview(true)} />
 
         <StickyFilters lang={lang} filters={filters} onChange={setFilters} />
 
@@ -839,8 +1632,11 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Uni detail modal */}
       {selected && <UniModal uni={selected} lang={lang} onClose={handleClose} />}
+
+      {/* Interview modal */}
+      {showInterview && <InterviewModal unis={allUnis} lang={lang} onClose={() => setShowInterview(false)} />}
     </>
   )
 }
