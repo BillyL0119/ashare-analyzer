@@ -29,14 +29,21 @@ function SourceBadge({ name }) {
   )
 }
 
-function relativeTime(iso) {
+function relativeTime(iso, zh) {
   if (!iso) return ''
   try {
     const diff = (Date.now() - new Date(iso).getTime()) / 1000
-    if (diff < 60)    return '刚刚'
-    if (diff < 3600)  return `${Math.floor(diff / 60)}分钟前`
-    if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`
-    return `${Math.floor(diff / 86400)}天前`
+    if (zh) {
+      if (diff < 60)    return '刚刚'
+      if (diff < 3600)  return `${Math.floor(diff / 60)}分钟前`
+      if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`
+      return `${Math.floor(diff / 86400)}天前`
+    } else {
+      if (diff < 60)    return 'just now'
+      if (diff < 3600)  return `${Math.floor(diff / 60)}m ago`
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+      return `${Math.floor(diff / 86400)}d ago`
+    }
   } catch { return '' }
 }
 
@@ -85,7 +92,7 @@ function Pill({ active, color, onClick, children }) {
   )
 }
 
-function NewsCard({ item }) {
+function NewsCard({ item, zh }) {
   const href = item.url || '#'
   const isLink = item.url && item.url.startsWith('http')
   return (
@@ -96,22 +103,13 @@ function NewsCard({ item }) {
       style={{ textDecoration: 'none', display: 'block', cursor: isLink ? 'pointer' : 'default' }}
     >
       <div
+        className={isLink ? 'bfs-card' : undefined}
         style={{
           background: 'var(--bg-secondary)',
           border: '1px solid var(--border-primary)',
           borderRadius: 12,
           padding: '14px 16px',
           marginBottom: 8,
-          transition: 'border-color 0.2s, background 0.2s',
-        }}
-        onMouseEnter={e => {
-          if (!isLink) return
-          e.currentTarget.style.borderColor = 'rgba(14,165,233,0.35)'
-          e.currentTarget.style.background = 'rgba(14,165,233,0.04)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = 'var(--border-primary)'
-          e.currentTarget.style.background = 'var(--bg-secondary)'
         }}
       >
         <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
@@ -121,7 +119,7 @@ function NewsCard({ item }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, flexWrap: 'wrap' }}>
               <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{item.source}</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at)}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, zh)}</span>
               <span style={{
                 fontSize: 10, padding: '1px 5px', borderRadius: 6,
                 background: item.lang === 'cn' ? 'rgba(232,50,30,0.1)' : 'rgba(14,100,233,0.1)',
@@ -228,7 +226,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {updatedAt && (
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              {zh ? '更新于' : 'Updated'} {relativeTime(updatedAt)}
+              {zh ? '更新于' : 'Updated'} {relativeTime(updatedAt, zh)}
             </span>
           )}
           <button
@@ -335,7 +333,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       ) : (
         <>
           {displayed.map((item, i) => (
-            <NewsCard key={`${item.source}-${i}`} item={item} />
+            <NewsCard key={`${item.source}-${i}`} item={item} zh={zh} />
           ))}
           {hasMore && (
             <button

@@ -293,11 +293,11 @@ function JobCard({ role, zh }) {
 
   return (
     <div
+      className="bfs-card"
       style={{
         ...cardStyle,
         cursor: 'pointer',
         borderColor: expanded ? `${role.color}55` : 'var(--border-primary)',
-        transition: 'border-color 0.2s',
       }}
       onClick={() => setExpanded(v => !v)}
     >
@@ -435,7 +435,7 @@ function QuestionCard({ q, zh }) {
         onClick={() => setShowFramework(v => !v)}
         style={{
           alignSelf: 'flex-start',
-          padding: '4px 10px', borderRadius: 4, border: 'none', cursor: 'pointer',
+          padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer',
           fontSize: 11, fontWeight: 600,
           background: showFramework ? 'rgba(14,165,233,0.15)' : 'var(--bg-tertiary)',
           color: showFramework ? ACCENT : 'var(--text-muted)',
@@ -474,7 +474,7 @@ function QuestionBank({ zh }) {
   })
 
   const filterBtnStyle = (active) => ({
-    padding: '4px 12px', borderRadius: 16, border: 'none', cursor: 'pointer',
+    padding: '4px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
     fontSize: 11, fontWeight: active ? 600 : 400,
     background: active ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'var(--bg-tertiary)',
     color: active ? '#fff' : 'var(--text-muted)',
@@ -596,7 +596,7 @@ function ChatBubble({ role: msgRole, content, streaming }) {
             {renderText(feedbackText)}
           </div>
         )}
-        {streaming && <span style={{ color: ACCENT, fontSize: 13 }}>▋</span>}
+        {streaming && <span style={{ color: ACCENT, fontSize: 13, animation: 'bfsCursorBlink 1s step-end infinite' }}>▋</span>}
       </div>
     </div>
   )
@@ -726,7 +726,7 @@ function MockInterview({ zh, lang }) {
                   key={opt.value}
                   onClick={() => setSelectedRole(opt.value)}
                   style={{
-                    padding: '5px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                    padding: '5px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
                     fontSize: 12, fontWeight: selectedRole === opt.value ? 600 : 400,
                     background: selectedRole === opt.value
                       ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)'
@@ -751,7 +751,7 @@ function MockInterview({ zh, lang }) {
                   key={opt.value}
                   onClick={() => setSelectedType(opt.value)}
                   style={{
-                    padding: '5px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                    padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
                     fontSize: 12, fontWeight: selectedType === opt.value ? 600 : 400,
                     background: selectedType === opt.value
                       ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)'
@@ -775,7 +775,7 @@ function MockInterview({ zh, lang }) {
                 ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'
                 : 'var(--bg-hover)',
               color: selectedRole && selectedType ? '#fff' : 'var(--text-muted)',
-              border: 'none', borderRadius: 6, cursor: selectedRole && selectedType ? 'pointer' : 'not-allowed',
+              border: 'none', borderRadius: 8, cursor: selectedRole && selectedType ? 'pointer' : 'not-allowed',
               fontSize: 14, fontWeight: 600,
               transition: 'opacity 0.15s',
             }}
@@ -808,7 +808,7 @@ function MockInterview({ zh, lang }) {
         <button
           onClick={handleReset}
           style={{
-            padding: '4px 10px', borderRadius: 5, border: '1px solid var(--border-primary)',
+            padding: '4px 10px', borderRadius: 6, border: '1px solid var(--border-primary)',
             background: 'transparent', cursor: 'pointer',
             fontSize: 11, color: 'var(--text-muted)',
           }}
@@ -832,6 +832,9 @@ function MockInterview({ zh, lang }) {
             streaming={streaming && i === messages.length - 1 && msg.role === 'assistant'}
           />
         ))}
+        {streaming && messages.length === 0 && (
+          <ChatBubble role="assistant" content="" streaming={true} />
+        )}
         {error && (
           <div style={{ fontSize: 12, color: 'var(--text-muted)', padding: '6px 10px', border: '1px solid var(--border-primary)', borderRadius: 5 }}>
             ⚠ {error}
@@ -877,7 +880,7 @@ function MockInterview({ zh, lang }) {
                 ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'
                 : 'var(--bg-tertiary)',
               color: !streaming && input.trim() ? '#fff' : 'var(--text-muted)',
-              border: 'none', borderRadius: 6,
+              border: 'none', borderRadius: 8,
               cursor: !streaming && input.trim() ? 'pointer' : 'not-allowed',
               fontSize: 13, fontWeight: 600, flexShrink: 0,
             }}
@@ -893,7 +896,7 @@ function MockInterview({ zh, lang }) {
           style={{
             padding: '10px',
             background: 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)',
-            color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer',
+            color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer',
             fontSize: 13, fontWeight: 600,
           }}
         >
@@ -970,7 +973,7 @@ export default function CareerGuidePage({ lang }) {
             key={tab.key}
             onClick={() => setSubTab(tab.key)}
             style={{
-              padding: '7px 16px', borderRadius: 5, border: 'none', cursor: 'pointer',
+              padding: '7px 16px', borderRadius: 6, border: 'none', cursor: 'pointer',
               fontSize: 13, fontWeight: subTab === tab.key ? 600 : 400,
               background: subTab === tab.key
                 ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'

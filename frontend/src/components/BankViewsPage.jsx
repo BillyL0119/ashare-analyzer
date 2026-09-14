@@ -103,20 +103,11 @@ function NewsCard({ item, zh }) {
       style={{ textDecoration: 'none', display: 'block' }}
     >
       <div
+        className={isLink ? 'bfs-card' : undefined}
         style={{
           background: 'var(--bg-secondary)',
           border: '1px solid var(--border-primary)',
           borderRadius: 12, padding: '14px 16px', marginBottom: 8,
-          transition: 'border-color 0.2s, background 0.2s',
-        }}
-        onMouseEnter={e => {
-          if (!isLink) return
-          e.currentTarget.style.borderColor = 'rgba(14,165,233,0.35)'
-          e.currentTarget.style.background = 'rgba(14,165,233,0.04)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = 'var(--border-primary)'
-          e.currentTarget.style.background = 'var(--bg-secondary)'
         }}
       >
         {/* Bank tags + action badge row */}
