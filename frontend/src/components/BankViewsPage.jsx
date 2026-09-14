@@ -82,7 +82,7 @@ function Pill({ active, color, onClick, children }) {
       style={{
         padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
-        background: active ? (color + '28') : 'rgba(255,255,255,0.04)',
+        background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
         outline: active ? `1px solid ${color}44` : 'none',
         transition: 'all 0.18s',
@@ -104,8 +104,8 @@ function NewsCard({ item, zh }) {
     >
       <div
         style={{
-          background: 'rgba(255,255,255,0.025)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-primary)',
           borderRadius: 12, padding: '14px 16px', marginBottom: 8,
           transition: 'border-color 0.2s, background 0.2s',
         }}
@@ -115,8 +115,8 @@ function NewsCard({ item, zh }) {
           e.currentTarget.style.background = 'rgba(14,165,233,0.04)'
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
-          e.currentTarget.style.background = 'rgba(255,255,255,0.025)'
+          e.currentTarget.style.borderColor = 'var(--border-primary)'
+          e.currentTarget.style.background = 'var(--bg-secondary)'
         }}
       >
         {/* Bank tags + action badge row */}
@@ -138,7 +138,7 @@ function NewsCard({ item, zh }) {
               background: 'rgba(14,165,233,0.15)',
               padding: '1px 5px', borderRadius: 4, flexShrink: 0, marginTop: 1,
             }}>AI速读</span>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.4 }}>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
               {item.ai_summary}
             </span>
           </div>
@@ -183,7 +183,7 @@ function SkeletonCard() {
   return (
     <div style={{
       height: 110, borderRadius: 12, marginBottom: 8,
-      background: 'rgba(255,255,255,0.04)',
+      background: 'var(--bg-tertiary)',
       animation: 'bvPulse 1.5s ease-in-out infinite',
     }} />
   )
@@ -256,7 +256,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
               ? '聚合公开财经媒体对投行市场观点的转述报道（来源：Reuters、CNBC 等）'
               : 'Public news reporting on investment bank views — Reuters, CNBC and more'}
           </p>
-          <p style={{ margin: '2px 0 0', fontSize: 11, color: 'rgba(255,255,255,0.22)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
             {zh
               ? '仅收录公开新闻转述，不涉及付费研报原文'
               : 'Public news summaries only — no proprietary research content'}
@@ -342,12 +342,12 @@ export default function BankViewsPage({ lang = 'zh' }) {
               onClick={() => setPage(p => p + 1)}
               style={{
                 display: 'block', width: '100%', padding: '12px 0',
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                 borderRadius: 12, color: 'var(--text-secondary)', fontSize: 13,
                 cursor: 'pointer', marginTop: 4, transition: 'background 0.2s',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.07)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-tertiary)'}
             >
               {zh
                 ? `加载更多（还有 ${visibleItems.length - displayed.length} 条）`

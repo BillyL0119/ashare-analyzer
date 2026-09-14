@@ -74,7 +74,7 @@ function Pill({ active, color, onClick, children }) {
       style={{
         padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
-        background: active ? (color + '28') : 'rgba(255,255,255,0.04)',
+        background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
         outline: active ? `1px solid ${color}44` : 'none',
         transition: 'all 0.18s',
@@ -97,8 +97,8 @@ function NewsCard({ item }) {
     >
       <div
         style={{
-          background: 'rgba(255,255,255,0.025)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-primary)',
           borderRadius: 12,
           padding: '14px 16px',
           marginBottom: 8,
@@ -110,8 +110,8 @@ function NewsCard({ item }) {
           e.currentTarget.style.background = 'rgba(14,165,233,0.04)'
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
-          e.currentTarget.style.background = 'rgba(255,255,255,0.025)'
+          e.currentTarget.style.borderColor = 'var(--border-primary)'
+          e.currentTarget.style.background = 'var(--bg-secondary)'
         }}
       >
         <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
@@ -159,7 +159,7 @@ function SkeletonCard() {
   return (
     <div style={{
       height: 90, borderRadius: 12, marginBottom: 8,
-      background: 'rgba(255,255,255,0.04)',
+      background: 'var(--bg-tertiary)',
       animation: 'pulse 1.5s ease-in-out infinite',
     }} />
   )
@@ -273,7 +273,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         </div>
 
         {/* Separator */}
-        <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.1)', margin: '0 4px', flexShrink: 0 }} />
+        <div style={{ width: 1, height: 20, background: 'var(--border-primary)', margin: '0 4px', flexShrink: 0 }} />
 
         {/* Language pills */}
         <div style={{ display: 'flex', gap: 4 }}>
@@ -310,12 +310,12 @@ export default function DailyNewsPage({ lang = 'zh' }) {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 5,
                   padding: '4px 10px', borderRadius: 8, cursor: 'pointer',
-                  background: 'rgba(255,255,255,0.03)',
+                  background: 'var(--bg-secondary)',
                   border: `1px solid ${cfg.color}33`,
                   transition: 'background 0.15s',
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = cfg.color + '11'}
-                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
               >
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.color, flexShrink: 0 }} />
                 <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{zh ? cfg.label : cfg.labelEn}</span>
@@ -346,13 +346,13 @@ export default function DailyNewsPage({ lang = 'zh' }) {
               onClick={() => setPage(p => p + 1)}
               style={{
                 display: 'block', width: '100%', padding: '12px 0',
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                 borderRadius: 12, color: 'var(--text-secondary)', fontSize: 13,
                 cursor: 'pointer', marginTop: 4,
                 transition: 'background 0.2s',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.07)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-tertiary)'}
             >
               {zh
                 ? `加载更多（还有 ${items.length - displayed.length} 条）`

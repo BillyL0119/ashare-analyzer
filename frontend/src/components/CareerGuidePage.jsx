@@ -231,8 +231,8 @@ const ACCENT = '#0ea5e9'
 const PURPLE = '#8b5cf6'
 
 const cardStyle = {
-  background: 'rgba(255,255,255,0.03)',
-  border: '1px solid rgba(255,255,255,0.08)',
+  background: 'var(--bg-secondary)',
+  border: '1px solid var(--border-primary)',
   borderRadius: 10,
   padding: '16px 18px',
 }
@@ -245,9 +245,9 @@ function Tag({ label, color }) {
       borderRadius: 4,
       fontSize: 11,
       fontWeight: 600,
-      background: color ? `${color}22` : 'rgba(255,255,255,0.06)',
+      background: color ? `${color}22` : 'var(--bg-hover)',
       color: color || 'var(--text-muted)',
-      border: `1px solid ${color ? `${color}44` : 'rgba(255,255,255,0.1)'}`,
+      border: `1px solid ${color ? `${color}44` : 'var(--border-primary)'}`,
     }}>
       {label}
     </span>
@@ -259,7 +259,7 @@ function Tag({ label, color }) {
 function Section({ title, children }) {
   const [open, setOpen] = useState(false)
   return (
-    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8, marginTop: 8 }}>
+    <div style={{ borderTop: '1px solid var(--border-primary)', paddingTop: 8, marginTop: 8 }}>
       <button
         onClick={() => setOpen(v => !v)}
         style={{
@@ -296,7 +296,7 @@ function JobCard({ role, zh }) {
       style={{
         ...cardStyle,
         cursor: 'pointer',
-        borderColor: expanded ? `${role.color}55` : 'rgba(255,255,255,0.08)',
+        borderColor: expanded ? `${role.color}55` : 'var(--border-primary)',
         transition: 'border-color 0.2s',
       }}
       onClick={() => setExpanded(v => !v)}
@@ -437,7 +437,7 @@ function QuestionCard({ q, zh }) {
           alignSelf: 'flex-start',
           padding: '4px 10px', borderRadius: 4, border: 'none', cursor: 'pointer',
           fontSize: 11, fontWeight: 600,
-          background: showFramework ? 'rgba(14,165,233,0.15)' : 'rgba(255,255,255,0.05)',
+          background: showFramework ? 'rgba(14,165,233,0.15)' : 'var(--bg-tertiary)',
           color: showFramework ? ACCENT : 'var(--text-muted)',
           transition: 'all 0.15s',
         }}
@@ -476,7 +476,7 @@ function QuestionBank({ zh }) {
   const filterBtnStyle = (active) => ({
     padding: '4px 12px', borderRadius: 16, border: 'none', cursor: 'pointer',
     fontSize: 11, fontWeight: active ? 600 : 400,
-    background: active ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'rgba(255,255,255,0.05)',
+    background: active ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'var(--bg-tertiary)',
     color: active ? '#fff' : 'var(--text-muted)',
     transition: 'all 0.15s',
   })
@@ -730,7 +730,7 @@ function MockInterview({ zh, lang }) {
                     fontSize: 12, fontWeight: selectedRole === opt.value ? 600 : 400,
                     background: selectedRole === opt.value
                       ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)'
-                      : 'rgba(255,255,255,0.06)',
+                      : 'var(--bg-hover)',
                     color: selectedRole === opt.value ? '#fff' : 'var(--text-secondary)',
                     transition: 'all 0.15s',
                   }}
@@ -755,7 +755,7 @@ function MockInterview({ zh, lang }) {
                     fontSize: 12, fontWeight: selectedType === opt.value ? 600 : 400,
                     background: selectedType === opt.value
                       ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)'
-                      : 'rgba(255,255,255,0.06)',
+                      : 'var(--bg-hover)',
                     color: selectedType === opt.value ? '#fff' : 'var(--text-secondary)',
                     transition: 'all 0.15s',
                   }}
@@ -773,7 +773,7 @@ function MockInterview({ zh, lang }) {
               padding: '11px 0',
               background: selectedRole && selectedType
                 ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'
-                : 'rgba(255,255,255,0.06)',
+                : 'var(--bg-hover)',
               color: selectedRole && selectedType ? '#fff' : 'var(--text-muted)',
               border: 'none', borderRadius: 6, cursor: selectedRole && selectedType ? 'pointer' : 'not-allowed',
               fontSize: 14, fontWeight: 600,
@@ -808,7 +808,7 @@ function MockInterview({ zh, lang }) {
         <button
           onClick={handleReset}
           style={{
-            padding: '4px 10px', borderRadius: 5, border: '1px solid rgba(255,255,255,0.1)',
+            padding: '4px 10px', borderRadius: 5, border: '1px solid var(--border-primary)',
             background: 'transparent', cursor: 'pointer',
             fontSize: 11, color: 'var(--text-muted)',
           }}
@@ -833,7 +833,7 @@ function MockInterview({ zh, lang }) {
           />
         ))}
         {error && (
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', padding: '6px 10px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 5 }}>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', padding: '6px 10px', border: '1px solid var(--border-primary)', borderRadius: 5 }}>
             ⚠ {error}
           </div>
         )}
@@ -857,8 +857,8 @@ function MockInterview({ zh, lang }) {
             style={{
               flex: 1,
               padding: '10px 12px',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--bg-secondary)',
+              border: '1px solid var(--border-primary)',
               borderRadius: 6,
               color: 'var(--text-primary)',
               fontSize: 13,
@@ -875,7 +875,7 @@ function MockInterview({ zh, lang }) {
               padding: '0 18px',
               background: !streaming && input.trim()
                 ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'
-                : 'rgba(255,255,255,0.05)',
+                : 'var(--bg-tertiary)',
               color: !streaming && input.trim() ? '#fff' : 'var(--text-muted)',
               border: 'none', borderRadius: 6,
               cursor: !streaming && input.trim() ? 'pointer' : 'not-allowed',
@@ -938,8 +938,8 @@ export default function CareerGuidePage({ lang }) {
       {/* Sub-tab nav */}
       <div style={{
         display: 'flex', gap: 4, marginBottom: 20,
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-primary)',
         borderRadius: 8, padding: 4, width: 'fit-content',
       }}>
         {TABS.map(tab => (
@@ -970,8 +970,8 @@ export default function CareerGuidePage({ lang }) {
       <div style={{
         marginTop: 32,
         padding: '10px 14px',
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        background: 'var(--bg-primary)',
+        border: '1px solid var(--border-primary)',
         borderRadius: 6,
         fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.7,
       }}>

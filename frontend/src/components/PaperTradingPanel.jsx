@@ -46,7 +46,7 @@ function Btn({ children, onClick, color = BUY_CLR, disabled, style }) {
       onClick={onClick}
       disabled={disabled}
       style={{
-        background: disabled ? 'rgba(255,255,255,0.06)' : color,
+        background: disabled ? 'var(--bg-hover)' : color,
         color: disabled ? MUTED : '#fff',
         border: 'none', borderRadius: 8, padding: '8px 20px',
         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -93,7 +93,7 @@ function SellModal({ pos, symbol, lang, market, onConfirm, onClose }) {
     }}
     onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div style={{ background: '#0d1117', border: `1px solid ${BDR}`, borderRadius: 16, padding: '28px 32px', width: 360, position: 'relative' }}>
+      <div style={{ background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 16, padding: '28px 32px', width: 360, position: 'relative' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: 12, right: 16, background: 'none', border: 'none', cursor: 'pointer', color: MUTED, fontSize: 18 }}>✕</button>
         <div style={{ fontSize: 16, fontWeight: 700, color: SELL_CLR, marginBottom: 18 }}>
           {zhEn('卖出', 'Sell')} {symbol}
@@ -119,12 +119,12 @@ function SellModal({ pos, symbol, lang, market, onConfirm, onClose }) {
                 setShares(clamped)
               }}
               style={{
-                flex: 1, background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
+                flex: 1, background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
                 borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
               }}
             />
             <button onClick={() => setShares(pos.available_shares)}
-              style={{ fontSize: 11, color: '#8ab4f8', background: 'rgba(138,180,248,0.1)', border: 'none', borderRadius: 6, padding: '6px 10px', cursor: 'pointer' }}>
+              style={{ fontSize: 11, color: '#0ea5e9', background: 'rgba(14,165,233,0.1)', border: 'none', borderRadius: 6, padding: '6px 10px', cursor: 'pointer' }}>
               {zhEn('全部', 'All')}
             </button>
           </div>
@@ -166,7 +166,7 @@ function ResetModal({ lang, onConfirm, onClose }) {
     }}
     onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div style={{ background: '#0d1117', border: `1px solid rgba(248,113,113,0.3)`, borderRadius: 16, padding: '28px 32px', width: 340, textAlign: 'center' }}>
+      <div style={{ background: 'var(--bg-secondary)', border: `1px solid rgba(248,113,113,0.3)`, borderRadius: 16, padding: '28px 32px', width: 340, textAlign: 'center' }}>
         <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
         <div style={{ fontSize: 16, fontWeight: 700, color: SELL_CLR, marginBottom: 10 }}>
           {zhEn('重置账户', 'Reset Account')}
@@ -175,7 +175,7 @@ function ResetModal({ lang, onConfirm, onClose }) {
           {zhEn('将清空所有持仓和交易记录，恢复初始资金 100万元。此操作不可撤销。', 'This will clear all positions and transactions, restoring ¥1,000,000 initial capital. This cannot be undone.')}
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onClose} style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8, color: MUTED, padding: '10px 0', cursor: 'pointer', fontSize: 13 }}>
+          <button onClick={onClose} style={{ flex: 1, background: 'var(--bg-tertiary)', border: 'none', borderRadius: 8, color: MUTED, padding: '10px 0', cursor: 'pointer', fontSize: 13 }}>
             {zhEn('取消', 'Cancel')}
           </button>
           <Btn color={SELL_CLR} onClick={onConfirm} style={{ flex: 1 }}>
@@ -392,7 +392,7 @@ export default function PaperTradingPanel({ lang }) {
       )}
 
       {/* ── Market toggle ── */}
-      <div style={{ display: 'flex', gap: 6, background: 'rgba(255,255,255,0.04)', border: `1px solid ${BDR}`, borderRadius: 24, padding: 4, width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: 6, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 24, padding: 4, width: 'fit-content' }}>
         {[
           { key: 'cn', label: zhEn('A股（¥100万）', 'A-Share (¥1M)') },
           { key: 'us', label: zhEn('美股（$10万）', 'US Stocks ($100K)') },
@@ -403,7 +403,7 @@ export default function PaperTradingPanel({ lang }) {
             style={{
               padding: '5px 18px', borderRadius: 20, border: 'none', cursor: 'pointer',
               fontSize: 12, fontWeight: 600,
-              background: ptMarket === key ? 'linear-gradient(135deg, #8ab4f8, #c084fc)' : 'transparent',
+              background: ptMarket === key ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'transparent',
               color: ptMarket === key ? '#fff' : MUTED,
               transition: 'all 0.2s',
             }}
@@ -419,7 +419,7 @@ export default function PaperTradingPanel({ lang }) {
           <div>
             <div style={{ fontSize: 12, color: MUTED, marginBottom: 4 }}>
               {account?.nickname} · {zhEn('全球排名', 'Global Rank')}:
-              <span style={{ color: '#8ab4f8', fontWeight: 700, marginLeft: 4 }}>
+              <span style={{ color: '#0ea5e9', fontWeight: 700, marginLeft: 4 }}>
                 {rank === -1 ? '--' : `#${rank}`}
               </span>
             </div>
@@ -447,10 +447,10 @@ export default function PaperTradingPanel({ lang }) {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {[
             { label: zhEn('现金余额', 'Cash'), value: `${currSym}${fmt(cash, 0)}`, color: 'var(--text-primary)' },
-            { label: zhEn('持仓市值', 'Portfolio Value'), value: `${currSym}${fmt(portfolioValue, 0)}`, color: '#8ab4f8' },
+            { label: zhEn('持仓市值', 'Portfolio Value'), value: `${currSym}${fmt(portfolioValue, 0)}`, color: '#0ea5e9' },
             { label: zhEn('已付手续费', 'Commission Paid'), value: `${currSym}${fmt(commission)}`, color: MUTED },
           ].map(({ label, value, color }) => (
-            <div key={label} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 16px', minWidth: 140, flex: 1 }}>
+            <div key={label} style={{ background: 'var(--bg-tertiary)', borderRadius: 10, padding: '10px 16px', minWidth: 140, flex: 1 }}>
               <div style={{ fontSize: 11, color: MUTED, marginBottom: 4 }}>{label}</div>
               <div style={{ fontSize: 16, fontWeight: 700, color, fontFamily: 'monospace' }}>{value}</div>
             </div>
@@ -477,7 +477,7 @@ export default function PaperTradingPanel({ lang }) {
               maxLength={isUS ? 10 : 6}
               style={{
                 width: '100%', boxSizing: 'border-box',
-                background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
+                background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
                 borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
               }}
             />
@@ -505,7 +505,7 @@ export default function PaperTradingPanel({ lang }) {
               }}
               style={{
                 width: '100%', boxSizing: 'border-box',
-                background: 'rgba(255,255,255,0.06)', border: `1px solid ${BDR}`,
+                background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
                 borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
               }}
             />
@@ -546,7 +546,7 @@ export default function PaperTradingPanel({ lang }) {
 
       {/* ── 3. Portfolio ── */}
       <Card>
-        <div style={{ fontSize: 14, fontWeight: 700, color: '#8ab4f8', marginBottom: 14 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: '#0ea5e9', marginBottom: 14 }}>
           {zhEn('持仓列表', 'Portfolio')}
           <span style={{ fontSize: 12, color: MUTED, fontWeight: 400, marginLeft: 8 }}>
             ({Object.keys(portfolio).length} {zhEn('只', 'stocks')})
@@ -588,7 +588,7 @@ export default function PaperTradingPanel({ lang }) {
                         transition: 'background 0.1s',
                       }}
                     >
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#8ab4f8', fontWeight: 600 }}>{sym}</td>
+                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#0ea5e9', fontWeight: 600 }}>{sym}</td>
                       <td style={{ padding: '10px 10px', color: 'var(--text-primary)' }}>{pos.shares}</td>
                       <td style={{ padding: '10px 10px' }}>
                         {canSell ? (
@@ -633,7 +633,7 @@ export default function PaperTradingPanel({ lang }) {
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
           onClick={() => setShowTxn((v) => !v)}
         >
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#c084fc' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#8b5cf6' }}>
             {zhEn('交易记录', 'Transaction History')}
             <span style={{ fontSize: 12, color: MUTED, fontWeight: 400, marginLeft: 8 }}>({txns.length})</span>
           </div>
@@ -660,7 +660,7 @@ export default function PaperTradingPanel({ lang }) {
                     const isBuy = tx.type === 'buy'
                     const pl    = tx.profit_loss
                     return (
-                      <tr key={i} style={{ borderBottom: `1px solid rgba(138,180,248,0.05)` }}>
+                      <tr key={i} style={{ borderBottom: `1px solid rgba(14,165,233,0.05)` }}>
                         <td style={{ padding: '8px 10px', color: MUTED }}>{tx.date}</td>
                         <td style={{ padding: '8px 10px' }}>
                           <Pill color={isBuy ? BUY_CLR : SELL_CLR}>
@@ -668,7 +668,7 @@ export default function PaperTradingPanel({ lang }) {
                           </Pill>
                         </td>
                         <td style={{ padding: '8px 10px', color: 'var(--text-primary)' }}>
-                          <span style={{ color: '#8ab4f8', fontFamily: 'monospace', marginRight: 6 }}>{tx.symbol}</span>
+                          <span style={{ color: '#0ea5e9', fontFamily: 'monospace', marginRight: 6 }}>{tx.symbol}</span>
                           {tx.name}
                         </td>
                         <td style={{ padding: '8px 10px', color: 'var(--text-primary)' }}>{tx.shares}</td>
@@ -723,16 +723,16 @@ export default function PaperTradingPanel({ lang }) {
                     <tr
                       key={entry.rank}
                       style={{
-                        background: entry.is_me ? 'rgba(138,180,248,0.08)' : 'transparent',
-                        borderBottom: `1px solid rgba(138,180,248,0.05)`,
+                        background: entry.is_me ? 'rgba(14,165,233,0.08)' : 'transparent',
+                        borderBottom: `1px solid rgba(14,165,233,0.05)`,
                       }}
                     >
                       <td style={{ padding: '9px 10px', fontWeight: 700, color: entry.rank <= 3 ? '#fbbf24' : MUTED }}>
                         {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `#${entry.rank}`}
                       </td>
-                      <td style={{ padding: '9px 10px', color: entry.is_me ? '#8ab4f8' : 'var(--text-primary)', fontWeight: entry.is_me ? 700 : 400 }}>
+                      <td style={{ padding: '9px 10px', color: entry.is_me ? '#0ea5e9' : 'var(--text-primary)', fontWeight: entry.is_me ? 700 : 400 }}>
                         {entry.nickname}
-                        {entry.is_me && <span style={{ fontSize: 10, color: '#8ab4f8', marginLeft: 6, background: 'rgba(138,180,248,0.15)', padding: '1px 5px', borderRadius: 4 }}>{zhEn('我', 'ME')}</span>}
+                        {entry.is_me && <span style={{ fontSize: 10, color: '#0ea5e9', marginLeft: 6, background: 'rgba(14,165,233,0.15)', padding: '1px 5px', borderRadius: 4 }}>{zhEn('我', 'ME')}</span>}
                       </td>
                       <td style={{ padding: '9px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>¥{fmt(entry.total_value, 0)}</td>
                       <td style={{ padding: '9px 10px' }}><PctBadge value={entry.return_pct} /></td>

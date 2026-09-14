@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 
-const ACCENT  = '#8ab4f8'
-const ACCENT2 = '#c084fc'
-const BDR     = 'rgba(138,180,248,0.10)'
+const ACCENT  = '#0ea5e9'
+const ACCENT2 = '#8b5cf6'
+const BDR     = 'var(--border-primary)'
 const MUTED   = 'var(--text-muted)'
 
 // ── Topic categories ──────────────────────────────────────────────────────────
@@ -95,9 +95,9 @@ function Bubble({ msg }) {
       <div style={{
         maxWidth: '76%',
         background: isUser
-          ? `linear-gradient(135deg,rgba(138,180,248,0.16),rgba(192,132,252,0.13))`
-          : 'rgba(255,255,255,0.04)',
-        border: `1px solid ${isUser ? 'rgba(138,180,248,0.22)' : 'rgba(255,255,255,0.06)'}`,
+          ? `linear-gradient(135deg,rgba(14,165,233,0.16),rgba(139,92,246,0.13))`
+          : 'var(--bg-tertiary)',
+        border: `1px solid ${isUser ? 'rgba(14,165,233,0.22)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '16px 16px 4px 16px' : '4px 16px 16px 16px',
         padding: '11px 15px',
         fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.75,
@@ -111,7 +111,7 @@ function Bubble({ msg }) {
       {isUser && (
         <div style={{
           width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-          background: 'rgba(138,180,248,0.12)', border: '1px solid rgba(138,180,248,0.2)',
+          background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.2)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
         }}>👤</div>
       )}
@@ -244,7 +244,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
       {/* ── Top banner ── */}
       <div style={{
         padding: '12px 20px', flexShrink: 0,
-        background: 'rgba(138,180,248,0.04)',
+        background: 'rgba(14,165,233,0.04)',
         borderBottom: `1px solid ${BDR}`,
         display: 'flex', alignItems: 'center', gap: 14,
       }}>
@@ -272,7 +272,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
             setMessages([{ role: 'assistant', content: zh ? '对话已清空，有什么问题尽管问！' : 'Chat cleared! Ask me anything.' }])
           }, 50) }}
           style={{
-            marginLeft: 'auto', background: 'rgba(255,255,255,0.04)',
+            marginLeft: 'auto', background: 'var(--bg-tertiary)',
             border: `1px solid ${BDR}`, borderRadius: 8,
             padding: '5px 12px', color: MUTED, fontSize: 12, cursor: 'pointer',
           }}
@@ -292,7 +292,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           display: 'flex', flexDirection: 'column',
           overflowY: 'auto',
         }}>
-          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 700, color: 'rgba(138,180,248,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 700, color: 'rgba(14,165,233,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             {zh ? '话题分类' : 'Topics'}
           </div>
 
@@ -304,7 +304,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: '8px 12px', cursor: 'pointer',
-                  background: activeCat === i ? 'rgba(138,180,248,0.08)' : 'transparent',
+                  background: activeCat === i ? 'rgba(14,165,233,0.08)' : 'transparent',
                   borderLeft: activeCat === i ? `3px solid ${ACCENT}` : '3px solid transparent',
                   transition: 'all 0.12s',
                 }}
@@ -327,17 +327,17 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                       onClick={() => send(zh ? t.zh : t.en)}
                       style={{
                         padding: '6px 10px 6px 28px', cursor: 'pointer',
-                        fontSize: 11, color: 'rgba(138,180,248,0.65)',
+                        fontSize: 11, color: 'rgba(14,165,233,0.65)',
                         borderRadius: 6, lineHeight: 1.4,
                         transition: 'all 0.12s',
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(138,180,248,0.06)'
+                        e.currentTarget.style.background = 'rgba(14,165,233,0.06)'
                         e.currentTarget.style.color = ACCENT
                       }}
                       onMouseLeave={e => {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'rgba(138,180,248,0.65)'
+                        e.currentTarget.style.color = 'rgba(14,165,233,0.65)'
                       }}
                     >
                       {zh ? t.zh : t.en}
@@ -394,15 +394,15 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   flex: 1,
                   background: 'var(--bg-secondary)',
-                  border: `1px solid rgba(138,180,248,0.2)`,
+                  border: `1px solid rgba(14,165,233,0.2)`,
                   borderRadius: 12, color: 'var(--text-primary)',
                   padding: '10px 14px', fontSize: 14,
                   resize: 'none', outline: 'none', lineHeight: 1.6,
                   fontFamily: 'inherit',
                   transition: 'border-color 0.2s',
                 }}
-                onFocus={e => e.target.style.borderColor = 'rgba(138,180,248,0.45)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(138,180,248,0.2)'}
+                onFocus={e => e.target.style.borderColor = 'rgba(14,165,233,0.45)'}
+                onBlur={e => e.target.style.borderColor = 'rgba(14,165,233,0.2)'}
               />
               <button
                 onClick={() => send()}
@@ -410,7 +410,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   background: input.trim() && !busy
                     ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
-                    : 'rgba(255,255,255,0.05)',
+                    : 'var(--bg-tertiary)',
                   border: 'none', borderRadius: 12,
                   padding: '0 22px', fontSize: 20,
                   color: input.trim() && !busy ? '#fff' : '#4a5568',

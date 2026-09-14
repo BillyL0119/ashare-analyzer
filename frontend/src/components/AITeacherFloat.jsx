@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 
-const ACCENT = '#8ab4f8'
-const ACCENT2 = '#c084fc'
-const BDR = 'rgba(138,180,248,0.12)'
+const ACCENT = '#0ea5e9'
+const ACCENT2 = '#8b5cf6'
+const BDR = 'var(--border-primary)'
 
 const QUICK_PROMPTS = {
   zh: [
@@ -43,9 +43,9 @@ function Bubble({ msg, accent }) {
       <div style={{
         maxWidth: '82%',
         background: isUser
-          ? `linear-gradient(135deg,rgba(138,180,248,0.18),rgba(192,132,252,0.15))`
-          : 'rgba(255,255,255,0.04)',
-        border: `1px solid ${isUser ? 'rgba(138,180,248,0.25)' : 'rgba(255,255,255,0.07)'}`,
+          ? `linear-gradient(135deg,rgba(14,165,233,0.18),rgba(139,92,246,0.15))`
+          : 'var(--bg-tertiary)',
+        border: `1px solid ${isUser ? 'rgba(14,165,233,0.25)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
         padding: '9px 13px',
         fontSize: 13,
@@ -183,7 +183,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           background: '#0b0f1a',
           border: `1px solid ${BDR}`,
           borderRadius: 16,
-          boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(138,180,248,0.08)',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(14,165,233,0.08)',
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
         }}>
@@ -191,7 +191,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '11px 14px',
-            background: 'rgba(138,180,248,0.04)',
+            background: 'rgba(14,165,233,0.04)',
             borderBottom: `1px solid ${BDR}`,
             flexShrink: 0,
           }}>
@@ -247,8 +247,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   disabled={busy}
                   style={{
                     fontSize: 11, padding: '4px 9px', borderRadius: 10,
-                    background: 'rgba(138,180,248,0.08)',
-                    border: '1px solid rgba(138,180,248,0.18)',
+                    background: 'rgba(14,165,233,0.08)',
+                    border: '1px solid rgba(14,165,233,0.18)',
                     color: ACCENT, cursor: 'pointer',
                     transition: 'all 0.15s',
                   }}
@@ -263,7 +263,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           <div style={{
             display: 'flex', gap: 7, padding: '9px 10px',
             borderTop: `1px solid ${BDR}`, flexShrink: 0,
-            background: 'rgba(255,255,255,0.02)',
+            background: 'var(--bg-primary)',
           }}>
             <textarea
               ref={inputRef}
@@ -274,8 +274,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               rows={2}
               disabled={busy}
               style={{
-                flex: 1, background: 'rgba(255,255,255,0.05)',
-                border: `1px solid rgba(138,180,248,0.2)`, borderRadius: 10,
+                flex: 1, background: 'var(--bg-tertiary)',
+                border: `1px solid rgba(14,165,233,0.2)`, borderRadius: 10,
                 color: 'var(--text-primary)', padding: '8px 11px', fontSize: 13,
                 resize: 'none', outline: 'none', lineHeight: 1.55,
                 fontFamily: 'inherit',
@@ -287,7 +287,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               style={{
                 background: input.trim() && !busy
                   ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
-                  : 'rgba(255,255,255,0.06)',
+                  : 'var(--bg-hover)',
                 border: 'none', borderRadius: 10, padding: '0 14px',
                 color: input.trim() && !busy ? '#fff' : 'var(--text-muted)',
                 fontSize: 18, cursor: input.trim() && !busy ? 'pointer' : 'default',
