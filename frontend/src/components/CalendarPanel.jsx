@@ -35,10 +35,10 @@ function EventRow({ event, lang, onStockClick }) {
       alignItems: 'center',
       gap: 10,
       padding: '8px 12px',
-      borderBottom: '1px solid rgba(138,180,248,0.07)',
+      borderBottom: '1px solid rgba(14,165,233,0.07)',
       transition: 'background 0.12s',
     }}
-    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.04)' }}
+    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.04)' }}
     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <TypeTag type={event.type} lang={lang} />
@@ -50,7 +50,7 @@ function EventRow({ event, lang, onStockClick }) {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: '#8ab4f8',
+            color: '#0ea5e9',
             fontFamily: 'monospace',
             fontSize: 12,
             padding: 0,
@@ -87,11 +87,11 @@ function DateGroup({ dateStr, events, lang, onStockClick }) {
         alignItems: 'center',
         gap: 10,
         padding: '6px 12px',
-        background: 'rgba(138,180,248,0.06)',
+        background: 'rgba(14,165,233,0.06)',
         borderRadius: '8px 8px 0 0',
-        borderBottom: '1px solid rgba(138,180,248,0.12)',
+        borderBottom: '1px solid rgba(14,165,233,0.12)',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#8ab4f8', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#0ea5e9', fontFamily: 'monospace' }}>
           {dateStr}
         </span>
         <span style={{
@@ -108,7 +108,7 @@ function DateGroup({ dateStr, events, lang, onStockClick }) {
           {events.length} {lang === 'zh' ? '件' : 'events'}
         </span>
       </div>
-      <div style={{ background: 'rgba(255,255,255,0.015)', borderRadius: '0 0 8px 8px', border: '1px solid rgba(138,180,248,0.08)', borderTop: 'none' }}>
+      <div style={{ background: 'var(--bg-secondary)', borderRadius: '0 0 8px 8px', border: '1px solid rgba(14,165,233,0.08)', borderTop: 'none' }}>
         {events.map((ev, i) => (
           <EventRow key={i} event={ev} lang={lang} onStockClick={onStockClick} />
         ))}
@@ -148,7 +148,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
     <div style={{ maxWidth: 760, margin: '0 auto', width: '100%' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-        <div style={{ fontSize: 16, fontWeight: 600, background: 'linear-gradient(90deg,#8ab4f8,#c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <div style={{ fontSize: 16, fontWeight: 600, background: 'linear-gradient(90deg,#0ea5e9,#8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           {lang === 'zh' ? 'A股日历 · 未来30天' : 'A-Share Calendar · Next 30 Days'}
         </div>
       </div>
@@ -170,10 +170,10 @@ export default function CalendarPanel({ lang, onStockSelect }) {
                 fontSize: 12,
                 fontWeight: active ? 700 : 400,
                 background: active
-                  ? (cfg ? cfg.bg : 'rgba(138,180,248,0.15)')
-                  : 'rgba(255,255,255,0.05)',
+                  ? (cfg ? cfg.bg : 'rgba(14,165,233,0.15)')
+                  : 'var(--bg-hover)',
                 color: active
-                  ? (cfg ? cfg.color : '#8ab4f8')
+                  ? (cfg ? cfg.color : '#0ea5e9')
                   : 'var(--text-muted)',
                 transition: 'all 0.15s',
               }}

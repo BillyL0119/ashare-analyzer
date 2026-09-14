@@ -6,10 +6,10 @@ const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
 const CONTENT_BG  = 'var(--bg-primary)'
-const BDR         = 'rgba(138,180,248,0.10)'
+const BDR         = 'var(--border-primary)'
 const MUTED       = 'var(--text-muted)'
 const GREEN       = '#34d399'
-const PROGRESS_BG = 'rgba(255,255,255,0.06)'
+const PROGRESS_BG = 'var(--bg-hover)'
 
 const EXAMS = [
   { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#6366f1', board: 'Cambridge 9708' },
@@ -19,7 +19,7 @@ const EXAMS = [
   { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#8b5cf6', board: 'IB SL/HL'       },
   { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '股票知识入门',       title_en: 'Stock Market Basics',    color: '#ec4899', board: 'Stock Basics'   },
   { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#06b6d4', board: 'Timeline' },
-  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#8ab4f8', board: 'Google Gemini' },
+  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#0ea5e9', board: 'Google Gemini' },
 ]
 
 function storageKey(exam) { return `bfs_study_${exam}` }
@@ -44,7 +44,7 @@ function TopicRow({ topic, active, read, accentColor, zh, onClick }) {
         padding: '8px 12px', cursor: 'pointer', borderRadius: 8,
         background: active
           ? `rgba(${hexToRgb(accentColor)},0.12)`
-          : hover ? 'rgba(255,255,255,0.04)' : 'transparent',
+          : hover ? 'var(--bg-hover)' : 'transparent',
         borderLeft: active ? `3px solid ${accentColor}` : '3px solid transparent',
         marginBottom: 2, transition: 'background 0.12s',
       }}
@@ -132,7 +132,7 @@ function KeyTermPill({ term }) {
 }
 
 // ── Economic Diagrams (AP Macro) ───────────────────────────────────────────────
-const DA = 'rgba(138,180,248,0.45)'   // axis
+const DA = 'rgba(14,165,233,0.45)'   // axis
 const DL = 'rgba(154,160,166,0.8)'    // axis label
 const DT = 'rgba(232,234,240,0.88)'   // text on diagram
 
@@ -461,7 +461,7 @@ function SectionBlock({ section, index, total, accentColor, zh }) {
       )}
 
       {index < total - 1 && (
-        <div style={{ height: 1, background: 'rgba(138,180,248,0.08)', margin: '24px 0 0 15px' }} />
+        <div style={{ height: 1, background: 'rgba(14,165,233,0.08)', margin: '24px 0 0 15px' }} />
       )}
     </div>
   )
@@ -532,7 +532,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
   const handleKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }
 
   return (
-    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(138,180,248,0.10)' }}>
+    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(14,165,233,0.10)' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
         <span style={{ fontSize: 20 }}>🤖</span>
@@ -567,8 +567,8 @@ function AITutor({ topicId, exam, zh, accentColor }) {
           {/* Answer */}
           <div style={{
             borderLeft: '3px solid',
-            borderImage: 'linear-gradient(180deg,#8ab4f8,#c084fc) 1',
-            background: 'rgba(138,180,248,0.05)',
+            borderImage: 'linear-gradient(180deg,#0ea5e9,#8b5cf6) 1',
+            background: 'rgba(14,165,233,0.05)',
             borderRadius: '0 10px 10px 0',
             padding: '12px 16px',
             fontSize: 13, color: 'rgba(232,234,240,0.9)', lineHeight: 1.8,
@@ -585,8 +585,8 @@ function AITutor({ topicId, exam, zh, accentColor }) {
       {/* Loading */}
       {loading && (
         <div style={{
-          borderLeft: '3px solid rgba(138,180,248,0.4)',
-          background: 'rgba(138,180,248,0.04)',
+          borderLeft: '3px solid rgba(14,165,233,0.4)',
+          background: 'rgba(14,165,233,0.04)',
           borderRadius: '0 10px 10px 0',
           padding: '12px 16px',
           marginBottom: 16,
@@ -607,7 +607,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
           rows={2}
           style={{
             flex: 1,
-            background: 'rgba(255,255,255,0.04)',
+            background: 'var(--bg-hover)',
             border: `1px solid rgba(${hexToRgb(accentColor)},0.25)`,
             borderRadius: 10,
             color: 'var(--text-primary)',
@@ -626,7 +626,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
           style={{
             background: input.trim() && !loading
               ? `linear-gradient(135deg, ${accentColor}, ${accentColor}99)`
-              : 'rgba(255,255,255,0.06)',
+              : 'var(--bg-hover)',
             border: 'none',
             borderRadius: 10,
             padding: '0 18px',
@@ -685,7 +685,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       tooltip: {
         trigger: 'axis',
         backgroundColor: '#1a2035',
-        borderColor: 'rgba(138,180,248,0.2)',
+        borderColor: 'rgba(14,165,233,0.2)',
         textStyle: { color: 'var(--text-primary)', fontSize: 12 },
         formatter: (params) => {
           let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
@@ -706,7 +706,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       grid: { left: 48, right: 24, top: 40, bottom: 36 },
       xAxis: {
         type: 'time',
-        axisLine: { lineStyle: { color: 'rgba(138,180,248,0.15)' } },
+        axisLine: { lineStyle: { color: 'rgba(14,165,233,0.15)' } },
         axisLabel: { color: 'var(--text-muted)', fontSize: 10 },
         splitLine: { show: false },
       },
@@ -716,7 +716,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
         nameTextStyle: { color: 'var(--text-muted)', fontSize: 10 },
         axisLine: { show: false },
         axisLabel: { color: 'var(--text-muted)', fontSize: 10 },
-        splitLine: { lineStyle: { color: 'rgba(138,180,248,0.07)' } },
+        splitLine: { lineStyle: { color: 'rgba(14,165,233,0.07)' } },
       },
       series,
     }
@@ -867,7 +867,7 @@ function EventTimeline({ zh }) {
 
             {/* Price chart */}
             <div style={{
-              background: 'rgba(255,255,255,0.02)',
+              background: 'var(--bg-primary)',
               border: `1px solid ${BDR}`,
               borderRadius: 12,
               padding: '16px 20px',
@@ -881,7 +881,7 @@ function EventTimeline({ zh }) {
 
             {/* Exam points */}
             <div style={{
-              background: 'rgba(255,255,255,0.02)',
+              background: 'var(--bg-primary)',
               border: `1px solid ${BDR}`,
               borderRadius: 12,
               padding: '16px 20px',
@@ -893,7 +893,7 @@ function EventTimeline({ zh }) {
                 <div key={i} style={{
                   display: 'flex', gap: 12, marginBottom: i < active.exam_points.length - 1 ? 14 : 0,
                   paddingBottom: i < active.exam_points.length - 1 ? 14 : 0,
-                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(138,180,248,0.07)' : 'none',
+                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(14,165,233,0.07)' : 'none',
                 }}>
                   <span style={{
                     flexShrink: 0, fontSize: 11, fontWeight: 700,
@@ -1138,7 +1138,7 @@ export default function StudyCenter({ lang }) {
               <div className="skeleton" style={{ height: 12, width: '35%' }} />
               {/* Section blocks */}
               {[0, 1, 2].map(i => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(138,180,248,0.07)` : 'none' }}>
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(14,165,233,0.07)` : 'none' }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <div className="skeleton" style={{ width: 3, height: 20, borderRadius: 2, flexShrink: 0 }} />
                     <div className="skeleton" style={{ height: 18, width: `${[55, 45, 60][i]}%` }} />
@@ -1194,10 +1194,10 @@ export default function StudyCenter({ lang }) {
                     setActiveExam('ai_teacher')
                   }}
                   style={{
-                    background: 'rgba(138,180,248,0.08)',
-                    border: '1px solid rgba(138,180,248,0.20)',
+                    background: 'rgba(14,165,233,0.08)',
+                    border: '1px solid rgba(14,165,233,0.20)',
                     borderRadius: 8, padding: '5px 14px', fontSize: 12,
-                    color: '#8ab4f8', cursor: 'pointer',
+                    color: '#0ea5e9', cursor: 'pointer',
                   }}
                 >
                   🎓 {zh ? '在AI老师中深入探讨 →' : 'Discuss with AI Tutor →'}

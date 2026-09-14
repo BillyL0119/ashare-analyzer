@@ -90,7 +90,7 @@ export default function WelcomeModal({ onLangSelect }) {
       }}>
         <div style={{
           background: '#161b2e', borderRadius: 16,
-          border: '1px solid rgba(138,180,248,0.3)',
+          border: '1px solid rgba(14,165,233,0.3)',
           padding: '40px 32px', width: 420, maxWidth: '92vw',
           textAlign: 'center',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -105,13 +105,13 @@ export default function WelcomeModal({ onLangSelect }) {
           <div style={{ display: 'flex', gap: 16 }}>
             <button onClick={() => handleLangSelect('zh')} style={{
               flex: 1, padding: '20px 16px', borderRadius: 12,
-              background: 'rgba(138,180,248,0.06)',
-              border: '1px solid rgba(138,180,248,0.2)',
+              background: 'rgba(14,165,233,0.06)',
+              border: '1px solid rgba(14,165,233,0.2)',
               cursor: 'pointer', color: '#e8eaf0',
               transition: 'all 0.2s',
             }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(99,102,241,0.2)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'rgba(138,180,248,0.06)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(14,165,233,0.06)'}
             >
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
                 <FlagCN height={28} />
@@ -149,7 +149,7 @@ export default function WelcomeModal({ onLangSelect }) {
     }}>
       <div style={{
         background: '#161b2e', borderRadius: 16,
-        border: '1px solid rgba(138,180,248,0.3)',
+        border: '1px solid rgba(14,165,233,0.3)',
         padding: '32px 28px', width: 400, maxWidth: '92vw',
         position: 'relative', textAlign: 'center',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',

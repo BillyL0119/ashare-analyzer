@@ -281,7 +281,7 @@ export default function StockCard({ stock }) {
                 style={{
                   padding: '5px 18px', borderRadius: 16, border: 'none', cursor: 'pointer',
                   fontSize: 12, fontWeight: 600,
-                  background: 'linear-gradient(135deg, #8ab4f8, #c084fc)',
+                  background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
                   color: '#fff',
                 }}
               >

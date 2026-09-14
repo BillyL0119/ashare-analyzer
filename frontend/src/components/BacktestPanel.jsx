@@ -5,8 +5,8 @@ import { getBacktest } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const ACCENT = '#8ab4f8'
-const ACCENT2 = '#c084fc'
+const ACCENT = '#0ea5e9'
+const ACCENT2 = '#8b5cf6'
 
 const STRATEGIES = [
   { key: 'ma',   zh: '双均线 (MA5/MA20)', en: 'MA Crossover (MA5/MA20)' },
@@ -32,7 +32,7 @@ const STRATEGY_DESC = {
 function MetricCard({ label, value, sub, color }) {
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(138,180,248,0.1)',
+      background: 'var(--bg-tertiary)', border: '1px solid rgba(14,165,233,0.1)',
       borderRadius: 10, padding: '12px 16px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
@@ -57,7 +57,7 @@ function EquityChart({ data, isCN }) {
       lineStyle: { color: ACCENT, width: 2 },
       itemStyle: { color: ACCENT },
       showSymbol: false,
-      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(138,180,248,0.15)' }, { offset: 1, color: 'rgba(138,180,248,0.01)' }] } },
+      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(14,165,233,0.15)' }, { offset: 1, color: 'rgba(14,165,233,0.01)' }] } },
     },
   ]
 
@@ -78,7 +78,7 @@ function EquityChart({ data, isCN }) {
     tooltip: {
       trigger: 'axis',
       backgroundColor: 'rgba(5,10,22,0.95)',
-      borderColor: 'rgba(138,180,248,0.3)',
+      borderColor: 'rgba(14,165,233,0.3)',
       textStyle: { color: 'var(--text-primary)', fontSize: 12 },
       formatter: (params) => {
         const date = params[0]?.axisValue || ''
@@ -98,7 +98,7 @@ function EquityChart({ data, isCN }) {
     xAxis: {
       type: 'category',
       data: dates,
-      axisLine: { lineStyle: { color: 'rgba(138,180,248,0.1)' } },
+      axisLine: { lineStyle: { color: 'rgba(14,165,233,0.1)' } },
       axisLabel: { color: 'var(--text-muted)', fontSize: 10,
         formatter: (v) => v?.slice(0, 7) || v,
         interval: Math.floor(dates.length / 6),
@@ -107,7 +107,7 @@ function EquityChart({ data, isCN }) {
     yAxis: {
       type: 'value',
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: 'rgba(138,180,248,0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(14,165,233,0.06)' } },
       axisLabel: { color: 'var(--text-muted)', fontSize: 10,
         formatter: (v) => `¥${(v / 10000).toFixed(0)}万`,
       },
@@ -154,7 +154,7 @@ function TradeTable({ trades, isCN }) {
             {paged.map((t, i) => {
               const color = t.win ? '#22c55e' : '#ef4444'
               return (
-                <tr key={i} style={{ borderTop: '1px solid rgba(138,180,248,0.06)' }}>
+                <tr key={i} style={{ borderTop: '1px solid rgba(14,165,233,0.06)' }}>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.buy_date}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-primary)', fontFamily: 'monospace' }}>{t.buy_price}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.sell_date}</td>
@@ -176,7 +176,7 @@ function TradeTable({ trades, isCN }) {
           {Array.from({ length: total }, (_, i) => (
             <button key={i} onClick={() => setPage(i)} style={{
               padding: '3px 9px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 11,
-              background: page === i ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'rgba(255,255,255,0.06)',
+              background: page === i ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'var(--bg-hover)',
               color: page === i ? '#fff' : 'var(--text-muted)',
             }}>{i + 1}</button>
           ))}
@@ -222,7 +222,7 @@ export default function BacktestPanel({ stocks }) {
   const btnStyle = (active) => ({
     padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
     fontSize: 12, fontWeight: active ? 600 : 400,
-    background: active ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'rgba(255,255,255,0.05)',
+    background: active ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'var(--bg-hover)',
     color: active ? '#fff' : 'var(--text-muted)', transition: 'all 0.2s',
     whiteSpace: 'nowrap',
   })
@@ -268,8 +268,8 @@ export default function BacktestPanel({ stocks }) {
         {/* Strategy description */}
         <div style={{
           fontSize: 11, color: 'var(--text-muted)', marginBottom: 10,
-          padding: '6px 10px', background: 'rgba(255,255,255,0.02)',
-          borderRadius: 6, border: '1px solid rgba(138,180,248,0.07)',
+          padding: '6px 10px', background: 'var(--bg-primary)',
+          borderRadius: 6, border: '1px solid rgba(14,165,233,0.07)',
         }}>
           {isCN ? STRATEGY_DESC[strategy].zh : STRATEGY_DESC[strategy].en}
         </div>
@@ -294,9 +294,9 @@ export default function BacktestPanel({ stocks }) {
           style={{
             padding: '8px 28px', borderRadius: 20, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 13, fontWeight: 700,
-            background: loading ? 'rgba(138,180,248,0.15)' : `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
+            background: loading ? 'rgba(14,165,233,0.15)' : `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
             color: loading ? 'var(--text-muted)' : '#fff',
-            boxShadow: loading ? 'none' : '0 2px 12px rgba(138,180,248,0.3)',
+            boxShadow: loading ? 'none' : '0 2px 12px rgba(14,165,233,0.3)',
             transition: 'all 0.2s',
           }}
         >

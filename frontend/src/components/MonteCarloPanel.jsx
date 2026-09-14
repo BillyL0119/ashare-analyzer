@@ -229,7 +229,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '12px 8px', marginBottom: 14 }}>
+      <div style={{ display: 'flex', background: 'var(--bg-tertiary)', borderRadius: 6, padding: '12px 8px', marginBottom: 14 }}>
         <div style={statStyle}>
           <div style={statLabel}>{t.mcProb}</div>
           <div style={statVal(parseFloat(result.probProfit) >= 50 ? '#ef5350' : '#26a69a')}>{result.probProfit}%</div>
@@ -284,11 +284,11 @@ export default function MonteCarloPanel({ stocks }) {
   const btnStyle = (active) => ({
     padding: '4px 10px',
     borderRadius: 4,
-    border: `1px solid ${active ? '#8ab4f8' : THEME.border}`,
+    border: `1px solid ${active ? '#0ea5e9' : THEME.border}`,
     cursor: 'pointer',
     fontSize: 12,
-    background: active ? 'rgba(138,180,248,0.12)' : 'rgba(255,255,255,0.06)',
-    color: active ? '#8ab4f8' : THEME.text,
+    background: active ? 'rgba(14,165,233,0.12)' : 'var(--bg-hover)',
+    color: active ? '#0ea5e9' : THEME.text,
     transition: 'all 0.15s',
   })
 
@@ -327,7 +327,7 @@ export default function MonteCarloPanel({ stocks }) {
             cursor: running ? 'wait' : 'pointer',
             fontSize: 13,
             fontWeight: 600,
-            background: running ? 'rgba(255,255,255,0.06)' : 'linear-gradient(135deg, #8ab4f8, #c084fc)',
+            background: running ? 'var(--bg-hover)' : 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
             color: running ? 'var(--text-muted)' : '#fff',
             transition: 'all 0.15s',
           }}

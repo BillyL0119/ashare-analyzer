@@ -211,7 +211,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
               {/* Left: similar stocks */}
               <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
-                  fontSize: 13, fontWeight: 600, color: '#c084fc' }}>
+                  fontSize: 13, fontWeight: 600, color: '#8b5cf6' }}>
                   {lang === 'zh' ? '相似走势 TOP5' : 'Similar Stocks TOP5'}
                 </div>
                 {simResults.length === 0 ? (

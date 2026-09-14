@@ -69,7 +69,7 @@ function RegimeBreakdown({ stats, lang, t }) {
                 &nbsp;| avg {s.avg_daily_return > 0 ? '+' : ''}{s.avg_daily_return.toFixed(3)}%/d
               </span>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 3, height: 7, overflow: 'hidden' }}>
+            <div style={{ background: 'var(--bg-hover)', borderRadius: 3, height: 7, overflow: 'hidden' }}>
               <div style={{ width: `${s.pct}%`, height: '100%', background: color, borderRadius: 3 }} />
             </div>
           </div>
@@ -208,7 +208,7 @@ function TransitionTable({ transitions, lang, t }) {
     <div style={{ overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
         <thead>
-          <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
+          <tr style={{ background: 'var(--bg-hover)' }}>
             {[t.regimeStart, t.regimeEnd, t.regimeCurrent, t.regimeDuration, t.regimeReturn].map(h => (
               <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{h}</th>
             ))}
@@ -253,7 +253,7 @@ function Interpretation({ text }) {
               : part
           )
         return (
-          <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '9px 13px', color: '#c9d1d9', fontSize: 13, lineHeight: 1.7 }}>
+          <div key={i} style={{ background: 'var(--bg-tertiary)', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '9px 13px', color: 'var(--text-primary)', fontSize: 13, lineHeight: 1.7 }}>
             {renderBold(s)}
           </div>
         )
@@ -296,26 +296,26 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
       {data && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Current regime + breakdown side by side */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 24, alignItems: 'start', background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '14px 18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 24, alignItems: 'start', background: 'var(--bg-tertiary)', borderRadius: 6, padding: '14px 18px' }}>
             <RegimeBadge regime={data.current_regime} duration={data.current_duration_days} lang={lang} t={t} />
             <RegimeBreakdown stats={data.regime_stats} lang={lang} t={t} />
           </div>
 
           {/* Price + regime chart */}
           <div>
-            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
+            <div style={{ color: '#0ea5e9', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
             <RegimePriceChart series={data.series} lang={lang} t={t} />
           </div>
 
           {/* Transition history */}
           <div>
-            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
+            <div style={{ color: '#0ea5e9', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
             <TransitionTable transitions={data.transitions} lang={lang} t={t} />
           </div>
 
           {/* Interpretation */}
           <div>
-            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
+            <div style={{ color: '#0ea5e9', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
             <Interpretation text={data.interpretation[lang]} />
           </div>
         </div>
@@ -334,8 +334,8 @@ export default function RegimePanel({ stocks }) {
   const [win, setWin] = useState(20)
 
   const btnStyle = (active) => ({
-    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#8ab4f8' : THEME.border}`,
-    background: active ? 'rgba(138,180,248,0.12)' : 'rgba(255,255,255,0.06)', color: active ? '#8ab4f8' : THEME.text, cursor: 'pointer',
+    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#0ea5e9' : THEME.border}`,
+    background: active ? 'rgba(14,165,233,0.12)' : 'var(--bg-hover)', color: active ? '#0ea5e9' : THEME.text, cursor: 'pointer',
   })
 
   return (

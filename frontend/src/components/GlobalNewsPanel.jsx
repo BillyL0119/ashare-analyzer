@@ -214,7 +214,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
             </Pill>
           ))}
         </div>
-        <div style={{ width: 1, background: 'rgba(255,255,255,0.08)', margin: '0 4px' }} />
+        <div style={{ width: 1, background: 'var(--border-primary)', margin: '0 4px' }} />
         {/* Category */}
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           {Object.entries(CAT_LABELS).map(([k, v]) => (
@@ -225,13 +225,13 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
         </div>
         {sources.length > 0 && (
           <>
-            <div style={{ width: 1, background: 'rgba(255,255,255,0.08)', margin: '0 4px' }} />
+            <div style={{ width: 1, background: 'var(--border-primary)', margin: '0 4px' }} />
             {/* Source */}
             <select
               value={filters.source}
               onChange={e => applyFilter({ ...filters, source: e.target.value })}
               style={{
-                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
                 borderRadius: 20, padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
               }}
             >
@@ -248,7 +248,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
           {[0, 1, 2, 3, 4].map(i => (
             <div key={i} style={{
               height: 80, borderRadius: 10,
-              background: 'rgba(255,255,255,0.04)',
+              background: 'var(--bg-hover)',
               animation: 'pulse 1.5s ease-in-out infinite',
             }} />
           ))}
@@ -267,7 +267,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onClick={() => setPage(p => p + 1)}
               style={{
                 display: 'block', width: '100%', padding: '10px 0',
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
                 borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
                 marginTop: 4,
               }}

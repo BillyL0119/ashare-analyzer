@@ -86,7 +86,7 @@ function SentimentGauge({ score, t }) {
         <path
           d="M 8 40 A 28 28 0 0 1 72 40"
           fill="none"
-          stroke="rgba(255,255,255,0.07)"
+          stroke="var(--border-primary)"
           strokeWidth="7"
           strokeLinecap="round"
         />
@@ -134,7 +134,7 @@ function NewsItem({ item, t }) {
         borderBottom: `1px solid ${THEME.border}`,
         transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.04)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.04)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       {/* Main row */}
@@ -177,7 +177,7 @@ function NewsItem({ item, t }) {
             <span>{item.source}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
-              <span style={{ color: '#8ab4f8', fontSize: 10, background: 'rgba(138,180,248,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
+              <span style={{ color: '#0ea5e9', fontSize: 10, background: 'rgba(14,165,233,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
             )}
           </div>
         </div>
@@ -208,8 +208,8 @@ function NewsItem({ item, t }) {
         <div style={{
           marginTop: 10,
           padding: '10px 12px',
-          background: 'rgba(138,180,248,0.04)',
-          border: '1px solid rgba(138,180,248,0.10)',
+          background: 'rgba(14,165,233,0.04)',
+          border: '1px solid rgba(14,165,233,0.10)',
           borderRadius: 6,
           fontSize: 12,
           color: 'var(--text-muted)',
@@ -217,7 +217,7 @@ function NewsItem({ item, t }) {
         }}>
           {ai.reason && (
             <div>
-              <span style={{ color: '#8ab4f8', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
+              <span style={{ color: '#0ea5e9', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
               {ai.reason}
             </div>
           )}
@@ -232,7 +232,7 @@ function NewsItem({ item, t }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                style={{ color: '#8ab4f8', textDecoration: 'none', fontSize: 11 }}
+                style={{ color: '#0ea5e9', textDecoration: 'none', fontSize: 11 }}
               >
                 {t.newsReadMore}
               </a>
@@ -257,9 +257,9 @@ function FilterPill({ active, color, onClick, children }) {
         fontSize: 11,
         fontWeight: active ? 600 : 400,
         background: active
-          ? `${color || 'rgba(138,180,248,0.25)'}30`
-          : 'rgba(255,255,255,0.05)',
-        color: active ? (color || '#8ab4f8') : 'var(--text-muted)',
+          ? `${color || 'rgba(14,165,233,0.25)'}30`
+          : 'var(--bg-hover)',
+        color: active ? (color || '#0ea5e9') : 'var(--text-muted)',
         transition: 'all 0.15s',
         letterSpacing: '0.2px',
       }}
@@ -313,12 +313,12 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
         }}
       >
         <span style={{
-          background: 'rgba(138,180,248,0.08)',
-          border: '1px solid rgba(138,180,248,0.3)',
+          background: 'rgba(14,165,233,0.08)',
+          border: '1px solid rgba(14,165,233,0.3)',
           borderRadius: 4,
           padding: '2px 8px',
           fontSize: 12,
-          color: '#8ab4f8',
+          color: '#0ea5e9',
           fontFamily: 'monospace',
         }}>
           {stock.code}
@@ -333,7 +333,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           marginLeft: 'auto',
           fontSize: 11,
           color: 'var(--text-muted)',
-          background: 'rgba(255,255,255,0.04)',
+          background: 'var(--bg-hover)',
           borderRadius: 4,
           padding: '2px 8px',
         }}>
@@ -364,8 +364,8 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           {/* ── Overview card ── */}
           {data.overall && (
             <div style={{
-              background: 'rgba(138,180,248,0.03)',
-              border: '1px solid rgba(138,180,248,0.10)',
+              background: 'rgba(14,165,233,0.03)',
+              border: '1px solid rgba(14,165,233,0.10)',
               borderRadius: 8,
               padding: '14px 16px',
               marginBottom: 14,
@@ -387,10 +387,10 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
                   <div style={{
                     marginTop: 12,
                     fontSize: 13,
-                    color: '#c084fc',
+                    color: '#8b5cf6',
                     lineHeight: 1.5,
                     paddingTop: 10,
-                    borderTop: '1px solid rgba(255,255,255,0.05)',
+                    borderTop: '1px solid var(--border-primary)',
                   }}>
                     {data.overall.ai_summary}
                   </div>
@@ -412,7 +412,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
               {t.newsEn}
             </FilterPill>
 
-            <div style={{ width: 1, height: 16, background: 'rgba(255,255,255,0.1)', margin: '0 3px' }} />
+            <div style={{ width: 1, height: 16, background: 'var(--border-primary)', margin: '0 3px' }} />
 
             <FilterPill active={sentFilter === 'all'} onClick={() => setSentFilter('all')}>
               {t.newsAllSent}
