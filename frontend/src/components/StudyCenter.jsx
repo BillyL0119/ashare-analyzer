@@ -179,18 +179,27 @@ function PPCDiagram() {
       caption="Concave shape = increasing opportunity costs. Points ON curve = productive efficiency. Outward shift = long-run economic growth (better technology or more resources)."
     >
       <ChartAxes xlabel="Good X →" ylabel="Good Y →"/>
-      <path d="M 393,235 C 388,118 173,24 58,24" fill="none" stroke="#f59e0b" strokeWidth="2.5"/>
-      <path d="M 427,235 C 421,106 185,3 58,3" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.55"/>
-      <text x="62" y="37" fill="#f59e0b" fontSize="11" fontWeight="700">PPC</text>
-      <text x="70" y="13" fill="#f59e0b" fontSize="10" opacity="0.62">PPC' (growth)</text>
-      <circle cx="268" cy="88" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
-      <text x="278" y="83" fill={DT} fontSize="10.5">A: Efficient</text>
-      <circle cx="220" cy="155" r="5.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="2"/>
-      <text x="230" y="150" fill={DT} fontSize="10.5">B: Inefficient</text>
-      <circle cx="320" cy="68" r="5.5" fill="#f87171" stroke="#0f1117" strokeWidth="2"/>
-      <text x="330" y="63" fill={DT} fontSize="10.5">C: Unattainable</text>
-      <path d="M 326,90 Q 342,72 358,74" stroke="#f59e0b" strokeWidth="1.3" fill="none" opacity="0.5"/>
-      <polygon points="357,68 364,74 356,79" fill="#f59e0b" opacity="0.5"/>
+      {/* PPC: quarter-ellipse a=290 b=180, κ=0.5523
+          M(55+290,235) C(55+290,235−κ·180) (55+κ·290,235−180) (55,235−180)
+          = M(345,235) C(345,136) (215,55) (55,55) */}
+      <path d="M 345,235 C 345,136 215,55 55,55" fill="none" stroke="#f59e0b" strokeWidth="2.5"/>
+      {/* PPC'(growth): same ellipse ×1.25 → a'=362.5 b'=225
+          M(418,235) C(418,111) (255,10) (55,10) — every point 1.25× farther from origin */}
+      <path d="M 418,235 C 418,111 255,10 55,10" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.55"/>
+      <text x="62" y="48" fill="#f59e0b" fontSize="11" fontWeight="700">PPC</text>
+      <text x="70" y="22" fill="#f59e0b" fontSize="10" opacity="0.62">PPC' (growth)</text>
+      {/* A: Efficient — on PPC at t=45°: (55+290·cos45°, 235−180·sin45°)=(260,108) */}
+      <circle cx="260" cy="108" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
+      <text x="270" y="103" fill={DT} fontSize="10.5">A: Efficient</text>
+      {/* B: Inefficient — inside PPC; (155/290)²+(70/180)²=0.44<1 ✓ */}
+      <circle cx="210" cy="165" r="5.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="2"/>
+      <text x="220" y="160" fill={DT} fontSize="10.5">B: Inefficient</text>
+      {/* C: outside PPC, inside PPC'; (250/290)²+(135/180)²=1.31>1, (250/362.5)²+(135/225)²=0.84<1 ✓ */}
+      <circle cx="305" cy="100" r="5.5" fill="#f87171" stroke="#0f1117" strokeWidth="2"/>
+      <text x="315" y="95" fill={DT} fontSize="10.5">C: Unattainable</text>
+      {/* Growth arrow: from PPC outward to PPC' at t≈30° */}
+      <path d="M 310,143 Q 338,131 366,122" stroke="#f59e0b" strokeWidth="1.3" fill="none" opacity="0.5"/>
+      <polygon points="365,116 372,122 364,127" fill="#f59e0b" opacity="0.5"/>
     </DiagramWrap>
   )
 }
