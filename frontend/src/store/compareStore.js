@@ -13,7 +13,7 @@ const useCompareStore = create((set, get) => ({
   startDate: oneYearAgo,
   endDate: today,
   adjust: 'qfq',
-  market: 'cn', // 'cn' | 'us'
+  market: 'us', // 'cn' | 'us'
 
   addSymbol: (stock) => {
     const { selectedSymbols } = get()
