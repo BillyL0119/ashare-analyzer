@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import useAuthStore from '../store/authStore'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const BG        = 'var(--bg-primary)'
@@ -188,10 +189,13 @@ function ResetModal({ lang, onConfirm, onClose }) {
 }
 
 // ── Main Component ───────────────────────────────────────────────────────────
-export default function PaperTradingPanel({ lang }) {
+export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const zhEn = (zh, en) => lang === 'zh' ? zh : en
 
-  const [deviceId]            = useState(getDeviceId)
+  const { user }              = useAuthStore()
+  // When logged in, use Supabase user ID as the account key (maps to a persistent
+  // server-side JSON file). When anonymous, fall back to the local device ID.
+  const accountKey            = user?.id ?? getDeviceId()
   const [account,  setAccount] = useState(null)
   const [loading,  setLoading] = useState(true)
   const [err,      setErr]     = useState(null)
@@ -225,7 +229,7 @@ export default function PaperTradingPanel({ lang }) {
       const res = await fetch('/api/paper/account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: deviceId }),
+        body: JSON.stringify({ device_id: accountKey }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.detail || 'Failed')
@@ -235,17 +239,17 @@ export default function PaperTradingPanel({ lang }) {
     } finally {
       setLoading(false)
     }
-  }, [deviceId])
+  }, [accountKey])
 
   const fetchLeaderboard = useCallback(async () => {
     try {
-      const res = await fetch(`/api/paper/leaderboard?device_id=${deviceId}`)
+      const res = await fetch(`/api/paper/leaderboard?device_id=${accountKey}`)
       const data = await res.json()
       setLeaderboard(Array.isArray(data) ? data : [])
     } catch (e) {
       console.error('leaderboard:', e)
     }
-  }, [deviceId])
+  }, [accountKey])
 
   useEffect(() => { fetchAccount() }, [fetchAccount])
   useEffect(() => { if (showBoard) fetchLeaderboard() }, [showBoard, fetchLeaderboard])
@@ -282,7 +286,7 @@ export default function PaperTradingPanel({ lang }) {
       const res = await fetch('/api/paper/buy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: deviceId, symbol: buyCode, shares: buyShares, market: ptMarket }),
+        body: JSON.stringify({ device_id: accountKey, symbol: buyCode, shares: buyShares, market: ptMarket }),
       })
       const data = await res.json()
       if (!res.ok) { setBuyMsg({ type: 'error', text: data.detail }); return }
@@ -301,7 +305,7 @@ export default function PaperTradingPanel({ lang }) {
       const res = await fetch('/api/paper/sell', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: deviceId, symbol: sellModal.symbol, shares, market: ptMarket }),
+        body: JSON.stringify({ device_id: accountKey, symbol: sellModal.symbol, shares, market: ptMarket }),
       })
       const data = await res.json()
       if (!res.ok) { setActionMsg({ type: 'error', text: data.detail }); return }
@@ -325,7 +329,7 @@ export default function PaperTradingPanel({ lang }) {
       const res = await fetch('/api/paper/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: deviceId }),
+        body: JSON.stringify({ device_id: accountKey }),
       })
       const data = await res.json()
       if (res.ok) { setActionMsg({ type: 'success', text: data.message }); fetchAccount() }
@@ -388,6 +392,34 @@ export default function PaperTradingPanel({ lang }) {
           maxWidth: '90vw', textAlign: 'center',
         }}>
           {actionMsg.text}
+        </div>
+      )}
+
+      {/* ── Auth banner (anonymous mode) ── */}
+      {!user && (
+        <div style={{
+          background: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.2)',
+          borderRadius: 10, padding: '10px 16px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap',
+        }}>
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+            {zhEn(
+              '当前为访客模式，数据仅保存在本设备。登录后可跨设备同步持仓和交易记录。',
+              'Guest mode — data is saved on this device only. Sign in to sync across devices.'
+            )}
+          </div>
+          {onOpenAuth && (
+            <button
+              onClick={onOpenAuth}
+              style={{
+                padding: '6px 16px', borderRadius: 8, border: 'none', flexShrink: 0,
+                background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+              }}
+            >
+              {zhEn('登录 / 注册', 'Sign In')}
+            </button>
+          )}
         </div>
       )}
 

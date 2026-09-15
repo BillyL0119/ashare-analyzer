@@ -445,7 +445,7 @@ export default function App() {
           {appTab === 'study' ? (
             <StudyCenter lang={lang} />
           ) : appTab === 'paper' ? (
-            <PaperTradingPanel lang={lang} />
+            <PaperTradingPanel lang={lang} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'universities' ? (
             <UniversitiesPage lang={lang} />
           ) : appTab === 'news' ? (
