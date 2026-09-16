@@ -395,7 +395,6 @@ body {
 
 .bfs-gblob {
   position: absolute;
-  border-radius: 50%;
   will-change: transform;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
@@ -418,53 +417,48 @@ body {
   width: 270px; height: 270px;
   top: calc(18% - 135px); left: calc(15% - 135px);
   background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
-  animation-name: bfsGoo1;
-  animation-duration: 20s;
+  animation: bfsGoo1 20s ease-in-out 0s infinite alternate both,
+             bfsMorph1 11s ease-in-out -2s infinite alternate both;
 }
 /* bg2 – violet, upper-center  (centre ≈ 44%, 24%) — drifts toward bg1 */
 .bg2 {
   width: 260px; height: 260px;
   top: calc(24% - 130px); left: calc(44% - 130px);
   background: radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 68%);
-  animation-name: bfsGoo2;
-  animation-duration: 25s;
-  animation-delay: -6s;
+  animation: bfsGoo2 25s ease-in-out -6s infinite alternate both,
+             bfsMorph2 13s ease-in-out -5s infinite alternate both;
 }
 /* bg3 – blue, upper-right  (centre ≈ 74%, 32%) — drifts toward bg5 */
 .bg3 {
   width: 280px; height: 280px;
   top: calc(32% - 140px); left: calc(74% - 140px);
   background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
-  animation-name: bfsGoo3;
-  animation-duration: 22s;
-  animation-delay: -11s;
+  animation: bfsGoo3 22s ease-in-out -11s infinite alternate both,
+             bfsMorph3 9s ease-in-out -8s infinite alternate both;
 }
 /* bg4 – cyan, lower-left  (centre ≈ 20%, 66%) — drifts toward bg6 */
 .bg4 {
   width: 260px; height: 260px;
   top: calc(66% - 130px); left: calc(20% - 130px);
   background: radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 68%);
-  animation-name: bfsGoo4;
-  animation-duration: 27s;
-  animation-delay: -4s;
+  animation: bfsGoo4 27s ease-in-out -4s infinite alternate both,
+             bfsMorph4 15s ease-in-out -3s infinite alternate both;
 }
 /* bg5 – violet, lower-center  (centre ≈ 54%, 60%) — drifts toward bg3 */
 .bg5 {
   width: 270px; height: 270px;
   top: calc(60% - 135px); left: calc(54% - 135px);
   background: radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 68%);
-  animation-name: bfsGoo5;
-  animation-duration: 19s;
-  animation-delay: -9s;
+  animation: bfsGoo5 19s ease-in-out -9s infinite alternate both,
+             bfsMorph5 10s ease-in-out -7s infinite alternate both;
 }
 /* bg6 – blue, lower-right  (centre ≈ 80%, 74%) — drifts toward bg4 */
 .bg6 {
   width: 260px; height: 260px;
   top: calc(74% - 130px); left: calc(80% - 130px);
   background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
-  animation-name: bfsGoo6;
-  animation-duration: 23s;
-  animation-delay: -15s;
+  animation: bfsGoo6 23s ease-in-out -15s infinite alternate both,
+             bfsMorph6 12s ease-in-out -1s infinite alternate both;
 }
 
 /*
@@ -499,6 +493,55 @@ body {
 @keyframes bfsGoo6 {
   from { transform: translate(0,      0)     scale(1);    }
   to   { transform: translate(-160px, -100px) scale(0.96); }
+}
+
+/* ── Organic shape morphing keyframes ─────────────────────────────────────
+   Each blob has a unique 5-step border-radius cycle using the 8-value syntax
+   (horizontal / vertical radii per corner) for natural amoeba-like deformation.
+   Durations are 9–15 s, all different from the position animations, so the
+   shape change and movement are always out of phase → fully organic feel.
+   ────────────────────────────────────────────────────────────────────────── */
+@keyframes bfsMorph1 {
+  0%   { border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%; }
+  25%  { border-radius: 55% 45% 38% 62% / 60% 50% 45% 40%; }
+  50%  { border-radius: 35% 65% 50% 50% / 55% 45% 60% 40%; }
+  75%  { border-radius: 62% 38% 55% 45% / 40% 60% 42% 58%; }
+  100% { border-radius: 48% 52% 42% 58% / 38% 62% 52% 48%; }
+}
+@keyframes bfsMorph2 {
+  0%   { border-radius: 68% 32% 45% 55% / 35% 65% 50% 50%; }
+  25%  { border-radius: 40% 60% 55% 45% / 58% 42% 38% 62%; }
+  50%  { border-radius: 55% 45% 62% 38% / 48% 52% 45% 55%; }
+  75%  { border-radius: 38% 62% 42% 58% / 62% 38% 60% 40%; }
+  100% { border-radius: 52% 48% 35% 65% / 45% 55% 55% 45%; }
+}
+@keyframes bfsMorph3 {
+  0%   { border-radius: 35% 65% 50% 50% / 60% 40% 55% 45%; }
+  25%  { border-radius: 62% 38% 45% 55% / 42% 58% 65% 35%; }
+  50%  { border-radius: 48% 52% 58% 42% / 55% 45% 38% 62%; }
+  75%  { border-radius: 58% 42% 35% 65% / 38% 62% 50% 50%; }
+  100% { border-radius: 45% 55% 62% 38% / 60% 40% 45% 55%; }
+}
+@keyframes bfsMorph4 {
+  0%   { border-radius: 50% 50% 38% 62% / 55% 45% 60% 40%; }
+  25%  { border-radius: 38% 62% 55% 45% / 40% 60% 35% 65%; }
+  50%  { border-radius: 62% 38% 48% 52% / 58% 42% 52% 48%; }
+  75%  { border-radius: 45% 55% 65% 35% / 35% 65% 48% 52%; }
+  100% { border-radius: 58% 42% 42% 58% / 50% 50% 62% 38%; }
+}
+@keyframes bfsMorph5 {
+  0%   { border-radius: 60% 40% 55% 45% / 38% 62% 48% 52%; }
+  25%  { border-radius: 45% 55% 40% 60% / 62% 38% 55% 45%; }
+  50%  { border-radius: 58% 42% 62% 38% / 50% 50% 35% 65%; }
+  75%  { border-radius: 35% 65% 48% 52% / 42% 58% 60% 40%; }
+  100% { border-radius: 50% 50% 35% 65% / 58% 42% 45% 55%; }
+}
+@keyframes bfsMorph6 {
+  0%   { border-radius: 48% 52% 35% 65% / 60% 40% 58% 42%; }
+  25%  { border-radius: 65% 35% 58% 42% / 45% 55% 40% 60%; }
+  50%  { border-radius: 40% 60% 52% 48% / 35% 65% 55% 45%; }
+  75%  { border-radius: 55% 45% 42% 58% / 62% 38% 48% 52%; }
+  100% { border-radius: 38% 62% 60% 40% / 50% 50% 38% 62%; }
 }
 
 /* ── Mobile: lighter filter, fewer/smaller blobs ── */
