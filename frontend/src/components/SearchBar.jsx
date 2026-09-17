@@ -35,7 +35,7 @@ export default function SearchBar() {
   const wrapperRef = useRef(null)
   const hotFetchedRef = useRef(false)
 
-  const { addSymbol, selectedSymbols, market } = useCompareStore()
+  const { addSymbol, switchMarketAndAddSymbol, selectedSymbols, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const zh = lang === 'zh'
@@ -60,18 +60,23 @@ export default function SearchBar() {
     if (!q.trim()) { setResults([]); return }
     setSearching(true)
     try {
-      const res = market === 'us' ? await searchUSStocks(q) : await searchStocks(q)
-      const raw = res.data.slice(0, 20)
-      const normalized = market === 'us'
-        ? raw.map((s) => ({ ...s, code: s.code || s.symbol }))
-        : raw
-      setResults(normalized)
+      const [cnRes, usRes] = await Promise.allSettled([
+        searchStocks(q),
+        searchUSStocks(q),
+      ])
+      const cnItems = cnRes.status === 'fulfilled'
+        ? cnRes.value.data.slice(0, 10).map((s) => ({ ...s, _market: 'cn' }))
+        : []
+      const usItems = usRes.status === 'fulfilled'
+        ? usRes.value.data.slice(0, 10).map((s) => ({ ...s, code: s.code || s.symbol, _market: 'us' }))
+        : []
+      setResults([...cnItems, ...usItems])
     } catch {
       setResults([])
     } finally {
       setSearching(false)
     }
-  }, [market])
+  }, [])
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
@@ -90,7 +95,12 @@ export default function SearchBar() {
   }, [])
 
   const handleSelect = (stock) => {
-    addSymbol(stock)
+    const targetMarket = stock._market || market
+    if (targetMarket !== market) {
+      switchMarketAndAddSymbol(targetMarket, stock)
+    } else {
+      addSymbol(stock)
+    }
     trackSearch(stock.code)
     setQuery('')
     setOpen(false)
@@ -110,6 +120,7 @@ export default function SearchBar() {
   const isFull = selectedSymbols.length >= 4
   const showHot = open && !query.trim()
   const showResults = open && query.trim() && results.length > 0
+  const showNoResults = open && query.trim() && !searching && results.length === 0
 
   const dropdownStyle = {
     position: 'absolute',
@@ -146,7 +157,7 @@ export default function SearchBar() {
           onFocus={handleFocus}
           onBlur={() => setFocused(false)}
           onKeyDown={handleKeyDown}
-          placeholder={isFull ? t.searchFull : (market === 'us' ? t.searchPlaceholderUS : t.searchPlaceholder)}
+          placeholder={isFull ? t.searchFull : t.searchPlaceholder}
           disabled={isFull}
           style={{
             width: '100%',
@@ -190,7 +201,7 @@ export default function SearchBar() {
                   return (
                     <div
                       key={s.code}
-                      onClick={() => !alreadyAdded && !isFull && handleSelect(s)}
+                      onClick={() => !alreadyAdded && !isFull && handleSelect({ ...s, _market: 'cn' })}
                       style={rowStyle(alreadyAdded || isFull)}
                       onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
@@ -212,7 +223,7 @@ export default function SearchBar() {
                   return (
                     <div
                       key={s.code}
-                      onClick={() => !alreadyAdded && !isFull && handleSelect(s)}
+                      onClick={() => !alreadyAdded && !isFull && handleSelect({ ...s, _market: 'us' })}
                       style={rowStyle(alreadyAdded || isFull)}
                       onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
@@ -235,22 +246,39 @@ export default function SearchBar() {
         <div style={{ ...dropdownStyle, maxHeight: 320, overflowY: 'auto' }}>
           {results.map((s) => {
             const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
+            const isUS = s._market === 'us'
             return (
               <div
-                key={s.code}
-                onClick={() => !alreadyAdded && handleSelect(s)}
-                style={rowStyle(alreadyAdded)}
-                onMouseEnter={(e) => { if (!alreadyAdded) e.currentTarget.style.background = 'var(--bg-hover)' }}
+                key={`${s._market}-${s.code}`}
+                onClick={() => !alreadyAdded && !isFull && handleSelect(s)}
+                style={rowStyle(alreadyAdded || isFull)}
+                onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
               >
                 <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
                 <span style={{ color: 'var(--text-secondary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
-                {s.exchange && market === 'us' && <span style={{ fontSize: 10, color: 'var(--text-muted)', flexShrink: 0 }}>{s.exchange}</span>}
+                <span style={{
+                  fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
+                  background: isUS ? 'rgba(14,165,233,0.12)' : 'rgba(34,197,94,0.12)',
+                  color: isUS ? '#0ea5e9' : '#22c55e',
+                  border: `1px solid ${isUS ? 'rgba(14,165,233,0.25)' : 'rgba(34,197,94,0.25)'}`,
+                }}>
+                  {isUS ? 'US' : 'A股'}
+                </span>
                 <PctBadge val={s.change_pct} />
                 {alreadyAdded && <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>{t.added}</span>}
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* No results panel */}
+      {showNoResults && (
+        <div style={dropdownStyle}>
+          <div style={{ padding: '14px 16px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
+            {t.searchNoResults}
+          </div>
         </div>
       )}
     </div>

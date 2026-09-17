@@ -32,6 +32,10 @@ const useCompareStore = create((set, get) => ({
   setDateRange: (startDate, endDate) => set({ startDate, endDate }),
   setAdjust: (adjust) => set({ adjust }),
   setMarket: (market) => set({ market, selectedSymbols: [], viewMode: 'sideBySide' }),
+
+  // Switch market AND add a stock atomically (used by cross-market search)
+  switchMarketAndAddSymbol: (newMarket, stock) =>
+    set({ market: newMarket, selectedSymbols: [stock], viewMode: 'sideBySide' }),
 }))
 
 export default useCompareStore
