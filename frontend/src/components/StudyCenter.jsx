@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react'
 import ReactECharts from 'echarts-for-react'
 import KLineLesson from './KLineLesson'
 import { useMobile } from '../hooks/useMobile'
+import { T } from '../i18n/translations'
 const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
@@ -31,9 +32,10 @@ function saveProgress(exam, p) {
 }
 
 // ── Sidebar topic row ─────────────────────────────────────────────────────────
-function TopicRow({ topic, active, read, accentColor, zh, onClick }) {
+function TopicRow({ topic, active, read, accentColor, lang, onClick }) {
   const [hover, setHover] = useState(false)
-  const displayTitle = (!zh && topic.title_en) ? topic.title_en : topic.title
+  const displayTitle = lang === 'zh' ? topic.title
+    : (topic[`title_${lang}`] || topic.title_en || topic.title)
   return (
     <div
       onClick={onClick}
@@ -81,9 +83,10 @@ function hexToRgb(hex) {
 }
 
 // ── Paper group (collapsible) ─────────────────────────────────────────────────
-function PaperGroup({ paper, activeId, progress, accentColor, zh, onSelect }) {
+function PaperGroup({ paper, activeId, progress, accentColor, lang, onSelect }) {
   const [open, setOpen] = useState(true)
   const readCount = paper.topics.filter((t) => progress[t.id]).length
+  const paperTitle = lang === 'zh' ? paper.title : (paper.title_en || paper.title)
 
   return (
     <div style={{ marginBottom: 8 }}>
@@ -96,7 +99,7 @@ function PaperGroup({ paper, activeId, progress, accentColor, zh, onSelect }) {
           color: `rgba(${hexToRgb(accentColor)},0.7)`, textTransform: 'uppercase',
         }}
       >
-        <span>{(!zh && paper.title_en) ? paper.title_en : paper.title}</span>
+        <span>{paperTitle}</span>
         <span style={{ fontSize: 10, color: MUTED }}>
           {readCount}/{paper.topics.length} {open ? '▲' : '▼'}
         </span>
@@ -108,7 +111,7 @@ function PaperGroup({ paper, activeId, progress, accentColor, zh, onSelect }) {
           active={t.id === activeId}
           read={!!progress[t.id]}
           accentColor={accentColor}
-          zh={zh}
+          lang={lang}
           onClick={() => onSelect(t.id)}
         />
       ))}
@@ -394,11 +397,16 @@ function EconDiagram({ type }) {
 }
 
 // ── Section block ─────────────────────────────────────────────────────────────
-function SectionBlock({ section, index, total, accentColor, zh }) {
-  const heading   = (!zh && section.heading_en)   ? section.heading_en   : section.heading
-  const body      = (!zh && section.body_en)      ? section.body_en      : section.body
-  const realWorld = (!zh && section.real_world_en) ? section.real_world_en : section.real_world
-  const examTip   = (!zh && section.exam_tip_en)  ? section.exam_tip_en  : section.exam_tip
+function SectionBlock({ section, index, total, accentColor, lang }) {
+  const pick = (key) => {
+    if (lang === 'zh') return section[key]
+    if (lang === 'en') return section[`${key}_en`] || section[key]
+    return section[`${key}_${lang}`] || section[`${key}_en`] || section[key]
+  }
+  const heading   = pick('heading')
+  const body      = pick('body')
+  const realWorld = pick('real_world')
+  const examTip   = pick('exam_tip')
 
   return (
     <div style={{ marginBottom: index < total - 1 ? 32 : 0 }}>
@@ -416,7 +424,7 @@ function SectionBlock({ section, index, total, accentColor, zh }) {
       {section.diagram_type && <EconDiagram type={section.diagram_type} />}
 
       {(() => {
-        const terms = (!zh && section.key_terms_en?.length > 0)
+        const terms = (lang !== 'zh' && section.key_terms_en?.length > 0)
           ? section.key_terms_en
           : section.key_terms
         return terms?.length > 0 ? (
@@ -452,7 +460,7 @@ function SectionBlock({ section, index, total, accentColor, zh }) {
           marginLeft: 15, marginBottom: 12,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: '#fbbf24', marginBottom: 6, letterSpacing: '0.05em' }}>
-            📝 {zh ? 'EXAM TIP' : 'KEY INSIGHT'}
+            📝 {lang === 'zh' ? 'EXAM TIP' : 'KEY INSIGHT'}
           </div>
           <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
             {examTip}
@@ -468,7 +476,8 @@ function SectionBlock({ section, index, total, accentColor, zh }) {
 }
 
 // ── AI Tutor ──────────────────────────────────────────────────────────────────
-function AITutor({ topicId, exam, zh, accentColor }) {
+function AITutor({ topicId, exam, lang, accentColor }) {
+  const zh = lang === 'zh'
   const [input,   setInput]   = useState('')
   const [loading, setLoading] = useState(false)
   const [history, setHistory] = useState([])   // [{q, answer, displayed}]
@@ -505,7 +514,7 @@ function AITutor({ topicId, exam, zh, accentColor }) {
     fetch('/api/study/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: q, topic_id: topicId, exam, lang: zh ? 'zh' : 'en' }),
+      body: JSON.stringify({ question: q, topic_id: topicId, exam, lang }),
     })
       .then((r) => r.json())
       .then((d) => {
@@ -922,6 +931,7 @@ function EventTimeline({ zh }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export default function StudyCenter({ lang }) {
   const zh = lang === 'zh'
+  const t = T[lang] || T.en
   const isMobile = useMobile()
   const [activeExam, setActiveExam] = useState('alevel')
   const [curriculum,    setCurriculum]    = useState(null)
@@ -1019,7 +1029,7 @@ export default function StudyCenter({ lang }) {
                 letterSpacing: '0.3px',
               }}
             >
-              {zh ? exam.label : exam.label_en}
+              {lang === 'zh' ? exam.label : exam.label_en}
             </button>
           )
         })}
@@ -1055,16 +1065,16 @@ export default function StudyCenter({ lang }) {
               fontSize: 13, fontWeight: 800, letterSpacing: '0.02em',
               color: accentColor, marginBottom: 2,
             }}>
-              {zh ? examMeta.title : examMeta.title_en}
+              {lang === 'zh' ? examMeta.title : examMeta.title_en}
             </div>
             <div style={{ fontSize: 11, color: MUTED }}>{examMeta.board}</div>
 
             {/* Progress bar */}
             <div style={{ marginTop: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: MUTED, marginBottom: 5 }}>
-                <span>{zh ? '学习进度' : 'Progress'}</span>
+                <span>{t.progress || 'Progress'}</span>
                 <span style={{ color: readCount > 0 ? GREEN : MUTED }}>
-                  {readCount} / {totalCount} {zh ? '已读' : 'read'}
+                  {readCount} / {totalCount} {t.read || 'read'}
                 </span>
               </div>
               <div style={{ height: 5, background: PROGRESS_BG, borderRadius: 3, overflow: 'hidden' }}>
@@ -1096,7 +1106,7 @@ export default function StudyCenter({ lang }) {
                   activeId={activeId}
                   progress={progress}
                   accentColor={accentColor}
-                  zh={zh}
+                  lang={lang}
                   onSelect={selectTopic}
                 />
               ))
@@ -1124,12 +1134,12 @@ export default function StudyCenter({ lang }) {
                 flexShrink: 0,
               }}
             >
-              ← {zh ? '返回列表' : 'Back'}
+              ← {t.back || 'Back'}
             </button>
           )}
           {!topicData && !loadingTopic ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: MUTED, fontSize: 14 }}>
-              {zh ? '选择左侧课题开始学习' : 'Select a topic from the sidebar to begin'}
+              {t.selectTopic || 'Select a topic from the sidebar to begin'}
             </div>
           ) : loadingTopic ? (
             <div className="skeleton-appear" style={{ padding: '28px 36px 40px', maxWidth: 780, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -1155,7 +1165,8 @@ export default function StudyCenter({ lang }) {
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
                   <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>
-                    {(!zh && topicData.title_en) ? topicData.title_en : topicData.title}
+                    {lang === 'zh' ? topicData.title
+                      : (topicData[`title_${lang}`] || topicData.title_en || topicData.title)}
                   </h1>
                   {isRead && (
                     <span style={{
@@ -1163,12 +1174,12 @@ export default function StudyCenter({ lang }) {
                       background: 'rgba(52,211,153,0.15)', color: GREEN,
                       border: '1px solid rgba(52,211,153,0.25)',
                     }}>
-                      ✓ {zh ? '已读' : 'Read'}
+                      ✓ {t.read || 'Read'}
                     </span>
                   )}
                 </div>
                 <div style={{ marginTop: 6, fontSize: 12, color: MUTED }}>
-                  ⏱ {topicData.estimated_time} &nbsp;·&nbsp; {topicData.sections?.length} {zh ? '个章节' : 'sections'}
+                  ⏱ {topicData.estimated_time} &nbsp;·&nbsp; {topicData.sections?.length} {t.sections || 'sections'}
                   &nbsp;·&nbsp; <span style={{ color: accentColor }}>{examMeta.label}</span>
                 </div>
               </div>
@@ -1181,7 +1192,7 @@ export default function StudyCenter({ lang }) {
                   index={i}
                   total={topicData.sections.length}
                   accentColor={accentColor}
-                  zh={zh}
+                  lang={lang}
                 />
               ))}
 
@@ -1189,8 +1200,9 @@ export default function StudyCenter({ lang }) {
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                 <button
                   onClick={() => {
-                    const title = (!zh && topicData?.title_en) ? topicData.title_en : topicData?.title
-                    setAiInitialMsg(zh ? `请深入讲解：${title}` : `Please explain in depth: ${title}`)
+                    const title = lang === 'zh' ? topicData?.title
+                      : (topicData?.[`title_${lang}`] || topicData?.title_en || topicData?.title)
+                    setAiInitialMsg(lang === 'zh' ? `请深入讲解：${title}` : `Please explain in depth: ${title}`)
                     setActiveExam('ai_teacher')
                   }}
                   style={{
@@ -1200,7 +1212,7 @@ export default function StudyCenter({ lang }) {
                     color: '#0ea5e9', cursor: 'pointer',
                   }}
                 >
-                  🎓 {zh ? '在AI老师中深入探讨 →' : 'Discuss with AI Tutor →'}
+                  🎓 {t.discussWithAI || 'Discuss with AI Tutor →'}
                 </button>
               </div>
 
@@ -1208,7 +1220,7 @@ export default function StudyCenter({ lang }) {
               <AITutor
                 topicId={activeId}
                 exam={activeExam}
-                zh={zh}
+                lang={lang}
                 accentColor={accentColor}
               />
 
@@ -1230,8 +1242,8 @@ export default function StudyCenter({ lang }) {
                   }}
                 >
                   {isRead
-                    ? `✓ ${zh ? '已标记为已读' : 'Marked as Read'}`
-                    : `${zh ? '标记为已读' : 'Mark as Read'} ✓`
+                    ? `✓ ${t.markedAsRead || 'Marked as Read'}`
+                    : `${t.markAsRead || 'Mark as Read'} ✓`
                   }
                 </button>
 
@@ -1253,7 +1265,7 @@ export default function StudyCenter({ lang }) {
                         fontSize: 14, fontWeight: 600, cursor: 'pointer',
                       }}
                     >
-                      {zh ? '下一课题 →' : 'Next Topic →'} {(!zh && next.title_en) ? next.title_en : next.title}
+                      {t.nextTopic || 'Next Topic →'} {lang === 'zh' ? next.title : (next[`title_${lang}`] || next.title_en || next.title)}
                     </button>
                   )
                 })()}
