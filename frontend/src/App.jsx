@@ -29,6 +29,14 @@ import { trackVisit, trackFeature } from './utils/analytics'
 
 const ACCENT_BLUE = '#0ea5e9'
 
+const LANG_OPTIONS = [
+  { code: 'zh', label: '中文' },
+  { code: 'en', label: 'EN' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' },
+  { code: 'fr', label: 'FR' },
+]
+
 export default function App() {
   const { market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
@@ -37,13 +45,14 @@ export default function App() {
   const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
-  const [showStats,     setShowStats]     = useState(false)
-  const [scrolled,      setScrolled]      = useState(false)
-  const [showInsight,   setShowInsight]   = useState(false)
-  const [showAIFloat,   setShowAIFloat]   = useState(false)
-  const [showWatchlist, setShowWatchlist] = useState(false)
-  const [showAuth,      setShowAuth]      = useState(false)
-  const [showUserMenu,  setShowUserMenu]  = useState(false)
+  const [showStats,        setShowStats]        = useState(false)
+  const [scrolled,         setScrolled]         = useState(false)
+  const [showInsight,      setShowInsight]      = useState(false)
+  const [showAIFloat,      setShowAIFloat]      = useState(false)
+  const [showWatchlist,    setShowWatchlist]    = useState(false)
+  const [showAuth,         setShowAuth]         = useState(false)
+  const [showUserMenu,     setShowUserMenu]     = useState(false)
+  const [showLangDropdown, setShowLangDropdown] = useState(false)
   const watchlistCount = useWatchlistStore((s) => s.list.length)
   const watchlistBtnRef = useRef(null)
 
@@ -223,44 +232,62 @@ export default function App() {
 
         <SearchBar />
 
-        {/* Language toggle */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--border-primary)',
-            borderRadius: 24,
-            padding: 3,
-            marginLeft: 'auto',
-            gap: 2,
-          }}
-        >
-          {['zh', 'en'].map((l) => (
-            <button
-              key={l}
-              onClick={() => setLang(l)}
+        {/* Language dropdown */}
+        <div style={{ position: 'relative', marginLeft: 'auto' }}>
+          <button
+            onClick={() => setShowLangDropdown(v => !v)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '5px 12px', borderRadius: 20,
+              border: '1px solid var(--border-primary)',
+              background: 'var(--bg-secondary)',
+              cursor: 'pointer', fontSize: 12, fontWeight: 600,
+              color: 'var(--text-secondary)', transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)' }}
+          >
+            {LANG_OPTIONS.find(l => l.code === lang)?.label ?? 'EN'}
+            <span style={{ fontSize: 9, opacity: 0.7 }}>▾</span>
+          </button>
+          {showLangDropdown && (
+            <div
               style={{
-                padding: '4px 12px',
-                borderRadius: 20,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 12,
-                fontWeight: 600,
-                background: lang === l ? ACCENT_BLUE : 'transparent',
-                color: lang === l ? '#fff' : 'var(--text-secondary)',
-                transition: 'all 0.2s ease',
+                position: 'absolute', top: 38, right: 0,
+                background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+                borderRadius: 10, minWidth: 120, zIndex: 9000,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '4px 0',
+                animation: 'bfsPageFadeIn 0.15s ease both',
               }}
+              onMouseLeave={() => setShowLangDropdown(false)}
             >
-              {l === 'zh' ? '中文' : 'EN'}
-            </button>
-          ))}
+              {LANG_OPTIONS.map(({ code, label }) => (
+                <button
+                  key={code}
+                  onClick={() => { setLang(code); setShowLangDropdown(false) }}
+                  style={{
+                    display: 'block', width: '100%', textAlign: 'left',
+                    padding: '8px 16px', background: lang === code ? 'rgba(14,165,233,0.1)' : 'none',
+                    border: 'none', cursor: 'pointer', fontSize: 13,
+                    fontWeight: lang === code ? 600 : 400,
+                    color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
+                    transition: 'background 0.12s',
+                  }}
+                  onMouseEnter={e => { if (lang !== code) e.currentTarget.style.background = 'var(--bg-hover)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = lang === code ? 'rgba(14,165,233,0.1)' : 'none' }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ☀️/🌙 Theme toggle */}
         <button
           onClick={toggleTheme}
-          title={theme === 'dark' ? (lang === 'zh' ? '切换浅色模式' : 'Light mode') : (lang === 'zh' ? '切换深色模式' : 'Dark mode')}
+          title={theme === 'dark' ? t.lightMode : t.darkMode}
           style={{
             width: 34, height: 34, borderRadius: '50%',
             border: '1px solid var(--border-primary)',
@@ -277,9 +304,9 @@ export default function App() {
 
         {/* 💡 Daily Insight + 🎓 AI Tutor + ⭐ Watchlist navbar buttons */}
         {[
-          { key: 'insight',   icon: '💡', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: lang === 'zh' ? '每日知识' : 'Daily Insight', badge: null },
-          { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: lang === 'zh' ? 'AI 老师'  : 'AI Tutor',     badge: null },
-          { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: lang === 'zh' ? '收藏夹'   : 'Watchlist',     badge: watchlistCount > 0 ? watchlistCount : null },
+          { key: 'insight',   icon: '💡', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: t.navInsight,   badge: null },
+          { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: t.navAITutor,   badge: null },
+          { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: t.navWatchlist, badge: watchlistCount > 0 ? watchlistCount : null },
         ].map(({ key, icon, active, onClick, title, badge }) => (
           <div key={key} ref={key === 'watchlist' ? watchlistBtnRef : undefined} style={{ position: 'relative', flexShrink: 0 }}>
             <button
@@ -359,7 +386,7 @@ export default function App() {
                       {user.email}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                      {lang === 'zh' ? '已登录' : 'Signed in'}
+                      {t.signedIn}
                     </div>
                   </div>
                   <button
@@ -373,7 +400,7 @@ export default function App() {
                     onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
                   >
-                    {lang === 'zh' ? '退出登录' : 'Sign Out'}
+                    {t.signOut}
                   </button>
                 </div>
               )}
@@ -390,7 +417,7 @@ export default function App() {
               onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.18)' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)' }}
             >
-              {lang === 'zh' ? '登录 / 注册' : 'Sign In'}
+              {t.signIn}
             </button>
           )}
         </div>
@@ -407,13 +434,13 @@ export default function App() {
           }}
         >
           {[
-            { key: 'analysis',      label: lang === 'zh' ? '行情分析' : 'Analysis' },
-            { key: 'news',          label: lang === 'zh' ? '每日新闻' : 'Daily News' },
-            { key: 'bank_views',    label: lang === 'zh' ? '大行观点' : 'Bank Views' },
-            { key: 'paper',         label: lang === 'zh' ? '模拟炒股' : 'Paper Trade' },
-            { key: 'study',         label: lang === 'zh' ? '学习中心' : 'Study' },
-            { key: 'universities',  label: lang === 'zh' ? '大学推荐' : 'Universities' },
-            { key: 'career',        label: lang === 'zh' ? '求职指南' : 'Career Guide' },
+            { key: 'analysis',      label: t.tabAnalysis },
+            { key: 'news',          label: t.tabNews },
+            { key: 'bank_views',    label: t.tabBankViews },
+            { key: 'paper',         label: t.tabPaper },
+            { key: 'study',         label: t.tabStudy },
+            { key: 'universities',  label: t.tabUniversities },
+            { key: 'career',        label: t.tabCareer },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -503,7 +530,7 @@ export default function App() {
           href="mailto:billyl090119@gmail.com"
           style={{ color: '#9ca3af', textDecoration: 'none' }}
         >
-          {lang === 'zh' ? '有问题请联系：billyl090119@gmail.com' : 'Contact: billyl090119@gmail.com'}
+          {t.contactLink}
         </a>
       </footer>
 
