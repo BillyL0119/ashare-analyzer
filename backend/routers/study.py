@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from .study_translations import AP_MACRO_TRANSLATIONS
+from .alevel_translations import ALEVEL_TRANSLATIONS
 
 router = APIRouter()
 
@@ -29,6 +30,26 @@ def _inject_ap_macro_translations():
                     val = sec_trans.get(field, {}).get(lang_code, "")
                     if val:
                         section[f"{field}_{lang_code}"] = val
+
+
+def _inject_alevel_translations():
+    """Inject ja/ko/fr translations into ALEVEL_CURRICULUM at startup."""
+    for paper in ALEVEL_CURRICULUM["papers"]:
+        for topic in paper["topics"]:
+            trans = ALEVEL_TRANSLATIONS.get(topic["id"], {})
+            if "title" in trans:
+                for lang_code in ["ja", "ko", "fr"]:
+                    val = trans["title"].get(lang_code, "")
+                    if val:
+                        topic[f"title_{lang_code}"] = val
+            sec_translations = trans.get("sections", [])
+            for i, section in enumerate(topic.get("sections", [])):
+                sec_trans = sec_translations[i] if i < len(sec_translations) else {}
+                for field in ["heading", "body", "real_world", "exam_tip"]:
+                    for lang_code in ["ja", "ko", "fr"]:
+                        val = sec_trans.get(field, {}).get(lang_code, "")
+                        if val:
+                            section[f"{field}_{lang_code}"] = val
 
 # ── A-Level Curriculum ────────────────────────────────────────────────────────
 
@@ -225,6 +246,7 @@ ALEVEL_CURRICULUM = {
     ],
 }
 
+_inject_alevel_translations()
 
 # ── IGCSE Curriculum ──────────────────────────────────────────────────────────
 
