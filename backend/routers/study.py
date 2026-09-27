@@ -9,6 +9,7 @@ from typing import Optional
 from .study_translations import AP_MACRO_TRANSLATIONS
 from .alevel_translations import ALEVEL_TRANSLATIONS
 from .ap_micro_translations import AP_MICRO_TRANSLATIONS
+from .igcse_translations import IGCSE_TRANSLATIONS
 
 router = APIRouter()
 
@@ -31,6 +32,26 @@ def _inject_ap_macro_translations():
                     val = sec_trans.get(field, {}).get(lang_code, "")
                     if val:
                         section[f"{field}_{lang_code}"] = val
+
+
+def _inject_igcse_translations():
+    """Inject ja/ko/fr translations into IGCSE_CURRICULUM at startup."""
+    for paper in IGCSE_CURRICULUM["papers"]:
+        for topic in paper["topics"]:
+            trans = IGCSE_TRANSLATIONS.get(topic["id"], {})
+            if "title" in trans:
+                for lang_code in ["ja", "ko", "fr"]:
+                    val = trans["title"].get(lang_code, "")
+                    if val:
+                        topic[f"title_{lang_code}"] = val
+            sec_translations = trans.get("sections", [])
+            for i, section in enumerate(topic.get("sections", [])):
+                sec_trans = sec_translations[i] if i < len(sec_translations) else {}
+                for field in ["heading", "body", "real_world", "exam_tip"]:
+                    for lang_code in ["ja", "ko", "fr"]:
+                        val = sec_trans.get(field, {}).get(lang_code, "")
+                        if val:
+                            section[f"{field}_{lang_code}"] = val
 
 
 def _inject_ap_micro_translations():
@@ -402,6 +423,7 @@ IGCSE_CURRICULUM = {
     ],
 }
 
+_inject_igcse_translations()
 
 # ── AP Macroeconomics Curriculum ──────────────────────────────────────────────
 
