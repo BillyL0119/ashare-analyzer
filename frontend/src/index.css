@@ -416,7 +416,10 @@ body {
 .bg1 {
   width: 270px; height: 270px;
   top: calc(18% - 135px); left: calc(15% - 135px);
-  background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
+  /* Specular highlight at upper-left simulates light on liquid surface */
+  background:
+    radial-gradient(ellipse at 36% 28%, rgba(255,255,255,0.42) 0%, transparent 46%),
+    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
   animation: bfsGoo1 20s ease-in-out 0s infinite alternate both,
              bfsMorph1 11s ease-in-out -2s infinite alternate both;
 }
@@ -424,7 +427,9 @@ body {
 .bg2 {
   width: 260px; height: 260px;
   top: calc(24% - 130px); left: calc(44% - 130px);
-  background: radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 68%);
+  background:
+    radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
+    radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
   animation: bfsGoo2 25s ease-in-out -6s infinite alternate both,
              bfsMorph2 13s ease-in-out -5s infinite alternate both;
 }
@@ -432,7 +437,9 @@ body {
 .bg3 {
   width: 280px; height: 280px;
   top: calc(32% - 140px); left: calc(74% - 140px);
-  background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
+  background:
+    radial-gradient(ellipse at 33% 32%, rgba(255,255,255,0.40) 0%, transparent 46%),
+    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
   animation: bfsGoo3 22s ease-in-out -11s infinite alternate both,
              bfsMorph3 9s ease-in-out -8s infinite alternate both;
 }
@@ -440,7 +447,9 @@ body {
 .bg4 {
   width: 260px; height: 260px;
   top: calc(66% - 130px); left: calc(20% - 130px);
-  background: radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 68%);
+  background:
+    radial-gradient(ellipse at 38% 26%, rgba(255,255,255,0.38) 0%, transparent 44%),
+    radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 76%);
   animation: bfsGoo4 27s ease-in-out -4s infinite alternate both,
              bfsMorph4 15s ease-in-out -3s infinite alternate both;
 }
@@ -448,7 +457,9 @@ body {
 .bg5 {
   width: 270px; height: 270px;
   top: calc(60% - 135px); left: calc(54% - 135px);
-  background: radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 68%);
+  background:
+    radial-gradient(ellipse at 38% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
+    radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
   animation: bfsGoo5 19s ease-in-out -9s infinite alternate both,
              bfsMorph5 10s ease-in-out -7s infinite alternate both;
 }
@@ -456,7 +467,9 @@ body {
 .bg6 {
   width: 260px; height: 260px;
   top: calc(74% - 130px); left: calc(80% - 130px);
-  background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 68%);
+  background:
+    radial-gradient(ellipse at 34% 28%, rgba(255,255,255,0.40) 0%, transparent 46%),
+    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
   animation: bfsGoo6 23s ease-in-out -15s infinite alternate both,
              bfsMorph6 12s ease-in-out -1s infinite alternate both;
 }

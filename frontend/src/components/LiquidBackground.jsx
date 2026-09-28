@@ -11,14 +11,20 @@ export default function LiquidBackground() {
       <svg aria-hidden="true" className="bfs-svg-defs">
         <defs>
           {/*
-            Gooey filter – desktop (stdDeviation 14):
-            feGaussianBlur blurs all sibling blobs together so halos overlap.
-            feColorMatrix boosts alpha contrast: alpha_out = alpha_in×20 − 8
-            → cutoff ≈ 0.40; blurred bridges above cutoff become opaque liquid,
-              areas below become transparent, creating the merge/split animation.
+            Gooey filter – desktop:
+            Step 1 – feTurbulence generates a fractal noise field.
+            Step 2 – feDisplacementMap distorts the source pixels using that noise
+                     (scale=44 → up to ±44px displacement), creating organic edges.
+            Step 3 – feGaussianBlur blurs displaced blobs so their halos overlap.
+            Step 4 – feColorMatrix boosts alpha contrast: alpha_out = alpha×20 − 8
+                     → cutoff ≈ 0.40; above = opaque liquid, below = transparent.
+            As blobs drift (CSS transform), they move through different regions of
+            the noise field → edges change organically without JS.
           */}
           <filter id="bfs-goo" colorInterpolationFilters="sRGB">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="3" seed="5" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="44" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+            <feGaussianBlur in="displaced" stdDeviation="12" result="blur" />
             <feColorMatrix
               in="blur"
               type="matrix"
@@ -29,9 +35,11 @@ export default function LiquidBackground() {
             />
           </filter>
 
-          {/* Lighter version for mobile (smaller blur = less GPU load) */}
+          {/* Lighter version for mobile (smaller displacement + blur = less GPU load) */}
           <filter id="bfs-goo-sm" colorInterpolationFilters="sRGB">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.010" numOctaves="2" seed="5" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="26" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+            <feGaussianBlur in="displaced" stdDeviation="9" result="blur" />
             <feColorMatrix
               in="blur"
               type="matrix"
