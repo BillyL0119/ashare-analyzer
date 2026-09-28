@@ -309,6 +309,8 @@ body {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  /* screen mode: blobs only ADD light — they never obscure or darken content */
+  mix-blend-mode: screen;
 }
 
 /* ── SVG filter element (zero-size, invisible) ── */
@@ -352,12 +354,11 @@ body {
   animation-duration: 33s;
   animation-delay: -11s;
 }
-/* Cyan – mid-screen */
+/* Cyan – lower-left (moved away from center) */
 .bfs-b3 {
-  width: 420px; height: 420px;
-  top: 36%; left: 40%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 68%);
+  width: 380px; height: 380px;
+  bottom: -80px; left: -60px;
+  background: radial-gradient(circle, rgba(6,182,212,0.09) 0%, transparent 68%);
   filter: blur(80px);
   animation-name: bfsAmb3;
   animation-duration: 24s;
@@ -373,8 +374,8 @@ body {
   to   { transform: translate(-80px,-95px) scale(0.93); }
 }
 @keyframes bfsAmb3 {
-  from { transform: translate(-50%,-50%) translate(0, 0)       scale(0.94); }
-  to   { transform: translate(-50%,-50%) translate(-70px, 80px) scale(1.06); }
+  from { transform: translate(0, 0)        scale(0.94); }
+  to   { transform: translate(60px, -70px) scale(1.06); }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -388,8 +389,8 @@ body {
   inset: 0;
   /* SVG gooey filter (defined inline in LiquidBackground.jsx) */
   filter: url(#bfs-goo);
-  /* Overall layer opacity keeps the effect subtle */
-  opacity: 0.22;
+  /* Halved opacity — content always readable */
+  opacity: 0.12;
   transition: none !important;
 }
 
@@ -404,69 +405,69 @@ body {
 }
 
 /*
- * Blob placement strategy:
- *   – Centers are set via top/left with -½-size offset so % = centre position.
- *   – Animations move blobs toward partner blobs so they merge mid-cycle.
- *   – Pair targets: (bg1↔bg2), (bg3↔bg5), (bg4↔bg6).
- *   – Because animation durations differ, pairs drift in and out of contact
- *     asynchronously, giving organic unpredictable liquid behaviour.
+ * Blob placement strategy (v2 — corner/edge only):
+ *   All 6 blobs are anchored near the 4 corners or side edges.
+ *   Page centre is intentionally kept free of blobs so content cards are
+ *   never visually cluttered by background activity.
+ *   Pair targets: (bg1↔bg2) upper-left, (bg3↔bg5) upper-right,
+ *                 (bg4↔bg6) lower — left + right corners.
+ *   Animation travel reduced to ≤65 px so blobs never drift to page centre.
  */
 
-/* bg1 – blue, upper-left  (centre ≈ 15%, 18%) */
+/* bg1 – blue, upper-left corner  (centre ≈ 8%, 10%) */
 .bg1 {
   width: 270px; height: 270px;
-  top: calc(18% - 135px); left: calc(15% - 135px);
-  /* Specular highlight at upper-left simulates light on liquid surface */
+  top: calc(10% - 135px); left: calc(8% - 135px);
   background:
     radial-gradient(ellipse at 36% 28%, rgba(255,255,255,0.42) 0%, transparent 46%),
     radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
   animation: bfsGoo1 20s ease-in-out 0s infinite alternate both,
              bfsMorph1 11s ease-in-out -2s infinite alternate both;
 }
-/* bg2 – violet, upper-center  (centre ≈ 44%, 24%) — drifts toward bg1 */
+/* bg2 – violet, upper-left cluster  (centre ≈ 20%, 8%) — drifts toward bg1 */
 .bg2 {
   width: 260px; height: 260px;
-  top: calc(24% - 130px); left: calc(44% - 130px);
+  top: calc(8% - 130px); left: calc(20% - 130px);
   background:
     radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
     radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
   animation: bfsGoo2 25s ease-in-out -6s infinite alternate both,
              bfsMorph2 13s ease-in-out -5s infinite alternate both;
 }
-/* bg3 – blue, upper-right  (centre ≈ 74%, 32%) — drifts toward bg5 */
+/* bg3 – blue, upper-right corner  (centre ≈ 88%, 8%) — drifts toward bg5 */
 .bg3 {
   width: 280px; height: 280px;
-  top: calc(32% - 140px); left: calc(74% - 140px);
+  top: calc(8% - 140px); left: calc(88% - 140px);
   background:
     radial-gradient(ellipse at 33% 32%, rgba(255,255,255,0.40) 0%, transparent 46%),
     radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
   animation: bfsGoo3 22s ease-in-out -11s infinite alternate both,
              bfsMorph3 9s ease-in-out -8s infinite alternate both;
 }
-/* bg4 – cyan, lower-left  (centre ≈ 20%, 66%) — drifts toward bg6 */
+/* bg4 – cyan, lower-left corner  (centre ≈ 8%, 88%) — drifts toward bg6 */
 .bg4 {
   width: 260px; height: 260px;
-  top: calc(66% - 130px); left: calc(20% - 130px);
+  top: calc(88% - 130px); left: calc(8% - 130px);
   background:
     radial-gradient(ellipse at 38% 26%, rgba(255,255,255,0.38) 0%, transparent 44%),
     radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 76%);
   animation: bfsGoo4 27s ease-in-out -4s infinite alternate both,
              bfsMorph4 15s ease-in-out -3s infinite alternate both;
 }
-/* bg5 – violet, lower-center  (centre ≈ 54%, 60%) — drifts toward bg3 */
+/* bg5 – violet, right edge  (centre ≈ 82%, 28%) — drifts toward bg3 */
 .bg5 {
   width: 270px; height: 270px;
-  top: calc(60% - 135px); left: calc(54% - 135px);
+  top: calc(28% - 135px); left: calc(82% - 135px);
   background:
     radial-gradient(ellipse at 38% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
     radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
   animation: bfsGoo5 19s ease-in-out -9s infinite alternate both,
              bfsMorph5 10s ease-in-out -7s infinite alternate both;
 }
-/* bg6 – blue, lower-right  (centre ≈ 80%, 74%) — drifts toward bg4 */
+/* bg6 – blue, lower-right corner  (centre ≈ 90%, 86%) — drifts toward bg4 */
 .bg6 {
   width: 260px; height: 260px;
-  top: calc(74% - 130px); left: calc(80% - 130px);
+  top: calc(86% - 130px); left: calc(90% - 130px);
   background:
     radial-gradient(ellipse at 34% 28%, rgba(255,255,255,0.40) 0%, transparent 46%),
     radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
@@ -475,37 +476,37 @@ body {
 }
 
 /*
- * Keyframe vectors are designed so partner blobs converge at the `to` end:
- *   bg1 moves +160px right / +110px down  →  approaches bg2's starting area
- *   bg2 moves −130px left  / +90px down   →  approaches bg1's `to` position
- *   bg3 moves −140px left  / +100px down  →  approaches bg5's starting area
- *   bg5 moves +80px right  / −100px up    →  approaches bg3's `to` position
- *   bg4 moves +170px right / −90px up     →  approaches bg6's starting area
- *   bg6 moves −160px left  / −100px up    →  approaches bg4's `to` position
+ * Keyframe vectors (v2 — short travel ≤65 px so blobs stay near corners):
+ *   bg1 moves +55px right / +60px down  →  merges with bg2 in upper-left
+ *   bg2 moves −45px left  / +55px down  →  merges with bg1
+ *   bg3 moves −55px left  / +65px down  →  merges with bg5 on upper-right
+ *   bg5 moves +35px right / −60px up    →  merges with bg3
+ *   bg4 moves +60px right / −50px up    →  merges with bg6 at lower area
+ *   bg6 moves −55px left  / −60px up    →  merges with bg4
  */
 @keyframes bfsGoo1 {
-  from { transform: translate(0,     0)     scale(1);    }
-  to   { transform: translate(160px, 110px) scale(1.08); }
+  from { transform: translate(0,    0)    scale(1);    }
+  to   { transform: translate(55px, 60px) scale(1.06); }
 }
 @keyframes bfsGoo2 {
-  from { transform: translate(0,      0)    scale(1);    }
-  to   { transform: translate(-130px, 90px) scale(0.95); }
+  from { transform: translate(0,     0)    scale(1);    }
+  to   { transform: translate(-45px, 55px) scale(0.96); }
 }
 @keyframes bfsGoo3 {
-  from { transform: translate(0,      0)    scale(1);    }
-  to   { transform: translate(-140px, 100px) scale(1.06); }
+  from { transform: translate(0,     0)    scale(1);    }
+  to   { transform: translate(-55px, 65px) scale(1.05); }
 }
 @keyframes bfsGoo4 {
-  from { transform: translate(0,     0)    scale(1);    }
-  to   { transform: translate(170px, -90px) scale(1.05); }
+  from { transform: translate(0,    0)     scale(1);    }
+  to   { transform: translate(60px, -50px) scale(1.04); }
 }
 @keyframes bfsGoo5 {
-  from { transform: translate(0,    0)     scale(0.94); }
-  to   { transform: translate(80px, -100px) scale(1.08); }
+  from { transform: translate(0,    0)     scale(0.95); }
+  to   { transform: translate(35px, -60px) scale(1.06); }
 }
 @keyframes bfsGoo6 {
-  from { transform: translate(0,      0)     scale(1);    }
-  to   { transform: translate(-160px, -100px) scale(0.96); }
+  from { transform: translate(0,     0)     scale(1);    }
+  to   { transform: translate(-55px, -60px) scale(0.97); }
 }
 
 /* ── Organic shape morphing keyframes ─────────────────────────────────────
@@ -562,19 +563,19 @@ body {
   /* Drop lower 3 goo blobs – keep only top 3 */
   .bg4, .bg5, .bg6 { display: none; }
   /* Switch to lighter mobile filter (stdDeviation 9 instead of 14) */
-  .bfs-goo-layer { filter: url(#bfs-goo-sm); opacity: 0.18; }
+  .bfs-goo-layer { filter: url(#bfs-goo-sm); opacity: 0.10; }
   /* Shrink ambient blobs */
   .bfs-b1 { width: 360px; height: 360px; filter: blur(55px); }
   .bfs-b2 { width: 320px; height: 320px; filter: blur(60px); }
-  .bfs-b3 { width: 260px; height: 260px; filter: blur(45px); }
-  /* Smaller goo blobs – re-centre to match reduced size */
-  .bg1 { width: 190px; height: 190px; top: calc(18% - 95px); left: calc(15% - 95px); }
-  .bg2 { width: 190px; height: 190px; top: calc(24% - 95px); left: calc(44% - 95px); }
-  .bg3 { width: 190px; height: 190px; top: calc(32% - 95px); left: calc(74% - 95px); }
+  .bfs-b3 { width: 220px; height: 220px; filter: blur(45px); }
+  /* Smaller goo blobs – corner-anchored positions (match desktop v2 layout) */
+  .bg1 { width: 190px; height: 190px; top: calc(10% - 95px); left: calc(8% - 95px); }
+  .bg2 { width: 190px; height: 190px; top: calc(8%  - 95px); left: calc(20% - 95px); }
+  .bg3 { width: 190px; height: 190px; top: calc(8%  - 95px); left: calc(88% - 95px); }
 }
 
 /* ── Light theme – tone down substantially ── */
-:root[data-theme="light"] .bfs-liquid-bg { opacity: 0.28; }
+:root[data-theme="light"] .bfs-liquid-bg { opacity: 0.18; }
 
 /* ── Reduced motion ─────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
