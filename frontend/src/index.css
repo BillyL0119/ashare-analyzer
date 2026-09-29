@@ -414,40 +414,40 @@ body {
  *   Animation travel reduced to ≤65 px so blobs never drift to page centre.
  */
 
-/* bg1 – blue, upper-left corner  (centre ≈ 8%, 10%) */
+/* bg1 – blue, upper-left corner  (centre ≈ 10%, 15%) */
 .bg1 {
   width: 270px; height: 270px;
-  top: calc(10% - 135px); left: calc(8% - 135px);
+  top: calc(15% - 135px); left: calc(10% - 135px);
   background:
     radial-gradient(ellipse at 36% 28%, rgba(255,255,255,0.42) 0%, transparent 46%),
     radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
   animation: bfsGoo1 20s ease-in-out 0s infinite alternate both,
              bfsMorph1 11s ease-in-out -2s infinite alternate both;
 }
-/* bg2 – violet, upper-left cluster  (centre ≈ 20%, 8%) — drifts toward bg1 */
+/* bg2 – violet, upper-left cluster  (centre ≈ 22%, 13%) — drifts toward bg1 */
 .bg2 {
   width: 260px; height: 260px;
-  top: calc(8% - 130px); left: calc(20% - 130px);
+  top: calc(13% - 130px); left: calc(22% - 130px);
   background:
     radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
     radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
   animation: bfsGoo2 25s ease-in-out -6s infinite alternate both,
              bfsMorph2 13s ease-in-out -5s infinite alternate both;
 }
-/* bg3 – blue, upper-right corner  (centre ≈ 88%, 8%) — drifts toward bg5 */
+/* bg3 – blue, upper-right corner  (centre ≈ 87%, 14%) — drifts toward bg5 */
 .bg3 {
   width: 280px; height: 280px;
-  top: calc(8% - 140px); left: calc(88% - 140px);
+  top: calc(14% - 140px); left: calc(87% - 140px);
   background:
     radial-gradient(ellipse at 33% 32%, rgba(255,255,255,0.40) 0%, transparent 46%),
     radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
   animation: bfsGoo3 22s ease-in-out -11s infinite alternate both,
              bfsMorph3 9s ease-in-out -8s infinite alternate both;
 }
-/* bg4 – cyan, lower-left corner  (centre ≈ 8%, 88%) — drifts toward bg6 */
+/* bg4 – cyan, lower-left corner  (centre ≈ 10%, 84%) — drifts toward bg6 */
 .bg4 {
   width: 260px; height: 260px;
-  top: calc(88% - 130px); left: calc(8% - 130px);
+  top: calc(84% - 130px); left: calc(10% - 130px);
   background:
     radial-gradient(ellipse at 38% 26%, rgba(255,255,255,0.38) 0%, transparent 44%),
     radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 76%);
@@ -464,10 +464,10 @@ body {
   animation: bfsGoo5 19s ease-in-out -9s infinite alternate both,
              bfsMorph5 10s ease-in-out -7s infinite alternate both;
 }
-/* bg6 – blue, lower-right corner  (centre ≈ 90%, 86%) — drifts toward bg4 */
+/* bg6 – blue, lower-right corner  (centre ≈ 88%, 84%) — drifts toward bg4 */
 .bg6 {
   width: 260px; height: 260px;
-  top: calc(86% - 130px); left: calc(90% - 130px);
+  top: calc(84% - 130px); left: calc(88% - 130px);
   background:
     radial-gradient(ellipse at 34% 28%, rgba(255,255,255,0.40) 0%, transparent 46%),
     radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
@@ -568,10 +568,10 @@ body {
   .bfs-b1 { width: 360px; height: 360px; filter: blur(55px); }
   .bfs-b2 { width: 320px; height: 320px; filter: blur(60px); }
   .bfs-b3 { width: 220px; height: 220px; filter: blur(45px); }
-  /* Smaller goo blobs – corner-anchored positions (match desktop v2 layout) */
-  .bg1 { width: 190px; height: 190px; top: calc(10% - 95px); left: calc(8% - 95px); }
-  .bg2 { width: 190px; height: 190px; top: calc(8%  - 95px); left: calc(20% - 95px); }
-  .bg3 { width: 190px; height: 190px; top: calc(8%  - 95px); left: calc(88% - 95px); }
+  /* Smaller goo blobs – corner-anchored, safe distance from edges */
+  .bg1 { width: 190px; height: 190px; top: calc(15% - 95px); left: calc(10% - 95px); }
+  .bg2 { width: 190px; height: 190px; top: calc(13% - 95px); left: calc(22% - 95px); }
+  .bg3 { width: 190px; height: 190px; top: calc(14% - 95px); left: calc(87% - 95px); }
 }
 
 /* ── Light theme – tone down substantially ── */

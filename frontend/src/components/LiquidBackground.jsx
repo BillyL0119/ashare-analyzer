@@ -22,8 +22,17 @@ export default function LiquidBackground() {
             the noise field → edges change organically without JS.
           */}
           <filter id="bfs-goo" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="3" seed="5" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="44" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+            {/*
+              baseFrequency="0.006" → noise period ≈167 px (larger than a single
+              blob), so the whole blob edge bends in one smooth curve rather than
+              alternating in/out at blob-edge scale.
+              numOctaves="2" eliminates the high-frequency 3rd octave (period≈42px)
+              that was creating jagged alternations at the same scale as the edge.
+              scale="25" matches the mobile value — consistent organic distortion
+              without fold-over artifacts.
+            */}
+            <feTurbulence type="fractalNoise" baseFrequency="0.006" numOctaves="2" seed="5" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             <feGaussianBlur in="displaced" stdDeviation="12" result="blur" />
             <feColorMatrix
               in="blur"
@@ -37,8 +46,8 @@ export default function LiquidBackground() {
 
           {/* Lighter version for mobile (smaller displacement + blur = less GPU load) */}
           <filter id="bfs-goo-sm" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.010" numOctaves="2" seed="5" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="26" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="2" seed="5" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             <feGaussianBlur in="displaced" stdDeviation="9" result="blur" />
             <feColorMatrix
               in="blur"
