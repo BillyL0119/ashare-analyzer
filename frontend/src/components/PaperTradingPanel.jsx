@@ -192,7 +192,7 @@ function ResetModal({ lang, onConfirm, onClose }) {
 export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const zhEn = (zh, en) => lang === 'zh' ? zh : en
 
-  const { user }              = useAuthStore()
+  const { user, loading: authLoading } = useAuthStore()
   // When logged in, use Supabase user ID as the account key (maps to a persistent
   // server-side JSON file). When anonymous, fall back to the local device ID.
   const accountKey            = user?.id ?? getDeviceId()
@@ -251,7 +251,12 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
     }
   }, [accountKey])
 
-  useEffect(() => { fetchAccount() }, [fetchAccount])
+  // Wait for auth to finish initialising before fetching, so we always use the
+  // final accountKey (user ID or device ID) and never trigger a double-fetch.
+  useEffect(() => {
+    if (authLoading) return
+    fetchAccount()
+  }, [fetchAccount, authLoading])
   useEffect(() => { if (showBoard) fetchLeaderboard() }, [showBoard, fetchLeaderboard])
 
   // ── Quote lookup ──────────────────────────────────────────────────────────
