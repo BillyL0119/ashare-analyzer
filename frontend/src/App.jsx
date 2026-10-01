@@ -29,6 +29,21 @@ import { trackVisit, trackFeature } from './utils/analytics'
 
 const ACCENT_BLUE = '#0ea5e9'
 
+// Skeleton placeholder shown while lazy page chunks are loading
+function PageSkeleton() {
+  return (
+    <div style={{ padding: '20px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {[100, 60, 80, 60].map((h, i) => (
+        <div key={i} style={{
+          height: h, borderRadius: 8,
+          background: 'var(--bg-secondary)',
+          animation: `bfsSkeletonPulse 1.6s ease-in-out ${i * 0.1}s infinite`,
+        }} />
+      ))}
+    </div>
+  )
+}
+
 const LANG_OPTIONS = [
   { code: 'zh', label: '中文' },
   { code: 'en', label: 'EN' },
@@ -41,7 +56,7 @@ export default function App() {
   const { market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme, setTheme } = useThemeStore()
-  const { user, init: initAuth, signOut, setLangPreference, setThemePreference } = useAuthStore()
+  const { user, loading: authLoading, init: initAuth, signOut, setLangPreference, setThemePreference, setKnowledgeDateSeen } = useAuthStore()
   const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
@@ -57,6 +72,7 @@ export default function App() {
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200) }
   const watchlistCount = useWatchlistStore((s) => s.list.length)
   const watchlistBtnRef = useRef(null)
+  const insightCheckedRef = useRef(false)
 
   // Splash screen — computed once at mount, stable for this session
   const [hadSplash]      = useState(shouldShowSplash)
@@ -85,15 +101,28 @@ export default function App() {
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
 
-  // Auto-open Daily Insight once per day
+  // Auto-open Daily Insight once per day.
+  // Logged-in users: check/save against account metadata so it syncs across devices.
+  // Guests: fall back to localStorage.
   useEffect(() => {
+    if (authLoading) return // wait until we know if user is logged in
+    if (insightCheckedRef.current) return
+    insightCheckedRef.current = true
+
     const todayStr = new Date().toISOString().slice(0, 10)
-    const seen = localStorage.getItem('bfs_knowledge_date')
-    if (seen !== todayStr) {
-      setShowInsight(true)
-      localStorage.setItem('bfs_knowledge_date', todayStr)
+    if (user) {
+      if (user.user_metadata?.knowledge_date !== todayStr) {
+        setShowInsight(true)
+        setKnowledgeDateSeen(todayStr)
+      }
+    } else {
+      const seen = localStorage.getItem('bfs_knowledge_date')
+      if (seen !== todayStr) {
+        setShowInsight(true)
+        localStorage.setItem('bfs_knowledge_date', todayStr)
+      }
     }
-  }, [])
+  }, [authLoading, user]) // eslint-disable-line
 
   // Scroll-aware header
   useEffect(() => {
@@ -102,8 +131,16 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Update document title and canonical on tab change for SEO
+  // Update document title and canonical on tab/stock change for SEO
   useEffect(() => {
+    // When stocks are selected in the analysis tab, show a stock-specific title
+    if (appTab === 'analysis' && selectedSymbols.length > 0) {
+      const label = selectedSymbols.length === 1
+        ? `${selectedSymbols[0].name || selectedSymbols[0].code} (${selectedSymbols[0].code})`
+        : selectedSymbols.map(s => s.code).join(' vs ')
+      document.title = `${label} | Best Friend Stock`
+      return
+    }
     const titles = {
       analysis:     'Best Friend Stock | 免费A股美股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
       news:         'Best Friend Stock | 每日大事件 - 市场重大新闻',
@@ -117,7 +154,7 @@ export default function App() {
       const paths = { universities: '/universities' }
       canonical.setAttribute('href', 'https://bestfriendstock.com' + (paths[appTab] || '/'))
     }
-  }, [appTab])
+  }, [appTab, selectedSymbols])
 
   const handleTabChange = (tab) => {
     setAppTab(tab)
@@ -503,7 +540,7 @@ export default function App() {
       </div>{/* end sticky nav wrapper */}
 
       <main style={{ padding: isMobile ? '2px 12px' : '2px 24px', flex: 1 }}>
-        <Suspense fallback={null}>
+        <Suspense fallback={<PageSkeleton />}>
           {appTab === 'study' ? (
             <StudyCenter lang={lang} />
           ) : appTab === 'paper' ? (
@@ -589,8 +626,13 @@ export default function App() {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
+        @keyframes bfsSkeletonPulse {
+          0%, 100% { opacity: 0.35; }
+          50%       { opacity: 0.7; }
+        }
         @media (prefers-reduced-motion: reduce) {
-          [style*="bfsPageFadeIn"] { animation: none !important; }
+          [style*="bfsPageFadeIn"],
+          [style*="bfsSkeletonPulse"] { animation: none !important; opacity: 0.5 !important; }
         }
       `}</style>
     </div>

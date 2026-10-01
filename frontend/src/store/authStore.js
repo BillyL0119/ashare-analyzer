@@ -37,6 +37,12 @@ const useAuthStore = create((set) => ({
     const { data: { user }, error } = await supabase.auth.updateUser({ data: { theme } })
     if (!error && user) set({ user })
   },
+
+  // Record that today's Daily Insight has been shown (so it doesn't re-appear on other devices)
+  setKnowledgeDateSeen: async (date) => {
+    const { data: { user }, error } = await supabase.auth.updateUser({ data: { knowledge_date: date } })
+    if (!error && user) set({ user })
+  },
 }))
 
 export default useAuthStore
