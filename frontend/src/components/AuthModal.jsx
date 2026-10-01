@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { T } from '../i18n/translations'
 
 const SIGNIN = 'signin'
 const SIGNUP = 'signup'
@@ -42,7 +43,7 @@ function Field({ label, type, value, onChange, placeholder }) {
 }
 
 export default function AuthModal({ open, onClose, lang = 'en' }) {
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
   const [mode,     setMode]     = useState(SIGNIN)
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
@@ -63,13 +64,11 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
           redirectTo: window.location.origin,
         })
         if (error) throw error
-        setMessage(zh ? '重置链接已发送，请查收邮件' : 'Reset link sent — please check your inbox')
+        setMessage(t.authResetSent)
       } else if (mode === SIGNUP) {
         const { error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
-        setMessage(zh
-          ? '注册成功！请查收验证邮件后再登录'
-          : 'Registered! Please verify your email then sign in')
+        setMessage(t.authRegistered)
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
@@ -92,16 +91,16 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
   }
 
   const title = mode === RESET
-    ? (zh ? '重置密码' : 'Reset Password')
+    ? t.authResetPw
     : mode === SIGNUP
-    ? (zh ? '创建账号' : 'Create Account')
-    : (zh ? '欢迎回来' : 'Welcome Back')
+    ? t.authCreateAccount
+    : t.authWelcomeBack
 
   const subtitle = mode === RESET
-    ? (zh ? '输入邮箱，我们将发送重置链接' : "Enter your email and we'll send a reset link")
+    ? t.authSubtitleReset
     : mode === SIGNUP
-    ? (zh ? '创建账号，解锁跨设备数据同步' : 'Create an account to sync your data across devices')
-    : (zh ? '登录你的 Best Friend Stock 账号' : 'Sign in to your Best Friend Stock account')
+    ? t.authSubtitleSignUp
+    : t.authSubtitleSignIn
 
   return (
     <div
@@ -144,8 +143,8 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
           {mode !== RESET && (
             <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg-tertiary)', borderRadius: 8, padding: 3 }}>
               {[
-                { k: SIGNIN, label: zh ? '登录' : 'Sign In' },
-                { k: SIGNUP, label: zh ? '注册' : 'Sign Up' },
+                { k: SIGNIN, label: t.authSignIn },
+                { k: SIGNUP, label: t.authSignUp },
               ].map(({ k, label }) => (
                 <button
                   key={k}
@@ -181,12 +180,12 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                 onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-tertiary)' }}
               >
                 <GoogleIcon />
-                {zh ? '使用 Google 继续' : 'Continue with Google'}
+                {t.authGoogle}
               </button>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                 <div style={{ flex: 1, height: 1, background: 'var(--border-primary)' }} />
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{zh ? '或用邮箱' : 'or use email'}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.authOrEmail}</span>
                 <div style={{ flex: 1, height: 1, background: 'var(--border-primary)' }} />
               </div>
             </>
@@ -195,22 +194,20 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
           {/* Email + password form */}
           <form onSubmit={handleSubmit}>
             <Field
-              label={zh ? '邮箱地址' : 'Email Address'}
+              label={t.authEmail}
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder={zh ? '请输入邮箱' : 'Enter your email'}
+              placeholder={t.authEmailPlaceholder}
             />
 
             {mode !== RESET && (
               <Field
-                label={zh ? '密码' : 'Password'}
+                label={t.authPassword}
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder={mode === SIGNUP
-                  ? (zh ? '至少 6 位字符' : 'At least 6 characters')
-                  : (zh ? '请输入密码' : 'Enter your password')}
+                placeholder={mode === SIGNUP ? t.authPasswordPlaceholderSignUp : t.authPasswordPlaceholderSignIn}
               />
             )}
 
@@ -222,7 +219,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                   onClick={() => switchMode(RESET)}
                   style={{ fontSize: 12, color: '#0ea5e9', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
-                  {zh ? '忘记密码？' : 'Forgot password?'}
+                  {t.authForgotPw}
                 </button>
               </div>
             )}
@@ -252,12 +249,12 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
               }}
             >
               {loading
-                ? (zh ? '处理中...' : 'Processing...')
+                ? t.authProcessing
                 : mode === RESET
-                  ? (zh ? '发送重置邮件' : 'Send Reset Email')
+                  ? t.authSendReset
                   : mode === SIGNUP
-                    ? (zh ? '创建账号' : 'Create Account')
-                    : (zh ? '登录' : 'Sign In')}
+                    ? t.authCreateAccount
+                    : t.authSignIn}
             </button>
 
             {/* Back from reset */}
@@ -267,7 +264,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                 onClick={() => switchMode(SIGNIN)}
                 style={{ display: 'block', margin: '14px auto 0', fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
-                ← {zh ? '返回登录' : 'Back to Sign In'}
+                ← {t.authBackToSignIn}
               </button>
             )}
           </form>

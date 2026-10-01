@@ -3,6 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import KLineLesson from './KLineLesson'
 import { useMobile } from '../hooks/useMobile'
 import { T } from '../i18n/translations'
+import useAuthStore from '../store/authStore'
 const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
@@ -933,6 +934,7 @@ export default function StudyCenter({ lang }) {
   const zh = lang === 'zh'
   const t = T[lang] || T.en
   const isMobile = useMobile()
+  const { user, setStudyProgressPreference } = useAuthStore()
   const [activeExam, setActiveExam] = useState('alevel')
   const [curriculum,    setCurriculum]    = useState(null)
   const [activeId,      setActiveId]      = useState(null)
@@ -966,6 +968,14 @@ export default function StudyCenter({ lang }) {
       .finally(() => setLoadingCurr(false))
   }, [activeExam])
 
+  // On login: load cloud study progress into localStorage and refresh current exam
+  useEffect(() => {
+    const cloud = user?.user_metadata?.study_progress
+    if (!cloud) return
+    Object.entries(cloud).forEach(([exam, prog]) => saveProgress(exam, prog))
+    setProgress(loadProgress(activeExam))
+  }, [user?.id]) // eslint-disable-line
+
   const selectTopic = (id, exam = activeExam) => {
     setActiveId(id)
     setLoadingTopic(true)
@@ -982,6 +992,13 @@ export default function StudyCenter({ lang }) {
     const updated = { ...progress, [activeId]: true }
     setProgress(updated)
     saveProgress(activeExam, updated)
+    if (user) {
+      const allProgress = {}
+      EXAMS.forEach((e) => {
+        allProgress[e.key] = e.key === activeExam ? updated : loadProgress(e.key)
+      })
+      setStudyProgressPreference(allProgress)
+    }
   }
 
   const isRead = activeId ? !!progress[activeId] : false

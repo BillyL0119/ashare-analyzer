@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import LiquidBackground from './components/LiquidBackground'
 import SplashScreen, { shouldShowSplash } from './components/SplashScreen'
 import SearchBar from './components/SearchBar'
@@ -44,6 +45,17 @@ function PageSkeleton() {
   )
 }
 
+const TAB_PATHS = {
+  analysis:     '/',
+  news:         '/news',
+  paper:        '/paper',
+  study:        '/study',
+  universities: '/universities',
+  bank_views:   '/bank_views',
+  career:       '/career',
+}
+const PATH_TABS = Object.fromEntries(Object.entries(TAB_PATHS).map(([k, v]) => [v, k]))
+
 const LANG_OPTIONS = [
   { code: 'zh', label: '中文' },
   { code: 'en', label: 'EN' },
@@ -53,13 +65,19 @@ const LANG_OPTIONS = [
 ]
 
 export default function App() {
-  const { market, setMarket, selectedSymbols } = useCompareStore()
+  const { market, setMarket, selectedSymbols, switchMarketAndAddSymbol } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme, setTheme } = useThemeStore()
-  const { user, loading: authLoading, init: initAuth, signOut, setLangPreference, setThemePreference, setKnowledgeDateSeen } = useAuthStore()
+  const { user, loading: authLoading, init: initAuth, signOut,
+          setLangPreference, setThemePreference, setKnowledgeDateSeen,
+          setWatchlistPreference } = useAuthStore()
   const t = T[lang]
   const isMobile = useMobile()
-  const [appTab,       setAppTab]       = useState('analysis')
+  const location = useLocation()
+  const navigate  = useNavigate()
+  // Derive active tab from URL — no state needed
+  const stockRouteMatch = location.pathname.match(/^\/stock\/(\w+)\/(.+)$/)
+  const appTab = stockRouteMatch ? 'analysis' : (PATH_TABS[location.pathname] || 'analysis')
   const [showStats,        setShowStats]        = useState(false)
   const [scrolled,         setScrolled]         = useState(false)
   const [showInsight,      setShowInsight]      = useState(false)
@@ -70,9 +88,12 @@ export default function App() {
   const [showLangDropdown, setShowLangDropdown] = useState(false)
   const [toast, setToast] = useState(null)
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200) }
-  const watchlistCount = useWatchlistStore((s) => s.list.length)
-  const watchlistBtnRef = useRef(null)
+  const watchlist      = useWatchlistStore((s) => s.list)
+  const watchlistCount = watchlist.length
+  const setWatchlistList = useWatchlistStore((s) => s.setList)
+  const watchlistBtnRef   = useRef(null)
   const insightCheckedRef = useRef(false)
+  const watchlistSyncRef  = useRef(null) // tracks last saved serialized value
 
   // Splash screen — computed once at mount, stable for this session
   const [hadSplash]      = useState(shouldShowSplash)
@@ -151,13 +172,51 @@ export default function App() {
     document.title = titles[appTab] || titles.analysis
     let canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
-      const paths = { universities: '/universities' }
-      canonical.setAttribute('href', 'https://bestfriendstock.com' + (paths[appTab] || '/'))
+      canonical.setAttribute('href', 'https://bestfriendstock.com' + location.pathname)
     }
-  }, [appTab, selectedSymbols])
+  }, [appTab, selectedSymbols, location.pathname]) // eslint-disable-line
+
+  // On mount: if URL is /stock/:market/:code, auto-load that stock
+  useEffect(() => {
+    if (stockRouteMatch) {
+      const [, urlMarket, urlCode] = stockRouteMatch
+      if ((urlMarket === 'cn' || urlMarket === 'us') && selectedSymbols.length === 0) {
+        switchMarketAndAddSymbol(urlMarket, { code: urlCode.toUpperCase(), name: urlCode.toUpperCase() })
+      }
+    }
+  }, []) // eslint-disable-line
+
+  // Keep URL in sync as stocks are selected / removed (replace to avoid cluttering history)
+  useEffect(() => {
+    if (appTab !== 'analysis') return
+    if (selectedSymbols.length > 0) {
+      const s = selectedSymbols[0]
+      navigate(`/stock/${market}/${s.code}`, { replace: true })
+    } else if (location.pathname !== '/') {
+      navigate('/', { replace: true })
+    }
+  }, [selectedSymbols]) // eslint-disable-line
+
+  // Watchlist cloud sync: load from account on login, save on every change
+  useEffect(() => {
+    if (!user) { watchlistSyncRef.current = null; return }
+    if (watchlistSyncRef.current === null && user.user_metadata?.watchlist?.length) {
+      // First login: restore cloud watchlist, skip next save (same data)
+      setWatchlistList(user.user_metadata.watchlist)
+      watchlistSyncRef.current = JSON.stringify(user.user_metadata.watchlist)
+    }
+  }, [user]) // eslint-disable-line
+
+  useEffect(() => {
+    if (!user) return
+    const serialized = JSON.stringify(watchlist)
+    if (serialized === watchlistSyncRef.current) return
+    watchlistSyncRef.current = serialized
+    setWatchlistPreference(watchlist)
+  }, [watchlist]) // eslint-disable-line
 
   const handleTabChange = (tab) => {
-    setAppTab(tab)
+    navigate(TAB_PATHS[tab] || '/')
     if (tab === 'paper') trackFeature('paper_trading')
     else if (tab === 'study') trackFeature('study')
     else if (tab === 'universities') trackFeature('universities')

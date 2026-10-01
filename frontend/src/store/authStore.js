@@ -43,6 +43,18 @@ const useAuthStore = create((set) => ({
     const { data: { user }, error } = await supabase.auth.updateUser({ data: { knowledge_date: date } })
     if (!error && user) set({ user })
   },
+
+  // Sync watchlist to account
+  setWatchlistPreference: async (watchlist) => {
+    const { data: { user }, error } = await supabase.auth.updateUser({ data: { watchlist } })
+    if (!error && user) set({ user })
+  },
+
+  // Sync study progress to account (object keyed by exam)
+  setStudyProgressPreference: async (study_progress) => {
+    const { data: { user }, error } = await supabase.auth.updateUser({ data: { study_progress } })
+    if (!error && user) set({ user })
+  },
 }))
 
 export default useAuthStore

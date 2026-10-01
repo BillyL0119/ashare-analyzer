@@ -23,6 +23,12 @@ const useWatchlistStore = create((set, get) => ({
   }),
 
   has: (code) => get().list.some((x) => x.code === code),
+
+  // Overwrite the entire list (used when syncing from cloud)
+  setList: (list) => {
+    localStorage.setItem(LS_KEY, JSON.stringify(list))
+    set({ list })
+  },
 }))
 
 export default useWatchlistStore
