@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useAuthStore from '../store/authStore'
 
 // ── Inline SVG flag components ─────────────────────────────────────────
 
@@ -129,22 +130,25 @@ const WELCOME_TEXT = {
 }
 
 export default function WelcomeModal({ onLangSelect }) {
-  const savedLang = localStorage.getItem('bfs_lang')
-  // Only show on first visit (no saved language preference)
-  const [open, setOpen] = useState(!savedLang)
+  const { user, loading } = useAuthStore()
   const [step, setStep] = useState(1)
   const [selectedLang, setSelectedLang] = useState(null)
+  const [dismissed, setDismissed] = useState(false)
+
+  // Show only after auth resolves and user is NOT logged in.
+  // Logged-in users get their language from their account — no modal needed.
+  // Unauthenticated users always see the picker on every visit (no localStorage persistence).
+  const open = !loading && !user && !dismissed
 
   if (!open) return null
 
   const handleLangSelect = (lang) => {
-    localStorage.setItem('bfs_lang', lang)
     setSelectedLang(lang)
     setStep(2)
     if (onLangSelect) onLangSelect(lang)
   }
 
-  const handleClose = () => setOpen(false)
+  const handleClose = () => setDismissed(true)
 
   const welcomeText = WELCOME_TEXT[selectedLang] ?? WELCOME_TEXT.en
 

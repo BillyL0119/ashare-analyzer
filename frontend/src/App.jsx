@@ -41,7 +41,7 @@ export default function App() {
   const { market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme } = useThemeStore()
-  const { user, init: initAuth, signOut } = useAuthStore()
+  const { user, init: initAuth, signOut, setLangPreference } = useAuthStore()
   const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
@@ -67,6 +67,13 @@ export default function App() {
     initAuth().then(fn => { cleanup = fn })
     return () => { cleanup?.() }
   }, []) // eslint-disable-line
+
+  // When a logged-in user's session resolves, apply their saved language preference
+  useEffect(() => {
+    if (user?.user_metadata?.lang) {
+      setLang(user.user_metadata.lang)
+    }
+  }, [user]) // eslint-disable-line
 
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
@@ -265,7 +272,11 @@ export default function App() {
               {LANG_OPTIONS.map(({ code, label }) => (
                 <button
                   key={code}
-                  onClick={() => { setLang(code); setShowLangDropdown(false) }}
+                  onClick={() => {
+                    setLang(code)
+                    setShowLangDropdown(false)
+                    if (user) setLangPreference(code)
+                  }}
                   style={{
                     display: 'block', width: '100%', textAlign: 'left',
                     padding: '8px 16px', background: lang === code ? 'rgba(14,165,233,0.1)' : 'none',

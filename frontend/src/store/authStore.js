@@ -25,6 +25,12 @@ const useAuthStore = create((set) => ({
   signOut: async () => {
     await supabase.auth.signOut()
   },
+
+  // Persist language preference to the user's Supabase account
+  setLangPreference: async (lang) => {
+    const { data: { user }, error } = await supabase.auth.updateUser({ data: { lang } })
+    if (!error && user) set({ user })
+  },
 }))
 
 export default useAuthStore
