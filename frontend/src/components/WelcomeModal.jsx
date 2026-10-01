@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useAuthStore from '../store/authStore'
 
 // ── Inline SVG flag components ─────────────────────────────────────────
@@ -130,15 +130,25 @@ const WELCOME_TEXT = {
 }
 
 export default function WelcomeModal({ onLangSelect }) {
-  const { user, loading } = useAuthStore()
+  const { user, loading, setLangPreference } = useAuthStore()
   const [step, setStep] = useState(1)
   const [selectedLang, setSelectedLang] = useState(null)
   const [dismissed, setDismissed] = useState(false)
+  const prevUserRef = useRef(null)
 
-  // Show only after auth resolves and user is NOT logged in.
-  // Logged-in users get their language from their account — no modal needed.
-  // Unauthenticated users always see the picker on every visit (no localStorage persistence).
-  const open = !loading && !user && !dismissed
+  // If user logs out in the same tab, dismiss the modal for this session
+  // instead of immediately popping the picker in their face.
+  useEffect(() => {
+    if (prevUserRef.current && !user) setDismissed(true)
+    prevUserRef.current = user
+  }, [user])
+
+  // Show when auth has resolved AND:
+  //   • user is not logged in (guest — always ask), OR
+  //   • user is logged in but has no saved language yet (new account)
+  // Never show once dismissed in this session.
+  const needsLangSelection = !user || !user.user_metadata?.lang
+  const open = !loading && needsLangSelection && !dismissed
 
   if (!open) return null
 
@@ -146,6 +156,8 @@ export default function WelcomeModal({ onLangSelect }) {
     setSelectedLang(lang)
     setStep(2)
     if (onLangSelect) onLangSelect(lang)
+    // New logged-in user: persist their choice to the account
+    if (user) setLangPreference(lang)
   }
 
   const handleClose = () => setDismissed(true)

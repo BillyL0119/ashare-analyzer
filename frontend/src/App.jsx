@@ -69,9 +69,12 @@ export default function App() {
   }, []) // eslint-disable-line
 
   // When a logged-in user's session resolves, apply their saved language preference
+  // and refresh the hint cookie so the next page load starts in the right language
+  // immediately (before auth resolves), eliminating the English flash.
   useEffect(() => {
     if (user?.user_metadata?.lang) {
       setLang(user.user_metadata.lang)
+      document.cookie = `bfs_lang_hint=${user.user_metadata.lang}; path=/; max-age=31536000; SameSite=Lax`
     }
   }, [user]) // eslint-disable-line
 
@@ -275,7 +278,10 @@ export default function App() {
                   onClick={() => {
                     setLang(code)
                     setShowLangDropdown(false)
-                    if (user) setLangPreference(code)
+                    if (user) {
+                      setLangPreference(code)
+                      document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
+                    }
                   }}
                   style={{
                     display: 'block', width: '100%', textAlign: 'left',
@@ -401,7 +407,12 @@ export default function App() {
                     </div>
                   </div>
                   <button
-                    onClick={async () => { setShowUserMenu(false); await signOut() }}
+                    onClick={async () => {
+                      setShowUserMenu(false)
+                      // Clear the lang hint so the next visit starts fresh (prevents stale language for other users on shared devices)
+                      document.cookie = 'bfs_lang_hint=; path=/; max-age=0; SameSite=Lax'
+                      await signOut()
+                    }}
                     style={{
                       display: 'block', width: '100%', textAlign: 'left',
                       padding: '9px 16px', background: 'none', border: 'none',
