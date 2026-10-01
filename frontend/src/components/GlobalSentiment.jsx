@@ -6,9 +6,10 @@ import {
   Marker, Graticule, Sphere,
 } from 'react-simple-maps'
 import ReactECharts from 'echarts-for-react'
+import worldAtlas from 'world-atlas/countries-110m.json'
 
-// ── Geo URL (TopoJSON, loaded client-side) ────────────────────────────────────
-const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
+// ── Geo data (self-hosted via npm world-atlas) ────────────────────────────────
+const GEO_URL = worldAtlas
 
 // ── symbol → ISO 3166-1 numeric string (must match String(geo.id) exactly) ────
 // world-atlas stores IDs as integers: Australia=36, US=840, etc. — NO zero-pad

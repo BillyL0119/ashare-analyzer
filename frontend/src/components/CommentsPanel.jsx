@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import useThemeStore from '../store/themeStore'
+import { T } from '../i18n/translations'
+import { relativeTime } from '../utils/time'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -9,9 +11,13 @@ const RED      = '#ef4444'
 const AMBER    = '#f59e0b'
 
 const SENT_CFG = {
-  bullish: { label_zh: '看多', label_en: 'Bullish', icon: '🐂', color: GREEN,  bg: 'rgba(34,197,94,0.12)'  },
-  neutral: { label_zh: '中性', label_en: 'Neutral', icon: '😐', color: AMBER,  bg: 'rgba(245,158,11,0.12)' },
-  bearish: { label_zh: '看空', label_en: 'Bearish', icon: '🐻', color: RED,    bg: 'rgba(239,68,68,0.12)'  },
+  bullish: { zh: '看多', en: 'Bullish', ja: '強気', ko: '강세', fr: 'Haussier', icon: '🐂', color: GREEN,  bg: 'rgba(34,197,94,0.12)'  },
+  neutral: { zh: '中性', en: 'Neutral', ja: '中立', ko: '중립', fr: 'Neutre',   icon: '😐', color: AMBER,  bg: 'rgba(245,158,11,0.12)' },
+  bearish: { zh: '看空', en: 'Bearish', ja: '弱気', ko: '약세', fr: 'Baissier', icon: '🐻', color: RED,    bg: 'rgba(239,68,68,0.12)'  },
+}
+
+function getSentLabel(cfg, lang) {
+  return cfg[lang] || cfg.en
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -25,15 +31,6 @@ function getDeviceId() {
   return id
 }
 
-function relativeTime(isoStr, zh) {
-  const diff = (Date.now() - new Date(isoStr)) / 1000
-  if (diff < 60)  return zh ? '刚刚' : 'just now'
-  if (diff < 3600) return zh ? `${Math.floor(diff/60)}分钟前` : `${Math.floor(diff/60)}m ago`
-  if (diff < 86400) return zh ? `${Math.floor(diff/3600)}小时前` : `${Math.floor(diff/3600)}h ago`
-  if (diff < 2592000) return zh ? `${Math.floor(diff/86400)}天前` : `${Math.floor(diff/86400)}d ago`
-  return new Date(isoStr).toLocaleDateString()
-}
-
 function avatarColor(nickname) {
   let h = 0
   for (let i = 0; i < nickname.length; i++) h = (h * 31 + nickname.charCodeAt(i)) % 360
@@ -42,10 +39,10 @@ function avatarColor(nickname) {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function SentimentBar({ stats, zh }) {
+function SentimentBar({ stats, t }) {
   if (!stats || stats.total === 0) return (
     <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: '10px 0' }}>
-      {zh ? '暂无评论数据' : 'No comments yet'}
+      {t.cmtNone}
     </div>
   )
   const { bullish_pct, neutral_pct, bearish_pct, total } = stats
@@ -65,14 +62,14 @@ function SentimentBar({ stats, zh }) {
           <span style={{ fontSize: 12, color: RED,   fontWeight: 600 }}>🐻 {bearish_pct}%</span>
         </div>
         <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-          {total} {zh ? '条评论' : 'comments'}
+          {t.cmtComments(total)}
         </span>
       </div>
     </div>
   )
 }
 
-function CommentCard({ comment, zh, onLike }) {
+function CommentCard({ comment, lang, onLike }) {
   const cfg = SENT_CFG[comment.sentiment] || SENT_CFG.neutral
   const initial = (comment.nickname || '?')[0].toUpperCase()
   const [liked, setLiked] = useState(comment.liked)
@@ -112,10 +109,10 @@ function CommentCard({ comment, zh, onLike }) {
             fontSize: 11, fontWeight: 600, padding: '1px 7px', borderRadius: 10,
             background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.color}33`,
           }}>
-            {cfg.icon} {zh ? cfg.label_zh : cfg.label_en}
+            {cfg.icon} {getSentLabel(cfg, lang)}
           </span>
           <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
-            {relativeTime(comment.timestamp, zh)}
+            {relativeTime(comment.timestamp, lang)}
           </span>
         </div>
 
@@ -137,7 +134,7 @@ function CommentCard({ comment, zh, onLike }) {
             fontSize: 12, transition: 'color 0.15s',
           }}
         >
-          {liked ? '👍' : '👍'} {likes > 0 && likes}
+          👍 {likes > 0 && likes}
         </button>
       </div>
     </div>
@@ -148,9 +145,8 @@ function CommentCard({ comment, zh, onLike }) {
 
 export default function CommentsPanel({ stocks, lang }) {
   useThemeStore((s) => s.theme)
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
 
-  // Use first selected stock
   const symbol = stocks?.[0]?.code || ''
 
   const [comments, setComments]   = useState([])
@@ -162,7 +158,6 @@ export default function CommentsPanel({ stocks, lang }) {
   const [error, setError]         = useState('')
   const [success, setSuccess]     = useState('')
 
-  // Form state
   const [nickname, setNickname]   = useState(() => localStorage.getItem('bfs_nickname') || '')
   const [content, setContent]     = useState('')
   const [sentiment, setSentiment] = useState('bullish')
@@ -180,12 +175,12 @@ export default function CommentsPanel({ stocks, lang }) {
       setStats(data.stats)
       setPage(data.page)
       setPages(data.pages)
-    } catch (e) {
-      setError(zh ? '加载失败' : 'Failed to load')
+    } catch {
+      setError(t.cmtLoadFailed)
     } finally {
       setLoading(false)
     }
-  }, [symbol, deviceId, zh])
+  }, [symbol, deviceId, t])
 
   useEffect(() => {
     setComments([])
@@ -198,14 +193,14 @@ export default function CommentsPanel({ stocks, lang }) {
   const handleSubmit = async () => {
     setError('')
     setSuccess('')
-    const nick = nickname.trim() || (zh ? '匿名用户' : 'Anonymous')
+    const nick = nickname.trim() || t.cmtAnon
     const text = content.trim()
     if (text.length < 10) {
-      setError(zh ? '评论至少10个字符' : 'Min 10 characters')
+      setError(t.cmtMinChars)
       return
     }
     if (text.length > 500) {
-      setError(zh ? '评论最多500字符' : 'Max 500 characters')
+      setError(t.cmtMaxChars)
       return
     }
     setSubmitting(true)
@@ -217,17 +212,16 @@ export default function CommentsPanel({ stocks, lang }) {
       })
       if (!res.ok) {
         const err = await res.json()
-        setError(err.detail || (zh ? '发送失败' : 'Failed to post'))
+        setError(err.detail || t.cmtSendFailed)
         return
       }
       localStorage.setItem('bfs_nickname', nick)
       setContent('')
-      setSuccess(zh ? '评论已发送！' : 'Comment posted!')
+      setSuccess(t.cmtPosted)
       setTimeout(() => setSuccess(''), 3000)
-      // Reload page 1
       await fetchComments(1, true)
     } catch {
-      setError(zh ? '网络错误' : 'Network error')
+      setError(t.cmtNetError)
     } finally {
       setSubmitting(false)
     }
@@ -244,7 +238,7 @@ export default function CommentsPanel({ stocks, lang }) {
   if (!symbol) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: 14 }}>
-        {zh ? '请先选择一只股票' : 'Please select a stock first'}
+        {t.cmtSelectStock}
       </div>
     )
   }
@@ -258,9 +252,9 @@ export default function CommentsPanel({ stocks, lang }) {
         borderRadius: 12, padding: '14px 18px', marginBottom: 16,
       }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
-          📊 {symbol} {zh ? '社区情绪' : 'Community Sentiment'}
+          📊 {symbol} {t.cmtSentiment}
         </div>
-        <SentimentBar stats={stats} zh={zh} />
+        <SentimentBar stats={stats} t={t} />
       </div>
 
       {/* ── Post comment ── */}
@@ -269,7 +263,7 @@ export default function CommentsPanel({ stocks, lang }) {
         borderRadius: 12, padding: '14px 18px', marginBottom: 16,
       }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>
-          ✍️ {zh ? '发表看法' : 'Share Your View'}
+          ✍️ {t.cmtShare}
         </div>
 
         {/* Nickname */}
@@ -277,7 +271,7 @@ export default function CommentsPanel({ stocks, lang }) {
           value={nickname}
           onChange={e => setNickname(e.target.value)}
           maxLength={30}
-          placeholder={zh ? '你的昵称（可选）' : 'Nickname (optional)'}
+          placeholder={t.cmtNickPh}
           style={{
             width: '100%', boxSizing: 'border-box',
             background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
@@ -296,7 +290,7 @@ export default function CommentsPanel({ stocks, lang }) {
             onChange={e => setContent(e.target.value)}
             maxLength={500}
             rows={3}
-            placeholder={zh ? '分享你对这只股票的看法...' : 'Share your view on this stock...'}
+            placeholder={t.cmtContentPh}
             style={{
               width: '100%', boxSizing: 'border-box',
               background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
@@ -334,7 +328,7 @@ export default function CommentsPanel({ stocks, lang }) {
                   transition: 'all 0.15s',
                 }}
               >
-                {cfg.icon} {zh ? cfg.label_zh : cfg.label_en}
+                {cfg.icon} {getSentLabel(cfg, lang)}
               </button>
             )
           })}
@@ -352,7 +346,7 @@ export default function CommentsPanel({ stocks, lang }) {
               fontSize: 13, fontWeight: 600, transition: 'all 0.2s',
             }}
           >
-            {submitting ? '...' : (zh ? '发送' : 'Post')}
+            {submitting ? '...' : t.cmtPost}
           </button>
         </div>
 
@@ -366,7 +360,7 @@ export default function CommentsPanel({ stocks, lang }) {
         borderRadius: 12, padding: '14px 18px',
       }} ref={listRef}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
-          💬 {zh ? '全部评论' : 'All Comments'}
+          💬 {t.cmtAll}
           {stats?.total > 0 && (
             <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>
               ({stats.total})
@@ -376,16 +370,16 @@ export default function CommentsPanel({ stocks, lang }) {
 
         {loading && comments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: 13 }}>
-            {zh ? '加载中...' : 'Loading...'}
+            {t.cmtLoading}
           </div>
         ) : comments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: 13 }}>
-            {zh ? '还没有评论，来抢沙发！' : 'No comments yet — be the first!'}
+            {t.cmtNone}
           </div>
         ) : (
           <>
             {comments.map(c => (
-              <CommentCard key={c.id} comment={c} zh={zh} onLike={handleLike} />
+              <CommentCard key={c.id} comment={c} lang={lang} onLike={handleLike} />
             ))}
 
             {/* Load more */}
@@ -400,7 +394,7 @@ export default function CommentsPanel({ stocks, lang }) {
                     color: 'var(--text-secondary)', fontSize: 12, cursor: 'pointer',
                   }}
                 >
-                  {loading ? '...' : (zh ? '加载更多' : 'Load more')}
+                  {loading ? '...' : t.cmtLoadMore}
                 </button>
               </div>
             )}

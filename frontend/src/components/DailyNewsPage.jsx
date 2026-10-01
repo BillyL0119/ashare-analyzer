@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { getDailyMarketNews } from '../api/stockApi'
+import { T } from '../i18n/translations'
+import { relativeTime } from '../utils/time'
 
 const SOURCE_COLORS = {
   '财联社':          '#e8a020',
@@ -29,47 +31,33 @@ function SourceBadge({ name }) {
   )
 }
 
-function relativeTime(iso, zh) {
-  if (!iso) return ''
-  try {
-    const diff = (Date.now() - new Date(iso).getTime()) / 1000
-    if (zh) {
-      if (diff < 60)    return '刚刚'
-      if (diff < 3600)  return `${Math.floor(diff / 60)}分钟前`
-      if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`
-      return `${Math.floor(diff / 86400)}天前`
-    } else {
-      if (diff < 60)    return 'just now'
-      if (diff < 3600)  return `${Math.floor(diff / 60)}m ago`
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-      return `${Math.floor(diff / 86400)}d ago`
-    }
-  } catch { return '' }
+const CAT_CONFIG = {
+  all:      { zh: '全部',   en: 'All',       ja: '全て',    ko: '전체',    fr: 'Tous',      color: '#0ea5e9' },
+  market:   { zh: '市场行情', en: 'Market',   ja: '市況',    ko: '시황',    fr: 'Marché',    color: '#38bdf8' },
+  macro:    { zh: '宏观政策', en: 'Macro',    ja: 'マクロ',  ko: '거시',    fr: 'Macro',     color: '#a78bfa' },
+  company:  { zh: '公司动态', en: 'Company',  ja: '企業',    ko: '기업',    fr: 'Entreprise', color: '#34d399' },
+  industry: { zh: '行业资讯', en: 'Industry', ja: '業界',    ko: '산업',    fr: 'Industrie', color: '#fb923c' },
+  breaking: { zh: '突发事件', en: 'Breaking', ja: '速報',    ko: '속보',    fr: 'Flash',     color: '#f87171' },
 }
 
-const CAT_CONFIG = {
-  all:      { label: '全部',   labelEn: 'All',       color: '#0ea5e9' },
-  market:   { label: '市场行情', labelEn: 'Market',   color: '#38bdf8' },
-  macro:    { label: '宏观政策', labelEn: 'Macro',    color: '#a78bfa' },
-  company:  { label: '公司动态', labelEn: 'Company',  color: '#34d399' },
-  industry: { label: '行业资讯', labelEn: 'Industry', color: '#fb923c' },
-  breaking: { label: '突发事件', labelEn: 'Breaking', color: '#f87171' },
+function getCatLabel(cfg, lang) {
+  return cfg[lang] || cfg.en
 }
 
 const LANG_OPTS = [
-  { key: 'all', label: '全部', labelEn: 'All' },
-  { key: 'cn',  label: '中文', labelEn: '中文' },
-  { key: 'en',  label: 'English', labelEn: 'English' },
+  { key: 'all', zh: '全部', en: 'All',     ja: '全て',  ko: '전체',  fr: 'Tous' },
+  { key: 'cn',  zh: '中文', en: '中文',    ja: '中文',  ko: '中文',  fr: '中文' },
+  { key: 'en',  zh: 'English', en: 'English', ja: 'English', ko: 'English', fr: 'English' },
 ]
 
-function CategoryDot({ category }) {
+function CategoryDot({ category, lang }) {
   const cfg = CAT_CONFIG[category] || CAT_CONFIG.market
   return (
     <span style={{
       fontSize: 10, padding: '1px 7px', borderRadius: 8, fontWeight: 500,
       background: cfg.color + '22', color: cfg.color, flexShrink: 0,
     }}>
-      {cfg.label}
+      {getCatLabel(cfg, lang)}
     </span>
   )
 }
@@ -92,7 +80,7 @@ function Pill({ active, color, onClick, children }) {
   )
 }
 
-function NewsCard({ item, zh }) {
+function NewsCard({ item, lang }) {
   const href = item.url || '#'
   const isLink = item.url && item.url.startsWith('http')
   return (
@@ -119,7 +107,7 @@ function NewsCard({ item, zh }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, flexWrap: 'wrap' }}>
               <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{item.source}</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, zh)}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, lang)}</span>
               <span style={{
                 fontSize: 10, padding: '1px 5px', borderRadius: 6,
                 background: item.lang === 'cn' ? 'rgba(232,50,30,0.1)' : 'rgba(14,100,233,0.1)',
@@ -127,7 +115,7 @@ function NewsCard({ item, zh }) {
               }}>
                 {item.lang === 'cn' ? '中' : 'EN'}
               </span>
-              <CategoryDot category={item.category} />
+              <CategoryDot category={item.category} lang={lang} />
             </div>
             {/* Title */}
             <div style={{
@@ -163,11 +151,10 @@ const PAGE_SIZE = 20
 const REFRESH_MS = 20 * 60 * 1000  // 20 min
 
 export default function DailyNewsPage({ lang = 'zh' }) {
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
   const [items,     setItems]     = useState([])
   const [loading,   setLoading]   = useState(false)
   const [updatedAt, setUpdatedAt] = useState(null)
-  const [sources,   setSources]   = useState([])
   const [catFilter, setCatFilter] = useState('all')
   const [langFilter, setLangFilter] = useState('all')
   const [page,      setPage]      = useState(1)
@@ -183,7 +170,6 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         const data = res.data
         setItems(data.items || [])
         setUpdatedAt(data.updated_at)
-        setSources(data.sources || [])
         setPage(1)
       })
       .catch(() => {})
@@ -215,18 +201,16 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
-            {zh ? '每日大事件' : 'Daily Market News'}
+            {t.dnTitle}
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-            {zh
-              ? '影响大盘与市场的重大新闻，每20分钟自动刷新'
-              : 'Major news affecting the market, auto-refreshes every 20 min'}
+            {t.dnSubtitle}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {updatedAt && (
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              {zh ? '更新于' : 'Updated'} {relativeTime(updatedAt, zh)}
+              {t.dnUpdated} {relativeTime(updatedAt, lang)}
             </span>
           )}
           <button
@@ -239,7 +223,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
               transition: 'all 0.2s',
             }}
           >
-            {loading ? (zh ? '加载中…' : 'Loading…') : (zh ? '刷新' : 'Refresh')}
+            {loading ? t.dnRefreshing : t.dnRefresh}
           </button>
         </div>
       </div>
@@ -261,7 +245,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
               color={cfg.color}
               onClick={() => setCategory(k)}
             >
-              {zh ? cfg.label : cfg.labelEn}
+              {getCatLabel(cfg, lang)}
             </Pill>
           ))}
         </div>
@@ -271,14 +255,14 @@ export default function DailyNewsPage({ lang = 'zh' }) {
 
         {/* Language pills */}
         <div style={{ display: 'flex', gap: 4 }}>
-          {LANG_OPTS.map(({ key, label, labelEn }) => (
+          {LANG_OPTS.map((opt) => (
             <Pill
-              key={key}
-              active={langFilter === key}
+              key={opt.key}
+              active={langFilter === opt.key}
               color="#0ea5e9"
-              onClick={() => setLang(key)}
+              onClick={() => setLang(opt.key)}
             >
-              {zh ? label : labelEn}
+              {opt[lang] || opt.en}
             </Pill>
           ))}
         </div>
@@ -286,7 +270,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         {/* Item count */}
         {items.length > 0 && (
           <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)' }}>
-            {items.length} {zh ? '条新闻' : 'articles'}
+            {t.dnCount(items.length)}
           </span>
         )}
       </div>
@@ -312,7 +296,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
                 onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
               >
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.color, flexShrink: 0 }} />
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{zh ? cfg.label : cfg.labelEn}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{getCatLabel(cfg, lang)}</span>
                 <span style={{ fontSize: 11, color: cfg.color, fontWeight: 600 }}>{count}</span>
               </div>
             )
@@ -328,12 +312,12 @@ export default function DailyNewsPage({ lang = 'zh' }) {
           textAlign: 'center', padding: '60px 0',
           color: 'var(--text-muted)', fontSize: 14,
         }}>
-          {zh ? '暂无新闻数据，请稍后刷新' : 'No news available, try refreshing later'}
+          {t.dnEmpty}
         </div>
       ) : (
         <>
           {displayed.map((item, i) => (
-            <NewsCard key={`${item.source}-${i}`} item={item} zh={zh} />
+            <NewsCard key={`${item.source}-${i}`} item={item} lang={lang} />
           ))}
           {hasMore && (
             <button
@@ -348,9 +332,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
               onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
               onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-tertiary)'}
             >
-              {zh
-                ? `加载更多（还有 ${items.length - displayed.length} 条）`
-                : `Load more (${items.length - displayed.length} more)`}
+              {t.dnLoadMore(items.length - displayed.length)}
             </button>
           )}
         </>
