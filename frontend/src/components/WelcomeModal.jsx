@@ -121,142 +121,85 @@ const LANG_OPTIONS = [
   { code: 'fr', nativeLabel: 'Français', subLabel: 'French',   Flag: FlagFR },
 ]
 
-const WELCOME_TEXT = {
-  zh: { title: '欢迎使用 Best Friend Stock', body: '此网站仅供股票学习用途，由两名高中生 Billy 和 Frank 合作开发。', cta: '我知道了' },
-  en: { title: 'Welcome to Best Friend Stock', body: 'This website is for stock learning purposes only, developed by two high school students, Billy and Frank.', cta: 'Got it' },
-  ja: { title: 'Best Friend Stock へようこそ', body: 'このウェブサイトは株式学習のみを目的としており、高校生の Billy と Frank が共同開発しました。', cta: '了解しました' },
-  ko: { title: 'Best Friend Stock에 오신 것을 환영합니다', body: '이 웹사이트는 주식 학습 목적으로만 사용되며, 고등학생인 Billy와 Frank가 공동 개발했습니다.', cta: '확인' },
-  fr: { title: 'Bienvenue sur Best Friend Stock', body: "Ce site est uniquement destiné à l'apprentissage boursier, développé par deux lycéens, Billy et Frank.", cta: "C'est compris" },
-}
 
 export default function WelcomeModal({ onLangSelect }) {
   const { user, loading, setLangPreference } = useAuthStore()
-  const [step, setStep] = useState(1)
-  const [selectedLang, setSelectedLang] = useState(null)
   const [dismissed, setDismissed] = useState(false)
   const prevUserRef = useRef(null)
 
   // If user logs out in the same tab, dismiss the modal for this session
-  // instead of immediately popping the picker in their face.
   useEffect(() => {
     if (prevUserRef.current && !user) setDismissed(true)
     prevUserRef.current = user
   }, [user])
 
-  // Show when auth has resolved AND:
-  //   • user is not logged in (guest — always ask), OR
-  //   • user is logged in but has no saved language yet (new account)
-  // Never show once dismissed in this session.
+  // Show when auth has resolved AND user needs to pick a language
   const needsLangSelection = !user || !user.user_metadata?.lang
   const open = !loading && needsLangSelection && !dismissed
 
   if (!open) return null
 
   const handleLangSelect = (lang) => {
-    setSelectedLang(lang)
-    setStep(2)
     if (onLangSelect) onLangSelect(lang)
-    // New logged-in user: persist their choice to the account
     if (user) setLangPreference(lang)
-  }
-
-  const handleClose = () => setDismissed(true)
-
-  const welcomeText = WELCOME_TEXT[selectedLang] ?? WELCOME_TEXT.en
-
-  if (step === 1) {
-    return (
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 9999,
-        background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <div style={{
-          background: '#161b2e', borderRadius: 16,
-          border: '1px solid rgba(14,165,233,0.3)',
-          padding: '40px 32px', width: 480, maxWidth: '94vw',
-          textAlign: 'center',
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-            <IconChart size={40} />
-          </div>
-          <p style={{ color: 'rgba(232,234,240,0.7)', fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
-            请选择您的语言 · Please select your language
-          </p>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-            gap: 12,
-          }}>
-            {LANG_OPTIONS.map(({ code, nativeLabel, subLabel, Flag }) => (
-              <button
-                key={code}
-                onClick={() => handleLangSelect(code)}
-                style={{
-                  padding: '16px 10px', borderRadius: 12,
-                  background: 'rgba(14,165,233,0.06)',
-                  border: '1px solid rgba(14,165,233,0.2)',
-                  cursor: 'pointer', color: '#e8eaf0',
-                  transition: 'all 0.2s',
-                  display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', gap: 8,
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(99,102,241,0.2)'
-                  e.currentTarget.style.borderColor = 'rgba(99,102,241,0.5)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(14,165,233,0.06)'
-                  e.currentTarget.style.borderColor = 'rgba(14,165,233,0.2)'
-                }}
-              >
-                <Flag height={22} />
-                <div style={{ fontSize: 14, fontWeight: 600 }}>{nativeLabel}</div>
-                <div style={{ fontSize: 11, color: 'rgba(232,234,240,0.4)' }}>{subLabel}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    setDismissed(true)
   }
 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+      background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
         background: '#161b2e', borderRadius: 16,
         border: '1px solid rgba(14,165,233,0.3)',
-        padding: '32px 28px', width: 400, maxWidth: '92vw',
-        position: 'relative', textAlign: 'center',
+        padding: '40px 32px', width: 480, maxWidth: '94vw',
+        textAlign: 'center',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       }}>
-        <button onClick={handleClose} style={{
-          position: 'absolute', top: 14, right: 16,
-          background: 'none', border: 'none', cursor: 'pointer',
-          color: 'rgba(232,234,240,0.4)', fontSize: 20, lineHeight: 1,
-        }}>&#x2715;</button>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-          <IconChart size={36} />
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <IconChart size={40} />
         </div>
-        <h2 style={{ color: '#e8eaf0', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
-          {welcomeText.title}
-        </h2>
-        <p style={{ color: 'rgba(232,234,240,0.6)', fontSize: 13, lineHeight: 1.7, marginBottom: 24 }}>
-          {welcomeText.body}
+        <p style={{ color: 'rgba(232,234,240,0.7)', fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
+          请选择您的语言 · Please select your language
         </p>
-        <button onClick={handleClose} style={{
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-          color: '#fff', border: 'none', borderRadius: 8,
-          padding: '10px 36px', fontSize: 14, fontWeight: 600,
-          cursor: 'pointer',
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+          gap: 12,
         }}>
-          {welcomeText.cta}
-        </button>
+          {LANG_OPTIONS.map(({ code, nativeLabel, subLabel, Flag }) => (
+            <button
+              key={code}
+              onClick={() => handleLangSelect(code)}
+              style={{
+                padding: '16px 10px', borderRadius: 12,
+                background: 'rgba(14,165,233,0.06)',
+                border: '1px solid rgba(14,165,233,0.2)',
+                cursor: 'pointer', color: '#e8eaf0',
+                transition: 'all 0.2s',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', gap: 8,
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(99,102,241,0.2)'
+                e.currentTarget.style.borderColor = 'rgba(99,102,241,0.5)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(14,165,233,0.06)'
+                e.currentTarget.style.borderColor = 'rgba(14,165,233,0.2)'
+              }}
+            >
+              <Flag height={22} />
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{nativeLabel}</div>
+              <div style={{ fontSize: 11, color: 'rgba(232,234,240,0.4)' }}>{subLabel}</div>
+            </button>
+          ))}
+        </div>
+        <p style={{ fontSize: 11, color: 'rgba(232,234,240,0.3)', marginTop: 20, lineHeight: 1.6 }}>
+          此网站仅供股票学习用途 · For stock learning purposes only
+        </p>
       </div>
     </div>
   )

@@ -40,8 +40,8 @@ const LANG_OPTIONS = [
 export default function App() {
   const { market, setMarket, selectedSymbols } = useCompareStore()
   const { lang, setLang } = useLangStore()
-  const { theme, toggleTheme } = useThemeStore()
-  const { user, init: initAuth, signOut, setLangPreference } = useAuthStore()
+  const { theme, toggleTheme, setTheme } = useThemeStore()
+  const { user, init: initAuth, signOut, setLangPreference, setThemePreference } = useAuthStore()
   const t = T[lang]
   const isMobile = useMobile()
   const [appTab,       setAppTab]       = useState('analysis')
@@ -53,6 +53,8 @@ export default function App() {
   const [showAuth,         setShowAuth]         = useState(false)
   const [showUserMenu,     setShowUserMenu]     = useState(false)
   const [showLangDropdown, setShowLangDropdown] = useState(false)
+  const [toast, setToast] = useState(null)
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200) }
   const watchlistCount = useWatchlistStore((s) => s.list.length)
   const watchlistBtnRef = useRef(null)
 
@@ -68,13 +70,15 @@ export default function App() {
     return () => { cleanup?.() }
   }, []) // eslint-disable-line
 
-  // When a logged-in user's session resolves, apply their saved language preference
-  // and refresh the hint cookie so the next page load starts in the right language
-  // immediately (before auth resolves), eliminating the English flash.
+  // When a logged-in user's session resolves, restore their saved language + theme.
+  // Also refresh the lang hint cookie to eliminate the English flash on next page load.
   useEffect(() => {
     if (user?.user_metadata?.lang) {
       setLang(user.user_metadata.lang)
       document.cookie = `bfs_lang_hint=${user.user_metadata.lang}; path=/; max-age=31536000; SameSite=Lax`
+    }
+    if (user?.user_metadata?.theme) {
+      setTheme(user.user_metadata.theme)
     }
   }, [user]) // eslint-disable-line
 
@@ -162,12 +166,11 @@ export default function App() {
         }),
       }}
     >
+      {/* Sticky nav wrapper — primary header + secondary tab bar scroll together */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0 }}>
       {/* Glassmorphism header */}
       <header
         style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
           background: scrolled ? 'var(--nav-bg)' : 'var(--nav-bg-dim)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -177,8 +180,7 @@ export default function App() {
           display: 'flex',
           alignItems: 'center',
           gap: isMobile ? 8 : 18,
-          flexShrink: 0,
-          flexWrap: 'wrap',
+          flexWrap: 'nowrap',
           transition: 'background 0.3s ease, box-shadow 0.3s ease',
         }}
       >
@@ -281,6 +283,7 @@ export default function App() {
                     if (user) {
                       setLangPreference(code)
                       document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
+                      showToast('Language saved')
                     }
                   }}
                   style={{
@@ -303,7 +306,11 @@ export default function App() {
 
         {/* ☀️/🌙 Theme toggle */}
         <button
-          onClick={toggleTheme}
+          onClick={() => {
+            const next = theme === 'dark' ? 'light' : 'dark'
+            toggleTheme()
+            if (user) { setThemePreference(next); showToast('Theme saved') }
+          }}
           title={theme === 'dark' ? t.lightMode : t.darkMode}
           style={{
             width: 34, height: 34, borderRadius: '50%',
@@ -444,50 +451,56 @@ export default function App() {
           )}
         </div>
 
-        {/* App tab toggle */}
-        <div
-          className="tab-bar"
-          style={{
-            display: 'flex', alignItems: 'center',
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--border-primary)',
-            borderRadius: 24, padding: 3, gap: 2,
-            overflowX: 'auto', flexWrap: 'nowrap', flexShrink: 1,
-          }}
-        >
-          {[
-            { key: 'analysis',      label: t.tabAnalysis },
-            { key: 'news',          label: t.tabNews },
-            { key: 'bank_views',    label: t.tabBankViews },
-            { key: 'paper',         label: t.tabPaper },
-            { key: 'study',         label: t.tabStudy },
-            { key: 'universities',  label: t.tabUniversities },
-            { key: 'career',        label: t.tabCareer },
-          ].map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => handleTabChange(key)}
-              className={`bfs-nav-tab${appTab === key ? ' is-active' : ''}`}
-              style={{
-                padding: '4px 13px', borderRadius: 6, border: 'none',
-                cursor: 'pointer', fontSize: 12, fontWeight: appTab === key ? 600 : 400,
-                background: 'transparent',
-                color: appTab === key ? '#0ea5e9' : 'var(--text-secondary)',
-                transition: 'color 0.2s ease', whiteSpace: 'nowrap',
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ color: 'var(--text-muted)', fontSize: 11, letterSpacing: '0.3px' }}>{t.dataSource}</div>
       </header>
       {/* Gradient nav border line */}
       <div style={{
-        height: 1, flexShrink: 0,
+        height: 1,
         background: 'linear-gradient(90deg, transparent, var(--border-primary) 20%, var(--border-glow) 50%, var(--border-primary) 80%, transparent)',
       }} />
+      {/* Secondary tab nav */}
+      <div
+        style={{
+          background: scrolled ? 'var(--nav-bg)' : 'var(--nav-bg-dim)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          padding: isMobile ? '0 12px' : '0 24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          borderBottom: '1px solid var(--border-primary)',
+          overflowX: 'auto',
+        }}
+      >
+        {[
+          { key: 'analysis',     label: t.tabAnalysis },
+          { key: 'news',         label: t.tabNews },
+          { key: 'bank_views',   label: t.tabBankViews },
+          { key: 'paper',        label: t.tabPaper },
+          { key: 'study',        label: t.tabStudy },
+          { key: 'universities', label: t.tabUniversities },
+          { key: 'career',       label: t.tabCareer },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => handleTabChange(key)}
+            className={`bfs-nav-tab${appTab === key ? ' is-active' : ''}`}
+            style={{
+              padding: '8px 14px', border: 'none', borderBottom: appTab === key ? '2px solid #0ea5e9' : '2px solid transparent',
+              cursor: 'pointer', fontSize: 12, fontWeight: appTab === key ? 600 : 400,
+              background: 'transparent',
+              color: appTab === key ? '#0ea5e9' : 'var(--text-secondary)',
+              transition: 'color 0.15s ease, border-color 0.15s ease',
+              whiteSpace: 'nowrap', flexShrink: 0,
+            }}
+          >
+            {label}
+          </button>
+        ))}
+        <div style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 11, letterSpacing: '0.3px', flexShrink: 0, paddingLeft: 16 }}>
+          {t.dataSource}
+        </div>
+      </div>
+      </div>{/* end sticky nav wrapper */}
 
       <main style={{ padding: isMobile ? '2px 12px' : '2px 24px', flex: 1 }}>
         <Suspense fallback={null}>
@@ -537,6 +550,21 @@ export default function App() {
       </div>
 
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
+      {/* Toast notification for saved preferences */}
+      {toast && (
+        <div style={{
+          position: 'fixed', bottom: 80, right: 24, zIndex: 9998,
+          background: 'var(--bg-secondary)', border: '1px solid rgba(52,211,153,0.35)',
+          borderRadius: 8, padding: '8px 14px', fontSize: 13,
+          color: 'var(--text-primary)', boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
+          display: 'flex', alignItems: 'center', gap: 8,
+          animation: 'bfsPageFadeIn 0.2s ease both',
+          pointerEvents: 'none',
+        }}>
+          <span style={{ color: '#34d399', fontSize: 15, lineHeight: 1 }}>✓</span>
+          {toast}
+        </div>
+      )}}
       <Suspense fallback={null}>
         <AITeacherFloat lang={lang} open={showAIFloat} onClose={() => setShowAIFloat(false)} />
       </Suspense>

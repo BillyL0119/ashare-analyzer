@@ -31,6 +31,12 @@ const useAuthStore = create((set) => ({
     const { data: { user }, error } = await supabase.auth.updateUser({ data: { lang } })
     if (!error && user) set({ user })
   },
+
+  // Persist theme preference to the user's Supabase account
+  setThemePreference: async (theme) => {
+    const { data: { user }, error } = await supabase.auth.updateUser({ data: { theme } })
+    if (!error && user) set({ user })
+  },
 }))
 
 export default useAuthStore

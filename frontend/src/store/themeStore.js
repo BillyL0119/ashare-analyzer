@@ -18,6 +18,11 @@ const useThemeStore = create((set) => ({
       applyTheme(next)
       return { theme: next }
     }),
+  // Apply a specific theme (used when restoring from account preferences)
+  setTheme: (theme) => {
+    applyTheme(theme)
+    set({ theme })
+  },
 }))
 
 export default useThemeStore
