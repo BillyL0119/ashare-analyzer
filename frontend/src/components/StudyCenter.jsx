@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ReactECharts from 'echarts-for-react'
 import KLineLesson from './KLineLesson'
 import { useMobile } from '../hooks/useMobile'
@@ -930,12 +931,20 @@ function EventTimeline({ zh }) {
 
 
 // ── Main component ────────────────────────────────────────────────────────────
+const VALID_EXAMS = ['alevel', 'igcse', 'ap_macro', 'ap_micro', 'ib', 'stocks', 'events', 'ai_teacher']
+
 export default function StudyCenter({ lang }) {
   const zh = lang === 'zh'
   const t = T[lang] || T.en
   const isMobile = useMobile()
   const { user, setStudyProgressPreference } = useAuthStore()
-  const [activeExam, setActiveExam] = useState('alevel')
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const examFromUrl = location.pathname.match(/^\/study\/(\w+)$/)?.[1]
+  const [activeExam, setActiveExam] = useState(
+    () => VALID_EXAMS.includes(examFromUrl) ? examFromUrl : 'alevel'
+  )
   const [curriculum,    setCurriculum]    = useState(null)
   const [activeId,      setActiveId]      = useState(null)
   const [topicData,     setTopicData]     = useState(null)
@@ -967,6 +976,11 @@ export default function StudyCenter({ lang }) {
       .catch(console.error)
       .finally(() => setLoadingCurr(false))
   }, [activeExam])
+
+  // Keep URL in sync with the active exam
+  useEffect(() => {
+    navigate(`/study/${activeExam}`, { replace: true })
+  }, [activeExam]) // eslint-disable-line
 
   // On login: load cloud study progress into localStorage and refresh current exam
   useEffect(() => {

@@ -39,6 +39,7 @@ export default function StockCard({ stock }) {
   })
 
   const [showKLineTip, setShowKLineTip] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const groupId = `group_${code}`
   useEffect(() => {
@@ -198,7 +199,7 @@ export default function StockCard({ stock }) {
 
         {/* Watchlist star */}
         <button
-          onClick={() => inWatchlist ? wlRemove(code) : wlAdd(stock)}
+          onClick={() => inWatchlist ? wlRemove(code) : wlAdd({ ...stock, market })}
           title={inWatchlist ? (lang === 'zh' ? '移出收藏' : 'Remove from watchlist') : (lang === 'zh' ? '加入收藏' : 'Add to watchlist')}
           style={{
             padding: '3px 6px',
@@ -214,6 +215,29 @@ export default function StockCard({ stock }) {
           onMouseLeave={(e) => { e.currentTarget.style.color = inWatchlist ? '#f6c90e' : 'var(--text-muted)' }}
         >
           {inWatchlist ? '★' : '☆'}
+        </button>
+
+        {/* Copy share link */}
+        <button
+          onClick={async () => {
+            const url = `${window.location.origin}/stock/${market}/${code}`
+            await navigator.clipboard.writeText(url).catch(() => {})
+            setCopied(true)
+            setTimeout(() => setCopied(false), 1500)
+          }}
+          title={lang === 'zh' ? '复制分享链接' : 'Copy share link'}
+          style={{
+            padding: '3px 8px', borderRadius: 4,
+            border: '1px solid rgba(14,165,233,0.25)',
+            cursor: 'pointer', fontSize: 12,
+            background: copied ? 'rgba(52,211,153,0.12)' : 'transparent',
+            color: copied ? '#34d399' : 'var(--text-muted)',
+            transition: 'all 0.15s', whiteSpace: 'nowrap',
+          }}
+          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(14,165,233,0.1)'; e.currentTarget.style.color = '#0ea5e9' } }}
+          onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' } }}
+        >
+          {copied ? '✓' : '🔗'}
         </button>
 
         <button

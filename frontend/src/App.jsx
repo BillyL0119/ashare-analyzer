@@ -77,7 +77,10 @@ export default function App() {
   const navigate  = useNavigate()
   // Derive active tab from URL — no state needed
   const stockRouteMatch = location.pathname.match(/^\/stock\/(\w+)\/(.+)$/)
-  const appTab = stockRouteMatch ? 'analysis' : (PATH_TABS[location.pathname] || 'analysis')
+  const studyRouteMatch = location.pathname.match(/^\/study\/(\w+)$/)
+  const appTab = stockRouteMatch ? 'analysis'
+    : studyRouteMatch ? 'study'
+    : (PATH_TABS[location.pathname] || 'analysis')
   const [showStats,        setShowStats]        = useState(false)
   const [scrolled,         setScrolled]         = useState(false)
   const [showInsight,      setShowInsight]      = useState(false)
@@ -86,7 +89,8 @@ export default function App() {
   const [showAuth,         setShowAuth]         = useState(false)
   const [showUserMenu,     setShowUserMenu]     = useState(false)
   const [showLangDropdown, setShowLangDropdown] = useState(false)
-  const [toast, setToast] = useState(null)
+  const [toast,          setToast]          = useState(null)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200) }
   const watchlist      = useWatchlistStore((s) => s.list)
   const watchlistCount = watchlist.length
@@ -168,6 +172,8 @@ export default function App() {
       paper:        'Best Friend Stock | 模拟炒股 - 100万虚拟资金T+1练习',
       study:        'Best Friend Stock | 经济学学习中心 - A-Level IB AP IGCSE',
       universities: 'Best Friend Stock | 全球商学院指南 - 90+顶尖商学院数据库',
+      bank_views:   'Best Friend Stock | 大行观点 - 顶级投行研究报告',
+      career:       'Best Friend Stock | 求职指南 - 金融行业职业规划',
     }
     document.title = titles[appTab] || titles.analysis
     let canonical = document.querySelector('link[rel="canonical"]')
@@ -290,47 +296,29 @@ export default function App() {
           <img
             src="/logo-dark.png"
             alt="Best Friend Stock"
-            style={{
-              height: 40,
-              width: 'auto',
-              filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
-            }}
+            style={{ height: 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />
-          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.2px' }}>
-            Best Friend Stock
-          </span>
+          {!isMobile && (
+            <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.2px' }}>
+              Best Friend Stock
+            </span>
+          )}
         </div>
 
         {/* Market toggle — pill style */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--border-primary)',
-            borderRadius: 24,
-            padding: 3,
-            gap: 2,
-          }}
-        >
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 24, padding: 3, gap: 2, flexShrink: 0 }}>
           {[{ key: 'cn', label: t.marketCN }, { key: 'us', label: t.marketUS }].map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setMarket(key)}
               style={{
-                padding: '5px 16px',
-                borderRadius: 20,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: 600,
-                letterSpacing: '0.2px',
-                background: market === key
-                  ? 'linear-gradient(135deg, var(--accent-blue), #38bdf8)'
-                  : 'transparent',
+                padding: isMobile ? '4px 10px' : '5px 16px',
+                borderRadius: 20, border: 'none', cursor: 'pointer',
+                fontSize: isMobile ? 11 : 13, fontWeight: 600, letterSpacing: '0.2px',
+                background: market === key ? 'linear-gradient(135deg, var(--accent-blue), #38bdf8)' : 'transparent',
                 color: market === key ? '#fff' : 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
-                boxShadow: market === key ? `0 2px 12px rgba(14,165,233,0.3)` : 'none',
+                boxShadow: market === key ? '0 2px 12px rgba(14,165,233,0.3)' : 'none',
               }}
             >
               {label}
@@ -340,212 +328,279 @@ export default function App() {
 
         <SearchBar />
 
-        {/* Language dropdown */}
-        <div style={{ position: 'relative', marginLeft: 'auto' }}>
-          <button
-            onClick={() => setShowLangDropdown(v => !v)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 4,
-              padding: '5px 12px', borderRadius: 20,
-              border: '1px solid var(--border-primary)',
-              background: 'var(--bg-secondary)',
-              cursor: 'pointer', fontSize: 12, fontWeight: 600,
-              color: 'var(--text-secondary)', transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)' }}
-          >
-            {LANG_OPTIONS.find(l => l.code === lang)?.label ?? 'EN'}
-            <span style={{ fontSize: 9, opacity: 0.7 }}>▾</span>
-          </button>
-          {showLangDropdown && (
-            <div
-              style={{
-                position: 'absolute', top: 38, right: 0,
-                background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                borderRadius: 10, minWidth: 120, zIndex: 9000,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '4px 0',
-                animation: 'bfsPageFadeIn 0.15s ease both',
-              }}
-              onMouseLeave={() => setShowLangDropdown(false)}
-            >
-              {LANG_OPTIONS.map(({ code, label }) => (
-                <button
-                  key={code}
-                  onClick={() => {
-                    setLang(code)
-                    setShowLangDropdown(false)
-                    if (user) {
-                      setLangPreference(code)
-                      document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
-                      showToast('Language saved')
-                    }
-                  }}
+        {/* Right-side controls pushed to the far right */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: isMobile ? 6 : 8, flexShrink: 0 }}>
+
+          {/* Language dropdown — desktop only */}
+          {!isMobile && (
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowLangDropdown(v => !v)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '5px 12px', borderRadius: 20,
+                  border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)',
+                  cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                  color: 'var(--text-secondary)', transition: 'all 0.2s ease', whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)' }}
+              >
+                {LANG_OPTIONS.find(l => l.code === lang)?.label ?? 'EN'}
+                <span style={{ fontSize: 9, opacity: 0.7 }}>▾</span>
+              </button>
+              {showLangDropdown && (
+                <div
                   style={{
-                    display: 'block', width: '100%', textAlign: 'left',
-                    padding: '8px 16px', background: lang === code ? 'rgba(14,165,233,0.1)' : 'none',
-                    border: 'none', cursor: 'pointer', fontSize: 13,
-                    fontWeight: lang === code ? 600 : 400,
-                    color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
-                    transition: 'background 0.12s',
+                    position: 'absolute', top: 38, right: 0,
+                    background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+                    borderRadius: 10, minWidth: 120, zIndex: 9000,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '4px 0',
+                    animation: 'bfsPageFadeIn 0.15s ease both',
                   }}
-                  onMouseEnter={e => { if (lang !== code) e.currentTarget.style.background = 'var(--bg-hover)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = lang === code ? 'rgba(14,165,233,0.1)' : 'none' }}
+                  onMouseLeave={() => setShowLangDropdown(false)}
                 >
-                  {label}
-                </button>
-              ))}
+                  {LANG_OPTIONS.map(({ code, label }) => (
+                    <button
+                      key={code}
+                      onClick={() => {
+                        setLang(code); setShowLangDropdown(false)
+                        if (user) { setLangPreference(code); document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`; showToast('Language saved') }
+                      }}
+                      style={{
+                        display: 'block', width: '100%', textAlign: 'left',
+                        padding: '8px 16px', background: lang === code ? 'rgba(14,165,233,0.1)' : 'none',
+                        border: 'none', cursor: 'pointer', fontSize: 13,
+                        fontWeight: lang === code ? 600 : 400,
+                        color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
+                        transition: 'background 0.12s',
+                      }}
+                      onMouseEnter={e => { if (lang !== code) e.currentTarget.style.background = 'var(--bg-hover)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = lang === code ? 'rgba(14,165,233,0.1)' : 'none' }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
-        </div>
 
-        {/* ☀️/🌙 Theme toggle */}
-        <button
-          onClick={() => {
-            const next = theme === 'dark' ? 'light' : 'dark'
-            toggleTheme()
-            if (user) { setThemePreference(next); showToast('Theme saved') }
-          }}
-          title={theme === 'dark' ? t.lightMode : t.darkMode}
-          style={{
-            width: 34, height: 34, borderRadius: '50%',
-            border: '1px solid var(--border-primary)',
-            background: 'transparent',
-            cursor: 'pointer', fontSize: 16,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'all 0.2s ease', flexShrink: 0,
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-        >
-          {theme === 'dark' ? '☀️' : '🌙'}
-        </button>
-
-        {/* 💡 Daily Insight + 🎓 AI Tutor + ⭐ Watchlist navbar buttons */}
-        {[
-          { key: 'insight',   icon: '💡', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: t.navInsight,   badge: null },
-          { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: t.navAITutor,   badge: null },
-          { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: t.navWatchlist, badge: watchlistCount > 0 ? watchlistCount : null },
-        ].map(({ key, icon, active, onClick, title, badge }) => (
-          <div key={key} ref={key === 'watchlist' ? watchlistBtnRef : undefined} style={{ position: 'relative', flexShrink: 0 }}>
+          {/* Theme toggle — desktop only */}
+          {!isMobile && (
             <button
-              onClick={onClick}
-              title={title}
+              onClick={() => { const next = theme === 'dark' ? 'light' : 'dark'; toggleTheme(); if (user) { setThemePreference(next); showToast('Theme saved') } }}
+              title={theme === 'dark' ? t.lightMode : t.darkMode}
               style={{
                 width: 34, height: 34, borderRadius: '50%',
-                border: `1px solid ${active ? '#0ea5e9' : 'var(--border-primary)'}`,
-                background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
+                border: '1px solid var(--border-primary)', background: 'transparent',
                 cursor: 'pointer', fontSize: 16,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
+                transition: 'all 0.2s ease', flexShrink: 0,
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--bg-hover)'
-                e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = active ? 'rgba(14,165,233,0.15)' : 'transparent'
-                e.currentTarget.style.boxShadow = active ? '0 0 10px rgba(14,165,233,0.25)' : 'none'
-              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
             >
-              {icon}
+              {theme === 'dark' ? '☀️' : '🌙'}
             </button>
-            {badge != null && (
-              <div style={{
-                position: 'absolute', top: -4, right: -4,
-                background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
-                color: '#fff', fontSize: 9, fontWeight: 700,
-                width: 15, height: 15, borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                pointerEvents: 'none',
-              }}>
-                {badge}
-              </div>
-            )}
-            {key === 'watchlist' && (
-              <Watchlist lang={lang} open={showWatchlist} onClose={() => setShowWatchlist(false)} anchorRef={watchlistBtnRef} />
-            )}
-          </div>
-        ))}
+          )}
 
-        {/* Auth button / user avatar */}
-        <div style={{ position: 'relative', flexShrink: 0 }}>
-          {user ? (
-            <>
+          {/* 💡 Daily Insight + 🎓 AI Tutor (desktop only) + ⭐ Watchlist (always) */}
+          {[
+            ...(isMobile ? [] : [
+              { key: 'insight',   icon: '💡', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: t.navInsight,   badge: null },
+              { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: t.navAITutor,   badge: null },
+            ]),
+            { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: t.navWatchlist, badge: watchlistCount > 0 ? watchlistCount : null },
+          ].map(({ key, icon, active, onClick, title, badge }) => (
+            <div key={key} ref={key === 'watchlist' ? watchlistBtnRef : undefined} style={{ position: 'relative', flexShrink: 0 }}>
               <button
-                onClick={() => setShowUserMenu(v => !v)}
-                title={user.email}
+                onClick={onClick}
+                title={title}
                 style={{
                   width: 34, height: 34, borderRadius: '50%',
-                  border: '1px solid rgba(14,165,233,0.4)',
-                  background: 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))',
-                  cursor: 'pointer', fontSize: 13, fontWeight: 700,
-                  color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.2s',
+                  border: `1px solid ${active ? '#0ea5e9' : 'var(--border-primary)'}`,
+                  background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
+                  cursor: 'pointer', fontSize: 16,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                  boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = active ? 'rgba(14,165,233,0.15)' : 'transparent'; e.currentTarget.style.boxShadow = active ? '0 0 10px rgba(14,165,233,0.25)' : 'none' }}
               >
-                {(user.email?.[0] ?? '?').toUpperCase()}
+                {icon}
               </button>
-              {showUserMenu && (
+              {badge != null && (
+                <div style={{
+                  position: 'absolute', top: -4, right: -4,
+                  background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
+                  color: '#fff', fontSize: 9, fontWeight: 700,
+                  width: 15, height: 15, borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  pointerEvents: 'none',
+                }}>
+                  {badge}
+                </div>
+              )}
+              {key === 'watchlist' && (
+                <Watchlist lang={lang} open={showWatchlist} onClose={() => setShowWatchlist(false)} anchorRef={watchlistBtnRef} />
+              )}
+            </div>
+          ))}
+
+          {/* ⋯ Mobile overflow menu — mobile only */}
+          {isMobile && (
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <button
+                onClick={() => setShowMobileMenu(v => !v)}
+                style={{
+                  width: 34, height: 34, borderRadius: '50%',
+                  border: `1px solid ${showMobileMenu ? '#0ea5e9' : 'var(--border-primary)'}`,
+                  background: showMobileMenu ? 'rgba(14,165,233,0.15)' : 'transparent',
+                  cursor: 'pointer', fontSize: 18, letterSpacing: '-2px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = showMobileMenu ? 'rgba(14,165,233,0.15)' : 'transparent' }}
+              >
+                •••
+              </button>
+              {showMobileMenu && (
                 <div
                   style={{
                     position: 'absolute', top: 40, right: 0,
                     background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 10, minWidth: 200, zIndex: 9000,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '8px 0',
+                    borderRadius: 12, minWidth: 190, zIndex: 9000,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.45)', padding: '8px 0',
                     animation: 'bfsPageFadeIn 0.15s ease both',
                   }}
-                  onMouseLeave={() => setShowUserMenu(false)}
+                  onMouseLeave={() => setShowMobileMenu(false)}
                 >
-                  <div style={{ padding: '8px 16px 10px', borderBottom: '1px solid var(--border-primary)' }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {user.email}
-                    </div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                      {t.signedIn}
+                  {/* Language chips */}
+                  <div style={{ padding: '4px 12px 8px', borderBottom: '1px solid var(--border-primary)', marginBottom: 4 }}>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Language</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                      {LANG_OPTIONS.map(({ code, label }) => (
+                        <button
+                          key={code}
+                          onClick={() => {
+                            setLang(code); setShowMobileMenu(false)
+                            if (user) { setLangPreference(code); document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`; showToast('Language saved') }
+                          }}
+                          style={{
+                            padding: '4px 8px', borderRadius: 6, fontSize: 11,
+                            background: lang === code ? 'rgba(14,165,233,0.15)' : 'var(--bg-tertiary)',
+                            border: `1px solid ${lang === code ? 'rgba(14,165,233,0.4)' : 'var(--border-primary)'}`,
+                            cursor: 'pointer', fontWeight: lang === code ? 700 : 400,
+                            color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
+                          }}
+                        >
+                          {label}
+                        </button>
+                      ))}
                     </div>
                   </div>
+                  {/* Theme */}
                   <button
-                    onClick={async () => {
-                      setShowUserMenu(false)
-                      // Clear the lang hint so the next visit starts fresh (prevents stale language for other users on shared devices)
-                      document.cookie = 'bfs_lang_hint=; path=/; max-age=0; SameSite=Lax'
-                      await signOut()
-                    }}
-                    style={{
-                      display: 'block', width: '100%', textAlign: 'left',
-                      padding: '9px 16px', background: 'none', border: 'none',
-                      cursor: 'pointer', fontSize: 13, color: '#ef5350',
-                      transition: 'background 0.12s',
-                    }}
+                    onClick={() => { const next = theme === 'dark' ? 'light' : 'dark'; toggleTheme(); setShowMobileMenu(false); if (user) { setThemePreference(next); showToast('Theme saved') } }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 14px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
                     onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
                   >
-                    {t.signOut}
+                    <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                    <span>{theme === 'dark' ? t.lightMode : t.darkMode}</span>
+                  </button>
+                  {/* Daily Insight */}
+                  <button
+                    onClick={() => { setShowInsight(v => !v); setShowMobileMenu(false) }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 14px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                  >
+                    <span>💡</span><span>{t.navInsight}</span>
+                  </button>
+                  {/* AI Tutor */}
+                  <button
+                    onClick={() => { setShowAIFloat(v => !v); setShowMobileMenu(false) }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 14px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                  >
+                    <span>🎓</span><span>{t.navAITutor}</span>
                   </button>
                 </div>
               )}
-            </>
-          ) : (
-            <button
-              onClick={() => setShowAuth(true)}
-              style={{
-                padding: '5px 14px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.35)',
-                background: 'rgba(14,165,233,0.08)',
-                cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#0ea5e9',
-                whiteSpace: 'nowrap', transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.18)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)' }}
-            >
-              {t.signIn}
-            </button>
+            </div>
           )}
-        </div>
+
+          {/* Auth button / user avatar */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            {user ? (
+              <>
+                <button
+                  onClick={() => setShowUserMenu(v => !v)}
+                  title={user.email}
+                  style={{
+                    width: 34, height: 34, borderRadius: '50%',
+                    border: '1px solid rgba(14,165,233,0.4)',
+                    background: 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))',
+                    cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                    color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))' }}
+                >
+                  {(user.email?.[0] ?? '?').toUpperCase()}
+                </button>
+                {showUserMenu && (
+                  <div
+                    style={{
+                      position: 'absolute', top: 40, right: 0,
+                      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+                      borderRadius: 10, minWidth: 200, zIndex: 9000,
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '8px 0',
+                      animation: 'bfsPageFadeIn 0.15s ease both',
+                    }}
+                    onMouseLeave={() => setShowUserMenu(false)}
+                  >
+                    <div style={{ padding: '8px 16px 10px', borderBottom: '1px solid var(--border-primary)' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {user.email}
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{t.signedIn}</div>
+                    </div>
+                    <button
+                      onClick={async () => { setShowUserMenu(false); document.cookie = 'bfs_lang_hint=; path=/; max-age=0; SameSite=Lax'; await signOut() }}
+                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#ef5350', transition: 'background 0.12s' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                    >
+                      {t.signOut}
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <button
+                onClick={() => setShowAuth(true)}
+                style={{
+                  padding: '5px 14px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.35)',
+                  background: 'rgba(14,165,233,0.08)',
+                  cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#0ea5e9',
+                  whiteSpace: 'nowrap', transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.18)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)' }}
+              >
+                {t.signIn}
+              </button>
+            )}
+          </div>
+
+        </div>{/* end right-side controls */}
 
       </header>
       {/* Gradient nav border line */}

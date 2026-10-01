@@ -269,6 +269,10 @@ export const T = {
     authBackToSignIn: '返回登录',
     authResetSent: '重置链接已发送，请查收邮件',
     authRegistered: '注册成功！请查收验证邮件后再登录',
+    // Watchlist panel
+    watchlistEmpty: '暂无收藏',
+    watchlistEmptyHint: '在股票卡片上点击 ⭐ 添加',
+    watchlistCount: (n) => `共 ${n} 只股票`,
   },
   en: {
     appTitle: 'Best Friend Stock',
@@ -540,6 +544,10 @@ export const T = {
     authBackToSignIn: 'Back to Sign In',
     authResetSent: 'Reset link sent — please check your inbox',
     authRegistered: 'Registered! Please verify your email then sign in',
+    // Watchlist panel
+    watchlistEmpty: 'No saved stocks',
+    watchlistEmptyHint: 'Click ⭐ on a stock card to add',
+    watchlistCount: (n) => `${n} stock${n !== 1 ? 's' : ''}`,
   },
   ja: {
     appTitle: 'Best Friend Stock',
@@ -811,6 +819,10 @@ export const T = {
     authBackToSignIn: 'ログインに戻る',
     authResetSent: 'リセットリンクを送信しました。メールをご確認ください',
     authRegistered: '登録完了！確認メールをご確認後にログインしてください',
+    // Watchlist panel
+    watchlistEmpty: 'ウォッチリストは空です',
+    watchlistEmptyHint: '銘柄カードの ⭐ をクリックして追加',
+    watchlistCount: (n) => `${n}銘柄`,
   },
   ko: {
     appTitle: 'Best Friend Stock',
@@ -1082,6 +1094,10 @@ export const T = {
     authBackToSignIn: '로그인으로 돌아가기',
     authResetSent: '재설정 링크를 보냈습니다. 이메일을 확인하세요',
     authRegistered: '등록 완료! 이메일을 인증한 후 로그인하세요',
+    // Watchlist panel
+    watchlistEmpty: '관심 종목이 없습니다',
+    watchlistEmptyHint: '종목 카드의 ⭐ 를 클릭하여 추가하세요',
+    watchlistCount: (n) => `${n}개 종목`,
   },
   fr: {
     appTitle: 'Best Friend Stock',
@@ -1353,5 +1369,9 @@ export const T = {
     authBackToSignIn: 'Retour à la connexion',
     authResetSent: 'Lien envoyé — vérifiez votre boîte mail',
     authRegistered: 'Inscrit ! Vérifiez votre email puis connectez-vous',
+    // Watchlist panel
+    watchlistEmpty: 'Aucun favori',
+    watchlistEmptyHint: 'Cliquez ⭐ sur une carte pour ajouter',
+    watchlistCount: (n) => `${n} action${n !== 1 ? 's' : ''}`,
   },
 }
