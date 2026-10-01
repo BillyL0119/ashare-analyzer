@@ -96,6 +96,9 @@ export default function App() {
   const watchlistCount = watchlist.length
   const setWatchlistList = useWatchlistStore((s) => s.setList)
   const watchlistBtnRef   = useRef(null)
+  const langDropdownRef   = useRef(null)
+  const userMenuRef       = useRef(null)
+  const mobileMenuRef     = useRef(null)
   const insightCheckedRef = useRef(false)
   const watchlistSyncRef  = useRef(null) // tracks last saved serialized value
 
@@ -148,6 +151,18 @@ export default function App() {
       }
     }
   }, [authLoading, user]) // eslint-disable-line
+
+  // Close any open dropdown when clicking outside
+  useEffect(() => {
+    if (!showLangDropdown && !showUserMenu && !showMobileMenu) return
+    const handler = (e) => {
+      if (showLangDropdown && langDropdownRef.current && !langDropdownRef.current.contains(e.target)) setShowLangDropdown(false)
+      if (showUserMenu   && userMenuRef.current   && !userMenuRef.current.contains(e.target))   setShowUserMenu(false)
+      if (showMobileMenu && mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) setShowMobileMenu(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showLangDropdown, showUserMenu, showMobileMenu])
 
   // Scroll-aware header
   useEffect(() => {
@@ -333,7 +348,7 @@ export default function App() {
 
           {/* Language dropdown — desktop only */}
           {!isMobile && (
-            <div style={{ position: 'relative' }}>
+            <div ref={langDropdownRef} style={{ position: 'relative' }}>
               <button
                 onClick={() => setShowLangDropdown(v => !v)}
                 style={{
@@ -358,7 +373,6 @@ export default function App() {
                     boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '4px 0',
                     animation: 'bfsPageFadeIn 0.15s ease both',
                   }}
-                  onMouseLeave={() => setShowLangDropdown(false)}
                 >
                   {LANG_OPTIONS.map(({ code, label }) => (
                     <button
@@ -451,7 +465,7 @@ export default function App() {
 
           {/* ⋯ Mobile overflow menu — mobile only */}
           {isMobile && (
-            <div style={{ position: 'relative', flexShrink: 0 }}>
+            <div ref={mobileMenuRef} style={{ position: 'relative', flexShrink: 0 }}>
               <button
                 onClick={() => setShowMobileMenu(v => !v)}
                 style={{
@@ -476,7 +490,6 @@ export default function App() {
                     boxShadow: '0 8px 32px rgba(0,0,0,0.45)', padding: '8px 0',
                     animation: 'bfsPageFadeIn 0.15s ease both',
                   }}
-                  onMouseLeave={() => setShowMobileMenu(false)}
                 >
                   {/* Language chips */}
                   <div style={{ padding: '4px 12px 8px', borderBottom: '1px solid var(--border-primary)', marginBottom: 4 }}>
@@ -536,7 +549,7 @@ export default function App() {
           )}
 
           {/* Auth button / user avatar */}
-          <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div ref={userMenuRef} style={{ position: 'relative', flexShrink: 0 }}>
             {user ? (
               <>
                 <button
@@ -564,7 +577,6 @@ export default function App() {
                       boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '8px 0',
                       animation: 'bfsPageFadeIn 0.15s ease both',
                     }}
-                    onMouseLeave={() => setShowUserMenu(false)}
                   >
                     <div style={{ padding: '8px 16px 10px', borderBottom: '1px solid var(--border-primary)' }}>
                       <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
