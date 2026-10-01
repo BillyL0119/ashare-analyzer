@@ -564,7 +564,7 @@ export default function App() {
           <span style={{ color: '#34d399', fontSize: 15, lineHeight: 1 }}>✓</span>
           {toast}
         </div>
-      )}}
+      )}
       <Suspense fallback={null}>
         <AITeacherFloat lang={lang} open={showAIFloat} onClose={() => setShowAIFloat(false)} />
       </Suspense>
