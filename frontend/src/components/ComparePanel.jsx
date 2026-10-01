@@ -119,7 +119,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
                 fontSize: 12, background: 'rgba(138,180,248,0.1)', color: '#8ab4f8',
               }}
             >
-              {lang === 'zh' ? 'A股日历' : 'A-Share Calendar'}
+              {t.calendarTab}
             </button>
           )}
           <button
@@ -129,7 +129,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               fontSize: 12, background: 'rgba(99,102,241,0.12)', color: '#818cf8',
             }}
           >
-            {lang === 'zh' ? '财报日历' : 'Earnings Calendar'}
+            {t.earningsTab}
           </button>
         </div>
         <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} onOpenKnowledge={onOpenKnowledge} />
@@ -173,15 +173,15 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           ] : []),
           { key: 'similar', label: t.similarTrend },
           { key: 'news', label: t.newsSentiment },
-          { key: 'global_news', label: lang === 'zh' ? '全球新闻' : 'Global News' },
+          { key: 'global_news', label: t.globalNews },
           { key: 'radar', label: t.radarTab },
           // calendar is A-share only
-          ...(market !== 'us' ? [{ key: 'calendar', label: lang === 'zh' ? 'A股日历' : 'Calendar' }] : []),
-          { key: 'earnings', label: lang === 'zh' ? '财报日历' : 'Earnings' },
-          { key: 'score',   label: t.scoreTab || (lang === 'zh' ? '股票打分' : 'Score') },
-          { key: 'backtest',label: t.backtestTab || (lang === 'zh' ? '策略回测' : 'Backtest') },
-          { key: 'sectors',  label: lang === 'zh' ? '🔄 板块' : '🔄 Sectors' },
-          { key: 'comments', label: lang === 'zh' ? '💬 评论' : '💬 Comments' },
+          ...(market !== 'us' ? [{ key: 'calendar', label: t.calendarTab }] : []),
+          { key: 'earnings', label: t.earningsTab },
+          { key: 'score',   label: t.scoreTab },
+          { key: 'backtest',label: t.backtestTab },
+          { key: 'sectors',  label: t.sectorsTab },
+          { key: 'comments', label: t.commentsTab },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -220,7 +220,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           fontSize: 12, color: 'var(--text-muted)',
           padding: '4px 2px',
         }}>
-          <span>{lang === 'zh' ? '起始:' : 'From:'}</span>
+          <span>{t.from}</span>
           <input
             type="date"
             value={`${startDate.slice(0, 4)}-${startDate.slice(4, 6)}-${startDate.slice(6, 8)}`}
@@ -234,7 +234,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             onFocus={(e) => { e.target.style.borderColor = '#0ea5e9' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
-          <span>{lang === 'zh' ? '至:' : 'To:'}</span>
+          <span>{t.to}</span>
           <input
             type="date"
             value={`${endDate.slice(0, 4)}-${endDate.slice(4, 6)}-${endDate.slice(6, 8)}`}

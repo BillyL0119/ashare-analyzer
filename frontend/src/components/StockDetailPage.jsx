@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { T } from '../i18n/translations'
 
 const UP   = '#ef5350'
 const DOWN = '#26a69a'
@@ -49,9 +50,10 @@ function MiniSimilarRow({ item, onStockClick }) {
   )
 }
 
-function MiniNewsRow({ item }) {
+function MiniNewsRow({ item, t }) {
   const sent = item.final_sentiment || 'neutral'
   const color = SENT_COLOR[sent] || SENT_COLOR.neutral
+  const label = sent === 'positive' ? t.sdSentPos : sent === 'negative' ? t.sdSentNeg : t.sdSentNeu
   return (
     <div style={{
       padding: '8px 10px',
@@ -64,7 +66,7 @@ function MiniNewsRow({ item }) {
           background: `${color}20`, color, border: `1px solid ${color}40`,
           flexShrink: 0, marginTop: 1,
         }}>
-          {sent === 'positive' ? '正面' : sent === 'negative' ? '负面' : '中性'}
+          {label}
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 12, color: 'var(--text-primary)', lineHeight: 1.4,
@@ -82,6 +84,7 @@ function MiniNewsRow({ item }) {
 }
 
 export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMain }) {
+  const t = T[lang] || T.en
   const [quote,   setQuote]   = useState(null)
   const [similar, setSimilar] = useState(null)
   const [news,    setNews]    = useState(null)
@@ -186,22 +189,17 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
 
           {/* ── 2. Quick metrics ── */}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
-            <MetricCard label={lang === 'zh' ? '市盈率(PE)' : 'P/E Ratio'}
-              value={pe !== null ? Number(pe).toFixed(1) : '--'} />
-            <MetricCard label={lang === 'zh' ? '市净率(PB)' : 'P/B Ratio'}
-              value={pb !== null ? Number(pb).toFixed(2) : '--'} />
-            <MetricCard label={lang === 'zh' ? '市值(亿)' : 'Mkt Cap (亿)'}
-              value={cap !== null ? (Number(cap) / 1e4).toFixed(0) : '--'} />
-            <MetricCard label={lang === 'zh' ? '52周高' : '52W High'}
-              value={high52 !== null ? Number(high52).toFixed(2) : '--'} />
-            <MetricCard label={lang === 'zh' ? '52周低' : '52W Low'}
-              value={low52 !== null ? Number(low52).toFixed(2) : '--'} />
+            <MetricCard label={t.sdPE} value={pe !== null ? Number(pe).toFixed(1) : '--'} />
+            <MetricCard label={t.sdPB} value={pb !== null ? Number(pb).toFixed(2) : '--'} />
+            <MetricCard label={t.sdMktCap} value={cap !== null ? (Number(cap) / 1e4).toFixed(0) : '--'} />
+            <MetricCard label={t.sd52High} value={high52 !== null ? Number(high52).toFixed(2) : '--'} />
+            <MetricCard label={t.sd52Low}  value={low52  !== null ? Number(low52).toFixed(2)  : '--'} />
           </div>
 
           {/* Loading */}
           {loading && (
             <div style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
-              {lang === 'zh' ? '加载数据中...' : 'Loading...'}
+              {t.sdLoading}
             </div>
           )}
 
@@ -212,11 +210,11 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
               <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
                   fontSize: 13, fontWeight: 600, color: '#8b5cf6' }}>
-                  {lang === 'zh' ? '相似走势 TOP5' : 'Similar Stocks TOP5'}
+                  {t.sdSimilar}
                 </div>
                 {simResults.length === 0 ? (
                   <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center' }}>
-                    {lang === 'zh' ? '暂无数据' : 'No data'}
+                    {t.sdNoData}
                   </div>
                 ) : (
                   <div>
@@ -241,15 +239,15 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
               <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
                   fontSize: 13, fontWeight: 600, color: '#ffa726' }}>
-                  {lang === 'zh' ? '新闻舆情（最新3条）' : 'Latest News (Top 3)'}
+                  {t.sdNews}
                 </div>
                 {newsItems.length === 0 ? (
                   <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center' }}>
-                    {lang === 'zh' ? '暂无新闻' : 'No news'}
+                    {t.sdNoNews}
                   </div>
                 ) : (
                   <div>
-                    {newsItems.map((item, i) => <MiniNewsRow key={i} item={item} />)}
+                    {newsItems.map((item, i) => <MiniNewsRow key={i} item={item} t={t} />)}
                   </div>
                 )}
               </div>
@@ -263,10 +261,10 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
               borderRadius: 10, padding: '14px 18px', marginBottom: 20,
             }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: '#818cf8', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
-                {lang === 'zh' ? 'AI 智能分析摘要' : 'AI Analysis Summary'}
+                {t.sdAI}
               </div>
               <div style={{ fontSize: 13, color: '#c7d2fe', lineHeight: 1.6 }}>
-                {analysis.summary ?? analysis.insight ?? analysis.analysis ?? (lang === 'zh' ? '分析中...' : 'Analyzing...')}
+                {analysis.summary ?? analysis.insight ?? analysis.analysis ?? t.sdAnalyzing}
               </div>
             </div>
           )}
@@ -284,7 +282,7 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
                 padding: '10px 36px', cursor: 'pointer', fontSize: 14, fontWeight: 600,
               }}
             >
-              {lang === 'zh' ? '查看完整分析 →' : 'Full Analysis →'}
+              {t.sdFullAnalysis}
             </button>
           </div>
         </div>

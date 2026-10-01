@@ -386,6 +386,30 @@ export const T = {
     cmtSelectStock: '请先选择一只股票',
     cmtLoading: '加载中...',
     cmtComments: (n) => `${n} 条评论`,
+    // Stock Detail
+    sdPE: '市盈率(PE)', sdPB: '市净率(PB)', sdMktCap: '市值(亿)',
+    sd52High: '52周高', sd52Low: '52周低', sdLoading: '加载数据中...',
+    sdSimilar: '相似走势 TOP5', sdNoData: '暂无数据',
+    sdNews: '新闻舆情（最新3条）', sdNoNews: '暂无新闻',
+    sdAI: 'AI 智能分析摘要', sdAnalyzing: '分析中...',
+    sdFullAnalysis: '查看完整分析 →',
+    sdSentPos: '正面', sdSentNeg: '负面', sdSentNeu: '中性',
+    // Calendar Panel
+    calTitle: 'A股日历 · 未来30天', calAll: '全部',
+    calLoading: '加载日历数据...', calEmpty: '未来30天暂无事件',
+    calFooter: '点击股票代码可加载到主分析页 · 数据来源：东方财富 / 巨潮资讯',
+    calToday: '今天', calTomorrow: '明天', calEventsUnit: '件', calClickHint: '点击分析',
+    // Earnings Panel
+    earTitle: '财报日历 · 未来30天', earUpdated: '更新于',
+    earEst: '预期', earRevenue: '营收',
+    earLoading: '加载财报数据...',
+    earLongLoad: '首次加载需获取实时数据，约需15秒',
+    earEmpty: '未来30天暂无即将发布的财报',
+    earFooter: '点击公司可加载到主分析页 · 美股数据来源：Yahoo Finance · A股数据来源：东方财富',
+    earToday: '今天', earTomorrow: '明天', earCompanies: '家',
+    // ComparePanel tabs
+    earningsTab: '财报日历', globalNews: '全球新闻',
+    sectorsTab: '🔄 板块', commentsTab: '💬 评论',
   },
   en: {
     appTitle: 'Best Friend Stock',
@@ -774,6 +798,30 @@ export const T = {
     cmtSelectStock: 'Please select a stock first',
     cmtLoading: 'Loading...',
     cmtComments: (n) => `${n} comment${n !== 1 ? 's' : ''}`,
+    // Stock Detail
+    sdPE: 'P/E Ratio', sdPB: 'P/B Ratio', sdMktCap: 'Mkt Cap (亿)',
+    sd52High: '52W High', sd52Low: '52W Low', sdLoading: 'Loading...',
+    sdSimilar: 'Similar Stocks TOP5', sdNoData: 'No data',
+    sdNews: 'Latest News (Top 3)', sdNoNews: 'No news',
+    sdAI: 'AI Analysis Summary', sdAnalyzing: 'Analyzing...',
+    sdFullAnalysis: 'Full Analysis →',
+    sdSentPos: 'Positive', sdSentNeg: 'Negative', sdSentNeu: 'Neutral',
+    // Calendar Panel
+    calTitle: 'A-Share Calendar · Next 30 Days', calAll: 'All',
+    calLoading: 'Loading calendar data...', calEmpty: 'No events in the next 30 days',
+    calFooter: 'Click stock code to load analysis · Source: EastMoney / CNINFO',
+    calToday: 'Today', calTomorrow: 'Tomorrow', calEventsUnit: 'events', calClickHint: 'Click to analyze',
+    // Earnings Panel
+    earTitle: 'Earnings Calendar · Next 30 Days', earUpdated: 'Updated',
+    earEst: 'Est', earRevenue: 'Revenue',
+    earLoading: 'Loading earnings data...',
+    earLongLoad: 'First load fetches live data, ~15s',
+    earEmpty: 'No upcoming earnings in the next 30 days',
+    earFooter: 'Click company to load analysis · US: Yahoo Finance · A-Share: EastMoney',
+    earToday: 'Today', earTomorrow: 'Tomorrow', earCompanies: 'companies',
+    // ComparePanel tabs
+    earningsTab: 'Earnings Calendar', globalNews: 'Global News',
+    sectorsTab: '🔄 Sectors', commentsTab: '💬 Comments',
   },
   ja: {
     appTitle: 'Best Friend Stock',
@@ -1162,6 +1210,30 @@ export const T = {
     cmtSelectStock: 'まず銘柄を選択してください',
     cmtLoading: '読み込み中...',
     cmtComments: (n) => `${n}件`,
+    // Stock Detail
+    sdPE: 'PER', sdPB: 'PBR', sdMktCap: '時価総額(億)',
+    sd52High: '52週高値', sd52Low: '52週安値', sdLoading: '読み込み中...',
+    sdSimilar: '類似銘柄 TOP5', sdNoData: 'データなし',
+    sdNews: '最新ニュース（3件）', sdNoNews: 'ニュースなし',
+    sdAI: 'AI分析サマリー', sdAnalyzing: '分析中...',
+    sdFullAnalysis: '詳細分析 →',
+    sdSentPos: 'ポジティブ', sdSentNeg: 'ネガティブ', sdSentNeu: '中立',
+    // Calendar Panel
+    calTitle: 'A株カレンダー · 30日間', calAll: '全て',
+    calLoading: 'カレンダー読込中...', calEmpty: '30日間にイベントなし',
+    calFooter: 'コードをクリックで分析 · 出所: EastMoney / CNINFO',
+    calToday: '今日', calTomorrow: '明日', calEventsUnit: '件', calClickHint: 'クリックで分析',
+    // Earnings Panel
+    earTitle: '決算カレンダー · 30日間', earUpdated: '更新',
+    earEst: '予想', earRevenue: '売上',
+    earLoading: '決算データ読込中...',
+    earLongLoad: '初回はリアルタイム取得 (~15秒)',
+    earEmpty: '30日間に決算なし',
+    earFooter: '企業をクリックで分析 · 米: Yahoo Finance · 中: EastMoney',
+    earToday: '今日', earTomorrow: '明日', earCompanies: '社',
+    // ComparePanel tabs
+    earningsTab: '決算カレンダー', globalNews: 'グローバルニュース',
+    sectorsTab: '🔄 セクター', commentsTab: '💬 コメント',
   },
   ko: {
     appTitle: 'Best Friend Stock',
@@ -1550,6 +1622,30 @@ export const T = {
     cmtSelectStock: '먼저 종목을 선택하세요',
     cmtLoading: '로딩 중...',
     cmtComments: (n) => `${n}개 댓글`,
+    // Stock Detail
+    sdPE: 'PER', sdPB: 'PBR', sdMktCap: '시총(억)',
+    sd52High: '52주 고가', sd52Low: '52주 저가', sdLoading: '로딩 중...',
+    sdSimilar: '유사종목 TOP5', sdNoData: '데이터 없음',
+    sdNews: '최신뉴스 (3개)', sdNoNews: '뉴스 없음',
+    sdAI: 'AI 분석 요약', sdAnalyzing: '분석 중...',
+    sdFullAnalysis: '전체 분석 →',
+    sdSentPos: '긍정', sdSentNeg: '부정', sdSentNeu: '중립',
+    // Calendar Panel
+    calTitle: 'A주식 달력 · 30일', calAll: '전체',
+    calLoading: '달력 로딩 중...', calEmpty: '30일간 이벤트 없음',
+    calFooter: '코드 클릭으로 분석 · 출처: EastMoney / CNINFO',
+    calToday: '오늘', calTomorrow: '내일', calEventsUnit: '건', calClickHint: '클릭 분석',
+    // Earnings Panel
+    earTitle: '실적 달력 · 30일', earUpdated: '업데이트',
+    earEst: '예상', earRevenue: '매출',
+    earLoading: '실적 로딩 중...',
+    earLongLoad: '첫 로딩은 실시간 취득 (~15초)',
+    earEmpty: '30일간 실적 발표 없음',
+    earFooter: '기업 클릭으로 분석 · 미: Yahoo Finance · A주: EastMoney',
+    earToday: '오늘', earTomorrow: '내일', earCompanies: '개사',
+    // ComparePanel tabs
+    earningsTab: '실적 달력', globalNews: '글로벌 뉴스',
+    sectorsTab: '🔄 섹터', commentsTab: '💬 댓글',
   },
   fr: {
     appTitle: 'Best Friend Stock',
@@ -1938,5 +2034,29 @@ export const T = {
     cmtSelectStock: "Veuillez d'abord sélectionner une action",
     cmtLoading: 'Chargement...',
     cmtComments: (n) => `${n} commentaire${n !== 1 ? 's' : ''}`,
+    // Stock Detail
+    sdPE: 'Ratio P/E', sdPB: 'Ratio P/B', sdMktCap: 'Cap. boursière',
+    sd52High: '52s Haut', sd52Low: '52s Bas', sdLoading: 'Chargement...',
+    sdSimilar: 'Actions similaires TOP5', sdNoData: 'Pas de données',
+    sdNews: 'Actualités récentes (3)', sdNoNews: 'Aucune actualité',
+    sdAI: 'Résumé analyse AI', sdAnalyzing: 'Analyse...',
+    sdFullAnalysis: 'Analyse complète →',
+    sdSentPos: 'Positif', sdSentNeg: 'Négatif', sdSentNeu: 'Neutre',
+    // Calendar Panel
+    calTitle: 'Calendrier A-Share · 30 jours', calAll: 'Tous',
+    calLoading: 'Chargement...', calEmpty: 'Aucun événement dans les 30 jours',
+    calFooter: 'Cliquez sur le code pour analyser · Source: EastMoney / CNINFO',
+    calToday: "Aujourd'hui", calTomorrow: 'Demain', calEventsUnit: 'événements', calClickHint: 'Cliquer pour analyser',
+    // Earnings Panel
+    earTitle: 'Calendrier résultats · 30 jours', earUpdated: 'Mis à jour',
+    earEst: 'Est.', earRevenue: 'Revenus',
+    earLoading: 'Chargement résultats...',
+    earLongLoad: 'Premier chargement en temps réel (~15s)',
+    earEmpty: 'Aucun résultat prévu dans les 30 jours',
+    earFooter: 'Cliquez pour analyser · US: Yahoo Finance · A-Share: EastMoney',
+    earToday: "Aujourd'hui", earTomorrow: 'Demain', earCompanies: 'sociétés',
+    // ComparePanel tabs
+    earningsTab: 'Cal. résultats', globalNews: 'Actualités mondiales',
+    sectorsTab: '🔄 Secteurs', commentsTab: '💬 Commentaires',
   },
 }

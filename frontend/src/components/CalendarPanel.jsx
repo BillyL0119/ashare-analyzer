@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react'
+import { T } from '../i18n/translations'
 
 const TYPE_CONFIG = {
-  earnings: { zh: '财报', en: 'Earnings', color: '#4a90e2', bg: 'rgba(74,144,226,0.15)' },
-  dividend: { zh: '分红', en: 'Dividend', color: '#26a69a', bg: 'rgba(38,166,154,0.15)' },
-  ipo:      { zh: '新股', en: 'IPO',      color: '#ffa726', bg: 'rgba(255,167,38,0.15)' },
-  holiday:  { zh: '假期', en: 'Holiday',  color: 'var(--text-muted)', bg: 'rgba(154,160,166,0.12)' },
+  earnings: { zh: '财报', en: 'Earnings', ja: '決算', ko: '실적', fr: 'Résultats', color: '#4a90e2', bg: 'rgba(74,144,226,0.15)' },
+  dividend: { zh: '分红', en: 'Dividend', ja: '配当', ko: '배당', fr: 'Dividende', color: '#26a69a', bg: 'rgba(38,166,154,0.15)' },
+  ipo:      { zh: '新股', en: 'IPO',      ja: 'IPO',  ko: 'IPO',  fr: 'IPO',       color: '#ffa726', bg: 'rgba(255,167,38,0.15)' },
+  holiday:  { zh: '假期', en: 'Holiday',  ja: '休日', ko: '휴일', fr: 'Férié',     color: 'var(--text-muted)', bg: 'rgba(154,160,166,0.12)' },
+}
+
+function getLang(cfg, lang) {
+  return cfg[lang] || cfg.en
 }
 
 function TypeTag({ type, lang }) {
@@ -22,12 +27,12 @@ function TypeTag({ type, lang }) {
       whiteSpace: 'nowrap',
       flexShrink: 0,
     }}>
-      {lang === 'zh' ? cfg.zh : cfg.en}
+      {getLang(cfg, lang)}
     </span>
   )
 }
 
-function EventRow({ event, lang, onStockClick }) {
+function EventRow({ event, lang, t, onStockClick }) {
   const hasStock = event.symbol && event.type !== 'holiday'
   return (
     <div style={{
@@ -56,7 +61,7 @@ function EventRow({ event, lang, onStockClick }) {
             padding: 0,
             textDecoration: 'underline dotted',
           }}
-          title={lang === 'zh' ? '点击分析' : 'Click to analyze'}
+          title={t.calClickHint}
         >
           {event.symbol}
         </button>
@@ -65,19 +70,19 @@ function EventRow({ event, lang, onStockClick }) {
       <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {hasStock ? event.name : null}
         {hasStock ? ' · ' : null}
-        {lang === 'zh' ? event.title : event.title_en}
+        {lang === 'zh' ? event.title : (event.title_en || event.title)}
       </span>
     </div>
   )
 }
 
-function DateGroup({ dateStr, events, lang, onStockClick }) {
+function DateGroup({ dateStr, events, lang, t, onStockClick }) {
   const d = new Date(dateStr + 'T00:00:00')
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const diff = Math.round((d - today) / 86400000)
-  const dayLabel = diff === 0 ? (lang === 'zh' ? '今天' : 'Today')
-    : diff === 1 ? (lang === 'zh' ? '明天' : 'Tomorrow')
+  const dayLabel = diff === 0 ? t.calToday
+    : diff === 1 ? t.calTomorrow
     : `+${diff}d`
 
   return (
@@ -105,12 +110,12 @@ function DateGroup({ dateStr, events, lang, onStockClick }) {
           {dayLabel}
         </span>
         <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
-          {events.length} {lang === 'zh' ? '件' : 'events'}
+          {events.length} {t.calEventsUnit}
         </span>
       </div>
       <div style={{ background: 'var(--bg-secondary)', borderRadius: '0 0 8px 8px', border: '1px solid rgba(14,165,233,0.08)', borderTop: 'none' }}>
         {events.map((ev, i) => (
-          <EventRow key={i} event={ev} lang={lang} onStockClick={onStockClick} />
+          <EventRow key={i} event={ev} lang={lang} t={t} onStockClick={onStockClick} />
         ))}
       </div>
     </div>
@@ -118,6 +123,7 @@ function DateGroup({ dateStr, events, lang, onStockClick }) {
 }
 
 export default function CalendarPanel({ lang, onStockSelect }) {
+  const t = T[lang] || T.en
   const [data,    setData]    = useState(null)
   const [loading, setLoading] = useState(true)
   const [filter,  setFilter]  = useState('all')
@@ -149,19 +155,19 @@ export default function CalendarPanel({ lang, onStockSelect }) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div style={{ fontSize: 16, fontWeight: 600, background: 'linear-gradient(90deg,#0ea5e9,#8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          {lang === 'zh' ? 'A股日历 · 未来30天' : 'A-Share Calendar · Next 30 Days'}
+          {t.calTitle}
         </div>
       </div>
 
       {/* Type filter */}
       <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-        {types.map((t) => {
-          const cfg = TYPE_CONFIG[t]
-          const active = filter === t
+        {types.map((type) => {
+          const cfg = TYPE_CONFIG[type]
+          const active = filter === type
           return (
             <button
-              key={t}
-              onClick={() => setFilter(t)}
+              key={type}
+              onClick={() => setFilter(type)}
               style={{
                 padding: '4px 12px',
                 borderRadius: 12,
@@ -178,10 +184,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
                 transition: 'all 0.15s',
               }}
             >
-              {t === 'all'
-                ? (lang === 'zh' ? '全部' : 'All')
-                : (lang === 'zh' ? TYPE_CONFIG[t].zh : TYPE_CONFIG[t].en)
-              }
+              {type === 'all' ? t.calAll : getLang(cfg, lang)}
             </button>
           )
         })}
@@ -190,11 +193,11 @@ export default function CalendarPanel({ lang, onStockSelect }) {
       {/* Content */}
       {loading ? (
         <div style={{ color: 'var(--text-muted)', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
-          {lang === 'zh' ? '加载日历数据...' : 'Loading calendar data...'}
+          {t.calLoading}
         </div>
       ) : dates.length === 0 ? (
         <div style={{ color: 'var(--text-muted)', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
-          {lang === 'zh' ? '未来30天暂无事件' : 'No events in the next 30 days'}
+          {t.calEmpty}
         </div>
       ) : (
         <div>
@@ -204,6 +207,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
               dateStr={d}
               events={groups[d]}
               lang={lang}
+              t={t}
               onStockClick={onStockSelect}
             />
           ))}
@@ -211,10 +215,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
       )}
 
       <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
-        {lang === 'zh'
-          ? '点击股票代码可加载到主分析页 · 数据来源：东方财富 / 巨潮资讯'
-          : 'Click stock code to load analysis · Source: EastMoney / CNINFO'
-        }
+        {t.calFooter}
       </div>
     </div>
   )

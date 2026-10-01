@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
+import { T } from '../i18n/translations'
 
 const MUTED = 'var(--text-muted)'
 const BDR = 'rgba(138,180,248,0.10)'
 
 const MARKET_CFG = {
-  us: { color: '#6366f1', bg: 'rgba(99,102,241,0.12)', label: '美股', label_en: 'US Stocks' },
-  cn: { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', label: 'A股',  label_en: 'A-Shares'  },
+  us: { color: '#6366f1', bg: 'rgba(99,102,241,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
+  cn: { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', zh: 'A股',  en: 'A-Shares',  ja: 'A株',   ko: 'A주식',  fr: 'A-Share' },
 }
 
-function EarningsRow({ item, lang, onStockClick }) {
+function getLang(cfg, lang) {
+  return cfg[lang] || cfg.en
+}
+
+function EarningsRow({ item, lang, t, onStockClick }) {
   const [hover, setHover] = useState(false)
   const mkt = MARKET_CFG[item.market] || MARKET_CFG.us
   const hasEps = item.eps_estimate !== null && item.eps_estimate !== undefined
@@ -70,7 +75,7 @@ function EarningsRow({ item, lang, onStockClick }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
             {hasEps && (
               <span style={{ fontSize: 12, color: '#c9d1d9' }}>
-                {lang === 'zh' ? '预期' : 'Est'} {item.eps_estimate}
+                {t.earEst} {item.eps_estimate}
               </span>
             )}
             {epsBeat && (
@@ -97,12 +102,12 @@ function EarningsRow({ item, lang, onStockClick }) {
       {(hasRevest || hasActualRev) && (
         <div style={{ textAlign: 'right', flexShrink: 0, minWidth: 90 }}>
           <div style={{ fontSize: 10, color: MUTED, marginBottom: 1 }}>
-            {lang === 'zh' ? '营收' : 'Revenue'}
+            {t.earRevenue}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
             {hasRevest && (
               <span style={{ fontSize: 11, color: '#c9d1d9' }}>
-                {lang === 'zh' ? '预期' : ''}{item.revenue_estimate}
+                {t.earEst}{item.revenue_estimate}
               </span>
             )}
             {hasActualRev && (
@@ -117,15 +122,11 @@ function EarningsRow({ item, lang, onStockClick }) {
   )
 }
 
-function DateGroup({ dateStr, items, lang, onStockClick }) {
+function DateGroup({ dateStr, items, lang, t, onStockClick }) {
   const d = new Date(dateStr + 'T00:00:00')
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const diff = Math.round((d - today) / 86400000)
-  const dayLabel = diff === 0
-    ? (lang === 'zh' ? '今天' : 'Today')
-    : diff === 1
-    ? (lang === 'zh' ? '明天' : 'Tomorrow')
-    : `+${diff}d`
+  const dayLabel = diff === 0 ? t.earToday : diff === 1 ? t.earTomorrow : `+${diff}d`
 
   return (
     <div style={{ marginBottom: 12 }}>
@@ -149,7 +150,7 @@ function DateGroup({ dateStr, items, lang, onStockClick }) {
           {dayLabel}
         </span>
         <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
-          {items.length} {lang === 'zh' ? '家' : 'companies'}
+          {items.length} {t.earCompanies}
         </span>
       </div>
       <div style={{
@@ -159,7 +160,7 @@ function DateGroup({ dateStr, items, lang, onStockClick }) {
         borderTop: 'none',
       }}>
         {items.map((item, i) => (
-          <EarningsRow key={i} item={item} lang={lang} onStockClick={onStockClick} />
+          <EarningsRow key={i} item={item} lang={lang} t={t} onStockClick={onStockClick} />
         ))}
       </div>
     </div>
@@ -167,10 +168,10 @@ function DateGroup({ dateStr, items, lang, onStockClick }) {
 }
 
 export default function EarningsPanel({ lang, onStockSelect }) {
+  const t = T[lang] || T.en
   const [data,    setData]    = useState(null)
   const [loading, setLoading] = useState(true)
   const [market,  setMarket]  = useState('us')
-  const zh = lang === 'zh'
 
   useEffect(() => {
     fetch('/api/earnings/calendar')
@@ -203,11 +204,11 @@ export default function EarningsPanel({ lang, onStockSelect }) {
           background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
         }}>
-          {zh ? '财报日历 · 未来30天' : 'Earnings Calendar · Next 30 Days'}
+          {t.earTitle}
         </div>
         {data?.updated_at && (
           <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-            {zh ? '更新于' : 'Updated'} {data.updated_at.slice(0, 16).replace('T', ' ')}
+            {t.earUpdated} {data.updated_at.slice(0, 16).replace('T', ' ')}
           </div>
         )}
       </div>
@@ -230,7 +231,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
                 transition: 'all 0.15s',
               }}
             >
-              {zh ? cfg.label : cfg.label_en}
+              {getLang(cfg, lang)}
               {data && (
                 <span style={{ marginLeft: 6, fontSize: 11, opacity: 0.7 }}>
                   ({m === 'us' ? (data.us?.length || 0) : (data.cn?.length || 0)})
@@ -244,14 +245,14 @@ export default function EarningsPanel({ lang, onStockSelect }) {
       {/* Content */}
       {loading ? (
         <div style={{ color: MUTED, fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
-          {zh ? '加载财报数据...' : 'Loading earnings data...'}
+          {t.earLoading}
           <div style={{ fontSize: 12, marginTop: 8, color: 'var(--text-muted)' }}>
-            {zh ? '首次加载需获取实时数据，约需15秒' : 'First load fetches live data, ~15s'}
+            {t.earLongLoad}
           </div>
         </div>
       ) : dates.length === 0 ? (
         <div style={{ color: MUTED, fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
-          {zh ? '未来30天暂无即将发布的财报' : 'No upcoming earnings in the next 30 days'}
+          {t.earEmpty}
         </div>
       ) : (
         <div>
@@ -261,6 +262,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
               dateStr={d}
               items={groups[d]}
               lang={lang}
+              t={t}
               onStockClick={handleStockClick}
             />
           ))}
@@ -268,10 +270,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
       )}
 
       <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
-        {zh
-          ? '点击公司可加载到主分析页 · 美股数据来源：Yahoo Finance · A股数据来源：东方财富'
-          : 'Click company to load analysis · US: Yahoo Finance · A-Share: EastMoney'
-        }
+        {t.earFooter}
       </div>
     </div>
   )
