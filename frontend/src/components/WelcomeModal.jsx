@@ -133,8 +133,10 @@ export default function WelcomeModal({ onLangSelect }) {
     prevUserRef.current = user
   }, [user])
 
-  // Show when auth has resolved AND user needs to pick a language
-  const needsLangSelection = !user || !user.user_metadata?.lang
+  // Show when auth has resolved AND user needs to pick a language.
+  // Guests who already picked (saved in localStorage) skip the modal.
+  const guestAlreadyPicked = !user && !!localStorage.getItem('bfs_lang')
+  const needsLangSelection = !user ? !guestAlreadyPicked : !user.user_metadata?.lang
   const open = !loading && needsLangSelection && !dismissed
 
   if (!open) return null
@@ -142,6 +144,7 @@ export default function WelcomeModal({ onLangSelect }) {
   const handleLangSelect = (lang) => {
     if (onLangSelect) onLangSelect(lang)
     if (user) setLangPreference(lang)
+    else localStorage.setItem('bfs_lang', lang)
     setDismissed(true)
   }
 

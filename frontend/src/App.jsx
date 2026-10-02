@@ -379,7 +379,13 @@ export default function App() {
                       key={code}
                       onClick={() => {
                         setLang(code); setShowLangDropdown(false)
-                        if (user) { setLangPreference(code); document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`; showToast('Language saved') }
+                        if (user) {
+                          setLangPreference(code)
+                          document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
+                          showToast('Language saved')
+                        } else {
+                          localStorage.setItem('bfs_lang', code)
+                        }
                       }}
                       style={{
                         display: 'block', width: '100%', textAlign: 'left',
@@ -500,7 +506,13 @@ export default function App() {
                           key={code}
                           onClick={() => {
                             setLang(code); setShowMobileMenu(false)
-                            if (user) { setLangPreference(code); document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`; showToast('Language saved') }
+                            if (user) {
+                              setLangPreference(code)
+                              document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
+                              showToast('Language saved')
+                            } else {
+                              localStorage.setItem('bfs_lang', code)
+                            }
                           }}
                           style={{
                             padding: '4px 8px', borderRadius: 6, fontSize: 11,

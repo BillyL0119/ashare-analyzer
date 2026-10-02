@@ -1,10 +1,12 @@
 import { create } from 'zustand'
 
-// Read a lightweight hint cookie set only for logged-in users.
-// This prevents the language flash while Supabase auth is resolving on page load.
-// The cookie is not authoritative — it is overwritten once auth resolves.
+// Priority: logged-in user cookie → guest localStorage → default 'zh'
 function readLangHint() {
-  return document.cookie.match(/bfs_lang_hint=(\w+)/)?.[1] || 'en'
+  return (
+    document.cookie.match(/bfs_lang_hint=(\w+)/)?.[1] ||
+    localStorage.getItem('bfs_lang') ||
+    'zh'
+  )
 }
 
 const useLangStore = create((set) => ({
