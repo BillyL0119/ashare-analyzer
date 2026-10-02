@@ -400,6 +400,7 @@ function EconDiagram({ type }) {
 
 // ── Section block ─────────────────────────────────────────────────────────────
 function SectionBlock({ section, index, total, accentColor, lang }) {
+  const t = T[lang] || T.en
   const pick = (key) => {
     if (lang === 'zh') return section[key]
     if (lang === 'en') return section[`${key}_en`] || section[key]
@@ -462,7 +463,7 @@ function SectionBlock({ section, index, total, accentColor, lang }) {
           marginLeft: 15, marginBottom: 12,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: '#fbbf24', marginBottom: 6, letterSpacing: '0.05em' }}>
-            📝 {lang === 'zh' ? 'EXAM TIP' : 'KEY INSIGHT'}
+            📝 {t.examTip}
           </div>
           <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
             {examTip}

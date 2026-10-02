@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { getGlobalNews } from '../api/stockApi'
-
-const LANG = 'zh'   // will use prop
+import { T } from '../i18n/translations'
 
 const SOURCE_COLORS = {
   'Reuters Business': '#ff8c00',
@@ -29,32 +28,19 @@ function SourceBadge({ name }) {
   )
 }
 
-function relativeTime(iso, lang) {
+function relativeTime(iso, t) {
   if (!iso) return ''
   try {
     const diff = (Date.now() - new Date(iso).getTime()) / 1000
-    if (diff < 60)   return lang === 'zh' ? '刚刚' : 'just now'
-    if (diff < 3600) return lang === 'zh' ? `${Math.floor(diff / 60)}分钟前` : `${Math.floor(diff / 60)}m ago`
-    if (diff < 86400) return lang === 'zh' ? `${Math.floor(diff / 3600)}小时前` : `${Math.floor(diff / 3600)}h ago`
-    return lang === 'zh' ? `${Math.floor(diff / 86400)}天前` : `${Math.floor(diff / 86400)}d ago`
+    if (diff < 60)    return t.timeJustNow
+    if (diff < 3600)  return t.timeMinsAgo(Math.floor(diff / 60))
+    if (diff < 86400) return t.timeHoursAgo(Math.floor(diff / 3600))
+    return t.timeDaysAgo(Math.floor(diff / 86400))
   } catch {
     return ''
   }
 }
 
-const CAT_LABELS = {
-  all:     { zh: '全部', en: 'All' },
-  market:  { zh: '市场', en: 'Market' },
-  economy: { zh: '宏观', en: 'Economy' },
-  company: { zh: '公司', en: 'Company' },
-  crypto:  { zh: '加密', en: 'Crypto' },
-}
-
-const LANG_LABELS = {
-  all: { zh: '全部', en: 'All' },
-  cn:  { zh: '中文', en: '中文' },
-  en:  { zh: 'English', en: 'English' },
-}
 
 function Pill({ active, onClick, children }) {
   return (
@@ -73,7 +59,7 @@ function Pill({ active, onClick, children }) {
   )
 }
 
-function NewsCard({ item, lang }) {
+function NewsCard({ item, t }) {
   return (
     <a
       href={item.url || '#'}
@@ -98,7 +84,7 @@ function NewsCard({ item, lang }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
               <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{item.source}</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, lang)}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, t)}</span>
               <span style={{
                 fontSize: 10, padding: '1px 6px', borderRadius: 8,
                 background: item.lang === 'cn' ? 'rgba(232,50,30,0.12)' : 'rgba(14,100,233,0.12)',
@@ -135,7 +121,7 @@ function NewsCard({ item, lang }) {
 const PAGE_SIZE = 20
 
 export default function GlobalNewsPanel({ lang = 'zh' }) {
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
   const [updatedAt, setUpdatedAt] = useState(null)
@@ -181,16 +167,16 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
-          {zh ? '全球财经新闻' : 'Global Financial News'}
+          {t.gnTitle}
           {items.length > 0 && (
             <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--text-muted)', marginLeft: 8 }}>
-              {items.length} {zh ? '条' : 'articles'}
+              {items.length} {t.gnArticles}
             </span>
           )}
         </div>
         {updatedAt && (
           <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-            {zh ? '更新于' : 'Updated'} {relativeTime(updatedAt, lang)}
+            {t.gnUpdated} {relativeTime(updatedAt, t)}
             <button
               onClick={() => fetchNews(filters)}
               style={{
@@ -198,7 +184,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
                 color: '#0ea5e9', cursor: 'pointer', padding: 0,
               }}
             >
-              {zh ? '刷新' : 'Refresh'}
+              {t.gnRefresh}
             </button>
           </div>
         )}
@@ -208,18 +194,18 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
         {/* Lang */}
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          {Object.entries(LANG_LABELS).map(([k, v]) => (
+          {[['all', t.gnLangAll], ['cn', t.gnLangCN], ['en', t.gnLangEN]].map(([k, label]) => (
             <Pill key={k} active={filters.lang === k} onClick={() => applyFilter({ ...filters, lang: k })}>
-              {v[zh ? 'zh' : 'en']}
+              {label}
             </Pill>
           ))}
         </div>
         <div style={{ width: 1, background: 'var(--border-primary)', margin: '0 4px' }} />
         {/* Category */}
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          {Object.entries(CAT_LABELS).map(([k, v]) => (
+          {[['all', t.gnCatAll], ['market', t.gnCatMarket], ['economy', t.gnCatEconomy], ['company', t.gnCatCompany], ['crypto', t.gnCatCrypto]].map(([k, label]) => (
             <Pill key={k} active={filters.category === k} onClick={() => applyFilter({ ...filters, category: k })}>
-              {v[zh ? 'zh' : 'en']}
+              {label}
             </Pill>
           ))}
         </div>
@@ -235,7 +221,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
                 borderRadius: 20, padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
               }}
             >
-              <option value="all">{zh ? '全部来源' : 'All Sources'}</option>
+              <option value="all">{t.gnAllSources}</option>
               {sources.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </>
@@ -255,12 +241,12 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
         </div>
       ) : items.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: 14 }}>
-          {zh ? '暂无新闻数据，请稍后再试' : 'No news available, please try again later'}
+          {t.gnNoData}
         </div>
       ) : (
         <>
           {displayed.map((item, i) => (
-            <NewsCard key={`${item.source}-${i}`} item={item} lang={lang} />
+            <NewsCard key={`${item.source}-${i}`} item={item} t={t} />
           ))}
           {hasMore && (
             <button
@@ -272,7 +258,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
                 marginTop: 4,
               }}
             >
-              {zh ? `加载更多 (${items.length - displayed.length} 条)` : `Load more (${items.length - displayed.length})`}
+              {t.gnLoadMore(items.length - displayed.length)}
             </button>
           )}
         </>

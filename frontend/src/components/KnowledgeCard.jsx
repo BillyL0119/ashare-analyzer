@@ -113,8 +113,8 @@ export default function KnowledgeCard({ lang, open, onClose }) {
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const TAB_LABEL = {
-    economics: lang === 'zh' ? '宏观经济' : 'Economics',
-    finance:   lang === 'zh' ? '金融分析' : 'Finance',
+    economics: t.catEconomics,
+    finance:   t.catFinance,
   }
 
   if (!open) return null

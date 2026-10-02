@@ -116,7 +116,7 @@ export default function StockCard({ stock }) {
           {/* K-line education button — placed right next to period selector */}
           <button
             onClick={() => setShowKLineTip(true)}
-            title={lang === 'zh' ? '学习K线图基础知识' : 'Learn candlestick basics'}
+            title={t.klineLearn}
             style={{
               padding: '3px 9px',
               borderRadius: 4,
@@ -131,7 +131,7 @@ export default function StockCard({ stock }) {
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)'; e.currentTarget.style.borderColor = '#0ea5e9' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)'; e.currentTarget.style.borderColor = 'rgba(14,165,233,0.35)' }}
           >
-            📖 {lang === 'zh' ? 'K线教学' : 'Learn'}
+            📖 {t.klineBtn}
           </button>
 
           {Object.entries(periodLabels).map(([key, label]) => (
@@ -180,7 +180,7 @@ export default function StockCard({ stock }) {
         {/* Export PDF */}
         <button
           onClick={() => window.open(`/api/export/pdf/${code}`, '_blank')}
-          title={lang === 'zh' ? '导出PDF报告' : 'Export PDF Report'}
+          title={t.exportTooltip}
           style={{
             padding: '3px 8px',
             borderRadius: 4,
@@ -194,13 +194,13 @@ export default function StockCard({ stock }) {
           onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.12)'; e.currentTarget.style.color = '#0ea5e9' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
-          {lang === 'zh' ? '导出报告' : 'Export PDF'}
+          {t.exportBtn}
         </button>
 
         {/* Watchlist star */}
         <button
           onClick={() => inWatchlist ? wlRemove(code) : wlAdd({ ...stock, market })}
-          title={inWatchlist ? (lang === 'zh' ? '移出收藏' : 'Remove from watchlist') : (lang === 'zh' ? '加入收藏' : 'Add to watchlist')}
+          title={inWatchlist ? t.watchRemove : t.watchAdd}
           style={{
             padding: '3px 6px',
             borderRadius: 4,
@@ -225,7 +225,7 @@ export default function StockCard({ stock }) {
             setCopied(true)
             setTimeout(() => setCopied(false), 1500)
           }}
-          title={lang === 'zh' ? '复制分享链接' : 'Copy share link'}
+          title={t.copyLink}
           style={{
             padding: '3px 8px', borderRadius: 4,
             border: '1px solid rgba(14,165,233,0.25)',
@@ -295,8 +295,8 @@ export default function StockCard({ stock }) {
             <div style={{ color: '#f85149', fontSize: 13, textAlign: 'center', maxWidth: 280 }}>
               {market === 'us'
                 ? (String(error).includes('API_LIMIT') || String(error).includes('limit')
-                    ? (lang === 'zh' ? '今日数据请求已达上限，显示缓存数据' : 'Daily data limit reached. Cached data shown where available.')
-                    : (lang === 'zh' ? '数据加载失败，请重试' : 'Unable to load data. Please try again.'))
+                    ? t.apiLimitMsg
+                    : t.apiErrorMsg)
                 : error}
             </div>
             {market === 'us' && (
@@ -309,7 +309,7 @@ export default function StockCard({ stock }) {
                   color: '#fff',
                 }}
               >
-                {lang === 'zh' ? '重试' : 'Retry'}
+                {t.retry}
               </button>
             )}
           </div>

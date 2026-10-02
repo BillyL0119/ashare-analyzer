@@ -410,6 +410,28 @@ export const T = {
     // ComparePanel tabs
     earningsTab: '财报日历', globalNews: '全球新闻',
     sectorsTab: '🔄 板块', commentsTab: '💬 评论',
+    // StockCard
+    klineLearn: '学习K线图基础知识', klineBtn: 'K线教学',
+    exportTooltip: '导出PDF报告', exportBtn: '导出报告',
+    watchAdd: '加入收藏', watchRemove: '移出收藏',
+    copyLink: '复制分享链接',
+    apiLimitMsg: '今日数据请求已达上限，显示缓存数据',
+    apiErrorMsg: '数据加载失败，请重试', retry: '重试',
+    // Time
+    timeJustNow: '刚刚',
+    timeMinsAgo: (n) => `${n}分钟前`,
+    timeHoursAgo: (n) => `${n}小时前`,
+    timeDaysAgo: (n) => `${n}天前`,
+    // Categories
+    catEconomics: '宏观经济', catFinance: '金融分析',
+    examTip: 'EXAM TIP',
+    // GlobalNewsPanel
+    gnTitle: '全球财经新闻', gnArticles: '条',
+    gnUpdated: '更新于', gnRefresh: '刷新',
+    gnAllSources: '全部来源', gnNoData: '暂无新闻数据，请稍后再试',
+    gnLoadMore: (n) => `加载更多 (${n} 条)`,
+    gnCatAll: '全部', gnCatMarket: '市场', gnCatEconomy: '宏观', gnCatCompany: '公司', gnCatCrypto: '加密',
+    gnLangAll: '全部', gnLangCN: '中文', gnLangEN: 'English',
   },
   en: {
     appTitle: 'Best Friend Stock',
@@ -822,6 +844,28 @@ export const T = {
     // ComparePanel tabs
     earningsTab: 'Earnings Calendar', globalNews: 'Global News',
     sectorsTab: '🔄 Sectors', commentsTab: '💬 Comments',
+    // StockCard
+    klineLearn: 'Learn candlestick basics', klineBtn: 'Learn',
+    exportTooltip: 'Export PDF Report', exportBtn: 'Export PDF',
+    watchAdd: 'Add to watchlist', watchRemove: 'Remove from watchlist',
+    copyLink: 'Copy share link',
+    apiLimitMsg: 'Daily data limit reached. Cached data shown where available.',
+    apiErrorMsg: 'Unable to load data. Please try again.', retry: 'Retry',
+    // Time
+    timeJustNow: 'just now',
+    timeMinsAgo: (n) => `${n}m ago`,
+    timeHoursAgo: (n) => `${n}h ago`,
+    timeDaysAgo: (n) => `${n}d ago`,
+    // Categories
+    catEconomics: 'Economics', catFinance: 'Finance',
+    examTip: 'KEY INSIGHT',
+    // GlobalNewsPanel
+    gnTitle: 'Global Financial News', gnArticles: 'articles',
+    gnUpdated: 'Updated', gnRefresh: 'Refresh',
+    gnAllSources: 'All Sources', gnNoData: 'No news available, please try again later',
+    gnLoadMore: (n) => `Load more (${n})`,
+    gnCatAll: 'All', gnCatMarket: 'Market', gnCatEconomy: 'Economy', gnCatCompany: 'Company', gnCatCrypto: 'Crypto',
+    gnLangAll: 'All', gnLangCN: '中文', gnLangEN: 'English',
   },
   ja: {
     appTitle: 'Best Friend Stock',
@@ -1234,6 +1278,28 @@ export const T = {
     // ComparePanel tabs
     earningsTab: '決算カレンダー', globalNews: 'グローバルニュース',
     sectorsTab: '🔄 セクター', commentsTab: '💬 コメント',
+    // StockCard
+    klineLearn: 'ローソク足の基礎を学ぶ', klineBtn: 'K線学習',
+    exportTooltip: 'PDFレポートを出力', exportBtn: 'PDF出力',
+    watchAdd: 'ウォッチリストに追加', watchRemove: 'ウォッチリストから削除',
+    copyLink: 'リンクをコピー',
+    apiLimitMsg: '本日のデータ取得上限に達しました。キャッシュデータを表示します。',
+    apiErrorMsg: 'データを読み込めません。再試行してください。', retry: '再試行',
+    // Time
+    timeJustNow: 'たった今',
+    timeMinsAgo: (n) => `${n}分前`,
+    timeHoursAgo: (n) => `${n}時間前`,
+    timeDaysAgo: (n) => `${n}日前`,
+    // Categories
+    catEconomics: 'マクロ経済', catFinance: '金融分析',
+    examTip: '重要ポイント',
+    // GlobalNewsPanel
+    gnTitle: 'グローバル金融ニュース', gnArticles: '件',
+    gnUpdated: '更新', gnRefresh: '更新',
+    gnAllSources: '全ソース', gnNoData: 'ニュースデータなし。後でもう一度お試しください',
+    gnLoadMore: (n) => `もっと見る (${n}件)`,
+    gnCatAll: '全て', gnCatMarket: '市場', gnCatEconomy: 'マクロ', gnCatCompany: '企業', gnCatCrypto: '暗号',
+    gnLangAll: '全て', gnLangCN: '中文', gnLangEN: 'English',
   },
   ko: {
     appTitle: 'Best Friend Stock',
@@ -1646,6 +1712,28 @@ export const T = {
     // ComparePanel tabs
     earningsTab: '실적 달력', globalNews: '글로벌 뉴스',
     sectorsTab: '🔄 섹터', commentsTab: '💬 댓글',
+    // StockCard
+    klineLearn: '캔들스틱 기초 학습', klineBtn: 'K선 학습',
+    exportTooltip: 'PDF 보고서 내보내기', exportBtn: 'PDF 내보내기',
+    watchAdd: '관심종목에 추가', watchRemove: '관심종목에서 제거',
+    copyLink: '공유 링크 복사',
+    apiLimitMsg: '오늘의 데이터 요청 한도에 도달했습니다. 캐시 데이터를 표시합니다.',
+    apiErrorMsg: '데이터를 불러올 수 없습니다. 다시 시도하세요.', retry: '다시 시도',
+    // Time
+    timeJustNow: '방금',
+    timeMinsAgo: (n) => `${n}분 전`,
+    timeHoursAgo: (n) => `${n}시간 전`,
+    timeDaysAgo: (n) => `${n}일 전`,
+    // Categories
+    catEconomics: '거시경제', catFinance: '금융 분석',
+    examTip: '핵심 인사이트',
+    // GlobalNewsPanel
+    gnTitle: '글로벌 금융 뉴스', gnArticles: '건',
+    gnUpdated: '업데이트', gnRefresh: '새로고침',
+    gnAllSources: '모든 출처', gnNoData: '뉴스 없음. 나중에 다시 시도하세요',
+    gnLoadMore: (n) => `더 보기 (${n}건)`,
+    gnCatAll: '전체', gnCatMarket: '시장', gnCatEconomy: '경기', gnCatCompany: '기업', gnCatCrypto: '암호화폐',
+    gnLangAll: '전체', gnLangCN: '중문', gnLangEN: 'English',
   },
   fr: {
     appTitle: 'Best Friend Stock',
@@ -2058,5 +2146,27 @@ export const T = {
     // ComparePanel tabs
     earningsTab: 'Cal. résultats', globalNews: 'Actualités mondiales',
     sectorsTab: '🔄 Secteurs', commentsTab: '💬 Commentaires',
+    // StockCard
+    klineLearn: 'Apprendre les chandeliers', klineBtn: 'Apprendre',
+    exportTooltip: 'Exporter rapport PDF', exportBtn: 'Exporter PDF',
+    watchAdd: 'Ajouter aux favoris', watchRemove: 'Retirer des favoris',
+    copyLink: 'Copier le lien',
+    apiLimitMsg: 'Limite de données journalière atteinte. Données en cache affichées.',
+    apiErrorMsg: 'Impossible de charger les données. Réessayez.', retry: 'Réessayer',
+    // Time
+    timeJustNow: "à l'instant",
+    timeMinsAgo: (n) => `il y a ${n}min`,
+    timeHoursAgo: (n) => `il y a ${n}h`,
+    timeDaysAgo: (n) => `il y a ${n}j`,
+    // Categories
+    catEconomics: 'Économie macro', catFinance: 'Finance',
+    examTip: 'POINT CLÉ',
+    // GlobalNewsPanel
+    gnTitle: 'Actualités financières mondiales', gnArticles: 'articles',
+    gnUpdated: 'Mis à jour', gnRefresh: 'Actualiser',
+    gnAllSources: 'Toutes sources', gnNoData: 'Aucune actualité disponible, réessayez plus tard',
+    gnLoadMore: (n) => `Charger plus (${n})`,
+    gnCatAll: 'Tout', gnCatMarket: 'Marché', gnCatEconomy: 'Économie', gnCatCompany: 'Entreprise', gnCatCrypto: 'Crypto',
+    gnLangAll: 'Tout', gnLangCN: '中文', gnLangEN: 'English',
   },
 }
