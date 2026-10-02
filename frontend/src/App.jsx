@@ -299,6 +299,8 @@ export default function App() {
           gap: isMobile ? 8 : 18,
           flexWrap: 'nowrap',
           transition: 'background 0.3s ease, box-shadow 0.3s ease',
+          position: 'relative',
+          zIndex: 10,
         }}
       >
         {/* Logo */}
