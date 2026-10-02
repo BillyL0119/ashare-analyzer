@@ -57,8 +57,8 @@ const TAB_PATHS = {
 const PATH_TABS = Object.fromEntries(Object.entries(TAB_PATHS).map(([k, v]) => [v, k]))
 
 const LANG_OPTIONS = [
-  { code: 'zh', label: '中文' },
   { code: 'en', label: 'EN' },
+  { code: 'zh', label: '中文' },
   { code: 'ja', label: '日本語' },
   { code: 'ko', label: '한국어' },
   { code: 'fr', label: 'FR' },

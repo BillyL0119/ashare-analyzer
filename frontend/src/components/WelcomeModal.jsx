@@ -114,8 +114,8 @@ function FlagFR({ height = 24 }) {
 // ─────────────────────────────────────────────────────────────────────
 
 const LANG_OPTIONS = [
-  { code: 'zh', nativeLabel: '中文',     subLabel: 'Chinese',  Flag: FlagCN },
   { code: 'en', nativeLabel: 'English',  subLabel: '英文',     Flag: FlagUS },
+  { code: 'zh', nativeLabel: '中文',     subLabel: 'Chinese',  Flag: FlagCN },
   { code: 'ja', nativeLabel: '日本語',   subLabel: 'Japanese', Flag: FlagJP },
   { code: 'ko', nativeLabel: '한국어',   subLabel: 'Korean',   Flag: FlagKR },
   { code: 'fr', nativeLabel: 'Français', subLabel: 'French',   Flag: FlagFR },
