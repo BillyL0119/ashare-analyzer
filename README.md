@@ -80,6 +80,20 @@ NEXT_PUBLIC_SUPABASE_URL=https://nadhlozvalgizccmnpay.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key_here
 ```
 
+## Deployment
+
+Production runs on a Tencent Cloud server (nginx + PM2), **not** Railway.
+`railway.json`, `nixpacks.toml`, `Dockerfile` and `Procfile` are unused leftovers.
+Merging to `main` does not deploy anything; deploy manually over SSH:
+
+```bash
+cd /root/ashare-analyzer
+git pull
+pip install -r backend/requirements.txt   # only needed when requirements.txt changed
+cd frontend && npm install && npm run build && cd ..
+pm2 restart all
+```
+
 ## Disclaimer
 
 本网站仅供学习和研究目的，不构成任何投资建议。股市有风险，投资需谨慎。
