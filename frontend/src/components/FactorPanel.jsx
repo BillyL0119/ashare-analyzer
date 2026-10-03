@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'

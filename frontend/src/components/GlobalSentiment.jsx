@@ -6,7 +6,7 @@ import {
   ComposableMap, Geographies, Geography,
   Marker, Graticule, Sphere,
 } from 'react-simple-maps'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import worldAtlas from 'world-atlas/countries-110m.json'
 
 // ── Geo data (self-hosted via npm world-atlas) ────────────────────────────────
@@ -432,6 +432,7 @@ export default function GlobalSentiment({ lang }) {
   const [loading, setLoading] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
   const t = T[lang] || T.en
+  const zh = lang === 'zh'
   const isMobile = useMobile()
 
   useEffect(() => {

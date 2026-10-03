@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import KLineLesson from './KLineLesson'
 import { useMobile } from '../hooks/useMobile'
 import { T } from '../i18n/translations'

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import { T } from '../i18n/translations'
 
 const BDR   = 'rgba(138,180,248,0.12)'

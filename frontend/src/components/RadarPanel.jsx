@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { getRadarScore } from '../api/stockApi'

@@ -11,6 +11,7 @@ import GlobalSentiment from './components/GlobalSentiment'
 import StatsDisplay from './components/StatsDisplay'
 import QuoteBanner from './components/QuoteBanner'
 import AuthModal from './components/AuthModal'
+import ErrorBoundary from './components/ErrorBoundary'
 import useAuthStore from './store/authStore'
 
 const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
@@ -680,6 +681,7 @@ export default function App() {
       </div>{/* end sticky nav wrapper */}
 
       <main style={{ padding: isMobile ? '2px 12px' : '2px 24px', flex: 1 }}>
+        <ErrorBoundary key={appTab}>
         <Suspense fallback={<PageSkeleton />}>
           {appTab === 'study' ? (
             <StudyCenter lang={lang} />
@@ -696,15 +698,16 @@ export default function App() {
           ) : (
             <>
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><QuoteBanner lang={lang} /></div>
+                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-2"><GlobalSentiment lang={lang} /></div>
+                <div className="bfs-enter-2"><ErrorBoundary><GlobalSentiment lang={lang} /></ErrorBoundary></div>
               )}
               <div className="bfs-enter-3"><ComparePanel onTabChange={handleTabChange} onOpenKnowledge={() => setShowInsight(true)} /></div>
             </>
           )}
         </Suspense>
+        </ErrorBoundary>
       </main>
 
       {/* Hidden stats entry — bottom left corner */}

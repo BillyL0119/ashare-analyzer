@@ -1,11 +1,11 @@
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import useThemeStore from '../store/themeStore'
 import { buildMACDOption } from '../utils/chartHelpers'
 
 export default function MACDChart({ macd, groupId }) {
+  useThemeStore((s) => s.theme)
   if (!macd || macd.length === 0) return null
 
-  useThemeStore((s) => s.theme)
   const option = buildMACDOption(macd)
 
   return (

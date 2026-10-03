@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import useLangStore from '../store/langStore'
 import { getBacktest } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
