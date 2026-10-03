@@ -41,7 +41,7 @@ function schoolGradient(name) {
 }
 
 function initials(name) {
-  const words = name.split(/[\s\-]+/).filter(w => w.length > 2)
+  const words = name.split(/[\s-]+/).filter(w => w.length > 2)
   return words.slice(0, 2).map(w => w[0].toUpperCase()).join('')
 }
 
@@ -820,7 +820,7 @@ function ProfileForm({ unis, profile, setProfile, onStart }) {
             key={val}
             onClick={() => set('lang')(val)}
             style={{
-              padding: '5px 14px', borderRadius: 20, border: 'none',
+              padding: '5px 14px', borderRadius: 20, 
               border: `1px solid ${profile.lang === val ? BLUE : 'var(--border-primary)'}`,
               background: profile.lang === val ? `${BLUE}22` : 'transparent',
               color: profile.lang === val ? BLUE : 'var(--text-muted)',
@@ -1451,7 +1451,7 @@ function StickyFilters({ lang, filters, onChange }) {
   const t = lang === 'zh'
 
   const pill = (active) => ({
-    padding: '5px 14px', borderRadius: 20, border: 'none',
+    padding: '5px 14px', borderRadius: 20, 
     border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
     background: active ? `${BLUE}22` : 'transparent',
     color: active ? BLUE : 'var(--text-muted)',

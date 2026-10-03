@@ -223,7 +223,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
               key={m}
               onClick={() => setMarket(m)}
               style={{
-                padding: '5px 18px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                padding: '5px 18px', borderRadius: 20, cursor: 'pointer',
                 fontSize: 13, fontWeight: active ? 700 : 400,
                 background: active ? cfg.bg : 'rgba(255,255,255,0.05)',
                 color: active ? cfg.color : MUTED,

@@ -196,7 +196,7 @@ export default function App() {
     if (canonical) {
       canonical.setAttribute('href', 'https://bestfriendstock.com' + location.pathname)
     }
-  }, [appTab, selectedSymbols, location.pathname]) // eslint-disable-line
+  }, [appTab, selectedSymbols, location.pathname])
 
   // On mount: if URL is /stock/:market/:code, auto-load that stock
   useEffect(() => {

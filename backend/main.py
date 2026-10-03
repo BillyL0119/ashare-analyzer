@@ -76,7 +76,13 @@ async def sitemap():
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://bestfriendstock.com/ai-teacher</loc>
+    <loc>https://bestfriendstock.com/news</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bestfriendstock.com/study</loc>
     <lastmod>{today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -88,13 +94,19 @@ async def sitemap():
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bestfriendstock.com/study</loc>
+    <loc>https://bestfriendstock.com/paper</loc>
     <lastmod>{today}</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://bestfriendstock.com/paper</loc>
+    <loc>https://bestfriendstock.com/bank_views</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bestfriendstock.com/career</loc>
     <lastmod>{today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -174,7 +186,7 @@ async def bot_render():
   <ul>
     <li><a href="https://bestfriendstock.com/">首页 - 股票行情分析</a></li>
     <li><a href="https://bestfriendstock.com/universities">全球商学院指南</a></li>
-    <li><a href="https://bestfriendstock.com/ai-teacher">AI经济学老师</a></li>
+    <li><a href="https://bestfriendstock.com/news">每日新闻</a></li>
     <li><a href="https://bestfriendstock.com/study">经济学学习中心</a></li>
     <li><a href="https://bestfriendstock.com/paper">模拟炒股</a></li>
   </ul>
