@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import ReactECharts from 'echarts-for-react'
 import useThemeStore from '../store/themeStore'
 import { THEME } from '../utils/chartHelpers'
+import { T } from '../i18n/translations'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -36,11 +37,11 @@ function fmt(n) {
   return `${sign}${Number(n).toFixed(2)}%`
 }
 
-function volLabel(ratio, zh) {
-  if (ratio > 1.5) return zh ? '📈量大' : '📈 High Vol'
-  if (ratio > 1.1) return zh ? '量增' : 'Vol↑'
-  if (ratio < 0.7) return zh ? '📉量缩' : '📉 Low Vol'
-  return zh ? '量平' : 'Vol~'
+function volLabel(ratio, t) {
+  if (ratio > 1.5) return t.srVolHigh
+  if (ratio > 1.1) return t.srVolUp
+  if (ratio < 0.7) return t.srVolLow
+  return t.srVolFlat
 }
 
 // ── Sentiment summary ─────────────────────────────────────────────────────────
@@ -72,6 +73,7 @@ function buildSummary(sectors, period, zh) {
 // ── Treemap chart ─────────────────────────────────────────────────────────────
 
 function Treemap({ sectors, lang }) {
+  const t = T[lang] || T.en
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
 
@@ -141,6 +143,7 @@ function Treemap({ sectors, lang }) {
 // ── Bar chart ranking ─────────────────────────────────────────────────────────
 
 function BarRanking({ sectors, period, lang }) {
+  const t = T[lang] || T.en
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
 
@@ -164,7 +167,7 @@ function BarRanking({ sectors, period, lang }) {
         formatter: (params) => {
           const p = params[0]
           const s = sorted[p.dataIndex]
-          return `${p.name}<br/>${fmt(p.value)}<br/>${zh ? '量比' : 'Vol'}: ${s.vol_ratio?.toFixed(2) ?? 'N/A'}`
+          return `${p.name}<br/>${fmt(p.value)}<br/>${t.srVolRatio}: ${s.vol_ratio?.toFixed(2) ?? 'N/A'}`
         },
       },
       xAxis: {
@@ -216,6 +219,7 @@ function BarRanking({ sectors, period, lang }) {
 
 export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
   useThemeStore((s) => s.theme)
+  const t = T[lang] || T.en
   const zh = lang === 'zh'
 
   const [market,  setMarket]  = useState(defaultMarket)
@@ -235,7 +239,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
         if (d.error) setError(d.error)
         else setData(d)
       })
-      .catch(() => setError(zh ? '加载失败' : 'Failed to load'))
+      .catch(() => setError(t.srLoadFail))
       .finally(() => setLoading(false))
   }, [market])
 
@@ -261,11 +265,11 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
       {/* ── Market toggle ── */}
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 13, color: 'var(--text-muted)', marginRight: 4 }}>
-          {zh ? '市场：' : 'Market:'}
+          {t.srMarket}
         </span>
         {[
-          { key: 'cn', label: zh ? 'A股' : 'A-Share' },
-          { key: 'us', label: zh ? '美股' : 'US' },
+          { key: 'cn', label: t.marketCN },
+          { key: 'us', label: t.marketUS },
         ].map(({ key, label }) => (
           <button key={key} onClick={() => setMarket(key)} style={pillBtn(market === key)}>
             {label}
@@ -274,7 +278,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
 
         {data?.date && (
           <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
-            {zh ? '更新：' : 'Updated:'} {data.date}
+            {t.srUpdated} {data.date}
           </span>
         )}
       </div>
@@ -288,7 +292,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             animation: 'spin 0.8s linear infinite',
           }} />
           <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 12 }}>
-            {zh ? '正在加载板块数据（首次约30秒）...' : 'Loading sector data (first load ~30s)...'}
+            {t.srLoadingMsg}
           </div>
         </div>
       )}
@@ -304,8 +308,8 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {/* ── View toggle ── */}
           <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
             {[
-              { key: 'treemap', label: zh ? '🗺 热力图' : '🗺 Heatmap' },
-              { key: 'bar',     label: zh ? '📊 排行榜' : '📊 Ranking' },
+              { key: 'treemap', label: t.srHeatmap },
+              { key: 'bar',     label: t.srRanking },
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setView(key)} style={{
                 ...pillBtn(view === key),
@@ -320,9 +324,9 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             {/* Period toggle — always shown */}
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
               {[
-                { key: 'today', label: zh ? '今日' : 'Today' },
-                { key: '5d',   label: zh ? '5日'  : '5-Day' },
-                { key: '20d',  label: zh ? '20日' : '20-Day' },
+                { key: 'today', label: t.earToday },
+                { key: '5d',   label: t.sr5Day },
+                { key: '20d',  label: t.sr20Day },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setPeriod(key)} style={{
                   padding: '4px 12px', borderRadius: 20, border: 'none',
@@ -354,13 +358,13 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {view === 'treemap' && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 14, flexWrap: 'wrap' }}>
               {[
-                [GREEN_DARK,  zh ? '>+3%'   : '>+3%'],
-                [GREEN_MID,   zh ? '+1.5~3%': '+1.5~3%'],
-                [GREEN_LIGHT, zh ? '+0.3~1.5%': '+0.3~1.5%'],
-                [NEUTRAL,     zh ? '±0.3%'  : '±0.3%'],
-                [RED_LIGHT,   zh ? '-0.3~1.5%': '-0.3~1.5%'],
-                [RED_MID,     zh ? '-1.5~3%': '-1.5~3%'],
-                [RED_DARK,    zh ? '<-3%'   : '<-3%'],
+                [GREEN_DARK,  '>+3%'],
+                [GREEN_MID,   '+1.5~3%'],
+                [GREEN_LIGHT, '+0.3~1.5%'],
+                [NEUTRAL,     '±0.3%'],
+                [RED_LIGHT,   '-0.3~1.5%'],
+                [RED_MID,     '-1.5~3%'],
+                [RED_DARK,    '<-3%'],
               ].map(([color, label]) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <div style={{ width: 14, height: 10, borderRadius: 2, background: color }} />
@@ -386,11 +390,11 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
               borderBottom: '1px solid var(--border-primary)',
               background: 'var(--bg-tertiary)',
             }}>
-              <span>{zh ? '行业' : 'Sector'}</span>
-              <span style={{ textAlign: 'right' }}>{zh ? '今日' : 'Today'}</span>
-              <span style={{ textAlign: 'right' }}>{zh ? '近5日' : '5-Day'}</span>
-              <span style={{ textAlign: 'right' }}>{zh ? '近20日' : '20-Day'}</span>
-              <span style={{ textAlign: 'right' }}>{zh ? '量比' : 'Vol'}</span>
+              <span>{t.srSector}</span>
+              <span style={{ textAlign: 'right' }}>{t.earToday}</span>
+              <span style={{ textAlign: 'right' }}>{t.sr5DayLong}</span>
+              <span style={{ textAlign: 'right' }}>{t.sr20DayLong}</span>
+              <span style={{ textAlign: 'right' }}>{t.srVolRatio}</span>
             </div>
             {[...sectors]
               .sort((a, b) => {
@@ -419,7 +423,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                         flexShrink: 0,
                       }} />
                       <span style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: i < 3 ? 700 : 400 }}>
-                        {zh ? s.name_zh : s.name_en}
+                        {zh ? s.name_zh : (s[`name_${lang}`] || s.name_en)}
                       </span>
                     </div>
                     <span style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: pctTextColor(s.today_pct) }}>
@@ -432,7 +436,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                       {fmt(s.pct_20d)}
                     </span>
                     <span style={{ textAlign: 'right', fontSize: 11, color: s.vol_ratio > 1.2 ? GREEN_MID : s.vol_ratio < 0.8 ? RED_MID : 'var(--text-muted)' }}>
-                      {volLabel(s.vol_ratio, zh)}
+                      {volLabel(s.vol_ratio, t)}
                     </span>
                   </div>
                 )
@@ -448,7 +452,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
               fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7,
             }}>
               <span style={{ fontWeight: 700, color: ACCENT2 }}>
-                {zh ? '📡 轮动小结' : '📡 Rotation Summary'}：
+                {t.srRotSummary}：
               </span>
               {' '}{summary}
             </div>

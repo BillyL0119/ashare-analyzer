@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMobile } from '../hooks/useMobile'
 import useCompareStore from '../store/compareStore'
+import { T } from '../i18n/translations'
 
 const ACCENT_BLUE   = '#8ab4f8'
 const ACCENT_PURPLE = '#c084fc'
@@ -79,6 +80,7 @@ function FeatureCard({ feature, lang, index, onClick }) {
 }
 
 export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
+  const t = T[lang] || T.en
   const zh = lang === 'zh'
   const isMobile = useMobile()
   const { setViewMode } = useCompareStore()
@@ -124,7 +126,7 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
           WebkitTextFillColor: 'transparent',
           lineHeight: 1.2, letterSpacing: '-0.3px',
         }}>
-          {zh ? '股市里，有我陪你' : 'Your Best Friend in the Market'}
+          {t.moSlogan}
         </h1>
 
         <p className="bfs-hero-sub" style={{
@@ -148,7 +150,7 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
               minHeight: 44, width: isMobile ? '100%' : 'auto',
             }}
           >
-            🔍 {zh ? '开始分析' : 'Start Analyzing'}
+            {t.moStart}
           </button>
 
           <button
@@ -164,7 +166,7 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
               minHeight: 44, width: isMobile ? '100%' : 'auto',
             }}
           >
-            📚 {zh ? '学习中心' : 'Study Center'}
+            {t.moStudy}
           </button>
         </div>
       </div>
@@ -194,7 +196,7 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
           href="mailto:billyl090119@gmail.com"
           style={{ color: '#9ca3af', fontSize: 10, textDecoration: 'none' }}
         >
-          {zh ? '网站有问题？请联系：billyl090119@gmail.com' : 'Issues? Contact: billyl090119@gmail.com'}
+          {t.moContact}
         </a>
       </div>
 

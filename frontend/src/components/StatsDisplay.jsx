@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import ReactECharts from 'echarts-for-react'
+import { T } from '../i18n/translations'
 
 const BDR   = 'rgba(138,180,248,0.12)'
 const MUTED = 'var(--text-muted)'
@@ -58,7 +59,7 @@ export default function StatsDisplay({ lang, onClose }) {
   const [stats,      setStats]      = useState(null)
   const [loading,    setLoading]    = useState(true)
   const [exportMode, setExportMode] = useState(false)
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function StatsDisplay({ lang, onClose }) {
       textStyle: { color: 'var(--text-primary)', fontSize: 12 },
       formatter: (params) => {
         const d = params[0]
-        return `${d.axisValue}<br/>${zh ? '访问' : 'Visits'}: <b>${d.data}</b>`
+        return `${d.axisValue}<br/>${t.stVisits}: <b>${d.data}</b>`
       },
     },
     xAxis: {
@@ -193,10 +194,10 @@ export default function StatsDisplay({ lang, onClose }) {
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               marginBottom: 4,
             }}>
-              {zh ? 'BestFriendStock 访问统计' : 'BestFriendStock Analytics'}
+              {t.stTitle}
             </div>
             <div style={{ fontSize: 12, color: MUTED }}>
-              bestfriendstock.com &nbsp;·&nbsp; {zh ? '实时数据' : 'Live data'}
+              bestfriendstock.com &nbsp;·&nbsp; {t.stLive}
             </div>
           </div>
 
@@ -209,7 +210,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 borderRadius: 8, padding: '6px 14px',
                 color: '#fbbf24', fontSize: 12, fontWeight: 600, cursor: 'pointer',
               }}>
-                📸 {zh ? '导出模式' : 'Export'}
+                📸 {t.stExport}
               </button>
             ) : (
               <button onClick={() => setExportMode(false)} style={{
@@ -218,7 +219,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 borderRadius: 8, padding: '6px 14px',
                 color: '#34d399', fontSize: 12, fontWeight: 600, cursor: 'pointer',
               }}>
-                ✓ {zh ? '退出导出' : 'Exit Export'}
+                ✓ {t.stExitExport}
               </button>
             )}
             {/* Close — hidden in export mode */}
@@ -233,11 +234,11 @@ export default function StatsDisplay({ lang, onClose }) {
 
         {loading ? (
           <div style={{ color: MUTED, textAlign: 'center', padding: '40px 0' }}>
-            {zh ? '加载统计数据...' : 'Loading stats...'}
+            {t.stLoading}
           </div>
         ) : !stats ? (
           <div style={{ color: '#f87171', textAlign: 'center', padding: '40px 0' }}>
-            {zh ? '加载失败' : 'Failed to load'}
+            {t.stLoadFail}
           </div>
         ) : (
           <>
@@ -245,33 +246,33 @@ export default function StatsDisplay({ lang, onClose }) {
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
               <BigStatCard
                 icon="🌍"
-                label={zh ? '总访问次数' : 'Total Visitors'}
+                label={t.stTotalVisits}
                 value={stats.total_visits.toLocaleString()}
-                sub={zh ? `本周 ${stats.this_week_visits} 次` : `${stats.this_week_visits} this week`}
+                sub={t.stThisWeek(stats.this_week_visits)}
                 gradient="linear-gradient(90deg,#8ab4f8,#6366f1)"
                 exportMode={exportMode}
               />
               <BigStatCard
                 icon="👥"
-                label={zh ? '独立用户数' : 'Unique Users'}
+                label={t.stUniqueUsers}
                 value={stats.unique_devices.toLocaleString()}
-                sub={zh ? `今日独立 ${stats.today_unique}` : `${stats.today_unique} unique today`}
+                sub={t.stUniqueToday(stats.today_unique)}
                 gradient="linear-gradient(90deg,#c084fc,#8b5cf6)"
                 exportMode={exportMode}
               />
               <BigStatCard
                 icon="📈"
-                label={zh ? '股票分析次数' : 'Stocks Analyzed'}
+                label={t.stStocksAnalyzed}
                 value={(stats.stocks_analyzed || 0).toLocaleString()}
-                sub={zh ? `最热：${stats.top_stocks[0]?.symbol ?? '--'}` : `Top: ${stats.top_stocks[0]?.symbol ?? '--'}`}
+                sub={t.stTopStock(stats.top_stocks[0]?.symbol ?? '--')}
                 gradient="linear-gradient(90deg,#34d399,#059669)"
                 exportMode={exportMode}
               />
               <BigStatCard
                 icon="🎓"
-                label={zh ? '学习次数' : 'Study Sessions'}
+                label={t.stStudySessions}
                 value={(stats.study_sessions || 0).toLocaleString()}
-                sub={zh ? '经济学学习中心' : 'Economics Study Center'}
+                sub={t.stStudyCenter}
                 gradient="linear-gradient(90deg,#fbbf24,#f59e0b)"
                 exportMode={exportMode}
               />
@@ -283,11 +284,11 @@ export default function StatsDisplay({ lang, onClose }) {
               borderRadius: 12, padding: '16px 12px', marginBottom: 16,
             }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-blue)', marginBottom: 10 }}>
-                {zh ? '过去30天访问量' : 'Visitor Trend — Last 30 Days'}
+                {t.stChartTitle}
               </div>
               {lineOption
                 ? <ReactECharts option={lineOption} style={{ height: 180 }} opts={{ renderer: 'canvas' }} />
-                : <div style={{ color: MUTED, fontSize: 12, padding: '50px 0', textAlign: 'center' }}>{zh ? '暂无数据' : 'No data yet'}</div>
+                : <div style={{ color: MUTED, fontSize: 12, padding: '50px 0', textAlign: 'center' }}>{t.stNoData}</div>
               }
             </div>
 
@@ -296,10 +297,10 @@ export default function StatsDisplay({ lang, onClose }) {
               {/* Top 5 stocks */}
               <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px' }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#fbbf24', marginBottom: 12 }}>
-                  {zh ? '最热门股票 TOP 5' : 'Top 5 Searched Stocks'}
+                  {t.stTop5}
                 </div>
                 {stats.top_stocks.length === 0 ? (
-                  <div style={{ color: MUTED, fontSize: 12 }}>{zh ? '暂无数据' : 'No data yet'}</div>
+                  <div style={{ color: MUTED, fontSize: 12 }}>{t.stNoData}</div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {stats.top_stocks.slice(0, 5).map((s, i) => {
@@ -332,7 +333,7 @@ export default function StatsDisplay({ lang, onClose }) {
               {pieOption && (
                 <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 12px' }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-purple)', marginBottom: 10 }}>
-                    {zh ? '功能使用分布' : 'Feature Usage'}
+                    {t.stFeatureUsage}
                   </div>
                   <ReactECharts option={pieOption} style={{ height: 180 }} opts={{ renderer: 'canvas' }} />
                 </div>
@@ -353,13 +354,10 @@ export default function StatsDisplay({ lang, onClose }) {
                 background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               }}>
-                {zh
-                  ? `Best Friend Stock 已帮助来自 ${countryEst} 个国家的学生学习经济学和分析股票。`
-                  : `Best Friend Stock has helped students from ${countryEst} countries learn economics and analyze stocks.`
-                }
+                {t.stTagline(countryEst)}
               </div>
               <div style={{ fontSize: 11, color: MUTED, marginTop: 6 }}>
-                {zh ? '数据每次访问实时更新 · 仅用于项目展示' : 'Updated in real-time · For project showcase only'}
+                {t.stFooter}
               </div>
             </div>
           </>

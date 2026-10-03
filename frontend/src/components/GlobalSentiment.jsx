@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useMobile } from '../hooks/useMobile'
+import { T } from '../i18n/translations'
 import useThemeStore from '../store/themeStore'
 import {
   ComposableMap, Geographies, Geography,
@@ -238,6 +239,7 @@ function WorldMap({ indices, lang }) {
   const [tooltip, setTooltip] = useState(null)
   const mousePosRef = useRef({ x: 0, y: 0 })
   const hideTimer = useRef(null)
+  const t = T[lang] || T.en
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
   const isLight = theme === 'light'
@@ -374,7 +376,7 @@ function WorldMap({ indices, lang }) {
         fontSize: 8, color: 'rgba(138,180,248,0.25)',
         pointerEvents: 'none', fontFamily: 'monospace',
       }}>
-        {zh ? '悬停查看详情' : 'Hover for details'}
+        {t.gsHover}
       </div>
 
       {/* Tooltip — follows mouse, shows on country or dot hover */}
@@ -429,7 +431,7 @@ export default function GlobalSentiment({ lang }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [collapsed, setCollapsed] = useState(false)
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
   const isMobile = useMobile()
 
   useEffect(() => {
@@ -478,11 +480,11 @@ export default function GlobalSentiment({ lang }) {
             background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           }}>
-            {zh ? '全球市场情绪' : 'Global Market Sentiment'}
+            {t.gsTitle}
           </span>
           {updTime && !loading && (
             <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
-              {zh ? `更新于 ${updTime}` : `Updated ${updTime}`}
+              {t.gsUpdated(updTime)}
             </span>
           )}
         </div>
@@ -509,12 +511,12 @@ export default function GlobalSentiment({ lang }) {
                 <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8, overflowY: isMobile ? 'visible' : 'auto', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
                   {!isMobile && (
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', letterSpacing: '0.3px' }}>
-                      {zh ? '情绪指数 (0-100)' : 'Sentiment Index (0-100)'}
+                      {t.gsSentIndex}
                     </div>
                   )}
                   <div style={{ flex: isMobile ? '1 1 45%' : 'none' }}>
                     <GaugeCard
-                      title={zh ? '美股情绪' : 'US Sentiment'}
+                      title={t.gsUSSent}
                       score={usScore}
                       labelZh={data?.us_sentiment?.label_zh}
                       labelEn={data?.us_sentiment?.label_en}
@@ -524,7 +526,7 @@ export default function GlobalSentiment({ lang }) {
                   </div>
                   <div style={{ flex: isMobile ? '1 1 45%' : 'none' }}>
                     <GaugeCard
-                      title={zh ? 'A股情绪' : 'A-Share'}
+                      title={t.gsCNSent}
                       score={cnScore}
                       labelZh={data?.cn_sentiment?.label_zh}
                       labelEn={data?.cn_sentiment?.label_en}

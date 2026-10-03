@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { T } from '../i18n/translations'
 
 const ACCENT = '#0ea5e9'
 const ACCENT2 = '#8b5cf6'
@@ -23,7 +24,7 @@ export default function DailyReport({ lang }) {
   const [report, setReport]   = useState(null)
   const [loading, setLoading] = useState(true)
   const [open, setOpen]       = useState(false)
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
 
   useEffect(() => {
     fetch('/api/market/daily-report')
@@ -79,7 +80,7 @@ export default function DailyReport({ lang }) {
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           flexShrink: 0, whiteSpace: 'nowrap',
         }}>
-          {zh ? '今日日报' : 'Daily Brief'}
+          {t.drTitle}
         </span>
         <span style={{
           fontSize: 12, color: 'var(--text-muted)', flex: 1,
@@ -103,7 +104,7 @@ export default function DailyReport({ lang }) {
           {Object.keys(cn).length > 0 && (
             <div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
-                {zh ? 'A股指数' : 'A-Share Indices'}
+                {t.drCNIndices}
               </div>
               {Object.values(cn).map(idx => (
                 <div key={idx.name} style={{
@@ -124,7 +125,7 @@ export default function DailyReport({ lang }) {
           {Object.keys(us).length > 0 && (
             <div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
-                {zh ? '美股指数' : 'US Indices'}
+                {t.drUSIndices}
               </div>
               {Object.values(us).map(idx => (
                 <div key={idx.name_en} style={{
@@ -145,7 +146,7 @@ export default function DailyReport({ lang }) {
           {(sent.us_score != null || sent.cn_score != null) && (
             <div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                {zh ? '市场情绪' : 'Market Mood'}
+                {t.drMood}
               </div>
               {sent.us_score != null && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
@@ -156,7 +157,7 @@ export default function DailyReport({ lang }) {
                     <div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>
                       {zh ? sent.us_label_zh : sent.us_label_en}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{zh ? '美股' : 'US Market'}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{t.drUSMarket}</div>
                   </div>
                 </div>
               )}
@@ -169,7 +170,7 @@ export default function DailyReport({ lang }) {
                     <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                       {zh ? sent.cn_label_zh : sent.cn_label_en}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{zh ? 'A股' : 'CN Market'}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{t.drCNMarket}</div>
                   </div>
                 </div>
               )}

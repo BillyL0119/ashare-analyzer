@@ -432,6 +432,41 @@ export const T = {
     gnLoadMore: (n) => `加载更多 (${n} 条)`,
     gnCatAll: '全部', gnCatMarket: '市场', gnCatEconomy: '宏观', gnCatCompany: '公司', gnCatCrypto: '加密',
     gnLangAll: '全部', gnLangCN: '中文', gnLangEN: 'English',
+    // SectorRotation
+    srVolHigh: '📈量大', srVolUp: '量增', srVolLow: '📉量缩', srVolFlat: '量平',
+    srVolRatio: '量比', srLoadFail: '加载失败',
+    srMarket: '市场：', srUpdated: '更新：',
+    srLoadingMsg: '正在加载板块数据（首次约30秒）...',
+    srHeatmap: '🗺 热力图', srRanking: '📊 排行榜',
+    sr5Day: '5日', sr20Day: '20日', sr5DayLong: '近5日', sr20DayLong: '近20日',
+    srSector: '行业', srRotSummary: '📡 轮动小结',
+    // StatsDisplay
+    stVisits: '访问', stTitle: 'BestFriendStock 访问统计', stLive: '实时数据',
+    stExport: '导出模式', stExitExport: '退出导出',
+    stLoading: '加载统计数据...', stLoadFail: '加载失败',
+    stTotalVisits: '总访问次数', stThisWeek: (n) => `本周 ${n} 次`,
+    stUniqueUsers: '独立用户数', stUniqueToday: (n) => `今日独立 ${n}`,
+    stStocksAnalyzed: '股票分析次数', stTopStock: (s) => `最热：${s}`,
+    stStudySessions: '学习次数', stStudyCenter: '经济学学习中心',
+    stChartTitle: '过去30天访问量', stNoData: '暂无数据',
+    stTop5: '最热门股票 TOP 5', stFeatureUsage: '功能使用分布',
+    stFooter: '数据每次访问实时更新 · 仅用于项目展示',
+    stTagline: (n) => `Best Friend Stock 已帮助来自 ${n} 个国家的学生学习经济学和分析股票。`,
+    // GlobalSentiment
+    gsHover: '悬停查看详情', gsTitle: '全球市场情绪',
+    gsUpdated: (t) => `更新于 ${t}`, gsSentIndex: '情绪指数 (0-100)',
+    gsUSSent: '美股情绪', gsCNSent: 'A股情绪',
+    // AITeacherFloat
+    atTitle: 'AI 老师', atFree: '免费', atClear: '清空对话',
+    atPlaceholder: '输入问题...', atError: (e) => `错误：${e}`, atNetError: (e) => `网络错误：${e}`,
+    // DailyReport
+    drTitle: '今日日报', drCNIndices: 'A股指数', drUSIndices: '美股指数',
+    drMood: '市场情绪', drUSMarket: '美股', drCNMarket: 'A股',
+    // MarketOverview
+    moSlogan: '股市里，有我陪你', moStart: '🔍 开始分析',
+    moStudy: '📚 学习中心', moContact: '网站有问题？请联系：billyl090119@gmail.com',
+    // SearchBar
+    sbHot: '热门股票',
   },
   en: {
     appTitle: 'Best Friend Stock',
@@ -866,6 +901,41 @@ export const T = {
     gnLoadMore: (n) => `Load more (${n})`,
     gnCatAll: 'All', gnCatMarket: 'Market', gnCatEconomy: 'Economy', gnCatCompany: 'Company', gnCatCrypto: 'Crypto',
     gnLangAll: 'All', gnLangCN: '中文', gnLangEN: 'English',
+    // SectorRotation
+    srVolHigh: '📈 High Vol', srVolUp: 'Vol↑', srVolLow: '📉 Low Vol', srVolFlat: 'Vol~',
+    srVolRatio: 'Vol', srLoadFail: 'Failed to load',
+    srMarket: 'Market:', srUpdated: 'Updated:',
+    srLoadingMsg: 'Loading sector data (first load ~30s)...',
+    srHeatmap: '🗺 Heatmap', srRanking: '📊 Ranking',
+    sr5Day: '5-Day', sr20Day: '20-Day', sr5DayLong: '5-Day', sr20DayLong: '20-Day',
+    srSector: 'Sector', srRotSummary: '📡 Rotation Summary',
+    // StatsDisplay
+    stVisits: 'Visits', stTitle: 'BestFriendStock Analytics', stLive: 'Live data',
+    stExport: 'Export', stExitExport: 'Exit Export',
+    stLoading: 'Loading stats...', stLoadFail: 'Failed to load',
+    stTotalVisits: 'Total Visitors', stThisWeek: (n) => `${n} this week`,
+    stUniqueUsers: 'Unique Users', stUniqueToday: (n) => `${n} unique today`,
+    stStocksAnalyzed: 'Stocks Analyzed', stTopStock: (s) => `Top: ${s}`,
+    stStudySessions: 'Study Sessions', stStudyCenter: 'Economics Study Center',
+    stChartTitle: 'Visitor Trend — Last 30 Days', stNoData: 'No data yet',
+    stTop5: 'Top 5 Searched Stocks', stFeatureUsage: 'Feature Usage',
+    stFooter: 'Updated in real-time · For project showcase only',
+    stTagline: (n) => `Best Friend Stock has helped students from ${n} countries learn economics and analyze stocks.`,
+    // GlobalSentiment
+    gsHover: 'Hover for details', gsTitle: 'Global Market Sentiment',
+    gsUpdated: (t) => `Updated ${t}`, gsSentIndex: 'Sentiment Index (0-100)',
+    gsUSSent: 'US Sentiment', gsCNSent: 'A-Share',
+    // AITeacherFloat
+    atTitle: 'AI Tutor', atFree: 'Free', atClear: 'Clear chat',
+    atPlaceholder: 'Ask anything...', atError: (e) => `Error: ${e}`, atNetError: (e) => `Network error: ${e}`,
+    // DailyReport
+    drTitle: 'Daily Brief', drCNIndices: 'A-Share Indices', drUSIndices: 'US Indices',
+    drMood: 'Market Mood', drUSMarket: 'US Market', drCNMarket: 'CN Market',
+    // MarketOverview
+    moSlogan: 'Your Best Friend in the Market', moStart: '🔍 Start Analyzing',
+    moStudy: '📚 Study Center', moContact: 'Issues? Contact: billyl090119@gmail.com',
+    // SearchBar
+    sbHot: 'Hot Stocks',
   },
   ja: {
     appTitle: 'Best Friend Stock',
@@ -1300,6 +1370,41 @@ export const T = {
     gnLoadMore: (n) => `もっと見る (${n}件)`,
     gnCatAll: '全て', gnCatMarket: '市場', gnCatEconomy: 'マクロ', gnCatCompany: '企業', gnCatCrypto: '暗号',
     gnLangAll: '全て', gnLangCN: '中文', gnLangEN: 'English',
+    // SectorRotation
+    srVolHigh: '📈 大量', srVolUp: '量増', srVolLow: '📉 少量', srVolFlat: '量平',
+    srVolRatio: '出来高比', srLoadFail: '読込失敗',
+    srMarket: '市場：', srUpdated: '更新：',
+    srLoadingMsg: 'セクターデータ読込中（初回約30秒）...',
+    srHeatmap: '🗺 ヒートマップ', srRanking: '📊 ランキング',
+    sr5Day: '5日', sr20Day: '20日', sr5DayLong: '過去5日', sr20DayLong: '過去20日',
+    srSector: 'セクター', srRotSummary: '📡 ローテーション概要',
+    // StatsDisplay
+    stVisits: '訪問', stTitle: 'BestFriendStock アクセス統計', stLive: 'リアルタイム',
+    stExport: 'エクスポート', stExitExport: '終了',
+    stLoading: '統計データ読込中...', stLoadFail: '読込失敗',
+    stTotalVisits: '総訪問数', stThisWeek: (n) => `今週 ${n} 回`,
+    stUniqueUsers: 'ユニーク訪問者', stUniqueToday: (n) => `今日 ${n} 人`,
+    stStocksAnalyzed: '株式分析回数', stTopStock: (s) => `人気：${s}`,
+    stStudySessions: '学習回数', stStudyCenter: '経済学習センター',
+    stChartTitle: '過去30日間のアクセス数', stNoData: 'データなし',
+    stTop5: '人気株 TOP 5', stFeatureUsage: '機能使用分布',
+    stFooter: 'リアルタイム更新 · プロジェクト展示用',
+    stTagline: (n) => `Best Friend Stock は ${n} カ国の学生が経済学と株式分析を学ぶのを支援しています。`,
+    // GlobalSentiment
+    gsHover: 'ホバーで詳細', gsTitle: 'グローバル市場センチメント',
+    gsUpdated: (t) => `更新 ${t}`, gsSentIndex: 'センチメント指数 (0-100)',
+    gsUSSent: '米国株センチメント', gsCNSent: 'A株センチメント',
+    // AITeacherFloat
+    atTitle: 'AI 先生', atFree: '無料', atClear: '会話をクリア',
+    atPlaceholder: '質問を入力...', atError: (e) => `エラー：${e}`, atNetError: (e) => `ネットエラー：${e}`,
+    // DailyReport
+    drTitle: '本日のレポート', drCNIndices: 'A株指数', drUSIndices: '米国株指数',
+    drMood: '市場ムード', drUSMarket: '米国市場', drCNMarket: '中国市場',
+    // MarketOverview
+    moSlogan: '株式市場のベストフレンド', moStart: '🔍 分析開始',
+    moStudy: '📚 学習センター', moContact: 'お問い合わせ: billyl090119@gmail.com',
+    // SearchBar
+    sbHot: '人気銘柄',
   },
   ko: {
     appTitle: 'Best Friend Stock',
@@ -1734,6 +1839,41 @@ export const T = {
     gnLoadMore: (n) => `더 보기 (${n}건)`,
     gnCatAll: '전체', gnCatMarket: '시장', gnCatEconomy: '경기', gnCatCompany: '기업', gnCatCrypto: '암호화폐',
     gnLangAll: '전체', gnLangCN: '중문', gnLangEN: 'English',
+    // SectorRotation
+    srVolHigh: '📈 대량', srVolUp: '거래량↑', srVolLow: '📉 소량', srVolFlat: '거래량~',
+    srVolRatio: '거래량비', srLoadFail: '로드 실패',
+    srMarket: '시장：', srUpdated: '업데이트：',
+    srLoadingMsg: '섹터 데이터 로드 중（첫 로드 약 30초）...',
+    srHeatmap: '🗺 히트맵', srRanking: '📊 순위',
+    sr5Day: '5일', sr20Day: '20일', sr5DayLong: '최근 5일', sr20DayLong: '최근 20일',
+    srSector: '섹터', srRotSummary: '📡 로테이션 요약',
+    // StatsDisplay
+    stVisits: '방문', stTitle: 'BestFriendStock 방문 통계', stLive: '실시간',
+    stExport: '내보내기', stExitExport: '종료',
+    stLoading: '통계 로드 중...', stLoadFail: '로드 실패',
+    stTotalVisits: '총 방문수', stThisWeek: (n) => `이번 주 ${n}회`,
+    stUniqueUsers: '순 방문자', stUniqueToday: (n) => `오늘 ${n}명`,
+    stStocksAnalyzed: '주식 분석 횟수', stTopStock: (s) => `인기：${s}`,
+    stStudySessions: '학습 횟수', stStudyCenter: '경제학 학습 센터',
+    stChartTitle: '최근 30일 방문 추이', stNoData: '데이터 없음',
+    stTop5: '인기 주식 TOP 5', stFeatureUsage: '기능 사용 분포',
+    stFooter: '실시간 업데이트 · 프로젝트 전시용',
+    stTagline: (n) => `Best Friend Stock은 ${n}개국 학생들이 경제학과 주식 분석을 배우는 데 도움을 주었습니다.`,
+    // GlobalSentiment
+    gsHover: '호버로 세부 정보 확인', gsTitle: '글로벌 시장 심리',
+    gsUpdated: (t) => `업데이트 ${t}`, gsSentIndex: '심리 지수 (0-100)',
+    gsUSSent: '미국 주식 심리', gsCNSent: 'A주식 심리',
+    // AITeacherFloat
+    atTitle: 'AI 선생님', atFree: '무료', atClear: '대화 지우기',
+    atPlaceholder: '질문 입력...', atError: (e) => `오류：${e}`, atNetError: (e) => `네트워크 오류：${e}`,
+    // DailyReport
+    drTitle: '오늘의 리포트', drCNIndices: 'A주식 지수', drUSIndices: '미국 주식 지수',
+    drMood: '시장 분위기', drUSMarket: '미국 시장', drCNMarket: '중국 시장',
+    // MarketOverview
+    moSlogan: '주식 시장의 베스트 프렌드', moStart: '🔍 분석 시작',
+    moStudy: '📚 학습 센터', moContact: '문의: billyl090119@gmail.com',
+    // SearchBar
+    sbHot: '인기 종목',
   },
   fr: {
     appTitle: 'Best Friend Stock',
@@ -2168,5 +2308,40 @@ export const T = {
     gnLoadMore: (n) => `Charger plus (${n})`,
     gnCatAll: 'Tout', gnCatMarket: 'Marché', gnCatEconomy: 'Économie', gnCatCompany: 'Entreprise', gnCatCrypto: 'Crypto',
     gnLangAll: 'Tout', gnLangCN: '中文', gnLangEN: 'English',
+    // SectorRotation
+    srVolHigh: '📈 Vol élevé', srVolUp: 'Vol↑', srVolLow: '📉 Vol faible', srVolFlat: 'Vol~',
+    srVolRatio: 'Vol', srLoadFail: 'Échec chargement',
+    srMarket: 'Marché :', srUpdated: 'Mis à jour :',
+    srLoadingMsg: 'Chargement secteurs (premier chargement ~30s)...',
+    srHeatmap: '🗺 Heatmap', srRanking: '📊 Classement',
+    sr5Day: '5j', sr20Day: '20j', sr5DayLong: '5 derniers j.', sr20DayLong: '20 derniers j.',
+    srSector: 'Secteur', srRotSummary: '📡 Résumé rotation',
+    // StatsDisplay
+    stVisits: 'Visites', stTitle: 'Statistiques BestFriendStock', stLive: 'Données live',
+    stExport: 'Exporter', stExitExport: 'Quitter',
+    stLoading: 'Chargement stats...', stLoadFail: 'Échec chargement',
+    stTotalVisits: 'Total visites', stThisWeek: (n) => `${n} cette semaine`,
+    stUniqueUsers: 'Visiteurs uniques', stUniqueToday: (n) => `${n} uniques auj.`,
+    stStocksAnalyzed: 'Actions analysées', stTopStock: (s) => `Top : ${s}`,
+    stStudySessions: "Sessions d'étude", stStudyCenter: "Centre d'étude économique",
+    stChartTitle: 'Tendance visites — 30 derniers j.', stNoData: 'Aucune donnée',
+    stTop5: 'Top 5 actions recherchées', stFeatureUsage: 'Utilisation des fonctions',
+    stFooter: 'Mis à jour en temps réel · Pour présentation projet',
+    stTagline: (n) => `Best Friend Stock a aidé des étudiants de ${n} pays à apprendre l'économie et analyser les actions.`,
+    // GlobalSentiment
+    gsHover: 'Survolez pour détails', gsTitle: 'Sentiment marché mondial',
+    gsUpdated: (t) => `Mis à jour ${t}`, gsSentIndex: 'Indice de sentiment (0-100)',
+    gsUSSent: 'Sentiment US', gsCNSent: 'A-Share',
+    // AITeacherFloat
+    atTitle: 'Tuteur IA', atFree: 'Gratuit', atClear: 'Vider la conv.',
+    atPlaceholder: 'Posez une question...', atError: (e) => `Erreur : ${e}`, atNetError: (e) => `Erreur réseau : ${e}`,
+    // DailyReport
+    drTitle: 'Bilan du jour', drCNIndices: 'Indices A-Share', drUSIndices: 'Indices US',
+    drMood: 'Humeur du marché', drUSMarket: 'Marché US', drCNMarket: 'Marché CN',
+    // MarketOverview
+    moSlogan: 'Votre meilleur ami en bourse', moStart: "🔍 Commencer l'analyse",
+    moStudy: "📚 Centre d'étude", moContact: 'Contact : billyl090119@gmail.com',
+    // SearchBar
+    sbHot: 'Actions populaires',
   },
 }

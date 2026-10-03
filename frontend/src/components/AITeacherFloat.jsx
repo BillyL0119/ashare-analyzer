@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { T } from '../i18n/translations'
 
 const ACCENT = '#0ea5e9'
 const ACCENT2 = '#8b5cf6'
@@ -69,8 +70,9 @@ export default function AITeacherFloat({ lang, open, onClose }) {
   const [busy,      setBusy]      = useState(false)
   const bottomRef = useRef(null)
   const inputRef  = useRef(null)
+  const t = T[lang] || T.en
   const zh = lang === 'zh'
-  const prompts = zh ? QUICK_PROMPTS.zh : QUICK_PROMPTS.en
+  const prompts = QUICK_PROMPTS[lang] || QUICK_PROMPTS.en
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -143,7 +145,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                 const u = [...prev]
                 u[u.length - 1] = {
                   role: 'assistant',
-                  content: d.error ? (zh ? `错误：${d.error}` : `Error: ${d.error}`) : full,
+                  content: d.error ? t.atError(d.error) : full,
                   streaming: false,
                 }
                 return u
@@ -157,7 +159,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
         const u = [...prev]
         u[u.length - 1] = {
           role: 'assistant',
-          content: zh ? `网络错误：${e.message}` : `Network error: ${e.message}`,
+          content: t.atNetError(e.message),
           streaming: false,
         }
         return u
@@ -203,15 +205,15 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   background: `linear-gradient(90deg,${ACCENT},${ACCENT2})`,
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                 }}>
-                  {zh ? 'AI 老师' : 'AI Tutor'}
+                  {t.atTitle}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Gemini · {zh ? '免费' : 'Free'}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Gemini · {t.atFree}</div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               <button
                 onClick={() => setMessages([])}
-                title={zh ? '清空对话' : 'Clear chat'}
+                title={t.atClear}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontSize: 14, color: 'var(--text-muted)', padding: '2px 4px', borderRadius: 4,
@@ -270,7 +272,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
-              placeholder={zh ? '输入问题...' : 'Ask anything...'}
+              placeholder={t.atPlaceholder}
               rows={2}
               disabled={busy}
               style={{

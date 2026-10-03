@@ -37,8 +37,7 @@ export default function SearchBar() {
 
   const { addSymbol, switchMarketAndAddSymbol, selectedSymbols, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
-  const t = T[lang]
-  const zh = lang === 'zh'
+  const t = T[lang] || T.en
 
   const fetchHot = useCallback(async () => {
     if (hotFetchedRef.current) return
@@ -183,18 +182,18 @@ export default function SearchBar() {
       {showHot && (
         <div style={dropdownStyle}>
           <div style={{ padding: '8px 12px 6px', fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.4px', borderBottom: '1px solid var(--border-primary)' }}>
-            {zh ? '热门股票' : 'Hot Stocks'}
+            {t.sbHot}
           </div>
           {hotLoading ? (
             <div style={{ padding: '12px 16px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
-              {zh ? '加载中…' : 'Loading…'}
+              {t.loading}
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
               {/* CN column */}
               <div style={{ borderRight: '1px solid var(--border-primary)' }}>
                 <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
-                  {zh ? 'A股' : 'A-Share'}
+                  {t.marketCN}
                 </div>
                 {hotCN.map((s, i) => {
                   const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
@@ -216,7 +215,7 @@ export default function SearchBar() {
               {/* US column */}
               <div>
                 <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
-                  {zh ? '美股' : 'US'}
+                  {t.marketUS}
                 </div>
                 {hotUS.map((s, i) => {
                   const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
