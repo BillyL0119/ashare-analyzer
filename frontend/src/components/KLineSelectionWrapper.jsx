@@ -22,6 +22,7 @@ import { useRef, useState, useCallback } from 'react'
 import KLineChart from './KLineChart'
 import KLineSegmentPanel from './KLineSegmentPanel'
 import useThemeStore from '../store/themeStore'
+import { T } from '../i18n/translations'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -77,6 +78,7 @@ function pixelToIndex(chart, x, candleCount) {
 export default function KLineSelectionWrapper({ candles, ma, groupId, market, code, name, lang, isMobile }) {
   useThemeStore((s) => s.theme)
   const zh = lang !== 'en'
+  const t  = T[lang] || T.en
 
   const klineRef     = useRef(null)   // ReactECharts instance
   const containerRef = useRef(null)   // div wrapping the chart
@@ -266,13 +268,9 @@ export default function KLineSelectionWrapper({ candles, ma, groupId, market, co
               ? 'rgba(239,83,80,0.18)'
               : 'rgba(138,180,248,0.12)'
           }}
-          title={selectMode
-            ? (zh ? '退出框选模式' : 'Exit selection mode')
-            : (zh ? '拖拽框选K线区间进行AI解读' : 'Drag to select a K-line range for AI analysis')}
+          title={selectMode ? t.kswExitTitle : t.kswDragHint}
         >
-          {selectMode
-            ? (zh ? '× 取消框选' : '× Cancel')
-            : (zh ? '框选分析' : 'Select range')}
+          {selectMode ? t.kswCancel : t.kswSelect}
         </button>
       </div>
 

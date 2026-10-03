@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { T } from '../i18n/translations'
 
 const MUTED  = 'var(--text-muted)'
 const GREEN  = '#34d399'
@@ -105,7 +106,8 @@ const PATTERNS = [
 
 const SIG_COLOR = { bull: GREEN, bear: RED, neutral: MUTED, reversal: BLUE }
 
-export default function KLineTip({ zh, onClose }) {
+export default function KLineTip({ zh, lang, onClose }) {
+  const t = T[lang] || T.en
   // Close on Escape
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose() }
@@ -142,10 +144,10 @@ export default function KLineTip({ zh, onClose }) {
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
-              {zh ? '📐 K线图速查' : '📐 Candlestick Quick Ref'}
+              {t.ktTitle}
             </div>
             <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>
-              {zh ? '悬停或点击学习中心查看完整教程' : 'Visit Study Center for the full interactive lesson'}
+              {t.ktHint}
             </div>
           </div>
           <button onClick={onClose} style={{
@@ -160,14 +162,14 @@ export default function KLineTip({ zh, onClose }) {
           borderRadius: 10, padding: '12px 14px', marginBottom: 14,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            {zh ? 'K线结构（阳线）' : 'Candlestick Anatomy (Bullish)'}
+            {t.ktAnatomy}
           </div>
           <AnatomyMini />
         </div>
 
         {/* Patterns */}
         <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          {zh ? '常见形态速查' : 'Common Patterns'}
+          {t.ktPatterns}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {PATTERNS.map(pat => {
@@ -203,9 +205,7 @@ export default function KLineTip({ zh, onClose }) {
         </div>
 
         <div style={{ marginTop: 14, fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-          {zh
-            ? '* K线形态须结合趋势和成交量综合判断，不可单独作为买卖依据。'
-            : '* Always confirm patterns with trend direction and volume. Never use alone as a trading signal.'}
+          {t.ktNote}
         </div>
       </div>
     </>

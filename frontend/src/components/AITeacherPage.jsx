@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { T } from '../i18n/translations'
 
 const ACCENT  = '#0ea5e9'
 const ACCENT2 = '#8b5cf6'
@@ -128,15 +129,11 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
   const bottomRef = useRef(null)
   const inputRef  = useRef(null)
   const zh = lang === 'zh'
+  const t  = T[lang] || T.en
 
   // Welcome message
   useEffect(() => {
-    setMessages([{
-      role: 'assistant',
-      content: zh
-        ? '你好！我是 BestFriendStock 的 AI 老师 🎓\n\n我可以帮你：\n• 解读K线、MACD、RSI等技术指标\n• 分析PE、财务报表等基本面\n• 讲解 A-Level / AP / IB 经济学考点\n• 用真实市场案例说明经济学概念\n\n左侧选择话题，或直接输入你的问题！'
-        : 'Hello! I\'m the BestFriendStock AI Tutor 🎓\n\nI can help you:\n• Explain technical indicators (K-line, MACD, RSI)\n• Analyse fundamentals (P/E, financial statements)\n• Cover A-Level / AP / IB Economics exam points\n• Connect real market cases to economic theory\n\nPick a topic from the left, or type your question!',
-    }])
+    setMessages([{ role: 'assistant', content: t.atWelcome }])
   }, [lang]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -216,7 +213,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
         const u = [...prev]
         u[u.length - 1] = {
           role: 'assistant',
-          content: `⚠️ ${zh ? '错误：' : 'Error: '}${e.message}`,
+          content: `⚠️ ${t.atError(e.message)}`,
           streaming: false,
         }
         return u
@@ -259,17 +256,15 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
             background: `linear-gradient(90deg,${ACCENT},${ACCENT2})`,
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           }}>
-            {zh ? 'AI 老师' : 'AI Tutor'}
+            {t.atTitle}
           </div>
           <div style={{ fontSize: 12, color: MUTED }}>
-            {zh
-              ? '专为学生设计的股市 + 经济学 AI 老师 · 完全免费 · Powered by Google Gemini'
-              : 'AI tutor for stock analysis & economics · Completely free · Powered by Google Gemini'}
+            {t.atSubtitle}
           </div>
         </div>
         <button
           onClick={() => { setMessages([]); setTimeout(() => {
-            setMessages([{ role: 'assistant', content: zh ? '对话已清空，有什么问题尽管问！' : 'Chat cleared! Ask me anything.' }])
+            setMessages([{ role: 'assistant', content: t.atClearMsg }])
           }, 50) }}
           style={{
             marginLeft: 'auto', background: 'var(--bg-tertiary)',
@@ -277,7 +272,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
             padding: '5px 12px', color: MUTED, fontSize: 12, cursor: 'pointer',
           }}
         >
-          {zh ? '清空对话' : 'Clear Chat'}
+          {t.atClear}
         </button>
       </div>
 
@@ -293,7 +288,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           overflowY: 'auto',
         }}>
           <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 700, color: 'rgba(14,165,233,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            {zh ? '话题分类' : 'Topics'}
+            {t.atTopics}
           </div>
 
           {CATEGORIES.map((c, i) => (
@@ -388,7 +383,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKey}
-                placeholder={zh ? '输入你的问题（Enter 发送，Shift+Enter 换行）...' : 'Ask your question (Enter to send, Shift+Enter for new line)...'}
+                placeholder={t.atPlaceholderFull}
                 rows={3}
                 disabled={busy}
                 style={{
@@ -422,9 +417,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
               </button>
             </div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
-              {zh
-                ? '仅供学习参考，不构成投资建议 · 10次/分钟限流'
-                : 'For educational purposes only, not investment advice · 10 req/min limit'}
+              {t.atDisclaimer}
             </div>
           </div>
         </div>

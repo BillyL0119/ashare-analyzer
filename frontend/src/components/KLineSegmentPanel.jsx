@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { analyzeKlineSegment } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
+import { T } from '../i18n/translations'
 
 function StatCard({ label, value, color }) {
   useThemeStore((s) => s.theme)
@@ -63,6 +64,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
   const [error,    setError]    = useState(null)
 
   const zh = lang !== 'en'
+  const t  = T[lang] || T.en
 
   const handleAnalyze = async () => {
     setLoading(true)
@@ -78,7 +80,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
       setResult(res.data)
     } catch (err) {
       const detail = err?.response?.data?.detail
-      setError(detail || (zh ? 'AI解读失败，请稍后重试' : 'Analysis failed, please retry'))
+      setError(detail || t.ksAnalyzeFail)
     } finally {
       setLoading(false)
     }
@@ -96,12 +98,12 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <span style={{ fontSize: 12, color: '#8ab4f8', fontWeight: 700 }}>
-          {zh ? '区间分析' : 'Segment Analysis'}
+          {t.ksTitle}
         </span>
         <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
           {startDate} ~ {endDate}
           &nbsp;·&nbsp;
-          {previewStats.bars}{zh ? ' 根K线' : ' bars'}
+          {previewStats.bars}{t.ksBars}
         </span>
         <button
           onClick={onClose}
@@ -110,7 +112,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
             cursor: 'pointer', color: 'var(--text-muted)', fontSize: 18, lineHeight: 1,
             padding: '0 2px',
           }}
-          title={zh ? '关闭' : 'Close'}
+          title={t.ksClose}
         >
           ×
         </button>
@@ -119,15 +121,15 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
       {/* Quick stats row (computed from candles on frontend — instant) */}
       <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 10 }}>
         <StatCard
-          label={zh ? '涨跌幅' : 'Return'}
+          label={t.ksReturn}
           value={`${previewStats.period_return >= 0 ? '+' : ''}${previewStats.period_return.toFixed(2)}%`}
           color={pctColor}
         />
-        <StatCard label={zh ? '区间最高' : 'High'}      value={previewStats.high.toFixed(2)} />
-        <StatCard label={zh ? '区间最低' : 'Low'}       value={previewStats.low.toFixed(2)} />
-        <StatCard label={zh ? '最大振幅' : 'Amplitude'} value={`${previewStats.amplitude.toFixed(1)}%`} />
+        <StatCard label={t.ksHigh}      value={previewStats.high.toFixed(2)} />
+        <StatCard label={t.ksLow}       value={previewStats.low.toFixed(2)} />
+        <StatCard label={t.ksAmplitude} value={`${previewStats.amplitude.toFixed(1)}%`} />
         <StatCard
-          label={zh ? '波动率(年化)' : 'Ann.Vol'}
+          label={t.ksAnnVol}
           value={`${previewStats.volatility.toFixed(1)}%`}
         />
       </div>
@@ -160,7 +162,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
               RSI:&nbsp;<span style={{ color: 'var(--text-primary)' }}>{result.tech?.rsi}</span>
             </div>
             <div style={{ color: 'var(--text-muted)' }}>
-              {zh ? '均线' : 'MA'}:&nbsp;<span style={{ color: 'var(--text-primary)' }}>{result.tech?.ma}</span>
+              {t.ksMA}:&nbsp;<span style={{ color: 'var(--text-primary)' }}>{result.tech?.ma}</span>
             </div>
           </div>
 
@@ -168,9 +170,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           {result.has_news && result.news?.length > 0 && (
             <div>
               <div style={{ fontSize: 11, color: '#26a69a', fontWeight: 600, marginBottom: 4 }}>
-                {zh
-                  ? `同期相关新闻（${result.news.length}条）`
-                  : `News in range (${result.news.length})`}
+                {t.ksNewsInRange(result.news.length)}
               </div>
               {result.news.map((n, i) => (
                 <div key={i} style={{
@@ -194,9 +194,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
               border: `1px solid ${THEME.border}`, borderRadius: 4,
               background: 'rgba(255,255,255,0.03)',
             }}>
-              {zh
-                ? '该时段未查到相关新闻，AI解读仅基于技术面数据'
-                : 'No news found for this period — AI analysis based on technicals only'}
+              {t.ksNoNews}
             </div>
           )}
 
@@ -211,7 +209,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
 
           {result.ai_source && result.ai_source !== 'none' && result.ai_source !== 'error' && (
             <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'right' }}>
-              {zh ? `由 ${result.ai_source} 生成` : `Generated by ${result.ai_source}`}
+              {t.ksGenBy(result.ai_source)}
             </div>
           )}
 
@@ -224,7 +222,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
               borderRadius: 5, cursor: 'pointer', fontSize: 11,
             }}
           >
-            {zh ? '重新解读' : 'Re-analyze'}
+            {t.ksReanalyze}
           </button>
         </div>
       )}
@@ -246,9 +244,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
             opacity: loading ? 0.7 : 1,
           }}
         >
-          {loading
-            ? (zh ? 'AI解读中...' : 'Analyzing...')
-            : (zh ? 'AI 解读这段走势' : 'AI Trend Analysis')}
+          {loading ? t.ksAnalyzing : t.ksAnalyze}
         </button>
       )}
     </div>

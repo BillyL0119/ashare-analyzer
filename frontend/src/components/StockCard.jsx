@@ -340,7 +340,7 @@ export default function StockCard({ stock }) {
       </div>
 
       {showKLineTip && (
-        <KLineTip zh={lang === 'zh'} onClose={() => setShowKLineTip(false)} />
+        <KLineTip zh={lang === 'zh'} lang={lang} onClose={() => setShowKLineTip(false)} />
       )}
     </div>
   )
