@@ -25,6 +25,7 @@ export default function DailyReport({ lang }) {
   const [loading, setLoading] = useState(true)
   const [open, setOpen]       = useState(false)
   const t = T[lang] || T.en
+  const zh = lang === 'zh'
 
   useEffect(() => {
     fetch('/api/market/daily-report')

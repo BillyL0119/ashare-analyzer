@@ -1,11 +1,11 @@
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import useThemeStore from '../store/themeStore'
 import { buildRSIOption } from '../utils/chartHelpers'
 
 export default function RSIChart({ rsi, groupId }) {
+  useThemeStore((s) => s.theme)
   if (!rsi || rsi.length === 0) return null
 
-  useThemeStore((s) => s.theme)
   const option = buildRSIOption(rsi)
 
   return (

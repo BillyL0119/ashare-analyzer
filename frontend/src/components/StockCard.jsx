@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 // Fixed bar heights to avoid Math.random() re-renders
 const SK_KLINE = [45,62,38,71,55,48,66,42,78,52,60,35,70,58,44,68,51,74,40,63]
 const SK_VOL   = [30,55,25,80,45,35,60,28,70,40,52,22,65,48,32,62,38,72,28,55]
-import * as echarts from 'echarts'
+import * as echarts from 'echarts/core'
 import { useStockData } from '../hooks/useStockData'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'

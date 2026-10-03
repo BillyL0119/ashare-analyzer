@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../lib/echarts'
 import useThemeStore from '../store/themeStore'
 import { THEME } from '../utils/chartHelpers'
 import { T } from '../i18n/translations'
