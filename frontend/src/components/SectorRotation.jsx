@@ -329,7 +329,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                 { key: '20d',  label: t.sr20Day },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setPeriod(key)} style={{
-                  padding: '4px 12px', borderRadius: 20, border: 'none',
+                  padding: '4px 12px', borderRadius: 20, 
                   cursor: 'pointer', fontSize: 11, fontWeight: period === key ? 700 : 400,
                   background: period === key ? 'rgba(139,92,246,0.15)' : 'var(--bg-tertiary)',
                   color: period === key ? ACCENT2 : 'var(--text-muted)',

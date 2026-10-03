@@ -193,7 +193,7 @@ def _build_us() -> dict:
 # ── endpoint ──────────────────────────────────────────────────────────────────
 
 @router.get("/rotation")
-def sector_rotation(market: str = Query("cn", regex="^(cn|us)$")):
+def sector_rotation(market: str = Query("cn", pattern="^(cn|us)$")):
     global _cn_ts, _cn_data, _us_ts, _us_data
 
     now = time.time()
