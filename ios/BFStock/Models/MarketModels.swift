@@ -43,6 +43,15 @@ struct HotStock: Codable, Identifiable {
     var resolvedMarket: Market { market == "us" ? .us : .cn }
 }
 
+struct USSearchItem: Codable {
+    let symbol: String
+    let name: String
+
+    var asResult: StockSearchResult {
+        StockSearchResult(code: symbol, name: name, changePct: nil, market: "us")
+    }
+}
+
 // MARK: - Sector
 
 struct SectorItem: Codable, Identifiable {
@@ -60,7 +69,7 @@ struct SectorsResponse: Codable {
 
 // MARK: - Search Result
 
-struct StockSearchResult: Codable, Identifiable {
+struct StockSearchResult: Codable, Identifiable, Hashable {
     var id: String { "\(resolvedMarket.rawValue)_\(code)" }
     let code: String
     let name: String

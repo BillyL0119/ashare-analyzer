@@ -80,14 +80,31 @@ final class MarketViewModel: ObservableObject {
             isSearching = true
             searchError = nil
             do {
-                // /api/stocks/search?q=... — returns plain array
-                let results: [StockSearchResult] = try await APIClient.shared.get("/stocks/search", params: ["q": query])
-                if !Task.isCancelled { searchResults = results }
+                let hasCJK = query.unicodeScalars.contains { $0.value >= 0x2E80 }
+                let lettersOnly = query.allSatisfy { $0.isASCII && $0.isLetter }
+                async let cnTask: Result<[StockSearchResult], Error> = Self.fetch {
+                    try await APIClient.shared.get("/stocks/search", params: ["q": query])
+                }
+                async let usTask: Result<[USSearchItem], Error> = hasCJK ? .success([]) : Self.fetch {
+                    try await APIClient.shared.get("/us/search", params: ["q": query])
+                }
+                let (cnRes, usRes) = await (cnTask, usTask)
+                if Task.isCancelled { return }
+                var cn: [StockSearchResult] = []
+                var us: [StockSearchResult] = []
+                if case .success(let r) = cnRes { cn = r }
+                if case .success(let r) = usRes { us = r.map(\.asResult) }
+                if case .failure(let e) = cnRes, case .failure = usRes { throw e }
+                searchResults = lettersOnly ? us + cn : cn + us
             } catch {
                 if !Task.isCancelled { searchError = errorMessage(error) }
             }
             if !Task.isCancelled { isSearching = false }
         }
+    }
+
+    private nonisolated static func fetch<T>(_ op: @Sendable () async throws -> T) async -> Result<T, Error> {
+        do { return .success(try await op()) } catch { return .failure(error) }
     }
 
     private func errorMessage(_ error: Error) -> String {
@@ -99,5 +116,47 @@ final class MarketViewModel: ObservableObject {
             }
         }
         return error.localizedDescription
+    }
+}
+
+struct SearchHistoryItem: Codable, Identifiable, Equatable {
+    let code: String
+    let name: String
+    let market: String
+    var id: String { "\(market)_\(code)" }
+}
+
+@MainActor
+final class SearchHistoryStore: ObservableObject {
+    static let shared = SearchHistoryStore()
+    private let key = "searchHistory.v1"
+    private let limit = 8
+
+    @Published private(set) var items: [SearchHistoryItem] = []
+
+    private init() {
+        if let data = UserDefaults.standard.data(forKey: key),
+           let decoded = try? JSONDecoder().decode([SearchHistoryItem].self, from: data) {
+            items = decoded
+        }
+    }
+
+    func record(code: String, name: String, market: Market) {
+        let item = SearchHistoryItem(code: code, name: name, market: market.rawValue)
+        items.removeAll { $0 == item }
+        items.insert(item, at: 0)
+        if items.count > limit { items = Array(items.prefix(limit)) }
+        persist()
+    }
+
+    func clear() {
+        items = []
+        persist()
+    }
+
+    private func persist() {
+        if let data = try? JSONEncoder().encode(items) {
+            UserDefaults.standard.set(data, forKey: key)
+        }
     }
 }

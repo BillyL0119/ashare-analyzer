@@ -5,6 +5,8 @@ struct MarketTabView: View {
     @State private var selectedHotMarket: Market = .cn
     @State private var searchText = ""
     @State private var showAbout = false
+    @State private var selectedResult: StockSearchResult?
+    @ObservedObject private var history = SearchHistoryStore.shared
 
     var body: some View {
         NavigationStack {
@@ -64,7 +66,23 @@ struct MarketTabView: View {
                 }
             }
             .navigationTitle("tab.market")
-            .searchable(text: $searchText, prompt: Text("search.placeholder"))
+            .searchable(text: $searchText, prompt: Text("search.placeholder")) {
+                if searchText.isEmpty && !history.items.isEmpty {
+                    Section {
+                        ForEach(history.items) { item in
+                            Label(item.name, systemImage: "clock.arrow.circlepath")
+                                .searchCompletion(item.name)
+                        }
+                    } header: {
+                        HStack {
+                            Text("最近搜索")
+                            Spacer()
+                            Button("清除") { history.clear() }
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
             .onChange(of: searchText) { _, new in vm.search(new) }
             .overlay(searchOverlay)
             .task { await vm.loadAll() }
@@ -78,6 +96,9 @@ struct MarketTabView: View {
                 }
             }
             .sheet(isPresented: $showAbout) { AboutSheet() }
+            .navigationDestination(item: $selectedResult) { r in
+                StockDetailView(code: r.code, name: r.name, market: r.resolvedMarket)
+            }
             .safeAreaInset(edge: .bottom) {
                 Text("disclaimer")
                     .font(.caption2)
@@ -107,14 +128,30 @@ struct MarketTabView: View {
                         .frame(maxWidth: .infinity)
                 } else {
                     ForEach(vm.searchResults) { result in
-                        NavigationLink(destination: StockDetailView(code: result.code, name: result.name, market: result.resolvedMarket)) {
-                            StockRow(
-                                code: result.code,
-                                name: result.name,
-                                changePct: result.changePct,
-                                market: result.resolvedMarket
-                            )
+                        Button {
+                            history.record(code: result.code, name: result.name, market: result.resolvedMarket)
+                            selectedResult = result
+                        } label: {
+                            HStack(spacing: 8) {
+                                StockRow(
+                                    code: result.code,
+                                    name: result.name,
+                                    changePct: result.changePct,
+                                    market: result.resolvedMarket
+                                )
+                                Text(result.resolvedMarket == .us ? "美股" : "A股")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(.quaternary, in: Capsule())
+                                    .foregroundStyle(.secondary)
+                                Image(systemName: "chevron.right")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(.tertiary)
+                            }
+                            .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
                     }
                 }
             }
