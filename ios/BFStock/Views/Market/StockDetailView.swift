@@ -56,8 +56,19 @@ struct StockDetailView: View {
                 if let q = vm.quote {
                     quoteGrid(q)
                         .padding(.horizontal)
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 12)
                 }
+
+                // News section
+                Divider().padding(.top, 4)
+                StockNewsSection(
+                    items: vm.newsItems,
+                    overall: vm.newsOverall,
+                    isLoading: vm.isLoadingNews,
+                    error: vm.newsError,
+                    onRetry: { Task { await vm.loadNews() } }
+                )
+                .padding(.bottom, 16)
             }
         }
         .navigationTitle(name)

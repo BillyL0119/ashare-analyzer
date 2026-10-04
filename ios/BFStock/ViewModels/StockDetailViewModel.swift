@@ -18,11 +18,31 @@ final class StockDetailViewModel: ObservableObject {
         self.market = market
     }
 
+    @Published var newsItems: [NewsItem] = []
+    @Published var newsOverall: NewsOverall?
+    @Published var isLoadingNews = false
+    @Published var newsError: String?
+
     func loadAll() async {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.loadQuote() }
             group.addTask { await self.loadCandles() }
+            group.addTask { await self.loadNews() }
         }
+    }
+
+    func loadNews() async {
+        isLoadingNews = true
+        newsError = nil
+        do {
+            let mkt = market == .cn ? "cn" : "us"
+            let resp: StockNewsResponse = try await APIClient.shared.get("/news/\(code)", params: ["market": mkt])
+            newsItems = resp.news
+            newsOverall = resp.overall
+        } catch {
+            newsError = errorMessage(error)
+        }
+        isLoadingNews = false
     }
 
     func loadQuote() async {
