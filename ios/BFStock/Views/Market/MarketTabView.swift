@@ -24,6 +24,14 @@ struct MarketTabView: View {
                     }
                 }
 
+                // Sector Performance
+                SectorListSection(
+                    sectors: vm.sectors,
+                    isLoading: vm.isLoadingSectors,
+                    error: vm.sectorsError,
+                    onRetry: { Task { await vm.loadSectors() } }
+                )
+
                 // Hot Stocks
                 Section {
                     Picker("", selection: $selectedHotMarket) {

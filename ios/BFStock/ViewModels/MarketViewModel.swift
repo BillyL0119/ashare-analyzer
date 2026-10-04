@@ -5,12 +5,15 @@ final class MarketViewModel: ObservableObject {
     @Published var overview: MarketOverview?
     @Published var cnHotStocks: [HotStock] = []
     @Published var usHotStocks: [HotStock] = []
+    @Published var sectors: [SectorItem] = []
     @Published var searchResults: [StockSearchResult] = []
     @Published var isLoadingOverview = false
     @Published var isLoadingHot = false
+    @Published var isLoadingSectors = false
     @Published var isSearching = false
     @Published var overviewError: String?
     @Published var hotError: String?
+    @Published var sectorsError: String?
     @Published var searchError: String?
 
     private var searchTask: Task<Void, Never>?
@@ -19,6 +22,7 @@ final class MarketViewModel: ObservableObject {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.loadOverview() }
             group.addTask { await self.loadHotStocks() }
+            group.addTask { await self.loadSectors() }
         }
     }
 
@@ -49,6 +53,18 @@ final class MarketViewModel: ObservableObject {
             hotError = errorMessage(error)
         }
         isLoadingHot = false
+    }
+
+    func loadSectors() async {
+        isLoadingSectors = true
+        sectorsError = nil
+        do {
+            let resp: SectorsResponse = try await APIClient.shared.get("/market/sectors")
+            sectors = resp.sectors
+        } catch {
+            sectorsError = errorMessage(error)
+        }
+        isLoadingSectors = false
     }
 
     func search(_ query: String) {
