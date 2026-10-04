@@ -1,0 +1,136 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "tab.market" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Market" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "行情" }
+        }
+      }
+    },
+    "tab.watchlist" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Watchlist" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "自选" }
+        }
+      }
+    },
+    "tab.paper_trading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Paper Trade" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "模拟盘" }
+        }
+      }
+    },
+    "tab.ai_teacher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "AI Teacher" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "AI老师" }
+        }
+      }
+    },
+    "disclaimer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "For learning only. Not investment advice." }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "仅供学习，不构成投资建议" }
+        }
+      }
+    },
+    "error.network" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Network error" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "网络错误" }
+        }
+      }
+    },
+    "error.timeout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Request timed out. Please retry." }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "请求超时，请重试" }
+        }
+      }
+    },
+    "error.decoding" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Data parsing failed" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "数据解析失败" }
+        }
+      }
+    },
+    "button.retry" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Retry" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "重试" }
+        }
+      }
+    },
+    "loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Loading..." }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "加载中..." }
+        }
+      }
+    },
+    "search.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Search stocks" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "搜索股票" }
+        }
+      }
+    },
+    "market.cn" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "A-Share" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "A股" }
+        }
+      }
+    },
+    "market.us" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "US Stock" }
+        },
+        "zh-Hans" : {
+          "stringUnit" : { "state" : "translated", "value" : "美股" }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
