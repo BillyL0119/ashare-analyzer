@@ -7,20 +7,22 @@ struct ContentView: View {
                 .tabItem {
                     Label("tab.market", systemImage: "chart.line.uptrend.xyaxis")
                 }
-            WatchlistTabView()
+            LearningTabView()
                 .tabItem {
-                    Label("tab.watchlist", systemImage: "star.fill")
-                }
-            PaperTradingTabView()
-                .tabItem {
-                    Label("tab.paper_trading", systemImage: "dollarsign.circle.fill")
+                    Label("tab.learning", systemImage: "book.fill")
                 }
             AITeacherTabView()
                 .tabItem {
                     Label("tab.ai_teacher", systemImage: "bubble.left.and.bubble.right.fill")
                 }
+            PaperTradingTabView()
+                .tabItem {
+                    Label("tab.paper_trading", systemImage: "dollarsign.circle.fill")
+                }
         }
         .tint(Color.accentColor)
+        // Cap dynamic type so numeric-heavy UIs don't break at xxxLarge
+        .dynamicTypeSize(.xSmall ... .accessibility1)
     }
 }
 

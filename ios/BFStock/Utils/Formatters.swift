@@ -8,11 +8,16 @@ enum Formatters {
         String(format: "%.\(decimals)f", value)
     }
 
-    // MARK: Change percentage
+    // MARK: Change percentage / absolute
 
     static func changePct(_ value: Double) -> String {
         let sign = value >= 0 ? "+" : ""
         return "\(sign)\(String(format: "%.2f", value))%"
+    }
+
+    static func changeAbs(_ value: Double) -> String {
+        let sign = value >= 0 ? "+" : ""
+        return "\(sign)\(String(format: "%.2f", value))"
     }
 
     // MARK: Large numbers (volume / amount in CNY)

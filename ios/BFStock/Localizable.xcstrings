@@ -1,135 +1,252 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
-    "tab.market" : {
+    "--" : {
+
+    },
+    "%@平" : {
+
+    },
+    "%@涨" : {
+
+    },
+    "%@跌" : {
+
+    },
+    "button.retry" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Market" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
         },
         "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "行情" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试"
+          }
         }
       }
     },
-    "tab.watchlist" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Watchlist" }
-        },
-        "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "自选" }
-        }
-      }
+    "Coming in Step 4" : {
+
     },
-    "tab.paper_trading" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Paper Trade" }
-        },
-        "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "模拟盘" }
-        }
-      }
+    "Coming in Step 5" : {
+
     },
-    "tab.ai_teacher" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "AI Teacher" }
-        },
-        "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "AI老师" }
-        }
-      }
+    "Coming in Step 6" : {
+
+    },
+    "Coming in Step 7" : {
+
     },
     "disclaimer" : {
       "localizations" : {
         "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "For learning only. Not investment advice." }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For learning only. Not investment advice."
+          }
         },
         "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "仅供学习，不构成投资建议" }
-        }
-      }
-    },
-    "error.network" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Network error" }
-        },
-        "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "网络错误" }
-        }
-      }
-    },
-    "error.timeout" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Request timed out. Please retry." }
-        },
-        "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "请求超时，请重试" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅供学习，不构成投资建议"
+          }
         }
       }
     },
     "error.decoding" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Data parsing failed" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data parsing failed"
+          }
         },
         "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "数据解析失败" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据解析失败"
+          }
         }
       }
     },
-    "button.retry" : {
+    "error.network" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Retry" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network error"
+          }
         },
         "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "重试" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络错误"
+          }
         }
       }
+    },
+    "error.timeout" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request timed out. Please retry."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求超时，请重试"
+          }
+        }
+      }
+    },
+    "K线图 — 即将在 Step 3 实现" : {
+
     },
     "loading" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Loading..." }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
         },
         "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "加载中..." }
-        }
-      }
-    },
-    "search.placeholder" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Search stocks" }
-        },
-        "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "搜索股票" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加载中..."
+          }
         }
       }
     },
     "market.cn" : {
       "localizations" : {
         "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "A-Share" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A-Share"
+          }
         },
         "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "A股" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A股"
+          }
         }
       }
     },
     "market.us" : {
       "localizations" : {
         "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "US Stock" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "US Stock"
+          }
         },
         "zh-Hans" : {
-          "stringUnit" : { "state" : "translated", "value" : "美股" }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "美股"
+          }
         }
       }
+    },
+    "search.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search stocks"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索股票"
+          }
+        }
+      }
+    },
+    "tab.ai_teacher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Teacher"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI老师"
+          }
+        }
+      }
+    },
+    "tab.learning" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learning"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学习中心"
+          }
+        }
+      }
+    },
+    "tab.market" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Market"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行情"
+          }
+        }
+      }
+    },
+    "tab.paper_trading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paper Trade"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟盘"
+          }
+        }
+      }
+    },
+    "tab.watchlist" : {
+
+    },
+    "暂无结果" : {
+
     }
   },
   "version" : "1.0"

@@ -21,6 +21,7 @@ const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
 const BankViewsPage      = lazy(() => import('./components/BankViewsPage'))
 const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
+const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -221,6 +222,10 @@ export default function App() {
     else if (tab === 'study') trackFeature('study')
     else if (tab === 'universities') trackFeature('universities')
     else trackFeature('analysis')
+  }
+
+  if (location.pathname === '/privacy') {
+    return <Suspense fallback={<PageSkeleton />}><PrivacyPage /></Suspense>
   }
 
   return (
