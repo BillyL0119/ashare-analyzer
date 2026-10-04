@@ -10,61 +10,23 @@ struct MarketTabView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                // Watchlist
-                WatchlistSection()
-
-                // Market Overview
-                Section {
-                    if vm.isLoadingOverview && vm.overview == nil {
-                        ProgressView(String(localized: "loading"))
-                            .frame(maxWidth: .infinity)
-                    } else if let err = vm.overviewError, vm.overview == nil {
-                        ErrorRetryView(message: err) { Task { await vm.loadOverview() } }
-                    } else if let ov = vm.overview {
-                        MarketOverviewCard(overview: ov)
-                    }
+            ScrollView {
+                LazyVStack(spacing: 26) {
+                    overviewSection
+                    WatchlistSection()
+                    SectorListSection(
+                        sectors: vm.sectors,
+                        isLoading: vm.isLoadingSectors,
+                        error: vm.sectorsError,
+                        onRetry: { Task { await vm.loadSectors() } }
+                    )
+                    hotSection
                 }
-
-                // Sector Performance
-                SectorListSection(
-                    sectors: vm.sectors,
-                    isLoading: vm.isLoadingSectors,
-                    error: vm.sectorsError,
-                    onRetry: { Task { await vm.loadSectors() } }
-                )
-
-                // Hot Stocks
-                Section {
-                    Picker("", selection: $selectedHotMarket) {
-                        Text("market.cn").tag(Market.cn)
-                        Text("market.us").tag(Market.us)
-                    }
-                    .pickerStyle(.segmented)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-
-                    if vm.isLoadingHot && hotStocks.isEmpty {
-                        ProgressView(String(localized: "loading"))
-                            .frame(maxWidth: .infinity)
-                    } else if let err = vm.hotError, hotStocks.isEmpty {
-                        ErrorRetryView(message: err) { Task { await vm.loadHotStocks() } }
-                    } else {
-                        ForEach(hotStocks.prefix(20)) { stock in
-                            NavigationLink(destination: StockDetailView(code: stock.code, name: stock.name, market: stock.resolvedMarket)) {
-                                StockRow(
-                                    code: stock.code,
-                                    name: stock.name,
-                                    changePct: stock.changePct,
-                                    market: stock.resolvedMarket
-                                )
-                            }
-                        }
-                    }
-                } header: {
-                    Text(selectedHotMarket == .cn ? "market.cn" : "market.us")
-                }
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+                .padding(.bottom, 24)
             }
+            .background(DS.bg.ignoresSafeArea())
             .navigationTitle("tab.market")
             .searchable(text: $searchText, prompt: Text("search.placeholder")) {
                 if searchText.isEmpty && !history.items.isEmpty {
@@ -110,52 +72,120 @@ struct MarketTabView: View {
         }
     }
 
+    // MARK: Overview
+
+    @ViewBuilder
+    private var overviewSection: some View {
+        if vm.isLoadingOverview && vm.overview == nil {
+            ProgressView(String(localized: "loading"))
+                .frame(maxWidth: .infinity, minHeight: 120)
+                .card()
+        } else if let err = vm.overviewError, vm.overview == nil {
+            ErrorRetryView(message: err) { Task { await vm.loadOverview() } }
+                .card()
+        } else if let ov = vm.overview {
+            MarketOverviewCard(overview: ov)
+        }
+    }
+
+    // MARK: Hot stocks
+
     private var hotStocks: [HotStock] {
         selectedHotMarket == .cn ? vm.cnHotStocks : vm.usHotStocks
     }
 
-    @ViewBuilder
-    private var searchOverlay: some View {
-        if !searchText.isEmpty {
-            List {
-                if vm.isSearching {
+    private var hotSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader("热门股票") { marketSegment }
+            Group {
+                if vm.isLoadingHot && hotStocks.isEmpty {
                     ProgressView(String(localized: "loading"))
-                        .frame(maxWidth: .infinity)
-                } else if let err = vm.searchError {
-                    Text(err).foregroundStyle(.secondary).font(.subheadline)
-                } else if vm.searchResults.isEmpty {
-                    Text("暂无结果").foregroundStyle(.secondary).font(.subheadline)
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, minHeight: 80)
+                } else if let err = vm.hotError, hotStocks.isEmpty {
+                    ErrorRetryView(message: err) { Task { await vm.loadHotStocks() } }
                 } else {
-                    ForEach(vm.searchResults) { result in
-                        Button {
-                            history.record(code: result.code, name: result.name, market: result.resolvedMarket)
-                            selectedResult = result
-                        } label: {
-                            HStack(spacing: 8) {
-                                StockRow(
-                                    code: result.code,
-                                    name: result.name,
-                                    changePct: result.changePct,
-                                    market: result.resolvedMarket
-                                )
-                                Text(result.resolvedMarket == .us ? "美股" : "A股")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(.quaternary, in: Capsule())
-                                    .foregroundStyle(.secondary)
-                                Image(systemName: "chevron.right")
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(.tertiary)
+                    let rows = Array(hotStocks.prefix(20).enumerated())
+                    VStack(spacing: 0) {
+                        ForEach(rows, id: \.element.id) { idx, stock in
+                            NavigationLink(destination: StockDetailView(
+                                code: stock.code, name: stock.name, market: stock.resolvedMarket
+                            )) {
+                                HStack(spacing: 12) {
+                                    Text("\(idx + 1)")
+                                        .font(.system(.footnote, design: .rounded).weight(.bold))
+                                        .monospacedDigit()
+                                        .foregroundStyle(idx < 3 ? DS.accent : Color.secondary.opacity(0.6))
+                                        .frame(width: 20)
+                                    StockRow(
+                                        code: stock.code, name: stock.name,
+                                        changePct: stock.changePct, market: stock.resolvedMarket
+                                    )
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .contentShape(Rectangle())
                             }
-                            .contentShape(Rectangle())
+                            .buttonStyle(.plain)
+                            if idx < rows.count - 1 { RowDivider() }
                         }
-                        .buttonStyle(.plain)
                     }
                 }
             }
-            .background(.background)
+            .card(padding: 0)
+        }
+    }
+
+    private var marketSegment: some View {
+        MarketSegmentControl(selection: $selectedHotMarket)
+    }
+
+    // MARK: Search
+
+    @ViewBuilder
+    private var searchOverlay: some View {
+        if !searchText.isEmpty {
+            ScrollView {
+                VStack(spacing: 0) {
+                    if vm.isSearching {
+                        ProgressView(String(localized: "loading"))
+                            .frame(maxWidth: .infinity, minHeight: 80)
+                    } else if let err = vm.searchError {
+                        Text(err).foregroundStyle(.secondary).font(.subheadline).padding()
+                    } else if vm.searchResults.isEmpty {
+                        Text("暂无结果").foregroundStyle(.secondary).font(.subheadline)
+                            .frame(maxWidth: .infinity, minHeight: 80)
+                    } else {
+                        let rows = Array(vm.searchResults.enumerated())
+                        ForEach(rows, id: \.element.id) { idx, result in
+                            Button {
+                                history.record(code: result.code, name: result.name, market: result.resolvedMarket)
+                                selectedResult = result
+                            } label: {
+                                HStack(spacing: 8) {
+                                    StockRow(
+                                        code: result.code, name: result.name,
+                                        changePct: result.changePct, market: result.resolvedMarket
+                                    )
+                                    Text(result.resolvedMarket == .us ? "美股" : "A股")
+                                        .font(.caption2.weight(.medium))
+                                        .padding(.horizontal, 7)
+                                        .padding(.vertical, 3)
+                                        .background(DS.surfaceHi, in: Capsule())
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            if idx < rows.count - 1 { RowDivider() }
+                        }
+                    }
+                }
+                .card(padding: 0)
+                .padding(16)
+            }
+            .background(DS.bg)
         }
     }
 }

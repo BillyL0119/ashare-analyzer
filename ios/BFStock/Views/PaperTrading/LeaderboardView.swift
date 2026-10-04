@@ -17,6 +17,8 @@ struct LeaderboardView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(DS.bg)
             .navigationTitle("收益排行榜")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -68,7 +70,7 @@ private struct LeaderboardRow: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
-                            .background(Color.accentColor)
+                            .background(DS.accent)
                             .clipShape(Capsule())
                     }
                 }

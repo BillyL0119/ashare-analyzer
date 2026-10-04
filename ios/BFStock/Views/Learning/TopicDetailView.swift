@@ -87,7 +87,7 @@ private struct SectionCard: View {
                                 .font(.caption)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.accentColor.opacity(0.12))
+                                .background(DS.accent.opacity(0.14))
                                 .foregroundStyle(Color.accentColor)
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
                         }
@@ -103,7 +103,7 @@ private struct SectionCard: View {
                             .font(.callout)
                             .foregroundStyle(.secondary)
                             .padding(10)
-                            .background(Color.secondary.opacity(0.08))
+                            .background(DS.surfaceHi)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
@@ -124,7 +124,7 @@ private struct SectionCard: View {
             }
         }
         .padding()
-        .background(.background)
+        .background(DS.bg)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
     }

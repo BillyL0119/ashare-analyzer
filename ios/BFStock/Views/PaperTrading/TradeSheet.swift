@@ -57,6 +57,8 @@ struct TradeSheet: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(DS.bg)
             .navigationTitle(isBuy ? "买入" : "卖出")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

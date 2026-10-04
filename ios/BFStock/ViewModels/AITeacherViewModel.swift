@@ -48,31 +48,31 @@ final class AITeacherViewModel: ObservableObject {
                     return
                 }
 
-                var buffer = ""
+                var buffer = Data()
                 for try await byte in asyncBytes {
                     guard !Task.isCancelled else { break }
-                    buffer.append(Character(UnicodeScalar(byte)))
-                    while let newline = buffer.firstIndex(of: "\n") {
-                        let line = String(buffer[buffer.startIndex..<newline])
-                        buffer.removeSubrange(buffer.startIndex...newline)
+                    if byte != UInt8(ascii: "\n") {
+                        buffer.append(byte)
+                        continue
+                    }
+                    let line = String(decoding: buffer, as: UTF8.self)
+                    buffer.removeAll(keepingCapacity: true)
+                    guard line.hasPrefix("data: ") else { continue }
+                    let json = String(line.dropFirst(6))
+                    guard let data = json.data(using: .utf8),
+                          let chunk = try? JSONDecoder().decode(SSEChunk.self, from: data) else { continue }
 
-                        guard line.hasPrefix("data: ") else { continue }
-                        let json = String(line.dropFirst(6))
-                        guard let data = json.data(using: .utf8),
-                              let chunk = try? JSONDecoder().decode(SSEChunk.self, from: data) else { continue }
-
-                        if let textPart = chunk.text {
-                            await MainActor.run {
-                                if assistantIndex < self.messages.count {
-                                    self.messages[assistantIndex].content += textPart
-                                }
+                    if let textPart = chunk.text {
+                        await MainActor.run {
+                            if assistantIndex < self.messages.count {
+                                self.messages[assistantIndex].content += textPart
                             }
                         }
-                        if chunk.done == true { break }
-                        if let err = chunk.error {
-                            await MainActor.run { self.finishStream(at: assistantIndex, error: err) }
-                            return
-                        }
+                    }
+                    if chunk.done == true { break }
+                    if let err = chunk.error {
+                        await MainActor.run { self.finishStream(at: assistantIndex, error: err) }
+                        return
                     }
                 }
                 await MainActor.run { self.finishStream(at: assistantIndex, error: nil) }

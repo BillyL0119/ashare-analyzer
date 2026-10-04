@@ -5,25 +5,32 @@ struct WatchlistSection: View {
 
     var body: some View {
         if !store.items.isEmpty {
-            Section {
-                ForEach(store.items) { item in
-                    NavigationLink(destination: StockDetailView(
-                        code: item.code,
-                        name: item.name,
-                        market: item.resolvedMarket
-                    )) {
-                        WatchlistRow(item: item)
-                    }
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            store.toggle(code: item.code, name: item.name, market: item.resolvedMarket)
-                        } label: {
-                            Label("删除", systemImage: "trash")
+            VStack(alignment: .leading, spacing: 10) {
+                SectionHeader("自选股") {
+                    Text("\(store.items.count)")
+                        .font(.system(.caption, design: .rounded).weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                VStack(spacing: 0) {
+                    ForEach(Array(store.items.enumerated()), id: \.element.id) { idx, item in
+                        NavigationLink(destination: StockDetailView(
+                            code: item.code, name: item.name, market: item.resolvedMarket
+                        )) {
+                            WatchlistRow(item: item)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                store.toggle(code: item.code, name: item.name, market: item.resolvedMarket)
+                            } label: { Label("移出自选", systemImage: "star.slash") }
+                        }
+                        if idx < store.items.count - 1 { RowDivider() }
                     }
                 }
-            } header: {
-                Text("自选股")
+                .card(padding: 0)
             }
         }
     }
@@ -41,35 +48,23 @@ private struct WatchlistRow: View {
     }
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(item.name)
-                    .font(.subheadline.weight(.medium))
+                    .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
                 Text(item.code)
-                    .font(.caption)
+                    .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
             }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 2) {
-                if let price = vm.price {
-                    Text(Formatters.price(price))
-                        .font(.subheadline.weight(.semibold))
-                        .monospacedDigit()
-                }
-                if let pct = vm.changePct {
-                    Text(Formatters.changePct(pct))
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(Theme.changeColor(pct, market: item.resolvedMarket))
-                        .monospacedDigit()
-                } else {
-                    Text("--")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                }
+            Spacer(minLength: 8)
+            if let price = vm.price {
+                Text(Formatters.price(price))
+                    .font(.system(.body, design: .rounded).weight(.semibold))
+                    .monospacedDigit()
             }
+            PctPill(pct: vm.changePct, market: item.resolvedMarket)
         }
-        .padding(.vertical, 2)
         .task { await vm.load() }
     }
 }

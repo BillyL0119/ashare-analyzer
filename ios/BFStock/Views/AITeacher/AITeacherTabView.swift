@@ -21,6 +21,7 @@ struct AITeacherTabView: View {
                 messagesArea
                 inputBar
             }
+            .background(DS.bg.ignoresSafeArea())
             .navigationTitle("tab.ai_teacher")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -75,50 +76,62 @@ struct AITeacherTabView: View {
     // MARK: - Welcome View
 
     private var welcomeView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "brain.head.profile")
-                .font(.system(size: 48))
-                .foregroundStyle(Color.accentColor)
-                .padding(.top, 32)
+        VStack(spacing: 18) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 30, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 72, height: 72)
+                .background(
+                    LinearGradient(colors: [DS.accent, Color(r: 0x8B, g: 0x6C, b: 0xFF)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing),
+                    in: RoundedRectangle(cornerRadius: 22, style: .continuous)
+                )
+                .shadow(color: DS.accent.opacity(0.35), radius: 18, y: 8)
+                .padding(.top, 28)
 
-            Text("AI股票老师")
-                .font(.title2.weight(.semibold))
-
-            Text("我可以帮你解答股票、基金、经济学相关问题。")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("快速提问")
-                    .font(.caption.weight(.semibold))
+            VStack(spacing: 6) {
+                Text("AI股票老师")
+                    .font(.title2.weight(.bold))
+                Text("股票、基金、经济学，有问必答")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
+            }
 
-                ForEach(shortcuts, id: \.0) { text, icon in
-                    Button {
-                        vm.inputText = text
-                        impactHaptic.impactOccurred()
-                        vm.send()
-                    } label: {
-                        Label(text, systemImage: icon)
-                            .font(.subheadline)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color.secondary.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+            VStack(alignment: .leading, spacing: 10) {
+                SectionHeader("快速提问")
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                    ForEach(shortcuts, id: \.0) { text, icon in
+                        Button {
+                            vm.inputText = text
+                            impactHaptic.impactOccurred()
+                            vm.send()
+                        } label: {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Image(systemName: icon)
+                                    .font(.callout.weight(.semibold))
+                                    .foregroundStyle(DS.accent)
+                                Text(text)
+                                    .font(.subheadline.weight(.medium))
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(2)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(14)
+                            .frame(maxWidth: .infinity, minHeight: 84, alignment: .topLeading)
+                            .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous))
+                            .overlay(RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous).strokeBorder(DS.stroke))
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
-            .padding(.top, 4)
+            .padding(.top, 6)
 
             Text("仅供学习，不构成投资建议")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
-                .padding(.top, 8)
+                .padding(.top, 4)
         }
-        .padding(.horizontal, 8)
         .frame(maxWidth: .infinity)
     }
 
@@ -126,13 +139,13 @@ struct AITeacherTabView: View {
 
     private var inputBar: some View {
         VStack(spacing: 0) {
-            Divider()
-            HStack(alignment: .bottom, spacing: 8) {
+            HStack(alignment: .bottom, spacing: 10) {
                 TextField("输入问题…", text: $vm.inputText, axis: .vertical)
                     .lineLimit(1...5)
-                    .padding(10)
-                    .background(Color.secondary.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(DS.surface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(DS.stroke))
                     .focused($inputFocused)
                     .onSubmit {
                         impactHaptic.impactOccurred()
@@ -159,13 +172,13 @@ struct AITeacherTabView: View {
                             .frame(width: 36, height: 36)
                             .background(vm.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                                 ? Color.secondary.opacity(0.3)
-                                : Color.accentColor)
+                                : DS.accent)
                             .clipShape(Circle())
                     }
                     .disabled(vm.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(.bar)
         }
@@ -184,12 +197,11 @@ private struct ChatBubble: View {
             if isUser { Spacer(minLength: 48) }
 
             if !isUser {
-                Image(systemName: "brain.head.profile")
-                    .font(.system(size: 14))
+                Image(systemName: "sparkles")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(width: 28, height: 28)
-                    .background(Color.accentColor)
-                    .clipShape(Circle())
+                    .background(DS.accent.gradient, in: Circle())
             }
 
             VStack(alignment: isUser ? .trailing : .leading, spacing: 4) {
@@ -197,16 +209,29 @@ private struct ChatBubble: View {
                     if message.content.isEmpty && message.isStreaming {
                         TypingIndicator()
                     } else {
-                        Text(message.content)
-                            .font(.body)
-                            .foregroundStyle(isUser ? .white : .primary)
-                            .textSelection(.enabled)
+                        if isUser {
+                            Text(message.content)
+                                .font(.body)
+                                .foregroundStyle(.white)
+                                .textSelection(.enabled)
+                        } else {
+                            MarkdownText(text: message.content)
+                                .textSelection(.enabled)
+                        }
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(isUser ? Color.accentColor : Color.secondary.opacity(0.12))
-                .clipShape(BubbleShape(isUser: isUser))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background {
+                    if isUser {
+                        BubbleShape(isUser: true).fill(
+                            LinearGradient(colors: [DS.accent, Color(r: 0x7A, g: 0x6C, b: 0xFF)],
+                                           startPoint: .topLeading, endPoint: .bottomTrailing))
+                    } else {
+                        BubbleShape(isUser: false).fill(DS.surface)
+                            .overlay(BubbleShape(isUser: false).stroke(DS.stroke))
+                    }
+                }
 
                 if message.isStreaming && !message.content.isEmpty {
                     Image(systemName: "ellipsis")
@@ -215,17 +240,81 @@ private struct ChatBubble: View {
                 }
             }
 
-            if isUser {
-                Image(systemName: "person.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(.white)
-                    .frame(width: 28, height: 28)
-                    .background(Color.secondary.opacity(0.5))
-                    .clipShape(Circle())
-            }
-
             if !isUser { Spacer(minLength: 48) }
         }
+    }
+}
+
+// MARK: - Markdown
+
+private struct MarkdownText: View {
+    let text: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(Array(text.components(separatedBy: "\n").enumerated()), id: \.offset) { _, raw in
+                line(raw)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func line(_ raw: String) -> some View {
+        let t = raw.trimmingCharacters(in: .whitespaces)
+        if t.isEmpty {
+            Color.clear.frame(height: 2)
+        } else if t.hasPrefix("|") {
+            tableRow(t)
+        } else if t.hasPrefix("---") {
+            Rectangle().fill(DS.stroke).frame(height: 1).padding(.vertical, 4)
+        } else if let r = t.range(of: #"^#{1,4}\s+"#, options: .regularExpression) {
+            inline(String(t[r.upperBound...]))
+                .font(.headline)
+                .padding(.top, 4)
+        } else if t.hasPrefix("- ") || t.hasPrefix("* ") {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text("•").foregroundStyle(DS.accent)
+                inline(String(t.dropFirst(2)))
+            }
+        } else if let r = t.range(of: #"^\d+[\.、]\s+"#, options: .regularExpression) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(String(t[..<r.upperBound]).trimmingCharacters(in: .whitespaces))
+                    .foregroundStyle(DS.accent)
+                    .monospacedDigit()
+                inline(String(t[r.upperBound...]))
+            }
+        } else {
+            inline(t)
+        }
+    }
+
+    @ViewBuilder
+    private func tableRow(_ t: String) -> some View {
+        let cells = t.split(separator: "|", omittingEmptySubsequences: true)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        if cells.allSatisfy({ $0.allSatisfy { "-: ".contains($0) } }) {
+            EmptyView()
+        } else {
+            HStack(alignment: .top, spacing: 8) {
+                ForEach(Array(cells.enumerated()), id: \.offset) { _, c in
+                    inline(c)
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+    }
+
+    private func inline(_ s: String) -> Text {
+        let attr = (try? AttributedString(
+            markdown: s,
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )) ?? AttributedString(s)
+        return Text(attr)
     }
 }
 

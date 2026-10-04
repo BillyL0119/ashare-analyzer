@@ -7,27 +7,18 @@ struct StockRow: View {
     let market: Market
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(name)
-                    .font(.subheadline.weight(.medium))
+                    .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
                 Text(code)
-                    .font(.caption)
+                    .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
             }
-            Spacer()
-            if let pct = changePct {
-                Text(Formatters.changePct(pct))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Theme.changeColor(pct, market: market))
-                    .monospacedDigit()
-            } else {
-                Text("--")
-                    .font(.subheadline)
-                    .foregroundStyle(.tertiary)
-            }
+            Spacer(minLength: 8)
+            PctPill(pct: changePct, market: market)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
     }
 }

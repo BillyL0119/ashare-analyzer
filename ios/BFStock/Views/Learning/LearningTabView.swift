@@ -19,8 +19,7 @@ struct LearningTabView: View {
             VStack(spacing: 0) {
                 if !vm.curricula.isEmpty {
                     examPicker
-                        .padding(.vertical, 8)
-                        .background(.bar)
+                        .padding(.vertical, 10)
                 }
 
                 Group {
@@ -35,6 +34,7 @@ struct LearningTabView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .background(DS.bg.ignoresSafeArea())
             .navigationTitle("tab.learning")
         }
         .task { await vm.load() }
@@ -55,11 +55,10 @@ struct LearningTabView: View {
                     } label: {
                         Text(label)
                             .font(.subheadline.weight(isSelected ? .semibold : .regular))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 6)
-                            .background(isSelected ? Color.accentColor : Color.secondary.opacity(0.12))
-                            .foregroundStyle(isSelected ? .white : .primary)
-                            .clipShape(Capsule())
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(isSelected ? DS.accent : DS.surfaceHi, in: Capsule())
+                            .foregroundStyle(isSelected ? Color.white : Color.primary)
                     }
                     .buttonStyle(.plain)
                 }
@@ -72,35 +71,45 @@ struct LearningTabView: View {
 
     @ViewBuilder
     private func curriculumList(_ curriculum: Curriculum) -> some View {
-        if let papers = curriculum.papers, !papers.isEmpty {
-            List {
-                ForEach(papers) { paper in
-                    Section(header: Text(paper.title).font(.subheadline.weight(.semibold))) {
-                        ForEach(paper.topics) { topic in
-                            NavigationLink(destination: TopicDetailView(
-                                exam: curriculum.key,
-                                topicID: topic.topicID,
-                                topicTitle: topic.title
-                            )) {
-                                TopicRow(topic: topic)
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 22) {
+                if let papers = curriculum.papers, !papers.isEmpty {
+                    ForEach(papers) { paper in
+                        VStack(alignment: .leading, spacing: 10) {
+                            SectionHeader(paper.title) {
+                                Text("\(paper.topics.count) 个主题")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                             }
+                            topicCard(paper.topics, exam: curriculum.key)
                         }
                     }
+                } else {
+                    topicCard(curriculum.allTopics, exam: curriculum.key)
                 }
             }
-            .listStyle(.insetGrouped)
-        } else {
-            List(curriculum.allTopics) { topic in
+            .padding(.horizontal, 16)
+            .padding(.top, 4)
+            .padding(.bottom, 24)
+        }
+    }
+
+    private func topicCard(_ topics: [TopicSummary], exam: String) -> some View {
+        VStack(spacing: 0) {
+            ForEach(Array(topics.enumerated()), id: \.element.id) { idx, topic in
                 NavigationLink(destination: TopicDetailView(
-                    exam: curriculum.key,
-                    topicID: topic.topicID,
-                    topicTitle: topic.title
+                    exam: exam, topicID: topic.topicID, topicTitle: topic.title
                 )) {
                     TopicRow(topic: topic)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                if idx < topics.count - 1 { RowDivider() }
             }
-            .listStyle(.insetGrouped)
         }
+        .card(padding: 0)
     }
 }
 
@@ -108,23 +117,29 @@ private struct TopicRow: View {
     let topic: TopicSummary
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(topic.title)
-                    .font(.subheadline)
+                    .font(.subheadline.weight(.medium))
+                    .multilineTextAlignment(.leading)
                 if let sections = topic.sectionCount {
                     Text("\(sections) sections")
                         .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.secondary)
                 }
             }
-            Spacer()
+            Spacer(minLength: 8)
             if let time = topic.estimatedTime {
                 Text(time)
-                    .font(.caption)
+                    .font(.system(.caption2, design: .rounded).weight(.medium))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(DS.surfaceHi, in: Capsule())
                     .foregroundStyle(.secondary)
             }
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
         }
-        .padding(.vertical, 2)
     }
 }

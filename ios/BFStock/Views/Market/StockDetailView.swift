@@ -18,49 +18,29 @@ struct StockDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                // Quote header
+            VStack(alignment: .leading, spacing: 16) {
                 quoteHeader
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+                    .padding(.horizontal, 4)
 
-                Divider().padding(.vertical, 8)
+                VStack(alignment: .leading, spacing: 0) {
+                    periodPicker
+                    indicatorPicker
+                        .padding(.top, 8)
 
-                // Period picker
-                periodPicker
-                    .padding(.horizontal)
+                    chartSection
+                        .padding(.top, 12)
+                    volumeSection
+                    subIndicatorSection
 
-                // Indicator picker
-                indicatorPicker
-                    .padding(.horizontal)
-                    .padding(.top, 6)
+                    indicatorLegend
+                        .padding(.top, 10)
+                }
+                .card(padding: 12)
 
-                // K-line chart
-                chartSection
-                    .padding(.top, 8)
-
-                // Volume chart
-                volumeSection
-
-                // Sub-indicator chart (MACD or RSI)
-                subIndicatorSection
-
-                Divider().padding(.top, 8)
-
-                // Legend (MA or indicator)
-                indicatorLegend
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-
-                // Quote details grid
                 if let q = vm.quote {
                     quoteGrid(q)
-                        .padding(.horizontal)
-                        .padding(.bottom, 12)
                 }
 
-                // News section
-                Divider().padding(.top, 4)
                 StockNewsSection(
                     items: vm.newsItems,
                     overall: vm.newsOverall,
@@ -68,9 +48,12 @@ struct StockDetailView: View {
                     error: vm.newsError,
                     onRetry: { Task { await vm.loadNews() } }
                 )
-                .padding(.bottom, 16)
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
         }
+        .background(DS.bg.ignoresSafeArea())
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -107,26 +90,37 @@ struct StockDetailView: View {
             } else if let err = vm.quoteError, vm.quote == nil {
                 ErrorRetryView(message: err) { Task { await vm.loadQuote() } }
             } else if let q = vm.quote {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(Formatters.price(q.price))
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
                         .monospacedDigit()
                         .minimumScaleFactor(0.6)
                         .lineLimit(1)
                         .foregroundStyle(Theme.changeColor(q.pctChange, market: market))
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(Formatters.changePct(q.pctChange))
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Theme.changeColor(q.pctChange, market: market))
+                    VStack(alignment: .leading, spacing: 4) {
+                        PctPill(pct: q.pctChange, market: market, minWidth: 0)
+                            .fixedSize()
                         Text(Formatters.changeAbs(q.change))
-                            .font(.caption)
+                            .font(.system(.caption, design: .rounded).weight(.medium))
+                            .monospacedDigit()
                             .foregroundStyle(Theme.changeColor(q.pctChange, market: market))
+                            .padding(.leading, 4)
                     }
                 }
-                Text("\(q.name)  \(q.code)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    Text(q.name)
+                        .font(.subheadline.weight(.medium))
+                    Text(q.code)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                    Text(market == .us ? "美股" : "A股")
+                        .font(.caption2.weight(.medium))
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 2)
+                        .background(DS.surfaceHi, in: Capsule())
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
@@ -346,7 +340,6 @@ struct StockDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding()
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
+        .card()
     }
 }

@@ -8,41 +8,31 @@ struct StockNewsSection: View {
     let onRetry: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Header
-            HStack {
-                Text("相关新闻")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                if isLoading {
-                    ProgressView().scaleEffect(0.7)
-                }
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader("相关新闻") {
+                if isLoading { ProgressView().scaleEffect(0.7) }
             }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
 
-            if isLoading && items.isEmpty {
-                ProgressView()
-                    .frame(maxWidth: .infinity, minHeight: 60)
-                    .padding(.bottom, 8)
-            } else if let err = error, items.isEmpty {
-                ErrorRetryView(message: err, onRetry: onRetry)
-                    .padding(.horizontal)
-                    .padding(.bottom, 8)
-            } else if !items.isEmpty {
-                if let ov = overall {
-                    overallCard(ov)
-                        .padding(.horizontal)
-                        .padding(.bottom, 10)
-                }
-                ForEach(Array(items.prefix(10).enumerated()), id: \.element.id) { idx, item in
-                    NewsRow(item: item)
-                    if idx < min(items.count, 10) - 1 {
-                        Divider().padding(.leading, 16)
+            VStack(alignment: .leading, spacing: 0) {
+                if isLoading && items.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 80)
+                } else if let err = error, items.isEmpty {
+                    ErrorRetryView(message: err, onRetry: onRetry)
+                } else if !items.isEmpty {
+                    if let ov = overall {
+                        overallCard(ov)
+                            .padding(12)
+                        RowDivider().padding(.leading, 0)
+                    }
+                    let rows = Array(items.prefix(10).enumerated())
+                    ForEach(rows, id: \.element.id) { idx, item in
+                        NewsRow(item: item)
+                        if idx < rows.count - 1 { RowDivider() }
                     }
                 }
             }
+            .card(padding: 0)
         }
     }
 
@@ -66,7 +56,7 @@ struct StockNewsSection: View {
             }
         }
         .padding(12)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+        .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
     }
 
     private func sentBadge(_ label: String, count: Int, color: Color) -> some View {

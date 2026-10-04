@@ -23,6 +23,7 @@ struct PaperTradingTabView: View {
                     accountBody(account)
                 }
             }
+            .background(DS.bg.ignoresSafeArea())
             .navigationTitle("tab.paper_trading")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarItems }
@@ -78,21 +79,16 @@ struct PaperTradingTabView: View {
     @ViewBuilder
     private func accountBody(_ account: PaperAccount) -> some View {
         ScrollView {
-            VStack(spacing: 0) {
+            VStack(spacing: 22) {
                 AccountHeaderView(account: account, market: selectedMarket)
-                    .padding(.horizontal)
-                    .padding(.top, 12)
-
-                marketPicker
-                    .padding(.vertical, 10)
 
                 positionsList(account)
-                    .padding(.horizontal)
 
                 transactionsList(account)
-                    .padding(.horizontal)
-                    .padding(.bottom, 24)
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 96)
         }
         .refreshable { await vm.loadAccount() }
         .overlay(alignment: .bottomTrailing) {
@@ -125,12 +121,7 @@ struct PaperTradingTabView: View {
     // MARK: - Market Picker
 
     private var marketPicker: some View {
-        Picker("市场", selection: $selectedMarket) {
-            Text("A股").tag(Market.cn)
-            Text("美股").tag(Market.us)
-        }
-        .pickerStyle(.segmented)
-        .padding(.horizontal)
+        MarketSegmentControl(selection: $selectedMarket)
     }
 
     // MARK: - Positions List
@@ -141,31 +132,46 @@ struct PaperTradingTabView: View {
             ? account.portfolio.sorted(by: { $0.key < $1.key })
             : account.usPortfolio.sorted(by: { $0.key < $1.key })
 
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("持仓").font(.headline)
-                Spacer()
-                if !positions.isEmpty {
-                    Text("\(positions.count) 只").font(.caption).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader("持仓") {
+                HStack(spacing: 10) {
+                    if !positions.isEmpty {
+                        Text("\(positions.count) 只")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    marketPicker
                 }
             }
-            .padding(.bottom, 4)
 
-            if positions.isEmpty {
-                Text("暂无持仓，点击 + 买入第一只股票")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+            Group {
+                if positions.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "tray")
+                            .font(.title2)
+                            .foregroundStyle(.tertiary)
+                        Text("暂无持仓，点击 + 买入第一只股票")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 20)
-            } else {
-                ForEach(positions, id: \.0) { symbol, pos in
-                    PositionRow(symbol: symbol, position: pos, market: selectedMarket)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            sellItem = SellSheetItem(symbol: symbol, name: symbol, position: pos, market: selectedMarket)
+                    .padding(.vertical, 28)
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(Array(positions.enumerated()), id: \.element.0) { idx, item in
+                            PositionRow(symbol: item.0, position: item.1, market: selectedMarket)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    sellItem = SellSheetItem(symbol: item.0, name: item.0, position: item.1, market: selectedMarket)
+                                }
+                            if idx < positions.count - 1 { RowDivider() }
                         }
+                    }
                 }
             }
+            .card(padding: 0)
         }
     }
 
@@ -178,11 +184,18 @@ struct PaperTradingTabView: View {
             : account.usTransactions.reversed()
 
         if !txs.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("最近交易").font(.headline).padding(.top, 16)
-                ForEach(txs.prefix(10)) { tx in
-                    TransactionRow(tx: tx)
+            VStack(alignment: .leading, spacing: 10) {
+                SectionHeader("最近交易")
+                let rows = Array(txs.prefix(10).enumerated())
+                VStack(spacing: 0) {
+                    ForEach(rows, id: \.element.id) { idx, tx in
+                        TransactionRow(tx: tx)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                        if idx < rows.count - 1 { RowDivider() }
+                    }
                 }
+                .card(padding: 0)
             }
         }
     }
@@ -197,9 +210,12 @@ struct PaperTradingTabView: View {
                 .font(.system(size: 22, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 56, height: 56)
-                .background(Color.accentColor)
-                .clipShape(Circle())
-                .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
+                .background(
+                    LinearGradient(colors: [DS.accent, Color(r: 0x7A, g: 0x6C, b: 0xFF)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing),
+                    in: Circle()
+                )
+                .shadow(color: DS.accent.opacity(0.45), radius: 12, y: 6)
         }
     }
 
@@ -248,41 +264,56 @@ private struct AccountHeaderView: View {
     private var isUp: Bool         { returnPct >= 0 }
 
     var body: some View {
-        VStack(spacing: 12) {
-            VStack(spacing: 4) {
+        let color = plColor(returnPct, market: market)
+        VStack(alignment: .leading, spacing: 18) {
+            HStack {
                 Text(market == .cn ? "A股账户" : "美股账户")
-                    .font(.caption)
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
+                Spacer()
+                Label("#\(account.rank)", systemImage: "trophy.fill")
+                    .font(.system(.caption, design: .rounded).weight(.semibold))
+                    .foregroundStyle(DS.accent)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(DS.accent.opacity(0.14), in: Capsule())
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(currency)
-                        .font(.title3)
+                        .font(.system(.title2, design: .rounded).weight(.semibold))
                         .foregroundStyle(.secondary)
                     Text(totalValue, format: .number.precision(.fractionLength(2)))
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        .monospacedDigit()
                         .minimumScaleFactor(0.55)
                         .lineLimit(1)
                 }
                 HStack(spacing: 8) {
-                    Text(returnPct >= 0 ? "+\(String(format: "%.2f", returnPct))%" : "\(String(format: "%.2f", returnPct))%")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(plColor(returnPct, market: market))
-                    Text("排名 #\(account.rank)")
+                    PctPill(pct: returnPct, market: market, minWidth: 0).fixedSize()
+                    Text("总收益率")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            HStack {
+            HStack(spacing: 0) {
                 StatCell(label: "可用现金", value: "\(currency)\(String(format: "%.0f", cash))")
-                Divider().frame(height: 32)
+                Rectangle().fill(DS.stroke).frame(width: 1, height: 30)
                 StatCell(label: "仅供学习", value: "不构成投资建议")
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 10)
-            .background(Color.secondary.opacity(0.08))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.vertical, 12)
+            .background(DS.surfaceHi.opacity(0.8), in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
         }
-        .padding(.vertical, 4)
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background {
+            RoundedRectangle(cornerRadius: DS.radius + 4, style: .continuous)
+                .fill(LinearGradient(colors: [color.opacity(0.20), DS.surface, DS.surface],
+                                     startPoint: .topLeading, endPoint: .bottomTrailing))
+        }
+        .overlay(RoundedRectangle(cornerRadius: DS.radius + 4, style: .continuous).strokeBorder(DS.stroke))
     }
 }
 
@@ -327,9 +358,6 @@ private struct PositionRow: View {
                 .foregroundStyle(plColor(position.profitLossPct, market: market))
             }
         }
-        .padding(12)
-        .background(Color.secondary.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
@@ -345,8 +373,7 @@ private struct TransactionRow: View {
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white)
                 .frame(width: 28, height: 28)
-                .background(tx.isBuy ? Color.accentColor : Color.secondary)
-                .clipShape(Circle())
+                .background(tx.isBuy ? DS.accent : Color.secondary.opacity(0.6), in: Circle())
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(tx.name.isEmpty ? tx.symbol : tx.name)
@@ -364,7 +391,6 @@ private struct TransactionRow: View {
                     .foregroundStyle(.tertiary)
             }
         }
-        .padding(.vertical, 4)
     }
 }
 

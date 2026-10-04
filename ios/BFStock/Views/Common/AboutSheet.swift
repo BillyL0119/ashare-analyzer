@@ -61,6 +61,8 @@ struct AboutSheet: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(DS.bg)
             .navigationTitle("关于")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
