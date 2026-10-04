@@ -30,6 +30,11 @@ struct StockDetailView: View {
                 periodPicker
                     .padding(.horizontal)
 
+                // Indicator picker
+                indicatorPicker
+                    .padding(.horizontal)
+                    .padding(.top, 6)
+
                 // K-line chart
                 chartSection
                     .padding(.top, 8)
@@ -37,10 +42,13 @@ struct StockDetailView: View {
                 // Volume chart
                 volumeSection
 
+                // Sub-indicator chart (MACD or RSI)
+                subIndicatorSection
+
                 Divider().padding(.top, 8)
 
-                // MA legend
-                maLegend
+                // Legend (MA or indicator)
+                indicatorLegend
                     .padding(.horizontal)
                     .padding(.vertical, 8)
 
@@ -126,6 +134,17 @@ struct StockDetailView: View {
         .pickerStyle(.segmented)
     }
 
+    // MARK: - Indicator Picker
+
+    private var indicatorPicker: some View {
+        Picker("", selection: $vm.indicator) {
+            ForEach(Indicator.allCases) { ind in
+                Text(ind.label).tag(ind)
+            }
+        }
+        .pickerStyle(.segmented)
+    }
+
     // MARK: - Chart
 
     private var chartSection: some View {
@@ -137,13 +156,17 @@ struct StockDetailView: View {
                 ErrorRetryView(message: err) { Task { await vm.loadCandles() } }
                     .frame(minHeight: 220)
             } else if !vm.candles.isEmpty {
+                let boll = vm.indicator == .boll ? vm.bollTuple : (upper: [Double?](), middle: [Double?](), lower: [Double?]())
                 KLineChart(
                     candles:    vm.candles,
-                    ma5:        vm.ma5,
-                    ma10:       vm.ma10,
-                    ma20:       vm.ma20,
+                    ma5:        vm.indicator == .boll ? [] : vm.ma5,
+                    ma10:       vm.indicator == .boll ? [] : vm.ma10,
+                    ma20:       vm.indicator == .boll ? [] : vm.ma20,
                     market:     market,
-                    priceRange: vm.priceRange
+                    priceRange: vm.chartPriceRange,
+                    bollUpper:  boll.upper,
+                    bollMiddle: boll.middle,
+                    bollLower:  boll.lower
                 )
                 .frame(height: 240)
                 .padding(.horizontal, 4)
@@ -162,13 +185,70 @@ struct StockDetailView: View {
         }
     }
 
-    // MARK: - MA Legend
+    // MARK: - Sub-indicator (MACD / RSI)
+
+    @ViewBuilder
+    private var subIndicatorSection: some View {
+        if !vm.candles.isEmpty {
+            switch vm.indicator {
+            case .macd:
+                let m = vm.macdTuple
+                VStack(alignment: .leading, spacing: 2) {
+                    macdLegendRow(m)
+                        .padding(.horizontal, 8)
+                        .padding(.top, 4)
+                    MACDChart(
+                        candles:    vm.candles,
+                        macdLine:   m.macdLine,
+                        signalLine: m.signalLine,
+                        histogram:  m.histogram,
+                        market:     market
+                    )
+                    .frame(height: 90)
+                    .padding(.horizontal, 4)
+                }
+            case .rsi:
+                VStack(alignment: .leading, spacing: 2) {
+                    rsiLegendRow
+                        .padding(.horizontal, 8)
+                        .padding(.top, 4)
+                    RSIChart(candles: vm.candles, values: vm.rsi14)
+                        .frame(height: 90)
+                        .padding(.horizontal, 4)
+                }
+            default:
+                EmptyView()
+            }
+        }
+    }
+
+    // MARK: - Legends
+
+    @ViewBuilder
+    private var indicatorLegend: some View {
+        switch vm.indicator {
+        case .none, .macd, .rsi:
+            maLegend
+        case .boll:
+            bollLegend
+        }
+    }
 
     private var maLegend: some View {
         HStack(spacing: 16) {
-            maItem("MA5", color: .yellow, values: vm.ma5)
+            maItem("MA5",  color: .yellow, values: vm.ma5)
             maItem("MA10", color: .purple, values: vm.ma10)
             maItem("MA20", color: .orange, values: vm.ma20)
+        }
+        .font(.caption)
+    }
+
+    private var bollLegend: some View {
+        let b = vm.bollTuple
+        return HStack(spacing: 16) {
+            bollItem("UP",  color: Color.cyan.opacity(0.8), values: b.upper)
+            bollItem("MID", color: Color.cyan.opacity(0.4), values: b.middle)
+            bollItem("DN",  color: Color.cyan.opacity(0.8), values: b.lower)
         }
         .font(.caption)
     }
@@ -182,6 +262,49 @@ struct StockDetailView: View {
                 .foregroundStyle(.secondary)
             if let v = values.last(where: { $0 != nil }), let val = v {
                 Text(Formatters.price(val))
+                    .foregroundStyle(color)
+                    .monospacedDigit()
+            }
+        }
+    }
+
+    private func bollItem(_ label: String, color: Color, values: [Double?]) -> some View {
+        HStack(spacing: 4) {
+            RoundedRectangle(cornerRadius: 1)
+                .fill(color)
+                .frame(width: 16, height: 2)
+            Text(label)
+                .foregroundStyle(.secondary)
+            if let v = values.last(where: { $0 != nil }), let val = v {
+                Text(Formatters.price(val))
+                    .foregroundStyle(color)
+                    .monospacedDigit()
+            }
+        }
+    }
+
+    private func macdLegendRow(_ m: (macdLine: [Double?], signalLine: [Double?], histogram: [Double?])) -> some View {
+        HStack(spacing: 12) {
+            legendLabel("MACD", color: .primary, values: m.macdLine)
+            legendLabel("DEA",  color: .yellow,  values: m.signalLine)
+            legendLabel("DIFF", color: .secondary, values: m.histogram)
+        }
+        .font(.caption)
+    }
+
+    private var rsiLegendRow: some View {
+        HStack(spacing: 12) {
+            legendLabel("RSI(14)", color: .purple, values: vm.rsi14)
+            Text("超买:70").font(.caption).foregroundStyle(.secondary)
+            Text("超卖:30").font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    private func legendLabel(_ label: String, color: Color, values: [Double?]) -> some View {
+        HStack(spacing: 4) {
+            Text(label).foregroundStyle(.secondary)
+            if let v = values.last(where: { $0 != nil }), let val = v {
+                Text(String(format: "%.4f", val))
                     .foregroundStyle(color)
                     .monospacedDigit()
             }

@@ -68,16 +68,39 @@ final class StockDetailViewModel: ObservableObject {
         Task { await loadCandles() }
     }
 
+    @Published var indicator: Indicator = .none
+
     // Computed MA series
     var ma5:  [Double?] { candles.ma(5)  }
     var ma10: [Double?] { candles.ma(10) }
     var ma20: [Double?] { candles.ma(20) }
+
+    // Technical indicators (computed from candles)
+    var macdTuple: (macdLine: [Double?], signalLine: [Double?], histogram: [Double?]) {
+        candles.macd()
+    }
+    var rsi14: [Double?] { candles.rsi() }
+    var bollTuple: (upper: [Double?], middle: [Double?], lower: [Double?]) {
+        candles.bollingerBands()
+    }
 
     // Y-axis range with 2% padding
     var priceRange: ClosedRange<Double> {
         guard !candles.isEmpty else { return 0...1 }
         let lo = candles.map(\.low).min()!
         let hi = candles.map(\.high).max()!
+        let pad = (hi - lo) * 0.02
+        return (lo - pad)...(hi + pad)
+    }
+
+    var chartPriceRange: ClosedRange<Double> {
+        guard indicator == .boll, !candles.isEmpty else { return priceRange }
+        let b = bollTuple
+        let allUpper = b.upper.compactMap { $0 }
+        let allLower = b.lower.compactMap { $0 }
+        guard !allUpper.isEmpty else { return priceRange }
+        let hi = max(candles.map(\.high).max()!, allUpper.max()!)
+        let lo = min(candles.map(\.low).min()!,  allLower.min()!)
         let pad = (hi - lo) * 0.02
         return (lo - pad)...(hi + pad)
     }
