@@ -130,28 +130,6 @@ export default function App() {
   // Track page visit once on mount
   useEffect(() => { trackVisit('home') }, [])
 
-  // Auto-open Daily Insight once per day.
-  // Logged-in users: check/save against account metadata so it syncs across devices.
-  // Guests: fall back to localStorage.
-  useEffect(() => {
-    if (authLoading) return // wait until we know if user is logged in
-    if (insightCheckedRef.current) return
-    insightCheckedRef.current = true
-
-    const todayStr = new Date().toISOString().slice(0, 10)
-    if (user) {
-      if (user.user_metadata?.knowledge_date !== todayStr) {
-        setShowInsight(true)
-        setKnowledgeDateSeen(todayStr)
-      }
-    } else {
-      const seen = localStorage.getItem('bfs_knowledge_date')
-      if (seen !== todayStr) {
-        setShowInsight(true)
-        localStorage.setItem('bfs_knowledge_date', todayStr)
-      }
-    }
-  }, [authLoading, user]) // eslint-disable-line
 
   // Close any open dropdown when clicking outside
   useEffect(() => {
