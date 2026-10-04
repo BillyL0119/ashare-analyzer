@@ -102,15 +102,7 @@ function NewsCard({ item, t }) {
             }}>
               {item.title}
             </div>
-            {item.summary && (
-              <div style={{
-                fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4,
-                display: '-webkit-box', WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical', overflow: 'hidden',
-              }}>
-                {item.summary}
-              </div>
-            )}
+            {/* summary field intentionally omitted — show title + link only */}
           </div>
         </div>
       </div>
@@ -165,7 +157,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
   return (
     <div style={{ paddingTop: 8 }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
           {t.gnTitle}
           {items.length > 0 && (
@@ -188,6 +180,11 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
             </button>
           </div>
         )}
+      </div>
+
+      {/* Disclaimer */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
+        仅供学习，不构成投资建议。数据来源可能存在延迟。
       </div>
 
       {/* Filters */}

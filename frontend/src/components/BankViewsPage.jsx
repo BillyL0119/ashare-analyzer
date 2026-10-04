@@ -131,17 +131,7 @@ function NewsCard({ item, t, lang }) {
           {item.title}
         </div>
 
-        {/* Summary */}
-        {item.summary && (
-          <div style={{
-            fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.45,
-            display: '-webkit-box', WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical', overflow: 'hidden',
-            marginBottom: 8,
-          }}>
-            {item.summary}
-          </div>
-        )}
+        {/* summary field intentionally omitted — show title + link only */}
 
         {/* Meta row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -230,6 +220,9 @@ export default function BankViewsPage({ lang = 'zh' }) {
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
             {t.bvNote}
+          </p>
+          <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+            仅供学习，不构成投资建议。数据来源可能存在延迟。
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>

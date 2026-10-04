@@ -734,6 +734,11 @@ export default function App() {
         borderTop: '1px solid var(--border-primary)',
         flexShrink: 0,
       }}>
+        <div style={{ marginBottom: 4, fontSize: 11, color: 'var(--text-muted)' }}>
+          仅供学习，不构成投资建议。数据来源可能存在延迟。
+          {' · '}
+          For educational use only. Not investment advice. Data may be delayed.
+        </div>
         <a
           href="mailto:billyl090119@gmail.com"
           style={{ color: '#9ca3af', textDecoration: 'none' }}

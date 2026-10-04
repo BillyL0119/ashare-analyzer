@@ -124,16 +124,7 @@ function NewsCard({ item, lang }) {
             }}>
               {item.title}
             </div>
-            {/* Summary */}
-            {item.summary && (
-              <div style={{
-                fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.45,
-                display: '-webkit-box', WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical', overflow: 'hidden',
-              }}>
-                {item.summary}
-              </div>
-            )}
+            {/* summary field intentionally omitted — show title + link only */}
           </div>
         </div>
       </div>
@@ -205,6 +196,9 @@ export default function DailyNewsPage({ lang = 'zh' }) {
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {t.dnSubtitle}
+          </p>
+          <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+            仅供学习，不构成投资建议。数据来源可能存在延迟。
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
