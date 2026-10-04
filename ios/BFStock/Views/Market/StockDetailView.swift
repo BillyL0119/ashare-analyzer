@@ -7,6 +7,7 @@ struct StockDetailView: View {
     let market: Market
 
     @StateObject private var vm: StockDetailViewModel
+    @ObservedObject private var watchlist = WatchlistStore.shared
 
     init(code: String, name: String, market: Market) {
         self.code = code
@@ -53,6 +54,19 @@ struct StockDetailView: View {
         }
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                let watched = watchlist.isWatched(code: code, market: market)
+                Button {
+                    let impact = UIImpactFeedbackGenerator(style: .light)
+                    impact.impactOccurred()
+                    watchlist.toggle(code: code, name: name, market: market)
+                } label: {
+                    Image(systemName: watched ? "star.fill" : "star")
+                        .foregroundStyle(watched ? .yellow : .secondary)
+                }
+            }
+        }
         .task { await vm.loadAll() }
         .refreshable { await vm.loadAll() }
         .safeAreaInset(edge: .bottom) {

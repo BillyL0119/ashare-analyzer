@@ -9,6 +9,9 @@ struct MarketTabView: View {
     var body: some View {
         NavigationStack {
             List {
+                // Watchlist
+                WatchlistSection()
+
                 // Market Overview
                 Section {
                     if vm.isLoadingOverview && vm.overview == nil {
@@ -29,8 +32,7 @@ struct MarketTabView: View {
                     }
                     .pickerStyle(.segmented)
                     .listRowBackground(Color.clear)
-                    .listRowInsets(.init())
-                    .padding(.vertical, 4)
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
 
                     if vm.isLoadingHot && hotStocks.isEmpty {
                         ProgressView(String(localized: "loading"))
