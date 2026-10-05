@@ -70,7 +70,11 @@ enum DS {
     static let surface   = Color(light: .white,                            dark: Color(r: 0x12, g: 0x17, b: 0x21))
     static let surfaceHi = Color(light: Color(r: 0xEA, g: 0xEE, b: 0xF5), dark: Color(r: 0x1B, g: 0x22, b: 0x30))
     static let stroke    = Color(light: Color.black.opacity(0.06),         dark: Color.white.opacity(0.07))
-    static let accent    = Color(r: 0x6C, g: 0x8E, b: 0xFF)
+    static let accent    = Color(light: Color(r: 0x2F, g: 0x5B, b: 0xEA), dark: Color(r: 0x6C, g: 0x8E, b: 0xFF))
+    static let accentAlt = Color(light: Color(r: 0x6A, g: 0x4B, b: 0xE8), dark: Color(r: 0x8B, g: 0x6C, b: 0xFF))
+    static var accentGradient: LinearGradient {
+        LinearGradient(colors: [accent, accentAlt], startPoint: .topLeading, endPoint: .bottomTrailing)
+    }
     static let radius: CGFloat = 20
     static let tileRadius: CGFloat = 14
 }

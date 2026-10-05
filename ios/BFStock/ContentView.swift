@@ -20,7 +20,7 @@ struct ContentView: View {
                     Label("tab.paper_trading", systemImage: "dollarsign.circle.fill")
                 }
         }
-        .tint(Color.accentColor)
+        .tint(DS.accent)
         // Cap dynamic type so numeric-heavy UIs don't break at xxxLarge
         .dynamicTypeSize(.xSmall ... .accessibility1)
     }

@@ -5,20 +5,27 @@ struct ErrorRetryView: View {
     let onRetry: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 40))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 14) {
+            Image(systemName: "wifi.exclamationmark")
+                .font(.system(size: 24, weight: .semibold))
+                .foregroundStyle(DS.accent)
+                .frame(width: 56, height: 56)
+                .background(DS.accent.opacity(0.14), in: Circle())
             Text(message)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             Button(action: onRetry) {
                 Label("button.retry", systemImage: "arrow.clockwise")
-                    .font(.subheadline.weight(.medium))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 9)
+                    .background(DS.accentGradient, in: Capsule())
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.plain)
         }
-        .padding()
+        .frame(maxWidth: .infinity)
+        .padding(20)
     }
 }
