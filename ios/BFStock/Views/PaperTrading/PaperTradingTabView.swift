@@ -287,6 +287,8 @@ private struct AccountHeaderView: View {
                     Text(totalValue, format: .number.precision(.fractionLength(2)))
                         .font(.system(size: 38, weight: .bold, design: .rounded))
                         .monospacedDigit()
+                        .contentTransition(.numericText(value: totalValue))
+                        .animation(.snappy(duration: 0.5), value: totalValue)
                         .minimumScaleFactor(0.55)
                         .lineLimit(1)
                 }

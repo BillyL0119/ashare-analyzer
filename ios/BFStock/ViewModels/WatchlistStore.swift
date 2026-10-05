@@ -33,6 +33,20 @@ final class WatchlistStore: ObservableObject {
         save()
     }
 
+    func move(id: String, before targetID: String) {
+        guard id != targetID,
+              let from = items.firstIndex(where: { $0.id == id }),
+              let to = items.firstIndex(where: { $0.id == targetID }) else { return }
+        let item = items.remove(at: from)
+        items.insert(item, at: to)
+        save()
+    }
+
+    func remove(id: String) {
+        items.removeAll { $0.id == id }
+        save()
+    }
+
     private func save() {
         if let data = try? JSONEncoder().encode(items) {
             UserDefaults.standard.set(data, forKey: key)

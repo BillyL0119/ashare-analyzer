@@ -94,6 +94,8 @@ struct StockDetailView: View {
                     Text(Formatters.price(q.price))
                         .font(.system(size: 42, weight: .bold, design: .rounded))
                         .monospacedDigit()
+                        .contentTransition(.numericText(value: q.price))
+                        .animation(.snappy(duration: 0.5), value: q.price)
                         .minimumScaleFactor(0.6)
                         .lineLimit(1)
                         .foregroundStyle(Theme.changeColor(q.pctChange, market: market))

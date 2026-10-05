@@ -129,6 +129,8 @@ struct PctPill: View {
             .font(.system(.footnote, design: .rounded).weight(.semibold))
             .monospacedDigit()
             .foregroundStyle(color)
+            .contentTransition(.numericText(value: pct ?? 0))
+            .animation(.snappy(duration: 0.45), value: pct)
             .padding(.horizontal, 10)
             .frame(minWidth: fixedWidth == nil ? minWidth : nil)
             .frame(width: fixedWidth)
