@@ -9,161 +9,185 @@ struct TopicDetailView: View {
 
     var body: some View {
         Group {
-            if vm.isLoading && vm.topic == nil {
-                ProgressView(String(localized: "loading"))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let err = vm.error, vm.topic == nil {
+            if let err = vm.error, vm.topic == nil {
                 ErrorRetryView(message: err) {
                     Task { await vm.load(exam: exam, topicID: topicID) }
                 }
             } else if let topic = vm.topic {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        if let time = topic.estimatedTime {
-                            HStack {
-                                Image(systemName: "clock")
-                                Text(time)
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal)
-                        }
+                        header(topic)
 
-                        ForEach(topic.sections) { section in
-                            SectionCard(section: section as TopicSection)
-                                .padding(.horizontal)
+                        ForEach(Array(topic.sections.enumerated()), id: \.element.id) { idx, section in
+                            SectionCard(index: idx + 1, section: section as TopicSection)
                         }
 
                         Text("disclaimer")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
                             .frame(maxWidth: .infinity)
-                            .padding()
+                            .padding(.vertical, 12)
                     }
-                    .padding(.vertical)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
                 }
+            } else {
+                ProgressView(String(localized: "loading"))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .navigationTitle(topicTitle)
-        .navigationBarTitleDisplayMode(.large)
+        .background(DS.bg.ignoresSafeArea())
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load(exam: exam, topicID: topicID) }
+    }
+
+    private var examName: String {
+        ["alevel": "A-Level", "igcse": "IGCSE", "ap_macro": "AP Macro",
+         "ap_micro": "AP Micro", "ib": "IB", "stocks": "股票入门"][exam] ?? exam.uppercased()
+    }
+
+    private func header(_ topic: TopicDetail) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(topic.title)
+                .font(.title.weight(.bold))
+                .fixedSize(horizontal: false, vertical: true)
+            chips(topic)
+        }
+        .padding(.top, 4)
+    }
+
+    private func chips(_ topic: TopicDetail) -> some View {
+        HStack(spacing: 8) {
+            chip(examName, icon: "graduationcap.fill", tint: DS.accent)
+            chip("\(topic.sections.count) 个章节", icon: "list.bullet", tint: .secondary)
+            if let time = topic.estimatedTime {
+                chip(time, icon: "clock", tint: .secondary)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func chip(_ text: String, icon: String, tint: Color) -> some View {
+        Label(text, systemImage: icon)
+            .font(.system(.caption, design: .rounded).weight(.semibold))
+            .foregroundStyle(tint)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(tint.opacity(0.14), in: Capsule())
     }
 }
 
 private struct SectionCard: View {
+    let index: Int
     let section: TopicSection
     @State private var expanded = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) { expanded.toggle() }
+                withAnimation(.snappy(duration: 0.25)) { expanded.toggle() }
             } label: {
-                HStack {
+                HStack(spacing: 12) {
+                    Text("\(index)")
+                        .font(.system(.footnote, design: .rounded).weight(.bold))
+                        .foregroundStyle(DS.accent)
+                        .frame(width: 28, height: 28)
+                        .background(DS.accent.opacity(0.14), in: Circle())
                     Text(section.heading)
                         .font(.headline)
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)
-                    Spacer()
-                    Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                        .font(.caption)
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.down")
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
+                        .rotationEffect(.degrees(expanded ? 0 : -90))
                 }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
 
             if expanded {
                 Text(section.body)
                     .font(.body)
-                    .foregroundStyle(.primary)
+                    .lineSpacing(5)
+                    .foregroundStyle(.primary.opacity(0.92))
                     .fixedSize(horizontal: false, vertical: true)
 
                 if let terms = section.keyTerms, !terms.isEmpty {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text("关键术语")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(.secondary)
-                        FlowLayout(items: terms) { term in
-                            Text(term)
-                                .font(.caption)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(DS.accent.opacity(0.14))
-                                .foregroundStyle(Color.accentColor)
-                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                        FlowLayout(spacing: 6) {
+                            ForEach(terms, id: \.self) { term in
+                                Text(term)
+                                    .font(.caption.weight(.medium))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(DS.accent.opacity(0.14), in: Capsule())
+                                    .foregroundStyle(DS.accent)
+                            }
                         }
                     }
                 }
 
                 if let rw = section.realWorld {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Label("真实案例", systemImage: "globe")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                        Text(rw)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .padding(10)
-                            .background(DS.surfaceHi)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    }
+                    callout(icon: "globe", title: "真实案例", text: rw, tint: DS.accent)
                 }
 
                 if let tip = section.examTip {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Label("考试技巧", systemImage: "lightbulb.fill")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.orange)
-                        Text(tip)
-                            .font(.callout)
-                            .foregroundStyle(.primary)
-                            .padding(10)
-                            .background(Color.orange.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    }
+                    callout(icon: "lightbulb.fill", title: "考试技巧", text: tip, tint: .orange)
                 }
             }
         }
-        .padding()
-        .background(DS.bg)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+        .card()
+    }
+
+    private func callout(icon: String, title: String, text: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Label(title, systemImage: icon)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(tint)
+            Text(text)
+                .font(.callout)
+                .lineSpacing(3)
+                .foregroundStyle(.primary.opacity(0.88))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(tint.opacity(0.10), in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
     }
 }
 
-// Simple flow layout for key term chips
-private struct FlowLayout<Item: Hashable, Content: View>: View {
-    let items: [Item]
-    let content: (Item) -> Content
+private struct FlowLayout: Layout {
+    var spacing: CGFloat = 6
 
-    var body: some View {
-        var width: CGFloat = 0
-        var height: CGFloat = 0
-        return GeometryReader { geo in
-            ZStack(alignment: .topLeading) {
-                ForEach(items, id: \.self) { item in
-                    content(item)
-                        .padding(.trailing, 4)
-                        .padding(.bottom, 4)
-                        .alignmentGuide(.leading) { d in
-                            if abs(width - d.width) > geo.size.width {
-                                width = 0; height -= d.height
-                            }
-                            let result = width
-                            if item == items.last { width = 0 } else { width -= d.width }
-                            return result
-                        }
-                        .alignmentGuide(.top) { _ in
-                            let result = height
-                            if item == items.last { height = 0 }
-                            return result
-                        }
-                }
-            }
-        }
-        .frame(height: estimatedHeight(items: items))
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        arrange(width: proposal.width ?? .infinity, subviews: subviews).size
     }
 
-    private func estimatedHeight(items: [Item]) -> CGFloat {
-        CGFloat(((items.count - 1) / 3 + 1) * 28)
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = arrange(width: bounds.width, subviews: subviews)
+        for (i, origin) in result.origins.enumerated() {
+            subviews[i].place(at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y),
+                              proposal: .unspecified)
+        }
+    }
+
+    private func arrange(width: CGFloat, subviews: Subviews) -> (size: CGSize, origins: [CGPoint]) {
+        var origins: [CGPoint] = []
+        var x: CGFloat = 0, y: CGFloat = 0, rowH: CGFloat = 0, maxW: CGFloat = 0
+        for v in subviews {
+            let s = v.sizeThatFits(.unspecified)
+            if x > 0 && x + s.width > width { x = 0; y += rowH + spacing; rowH = 0 }
+            origins.append(CGPoint(x: x, y: y))
+            x += s.width + spacing
+            rowH = max(rowH, s.height)
+            maxW = max(maxW, x - spacing)
+        }
+        return (CGSize(width: maxW, height: y + rowH), origins)
     }
 }
