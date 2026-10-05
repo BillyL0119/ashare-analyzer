@@ -12,6 +12,7 @@ import json
 import os
 import time
 import logging
+import threading
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -25,6 +26,7 @@ _cache_data: dict | None = None
 _SECTORS_TTL = 600  # 10 minutes
 _sectors_ts: float = 0
 _sectors_data: dict | None = None
+_sectors_ok = False
 
 _MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "industry_map.json")
 try:
@@ -32,6 +34,69 @@ try:
         _INDUSTRY_MAP: dict = json.load(_f)
 except Exception:
     _INDUSTRY_MAP = {"industries": {}}
+
+
+# ── Shared A-share spot snapshot ─────────────────────────────────────────────
+# stock_zh_a_spot_em pages through ~5000 rows on eastmoney and often stalls or is
+# dropped by the upstream. Fetch it once, share it between /overview and /sectors,
+# and serve the last good snapshot while a background refresh runs.
+_SPOT_TTL = 120
+_SPOT_RETRY_COOLDOWN = 30
+_spot_df: pd.DataFrame | None = None
+_spot_ts: float = 0
+_spot_fail_ts: float = 0
+_spot_refreshing = False
+_spot_lock = threading.Lock()
+
+
+def _refresh_spot() -> None:
+    global _spot_df, _spot_ts, _spot_fail_ts, _spot_refreshing
+    try:
+        df = ak.stock_zh_a_spot_em()
+        if df is not None and not df.empty:
+            _spot_df, _spot_ts = df, time.time()
+        else:
+            _spot_fail_ts = time.time()
+    except Exception as e:
+        _spot_fail_ts = time.time()
+        logger.warning("stock_zh_a_spot_em failed: %s", e)
+    finally:
+        _spot_refreshing = False
+
+
+def _get_spot_df() -> pd.DataFrame | None:
+    """Return the latest spot snapshot without blocking when a stale one exists."""
+    global _spot_refreshing
+    now = time.time()
+    fresh = _spot_df is not None and now - _spot_ts < _SPOT_TTL
+    if fresh:
+        return _spot_df
+    cooling = now - _spot_fail_ts < _SPOT_RETRY_COOLDOWN
+
+    if _spot_df is not None:
+        # stale but usable: refresh in the background, answer immediately
+        if not cooling and not _spot_refreshing:
+            with _spot_lock:
+                if not _spot_refreshing:
+                    _spot_refreshing = True
+                    threading.Thread(target=_refresh_spot, daemon=True).start()
+        return _spot_df
+
+    # nothing cached yet: block once (single flight), unless we just failed
+    if cooling:
+        return None
+    with _spot_lock:
+        if _spot_df is None and not _spot_refreshing:
+            _spot_refreshing = True
+            _refresh_spot()
+    return _spot_df
+
+
+def _fetch_index(sym_param: str):
+    return sym_param, ak.stock_zh_index_spot_em(symbol=sym_param)
+
+
+threading.Thread(target=_get_spot_df, daemon=True).start()  # warm up on startup
 
 
 def _safe_float(val, default: float = 0.0) -> float:
@@ -59,12 +124,16 @@ def _build_sector_performance(spot_df: pd.DataFrame) -> list:
         return []
 
 
+_cache_ok = False
+
+
 @router.get("/overview")
 def market_overview():
-    global _cache_ts, _cache_data
+    global _cache_ts, _cache_data, _cache_ok
 
     now = time.time()
-    if _cache_data is not None and now - _cache_ts < _CACHE_TTL:
+    ttl = _CACHE_TTL if _cache_ok else 30
+    if _cache_data is not None and now - _cache_ts < ttl:
         return _cache_data
 
     result: dict = {
@@ -80,25 +149,31 @@ def market_overview():
         "northbound_flow": "N/A",
         "sector_performance": [],
     }
+    got_data = False
 
-    # Spot data: advance/decline counts, volume, sector perf
-    spot_df = None
-    try:
-        spot_df = ak.stock_zh_a_spot_em()
-        pct = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
-        result["advance_count"] = int((pct > 0).sum())
-        result["decline_count"] = int((pct < 0).sum())
-        result["flat_count"]    = int((pct == 0).sum())
-        vol = pd.to_numeric(spot_df["成交额"], errors="coerce").sum()
-        result["total_volume"]  = f"{vol / 1e8:.0f}亿"
-        result["sector_performance"] = _build_sector_performance(spot_df)
-    except Exception as e:
-        logger.warning("stock_zh_a_spot_em failed: %s", e)
-
-    # Index data
-    for sym_param in ("上证系列指数", "深证系列指数"):
+    spot_df = _get_spot_df()
+    if spot_df is not None:
         try:
-            df = ak.stock_zh_index_spot_em(symbol=sym_param)
+            pct = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
+            result["advance_count"] = int((pct > 0).sum())
+            result["decline_count"] = int((pct < 0).sum())
+            result["flat_count"]    = int((pct == 0).sum())
+            vol = pd.to_numeric(spot_df["成交额"], errors="coerce").sum()
+            result["total_volume"]  = f"{vol / 1e8:.0f}亿"
+            result["sector_performance"] = _build_sector_performance(spot_df)
+            got_data = True
+        except Exception as e:
+            logger.warning("overview: spot parsing failed: %s", e)
+
+    # Index data — both index groups in parallel
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures = [pool.submit(_fetch_index, sym) for sym in ("上证系列指数", "深证系列指数")]
+        for fut in futures:
+            try:
+                _, df = fut.result(timeout=12)
+            except Exception as e:
+                logger.warning("Index fetch failed: %s", e)
+                continue
             for _, row in df.iterrows():
                 name = str(row.get("名称", ""))
                 entry = {
@@ -112,39 +187,45 @@ def market_overview():
                     result["shenzhen_index"] = entry
                 elif "创业板指" in name and not result["chinext_index"]:
                     result["chinext_index"] = entry
+                got_data = True
+
+    # Northbound flow (only if the installed akshare still ships this API)
+    nb_fn = getattr(ak, "stock_hsgt_north_net_flow_in_em", None)
+    if nb_fn is not None:
+        try:
+            nf = nb_fn(symbol="沪股通")
+            if nf is not None and not nf.empty:
+                val = _safe_float(nf.iloc[-1].get("净流入", 0))
+                sign = "+" if val >= 0 else ""
+                result["northbound_flow"] = f"{sign}{val / 1e8:.1f}亿"
         except Exception as e:
-            logger.warning("Index %s failed: %s", sym_param, e)
+            logger.warning("Northbound flow failed: %s", e)
 
-    # Northbound flow
-    try:
-        nf = ak.stock_hsgt_north_net_flow_in_em(symbol="沪股通")
-        if nf is not None and not nf.empty:
-            val = _safe_float(nf.iloc[-1].get("净流入", 0))
-            sign = "+" if val >= 0 else ""
-            result["northbound_flow"] = f"{sign}{val / 1e8:.1f}亿"
-    except Exception as e:
-        logger.warning("Northbound flow failed: %s", e)
+    if _cache_data is not None and _cache_data.get("date") == result["date"]:
+        for key in ("shanghai_index", "shenzhen_index", "chinext_index", "northbound_flow"):
+            if not result[key] or result[key] == "N/A":
+                result[key] = _cache_data.get(key, result[key])
 
-    _cache_ts   = now
-    _cache_data = result
+    if not got_data and _cache_data is not None and _cache_ok:
+        # upstream is down: keep serving the last good overview, retry soon
+        _cache_ts = now
+        return _cache_data
+
+    _cache_ts, _cache_data, _cache_ok = now, result, got_data
     return result
 
 
 @router.get("/sectors")
 def market_sectors():
     """Return per-industry average change_pct with leader stock, cached 10 min."""
-    global _sectors_ts, _sectors_data
+    global _sectors_ts, _sectors_data, _sectors_ok
 
     now = time.time()
-    if _sectors_data is not None and now - _sectors_ts < _SECTORS_TTL:
+    ttl = _SECTORS_TTL if _sectors_ok else 30
+    if _sectors_data is not None and now - _sectors_ts < ttl:
         return _sectors_data
 
-    # Fetch live spot data once
-    spot_df = None
-    try:
-        spot_df = ak.stock_zh_a_spot_em()
-    except Exception as e:
-        logger.warning("sectors: spot_em failed: %s", e)
+    spot_df = _get_spot_df()
 
     sectors = []
     for industry_name, code_list in _INDUSTRY_MAP.get("industries", {}).items():
@@ -186,8 +267,10 @@ def market_sectors():
         "date": datetime.now().strftime("%Y-%m-%d"),
         "sectors": sectors,
     }
-    _sectors_ts = now
-    _sectors_data = result
+    if spot_df is None and _sectors_data is not None and _sectors_ok:
+        _sectors_ts = now
+        return _sectors_data
+    _sectors_ts, _sectors_data, _sectors_ok = now, result, spot_df is not None
     return result
 
 
