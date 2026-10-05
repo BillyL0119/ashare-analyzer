@@ -34,16 +34,6 @@ struct MarketOverviewCard: View {
             }
 
             breadth
-
-            if !overview.sectorPerformance.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(overview.sectorPerformance.prefix(10)) { SectorChip(sector: $0) }
-                    }
-                }
-                .padding(.horizontal, -16)
-                .contentMargins(.horizontal, 16, for: .scrollContent)
-            }
         }
         .card()
     }
@@ -109,23 +99,5 @@ private struct IndexTile: View {
                            startPoint: .topLeading, endPoint: .bottomTrailing),
             in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous)
         )
-    }
-}
-
-private struct SectorChip: View {
-    let sector: SectorPerf
-
-    var body: some View {
-        let color = Theme.changeColor(sector.changePct, market: .cn)
-        HStack(spacing: 6) {
-            Text(sector.name).font(.caption.weight(.medium)).lineLimit(1)
-            Text(Formatters.changePct(sector.changePct))
-                .font(.system(.caption, design: .rounded).weight(.semibold))
-                .monospacedDigit()
-                .foregroundStyle(color)
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(color.opacity(0.12), in: Capsule())
     }
 }

@@ -44,6 +44,46 @@ _US_HOT = [
 ]
 
 
+def _us_pct_tencent(symbols: list) -> dict:
+    """US day change % from qt.gtimg.cn (one fast request)."""
+    r = _req.get("https://qt.gtimg.cn/q=" + ",".join("us" + s for s in symbols), timeout=6)
+    out: dict = {}
+    for chunk in r.content.decode("gbk", errors="ignore").split(";"):
+        _, _, val = chunk.partition("=")
+        f = val.strip().strip('"').split("~")
+        if len(f) < 33:
+            continue
+        try:
+            out[f[2].split(".")[0]] = round(float(f[32]), 2)
+        except ValueError:
+            pass
+    return out
+
+
+def _cn_hot_from_spot() -> list:
+    """Fallback when eastmoney's hot-rank is down: most active A-shares by turnover."""
+    import pandas as pd
+    from routers.market import _get_spot_df
+    df = _get_spot_df()
+    if df is None:
+        return []
+    df = df.copy()
+    df["成交额"] = pd.to_numeric(df["成交额"], errors="coerce")
+    df["涨跌幅"] = pd.to_numeric(df["涨跌幅"], errors="coerce")
+    df = df.dropna(subset=["成交额"]).sort_values("成交额", ascending=False).head(20)
+    out = []
+    for i, (_, row) in enumerate(df.iterrows()):
+        pct = row["涨跌幅"]
+        out.append({
+            "code": _cn_code(str(row["代码"])),
+            "name": str(row["名称"]),
+            "change_pct": None if pd.isna(pct) else round(float(pct), 2),
+            "rank": i + 1,
+            "market": "cn",
+        })
+    return out
+
+
 def _cn_code(raw: str) -> str:
     """Strip exchange prefix: SZ000725 -> 000725."""
     if len(raw) > 6 and raw[:2].upper() in ("SH", "SZ", "BJ"):
@@ -132,34 +172,46 @@ def hot_stocks(market: str = Query("cn", pattern="^(cn|us)$")):
             _hot_cn_ts = now
             return result
         except Exception:
-            return _hot_cn_data or []
+            if _hot_cn_data:
+                return _hot_cn_data
+            fallback = _cn_hot_from_spot()
+            # cache briefly so a dead upstream isn't hammered on every request
+            _hot_cn_data = fallback
+            _hot_cn_ts = now - (_HOT_TTL - (120 if fallback else 20))
+            return fallback
 
     else:  # us
         if _hot_us_data is not None and now - _hot_us_ts < _HOT_TTL:
             return _hot_us_data
         pct_map: dict = {}
         try:
-            import yfinance as yf
-            syms = " ".join(s for s, _ in _US_HOT)
-            data = yf.download(syms, period="2d", group_by="ticker",
-                               progress=False, threads=False, auto_adjust=True)
-            for sym, _ in _US_HOT:
-                try:
-                    hist = (data[sym] if len(_US_HOT) > 1 else data).dropna(subset=["Close"])
-                    if len(hist) >= 2:
-                        last, prev = float(hist["Close"].iloc[-1]), float(hist["Close"].iloc[-2])
-                        pct_map[sym] = round((last - prev) / prev * 100, 2) if prev else None
-                except Exception:
-                    pass
+            pct_map = _us_pct_tencent([s for s, _ in _US_HOT])
         except Exception:
             pass
+        if len(pct_map) < len(_US_HOT):
+            try:
+                import yfinance as yf
+                syms = " ".join(s for s, _ in _US_HOT)
+                data = yf.download(syms, period="2d", group_by="ticker",
+                                   progress=False, threads=False, auto_adjust=True)
+                for sym, _ in _US_HOT:
+                    try:
+                        hist = (data[sym] if len(_US_HOT) > 1 else data).dropna(subset=["Close"])
+                        if len(hist) >= 2 and sym not in pct_map:
+                            last, prev = float(hist["Close"].iloc[-1]), float(hist["Close"].iloc[-2])
+                            pct_map[sym] = round((last - prev) / prev * 100, 2) if prev else None
+                    except Exception:
+                        pass
+            except Exception:
+                pass
         result = [
             {"code": sym, "name": name,
              "change_pct": pct_map.get(sym), "rank": i + 1, "market": "us"}
             for i, (sym, name) in enumerate(_US_HOT)
         ]
         _hot_us_data = result
-        _hot_us_ts = now
+        # incomplete (no pct at all) data expires quickly
+        _hot_us_ts = now if pct_map else now - (_HOT_TTL - 60)
         return result
 
 

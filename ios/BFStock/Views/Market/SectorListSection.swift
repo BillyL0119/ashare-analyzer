@@ -80,7 +80,7 @@ struct SectorRow: View {
             }
             .frame(height: 8)
 
-            PctPill(pct: sector.changePct, market: .cn, minWidth: 62)
+            PctPill(pct: sector.changePct, market: .cn, fixedWidth: 74)
         }
     }
 }

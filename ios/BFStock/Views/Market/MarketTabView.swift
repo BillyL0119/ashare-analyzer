@@ -109,6 +109,17 @@ struct MarketTabView: View {
                     SkeletonRows(rows: 5)
                 } else if let err = vm.hotError, hotStocks.isEmpty {
                     ErrorRetryView(message: err) { Task { await vm.loadHotStocks() } }
+                } else if hotStocks.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "flame")
+                            .font(.title2)
+                            .foregroundStyle(.tertiary)
+                        Text("暂无热门股数据，稍后下拉刷新")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 28)
                 } else {
                     let rows = Array(hotStocks.prefix(20).enumerated())
                     VStack(spacing: 0) {
