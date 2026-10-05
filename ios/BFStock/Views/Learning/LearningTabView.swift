@@ -65,6 +65,7 @@ struct LearningTabView: View {
             }
             .padding(.horizontal)
         }
+        .sensoryFeedback(.selection, trigger: vm.selectedKey)
     }
 
     // MARK: - Topic List

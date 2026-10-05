@@ -6,7 +6,27 @@ struct WatchlistSection: View {
     @State private var targeted: String?
 
     var body: some View {
-        if !store.items.isEmpty {
+        if store.items.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                SectionHeader("自选股")
+                HStack(spacing: 14) {
+                    Image(systemName: "star")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(DS.accent)
+                        .frame(width: 44, height: 44)
+                        .background(DS.accent.opacity(0.14), in: Circle())
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("还没有自选股")
+                            .font(.subheadline.weight(.semibold))
+                        Text("搜索股票，点详情页右上角的星标即可添加")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .card()
+            }
+        } else {
             VStack(alignment: .leading, spacing: 10) {
                 SectionHeader("自选股") {
                     HStack(spacing: 12) {

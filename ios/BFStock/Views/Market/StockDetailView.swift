@@ -57,6 +57,22 @@ struct StockDetailView: View {
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 1) {
+                    Text(name)
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(1)
+                    if let q = vm.quote {
+                        HStack(spacing: 5) {
+                            Text(Formatters.price(q.price))
+                            Text(Formatters.changePct(q.pctChange))
+                        }
+                        .font(.system(.caption2, design: .rounded).weight(.semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(Theme.changeColor(q.pctChange, market: market))
+                    }
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 let watched = watchlist.isWatched(code: code, market: market)
                 Button {
@@ -139,6 +155,7 @@ struct StockDetailView: View {
             }
         }
         .pickerStyle(.segmented)
+        .sensoryFeedback(.selection, trigger: vm.period)
     }
 
     // MARK: - Indicator Picker
@@ -150,6 +167,7 @@ struct StockDetailView: View {
             }
         }
         .pickerStyle(.segmented)
+        .sensoryFeedback(.selection, trigger: vm.indicator)
     }
 
     // MARK: - Chart

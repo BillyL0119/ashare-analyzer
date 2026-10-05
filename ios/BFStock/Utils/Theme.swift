@@ -171,6 +171,7 @@ struct MarketSegmentControl: View {
         }
         .padding(2)
         .background(DS.surfaceHi, in: Capsule())
+        .sensoryFeedback(.selection, trigger: selection)
     }
 }
 
