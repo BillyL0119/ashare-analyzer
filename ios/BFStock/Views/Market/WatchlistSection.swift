@@ -57,14 +57,27 @@ private struct WatchlistRow: View {
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
             }
-            Spacer(minLength: 8)
+            Spacer(minLength: 4)
+            if vm.closes.count > 1 {
+                Sparkline(values: vm.closes, color: trendColor)
+                    .frame(width: 64, height: 32)
+                    .transition(.opacity)
+            }
             if let price = vm.price {
                 Text(Formatters.price(price))
                     .font(.system(.body, design: .rounded).weight(.semibold))
                     .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .frame(width: 78, alignment: .trailing)
             }
-            PctPill(pct: vm.changePct, market: item.resolvedMarket)
+            PctPill(pct: vm.changePct, market: item.resolvedMarket, fixedWidth: 80)
         }
+        .animation(.easeOut(duration: 0.3), value: vm.closes.count)
         .task { await vm.load() }
+    }
+
+    private var trendColor: Color {
+        Theme.changeColor(vm.trendPct ?? 0, market: item.resolvedMarket)
     }
 }

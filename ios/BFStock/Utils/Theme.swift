@@ -121,6 +121,7 @@ struct PctPill: View {
     let pct: Double?
     let market: Market
     var minWidth: CGFloat = 68
+    var fixedWidth: CGFloat? = nil
 
     var body: some View {
         let color = pct.map { Theme.changeColor($0, market: market) } ?? .secondary
@@ -129,7 +130,8 @@ struct PctPill: View {
             .monospacedDigit()
             .foregroundStyle(color)
             .padding(.horizontal, 10)
-            .frame(minWidth: minWidth)
+            .frame(minWidth: fixedWidth == nil ? minWidth : nil)
+            .frame(width: fixedWidth)
             .padding(.vertical, 5)
             .background(color.opacity(0.14), in: Capsule())
     }
@@ -230,5 +232,67 @@ struct SkeletonRows: View {
             }
         }
         .accessibilityLabel("加载中")
+    }
+}
+
+// MARK: - Sparkline
+
+struct Sparkline: View {
+    let values: [Double]
+    let color: Color
+    var lineWidth: CGFloat = 1.6
+    @State private var progress: CGFloat = 0
+
+    var body: some View {
+        GeometryReader { geo in
+            let pts = points(in: geo.size)
+            ZStack {
+                if pts.count > 1 {
+                    fillPath(pts, height: geo.size.height)
+                        .fill(LinearGradient(colors: [color.opacity(0.28), color.opacity(0)],
+                                             startPoint: .top, endPoint: .bottom))
+                        .opacity(progress)
+                    linePath(pts)
+                        .trim(from: 0, to: progress)
+                        .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+                    if let last = pts.last {
+                        Circle().fill(color)
+                            .frame(width: 4.5, height: 4.5)
+                            .position(last)
+                            .opacity(progress >= 1 ? 1 : 0)
+                    }
+                }
+            }
+        }
+        .onAppear { withAnimation(.easeOut(duration: 0.8)) { progress = 1 } }
+        .onChange(of: values) { _, _ in
+            progress = 0
+            withAnimation(.easeOut(duration: 0.8)) { progress = 1 }
+        }
+    }
+
+    private func points(in size: CGSize) -> [CGPoint] {
+        guard values.count > 1, let lo = values.min(), let hi = values.max() else { return [] }
+        let span = max(hi - lo, 1e-9)
+        let inset: CGFloat = 3
+        return values.enumerated().map { i, v in
+            CGPoint(x: inset + (size.width - 2 * inset) * CGFloat(i) / CGFloat(values.count - 1),
+                    y: inset + (size.height - 2 * inset) * (1 - CGFloat((v - lo) / span)))
+        }
+    }
+
+    private func linePath(_ pts: [CGPoint]) -> Path {
+        var p = Path()
+        p.move(to: pts[0])
+        for pt in pts.dropFirst() { p.addLine(to: pt) }
+        return p
+    }
+
+    private func fillPath(_ pts: [CGPoint], height: CGFloat) -> Path {
+        var p = linePath(pts)
+        p.addLine(to: CGPoint(x: pts.last!.x, y: height))
+        p.addLine(to: CGPoint(x: pts[0].x, y: height))
+        p.closeSubpath()
+        return p
     }
 }
