@@ -34,6 +34,15 @@ enum Formatters {
 
     // MARK: Volume (shares)
 
+    static func shareVolume(_ value: Double) -> String {
+        if value >= 1_0000_0000 {
+            return String(format: "%.2f亿股", value / 1_0000_0000)
+        } else if value >= 1_0000 {
+            return String(format: "%.1f万股", value / 1_0000)
+        }
+        return String(format: "%.0f股", value)
+    }
+
     static func volume(_ value: Double) -> String {
         if value >= 1_0000_0000 {
             return String(format: "%.1f亿手", value / 1_0000_0000)

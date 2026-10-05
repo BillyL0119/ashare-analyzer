@@ -338,27 +338,78 @@ struct StockDetailView: View {
     // MARK: - Quote Grid
 
     private func quoteGrid(_ q: RealtimeQuote) -> some View {
+        let last = vm.candles.last
+        // The US realtime feed has no open/high/low/turnover: fall back to the latest candle.
+        let open   = q.open  > 0 ? q.open  : (last?.open  ?? 0)
+        let high   = q.high  > 0 ? q.high  : (last?.high  ?? 0)
+        let low    = q.low   > 0 ? q.low   : (last?.low   ?? 0)
+        let volume = q.volume > 0 ? q.volume : (last?.volume ?? 0)
+        func px(_ v: Double) -> String { v > 0 ? Formatters.price(v) : "--" }
         let items: [(String, String)] = [
-            ("今开", Formatters.price(q.open)),
-            ("昨收", Formatters.price(q.prevClose)),
-            ("最高", Formatters.price(q.high)),
-            ("最低", Formatters.price(q.low)),
-            ("成交量", Formatters.volume(q.volume)),
-            ("成交额", Formatters.cnyAmount(q.amount)),
+            ("今开", px(open)),
+            ("昨收", px(q.prevClose)),
+            ("最高", px(high)),
+            ("最低", px(low)),
+            ("成交量", volume > 0 ? (market == .us ? Formatters.shareVolume(volume) : Formatters.volume(volume)) : "--"),
+            ("成交额", q.amount > 0 ? Formatters.cnyAmount(q.amount) : "--"),
         ]
-        return LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 3), spacing: 12) {
-            ForEach(items, id: \.0) { label, value in
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(label)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    Text(value)
-                        .font(.subheadline.weight(.medium))
-                        .monospacedDigit()
+        return VStack(alignment: .leading, spacing: 16) {
+            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 3), spacing: 14) {
+                ForEach(items, id: \.0) { label, value in
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(label)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Text(value)
+                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                            .monospacedDigit()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            rangeBar(price: q.price)
         }
         .card()
+    }
+
+    @ViewBuilder
+    private func rangeBar(price: Double) -> some View {
+        if let lo = vm.candles.map(\.low).min(), let hi = vm.candles.map(\.high).max(), hi > lo {
+            let pos = min(max((price - lo) / (hi - lo), 0), 1)
+            VStack(spacing: 8) {
+                HStack {
+                    Text("区间最低").foregroundStyle(.secondary)
+                    Spacer()
+                    Text("区间最高").foregroundStyle(.secondary)
+                }
+                .font(.caption2)
+                GeometryReader { geo in
+                    let w = geo.size.width
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(DS.surfaceHi)
+                        Capsule()
+                            .fill(LinearGradient(colors: [Theme.downColor(market: market).opacity(0.7),
+                                                          Theme.upColor(market: market).opacity(0.7)],
+                                                 startPoint: .leading, endPoint: .trailing))
+                            .frame(height: 6)
+                        Circle()
+                            .fill(.white)
+                            .frame(width: 14, height: 14)
+                            .overlay(Circle().strokeBorder(DS.stroke, lineWidth: 1))
+                            .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                            .offset(x: (w - 14) * pos)
+                    }
+                    .frame(height: 14)
+                }
+                .frame(height: 14)
+                HStack {
+                    Text(Formatters.price(lo))
+                    Spacer()
+                    Text(Formatters.price(hi))
+                }
+                .font(.system(.caption, design: .rounded).weight(.semibold))
+                .monospacedDigit()
+            }
+        }
     }
 }

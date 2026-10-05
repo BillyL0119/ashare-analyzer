@@ -216,7 +216,7 @@ struct VolumeChart: View {
                 AxisGridLine()
                 AxisValueLabel {
                     if let d = v.as(Double.self) {
-                        Text(Formatters.volume(d)).font(.caption2)
+                        Text(market == .us ? Formatters.shareVolume(d) : Formatters.volume(d)).font(.caption2)
                     }
                 }
             }
