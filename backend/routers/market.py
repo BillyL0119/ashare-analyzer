@@ -41,7 +41,7 @@ except Exception:
 # dropped by the upstream. Fetch it once, share it between /overview and /sectors,
 # and serve the last good snapshot while a background refresh runs.
 _SPOT_TTL = 120
-_SPOT_RETRY_COOLDOWN = 30
+_SPOT_RETRY_COOLDOWN = 60
 _spot_df: pd.DataFrame | None = None
 _spot_ts: float = 0
 _spot_fail_ts: float = 0
@@ -49,17 +49,30 @@ _spot_refreshing = False
 _spot_lock = threading.Lock()
 
 
+def _spot_from_sina() -> pd.DataFrame:
+    """Fallback source (~40s, so only ever called from the background refresher)."""
+    df = ak.stock_zh_a_spot()
+    df = df.copy()
+    df["代码"] = df["代码"].astype(str).str.replace(r"^(sh|sz|bj)", "", regex=True)
+    return df
+
+
 def _refresh_spot() -> None:
     global _spot_df, _spot_ts, _spot_fail_ts, _spot_refreshing
     try:
-        df = ak.stock_zh_a_spot_em()
+        df = None
+        try:
+            df = ak.stock_zh_a_spot_em()
+        except Exception as e:
+            logger.warning("stock_zh_a_spot_em failed, falling back to sina: %s", e)
+            try:
+                df = _spot_from_sina()
+            except Exception as e2:
+                logger.warning("sina spot fallback failed: %s", e2)
         if df is not None and not df.empty:
             _spot_df, _spot_ts = df, time.time()
         else:
             _spot_fail_ts = time.time()
-    except Exception as e:
-        _spot_fail_ts = time.time()
-        logger.warning("stock_zh_a_spot_em failed: %s", e)
     finally:
         _spot_refreshing = False
 
@@ -90,6 +103,28 @@ def _get_spot_df() -> pd.DataFrame | None:
             _spot_refreshing = True
             _refresh_spot()
     return _spot_df
+
+
+_TENCENT_INDEX_KEYS = {"000001": "shanghai_index", "399001": "shenzhen_index", "399006": "chinext_index"}
+
+
+def _fetch_indices_tencent() -> dict:
+    """Main indices from qt.gtimg.cn — one fast request, far more reliable than eastmoney."""
+    import requests
+    r = requests.get("https://qt.gtimg.cn/q=sh000001,sz399001,sz399006", timeout=6)
+    text = r.content.decode("gbk", errors="ignore")
+    out: dict = {}
+    for chunk in text.split(";"):
+        _, _, val = chunk.partition("=")
+        f = val.strip().strip('"').split("~")
+        if len(f) < 33 or f[2] not in _TENCENT_INDEX_KEYS:
+            continue
+        out[_TENCENT_INDEX_KEYS[f[2]]] = {
+            "value":      _safe_float(f[3]),
+            "change":     _safe_float(f[31]),
+            "change_pct": round(_safe_float(f[32]) / 100, 4),
+        }
+    return out
 
 
 def _fetch_index(sym_param: str):
@@ -165,9 +200,17 @@ def market_overview():
         except Exception as e:
             logger.warning("overview: spot parsing failed: %s", e)
 
-    # Index data — both index groups in parallel
+    # Index data: tencent first, eastmoney only as a fallback
+    try:
+        for key, entry in _fetch_indices_tencent().items():
+            result[key] = entry
+            got_data = True
+    except Exception as e:
+        logger.warning("tencent indices failed: %s", e)
+
+    missing = not (result["shanghai_index"] and result["shenzhen_index"] and result["chinext_index"])
     with ThreadPoolExecutor(max_workers=2) as pool:
-        futures = [pool.submit(_fetch_index, sym) for sym in ("上证系列指数", "深证系列指数")]
+        futures = [pool.submit(_fetch_index, sym) for sym in ("上证系列指数", "深证系列指数")] if missing else []
         for fut in futures:
             try:
                 _, df = fut.result(timeout=12)
