@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LearningTabView: View {
     @StateObject private var vm = LearningViewModel()
+    @ObservedObject private var progress = LearningProgressStore.shared
 
     private let examLabels: [String: String] = [
         "alevel":   "A-Level",
@@ -74,12 +75,14 @@ struct LearningTabView: View {
     private func curriculumList(_ curriculum: Curriculum) -> some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 22) {
+                progressCard(curriculum)
                 if let papers = curriculum.papers, !papers.isEmpty {
                     ForEach(papers) { paper in
                         VStack(alignment: .leading, spacing: 10) {
                             SectionHeader(paper.title) {
-                                Text("\(paper.topics.count) 个主题")
-                                    .font(.caption)
+                                Text("\(progress.count(exam: curriculum.key, topics: paper.topics))/\(paper.topics.count)")
+                                    .font(.system(.caption, design: .rounded).weight(.semibold))
+                                    .monospacedDigit()
                                     .foregroundStyle(.secondary)
                             }
                             topicCard(paper.topics, exam: curriculum.key)
@@ -95,13 +98,42 @@ struct LearningTabView: View {
         }
     }
 
+    private func progressCard(_ curriculum: Curriculum) -> some View {
+        let all = curriculum.allTopics
+        let done = progress.count(exam: curriculum.key, topics: all)
+        let total = max(all.count, 1)
+        let fraction = Double(done) / Double(total)
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("学习进度")
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                Text("\(done)/\(all.count) 已学完")
+                    .font(.system(.caption, design: .rounded).weight(.semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                    .contentTransition(.numericText(value: Double(done)))
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(DS.surfaceHi)
+                    Capsule().fill(DS.accentGradient)
+                        .frame(width: max(geo.size.width * fraction, done > 0 ? 8 : 0))
+                }
+            }
+            .frame(height: 8)
+            .animation(.snappy(duration: 0.4), value: done)
+        }
+        .card()
+    }
+
     private func topicCard(_ topics: [TopicSummary], exam: String) -> some View {
         VStack(spacing: 0) {
             ForEach(Array(topics.enumerated()), id: \.element.id) { idx, topic in
                 NavigationLink(destination: TopicDetailView(
                     exam: exam, topicID: topic.topicID, topicTitle: topic.title
                 )) {
-                    TopicRow(topic: topic)
+                    TopicRow(topic: topic, done: progress.isDone(exam, topic.topicID))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .contentShape(Rectangle())
@@ -116,9 +148,13 @@ struct LearningTabView: View {
 
 private struct TopicRow: View {
     let topic: TopicSummary
+    var done = false
 
     var body: some View {
         HStack(spacing: 12) {
+            Image(systemName: done ? "checkmark.circle.fill" : "circle")
+                .font(.title3)
+                .foregroundStyle(done ? Color(red: 0.18, green: 0.72, blue: 0.39) : Color.secondary.opacity(0.4))
             VStack(alignment: .leading, spacing: 4) {
                 Text(topic.title)
                     .font(.subheadline.weight(.medium))

@@ -6,6 +6,7 @@ struct TopicDetailView: View {
     let topicTitle: String
 
     @StateObject private var vm = TopicViewModel()
+    @ObservedObject private var progress = LearningProgressStore.shared
 
     var body: some View {
         Group {
@@ -21,6 +22,8 @@ struct TopicDetailView: View {
                         ForEach(Array(topic.sections.enumerated()), id: \.element.id) { idx, section in
                             SectionCard(index: idx + 1, section: section as TopicSection)
                         }
+
+                        completeButton
 
                         Text("disclaimer")
                             .font(.caption2)
@@ -40,6 +43,30 @@ struct TopicDetailView: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load(exam: exam, topicID: topicID) }
+    }
+
+    private var completeButton: some View {
+        let done = progress.isDone(exam, topicID)
+        let green = Color(red: 0.18, green: 0.72, blue: 0.39)
+        return Button {
+            withAnimation(.snappy(duration: 0.3)) { progress.toggle(exam, topicID) }
+        } label: {
+            Label(done ? "已学完" : "标记为已学完",
+                  systemImage: done ? "checkmark.circle.fill" : "checkmark.circle")
+                .font(.headline)
+                .foregroundStyle(done ? green : Color.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 15)
+                .background {
+                    if done {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous).fill(green.opacity(0.14))
+                    } else {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous).fill(DS.accentGradient)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .sensoryFeedback(.success, trigger: done)
     }
 
     private var examName: String {

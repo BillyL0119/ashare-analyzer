@@ -65,3 +65,29 @@ final class TopicViewModel: ObservableObject {
         return error.localizedDescription
     }
 }
+
+@MainActor
+final class LearningProgressStore: ObservableObject {
+    static let shared = LearningProgressStore()
+    private let key = "learningProgress.v1"
+
+    @Published private(set) var done: Set<String> = []
+
+    private init() {
+        if let arr = UserDefaults.standard.array(forKey: key) as? [String] { done = Set(arr) }
+    }
+
+    private func token(_ exam: String, _ topicID: String) -> String { "\(exam)/\(topicID)" }
+
+    func isDone(_ exam: String, _ topicID: String) -> Bool { done.contains(token(exam, topicID)) }
+
+    func toggle(_ exam: String, _ topicID: String) {
+        let t = token(exam, topicID)
+        if done.contains(t) { done.remove(t) } else { done.insert(t) }
+        UserDefaults.standard.set(Array(done), forKey: key)
+    }
+
+    func count(exam: String, topics: [TopicSummary]) -> Int {
+        topics.filter { isDone(exam, $0.topicID) }.count
+    }
+}
