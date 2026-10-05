@@ -83,6 +83,7 @@ private struct SplashView: View {
                         .offset(y: taglineVisible ? 0 : 6)
                 }
         }
+        .ignoresSafeArea()
         .task {
             withAnimation(.easeInOut(duration: 0.7).delay(0.05)) { sweep = 1.2 }
             withAnimation(.easeOut(duration: 0.45).delay(0.1)) { taglineVisible = true }

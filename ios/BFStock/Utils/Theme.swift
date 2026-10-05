@@ -169,3 +169,66 @@ struct MarketSegmentControl: View {
         .background(DS.surfaceHi, in: Capsule())
     }
 }
+
+// MARK: - Skeleton loading
+
+private struct ShimmerModifier: ViewModifier {
+    @State private var phase: CGFloat = -1
+    private let sheen = Color(light: Color.white.opacity(0.85), dark: Color.white.opacity(0.10))
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                GeometryReader { geo in
+                    LinearGradient(colors: [.clear, sheen, .clear], startPoint: .leading, endPoint: .trailing)
+                        .frame(width: geo.size.width * 0.7)
+                        .offset(x: phase * geo.size.width * 1.4)
+                }
+                .mask(content)
+            }
+            .onAppear {
+                withAnimation(.linear(duration: 1.3).repeatForever(autoreverses: false)) { phase = 1 }
+            }
+    }
+}
+
+extension View {
+    func shimmer() -> some View { modifier(ShimmerModifier()) }
+}
+
+struct SkeletonBar: View {
+    var width: CGFloat? = nil
+    var height: CGFloat = 12
+    var radius: CGFloat = 6
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: radius, style: .continuous)
+            .fill(DS.surfaceHi)
+            .frame(width: width, height: height)
+            .shimmer()
+    }
+}
+
+struct SkeletonRows: View {
+    var rows: Int = 4
+    var trailingPill = true
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(0..<rows, id: \.self) { i in
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        SkeletonBar(width: CGFloat(90 + (i * 23) % 50), height: 13)
+                        SkeletonBar(width: 54, height: 9)
+                    }
+                    Spacer()
+                    if trailingPill { SkeletonBar(width: 68, height: 26, radius: 13) }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 13)
+                if i < rows - 1 { RowDivider() }
+            }
+        }
+        .accessibilityLabel("加载中")
+    }
+}

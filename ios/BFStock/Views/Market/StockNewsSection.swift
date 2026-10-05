@@ -15,8 +15,7 @@ struct StockNewsSection: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 if isLoading && items.isEmpty {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, minHeight: 80)
+                    SkeletonRows(rows: 4, trailingPill: false)
                 } else if let err = error, items.isEmpty {
                     ErrorRetryView(message: err, onRetry: onRetry)
                 } else if !items.isEmpty {

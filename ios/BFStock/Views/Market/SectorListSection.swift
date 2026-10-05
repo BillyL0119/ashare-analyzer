@@ -11,7 +11,7 @@ struct SectorListSection: View {
             SectionHeader("行业板块")
             Group {
                 if isLoading && sectors.isEmpty {
-                    ProgressView().frame(maxWidth: .infinity, minHeight: 80)
+                    SkeletonRows(rows: 4)
                 } else if let err = error, sectors.isEmpty {
                     ErrorRetryView(message: err, onRetry: onRetry)
                 } else {

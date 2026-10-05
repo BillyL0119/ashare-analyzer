@@ -155,8 +155,7 @@ struct StockDetailView: View {
     private var chartSection: some View {
         Group {
             if vm.isLoadingChart && vm.candles.isEmpty {
-                ProgressView(String(localized: "loading"))
-                    .frame(maxWidth: .infinity, minHeight: 220)
+                SkeletonBar(height: 240, radius: DS.tileRadius)
             } else if let err = vm.chartError, vm.candles.isEmpty {
                 ErrorRetryView(message: err) { Task { await vm.loadCandles() } }
                     .frame(minHeight: 220)

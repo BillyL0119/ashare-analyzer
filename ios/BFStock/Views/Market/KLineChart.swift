@@ -12,8 +12,17 @@ struct KLineChart: View {
     var bollMiddle: [Double?] = []
     var bollLower:  [Double?] = []
 
+    @State private var selected: Candle?
+    private let haptic = UISelectionFeedbackGenerator()
+
     var body: some View {
         Chart {
+            if let s = selected {
+                RuleMark(x: .value("Date", s.parsedDate))
+                    .foregroundStyle(Color.secondary.opacity(0.8))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+            }
+
             // Candlestick wicks (high-low)
             ForEach(candles) { c in
                 RuleMark(
@@ -110,6 +119,66 @@ struct KLineChart: View {
             }
         }
         .chartLegend(.hidden)
+        .chartOverlay { proxy in
+            GeometryReader { geo in
+                Rectangle().fill(Color.clear).contentShape(Rectangle())
+                    .gesture(
+                        LongPressGesture(minimumDuration: 0.25)
+                            .sequenced(before: DragGesture(minimumDistance: 0))
+                            .onChanged { value in
+                                guard case .second(true, let drag?) = value,
+                                      let frame = proxy.plotFrame else { return }
+                                let x = drag.location.x - geo[frame].origin.x
+                                guard let date: Date = proxy.value(atX: x) else { return }
+                                let nearest = candles.min {
+                                    abs($0.parsedDate.timeIntervalSince(date)) < abs($1.parsedDate.timeIntervalSince(date))
+                                }
+                                if nearest?.id != selected?.id { haptic.selectionChanged() }
+                                selected = nearest
+                            }
+                            .onEnded { _ in selected = nil }
+                    )
+            }
+        }
+        .overlay(alignment: .top) {
+            if let s = selected { infoBar(s) }
+        }
+    }
+
+    private func changePct(of c: Candle) -> Double {
+        if c.pctChange != 0 { return c.pctChange }
+        guard let i = candles.firstIndex(where: { $0.id == c.id }), i > 0, candles[i - 1].close != 0 else { return 0 }
+        return (c.close - candles[i - 1].close) / candles[i - 1].close * 100
+    }
+
+    private func infoBar(_ c: Candle) -> some View {
+        let pct = changePct(of: c)
+        return VStack(spacing: 3) {
+            HStack(spacing: 8) {
+                Text(c.date).font(.system(.caption2, design: .rounded).weight(.semibold))
+                Text(Formatters.changePct(pct))
+                    .font(.system(.caption2, design: .rounded).weight(.bold))
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.changeColor(pct, market: market))
+            }
+            HStack(spacing: 10) {
+                ForEach([("开", c.open), ("高", c.high), ("低", c.low), ("收", c.close)], id: \.0) { label, v in
+                    HStack(spacing: 2) {
+                        Text(label).foregroundStyle(.secondary)
+                        Text(Formatters.price(v)).monospacedDigit()
+                    }
+                    .font(.system(.caption2, design: .rounded))
+                }
+            }
+        }
+        .lineLimit(1)
+        .fixedSize()
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(DS.stroke))
+        .padding(.top, 2)
+        .transition(.opacity)
     }
 
     private func candleColor(_ c: Candle) -> Color {

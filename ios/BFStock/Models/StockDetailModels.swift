@@ -74,11 +74,14 @@ struct Candle: Decodable, Identifiable {
     var isUp: Bool { close >= open }
 
     // Parsed date for Swift Charts x-axis
-    var parsedDate: Date {
+    private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
-        return f.date(from: date) ?? Date()
-    }
+        f.locale = Locale(identifier: "en_US_POSIX")
+        return f
+    }()
+
+    var parsedDate: Date { Self.dayFormatter.date(from: date) ?? Date() }
 }
 
 enum ChartPeriod: String, CaseIterable, Identifiable {

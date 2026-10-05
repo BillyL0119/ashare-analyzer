@@ -77,9 +77,16 @@ struct MarketTabView: View {
     @ViewBuilder
     private var overviewSection: some View {
         if vm.isLoadingOverview && vm.overview == nil {
-            ProgressView(String(localized: "loading"))
-                .frame(maxWidth: .infinity, minHeight: 120)
-                .card()
+            VStack(alignment: .leading, spacing: 16) {
+                SkeletonBar(width: 90, height: 14)
+                HStack(spacing: 10) {
+                    ForEach(0..<3, id: \.self) { _ in
+                        SkeletonBar(height: 78, radius: DS.tileRadius)
+                    }
+                }
+                SkeletonBar(height: 8, radius: 4)
+            }
+            .card()
         } else if let err = vm.overviewError, vm.overview == nil {
             ErrorRetryView(message: err) { Task { await vm.loadOverview() } }
                 .card()
@@ -99,8 +106,7 @@ struct MarketTabView: View {
             SectionHeader("热门股票") { marketSegment }
             Group {
                 if vm.isLoadingHot && hotStocks.isEmpty {
-                    ProgressView(String(localized: "loading"))
-                        .frame(maxWidth: .infinity, minHeight: 80)
+                    SkeletonRows(rows: 5)
                 } else if let err = vm.hotError, hotStocks.isEmpty {
                     ErrorRetryView(message: err) { Task { await vm.loadHotStocks() } }
                 } else {
