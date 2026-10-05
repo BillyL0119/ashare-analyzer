@@ -241,7 +241,7 @@ struct StockDetailView: View {
 
     private var maLegend: some View {
         HStack(spacing: 16) {
-            maItem("MA5",  color: .yellow, values: vm.ma5)
+            maItem("MA5",  color: DS.ma5, values: vm.ma5)
             maItem("MA10", color: .purple, values: vm.ma10)
             maItem("MA20", color: .orange, values: vm.ma20)
         }
@@ -251,9 +251,9 @@ struct StockDetailView: View {
     private var bollLegend: some View {
         let b = vm.bollTuple
         return HStack(spacing: 16) {
-            bollItem("UP",  color: Color.cyan.opacity(0.8), values: b.upper)
-            bollItem("MID", color: Color.cyan.opacity(0.4), values: b.middle)
-            bollItem("DN",  color: Color.cyan.opacity(0.8), values: b.lower)
+            bollItem("UP",  color: DS.boll.opacity(0.9), values: b.upper)
+            bollItem("MID", color: DS.boll.opacity(0.55), values: b.middle)
+            bollItem("DN",  color: DS.boll.opacity(0.9), values: b.lower)
         }
         .font(.caption)
     }
@@ -291,7 +291,7 @@ struct StockDetailView: View {
     private func macdLegendRow(_ m: (macdLine: [Double?], signalLine: [Double?], histogram: [Double?])) -> some View {
         HStack(spacing: 12) {
             legendLabel("MACD", color: .primary, values: m.macdLine)
-            legendLabel("DEA",  color: .yellow,  values: m.signalLine)
+            legendLabel("DEA",  color: DS.ma5,  values: m.signalLine)
             legendLabel("DIFF", color: .secondary, values: m.histogram)
         }
         .font(.caption)

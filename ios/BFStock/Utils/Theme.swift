@@ -75,6 +75,8 @@ enum DS {
     static var accentGradient: LinearGradient {
         LinearGradient(colors: [accent, accentAlt], startPoint: .topLeading, endPoint: .bottomTrailing)
     }
+    static let ma5  = Color(light: Color(r: 0xD9, g: 0x91, b: 0x00), dark: Color(r: 0xFA, g: 0xCC, b: 0x15))
+    static let boll = Color(light: Color(r: 0x0E, g: 0x74, b: 0x90), dark: Color(r: 0x22, g: 0xD3, b: 0xEE))
     static let radius: CGFloat = 20
     static let tileRadius: CGFloat = 14
 }
@@ -87,6 +89,7 @@ private struct CardModifier: ViewModifier {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.radius, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: DS.radius, style: .continuous).strokeBorder(DS.stroke))
+            .shadow(color: Color.black.opacity(0.05), radius: 10, y: 3)
     }
 }
 

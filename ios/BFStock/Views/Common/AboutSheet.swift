@@ -2,12 +2,33 @@ import SwiftUI
 
 struct AboutSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("appearance") private var appearance = AppearanceSetting.system.rawValue
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 22) {
                     hero
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        SectionHeader("外观")
+                        HStack(spacing: 8) {
+                            ForEach(AppearanceSetting.allCases) { opt in
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.25)) { appearance = opt.rawValue }
+                                } label: {
+                                    Text(opt.label)
+                                        .font(.subheadline.weight(.semibold))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 10)
+                                        .foregroundStyle(appearance == opt.rawValue ? Color.white : Color.primary)
+                                        .background(appearance == opt.rawValue ? DS.accent : DS.surfaceHi, in: Capsule())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .card()
+                    }
 
                     group("关于") {
                         infoRow("开发者", "Billy L.")
