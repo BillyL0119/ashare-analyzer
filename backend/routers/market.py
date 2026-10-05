@@ -78,31 +78,18 @@ def _refresh_spot() -> None:
 
 
 def _get_spot_df() -> pd.DataFrame | None:
-    """Return the latest spot snapshot without blocking when a stale one exists."""
+    """Return the latest spot snapshot. Never blocks: refreshes run in a background thread."""
     global _spot_refreshing
     now = time.time()
-    fresh = _spot_df is not None and now - _spot_ts < _SPOT_TTL
-    if fresh:
+    if _spot_df is not None and now - _spot_ts < _SPOT_TTL:
         return _spot_df
     cooling = now - _spot_fail_ts < _SPOT_RETRY_COOLDOWN
-
-    if _spot_df is not None:
-        # stale but usable: refresh in the background, answer immediately
-        if not cooling and not _spot_refreshing:
-            with _spot_lock:
-                if not _spot_refreshing:
-                    _spot_refreshing = True
-                    threading.Thread(target=_refresh_spot, daemon=True).start()
-        return _spot_df
-
-    # nothing cached yet: block once (single flight), unless we just failed
-    if cooling:
-        return None
-    with _spot_lock:
-        if _spot_df is None and not _spot_refreshing:
-            _spot_refreshing = True
-            _refresh_spot()
-    return _spot_df
+    if not cooling and not _spot_refreshing:
+        with _spot_lock:
+            if not _spot_refreshing:
+                _spot_refreshing = True
+                threading.Thread(target=_refresh_spot, daemon=True).start()
+    return _spot_df  # stale snapshot, or None until the first refresh completes
 
 
 _TENCENT_INDEX_KEYS = {"000001": "shanghai_index", "399001": "shenzhen_index", "399006": "chinext_index"}
@@ -160,14 +147,15 @@ def _build_sector_performance(spot_df: pd.DataFrame) -> list:
 
 
 _cache_ok = False
+_cache_complete = False
 
 
 @router.get("/overview")
 def market_overview():
-    global _cache_ts, _cache_data, _cache_ok
+    global _cache_ts, _cache_data, _cache_ok, _cache_complete
 
     now = time.time()
-    ttl = _CACHE_TTL if _cache_ok else 30
+    ttl = _CACHE_TTL if _cache_complete else 20
     if _cache_data is not None and now - _cache_ts < ttl:
         return _cache_data
 
@@ -185,6 +173,7 @@ def market_overview():
         "sector_performance": [],
     }
     got_data = False
+    spot_ok = False
 
     spot_df = _get_spot_df()
     if spot_df is not None:
@@ -197,6 +186,7 @@ def market_overview():
             result["total_volume"]  = f"{vol / 1e8:.0f}亿"
             result["sector_performance"] = _build_sector_performance(spot_df)
             got_data = True
+            spot_ok = True
         except Exception as e:
             logger.warning("overview: spot parsing failed: %s", e)
 
@@ -254,7 +244,9 @@ def market_overview():
         _cache_ts = now
         return _cache_data
 
+    indices_ok = bool(result["shanghai_index"] and result["shenzhen_index"] and result["chinext_index"])
     _cache_ts, _cache_data, _cache_ok = now, result, got_data
+    _cache_complete = spot_ok and indices_ok
     return result
 
 
