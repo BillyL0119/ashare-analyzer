@@ -155,7 +155,7 @@ struct MarketSegmentControl: View {
                 Button {
                     withAnimation(.snappy(duration: 0.25)) { selection = m }
                 } label: {
-                    Text(m == .cn ? "A股" : "美股")
+                    Text(m == .cn ? L("A股") : L("美股"))
                         .font(.caption.weight(.semibold))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 6)

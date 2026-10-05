@@ -133,7 +133,7 @@ struct PaperTradingTabView: View {
             : account.usPortfolio.sorted(by: { $0.key < $1.key })
 
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader("持仓") {
+            SectionHeader(L("持仓")) {
                 HStack(spacing: 10) {
                     if !positions.isEmpty {
                         Text("\(positions.count) 只")
@@ -185,7 +185,7 @@ struct PaperTradingTabView: View {
 
         if !txs.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
-                SectionHeader("最近交易")
+                SectionHeader(L("最近交易"))
                 let rows = Array(txs.prefix(10).enumerated())
                 VStack(spacing: 0) {
                     ForEach(rows, id: \.element.id) { idx, tx in
@@ -267,7 +267,7 @@ private struct AccountHeaderView: View {
         let color = plColor(returnPct, market: market)
         VStack(alignment: .leading, spacing: 18) {
             HStack {
-                Text(market == .cn ? "A股账户" : "美股账户")
+                Text(market == .cn ? L("A股账户") : L("美股账户"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
@@ -301,9 +301,9 @@ private struct AccountHeaderView: View {
             }
 
             HStack(spacing: 0) {
-                StatCell(label: "可用现金", value: "\(currency)\(String(format: "%.0f", cash))")
+                StatCell(label: L("可用现金"), value: "\(currency)\(String(format: "%.0f", cash))")
                 Rectangle().fill(DS.stroke).frame(width: 1, height: 30)
-                StatCell(label: "仅供学习", value: "不构成投资建议")
+                StatCell(label: L("仅供学习"), value: L("不构成投资建议"))
             }
             .padding(.vertical, 12)
             .background(DS.surfaceHi.opacity(0.8), in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
@@ -343,7 +343,7 @@ private struct PositionRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(symbol)
                     .font(.subheadline.weight(.semibold))
-                Text("\(position.sharesInt)股 · 均价\(market == .cn ? "¥" : "$")\(String(format: "%.2f", position.avgCost))")
+                Text(L("%lld股 · 均价%@", position.sharesInt, "\(market == .cn ? "¥" : "$")\(String(format: "%.2f", position.avgCost))"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -371,7 +371,7 @@ private struct TransactionRow: View {
 
     var body: some View {
         HStack {
-            Text(tx.isBuy ? "买" : "卖")
+            Text(tx.isBuy ? L("买") : L("卖"))
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white)
                 .frame(width: 28, height: 28)
@@ -380,7 +380,7 @@ private struct TransactionRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(tx.name.isEmpty ? tx.symbol : tx.name)
                     .font(.subheadline)
-                Text("\(tx.sharesInt)股 @ \(currency)\(String(format: "%.2f", tx.price))")
+                Text(L("%lld股 @ %@", tx.sharesInt, "\(currency)\(String(format: "%.2f", tx.price))"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

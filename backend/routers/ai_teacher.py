@@ -30,6 +30,8 @@ SYSTEM_PROMPT = (
     "根据用户提问语言自动用中文或英文回答，回答简洁清晰，适合学生理解。"
 )
 
+_LANG_NAMES = {"zh": "简体中文", "en": "English", "ja": "日本語", "ko": "한국어", "fr": "Français"}
+
 # ── Rate limiting ─────────────────────────────────────────────────────────────
 _rate_store: dict = defaultdict(list)  # device_id → [timestamps]
 
@@ -54,6 +56,7 @@ class ChatBody(BaseModel):
     message: str
     history: list[ChatMessage] = []
     device_id: Optional[str] = "anon"
+    lang: Optional[str] = None   # optional reply-language hint: zh / en / ja / ko / fr
 
 
 # ── Endpoint ──────────────────────────────────────────────────────────────────
@@ -80,7 +83,10 @@ async def ai_chat(body: ChatBody):
                 )
 
                 # Build messages: system + history + new user message
-                messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+                system_prompt = SYSTEM_PROMPT
+                if body.lang in _LANG_NAMES:
+                    system_prompt += f"\n请始终使用{_LANG_NAMES[body.lang]}回答，除非用户明确要求使用其他语言。"
+                messages = [{"role": "system", "content": system_prompt}]
                 for m in body.history:
                     if not m.content.strip():
                         continue

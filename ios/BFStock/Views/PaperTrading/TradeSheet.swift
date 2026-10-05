@@ -69,7 +69,7 @@ struct TradeSheet: View {
             }
             .scrollDismissesKeyboard(.interactively)
             .background(DS.bg.ignoresSafeArea())
-            .navigationTitle(isBuy ? "买入" : "卖出")
+            .navigationTitle(isBuy ? L("买入") : L("卖出"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -94,8 +94,8 @@ struct TradeSheet: View {
 
     private var buyHeader: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(market == .cn ? "A股 · 股票代码" : "美股 · 股票代码")
-            TextField(market == .cn ? "如 000001" : "如 AAPL", text: $buySymbol)
+            SectionHeader(market == .cn ? L("A股 · 股票代码") : L("美股 · 股票代码"))
+            TextField(market == .cn ? L("如 000001") : L("如 AAPL"), text: $buySymbol)
                 .font(.system(size: 28, weight: .bold, design: .monospaced))
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(market == .cn ? .never : .characters)
@@ -127,13 +127,13 @@ struct TradeSheet: View {
                 }
 
                 HStack(spacing: 10) {
-                    infoTile("现价", "\(currency)\(String(format: "%.2f", pos.currentPrice))")
-                    infoTile("成本", "\(currency)\(String(format: "%.2f", pos.avgCost))")
-                    infoTile("可卖/持有", "\(pos.availableSharesInt)/\(pos.sharesInt)")
+                    infoTile(L("现价"), "\(currency)\(String(format: "%.2f", pos.currentPrice))")
+                    infoTile(L("成本"), "\(currency)\(String(format: "%.2f", pos.avgCost))")
+                    infoTile(L("可卖/持有"), "\(pos.availableSharesInt)/\(pos.sharesInt)")
                 }
 
                 if pos.availableSharesInt < pos.sharesInt {
-                    Label(market == .cn ? "T+1：今日买入部分明日可卖" : "T+2：部分持仓尚未结算",
+                    Label(market == .cn ? L("T+1：今日买入部分明日可卖") : L("T+2：部分持仓尚未结算"),
                           systemImage: "clock.badge.exclamationmark")
                         .font(.caption)
                         .foregroundStyle(sellColor)
@@ -162,7 +162,7 @@ struct TradeSheet: View {
     private var sharesCard: some View {
         VStack(spacing: 16) {
             HStack {
-                Text(market == .cn ? "股数（100 的整数倍）" : "股数")
+                Text(market == .cn ? L("股数（100 的整数倍）") : L("股数"))
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
@@ -231,7 +231,7 @@ struct TradeSheet: View {
         }
         let m = max(minStep, maxSell)
         func part(_ f: Double) -> Int { max(minStep, Int(Double(m) * f) / minStep * minStep) }
-        var opts: [(String, Int)] = [("1/4", part(0.25)), ("1/2", part(0.5)), ("3/4", part(0.75)), ("全部", m)]
+        var opts: [(String, Int)] = [("1/4", part(0.25)), ("1/2", part(0.5)), ("3/4", part(0.75)), (L("全部"), m)]
         var seen = Set<Int>()
         opts = opts.filter { seen.insert($0.1).inserted }
         return opts
@@ -244,12 +244,12 @@ struct TradeSheet: View {
         if let amt = estimatedAmount, let pos = sellTuple?.2 {
             let pl = amt - pos.avgCost * Double(shares)
             VStack(spacing: 12) {
-                estimateRow("预计成交金额", "\(currency)\(String(format: "%.2f", amt))", color: .primary, bold: true)
+                estimateRow(L("预计成交金额"), "\(currency)\(String(format: "%.2f", amt))", color: .primary, bold: true)
                 if market == .cn {
-                    estimateRow("手续费约", "¥\(String(format: "%.2f", max(5, amt * 0.0013)))", color: .secondary)
+                    estimateRow(L("手续费约"), "¥\(String(format: "%.2f", max(5, amt * 0.0013)))", color: .secondary)
                 }
                 RowDivider().padding(.leading, 0)
-                estimateRow("预计盈亏", "\(pl >= 0 ? "+" : "")\(String(format: "%.2f", pl))",
+                estimateRow(L("预计盈亏"), "\(pl >= 0 ? "+" : "")\(String(format: "%.2f", pl))",
                             color: Theme.changeColor(pl, market: market), bold: true)
             }
             .card()
@@ -278,7 +278,7 @@ struct TradeSheet: View {
             onConfirm(sym, shares, market)
             dismiss()
         } label: {
-            Text(isBuy ? "确认买入 \(shares) 股" : "确认卖出 \(shares) 股")
+            Text(isBuy ? L("确认买入 %lld 股", shares) : L("确认卖出 %lld 股", shares))
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)

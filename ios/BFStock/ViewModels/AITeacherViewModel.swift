@@ -33,7 +33,7 @@ final class AITeacherViewModel: ObservableObject {
             ChatRequestBody.HistoryItem(role: $0.role, content: $0.content)
         }
 
-        let body = ChatRequestBody(message: text, deviceId: deviceID, history: Array(history))
+        let body = ChatRequestBody(message: text, deviceId: deviceID, history: Array(history), lang: Lang.code)
         guard let bodyData = try? JSONEncoder().encodeSnakeCase(body) else { return }
 
         let request = APIClient.shared.sseRequest(path: "/ai/chat", jsonBody: bodyData)
@@ -44,7 +44,7 @@ final class AITeacherViewModel: ObservableObject {
                 let (asyncBytes, response) = try await URLSession.shared.bytes(for: request)
                 guard let http = response as? HTTPURLResponse,
                       (200...299).contains(http.statusCode) else {
-                    await MainActor.run { self.finishStream(at: assistantIndex, error: "服务器错误") }
+                    await MainActor.run { self.finishStream(at: assistantIndex, error: L("服务器错误")) }
                     return
                 }
 
@@ -88,7 +88,7 @@ final class AITeacherViewModel: ObservableObject {
         if index < messages.count {
             messages[index].isStreaming = false
             if let error {
-                messages[index].content = messages[index].content.isEmpty ? "出错了：\(error)" : messages[index].content
+                messages[index].content = messages[index].content.isEmpty ? L("出错了：%@", error) : messages[index].content
             }
         }
         isStreaming = false

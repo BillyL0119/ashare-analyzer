@@ -103,7 +103,7 @@ struct MarketTabView: View {
 
     private var hotSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader("热门股票") { marketSegment }
+            SectionHeader(L("热门股票")) { marketSegment }
             Group {
                 if vm.isLoadingHot && hotStocks.isEmpty {
                     SkeletonRows(rows: 5)
@@ -183,7 +183,7 @@ struct MarketTabView: View {
                                         code: result.code, name: result.name,
                                         changePct: result.changePct, market: result.resolvedMarket
                                     )
-                                    Text(result.resolvedMarket == .us ? "美股" : "A股")
+                                    Text(result.resolvedMarket == .us ? L("美股") : L("A股"))
                                         .font(.caption2.weight(.medium))
                                         .padding(.horizontal, 7)
                                         .padding(.vertical, 3)

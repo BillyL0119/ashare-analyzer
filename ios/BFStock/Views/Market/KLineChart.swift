@@ -162,7 +162,7 @@ struct KLineChart: View {
                     .foregroundStyle(Theme.changeColor(pct, market: market))
             }
             HStack(spacing: 10) {
-                ForEach([("开", c.open), ("高", c.high), ("低", c.low), ("收", c.close)], id: \.0) { label, v in
+                ForEach([(L("开"), c.open), (L("高"), c.high), (L("低"), c.low), (L("收"), c.close)], id: \.0) { label, v in
                     HStack(spacing: 2) {
                         Text(label).foregroundStyle(.secondary)
                         Text(Formatters.price(v)).monospacedDigit()

@@ -8,7 +8,7 @@ struct WatchlistSection: View {
     var body: some View {
         if store.items.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
-                SectionHeader("自选股")
+                SectionHeader(L("自选股"))
                 HStack(spacing: 14) {
                     Image(systemName: "star")
                         .font(.title3.weight(.semibold))
@@ -28,12 +28,12 @@ struct WatchlistSection: View {
             }
         } else {
             VStack(alignment: .leading, spacing: 10) {
-                SectionHeader("自选股") {
+                SectionHeader(L("自选股")) {
                     HStack(spacing: 12) {
                         Text("\(store.items.count)")
                             .font(.system(.caption, design: .rounded).weight(.semibold))
                             .foregroundStyle(.secondary)
-                        Button(editing ? "完成" : "编辑") {
+                        Button(editing ? L("完成") : L("编辑")) {
                             withAnimation(.snappy(duration: 0.25)) { editing.toggle() }
                         }
                         .font(.caption.weight(.semibold))

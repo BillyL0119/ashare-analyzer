@@ -10,7 +10,7 @@ struct LearningTabView: View {
         "ap_macro": "AP Macro",
         "ap_micro": "AP Micro",
         "ib":       "IB",
-        "stocks":   "股票入门",
+        "stocks":   L("股票入门"),
     ]
 
     private let examOrder = ["alevel", "igcse", "ap_macro", "ap_micro", "ib", "stocks"]
@@ -160,7 +160,7 @@ private struct TopicRow: View {
                     .font(.subheadline.weight(.medium))
                     .multilineTextAlignment(.leading)
                 if let sections = topic.sectionCount {
-                    Text("\(sections) sections")
+                    Text(L("%lld 个章节", sections))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

@@ -9,7 +9,7 @@ struct StockNewsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader("相关新闻") {
+            SectionHeader(L("相关新闻")) {
                 if isLoading { ProgressView().scaleEffect(0.7) }
             }
 
@@ -38,11 +38,11 @@ struct StockNewsSection: View {
     private func overallCard(_ ov: NewsOverall) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 0) {
-                sentBadge("利好", count: ov.positiveCount, color: upGreen)
+                sentBadge(L("利好"), count: ov.positiveCount, color: upGreen)
                 Text("  ·  ").font(.caption2).foregroundStyle(.tertiary)
-                sentBadge("中性", count: ov.neutralCount, color: .secondary)
+                sentBadge(L("中性"), count: ov.neutralCount, color: .secondary)
                 Text("  ·  ").font(.caption2).foregroundStyle(.tertiary)
-                sentBadge("利空", count: ov.negativeCount, color: downRed)
+                sentBadge(L("利空"), count: ov.negativeCount, color: downRed)
                 Spacer()
                 scoreLabel(ov.sentimentScore)
             }
@@ -68,7 +68,7 @@ struct StockNewsSection: View {
     private func scoreLabel(_ score: Double) -> some View {
         let color: Color = score > 0.05 ? upGreen : (score < -0.05 ? downRed : .secondary)
         let sign = score > 0 ? "+" : ""
-        return Text("情感 \(sign)\(String(format: "%.2f", score))")
+        return Text(L("情感 %@", "\(sign)\(String(format: "%.2f", score))"))
             .font(.caption.monospacedDigit())
             .foregroundStyle(color)
     }
@@ -128,9 +128,9 @@ struct NewsRow: View {
 
     private var sentLabel: String {
         switch item.finalSentiment {
-        case "positive": return "利好"
-        case "negative": return "利空"
-        default:         return "中性"
+        case "positive": return L("利好")
+        case "negative": return L("利空")
+        default:         return L("中性")
         }
     }
 

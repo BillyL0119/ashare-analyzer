@@ -27,9 +27,9 @@ struct MarketOverviewCard: View {
                 .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
             } else {
                 HStack(spacing: 10) {
-                    if let sh = overview.shanghaiIndex { IndexTile(name: "上证指数", quote: sh) }
-                    if let sz = overview.shenzhenIndex { IndexTile(name: "深证成指", quote: sz) }
-                    if let cy = overview.chinextIndex { IndexTile(name: "创业板指", quote: cy) }
+                    if let sh = overview.shanghaiIndex { IndexTile(name: L("上证指数"), quote: sh) }
+                    if let sz = overview.shenzhenIndex { IndexTile(name: L("深证成指"), quote: sz) }
+                    if let cy = overview.chinextIndex { IndexTile(name: L("创业板指"), quote: cy) }
                 }
             }
 

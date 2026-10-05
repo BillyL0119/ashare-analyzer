@@ -1361,19 +1361,27 @@ def _slim_curriculum(curriculum: dict) -> dict:
     for paper in curriculum["papers"]:
         slim_topics = []
         for topic in paper["topics"]:
-            slim_topics.append({
+            entry = {
                 "id":             topic["id"],
                 "title":          topic["title"],
                 "title_en":       topic.get("title_en", topic["title"]),
                 "estimated_time": topic["estimated_time"],
                 "section_count":  len(topic["sections"]),
-            })
-        slim_papers.append({
+            }
+            for lang_code in ("ja", "ko", "fr"):
+                if topic.get(f"title_{lang_code}"):
+                    entry[f"title_{lang_code}"] = topic[f"title_{lang_code}"]
+            slim_topics.append(entry)
+        slim_paper = {
             "id":       paper["id"],
             "title":    paper["title"],
             "title_en": paper.get("title_en", paper["title"]),
             "topics":   slim_topics,
-        })
+        }
+        for lang_code in ("ja", "ko", "fr"):
+            if paper.get(f"title_{lang_code}"):
+                slim_paper[f"title_{lang_code}"] = paper[f"title_{lang_code}"]
+        slim_papers.append(slim_paper)
     return {
         "exam":   curriculum["exam"],
         "board":  curriculum["board"],

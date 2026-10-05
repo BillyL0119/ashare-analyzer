@@ -51,7 +51,7 @@ struct TopicDetailView: View {
         return Button {
             withAnimation(.snappy(duration: 0.3)) { progress.toggle(exam, topicID) }
         } label: {
-            Label(done ? "已学完" : "标记为已学完",
+            Label(done ? L("已学完") : L("标记为已学完"),
                   systemImage: done ? "checkmark.circle.fill" : "checkmark.circle")
                 .font(.headline)
                 .foregroundStyle(done ? green : Color.white)
@@ -71,7 +71,7 @@ struct TopicDetailView: View {
 
     private var examName: String {
         ["alevel": "A-Level", "igcse": "IGCSE", "ap_macro": "AP Macro",
-         "ap_micro": "AP Micro", "ib": "IB", "stocks": "股票入门"][exam] ?? exam.uppercased()
+         "ap_micro": "AP Micro", "ib": "IB", "stocks": L("股票入门")][exam] ?? exam.uppercased()
     }
 
     private func header(_ topic: TopicDetail) -> some View {
@@ -87,7 +87,7 @@ struct TopicDetailView: View {
     private func chips(_ topic: TopicDetail) -> some View {
         HStack(spacing: 8) {
             chip(examName, icon: "graduationcap.fill", tint: DS.accent)
-            chip("\(topic.sections.count) 个章节", icon: "list.bullet", tint: .secondary)
+            chip(L("%lld 个章节", topic.sections.count), icon: "list.bullet", tint: .secondary)
             if let time = topic.estimatedTime {
                 chip(time, icon: "clock", tint: .secondary)
             }
@@ -161,11 +161,11 @@ private struct SectionCard: View {
                 }
 
                 if let rw = section.realWorld {
-                    callout(icon: "globe", title: "真实案例", text: rw, tint: DS.accent)
+                    callout(icon: "globe", title: L("真实案例"), text: rw, tint: DS.accent)
                 }
 
                 if let tip = section.examTip {
-                    callout(icon: "lightbulb.fill", title: "考试技巧", text: tip, tint: .orange)
+                    callout(icon: "lightbulb.fill", title: L("考试技巧"), text: tip, tint: .orange)
                 }
             }
         }

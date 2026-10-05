@@ -20,36 +20,41 @@ enum Formatters {
         return "\(sign)\(String(format: "%.2f", value))"
     }
 
-    // MARK: Large numbers (volume / amount in CNY)
-    // 1亿 = 100_000_000, 1万 = 10_000
+    // MARK: Large numbers
+    // zh / ja / ko group by 万 (10_000) and 亿 (100_000_000); en / fr use K / M / B.
+
+    private static func scaled(_ value: Double, myriadDecimals: Int, unit: String = "") -> String {
+        if Lang.usesMyriad {
+            if value >= 1_0000_0000 {
+                return String(format: "%.\(myriadDecimals)f", value / 1_0000_0000) + L("亿") + unit
+            } else if value >= 1_0000 {
+                return String(format: "%.\(myriadDecimals)f", value / 1_0000) + L("万") + unit
+            }
+        } else {
+            if value >= 1_000_000_000 {
+                return String(format: "%.2f", value / 1_000_000_000) + "B" + unit
+            } else if value >= 1_000_000 {
+                return String(format: "%.2f", value / 1_000_000) + "M" + unit
+            } else if value >= 1_000 {
+                return String(format: "%.1f", value / 1_000) + "K" + unit
+            }
+        }
+        return String(format: "%.0f", value) + unit
+    }
 
     static func cnyAmount(_ value: Double) -> String {
-        if value >= 1_0000_0000 {
-            return String(format: "%.2f亿", value / 1_0000_0000)
-        } else if value >= 1_0000 {
-            return String(format: "%.2f万", value / 1_0000)
-        }
-        return String(format: "%.0f", value)
+        scaled(value, myriadDecimals: 2)
     }
 
-    // MARK: Volume (shares)
+    // MARK: Volume
 
     static func shareVolume(_ value: Double) -> String {
-        if value >= 1_0000_0000 {
-            return String(format: "%.2f亿股", value / 1_0000_0000)
-        } else if value >= 1_0000 {
-            return String(format: "%.1f万股", value / 1_0000)
-        }
-        return String(format: "%.0f股", value)
+        scaled(value, myriadDecimals: 1, unit: L("股"))
     }
 
+    /// A-share volume is quoted in lots (手) of 100 shares.
     static func volume(_ value: Double) -> String {
-        if value >= 1_0000_0000 {
-            return String(format: "%.1f亿手", value / 1_0000_0000)
-        } else if value >= 1_0000 {
-            return String(format: "%.1f万手", value / 1_0000)
-        }
-        return String(format: "%.0f手", value)
+        scaled(value, myriadDecimals: 1, unit: L("手"))
     }
 
     // MARK: Date

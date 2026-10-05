@@ -7,12 +7,12 @@ struct AITeacherTabView: View {
     private let impactHaptic = UIImpactFeedbackGenerator(style: .light)
 
     private let shortcuts: [(String, String)] = [
-        ("什么是K线图", "bubble.left"),
-        ("PE比率怎么看", "chart.bar"),
-        ("股票和基金区别", "scale.3d"),
-        ("如何看财报", "doc.text"),
-        ("什么是止损", "exclamationmark.triangle"),
-        ("分散投资原则", "circle.grid.3x3"),
+        (L("什么是K线图"), "bubble.left"),
+        (L("PE比率怎么看"), "chart.bar"),
+        (L("股票和基金区别"), "scale.3d"),
+        (L("如何看财报"), "doc.text"),
+        (L("什么是止损"), "exclamationmark.triangle"),
+        (L("分散投资原则"), "circle.grid.3x3"),
     ]
 
     var body: some View {
@@ -98,7 +98,7 @@ struct AITeacherTabView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                SectionHeader("快速提问")
+                SectionHeader(L("快速提问"))
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
                     ForEach(shortcuts, id: \.0) { text, icon in
                         Button {

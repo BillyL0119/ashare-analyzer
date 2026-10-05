@@ -82,7 +82,7 @@ private struct PodiumCard: View {
             Text("\(entry.rank)")
                 .font(.system(size: isFirst ? 30 : 24, weight: .bold, design: .rounded))
                 .foregroundStyle(medal)
-            Text(entry.nickname + (entry.isMe ? "（我）" : ""))
+            Text(entry.nickname + (entry.isMe ? L("（我）") : ""))
                 .font(.caption.weight(.semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)

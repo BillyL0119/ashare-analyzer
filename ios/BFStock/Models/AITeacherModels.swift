@@ -18,6 +18,7 @@ struct ChatRequestBody: Encodable {
     let message: String
     let deviceId: String
     let history: [HistoryItem]
+    let lang: String
 
     struct HistoryItem: Encodable {
         let role: String

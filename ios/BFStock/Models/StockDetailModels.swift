@@ -92,6 +92,7 @@ enum ChartPeriod: String, CaseIterable, Identifiable {
     case d250 = "1年"
 
     var id: String { rawValue }
+    var label: String { L(rawValue) }
     var count: Int {
         switch self {
         case .d10:  return 10
@@ -108,7 +109,7 @@ enum Indicator: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var label: String {
         switch self {
-        case .none: return "指标"
+        case .none: return L("指标")
         case .macd: return "MACD"
         case .rsi:  return "RSI"
         case .boll: return "BOLL"

@@ -8,7 +8,7 @@ struct SectorListSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader("行业板块")
+            SectionHeader(L("行业板块"))
             Group {
                 if isLoading && sectors.isEmpty {
                     SkeletonRows(rows: 4)
@@ -48,14 +48,16 @@ struct SectorRow: View {
         let color = Theme.changeColor(sector.changePct, market: .cn)
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(sector.name)
+                Text(L(sector.name))
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                 if !sector.leader.isEmpty {
                     Text("领涨 \(sector.leader)")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                 }
             }
             .frame(width: 92, alignment: .leading)

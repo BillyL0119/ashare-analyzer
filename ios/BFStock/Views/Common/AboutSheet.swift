@@ -3,6 +3,7 @@ import SwiftUI
 struct AboutSheet: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("appearance") private var appearance = AppearanceSetting.system.rawValue
+    @AppStorage(Lang.storageKey) private var language = AppLanguage.system.rawValue
 
     var body: some View {
         NavigationStack {
@@ -11,7 +12,7 @@ struct AboutSheet: View {
                     hero
 
                     VStack(alignment: .leading, spacing: 10) {
-                        SectionHeader("外观")
+                        SectionHeader(L("外观"))
                         HStack(spacing: 8) {
                             ForEach(AppearanceSetting.allCases) { opt in
                                 Button {
@@ -30,24 +31,47 @@ struct AboutSheet: View {
                         .card()
                     }
 
-                    group("关于") {
-                        infoRow("开发者", "Billy L.")
-                        RowDivider()
-                        infoRow("网站", "bestfriendstock.com")
-                        RowDivider()
-                        linkRow("访问网站", "safari", "https://bestfriendstock.com")
+                    VStack(alignment: .leading, spacing: 10) {
+                        SectionHeader(L("语言"))
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+                            ForEach(AppLanguage.allCases) { opt in
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.25)) { language = opt.rawValue }
+                                } label: {
+                                    Text(opt.nativeName)
+                                        .font(.subheadline.weight(.semibold))
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 10)
+                                        .foregroundStyle(language == opt.rawValue ? Color.white : Color.primary)
+                                        .background(language == opt.rawValue ? DS.accent : DS.surfaceHi, in: Capsule())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .card()
+                        .sensoryFeedback(.selection, trigger: language)
                     }
 
-                    group("法律") {
-                        linkRow("隐私政策 / Privacy Policy", "hand.raised", "https://bestfriendstock.com/privacy")
+                    group(L("关于")) {
+                        infoRow(L("开发者"), "Billy L.")
                         RowDivider()
-                        note("免责声明", "本应用仅供学习和教育目的，不构成任何投资建议。股市有风险，投资需谨慎。行情数据可能存在延迟。AI 老师内容由 AI 生成，仅供参考。")
+                        infoRow(L("网站"), "bestfriendstock.com")
+                        RowDivider()
+                        linkRow(L("访问网站"), "safari", "https://bestfriendstock.com")
                     }
 
-                    group("数据") {
-                        note("数据说明", "模拟盘数据和 AI 对话记录存储在服务器上，通过设备匿名 ID 关联，不绑定任何个人身份。重置账户将永久删除所有相关数据。")
+                    group(L("法律")) {
+                        linkRow(L("隐私政策 / Privacy Policy"), "hand.raised", "https://bestfriendstock.com/privacy")
                         RowDivider()
-                        linkRow("联系 / 删除数据请求", "envelope", "mailto:billyl090119@gmail.com")
+                        note(L("免责声明"), L("本应用仅供学习和教育目的，不构成任何投资建议。股市有风险，投资需谨慎。行情数据可能存在延迟。AI 老师内容由 AI 生成，仅供参考。"))
+                    }
+
+                    group(L("数据")) {
+                        note(L("数据说明"), L("模拟盘数据和 AI 对话记录存储在服务器上，通过设备匿名 ID 关联，不绑定任何个人身份。重置账户将永久删除所有相关数据。"))
+                        RowDivider()
+                        linkRow(L("联系 / 删除数据请求"), "envelope", "mailto:billyl090119@gmail.com")
                     }
                 }
                 .padding(16)

@@ -132,7 +132,7 @@ struct StockDetailView: View {
                     Text(q.code)
                         .font(.system(.caption, design: .monospaced))
                         .foregroundStyle(.secondary)
-                    Text(market == .us ? "美股" : "A股")
+                    Text(market == .us ? L("美股") : L("A股"))
                         .font(.caption2.weight(.medium))
                         .padding(.horizontal, 7)
                         .padding(.vertical, 2)
@@ -151,7 +151,7 @@ struct StockDetailView: View {
             set: { vm.changePeriod($0) }
         )) {
             ForEach(ChartPeriod.allCases) { p in
-                Text(p.rawValue).tag(p)
+                Text(p.label).tag(p)
             }
         }
         .pickerStyle(.segmented)
@@ -346,12 +346,12 @@ struct StockDetailView: View {
         let volume = q.volume > 0 ? q.volume : (last?.volume ?? 0)
         func px(_ v: Double) -> String { v > 0 ? Formatters.price(v) : "--" }
         let items: [(String, String)] = [
-            ("今开", px(open)),
-            ("昨收", px(q.prevClose)),
-            ("最高", px(high)),
-            ("最低", px(low)),
-            ("成交量", volume > 0 ? (market == .us ? Formatters.shareVolume(volume) : Formatters.volume(volume)) : "--"),
-            ("成交额", q.amount > 0 ? Formatters.cnyAmount(q.amount) : "--"),
+            (L("今开"), px(open)),
+            (L("昨收"), px(q.prevClose)),
+            (L("最高"), px(high)),
+            (L("最低"), px(low)),
+            (L("成交量"), volume > 0 ? (market == .us ? Formatters.shareVolume(volume) : Formatters.volume(volume)) : "--"),
+            (L("成交额"), q.amount > 0 ? Formatters.cnyAmount(q.amount) : "--"),
         ]
         return VStack(alignment: .leading, spacing: 16) {
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 3), spacing: 14) {
