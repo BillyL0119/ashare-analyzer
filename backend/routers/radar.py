@@ -180,4 +180,5 @@ def get_radar(symbol: str):
         return result
     except Exception as exc:
         logger.exception("Radar error for %s", symbol)
-        raise HTTPException(status_code=500, detail=f"服务器内部错误：{exc}") from exc
+        from security import internal_error
+        raise internal_error() from exc

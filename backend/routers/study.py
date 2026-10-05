@@ -1479,9 +1479,8 @@ def ask_ai_tutor(body: AskBody):
         answer = msg.content[0].text.strip()
         return {"answer": answer, "topic": topic_title, "exam": exam_name}
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"AI tutor unavailable: {exc}")
-
-
+        from security import internal_error
+        raise internal_error()
 # ── Economic Events Timeline ──────────────────────────────────────────────────
 
 ECONOMIC_EVENTS = [

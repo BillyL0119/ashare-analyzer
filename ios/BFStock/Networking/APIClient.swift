@@ -34,6 +34,7 @@ final class APIClient: @unchecked Sendable {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 15
         config.timeoutIntervalForResource = 60
+        config.tlsMinimumSupportedProtocolVersion = .TLSv12
         self.session = URLSession(configuration: config)
     }
 
@@ -77,7 +78,8 @@ final class APIClient: @unchecked Sendable {
         if !params.isEmpty {
             components.queryItems = params.map { URLQueryItem(name: $0.key, value: $0.value) }
         }
-        guard let url = components.url else { throw URLError(.badURL) }
+        guard let url = components.url,
+              url.scheme == "https", url.host == "bestfriendstock.com" else { throw URLError(.badURL) }
         return url
     }
 

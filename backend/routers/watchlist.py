@@ -33,9 +33,8 @@ def get_watchlist():
         result = client.table("watchlist").select("*").order("added_at", desc=True).execute()
         return result.data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
+        from security import internal_error
+        raise internal_error()
 @router.post("")
 def add_to_watchlist(item: WatchlistItem):
     client = get_supabase_client()
@@ -48,9 +47,8 @@ def add_to_watchlist(item: WatchlistItem):
         ).execute()
         return result.data[0] if result.data else {"code": item.code, "name": item.name}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
+        from security import internal_error
+        raise internal_error()
 @router.delete("/{code}")
 def remove_from_watchlist(code: str):
     client = get_supabase_client()
@@ -60,4 +58,5 @@ def remove_from_watchlist(code: str):
         result = client.table("watchlist").delete().eq("code", code).execute()
         return {"success": True, "code": code}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        from security import internal_error
+        raise internal_error()

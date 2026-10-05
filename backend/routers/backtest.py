@@ -289,4 +289,5 @@ def backtest(
         raise
     except Exception as exc:
         logger.exception("Backtest error %s", symbol)
-        raise HTTPException(status_code=500, detail=str(exc))
+        from security import internal_error
+        raise internal_error()

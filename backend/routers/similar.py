@@ -535,9 +535,8 @@ def similar_cross(symbol: str):
         logger.exception("Cross scan error for %s", symbol)
         if stale_cached:
             return {**stale_cached, "data_quality": "stale"}
-        raise HTTPException(status_code=500, detail=f"服务器内部错误：{exc}") from exc
-
-
+        from security import internal_error
+        raise internal_error() from exc
 @router.get("/{symbol}")
 def similar_stocks(symbol: str):
     """
@@ -686,4 +685,5 @@ def similar_stocks(symbol: str):
         if stale_cached:
             logger.warning("Exception fallback to stale cache for %s", symbol)
             return {**stale_cached, "data_quality": "stale"}
-        raise HTTPException(status_code=500, detail=f"服务器内部错误：{exc}") from exc
+        from security import internal_error
+        raise internal_error() from exc

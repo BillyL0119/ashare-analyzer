@@ -187,8 +187,8 @@ def export_pdf(symbol: str):
         pdf_bytes = _build_pdf(symbol, name, df)
     except Exception as e:
         logger.exception("PDF build failed for %s", symbol)
-        raise HTTPException(status_code=500, detail=f"PDF生成失败: {e}")
-
+        from security import internal_error
+        raise internal_error()
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",

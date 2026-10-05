@@ -310,10 +310,14 @@ private struct MarkdownText: View {
     }
 
     private func inline(_ s: String) -> Text {
-        let attr = (try? AttributedString(
+        var attr = (try? AttributedString(
             markdown: s,
             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )) ?? AttributedString(s)
+        // Model output is untrusted: keep the link text but make it inert (no phishing taps).
+        for run in attr.runs where run.link != nil {
+            attr[run.range].link = nil
+        }
         return Text(attr)
     }
 }

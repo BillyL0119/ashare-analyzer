@@ -7,6 +7,8 @@ enum KeychainHelper {
     /// Returns existing device ID from Keychain, or creates and stores a new UUID.
     static func getOrCreateDeviceID() -> String {
         if let existing = read(key: deviceIDKey) {
+            // Re-save so IDs created by older builds also become non-migratable.
+            save(key: deviceIDKey, value: existing)
             return existing
         }
         let newID = UUID().uuidString
@@ -22,7 +24,10 @@ enum KeychainHelper {
             kSecClass:            kSecClassGenericPassword,
             kSecAttrAccount:      key,
             kSecValueData:        data,
-            kSecAttrAccessible:   kSecAttrAccessibleAfterFirstUnlock,
+            // The ID is the only credential for the paper-trading account: never let it leave
+            // this device via backups or device transfer.
+            kSecAttrAccessible:   kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+            kSecAttrSynchronizable: false,
         ]
         SecItemDelete(query as CFDictionary)
         SecItemAdd(query as CFDictionary, nil)

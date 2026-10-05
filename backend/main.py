@@ -55,13 +55,17 @@ async def warmup_caches():
     loop = asyncio.get_event_loop()
     loop.run_in_executor(None, warmup_sentiment)
 
+from security import SecurityMiddleware, allowed_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins(),
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
+# Added last so it is the outermost layer: rate limits and bans run before anything else.
+app.add_middleware(SecurityMiddleware)
 
 @app.get("/sitemap.xml", response_class=Response)
 async def sitemap():

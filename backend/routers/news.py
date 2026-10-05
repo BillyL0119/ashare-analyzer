@@ -1188,4 +1188,5 @@ def get_news(symbol: str, market: str = Query("cn")):
         raise
     except Exception as exc:
         logger.exception("News route error for %s", symbol)
-        raise HTTPException(status_code=500, detail=f"新闻获取失败：{exc}") from exc
+        from security import internal_error
+        raise internal_error() from exc

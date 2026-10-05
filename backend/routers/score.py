@@ -679,4 +679,5 @@ def get_score(symbol: str):
         return result
     except Exception as exc:
         logger.exception("Score error %s", symbol)
-        raise HTTPException(status_code=500, detail=str(exc))
+        from security import internal_error
+        raise internal_error()

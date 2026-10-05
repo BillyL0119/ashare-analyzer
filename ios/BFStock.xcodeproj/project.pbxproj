@@ -45,6 +45,7 @@
 		EBD1DE80D52538E8A28E539C /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41677ED5EE74011F05A645DA /* KeychainHelper.swift */; };
 		F1B70C29E89E53C984716147 /* ErrorRetryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4616D726B6C1229BA2D59D66 /* ErrorRetryView.swift */; };
 		F6EBA07DD8FB21D243EEDFA4 /* WatchlistQuoteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0129239F49312C2C498A4A /* WatchlistQuoteViewModel.swift */; };
+		D4E5F6789012345601AB2CD3 /* SafeURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6789012345601AB2CD0 /* SafeURL.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,6 +88,7 @@
 		F526905BD6386ADF458C0634 /* StockDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockDetailViewModel.swift; sourceTree = "<group>"; };
 		F7F099D7B4E063C994F7723A /* StockRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockRow.swift; sourceTree = "<group>"; };
 		F91577CB01DAD4D21E21F115 /* MarketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketViewModel.swift; sourceTree = "<group>"; };
+		D4E5F6789012345601AB2CD0 /* SafeURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeURL.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -225,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				4ED9104CB79B3D00A8F87389 /* Formatters.swift */,
+				D4E5F6789012345601AB2CD0 /* SafeURL.swift */,
 				41677ED5EE74011F05A645DA /* KeychainHelper.swift */,
 				833B92D2B499C00060F09406 /* Theme.swift */,
 			);
@@ -320,6 +323,7 @@
 				D6A313AFB8BA7C21F4B02503 /* ContentView.swift in Sources */,
 				F1B70C29E89E53C984716147 /* ErrorRetryView.swift in Sources */,
 				8EDED6EBB6EFE41E9CE2389D /* Formatters.swift in Sources */,
+				D4E5F6789012345601AB2CD3 /* SafeURL.swift in Sources */,
 				618B6C9508E2EE8057D96386 /* KLineChart.swift in Sources */,
 				EBD1DE80D52538E8A28E539C /* KeychainHelper.swift in Sources */,
 				0C2D6C43E5BD2DDA7B623EA8 /* LeaderboardView.swift in Sources */,

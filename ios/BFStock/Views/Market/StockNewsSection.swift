@@ -82,9 +82,7 @@ struct NewsRow: View {
 
     var body: some View {
         Button {
-            if let url = URL(string: item.url), UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-            }
+            SafeURL.open(item.url)
         } label: {
             HStack(alignment: .top, spacing: 10) {
                 Circle()
