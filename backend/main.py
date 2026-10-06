@@ -10,6 +10,7 @@ from routers.simulation import router as simulation_router
 from routers.watchlist import router as watchlist_router
 from routers.financial import router as financial_router
 from routers.us_stocks import router as us_stocks_router
+from routers.us_market import router as us_market_router
 from routers.similar import router as similar_router
 from routers.news import router as news_router
 from routers.radar import router as radar_router
@@ -191,6 +192,7 @@ app.include_router(indicators_router, prefix="/api/indicators", tags=["indicator
 app.include_router(simulation_router, prefix="/api/simulation", tags=["simulation"])
 app.include_router(watchlist_router, prefix="/api/watchlist", tags=["watchlist"])
 app.include_router(financial_router, prefix="/api/financial", tags=["financial"])
+app.include_router(us_market_router, prefix="/api/us/market", tags=["us_market"])
 app.include_router(us_stocks_router, prefix="/api/us", tags=["us_stocks"])
 app.include_router(similar_router, prefix="/api/similar", tags=["similar"])
 app.include_router(news_router, prefix="/api/news", tags=["news"])

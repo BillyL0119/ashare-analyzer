@@ -23,7 +23,7 @@ import requests
 
 router = APIRouter()
 
-POLYGON_KEY  = "ni5ftWPpA88XtLZPAlE35rohnEwIjFoH"
+POLYGON_KEY  = os.getenv("POLYGON_API_KEY", "")   # set in backend/.env, never in code
 POLYGON_BASE = "https://api.polygon.io"
 
 # ── Disk cache ────────────────────────────────────────────────────────────────
@@ -428,6 +428,47 @@ def get_us_history(symbol: str, period: str = "1y"):
 @router.get("/stock/{symbol}/realtime")
 def get_us_realtime(symbol: str):
     sym = symbol.upper()
+    live = None
+    try:
+        from routers.us_market import us_quotes, market_session, _cached, _ttl
+        live = _cached("rt:" + sym, _ttl(), lambda: us_quotes([sym]).get(sym))
+    except Exception:
+        live = None
+
+    if live:
+        # Live numbers (price vs previous close, open/high/low, volume, P/E, market cap, 52w range) from the quote feed;
+        # company profile (description, sector...) from the cached Polygon lookup.
+        try:
+            info = _fetch_company_info(sym)
+        except Exception:
+            info = read_cache(f"{sym}_info", max_age_hours=9999) or {}
+        return {
+            "symbol":       sym,
+            "name":         live["name"] or info.get("name", sym),
+            "price":        live["price"],
+            "change":       live["change"],
+            "change_pct":   live["pct"],
+            "prev_close":   live["prev_close"],
+            "open":         live["open"],
+            "high":         live["high"],
+            "low":          live["low"],
+            "volume":       live["volume"],
+            "amount":       live["amount"],
+            "market_cap":   live["market_cap"] or info.get("market_cap"),
+            "pe_ratio":     live["pe"],
+            "week52_high":  live["high52"],
+            "week52_low":   live["low52"],
+            "sector":       info.get("sector", ""),
+            "industry":     info.get("industry", ""),
+            "description":  info.get("description", ""),
+            "homepage_url": info.get("homepage_url", ""),
+            "employees":    info.get("employees"),
+            "quote_time":   live["time"],
+        }
+    return _get_us_realtime_polygon(sym)
+
+
+def _get_us_realtime_polygon(sym: str):
 
     try:
         # Price: cache 1 hour
@@ -528,6 +569,16 @@ def get_us_realtime(symbol: str):
 def search_us_stocks(q: str = Query(..., min_length=1)):
     q_strip  = q.strip()
     q_lower  = q_strip.lower()
+
+    # Any US ticker / company (English or Chinese name) with live price; falls back to the local list below.
+    try:
+        from routers.us_market import _search, _cached
+        live = _cached("s:" + q_lower, 120, lambda: _search(q_strip))
+        if live:
+            return [{"symbol": r["symbol"], "name": r["name"], "name_zh": r["name_zh"], "exchange": "", "sector": "",
+                     "type": "CS", "price": r["price"], "change_pct": r["pct"]} for r in live]
+    except Exception:
+        pass
     cache_key = f"search_{q_lower}"
 
     cached = read_cache(cache_key, max_age_hours=24)

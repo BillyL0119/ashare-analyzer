@@ -181,6 +181,15 @@ def hot_stocks(market: str = Query("cn", pattern="^(cn|us)$")):
             return fallback
 
     else:  # us
+        try:
+            from routers.us_market import _cached, _ttl, _build_overview
+            data = _cached("overview", _ttl(), _build_overview)
+            active = data.get("active_20") or data.get("active") or []
+            if active:
+                return [{"code": q["symbol"], "name": q["name"], "change_pct": q["pct"], "rank": i + 1, "market": "us"}
+                        for i, q in enumerate(active[:20])]
+        except Exception:
+            pass
         if _hot_us_data is not None and now - _hot_us_ts < _HOT_TTL:
             return _hot_us_data
         pct_map: dict = {}
