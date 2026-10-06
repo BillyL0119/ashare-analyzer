@@ -4,7 +4,7 @@ import { useT } from '../i18n'
 import { Icon } from '../icons'
 import Markdown from '../Markdown'
 
-const SHORTCUTS = ['什么是K线图', 'PE比率怎么看', '股票和基金区别', '如何看财报', '什么是止损', '分散投资原则']
+const SHORTCUTS = ['什么是标普500', 'ETF是什么', '如何看财报季', '什么是做空', 'PE比率怎么看', '什么是止损']
 
 function deviceId() {
   let id = localStorage.getItem('bfs_device_id')

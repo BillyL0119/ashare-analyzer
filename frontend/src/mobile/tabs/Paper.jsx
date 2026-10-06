@@ -138,7 +138,7 @@ function Board({ onClose }) {
 export default function Paper() {
   const t = useT()
   const [acc, setAcc] = useState(null); const [err, setErr] = useState(null)
-  const [market, setMarket] = useState('cn')
+  const [market, setMarket] = useState('us')
   const [sheet, setSheet] = useState(null) // {mode, symbol, pos} | 'board' | 'reset'
   const [toast, setToast] = useState('')
 

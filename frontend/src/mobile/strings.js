@@ -1027,6 +1027,30 @@ export const STR = {
   "%lld일",
   "%lld j"
  ],
+ "市盈率": [
+  "P/E",
+  "PER",
+  "PER",
+  "P/E"
+ ],
+ "总市值": [
+  "Market cap",
+  "時価総額",
+  "시가총액",
+  "Capi. boursière"
+ ],
+ "52周最低": [
+  "52W low",
+  "52週安値",
+  "52주 최저",
+  "Plus bas 52 sem."
+ ],
+ "52周最高": [
+  "52W high",
+  "52週高値",
+  "52주 최고",
+  "Plus haut 52 sem."
+ ],
  "美股热门": [
   "US Movers",
   "米国株ランキング",
