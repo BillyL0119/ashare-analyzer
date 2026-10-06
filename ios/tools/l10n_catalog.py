@@ -172,6 +172,14 @@ T = {
     "模拟盘数据和 AI 对话记录存储在服务器上，通过设备匿名 ID 关联，不绑定任何个人身份。重置账户将永久删除所有相关数据。": ("Paper-trading data and AI chats are stored on our server and linked to an anonymous device ID, not to any personal identity. Resetting the account permanently deletes the related data.", "ペーパートレードのデータとAIとの会話は、端末の匿名IDに紐づけてサーバーに保存され、個人を特定する情報とは結びつきません。口座をリセットすると関連データは完全に削除されます。", "모의투자 데이터와 AI 대화 기록은 기기 익명 ID로 서버에 저장되며 개인 신원과 연결되지 않습니다. 계좌를 초기화하면 관련 데이터가 영구 삭제됩니다.", "Les données de simulation et les conversations IA sont stockées sur le serveur, liées à un identifiant d'appareil anonyme, sans identité personnelle. Réinitialiser le compte supprime définitivement ces données."),
     "联系 / 删除数据请求": ("Contact / data deletion request", "お問い合わせ / データ削除の依頼", "문의 / 데이터 삭제 요청", "Contact / demande de suppression"),
     "Best Friend Stock · 版本 1.0": ("Best Friend Stock · Version 1.0", "Best Friend Stock · バージョン 1.0", "Best Friend Stock · 버전 1.0", "Best Friend Stock · Version 1.0"),
+    # --- global market
+    "全球市场": ("Global Markets", "グローバル市場", "글로벌 시장", "Marchés mondiaux"),
+    "美股情绪": ("US Sentiment", "米国株センチメント", "미국 주식 심리", "Sentiment US"),
+    "A股情绪": ("A-Share Sentiment", "A株センチメント", "A주 심리", "Sentiment A"),
+    "极度恐慌": ("Extreme Fear", "極度の恐怖", "극단적 공포", "Peur extrême"),
+    "恐慌": ("Fear", "恐怖", "공포", "Peur"),
+    "贪婪": ("Greed", "強欲", "탐욕", "Avidité"),
+    "极度贪婪": ("Extreme Greed", "極度の強欲", "극단적 탐욕", "Avidité extrême"),
     # --- sector names (from the API)
     "白酒": ("Baijiu", "白酒", "백주", "Baijiu"),
     "银行": ("Banks", "銀行", "은행", "Banques"),

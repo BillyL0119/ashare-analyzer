@@ -78,3 +78,31 @@ struct StockSearchResult: Codable, Identifiable, Hashable {
 
     var resolvedMarket: Market { market == "us" ? .us : .cn }
 }
+
+// MARK: - Global sentiment & indices
+
+struct SentimentGauge: Codable {
+    let score: Double
+    let labelZh: String
+    let labelEn: String
+}
+
+struct GlobalIndex: Codable, Identifiable {
+    var id: String { symbol }
+    let symbol: String
+    let name: String
+    let nameZh: String
+    let region: String
+    let close: Double?
+    let changePct: Double?   // percent: 0.66 = +0.66%
+
+    var displayName: String { Lang.code == "zh" ? nameZh : name }
+    /// East-Asian markets quote red-up / green-down like A-shares; the rest follow the US convention.
+    var market: Market { ["cn", "hk", "jp", "kr"].contains(region) ? .cn : .us }
+}
+
+struct SentimentResponse: Codable {
+    let usSentiment: SentimentGauge
+    let cnSentiment: SentimentGauge
+    let indices: [GlobalIndex]
+}

@@ -6,6 +6,9 @@ final class MarketViewModel: ObservableObject {
     @Published var cnHotStocks: [HotStock] = []
     @Published var usHotStocks: [HotStock] = []
     @Published var sectors: [SectorItem] = []
+    @Published var sentiment: SentimentResponse?
+    @Published var isLoadingSentiment = false
+    @Published var sentimentError: String?
     @Published var searchResults: [StockSearchResult] = []
     @Published var isLoadingOverview = false
     @Published var isLoadingHot = false
@@ -23,6 +26,7 @@ final class MarketViewModel: ObservableObject {
             group.addTask { await self.loadOverview() }
             group.addTask { await self.loadHotStocks() }
             group.addTask { await self.loadSectors() }
+            group.addTask { await self.loadSentiment() }
         }
     }
 
@@ -53,6 +57,17 @@ final class MarketViewModel: ObservableObject {
             hotError = errorMessage(error)
         }
         isLoadingHot = false
+    }
+
+    func loadSentiment() async {
+        isLoadingSentiment = true
+        sentimentError = nil
+        do {
+            sentiment = try await APIClient.shared.get("/market/sentiment")
+        } catch {
+            sentimentError = errorMessage(error)
+        }
+        isLoadingSentiment = false
     }
 
     func loadSectors() async {

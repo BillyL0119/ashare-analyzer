@@ -14,6 +14,12 @@ struct MarketTabView: View {
                 LazyVStack(spacing: 26) {
                     overviewSection
                     WatchlistSection()
+                    GlobalMarketSection(
+                        sentiment: vm.sentiment,
+                        isLoading: vm.isLoadingSentiment,
+                        error: vm.sentimentError,
+                        onRetry: { Task { await vm.loadSentiment() } }
+                    )
                     SectorListSection(
                         sectors: vm.sectors,
                         isLoading: vm.isLoadingSectors,

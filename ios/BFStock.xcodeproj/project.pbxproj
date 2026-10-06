@@ -46,6 +46,7 @@
 		F1B70C29E89E53C984716147 /* ErrorRetryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4616D726B6C1229BA2D59D66 /* ErrorRetryView.swift */; };
 		F6EBA07DD8FB21D243EEDFA4 /* WatchlistQuoteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0129239F49312C2C498A4A /* WatchlistQuoteViewModel.swift */; };
 		D4E5F6789012345601AB2CD3 /* SafeURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6789012345601AB2CD0 /* SafeURL.swift */; };
+		E5F6789012345678AB4CD5E6 /* GlobalMarketSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6789012345678AB4CD5E0 /* GlobalMarketSection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +90,7 @@
 		F7F099D7B4E063C994F7723A /* StockRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockRow.swift; sourceTree = "<group>"; };
 		F91577CB01DAD4D21E21F115 /* MarketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketViewModel.swift; sourceTree = "<group>"; };
 		D4E5F6789012345601AB2CD0 /* SafeURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeURL.swift; sourceTree = "<group>"; };
+		E5F6789012345678AB4CD5E0 /* GlobalMarketSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalMarketSection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -219,6 +221,7 @@
 				5904E889C4C123B0A98897A5 /* WatchlistSection.swift */,
 				A1B2C3D4E5F67890AB1CD2E0 /* SectorListSection.swift */,
 				C3D4E5F678901234BC5DE6F0 /* StockNewsSection.swift */,
+				E5F6789012345678AB4CD5E0 /* GlobalMarketSection.swift */,
 			);
 			path = Market;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				A1B2C3D4E5F67890AB1CD2EF /* SectorListSection.swift in Sources */,
 				B2C3D4E5F6789012AB3CD4E5 /* NewsModels.swift in Sources */,
 				C3D4E5F678901234BC5DE6F7 /* StockNewsSection.swift in Sources */,
+				E5F6789012345678AB4CD5E6 /* GlobalMarketSection.swift in Sources */,
 				A4724D10FDC2DB6194DB2F88 /* WatchlistStore.swift in Sources */,
 				DD754F618B646363756847F4 /* WatchlistTabView.swift in Sources */,
 			);
