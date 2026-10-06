@@ -12,6 +12,7 @@ import json
 import os
 import time
 import logging
+import requests
 import threading
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -390,7 +391,10 @@ def _ak_global_index(zh_name: str, days: int = 10) -> dict:
     Takes Chinese name as key, e.g. '日经225指数'. Only needs last 2 rows for change_pct."""
     try:
         df = ak.index_global_hist_sina(symbol=zh_name)
-        df = df.dropna(subset=["close"]).tail(days)
+        # Sina appends today's unfinished session with close == 0.0 (not NaN): drop it,
+        # otherwise the change % comes out as -100%.
+        df = df.dropna(subset=["close"])
+        df = df[df["close"] > 0].tail(days)
         df = df.rename(columns={"close": "Close"})
         if len(df) < 2:
             return {}
@@ -403,6 +407,20 @@ def _ak_global_index(zh_name: str, days: int = 10) -> dict:
         }
     except Exception as e:
         logger.debug("ak_global_index %s: %s", zh_name, e)
+        return {}
+
+
+def _tencent_hsi() -> dict:
+    """Hang Seng from qt.gtimg.cn (the Sina global-history feed has no HSI)."""
+    try:
+        r = requests.get("https://qt.gtimg.cn/q=hkHSI", timeout=6)
+        f = r.content.decode("gbk", errors="ignore").split('"')[1].split("~")
+        last, prev = float(f[3]), float(f[4])
+        if last <= 0 or prev <= 0:
+            return {}
+        return {"close": round(last, 2), "change_pct": round((last - prev) / prev * 100, 2)}
+    except Exception as e:
+        logger.debug("tencent hsi: %s", e)
         return {}
 
 
@@ -527,6 +545,7 @@ def _do_fetch_sentiment() -> dict:
             # Global indices via index_global_hist_sina (10 days — change_pct only)
             for yf_sym, zh_name in _AK_GLOBAL_SINA_MAP.items():
                 futures[pool.submit(_ak_global_index, zh_name)] = yf_sym
+            futures[pool.submit(_tencent_hsi)] = "^HSI"
             for fut in as_completed(futures, timeout=30):
                 yf_sym = futures[fut]
                 try:
