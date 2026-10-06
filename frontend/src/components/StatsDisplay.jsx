@@ -21,6 +21,46 @@ const FEATURE_LABELS = {
   ai_tutor:      { zh: 'AI导师', en: 'AI Tutor' },
 }
 
+const SOURCE_LABELS = {
+  direct: { zh: '直接访问', en: 'Direct' }, instagram: { zh: 'Instagram', en: 'Instagram' }, tiktok: { zh: 'TikTok', en: 'TikTok' },
+  facebook: { zh: 'Facebook', en: 'Facebook' }, twitter: { zh: 'X / Twitter', en: 'X / Twitter' }, youtube: { zh: 'YouTube', en: 'YouTube' },
+  google: { zh: 'Google 搜索', en: 'Google' }, bing: { zh: 'Bing', en: 'Bing' }, baidu: { zh: '百度', en: 'Baidu' }, wechat: { zh: '微信', en: 'WeChat' },
+  xiaohongshu: { zh: '小红书', en: 'Xiaohongshu' }, weibo: { zh: '微博', en: 'Weibo' }, reddit: { zh: 'Reddit', en: 'Reddit' }, line: { zh: 'Line', en: 'Line' },
+  other: { zh: '其他', en: 'Other' },
+}
+
+function SourceBlock({ stats, lang }) {
+  const sources = stats.sources || []
+  const ui = stats.ui_split || {}
+  const total = sources.reduce((a, [, n]) => a + n, 0)
+  const uiTotal = (ui.mobile || 0) + (ui.desktop || 0)
+  if (!total) return null
+  const L = lang === 'zh' ? 'zh' : 'en'
+  return (
+    <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12, flexWrap: 'wrap', gap: 6 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: '#34d399' }}>{L === 'zh' ? '访问来源' : 'Traffic sources'}</span>
+        {uiTotal > 0 && (
+          <span style={{ fontSize: 11, color: MUTED }}>
+            {L === 'zh' ? '手机' : 'Mobile'} {Math.round(((ui.mobile || 0) / uiTotal) * 100)}% · {L === 'zh' ? '电脑' : 'Desktop'} {Math.round(((ui.desktop || 0) / uiTotal) * 100)}%
+          </span>
+        )}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+        {sources.slice(0, 6).map(([key, n]) => (
+          <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 12, color: 'var(--text-primary)', minWidth: 96 }}>{SOURCE_LABELS[key]?.[L] ?? key}</span>
+            <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ width: `${(n / sources[0][1]) * 100}%`, height: '100%', background: 'linear-gradient(90deg,#34d399,#8ab4f8)', borderRadius: 2 }} />
+            </div>
+            <span style={{ fontSize: 11, color: MUTED, fontFamily: 'monospace', minWidth: 40, textAlign: 'right' }}>{n} · {Math.round((n / total) * 100)}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function BigStatCard({ icon, label, value, sub, gradient, exportMode }) {
   return (
     <div style={{
@@ -291,6 +331,8 @@ export default function StatsDisplay({ lang, onClose }) {
                 : <div style={{ color: MUTED, fontSize: 12, padding: '50px 0', textAlign: 'center' }}>{t.stNoData}</div>
               }
             </div>
+
+            <SourceBlock stats={stats} lang={lang} />
 
             {/* ── Bottom two columns ── */}
             <div style={{ display: 'grid', gridTemplateColumns: pieOption ? '1fr 1fr' : '1fr', gap: 16, marginBottom: 16 }}>

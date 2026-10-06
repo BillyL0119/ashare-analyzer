@@ -5,6 +5,7 @@ import { useT } from './i18n'
 import { Icon } from './icons'
 import Settings from './Settings'
 import Market from './tabs/Market'
+import { trackFeature, trackVisit } from '../utils/analytics'
 
 const StockDetail = lazy(() => import('./tabs/StockDetail'))
 const Learning = lazy(() => import('./tabs/Learning'))
@@ -36,8 +37,13 @@ export default function MobileApp() {
 
   useEffect(() => {
     document.documentElement.classList.add('m-root')
+    trackVisit('home')
     return () => document.documentElement.classList.remove('m-root')
   }, [])
+
+  // Same feature names the desktop site reports, so both UIs show up in one usage chart.
+  const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
+  useEffect(() => { if (section) trackFeature(section) }, [section])
 
   return (
     <div className="m-app">

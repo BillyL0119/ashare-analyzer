@@ -13,6 +13,7 @@ import os
 import json
 import fcntl
 import logging
+import re
 
 router = APIRouter()
 logger = logging.getLogger("analytics")
@@ -122,6 +123,25 @@ def _locked_update(fn) -> None:
 class VisitBody(BaseModel):
     device_id: str
     page: str = "home"
+    ui: str = ""          # "mobile" | "desktop" (optional, older clients omit it)
+    source: str = ""      # traffic source category, e.g. "instagram", "google", "direct"
+
+
+_SOURCE_RE = re.compile(r"^[a-z0-9][a-z0-9_.-]{0,23}$")
+_MAX_SOURCES = 40
+_DAILY_SOURCE_DAYS = 90
+
+
+def _clean_source(raw: str, known: dict) -> str:
+    """Only short, plain category names are stored; anything else is bucketed so the file cannot be flooded."""
+    src = (raw or "").strip().lower()
+    if not src:
+        return "direct"
+    if not _SOURCE_RE.match(src):
+        return "other"
+    if src not in known and len(known) >= _MAX_SOURCES:
+        return "other"
+    return src
 
 class TrackBody(BaseModel):
     device_id: str
@@ -151,6 +171,21 @@ def record_visit(body: VisitBody):
         # Track unique per day (store seen devices per day would be heavy;
         # approximate: count visit as unique if device not seen overall before today)
         daily[today]["unique"] = min(daily[today]["unique"] + 1, daily[today]["visits"])
+
+        # Where visitors come from and which UI they got (category names only: no URLs, no IPs)
+        ui = body.ui if body.ui in ("mobile", "desktop") else "unknown"
+        by_ui = data.setdefault("by_ui", {})
+        by_ui[ui] = by_ui.get(ui, 0) + 1
+
+        by_source = data.setdefault("by_source", {})
+        src = _clean_source(body.source, by_source)
+        by_source[src] = by_source.get(src, 0) + 1
+
+        ds = data.setdefault("daily_sources", {})
+        day = ds.setdefault(today, {})
+        day[src] = day.get(src, 0) + 1
+        for old in sorted(ds)[:-_DAILY_SOURCE_DAYS]:
+            ds.pop(old, None)
 
     try:
         _locked_update(mutate)
@@ -233,4 +268,7 @@ def get_stats():
         "top_stocks":      top_stocks_out,
         "feature_usage":   feature_usage,
         "daily_chart":     chart,
+        "ui_split":        data.get("by_ui", {}),
+        "sources":         sorted(data.get("by_source", {}).items(), key=lambda x: x[1], reverse=True)[:10],
+        "today_sources":   sorted(data.get("daily_sources", {}).get(today, {}).items(), key=lambda x: x[1], reverse=True)[:10],
     }

@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ReactECharts from '../../lib/echarts'
 import useWatchlistStore from '../../store/watchlistStore'
 import { useT } from '../i18n'
 import { useAPI, num, pct } from '../data'
+import { trackSearch } from '../../utils/analytics'
 import { boll, ma, macd, rsi } from '../indicators'
 import { ErrorBox, Pill, Section, Segment, Skeleton, SkeletonRows } from '../ui'
 import { changeColor } from '../helpers'
@@ -130,6 +131,7 @@ export default function StockDetail() {
   const [period, setPeriod] = useState('30'); const [indicator, setIndicator] = useState('ma')
   const watched = useWatchlistStore((s) => s.list.some((x) => x.code === code))
   const add = useWatchlistStore((s) => s.add), remove = useWatchlistStore((s) => s.remove)
+  useEffect(() => { trackSearch(code) }, [code])
 
   const q = useAPI(market === 'cn' ? `/stocks/${code}/realtime` : `/us/stock/${code}/realtime`, { refreshMs: 30000 })
   const h = useAPI(market === 'cn' ? `/stocks/${code}/history?count=250` : `/us/stock/${code}/history?count=250`)
