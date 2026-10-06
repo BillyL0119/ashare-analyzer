@@ -193,7 +193,8 @@ export default function App() {
     if (selectedSymbols.length > 0) {
       const s = selectedSymbols[0]
       navigate(`/stock/${market}/${s.code}`, { replace: true })
-    } else if (location.pathname !== '/') {
+    } else if (location.pathname !== '/' && location.pathname !== '/privacy') {
+      // /privacy is a standalone page: a direct visit must not be bounced to the home page
       navigate('/', { replace: true })
     }
   }, [selectedSymbols]) // eslint-disable-line

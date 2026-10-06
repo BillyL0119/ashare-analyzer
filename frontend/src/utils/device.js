@@ -53,16 +53,22 @@ export function chooseUI({ ua = '', width = 1024, search = '', storage = null } 
   return 'desktop'
 }
 
+/** Pages the phone UI implements. Anything else (privacy policy, news, universities, ...) keeps the full site. */
+export function mobileSupports(pathname = '/') {
+  return pathname === '/' || /^\/(stock\/(cn|us)\/[^/]+|study(\/.*)?|ai-teacher|paper)\/?$/.test(pathname)
+}
+
 export function currentUI() {
   if (typeof window === 'undefined') return 'desktop'
   let storage = null
   try { storage = window.sessionStorage } catch { /* blocked */ }
-  return chooseUI({
+  const ui = chooseUI({
     ua: navigator.userAgent || '',
     width: window.innerWidth,
     search: window.location.search,
     storage,
   })
+  return ui === 'mobile' && !mobileSupports(window.location.pathname) ? 'desktop' : ui
 }
 
 export function setUIOverride(mode) {
