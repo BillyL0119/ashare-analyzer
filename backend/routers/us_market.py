@@ -179,7 +179,12 @@ def _f(v, default=None):
 def parse_quote(fields: list) -> dict | None:
     if len(fields) < 50 or not fields[3] or _f(fields[3]) in (None, 0.0):
         return None
-    sym = fields[2].split(".")[0] if fields[2].count(".") <= 1 else ".".join(fields[2].split(".")[:-1])
+    code = fields[2]
+    if code.startswith("."):          # index codes such as ".INX" keep their dot
+        sym = code
+    else:                              # "AAPL.OQ" -> AAPL, "BRK.B.N" -> BRK.B
+        parts = code.split(".")
+        sym = parts[0] if len(parts) == 2 else ".".join(parts[:-1])
     price, prev = _f(fields[3]), _f(fields[4])
     return {
         "symbol": sym.upper(),

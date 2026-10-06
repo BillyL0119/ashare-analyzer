@@ -6,6 +6,7 @@ import { useT } from '../i18n'
 import { getJSON, useAPI, pct, num } from '../data'
 import { ErrorBox, Gauge, Pill, Section, Segment, Skeleton, SkeletonRows, Sparkline } from '../ui'
 import { changeColor, marketOf, marketOfRegion } from '../helpers'
+import USMarket from './USMarket'
 import { Icon } from '../icons'
 const open = (nav, market, code) => nav(`/stock/${market}/${code}`)
 
@@ -31,16 +32,16 @@ function SearchBox() {
     const id = ++seq.current
     const timer = setTimeout(async () => {
       setBusy(true)
-      const cjk = /[⺀-￿]/.test(term)
+      // US first: any ticker or company (English or Chinese name). A-share lookup only when it can be an A-share.
+      const mayBeAShare = /^\d+$/.test(term) || /[\u2E80-\uFFFF]/.test(term)
       const [cn, us] = await Promise.allSettled([
-        getJSON('/stocks/search?q=' + encodeURIComponent(term)),
-        cjk ? Promise.resolve([]) : getJSON('/us/search?q=' + encodeURIComponent(term)),
+        mayBeAShare ? getJSON('/stocks/search?q=' + encodeURIComponent(term)) : Promise.resolve([]),
+        getJSON('/us/market/search?q=' + encodeURIComponent(term)),
       ])
       if (id !== seq.current) return
       const cnList = cn.status === 'fulfilled' ? cn.value.map((r) => ({ code: r.code, name: r.name, pct: r.change_pct, market: 'cn' })) : []
-      const usList = us.status === 'fulfilled' ? us.value.map((r) => ({ code: r.symbol, name: r.name, pct: null, market: 'us' })) : []
-      const letters = /^[A-Za-z]+$/.test(term)
-      setResults(letters ? [...usList, ...cnList] : [...cnList, ...usList]); setBusy(false)
+      const usList = us.status === 'fulfilled' ? us.value.results.map((r) => ({ code: r.symbol, name: r.name, pct: r.pct, market: 'us' })) : []
+      setResults([...usList, ...cnList]); setBusy(false)
     }, 300)
     return () => clearTimeout(timer)
   }, [q])
@@ -259,8 +260,15 @@ function Hot() {
   )
 }
 
+function useMode() {
+  const [mode, setMode] = useState(() => { try { return localStorage.getItem('bfs_m_market') === 'cn' ? 'cn' : 'us' } catch { return 'us' } })
+  const change = (m) => { setMode(m); try { localStorage.setItem('bfs_m_market', m) } catch { /* ignore */ } }
+  return [mode, change]
+}
+
 export default function Market({ onSettings }) {
   const t = useT()
+  const [mode, setMode] = useMode()
   return (
     <div className="m-stack" style={{ gap: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -268,9 +276,15 @@ export default function Market({ onSettings }) {
         <button className="m-iconbtn" onClick={onSettings} aria-label={t('关于')}>{Icon.more}</button>
       </div>
       <SearchBox />
+      <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
       <div className="m-stack">
-        <Overview /><Watchlist /><Global /><Sectors /><Hot />
+        {mode === 'us' ? (
+          <><USMarket /><Watchlist /><Global /></>
+        ) : (
+          <><Overview /><Watchlist /><Global /><Sectors /><Hot /></>
+        )}
         <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>
+        <div className="m-footer" style={{ marginTop: -18 }}>{t('数据延迟，仅供参考')}</div>
       </div>
     </div>
   )
