@@ -162,7 +162,7 @@ export default function App() {
       return
     }
     const titles = {
-      analysis:     'Best Friend Stock | 免费A股美股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
+      analysis:     'Best Friend Stock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
       news:         'Best Friend Stock | 每日大事件 - 市场重大新闻',
       paper:        'Best Friend Stock | 模拟炒股 - 100万虚拟资金T+1练习',
       study:        'Best Friend Stock | 经济学学习中心 - A-Level IB AP IGCSE',
