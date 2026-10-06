@@ -6,17 +6,20 @@ final class LearningViewModel: ObservableObject {
     @Published var selectedKey: String = "alevel"
     @Published var isLoading = false
     @Published var error: String?
+    private var didRefresh = false
 
     var selected: Curriculum? {
         curricula.first { $0.key == selectedKey }
     }
 
     func load() async {
-        guard curricula.isEmpty else { return }
+        guard curricula.isEmpty || !didRefresh else { return }
+        defer { didRefresh = true }
         isLoading = true
         error = nil
+        if let c: CurriculumResponse = APIClient.shared.cached("/study/curriculum") { curricula = c.curricula }
         do {
-            let resp: CurriculumResponse = try await APIClient.shared.get("/study/curriculum")
+            let resp: CurriculumResponse = try await APIClient.shared.get("/study/curriculum", persist: true)
             curricula = resp.curricula
         } catch {
             self.error = errorMessage(error)

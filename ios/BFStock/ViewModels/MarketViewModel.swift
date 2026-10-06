@@ -33,9 +33,10 @@ final class MarketViewModel: ObservableObject {
     func loadOverview() async {
         isLoadingOverview = true
         overviewError = nil
+        if overview == nil { overview = APIClient.shared.cached("/market/overview") }
         do {
             // API returns plain object, no {success, data} wrapper
-            let ov: MarketOverview = try await APIClient.shared.get("/market/overview")
+            let ov: MarketOverview = try await APIClient.shared.get("/market/overview", persist: true)
             overview = ov
         } catch {
             overviewError = errorMessage(error)
@@ -46,10 +47,12 @@ final class MarketViewModel: ObservableObject {
     func loadHotStocks() async {
         isLoadingHot = true
         hotError = nil
+        if cnHotStocks.isEmpty { cnHotStocks = APIClient.shared.cached("/stocks/hot", params: ["market": "cn"]) ?? [] }
+        if usHotStocks.isEmpty { usHotStocks = APIClient.shared.cached("/stocks/hot", params: ["market": "us"]) ?? [] }
         do {
             // Endpoints: /api/stocks/hot?market=cn|us — returns plain array
-            async let cn: [HotStock] = APIClient.shared.get("/stocks/hot", params: ["market": "cn"])
-            async let us: [HotStock] = APIClient.shared.get("/stocks/hot", params: ["market": "us"])
+            async let cn: [HotStock] = APIClient.shared.get("/stocks/hot", params: ["market": "cn"], persist: true)
+            async let us: [HotStock] = APIClient.shared.get("/stocks/hot", params: ["market": "us"], persist: true)
             let (cnStocks, usStocks) = try await (cn, us)
             cnHotStocks = cnStocks
             usHotStocks = usStocks
@@ -62,8 +65,9 @@ final class MarketViewModel: ObservableObject {
     func loadSentiment() async {
         isLoadingSentiment = true
         sentimentError = nil
+        if sentiment == nil { sentiment = APIClient.shared.cached("/market/sentiment") }
         do {
-            sentiment = try await APIClient.shared.get("/market/sentiment")
+            sentiment = try await APIClient.shared.get("/market/sentiment", persist: true)
         } catch {
             sentimentError = errorMessage(error)
         }
@@ -73,8 +77,9 @@ final class MarketViewModel: ObservableObject {
     func loadSectors() async {
         isLoadingSectors = true
         sectorsError = nil
+        if sectors.isEmpty, let c: SectorsResponse = APIClient.shared.cached("/market/sectors") { sectors = c.sectors }
         do {
-            let resp: SectorsResponse = try await APIClient.shared.get("/market/sectors")
+            let resp: SectorsResponse = try await APIClient.shared.get("/market/sectors", persist: true)
             sectors = resp.sectors
         } catch {
             sectorsError = errorMessage(error)

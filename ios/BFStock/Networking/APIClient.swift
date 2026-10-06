@@ -40,10 +40,19 @@ final class APIClient: @unchecked Sendable {
 
     // MARK: GET
 
-    func get<T: Decodable>(_ path: String, params: [String: String] = [:]) async throws -> T {
+    func get<T: Decodable>(_ path: String, params: [String: String] = [:], persist: Bool = false) async throws -> T {
         let url = try buildURL(path: path, params: params)
         let request = URLRequest(url: url)
-        return try await perform(request)
+        return try await perform(request, persistKey: persist ? url : nil)
+    }
+
+    /// Last successful response for this request, if it is younger than 24 hours.
+    func cached<T: Decodable>(_ path: String, params: [String: String] = [:]) -> T? {
+        guard let url = try? buildURL(path: path, params: params),
+              let data = ResponseCache.load(for: url) else { return nil }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try? decoder.decode(T.self, from: data)
     }
 
     // MARK: POST
@@ -83,7 +92,7 @@ final class APIClient: @unchecked Sendable {
         return url
     }
 
-    private func perform<T: Decodable>(_ request: URLRequest) async throws -> T {
+    private func perform<T: Decodable>(_ request: URLRequest, persistKey: URL? = nil) async throws -> T {
         do {
             let (data, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse else {
@@ -97,7 +106,9 @@ final class APIClient: @unchecked Sendable {
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             do {
-                return try decoder.decode(T.self, from: data)
+                let value = try decoder.decode(T.self, from: data)
+                if let key = persistKey { ResponseCache.store(data, for: key) }
+                return value
             } catch {
                 throw APIError.decodingError(error)
             }

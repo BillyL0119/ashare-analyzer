@@ -47,6 +47,7 @@
 		F6EBA07DD8FB21D243EEDFA4 /* WatchlistQuoteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0129239F49312C2C498A4A /* WatchlistQuoteViewModel.swift */; };
 		D4E5F6789012345601AB2CD3 /* SafeURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6789012345601AB2CD0 /* SafeURL.swift */; };
 		E5F6789012345678AB4CD5E6 /* GlobalMarketSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6789012345678AB4CD5E0 /* GlobalMarketSection.swift */; };
+		F6789012345678ABCD5EF6A7 /* ResponseCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6789012345678ABCD5EF6A0 /* ResponseCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +92,7 @@
 		F91577CB01DAD4D21E21F115 /* MarketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketViewModel.swift; sourceTree = "<group>"; };
 		D4E5F6789012345601AB2CD0 /* SafeURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeURL.swift; sourceTree = "<group>"; };
 		E5F6789012345678AB4CD5E0 /* GlobalMarketSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalMarketSection.swift; sourceTree = "<group>"; };
+		F6789012345678ABCD5EF6A0 /* ResponseCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -241,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				9E5F395011AE75A77A99242A /* APIClient.swift */,
+				F6789012345678ABCD5EF6A0 /* ResponseCache.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 				EB625E1254F5B68F5FAAFB83 /* AITeacherTabView.swift in Sources */,
 				B71463A3C06A44FE61434BE2 /* AITeacherViewModel.swift in Sources */,
 				81B5C713635306177BF069AF /* APIClient.swift in Sources */,
+				F6789012345678ABCD5EF6A7 /* ResponseCache.swift in Sources */,
 				720F2B68B6FA73CCFBBC3F72 /* AboutSheet.swift in Sources */,
 				4DABD650539F30C5B6EAA4C7 /* BFStockApp.swift in Sources */,
 				D6A313AFB8BA7C21F4B02503 /* ContentView.swift in Sources */,
