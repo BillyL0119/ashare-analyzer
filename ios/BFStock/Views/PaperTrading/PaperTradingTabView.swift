@@ -217,6 +217,7 @@ struct PaperTradingTabView: View {
                 )
                 .shadow(color: DS.accent.opacity(0.45), radius: 12, y: 6)
         }
+        .accessibilityLabel(L("买入"))
     }
 
     // MARK: - Toolbar
@@ -228,6 +229,7 @@ struct PaperTradingTabView: View {
                 Image(systemName: "arrow.counterclockwise")
                     .font(.caption)
             }
+            .accessibilityLabel(L("重置账户"))
             .tint(.secondary)
         }
         ToolbarItem(placement: .topBarTrailing) {
@@ -237,6 +239,7 @@ struct PaperTradingTabView: View {
             } label: {
                 Image(systemName: "trophy")
             }
+            .accessibilityLabel(L("收益排行榜"))
         }
     }
 }

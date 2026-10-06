@@ -20,5 +20,6 @@ struct StockRow: View {
             PctPill(pct: changePct, market: market)
         }
         .padding(.vertical, 2)
+        .accessibilityElement(children: .combine)
     }
 }

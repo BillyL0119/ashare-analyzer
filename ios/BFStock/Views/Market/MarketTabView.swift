@@ -60,6 +60,7 @@ struct MarketTabView: View {
                     Button { showAbout = true } label: {
                         Image(systemName: "info.circle")
                     }
+                    .accessibilityLabel(L("关于"))
                     .tint(.secondary)
                 }
             }

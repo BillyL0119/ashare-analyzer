@@ -84,5 +84,6 @@ struct SectorRow: View {
 
             PctPill(pct: sector.changePct, market: .cn, fixedWidth: 74)
         }
+        .accessibilityElement(children: .combine)
     }
 }

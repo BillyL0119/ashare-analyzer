@@ -180,6 +180,14 @@ T = {
     "恐慌": ("Fear", "恐怖", "공포", "Peur"),
     "贪婪": ("Greed", "強欲", "탐욕", "Avidité"),
     "极度贪婪": ("Extreme Greed", "極度の強欲", "극단적 탐욕", "Avidité extrême"),
+    # --- accessibility labels
+    "清空对话": ("Clear chat", "会話を消去", "대화 지우기", "Effacer la conversation"),
+    "停止生成": ("Stop generating", "生成を停止", "생성 중지", "Arrêter la génération"),
+    "发送": ("Send", "送信", "보내기", "Envoyer"),
+    "重置账户": ("Reset account", "口座をリセット", "계좌 초기화", "Réinitialiser le compte"),
+    "加入自选": ("Add to watchlist", "ウォッチリストに追加", "관심종목에 추가", "Ajouter aux favoris"),
+    "减少": ("Decrease", "減らす", "줄이기", "Diminuer"),
+    "增加": ("Increase", "増やす", "늘리기", "Augmenter"),
     # --- sector names (from the API)
     "白酒": ("Baijiu", "白酒", "백주", "Baijiu"),
     "银行": ("Banks", "銀行", "은행", "Banques"),

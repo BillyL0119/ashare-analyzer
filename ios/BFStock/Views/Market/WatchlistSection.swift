@@ -63,12 +63,14 @@ struct WatchlistSection: View {
                         .foregroundStyle(.red)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(L("移出自选") + " " + item.name)
 
                 WatchlistRow(item: item, compact: true)
 
                 Image(systemName: "line.3.horizontal")
                     .font(.body.weight(.semibold))
                     .foregroundStyle(.tertiary)
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -134,6 +136,7 @@ private struct WatchlistRow: View {
             Spacer(minLength: 4)
             if vm.closes.count > 1 && !compact {
                 Sparkline(values: vm.closes, color: trendColor)
+                    .accessibilityHidden(true)
                     .frame(width: 64, height: 32)
                     .transition(.opacity)
             }
@@ -150,6 +153,7 @@ private struct WatchlistRow: View {
             PctPill(pct: vm.changePct, market: item.resolvedMarket, fixedWidth: compact ? 72 : 80)
         }
         .animation(.easeOut(duration: 0.3), value: vm.closes.count)
+        .accessibilityElement(children: .combine)
         .task { await vm.load() }
     }
 

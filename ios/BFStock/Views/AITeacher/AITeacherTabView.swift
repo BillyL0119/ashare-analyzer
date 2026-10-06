@@ -30,6 +30,7 @@ struct AITeacherTabView: View {
                         Button { vm.clearHistory() } label: {
                             Image(systemName: "trash")
                         }
+                        .accessibilityLabel(L("清空对话"))
                         .tint(.secondary)
                     }
                 }
@@ -161,6 +162,7 @@ struct AITeacherTabView: View {
                             .background(Color.red)
                             .clipShape(Circle())
                     }
+                    .accessibilityLabel(L("停止生成"))
                 } else {
                     Button {
                         impactHaptic.impactOccurred()
@@ -175,6 +177,7 @@ struct AITeacherTabView: View {
                                 : DS.accent)
                             .clipShape(Circle())
                     }
+                    .accessibilityLabel(L("发送"))
                     .disabled(vm.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }

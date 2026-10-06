@@ -175,6 +175,7 @@ struct TradeSheet: View {
 
             HStack(spacing: 14) {
                 stepButton("minus") { setShares(shares - minStep) }
+                    .accessibilityLabel(L("减少"))
                     .disabled(shares <= minStep)
                 TextField("0", text: $sharesText)
                     .font(.system(size: 40, weight: .bold, design: .rounded))
@@ -187,6 +188,7 @@ struct TradeSheet: View {
                         shares = normalized(n)
                     }
                 stepButton("plus") { setShares(shares + minStep) }
+                    .accessibilityLabel(L("增加"))
                     .disabled(shares >= upperBound)
             }
 

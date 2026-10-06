@@ -75,6 +75,7 @@ private struct IndexChip: View {
                            startPoint: .topLeading, endPoint: .bottomTrailing),
             in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous)
         )
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -134,6 +135,9 @@ private struct GaugeTile: View {
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
         .background(DS.surfaceHi.opacity(0.55), in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue("\(Int(score)), \(L(gauge.labelZh))")
         .onAppear { withAnimation(.easeOut(duration: 0.9)) { shown = true } }
     }
 }

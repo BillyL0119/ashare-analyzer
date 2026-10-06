@@ -94,6 +94,7 @@ private struct IndexTile: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
         .background(
             LinearGradient(colors: [color.opacity(0.16), DS.surfaceHi.opacity(0.6)],
                            startPoint: .topLeading, endPoint: .bottomTrailing),

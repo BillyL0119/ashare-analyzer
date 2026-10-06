@@ -83,6 +83,7 @@ struct StockDetailView: View {
                     Image(systemName: watched ? "star.fill" : "star")
                         .foregroundStyle(watched ? .yellow : .secondary)
                 }
+                .accessibilityLabel(watched ? L("移出自选") : L("加入自选"))
             }
         }
         .task { await vm.loadAll() }
