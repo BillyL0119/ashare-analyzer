@@ -3,30 +3,55 @@ import SwiftUI
 struct MarketTabView: View {
     @StateObject private var vm = MarketViewModel()
     @State private var selectedHotMarket: Market = .cn
+    @AppStorage("marketTabMode") private var modeRaw = Market.us.rawValue
     @State private var searchText = ""
     @State private var showAbout = false
     @State private var selectedResult: StockSearchResult?
     @ObservedObject private var history = SearchHistoryStore.shared
 
+    private var mode: Binding<Market> {
+        Binding(get: { Market(rawValue: modeRaw) ?? .us }, set: { modeRaw = $0.rawValue })
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 26) {
-                    overviewSection
-                    WatchlistSection()
-                    GlobalMarketSection(
-                        sentiment: vm.sentiment,
-                        isLoading: vm.isLoadingSentiment,
-                        error: vm.sentimentError,
-                        onRetry: { Task { await vm.loadSentiment() } }
-                    )
-                    SectorListSection(
-                        sectors: vm.sectors,
-                        isLoading: vm.isLoadingSectors,
-                        error: vm.sectorsError,
-                        onRetry: { Task { await vm.loadSectors() } }
-                    )
-                    hotSection
+                    HStack {
+                        MarketSegmentControl(selection: mode, order: [.us, .cn])
+                        Spacer()
+                    }
+                    if mode.wrappedValue == .us {
+                        USMarketSection(
+                            overview: vm.usOverview,
+                            isLoading: vm.isLoadingUS,
+                            error: vm.usError,
+                            onRetry: { Task { await vm.loadUSOverview() } }
+                        )
+                        WatchlistSection()
+                        GlobalMarketSection(
+                            sentiment: vm.sentiment,
+                            isLoading: vm.isLoadingSentiment,
+                            error: vm.sentimentError,
+                            onRetry: { Task { await vm.loadSentiment() } }
+                        )
+                    } else {
+                        overviewSection
+                        WatchlistSection()
+                        GlobalMarketSection(
+                            sentiment: vm.sentiment,
+                            isLoading: vm.isLoadingSentiment,
+                            error: vm.sentimentError,
+                            onRetry: { Task { await vm.loadSentiment() } }
+                        )
+                        SectorListSection(
+                            sectors: vm.sectors,
+                            isLoading: vm.isLoadingSectors,
+                            error: vm.sectorsError,
+                            onRetry: { Task { await vm.loadSectors() } }
+                        )
+                        hotSection
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 6)

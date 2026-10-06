@@ -1,0 +1,226 @@
+import SwiftUI
+
+/// US market block for the Market tab: session, indices, breadth, movers, sector heat map, mega caps.
+struct USMarketSection: View {
+    let overview: USOverview?
+    let isLoading: Bool
+    let error: String?
+    let onRetry: () -> Void
+
+    @State private var moverTab = 0
+
+    var body: some View {
+        if let ov = overview {
+            VStack(spacing: 26) {
+                overviewCard(ov)
+                megaCaps(ov.megaCaps)
+                movers(ov)
+                sectors(ov.sectors)
+            }
+        } else if let err = error {
+            ErrorRetryView(message: err, onRetry: onRetry).card()
+        } else if isLoading {
+            VStack(alignment: .leading, spacing: 16) {
+                SkeletonBar(width: 90, height: 14)
+                HStack(spacing: 10) {
+                    ForEach(0..<2, id: \.self) { _ in SkeletonBar(height: 78, radius: DS.tileRadius) }
+                }
+                SkeletonBar(height: 8, radius: 4)
+            }
+            .card()
+        }
+    }
+
+    // MARK: Overview
+
+    private func overviewCard(_ ov: USOverview) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 6) {
+                Circle().fill(sessionColor(ov.session.state)).frame(width: 6, height: 6)
+                Text("美股大盘").font(.subheadline.weight(.semibold))
+                Text(sessionLabel(ov.session))
+                    .font(.caption2.weight(.medium))
+                    .padding(.horizontal, 7).padding(.vertical, 3)
+                    .background(DS.surfaceHi, in: Capsule())
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(ov.session.etTime.suffix(5) + " ET")
+                    .font(.system(.caption, design: .rounded)).foregroundStyle(.secondary)
+            }
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                ForEach(ov.indices) { q in IndexTileUS(quote: q) }
+            }
+            breadth(ov.breadth)
+        }
+        .card()
+    }
+
+    private func breadth(_ b: USBreadth) -> some View {
+        let total = Double(max(b.advancing + b.declining, 1))
+        return VStack(spacing: 8) {
+            GeometryReader { geo in
+                let w = geo.size.width - 2
+                HStack(spacing: 2) {
+                    Capsule().fill(Theme.usUp).frame(width: max(w * Double(b.advancing) / total, b.advancing > 0 ? 3 : 0))
+                    Capsule().fill(Theme.usDown)
+                }
+            }
+            .frame(height: 6)
+            HStack {
+                Text(L("上涨 %lld · 下跌 %lld", b.advancing, b.declining))
+                Spacer()
+                Text("数据延迟，仅供参考")
+            }
+            .font(.caption2).foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: Mega caps
+
+    private func megaCaps(_ items: [USQuote]) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(L("七巨头"))
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(items) { q in
+                        NavigationLink(destination: StockDetailView(code: q.symbol, name: q.name, market: .us)) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(q.symbol).font(.system(.subheadline, design: .rounded).weight(.bold))
+                                Text(Formatters.price(q.price)).font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                                Text(Formatters.changePct(q.pct))
+                                    .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                                    .foregroundStyle(Theme.changeColor(q.pct, market: .us))
+                            }
+                            .padding(12)
+                            .frame(width: 96, alignment: .leading)
+                            .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: Movers
+
+    private func movers(_ ov: USOverview) -> some View {
+        let rows: [USQuote] = moverTab == 0 ? ov.gainers : moverTab == 1 ? ov.losers : Array(ov.active20.prefix(10))
+        return VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(L("美股热门")) {
+                Picker("", selection: $moverTab) {
+                    Text("涨幅榜").tag(0); Text("跌幅榜").tag(1); Text("活跃榜").tag(2)
+                }
+                .pickerStyle(.segmented).frame(maxWidth: 220)
+            }
+            VStack(spacing: 0) {
+                ForEach(Array(rows.enumerated()), id: \.element.id) { idx, q in
+                    NavigationLink(destination: StockDetailView(code: q.symbol, name: q.name, market: .us)) {
+                        StockRow(code: q.symbol, name: q.name, changePct: q.pct, market: .us)
+                            .padding(.horizontal, 16).padding(.vertical, 10)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    if idx < rows.count - 1 { RowDivider() }
+                }
+            }
+            .card(padding: 0)
+        }
+    }
+
+    // MARK: Sectors
+
+    private func sectors(_ items: [USSectorTile]) -> some View {
+        let maxAbs = max(items.map { abs($0.pct) }.max() ?? 1, 0.01)
+        return VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(L("行业板块"))
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+                ForEach(items) { s in
+                    let c = Theme.changeColor(s.pct, market: .us)
+                    NavigationLink(destination: StockDetailView(code: s.symbol, name: s.name, market: .us)) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(L(Self.sectorKey[s.name] ?? s.name))
+                                .font(.caption.weight(.semibold)).lineLimit(2).minimumScaleFactor(0.8)
+                                .frame(maxWidth: .infinity, minHeight: 30, alignment: .topLeading)
+                            Text(Formatters.changePct(s.pct))
+                                .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                                .foregroundStyle(c)
+                            Text(s.symbol).font(.caption2).foregroundStyle(.secondary)
+                        }
+                        .padding(10)
+                        .background(c.opacity(0.08 + 0.2 * abs(s.pct) / maxAbs),
+                                    in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    private static let sectorKey: [String: String] = [
+        "Technology": "科技", "Financials": "金融", "Energy": "能源板块", "Health Care": "医疗保健",
+        "Consumer Discretionary": "非必需消费", "Consumer Staples": "必需消费", "Industrials": "工业",
+        "Utilities": "公用事业", "Materials": "原材料", "Real Estate": "房地产板块", "Communication": "通信服务",
+    ]
+
+    // MARK: Session
+
+    private func sessionColor(_ s: String) -> Color {
+        switch s { case "regular": return Theme.usUp; case "pre", "post": return .orange; default: return .secondary }
+    }
+
+    private func sessionLabel(_ s: USSession) -> String {
+        switch s.state {
+        case "regular": return L("交易中")
+        case "pre", "post":
+            return (s.state == "pre" ? L("盘前交易") : L("盘后交易")) + countdown(s.nextOpenUtc).map { " · " + $0 }.orEmpty
+        default:
+            return L("休市") + countdown(s.nextOpenUtc).map { " · " + $0 }.orEmpty
+        }
+    }
+
+    private func countdown(_ iso: String?) -> String? {
+        guard let iso, let d = ISO8601DateFormatter().date(from: iso) else { return nil }
+        let mins = Int(d.timeIntervalSinceNow / 60)
+        guard mins > 0 else { return nil }
+        let text = mins >= 2880 ? L("%lld天", mins / 1440) : L("%lld小时 %lld分钟", mins / 60, mins % 60)
+        return L("距开盘 %@", text)
+    }
+}
+
+private extension Optional where Wrapped == String {
+    var orEmpty: String { self ?? "" }
+}
+
+private struct IndexTileUS: View {
+    let quote: USQuote
+
+    private var title: String {
+        switch quote.name {
+        case "S&P 500": return L("标普500")
+        case "Nasdaq": return L("纳斯达克")
+        case "Dow Jones": return L("道琼斯")
+        case "Russell 2000": return L("罗素2000")
+        default: return quote.name
+        }
+    }
+
+    var body: some View {
+        let color = Theme.changeColor(quote.pct, market: .us)
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+            Text(Formatters.price(quote.price))
+                .font(.system(.callout, design: .rounded).weight(.bold)).monospacedDigit()
+                .minimumScaleFactor(0.7).lineLimit(1)
+            Text(Formatters.changePct(quote.pct))
+                .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                .foregroundStyle(color)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+        .background(
+            LinearGradient(colors: [color.opacity(0.16), DS.surfaceHi.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing),
+            in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+    }
+}

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PaperTradingTabView: View {
     @StateObject private var vm = PaperTradingViewModel()
-    @State private var selectedMarket: Market = .cn
+    @State private var selectedMarket: Market = .us
     @State private var showBuySheet = false
     @State private var showLeaderboard = false
     @State private var sellItem: SellSheetItem?
@@ -121,7 +121,7 @@ struct PaperTradingTabView: View {
     // MARK: - Market Picker
 
     private var marketPicker: some View {
-        MarketSegmentControl(selection: $selectedMarket)
+        MarketSegmentControl(selection: $selectedMarket, order: [.us, .cn])
     }
 
     // MARK: - Positions List

@@ -7,12 +7,12 @@ struct AITeacherTabView: View {
     private let impactHaptic = UIImpactFeedbackGenerator(style: .light)
 
     private let shortcuts: [(String, String)] = [
-        (L("什么是K线图"), "bubble.left"),
+        (L("什么是标普500"), "chart.line.uptrend.xyaxis"),
+        (L("ETF是什么"), "square.stack.3d.up"),
+        (L("如何看财报季"), "doc.text"),
+        (L("什么是做空"), "arrow.down.right"),
         (L("PE比率怎么看"), "chart.bar"),
-        (L("股票和基金区别"), "scale.3d"),
-        (L("如何看财报"), "doc.text"),
         (L("什么是止损"), "exclamationmark.triangle"),
-        (L("分散投资原则"), "circle.grid.3x3"),
     ]
 
     var body: some View {

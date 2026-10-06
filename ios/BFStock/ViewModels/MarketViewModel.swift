@@ -3,6 +3,9 @@ import Foundation
 @MainActor
 final class MarketViewModel: ObservableObject {
     @Published var overview: MarketOverview?
+    @Published var usOverview: USOverview?
+    @Published var usError: String?
+    @Published var isLoadingUS = false
     @Published var cnHotStocks: [HotStock] = []
     @Published var usHotStocks: [HotStock] = []
     @Published var sectors: [SectorItem] = []
@@ -24,10 +27,23 @@ final class MarketViewModel: ObservableObject {
     func loadAll() async {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.loadOverview() }
+            group.addTask { await self.loadUSOverview() }
             group.addTask { await self.loadHotStocks() }
             group.addTask { await self.loadSectors() }
             group.addTask { await self.loadSentiment() }
         }
+    }
+
+    func loadUSOverview() async {
+        if usOverview == nil { usOverview = APIClient.shared.cached("/us/market/overview") }
+        isLoadingUS = usOverview == nil
+        usError = nil
+        do {
+            usOverview = try await APIClient.shared.get("/us/market/overview", persist: true)
+        } catch {
+            if usOverview == nil { usError = errorMessage(error) }
+        }
+        isLoadingUS = false
     }
 
     func loadOverview() async {

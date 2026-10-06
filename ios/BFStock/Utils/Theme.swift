@@ -147,11 +147,12 @@ struct RowDivider: View {
 
 struct MarketSegmentControl: View {
     @Binding var selection: Market
+    var order: [Market] = [.cn, .us]
     @Namespace private var ns
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach([Market.cn, Market.us], id: \.self) { m in
+            ForEach(order, id: \.self) { m in
                 Button {
                     withAnimation(.snappy(duration: 0.25)) { selection = m }
                 } label: {

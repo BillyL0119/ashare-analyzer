@@ -46,9 +46,11 @@ struct HotStock: Codable, Identifiable {
 struct USSearchItem: Codable {
     let symbol: String
     let name: String
+    let nameZh: String?
+    let changePct: Double?
 
     var asResult: StockSearchResult {
-        StockSearchResult(code: symbol, name: name, changePct: nil, market: "us")
+        StockSearchResult(code: symbol, name: name, changePct: changePct, market: "us")
     }
 }
 
@@ -105,4 +107,51 @@ struct SentimentResponse: Codable {
     let usSentiment: SentimentGauge
     let cnSentiment: SentimentGauge
     let indices: [GlobalIndex]
+}
+
+// MARK: - US market overview (/us/market/overview)
+
+struct USSession: Codable {
+    let state: String          // "pre" | "regular" | "post" | "closed"
+    let etTime: String
+    let nextOpenUtc: String?
+    let closesEarly: Bool?
+}
+
+struct USQuote: Codable, Identifiable {
+    var id: String { symbol }
+    let symbol: String
+    let name: String
+    let nameZh: String?
+    let price: Double
+    let change: Double?
+    let pct: Double
+    let amount: Double?
+    let marketCap: Double?
+}
+
+struct USSectorTile: Codable, Identifiable {
+    var id: String { symbol }
+    let symbol: String
+    let name: String
+    let pct: Double
+    let price: Double?
+}
+
+struct USBreadth: Codable {
+    let advancing: Int
+    let declining: Int
+    let sample: Int
+}
+
+struct USOverview: Codable {
+    let session: USSession
+    let asOf: String
+    let indices: [USQuote]
+    let gainers: [USQuote]
+    let losers: [USQuote]
+    let active20: [USQuote]
+    let sectors: [USSectorTile]
+    let megaCaps: [USQuote]
+    let breadth: USBreadth
 }
