@@ -10,7 +10,8 @@ Returns 6 dimension scores (0-100) for radar chart comparison:
   similarity: price correlation with CSI 300 (市场相关性)
 
 All scores are normalised to [0, 100].
-Data sources: akshare (price), yfinance (PE/PB).
+Data sources: A-shares: akshare (price), yfinance (PE/PB), CSI 300.
+              US stocks: Tencent kline (price), NASDAQ public API (PE/PB), SPY for market correlation.
 """
 
 from fastapi import APIRouter, HTTPException
@@ -65,6 +66,65 @@ def _get_name(symbol: str) -> str:
 
 
 # ── Score computation ─────────────────────────────────────────────────────────
+
+def _is_us(symbol: str) -> bool:
+    return not symbol.isdigit()
+
+
+def _score_from_series(pe, pb, closes, volumes, mkt_closes) -> dict:
+    """Shared scoring: same formulas for both markets."""
+    scores: dict[str, int] = {}
+    scores["valuation"] = round(_clamp((80 - pe) / 75 * 100)) if pe and pe > 0 else 50
+    scores["pb"] = round(_clamp((15 - pb) / 14.5 * 100)) if pb and pb > 0 else 50
+    if len(closes) < 20:
+        scores.update({"momentum": 50, "stability": 50, "volume": 50, "similarity": 50})
+        return scores
+    arr = np.array(closes, dtype=float)
+    rets = np.diff(arr) / arr[:-1]
+    total_ret = (closes[-1] - closes[0]) / closes[0] * 100
+    scores["momentum"] = round(_clamp((total_ret + 50) / 150 * 100))
+    ann_vol = float(np.std(rets) * np.sqrt(252) * 100)
+    scores["stability"] = round(_clamp((80 - ann_vol) / 80 * 100))
+    if len(volumes) >= 30:
+        recent_avg = float(np.mean(volumes[-30:]))
+        full_avg = float(np.mean(volumes)) or recent_avg
+        ratio = recent_avg / full_avg if full_avg > 0 else 1.0
+        scores["volume"] = round(_clamp((ratio - 0.3) / 1.7 * 100))
+    else:
+        scores["volume"] = 50
+    scores["similarity"] = 50
+    if len(mkt_closes) >= 21:
+        n = min(len(rets), len(mkt_closes) - 1)
+        mkt_arr = np.array(mkt_closes[-(n + 1):], dtype=float)
+        mkt_rets = np.diff(mkt_arr) / mkt_arr[:-1]
+        if n >= 10:
+            corr = float(np.corrcoef(rets[-n:], mkt_rets)[0, 1])
+            if not math.isnan(corr):
+                scores["similarity"] = round(_clamp((corr + 1) / 2 * 100))
+    return scores
+
+
+def _compute_us(symbol: str) -> tuple:
+    """(scores, name) for a US ticker."""
+    from routers.us_stocks import _fetch_history_candles
+    from routers.score import _nasdaq_fundamentals_us
+    candles = _fetch_history_candles(symbol, 365)[-252:]
+    closes = [c["close"] for c in candles if c.get("close")]
+    volumes = [c["volume"] for c in candles if c.get("volume") is not None]
+    mkt = [c["close"] for c in _fetch_history_candles("SPY", 365)[-252:] if c.get("close")]
+    try:
+        fund = _nasdaq_fundamentals_us(symbol)
+    except Exception as e:
+        logger.warning("US fundamentals failed for %s: %s", symbol, e)
+        fund = {}
+    name = symbol
+    try:
+        from routers.us_market import us_quotes
+        name = (us_quotes([symbol]).get(symbol) or {}).get("name") or symbol
+    except Exception:
+        pass
+    return _score_from_series(_safe(fund.get("pe")), _safe(fund.get("pb")), closes, volumes, mkt), name
+
 
 def _compute(symbol: str) -> dict:
     # ── Price data (1 year daily) ────────────────────────────────────────────
@@ -172,8 +232,14 @@ def get_radar(symbol: str):
             return cached
 
     try:
-        scores = _compute(symbol)
-        name = _get_name(symbol)
+        if _is_us(symbol):
+            sym = symbol.upper().replace("-", ".")
+            if not sym.replace(".", "").isalnum() or len(sym) > 10:
+                raise HTTPException(status_code=404, detail="Unknown symbol")
+            scores, name = _compute_us(sym)
+        else:
+            scores = _compute(symbol)
+            name = _get_name(symbol)
         result = {"symbol": symbol, "name": name, "scores": scores}
         _cache[symbol] = (now, result)
         logger.info("Radar computed for %s: %s", symbol, scores)
