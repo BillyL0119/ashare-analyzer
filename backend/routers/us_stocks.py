@@ -318,9 +318,42 @@ def _find_recent_history_cache(sym: str, max_days: int = 7) -> list:
     return []
 
 
+_TENCENT_SUFFIX: dict = {}   # ticker -> working exchange suffix (".OQ" Nasdaq, ".N" NYSE, ".AM" NYSE American)
+
+
+def _tencent_history(sym: str, days: int = 365) -> list:
+    """Daily candles (forward-adjusted) from Tencent's kline feed: no key, no rate limit. [] on failure."""
+    import requests
+    want = max(min(int(days * 0.72) + 20, 700), 60)   # trading days
+    suffixes = [_TENCENT_SUFFIX[sym]] if sym in _TENCENT_SUFFIX else [".OQ", ".N", ".AM"]
+    for suf in suffixes:
+        try:
+            r = requests.get(
+                "https://web.ifzq.gtimg.cn/appstock/app/usfqkline/get",
+                params={"param": f"us{sym}{suf},day,,,{want},qfq"}, timeout=8,
+            )
+            data = r.json().get("data")
+            if not isinstance(data, dict) or not data:
+                continue
+            node = next(iter(data.values()))
+            rows = node.get("qfqday") or node.get("day") or []
+            if len(rows) < 5:
+                continue
+            _TENCENT_SUFFIX[sym] = suf
+            # row: [date, open, close, high, low, volume]
+            return [{
+                "date": row[0], "open": round(float(row[1]), 4), "high": round(float(row[3]), 4),
+                "low": round(float(row[4]), 4), "close": round(float(row[2]), 4),
+                "volume": int(float(row[5])),
+            } for row in rows]
+        except Exception:
+            continue
+    return []
+
+
 def _fetch_history_candles(sym: str, days: int = 365, stale_fallback_days: int = 30) -> list:
     """
-    Fetch daily OHLCV from Polygon aggregates.
+    Fetch daily OHLCV: Tencent kline first, Polygon aggregates as the fallback.
     Returns list of candle dicts sorted by date ASC.
     Cached until next calendar day. Falls back to recent stale cache on API error.
     stale_fallback_days: how old a cached file can be before we ignore it as fallback.
@@ -330,6 +363,11 @@ def _fetch_history_candles(sym: str, days: int = 365, stale_fallback_days: int =
     cached = read_cache(cache_key, max_age_hours=24)
     if cached:
         return cached
+
+    tc = _tencent_history(sym, max(days, 365))
+    if tc:
+        write_cache(cache_key, tc)
+        return tc
 
     to_date = datetime.now().strftime("%Y-%m-%d")
     from_date = (datetime.now() - timedelta(days=max(days, 365))).strftime("%Y-%m-%d")
