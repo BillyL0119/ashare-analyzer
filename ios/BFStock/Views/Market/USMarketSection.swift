@@ -51,8 +51,11 @@ struct USMarketSection: View {
                 Text(ov.session.etTime.suffix(5) + " ET")
                     .font(.system(.caption, design: .rounded)).foregroundStyle(.secondary)
             }
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                ForEach(ov.indices) { q in IndexTileUS(quote: q) }
+            if let hero = ov.indices.first {
+                IndexTileUS(quote: hero, style: .hero)
+                HStack(spacing: 8) {
+                    ForEach(ov.indices.dropFirst()) { q in IndexTileUS(quote: q, style: .compact) }
+                }
             }
             breadth(ov.breadth)
         }
@@ -120,9 +123,18 @@ struct USMarketSection: View {
             VStack(spacing: 0) {
                 ForEach(Array(rows.enumerated()), id: \.element.id) { idx, q in
                     NavigationLink(destination: StockDetailView(code: q.symbol, name: q.name, market: .us)) {
-                        StockRow(code: q.symbol, name: q.name, changePct: q.pct, market: .us)
-                            .padding(.horizontal, 16).padding(.vertical, 10)
-                            .contentShape(Rectangle())
+                        HStack(spacing: 10) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(q.symbol).font(.subheadline.weight(.bold))
+                                Text(q.name).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                            }
+                            Spacer(minLength: 8)
+                            Text(Formatters.price(q.price))
+                                .font(.system(.subheadline, design: .rounded).weight(.medium)).monospacedDigit()
+                            PctPill(pct: q.pct, market: .us, fixedWidth: 74)
+                        }
+                        .padding(.horizontal, 16).padding(.vertical, 9)
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     if idx < rows.count - 1 { RowDivider() }
@@ -259,7 +271,9 @@ private extension Optional where Wrapped == String {
 }
 
 private struct IndexTileUS: View {
+    enum Style { case hero, compact }
     let quote: USQuote
+    let style: Style
 
     private var title: String {
         switch quote.name {
@@ -273,16 +287,40 @@ private struct IndexTileUS: View {
 
     var body: some View {
         let color = Theme.changeColor(quote.pct, market: .us)
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
-            Text(Formatters.price(quote.price))
-                .font(.system(.callout, design: .rounded).weight(.bold)).monospacedDigit()
-                .minimumScaleFactor(0.7).lineLimit(1)
-            Text(Formatters.changePct(quote.pct))
-                .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
-                .foregroundStyle(color)
+        Group {
+            if style == .hero {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(title).font(.footnote.weight(.medium)).foregroundStyle(.secondary)
+                        Text(Formatters.price(quote.price))
+                            .font(.system(size: 34, weight: .bold, design: .rounded)).monospacedDigit()
+                            .minimumScaleFactor(0.7).lineLimit(1)
+                    }
+                    Spacer()
+                    VStack(alignment: .trailing, spacing: 4) {
+                        PctPill(pct: quote.pct, market: .us, fixedWidth: 84)
+                        if let ch = quote.change {
+                            Text(Formatters.changeAbs(ch))
+                                .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                                .foregroundStyle(color)
+                        }
+                    }
+                }
+                .padding(.horizontal, 16).padding(.vertical, 14)
+            } else {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title).font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
+                    Text(Formatters.price(quote.price))
+                        .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                        .minimumScaleFactor(0.6).lineLimit(1)
+                    Text(Formatters.changePct(quote.pct))
+                        .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                        .foregroundStyle(color)
+                }
+                .padding(.horizontal, 10).padding(.vertical, 9)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
-        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .background(

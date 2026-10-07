@@ -36,14 +36,30 @@ function SessionPill({ session }) {
   )
 }
 
-function IndexCard({ i }) {
+function IndexCard({ i, hero }) {
   const t = useT(); const lang = useLangStore((s) => s.lang)
   const c = changeColor(i.pct, 'us')
+  const title = lang === 'zh' ? i.name_zh : (INDEX_ZH[i.name] ? t(INDEX_ZH[i.name]) : i.name)
+  const bg = `linear-gradient(135deg, color-mix(in srgb, ${c} 16%, transparent), var(--surface-hi))`
+  if (hero) {
+    return (
+      <div className="m-tile" style={{ background: bg, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ minWidth: 0 }}>
+          <div className="m-label">{title}</div>
+          <div className="m-big m-num" style={{ marginTop: 4, fontSize: 32, lineHeight: 1.1 }}>{num(i.price)}</div>
+        </div>
+        <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
+          <Pill value={i.pct} market="us" width={84} />
+          {i.change != null && <span className="m-num" style={{ color: c, fontWeight: 650, fontSize: 12.5 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}
+        </div>
+      </div>
+    )
+  }
   return (
-    <div className="m-tile" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${c} 16%, transparent), var(--surface-hi))`, padding: '12px 14px' }}>
-      <div className="m-label">{lang === 'zh' ? i.name_zh : (INDEX_ZH[i.name] ? t(INDEX_ZH[i.name]) : i.name)}</div>
-      <div className="m-big m-num" style={{ margin: '6px 0 3px', fontSize: 18 }}>{num(i.price)}</div>
-      <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 13 }}>{pct(i.pct)}</div>
+    <div className="m-tile" style={{ background: bg, padding: '9px 10px', minWidth: 0 }}>
+      <div className="m-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</div>
+      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 14.5, fontWeight: 800 }}>{num(i.price)}</div>
+      <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(i.pct)}</div>
     </div>
   )
 }
@@ -51,7 +67,7 @@ function IndexCard({ i }) {
 function Overview({ d, error, reload }) {
   const t = useT()
   if (!d) return error ? <ErrorBox onRetry={reload} /> : (
-    <div className="m-card" style={{ display: 'grid', gap: 14 }}><Skeleton w={120} h={14} /><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>{[0, 1, 2, 3].map((k) => <Skeleton key={k} h={84} r={14} />)}</div></div>
+    <div className="m-card" style={{ display: 'grid', gap: 14 }}><Skeleton w={120} h={14} /><Skeleton h={82} r={14} /><div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>{[0, 1, 2].map((k) => <Skeleton key={k} h={66} r={14} />)}</div></div>
   )
   const b = d.breadth
   return (
@@ -59,7 +75,8 @@ function Overview({ d, error, reload }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <b style={{ fontSize: 14 }}>{t('美股大盘')}</b><SessionPill session={d.session} />
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>{d.indices.map((i) => <IndexCard key={i.symbol || i.name} i={i} />)}</div>
+      {d.indices[0] && <IndexCard hero i={d.indices[0]} />}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>{d.indices.slice(1).map((i) => <IndexCard key={i.symbol || i.name} i={i} />)}</div>
       {b?.sample > 0 && (
         <div>
           <div style={{ display: 'flex', gap: 2, height: 6, borderRadius: 3, overflow: 'hidden', background: 'var(--surface-hi)' }}>
