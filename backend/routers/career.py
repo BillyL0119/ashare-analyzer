@@ -1,5 +1,6 @@
 """
 Career Guide — /api/career/
+- GET  /roles           → career role guide (data/career_roles.json, generated from frontend careerData.js)
 - POST /mock-interview  → DeepSeek streaming mock interview
 """
 
@@ -19,6 +20,19 @@ router = APIRouter()
 logger = logging.getLogger("career")
 
 DEEPSEEK_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+
+_ROLES_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "career_roles.json")
+_roles_cache: dict | None = None
+
+
+@router.get("/roles")
+def get_roles():
+    global _roles_cache
+    if _roles_cache is None:
+        with open(_ROLES_PATH, encoding="utf-8") as f:
+            _roles_cache = json.load(f)
+    return _roles_cache
+
 
 # ── Rate limiting ──────────────────────────────────────────────────────────────
 _rate_store: dict = defaultdict(list)
