@@ -1337,6 +1337,10 @@ STOCKS_CURRICULUM = {
 }
 
 
+from .study_us import US_PAPER
+STOCKS_CURRICULUM["papers"].insert(0, US_PAPER)
+
+
 # ── All curricula registry ────────────────────────────────────────────────────
 
 ALL_CURRICULA = {
