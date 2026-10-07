@@ -212,7 +212,7 @@ Sitemap: https://bestfriendstock.com/sitemap.xml"""
 
 _SEO_CACHE: dict = {}
 
-@app.get("/seo/stock/us/{symbol}", response_class=Response)
+@app.api_route("/seo/stock/us/{symbol}", methods=["GET", "HEAD"], response_class=Response)
 async def seo_us_stock(symbol: str):
     """index.html with per-stock title/description/canonical (nginx routes /stock/us/<TICKER> here)."""
     import html as _html, re as _re, time as _time, os as _os
