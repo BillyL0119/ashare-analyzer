@@ -338,6 +338,13 @@ struct StockDetailView: View {
 
     // MARK: - Quote Grid
 
+    private func usd(_ v: Double) -> String {
+        guard v > 0 else { return "--" }
+        if v >= 1e12 { return String(format: "$%.2fT", v / 1e12) }
+        if v >= 1e9 { return String(format: "$%.2fB", v / 1e9) }
+        return String(format: "$%.1fM", v / 1e6)
+    }
+
     private func quoteGrid(_ q: RealtimeQuote) -> some View {
         let last = vm.candles.last
         // The US realtime feed has no open/high/low/turnover: fall back to the latest candle.
@@ -352,8 +359,11 @@ struct StockDetailView: View {
             (L("最高"), px(high)),
             (L("最低"), px(low)),
             (L("成交量"), volume > 0 ? (market == .us ? Formatters.shareVolume(volume) : Formatters.volume(volume)) : "--"),
-            (L("成交额"), q.amount > 0 ? Formatters.cnyAmount(q.amount) : "--"),
-        ]
+            (L("成交额"), q.amount > 0 ? (market == .us ? usd(q.amount) : Formatters.cnyAmount(q.amount)) : "--"),
+        ] + (market == .us ? [
+            (L("市盈率"), (q.peRatio ?? 0) > 0 ? String(format: "%.1f", q.peRatio!) : "--"),
+            (L("总市值"), usd(q.marketCap ?? 0)),
+        ] : [])
         return VStack(alignment: .leading, spacing: 16) {
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 3), spacing: 14) {
                 ForEach(items, id: \.0) { label, value in
@@ -368,20 +378,20 @@ struct StockDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            rangeBar(price: q.price)
+            rangeBar(price: q.price, week52: (q.week52Low ?? 0) > 0 && (q.week52High ?? 0) > 0 ? (q.week52Low!, q.week52High!) : nil)
         }
         .card()
     }
 
     @ViewBuilder
-    private func rangeBar(price: Double) -> some View {
-        if let lo = vm.candles.map(\.low).min(), let hi = vm.candles.map(\.high).max(), hi > lo {
+    private func rangeBar(price: Double, week52: (Double, Double)?) -> some View {
+        if let (lo, hi) = week52 ?? vm.candles.map(\.low).min().flatMap({ l in vm.candles.map(\.high).max().map { (l, $0) } }), hi > lo {
             let pos = min(max((price - lo) / (hi - lo), 0), 1)
             VStack(spacing: 8) {
                 HStack {
-                    Text("区间最低").foregroundStyle(.secondary)
+                    Text(week52 != nil ? L("52周最低") : L("区间最低")).foregroundStyle(.secondary)
                     Spacer()
-                    Text("区间最高").foregroundStyle(.secondary)
+                    Text(week52 != nil ? L("52周最高") : L("区间最高")).foregroundStyle(.secondary)
                 }
                 .font(.caption2)
                 GeometryReader { geo in

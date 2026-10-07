@@ -12,6 +12,11 @@ struct RealtimeQuote: Decodable {
     let low: Double
     let open: Double
     let prevClose: Double
+    // US-only extras (nil for A-shares)
+    var peRatio: Double? = nil
+    var marketCap: Double? = nil
+    var week52High: Double? = nil
+    var week52Low: Double? = nil
 }
 
 // US realtime has different field names
@@ -22,13 +27,23 @@ struct USRealtimeQuote: Decodable {
     let change: Double
     let changePct: Double   // percentage: 0.129 = +0.129%
     let volume: Double
+    let amount: Double?
+    let open: Double?
+    let high: Double?
+    let low: Double?
+    let prevClose: Double?
+    let peRatio: Double?
+    let marketCap: Double?
+    let week52High: Double?
+    let week52Low: Double?
 
     func toQuote() -> RealtimeQuote {
         RealtimeQuote(
             code: symbol, name: name, price: price,
             change: change, pctChange: changePct,
-            volume: volume, amount: 0, high: 0, low: 0,
-            open: 0, prevClose: price - change
+            volume: volume, amount: amount ?? 0, high: high ?? 0, low: low ?? 0,
+            open: open ?? 0, prevClose: (prevClose ?? 0) > 0 ? prevClose! : price - change,
+            peRatio: peRatio, marketCap: marketCap, week52High: week52High, week52Low: week52Low
         )
     }
 }
