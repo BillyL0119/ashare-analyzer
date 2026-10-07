@@ -310,7 +310,7 @@ export default function App() {
 
         {/* Market toggle — pill style */}
         <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 24, padding: 3, gap: 2, flexShrink: 0 }}>
-          {[{ key: 'cn', label: t.marketCN }, { key: 'us', label: t.marketUS }].map(({ key, label }) => (
+          {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN }].map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setMarket(key)}

@@ -238,11 +238,11 @@ function Sectors() {
 
 function Hot() {
   const t = useT(); const nav = useNavigate()
-  const [market, setMarket] = useState('cn')
+  const [market, setMarket] = useState('us')
   const { data, error, reload } = useAPI(`/stocks/hot?market=${market}`)
   return (
     <Section title={t('热门股票')} action={null}>
-      <div style={{ margin: '-4px 4px 10px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'cn', label: t('A股') }, { value: 'us', label: t('美股') }]} /></div>
+      <div style={{ margin: '-4px 4px 10px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
       {!data ? (error ? <ErrorBox onRetry={reload} /> : <SkeletonRows rows={5} />) : data.length === 0 ? (
         <div className="m-card m-empty">{t('暂无热门股数据，稍后下拉刷新')}</div>
       ) : (
