@@ -54,3 +54,23 @@ final class DailyKnowledgeViewModel: ObservableObject {
         if let k: DailyKnowledge = try? await APIClient.shared.get("/knowledge/today", persist: true) { knowledge = k }
     }
 }
+
+@MainActor
+final class UniversitiesViewModel: ObservableObject {
+    @Published var all: [University] = []
+    @Published var isLoading = false
+    @Published var error: String?
+
+    func load() async {
+        if all.isEmpty, let c: [University] = APIClient.shared.cached("/universities") { all = c }
+        guard all.isEmpty else { return }
+        isLoading = true
+        error = nil
+        do {
+            all = try await APIClient.shared.get("/universities", persist: true)
+        } catch {
+            self.error = error.localizedDescription
+        }
+        isLoading = false
+    }
+}

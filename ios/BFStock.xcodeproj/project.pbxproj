@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E14B7911CFCC40ACA8B37AD2 /* UniversitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF86EFE9C0694641A5F6617F /* UniversitiesView.swift */; };
 		05BB778D94EC4327951826CF /* DailyKnowledgeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6540DA16713144E2873BB013 /* DailyKnowledgeCard.swift */; };
 		D70AF5970251478AB82AF519 /* NewsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7088D33364465FBCA686B8 /* NewsTabView.swift */; };
 		BA86FB14C96F4649828BD3A2 /* StockScoreSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F28593429044E896F90F86 /* StockScoreSection.swift */; };
@@ -57,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AF86EFE9C0694641A5F6617F /* UniversitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversitiesView.swift; sourceTree = "<group>"; };
 		6540DA16713144E2873BB013 /* DailyKnowledgeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyKnowledgeCard.swift; sourceTree = "<group>"; };
 		AB7088D33364465FBCA686B8 /* NewsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTabView.swift; sourceTree = "<group>"; };
 		65F28593429044E896F90F86 /* StockScoreSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockScoreSection.swift; sourceTree = "<group>"; };
@@ -108,6 +110,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		AB2920E52ED0403B8EA92DB9 /* Universities */ = {
+			isa = PBXGroup;
+			children = (
+				AF86EFE9C0694641A5F6617F /* UniversitiesView.swift */,
+			);
+			path = Universities;
+			sourceTree = "<group>";
+		};
 		E3F519285DA64A7EAF526F45 /* News */ = {
 			isa = PBXGroup;
 			children = (
@@ -208,6 +218,7 @@
 				90E8CC5962E39126E19130BE /* PaperTrading */,
 				AE4C2BAD9B07C8AB0DD31BA3 /* Watchlist */,
 				E3F519285DA64A7EAF526F45 /* News */,
+				AB2920E52ED0403B8EA92DB9 /* Universities */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -346,6 +357,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E14B7911CFCC40ACA8B37AD2 /* UniversitiesView.swift in Sources */,
 				05BB778D94EC4327951826CF /* DailyKnowledgeCard.swift in Sources */,
 				D70AF5970251478AB82AF519 /* NewsTabView.swift in Sources */,
 				BA86FB14C96F4649828BD3A2 /* StockScoreSection.swift in Sources */,

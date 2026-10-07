@@ -610,6 +610,35 @@
         }
       }
     },
+    "90所全球顶尖商学院，含QS排名、学费与申请要求": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 top schools with QS rank, tuition and admission"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 grandes écoles : classement QS, frais, admission"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS順位・学費・出願要件つき、世界のトップ90校"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS 순위·학비·지원 요건이 담긴 세계 90개 대학"
+          }
+        }
+      }
+    },
     "AI老师": {
       "extractionState": "manual",
       "localizations": {
@@ -1529,6 +1558,35 @@
         }
       }
     },
+    "不接受": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not accepted"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non accepté"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不可"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "불가"
+          }
+        }
+      }
+    },
     "不构成投资建议": {
       "extractionState": "manual",
       "localizations": {
@@ -1554,6 +1612,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "투자 조언이 아닙니다"
+          }
+        }
+      }
+    },
+    "专业方向": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Specialties"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spécialités"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "専門分野"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전공 분야"
           }
         }
       }
@@ -1641,6 +1728,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "매수"
+          }
+        }
+      }
+    },
+    "亚洲": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asia"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asie"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アジア"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아시아"
           }
         }
       }
@@ -2167,6 +2283,35 @@
         }
       }
     },
+    "全球商学院指南": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Business school guide"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guide des business schools"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ビジネススクールガイド"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "글로벌 비즈니스 스쿨 가이드"
+          }
+        }
+      }
+    },
     "全球市场": {
       "extractionState": "manual",
       "localizations": {
@@ -2208,19 +2353,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tout"
+            "value": "Tous"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "全部"
+            "value": "すべて"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "전부"
+            "value": "전체"
           }
         }
       }
@@ -2486,6 +2631,35 @@
         }
       }
     },
+    "创办": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Founded"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fondée"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "創立"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설립"
+          }
+        }
+      }
+    },
     "利好": {
       "extractionState": "manual",
       "localizations": {
@@ -2685,6 +2859,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "화학"
+          }
+        }
+      }
+    },
+    "北美": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "North America"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amérique du Nord"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "北米"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "북미"
           }
         }
       }
@@ -3008,6 +3211,35 @@
         }
       }
     },
+    "商学院指南": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Business schools"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Business schools"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ビジネススクール"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비즈니스 스쿨"
+          }
+        }
+      }
+    },
     "地产": {
       "extractionState": "manual",
       "localizations": {
@@ -3120,6 +3352,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "화면 스타일"
+          }
+        }
+      }
+    },
+    "大洋洲": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oceania"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Océanie"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オセアニア"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오세아니아"
           }
         }
       }
@@ -3327,6 +3588,35 @@
         }
       }
     },
+    "学费": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuition"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frais"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "学費"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학비"
+          }
+        }
+      }
+    },
     "完成": {
       "extractionState": "manual",
       "localizations": {
@@ -3381,6 +3671,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "거시"
+          }
+        }
+      }
+    },
+    "就业去向": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Employment"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débouchés"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "就職先"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "취업 분야"
           }
         }
       }
@@ -4106,6 +4425,93 @@
           "stringUnit": {
             "state": "translated",
             "value": "지표"
+          }
+        }
+      }
+    },
+    "授课语言": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "授業言語"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "수업 언어"
+          }
+        }
+      }
+    },
+    "接受": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accepted"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accepté"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인정"
+          }
+        }
+      }
+    },
+    "搜索商学院": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search schools"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher une école"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スクールを検索"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학교 검색"
           }
         }
       }
@@ -4922,6 +5328,35 @@
         }
       }
     },
+    "欧洲": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Europe"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Europe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヨーロッパ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유럽"
+          }
+        }
+      }
+    },
     "每日新闻": {
       "extractionState": "manual",
       "localizations": {
@@ -5299,6 +5734,35 @@
         }
       }
     },
+    "申请要求": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Admission"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Admission"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出願要件"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지원 요건"
+          }
+        }
+      }
+    },
     "电力": {
       "extractionState": "manual",
       "localizations": {
@@ -5556,6 +6020,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "실제 사례"
+          }
+        }
+      }
+    },
+    "知名校友": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notable alumni"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anciens célèbres"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "著名な卒業生"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유명 동문"
           }
         }
       }
@@ -6401,6 +6894,35 @@
         }
       }
     },
+    "英国": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UK"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Royaume-Uni"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "英国"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영국"
+          }
+        }
+      }
+    },
     "行业板块": {
       "extractionState": "manual",
       "localizations": {
@@ -6455,6 +6977,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "시장"
+          }
+        }
+      }
+    },
+    "访问官网": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visit website"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Site officiel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公式サイトを開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공식 웹사이트"
           }
         }
       }
@@ -7064,6 +7615,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "경기소비재"
+          }
+        }
+      }
+    },
+    "项目": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programs"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programmes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プログラム"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로그램"
           }
         }
       }
