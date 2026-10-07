@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05BB778D94EC4327951826CF /* DailyKnowledgeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6540DA16713144E2873BB013 /* DailyKnowledgeCard.swift */; };
+		D70AF5970251478AB82AF519 /* NewsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7088D33364465FBCA686B8 /* NewsTabView.swift */; };
+		BA86FB14C96F4649828BD3A2 /* StockScoreSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F28593429044E896F90F86 /* StockScoreSection.swift */; };
+		43789CB7A89E4F21946D0176 /* ExtraFeatureViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC78DAD6F9F47839C0DE2D5 /* ExtraFeatureViewModels.swift */; };
+		BB99F602FAC44E15A675CD8B /* ExtraFeatureModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909940DE369348CDACC7F077 /* ExtraFeatureModels.swift */; };
 		05692862D99F3A16E80DA15C /* PaperTradingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D68E22A6888B07DF14F795 /* PaperTradingModels.swift */; };
 		067CD357A9861613424874ED /* MarketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91577CB01DAD4D21E21F115 /* MarketViewModel.swift */; };
 		0C2D6C43E5BD2DDA7B623EA8 /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A11D316A0BA01996AF8B074 /* LeaderboardView.swift */; };
@@ -52,6 +57,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6540DA16713144E2873BB013 /* DailyKnowledgeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyKnowledgeCard.swift; sourceTree = "<group>"; };
+		AB7088D33364465FBCA686B8 /* NewsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTabView.swift; sourceTree = "<group>"; };
+		65F28593429044E896F90F86 /* StockScoreSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockScoreSection.swift; sourceTree = "<group>"; };
+		FFC78DAD6F9F47839C0DE2D5 /* ExtraFeatureViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraFeatureViewModels.swift; sourceTree = "<group>"; };
+		909940DE369348CDACC7F077 /* ExtraFeatureModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraFeatureModels.swift; sourceTree = "<group>"; };
 		0C64C1103B9B5E6CD775F260 /* TopicDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailView.swift; sourceTree = "<group>"; };
 		144D7FB810785370C7AF66E0 /* PaperTradingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperTradingViewModel.swift; sourceTree = "<group>"; };
 		16D68E22A6888B07DF14F795 /* PaperTradingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperTradingModels.swift; sourceTree = "<group>"; };
@@ -98,6 +108,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		E3F519285DA64A7EAF526F45 /* News */ = {
+			isa = PBXGroup;
+			children = (
+				AB7088D33364465FBCA686B8 /* NewsTabView.swift */,
+			);
+			path = News;
+			sourceTree = "<group>";
+		};
 		0F4C1012B1DAE1259DC1CA28 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -131,6 +149,7 @@
 				B2C3D4E5F6789012AB3CD4E0 /* NewsModels.swift */,
 				16D68E22A6888B07DF14F795 /* PaperTradingModels.swift */,
 				D9DCB7A60EC9BA2999826BF7 /* StockDetailModels.swift */,
+				909940DE369348CDACC7F077 /* ExtraFeatureModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -148,6 +167,7 @@
 			children = (
 				604EDFFCEDBDF33F6EA37AA7 /* LearningTabView.swift */,
 				0C64C1103B9B5E6CD775F260 /* TopicDetailView.swift */,
+				6540DA16713144E2873BB013 /* DailyKnowledgeCard.swift */,
 			);
 			path = Learning;
 			sourceTree = "<group>";
@@ -187,6 +207,7 @@
 				DF720BAE186FCE78333CA81C /* Market */,
 				90E8CC5962E39126E19130BE /* PaperTrading */,
 				AE4C2BAD9B07C8AB0DD31BA3 /* Watchlist */,
+				E3F519285DA64A7EAF526F45 /* News */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -201,6 +222,7 @@
 				F526905BD6386ADF458C0634 /* StockDetailViewModel.swift */,
 				3F0129239F49312C2C498A4A /* WatchlistQuoteViewModel.swift */,
 				7E8D0B23A5E88499DABB4A9F /* WatchlistStore.swift */,
+				FFC78DAD6F9F47839C0DE2D5 /* ExtraFeatureViewModels.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -227,6 +249,7 @@
 				C3D4E5F678901234BC5DE6F0 /* StockNewsSection.swift */,
 				D4E5F6A7B8C9D0E1F2A3B4C6 /* USMarketSection.swift */,
 				E5F6789012345678AB4CD5E0 /* GlobalMarketSection.swift */,
+				65F28593429044E896F90F86 /* StockScoreSection.swift */,
 			);
 			path = Market;
 			sourceTree = "<group>";
@@ -323,6 +346,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05BB778D94EC4327951826CF /* DailyKnowledgeCard.swift in Sources */,
+				D70AF5970251478AB82AF519 /* NewsTabView.swift in Sources */,
+				BA86FB14C96F4649828BD3A2 /* StockScoreSection.swift in Sources */,
+				43789CB7A89E4F21946D0176 /* ExtraFeatureViewModels.swift in Sources */,
+				BB99F602FAC44E15A675CD8B /* ExtraFeatureModels.swift in Sources */,
 				CE2D683996E7EC3BB0C95276 /* AITeacherModels.swift in Sources */,
 				EB625E1254F5B68F5FAAFB83 /* AITeacherTabView.swift in Sources */,
 				B71463A3C06A44FE61434BE2 /* AITeacherViewModel.swift in Sources */,

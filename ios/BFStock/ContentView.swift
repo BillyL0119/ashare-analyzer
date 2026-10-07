@@ -14,6 +14,10 @@ struct ContentView: View {
                     .tabItem {
                         Label("tab.learning", systemImage: "book.fill")
                     }
+                NewsTabView()
+                    .tabItem {
+                        Label(L("资讯"), systemImage: "newspaper.fill")
+                    }
                 AITeacherTabView()
                     .tabItem {
                         Label("tab.ai_teacher", systemImage: "bubble.left.and.bubble.right.fill")

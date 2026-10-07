@@ -1087,6 +1087,102 @@ export const STR = {
   "일일 변동폭",
   "Amplitude"
  ],
+ "资讯": [
+  "News",
+  "ニュース",
+  "뉴스",
+  "Actualités"
+ ],
+ "每日新闻": [
+  "Daily news",
+  "デイリーニュース",
+  "오늘의 뉴스",
+  "Actualités du jour"
+ ],
+ "大行观点": [
+  "Bank views",
+  "大手行の見方",
+  "대형 은행 전망",
+  "Avis des banques"
+ ],
+ "暂无资讯": [
+  "No news yet",
+  "ニュースはまだありません",
+  "아직 뉴스가 없습니다",
+  "Aucune actualité"
+ ],
+ "加载失败": [
+  "Failed to load",
+  "読み込みに失敗しました",
+  "불러오기 실패",
+  "Échec du chargement"
+ ],
+ "综合评分": [
+  "Stock score",
+  "総合スコア",
+  "종합 점수",
+  "Score global"
+ ],
+ "技术面": [
+  "Technical",
+  "テクニカル",
+  "기술적",
+  "Technique"
+ ],
+ "基本面": [
+  "Fundamental",
+  "ファンダメンタル",
+  "펀더멘털",
+  "Fondamentaux"
+ ],
+ "情绪面": [
+  "Sentiment",
+  "センチメント",
+  "심리",
+  "Sentiment"
+ ],
+ "风险": [
+  "Risk",
+  "リスク",
+  "위험",
+  "Risque"
+ ],
+ "评级": [
+  "Rating",
+  "格付け",
+  "투자의견",
+  "Notation"
+ ],
+ "目标价": [
+  "Price target",
+  "目標株価",
+  "목표가",
+  "Objectif de cours"
+ ],
+ "展望": [
+  "Outlook",
+  "見通し",
+  "전망",
+  "Perspectives"
+ ],
+ "宏观": [
+  "Macro",
+  "マクロ",
+  "거시",
+  "Macro"
+ ],
+ "策略": [
+  "Strategy",
+  "ストラテジー",
+  "전략",
+  "Stratégie"
+ ],
+ "今日知识": [
+  "Today's concept",
+  "今日の知識",
+  "오늘의 지식",
+  "Notion du jour"
+ ],
  "美股热门": [
   "US Movers",
   "米国株ランキング",
@@ -1374,12 +1470,6 @@ export const STR = {
   "データなし",
   "데이터 없음",
   "Aucune donnée"
- ],
- "加载失败": [
-  "Failed to load",
-  "読み込みに失敗しました",
-  "불러오기 실패",
-  "Échec du chargement"
  ],
  "未找到相关股票": [
   "No stocks found",

@@ -75,6 +75,7 @@ struct LearningTabView: View {
     private func curriculumList(_ curriculum: Curriculum) -> some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 22) {
+                DailyKnowledgeCard()
                 progressCard(curriculum)
                 if let papers = curriculum.papers, !papers.isEmpty {
                     ForEach(papers) { paper in

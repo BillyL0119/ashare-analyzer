@@ -45,6 +45,8 @@ struct StockDetailView: View {
                     quoteGrid(q)
                 }
 
+                StockScoreSection(symbol: code)
+
                 StockNewsSection(
                     items: vm.newsItems,
                     overall: vm.newsOverall,
