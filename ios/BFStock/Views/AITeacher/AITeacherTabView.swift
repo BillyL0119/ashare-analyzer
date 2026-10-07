@@ -115,10 +115,12 @@ struct AITeacherTabView: View {
                                     .font(.subheadline.weight(.medium))
                                     .multilineTextAlignment(.leading)
                                     .lineLimit(2)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                                Spacer(minLength: 0)
                             }
                             .padding(14)
-                            .frame(maxWidth: .infinity, minHeight: 84, alignment: .topLeading)
+                            .frame(maxWidth: .infinity, minHeight: 100, maxHeight: .infinity, alignment: .topLeading)
                             .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous))
                             .overlay(RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous).strokeBorder(DS.stroke))
                         }
