@@ -675,7 +675,7 @@ def get_us_similar(symbol: str):
     cache_key = f"{sym}_similar_us"
 
     cached = read_cache(cache_key, max_age_hours=24)
-    if cached:
+    if cached and cached.get("results"):      # an empty list is a failed run, never serve it from cache
         return cached
 
     try:
@@ -756,7 +756,8 @@ def get_us_similar(symbol: str):
         results = results[:10]
 
         response = {"symbol": sym, "industry": sector or "", "results": results}
-        write_cache(cache_key, response)
+        if results:
+            write_cache(cache_key, response)
         return response
 
     except Exception:
