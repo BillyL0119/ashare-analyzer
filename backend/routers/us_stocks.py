@@ -399,9 +399,10 @@ def _fetch_company_info(sym: str) -> dict:
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @router.get("/stock/{symbol}/history")
-def get_us_history(symbol: str, period: str = "1y"):
+def get_us_history(symbol: str, period: str = "1y", count: int = Query(0, ge=0, le=1000)):
     sym = symbol.upper()
-    days = _period_to_days(period)
+    # `count` (latest N candles) takes precedence over `period`; fetch a year+ so indicators have history.
+    days = max(_period_to_days(period), 400) if count else _period_to_days(period)
 
     try:
         all_candles = _fetch_history_candles(sym, days)
@@ -413,6 +414,8 @@ def get_us_history(symbol: str, period: str = "1y"):
 
         cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
         candles = [c for c in all_candles if c["date"] >= cutoff]
+        if count:
+            candles = candles[-count:]
         return {"symbol": sym, "data": candles}
 
     except Exception:
