@@ -121,8 +121,61 @@ def _fetch_one_us(sym: str, name: str) -> dict | None:
         return None
 
 
+_NASDAQ_HEADERS = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+_MIN_CAP = 20e9      # only companies worth following (>= $20B market cap)
+_PER_DAY = 12
+
+
+def _money(txt) -> float:
+    try:
+        return float(str(txt).replace("$", "").replace(",", ""))
+    except Exception:
+        return 0.0
+
+
+def _nasdaq_day(d: date) -> list:
+    import requests
+    try:
+        r = requests.get("https://api.nasdaq.com/api/calendar/earnings",
+                         params={"date": d.isoformat()}, headers=_NASDAQ_HEADERS, timeout=10)
+        rows = (r.json().get("data") or {}).get("rows") or []
+    except Exception as e:
+        logger.warning("nasdaq earnings %s: %s", d, e)
+        return []
+    out = []
+    for row in rows:
+        cap = _money(row.get("marketCap"))
+        if cap < _MIN_CAP:
+            continue
+        t = row.get("time") or ""
+        out.append({
+            "date": d.isoformat(),
+            "symbol": row.get("symbol"),
+            "name": row.get("name"),
+            "market": "us",
+            "eps_estimate": _fmt_eps(_money(row.get("epsForecast")) if row.get("epsForecast") else None),
+            "eps_actual": None,
+            "revenue_estimate": None,
+            "revenue_actual": None,
+            "timing": "BMO" if "pre" in t else "AMC" if "after" in t else None,
+            "market_cap": cap,
+        })
+    out.sort(key=lambda e: -e["market_cap"])
+    return out[:_PER_DAY]
+
+
 def _fetch_us_earnings() -> list:
+    """Nasdaq's public earnings calendar (Yahoo rate-limits the server), yfinance as a fallback."""
+    days = [_today() + timedelta(days=i) for i in range(0, 21)]
+    days = [d for d in days if d.weekday() < 5]
     events = []
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        for rows in pool.map(_nasdaq_day, days):
+            events.extend(rows)
+    if events:
+        events.sort(key=lambda e: (e["date"], -e["market_cap"]))
+        return events
+
     with ThreadPoolExecutor(max_workers=6) as pool:
         futures = {pool.submit(_fetch_one_us, sym, name): sym for sym, name in _US_TICKERS}
         for fut in as_completed(futures):
@@ -232,6 +285,7 @@ def earnings_calendar():
         "cn": cn_events,
         "updated_at": datetime.now().isoformat(),
     }
-    _cache_ts = now
-    _cache_data = result
+    if us_events:
+        _cache_ts = now
+        _cache_data = result
     return result
