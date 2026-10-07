@@ -325,6 +325,7 @@ def _tencent_history(sym: str, days: int = 365) -> list:
     """Daily candles (forward-adjusted) from Tencent's kline feed: no key, no rate limit. [] on failure."""
     import requests
     want = max(min(int(days * 0.72) + 20, 700), 60)   # trading days
+    sym = sym.replace("-", ".")                         # BRK-B -> BRK.B
     suffixes = [_TENCENT_SUFFIX[sym]] if sym in _TENCENT_SUFFIX else [".OQ", ".N", ".AM"]
     for suf in suffixes:
         try:
@@ -675,7 +676,8 @@ def get_us_similar(symbol: str):
     cache_key = f"{sym}_similar_us"
 
     cached = read_cache(cache_key, max_age_hours=24)
-    if cached and cached.get("results"):      # an empty list is a failed run, never serve it from cache
+    # An empty or thin list is a failed/partial run (rate-limited era): recompute, it is fast now.
+    if cached and len(cached.get("results", [])) >= 8:
         return cached
 
     try:
@@ -694,7 +696,7 @@ def get_us_similar(symbol: str):
         if not candidates:
             return {"symbol": sym, "industry": sector or "", "results": []}
 
-        candidates = candidates[:15]
+        candidates = candidates[:24]
 
         def _get_series_and_sparkline(ticker_sym: str):
             """Return (date-indexed returns Series, sparkline list).
