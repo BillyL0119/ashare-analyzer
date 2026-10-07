@@ -210,6 +210,56 @@ Allow: /
 Sitemap: https://bestfriendstock.com/sitemap.xml"""
     return Response(content=content, media_type="text/plain")
 
+_SEO_CACHE: dict = {}
+
+@app.get("/seo/stock/us/{symbol}", response_class=Response)
+async def seo_us_stock(symbol: str):
+    """index.html with per-stock title/description/canonical (nginx routes /stock/us/<TICKER> here)."""
+    import html as _html, re as _re, time as _time, os as _os
+    from routers.us_market import us_quotes
+    sym = symbol.upper()
+    if not _re.fullmatch(r"[A-Z0-9.\-]{1,10}", sym):
+        return Response(status_code=404)
+    path = _os.path.join(_os.path.dirname(__file__), "..", "frontend", "dist", "index.html")
+    try:
+        page = open(path, encoding="utf-8").read()
+    except OSError:
+        return Response(status_code=404)
+    hit = _SEO_CACHE.get(sym)
+    if hit and _time.time() - hit[0] < 120:
+        q = hit[1]
+    else:
+        try:
+            q = us_quotes([sym]).get(sym)
+        except Exception:
+            q = None
+        _SEO_CACHE[sym] = (_time.time(), q)
+        if len(_SEO_CACHE) > 500:
+            _SEO_CACHE.clear()
+    if not q:  # unknown ticker: serve the plain SPA shell
+        return Response(content=page, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-cache"})
+    e = _html.escape
+    name = e(q["name"])
+    sign = "+" if q["pct"] > 0 else ""
+    title = f"{name} ({sym}) 美股行情 · K线 · AI分析 | Best Friend Stock"
+    desc = (f"{name}（{sym}）美股实时行情：最新价 ${q['price']:.2f}，涨跌幅 {sign}{q['pct']:.2f}%。"
+            f"查看K线图、MACD/RSI 技术指标、新闻情绪和 AI 分析，并可用模拟盘练习交易。仅供学习，不构成投资建议。")
+    url = f"https://bestfriendstock.com/stock/us/{sym}"
+    def sub(pattern, repl):
+        nonlocal page
+        page = _re.sub(pattern, lambda _m: repl, page, count=1)
+    sub(r"<title>.*?</title>", f"<title>{title}</title>")
+    sub(r'<meta name="description" content="[^"]*"', f'<meta name="description" content="{e(desc, quote=True)}"')
+    sub(r'<meta property="og:title" content="[^"]*"', f'<meta property="og:title" content="{title}"')
+    sub(r'<meta property="og:description" content="[^"]*"', f'<meta property="og:description" content="{e(desc, quote=True)}"')
+    sub(r'<meta property="og:url" content="[^"]*"', f'<meta property="og:url" content="{url}"')
+    sub(r'<meta name="twitter:title" content="[^"]*"', f'<meta name="twitter:title" content="{title}"')
+    sub(r'<meta name="twitter:description" content="[^"]*"', f'<meta name="twitter:description" content="{e(desc, quote=True)}"')
+    sub(r'<link rel="canonical" href="[^"]*"', f'<link rel="canonical" href="{url}"')
+    summary = f'<noscript><h1>{name} ({sym})</h1><p>{e(desc)}</p><p><a href="https://bestfriendstock.com/">Best Friend Stock</a></p></noscript>'
+    page = page.replace("<body>", "<body>" + summary, 1) if "<body>" in page else page
+    return Response(content=page, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-cache"})
+
 @app.get("/bot-render", response_class=Response)
 async def bot_render():
     """Full static HTML for search engine crawlers."""
