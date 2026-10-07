@@ -133,8 +133,8 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
           fontSize: 15, color: '#6b7280', margin: '0 0 32px', lineHeight: 1.6,
         }}>
           {zh
-            ? '专为学生设计的 A 股智能分析平台 · 完全免费'
-            : 'Smart A-Share Analysis for Students · Completely Free'}
+            ? '专为学生设计的美股与 A 股智能分析平台 · 完全免费'
+            : 'Smart US & A-Share Analysis for Students · Completely Free'}
         </p>
 
         {/* CTA buttons */}
