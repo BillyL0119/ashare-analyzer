@@ -150,7 +150,8 @@ export default function StockDetail() {
   const pos = price != null && hi > lo ? Math.min(1, Math.max(0, (price - lo) / (hi - lo))) : null
   const c = changeColor(p, market)
 
-  const grid = [[t('今开'), open], [t('昨收'), d?.prev_close > 0 ? d.prev_close : (candles.length > 1 ? candles[candles.length - 2].close : null)], [t('最高'), high], [t('最低'), low]]
+  const prevClose = d?.prev_close > 0 ? d.prev_close : (candles.length > 1 ? candles[candles.length - 2].close : null)
+  const grid = [[t('今开'), open], [t('昨收'), prevClose], [t('最高'), high], [t('最低'), low]]
   const money = (v) => {
     if (!(v > 0)) return '--'
     if (market === 'us') return '$' + (v >= 1e12 ? (v / 1e12).toFixed(2) + 'T' : v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : (v / 1e6).toFixed(1) + 'M')
@@ -185,6 +186,16 @@ export default function StockDetail() {
         </div>
       </div>
 
+      {market === 'us' && d && (
+        <div style={{ display: 'flex', alignItems: 'stretch', background: 'var(--surface-hi)', borderRadius: 14, padding: '12px 0' }}>
+          {[[t('总市值'), money(d.market_cap)], [t('市盈率'), d.pe_ratio > 0 ? d.pe_ratio.toFixed(1) : '--'], [t('成交额'), money(d.amount)]].map(([k, v], i) => (
+            <div key={k} style={{ flex: 1, textAlign: 'center', borderLeft: i ? '1px solid var(--line, rgba(128,128,128,.25))' : 'none' }}>
+              <div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 800, fontSize: 15, marginTop: 3 }}>{v}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="m-card" style={{ padding: 12 }}>
         <Segment full value={period} onChange={setPeriod} options={PERIODS.map(([v, l]) => ({ value: v, label: t(l) }))} />
         <div style={{ height: 8 }} />
@@ -195,8 +206,9 @@ export default function StockDetail() {
 
       <div className="m-card" style={{ display: 'grid', gap: 16 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-          {[...grid, [t('成交量'), fmtVol(vol)], [t('成交额'), money(d?.amount)],
-            ...(market === 'us' ? [[t('市盈率'), d?.pe_ratio > 0 ? d.pe_ratio.toFixed(1) : '--'], [t('总市值'), money(d?.market_cap)]] : [])].map(([k, v], i) => (
+          {[...grid, [t('成交量'), fmtVol(vol)], market === 'us'
+              ? [t('日内振幅'), high > 0 && low > 0 && prevClose > 0 ? ((high - low) / prevClose * 100).toFixed(2) + '%' : '--']
+              : [t('成交额'), money(d?.amount)]].map(([k, v], i) => (
             <div key={i}><div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 700, fontSize: 15, marginTop: 3 }}>{typeof v === 'number' ? num(v) : (v ?? '--')}</div></div>
           ))}
         </div>

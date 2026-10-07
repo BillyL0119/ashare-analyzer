@@ -22,6 +22,10 @@ struct StockDetailView: View {
                 quoteHeader
                     .padding(.horizontal, 4)
 
+                if market == .us, let q = vm.quote {
+                    keyStats(q)
+                }
+
                 VStack(alignment: .leading, spacing: 0) {
                     periodPicker
                     indicatorPicker
@@ -345,6 +349,30 @@ struct StockDetailView: View {
         return String(format: "$%.1fM", v / 1e6)
     }
 
+    private func keyStats(_ q: RealtimeQuote) -> some View {
+        let items: [(String, String)] = [
+            (L("总市值"), usd(q.marketCap ?? 0)),
+            (L("市盈率"), (q.peRatio ?? 0) > 0 ? String(format: "%.1f", q.peRatio!) : "--"),
+            (L("成交额"), usd(q.amount)),
+        ]
+        return HStack(spacing: 0) {
+            ForEach(Array(items.enumerated()), id: \.offset) { i, item in
+                VStack(spacing: 3) {
+                    Text(item.0).font(.caption2).foregroundStyle(.secondary)
+                    Text(item.1)
+                        .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                        .minimumScaleFactor(0.7).lineLimit(1)
+                }
+                .frame(maxWidth: .infinity)
+                if i < items.count - 1 {
+                    Rectangle().fill(DS.stroke).frame(width: 1, height: 26)
+                }
+            }
+        }
+        .padding(.vertical, 12)
+        .background(DS.surfaceHi.opacity(0.7), in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+    }
+
     private func quoteGrid(_ q: RealtimeQuote) -> some View {
         let last = vm.candles.last
         // The US realtime feed has no open/high/low/turnover: fall back to the latest candle.
@@ -359,11 +387,10 @@ struct StockDetailView: View {
             (L("最高"), px(high)),
             (L("最低"), px(low)),
             (L("成交量"), volume > 0 ? (market == .us ? Formatters.shareVolume(volume) : Formatters.volume(volume)) : "--"),
-            (L("成交额"), q.amount > 0 ? (market == .us ? usd(q.amount) : Formatters.cnyAmount(q.amount)) : "--"),
-        ] + (market == .us ? [
-            (L("市盈率"), (q.peRatio ?? 0) > 0 ? String(format: "%.1f", q.peRatio!) : "--"),
-            (L("总市值"), usd(q.marketCap ?? 0)),
-        ] : [])
+            market == .us
+                ? (L("日内振幅"), (high > 0 && low > 0 && q.prevClose > 0) ? String(format: "%.2f%%", (high - low) / q.prevClose * 100) : "--")
+                : (L("成交额"), q.amount > 0 ? Formatters.cnyAmount(q.amount) : "--"),
+        ]
         return VStack(alignment: .leading, spacing: 16) {
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 3), spacing: 14) {
                 ForEach(items, id: \.0) { label, value in

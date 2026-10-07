@@ -206,6 +206,7 @@ T = {
     "盘前": ("Pre-mkt", "寄り前", "장전", "Avant ouv."),
     "盘后": ("After-mkt", "引け後", "장후", "Après clôt."),
     "未来一周暂无重要财报": ("No major earnings this week", "今週の主要決算はありません", "이번 주 주요 실적 발표 없음", "Aucun résultat majeur cette semaine"),
+    "日内振幅": ("Day range", "日中値幅", "일일 변동폭", "Amplitude"),
     "美股热门": ("US Movers", "米国株ランキング", "미국 주식 순위", "Mouvements US"),
     "涨幅榜": ("Top gainers", "値上がり", "상승률", "Plus fortes hausses"),
     "跌幅榜": ("Top losers", "値下がり", "하락률", "Plus fortes baisses"),

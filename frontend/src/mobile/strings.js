@@ -1081,6 +1081,12 @@ export const STR = {
   "이번 주 주요 실적 발표 없음",
   "Aucun résultat majeur cette semaine"
  ],
+ "日内振幅": [
+  "Day range",
+  "日中値幅",
+  "일일 변동폭",
+  "Amplitude"
+ ],
  "美股热门": [
   "US Movers",
   "米国株ランキング",

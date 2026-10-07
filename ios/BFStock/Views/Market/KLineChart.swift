@@ -48,7 +48,7 @@ struct KLineChart: View {
             // MA5
             ForEach(Array(zip(candles, ma5)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("MA5", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("MA5", v), series: .value("Series", "MA5"))
                         .foregroundStyle(DS.ma5)
                         .lineStyle(StrokeStyle(lineWidth: 1))
                         .interpolationMethod(.monotone)
@@ -58,7 +58,7 @@ struct KLineChart: View {
             // MA10
             ForEach(Array(zip(candles, ma10)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("MA10", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("MA10", v), series: .value("Series", "MA10"))
                         .foregroundStyle(.purple)
                         .lineStyle(StrokeStyle(lineWidth: 1))
                         .interpolationMethod(.monotone)
@@ -68,7 +68,7 @@ struct KLineChart: View {
             // MA20
             ForEach(Array(zip(candles, ma20)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("MA20", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("MA20", v), series: .value("Series", "MA20"))
                         .foregroundStyle(.orange)
                         .lineStyle(StrokeStyle(lineWidth: 1))
                         .interpolationMethod(.monotone)
@@ -78,7 +78,7 @@ struct KLineChart: View {
             // Bollinger Upper Band
             ForEach(Array(zip(candles, bollUpper)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("BU", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("BU", v), series: .value("Series", "BU"))
                         .foregroundStyle(DS.boll.opacity(0.9))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 2]))
                         .interpolationMethod(.monotone)
@@ -88,7 +88,7 @@ struct KLineChart: View {
             // Bollinger Middle Band
             ForEach(Array(zip(candles, bollMiddle)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("BM", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("BM", v), series: .value("Series", "BM"))
                         .foregroundStyle(DS.boll.opacity(0.55))
                         .lineStyle(StrokeStyle(lineWidth: 1))
                         .interpolationMethod(.monotone)
@@ -98,7 +98,7 @@ struct KLineChart: View {
             // Bollinger Lower Band
             ForEach(Array(zip(candles, bollLower)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("BL", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("BL", v), series: .value("Series", "BL"))
                         .foregroundStyle(DS.boll.opacity(0.9))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 2]))
                         .interpolationMethod(.monotone)
@@ -264,7 +264,7 @@ struct MACDChart: View {
             // MACD line (white/primary adapts to dark mode)
             ForEach(Array(zip(candles, macdLine)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("MACD", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("MACD", v), series: .value("Series", "MACD"))
                         .foregroundStyle(Color.primary)
                         .lineStyle(StrokeStyle(lineWidth: 1))
                         .interpolationMethod(.monotone)
@@ -274,7 +274,7 @@ struct MACDChart: View {
             // Signal line
             ForEach(Array(zip(candles, signalLine)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("Sig", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("Sig", v), series: .value("Series", "Sig"))
                         .foregroundStyle(DS.ma5)
                         .lineStyle(StrokeStyle(lineWidth: 1))
                         .interpolationMethod(.monotone)
@@ -317,7 +317,7 @@ struct RSIChart: View {
 
             ForEach(Array(zip(candles, values)), id: \.0.id) { c, v in
                 if let v {
-                    LineMark(x: .value("Date", c.parsedDate), y: .value("RSI", v))
+                    LineMark(x: .value("Date", c.parsedDate), y: .value("RSI", v), series: .value("Series", "RSI"))
                         .foregroundStyle(Color.purple)
                         .lineStyle(StrokeStyle(lineWidth: 1.5))
                         .interpolationMethod(.monotone)
