@@ -3,6 +3,7 @@ import SwiftUI
 /// US market block for the Market tab: session, indices, breadth, movers, sector heat map, mega caps.
 struct USMarketSection: View {
     let overview: USOverview?
+    var earnings: [EarningsEvent] = []
     let isLoading: Bool
     let error: String?
     let onRetry: () -> Void
@@ -16,6 +17,7 @@ struct USMarketSection: View {
                 megaCaps(ov.megaCaps)
                 movers(ov)
                 sectors(ov.sectors)
+                earningsSection
             }
         } else if let err = error {
             ErrorRetryView(message: err, onRetry: onRetry).card()
@@ -162,6 +164,68 @@ struct USMarketSection: View {
         "Consumer Discretionary": "非必需消费", "Consumer Staples": "必需消费", "Industrials": "工业",
         "Utilities": "公用事业", "Materials": "原材料", "Real Estate": "房地产板块", "Communication": "通信服务",
     ]
+
+    // MARK: Earnings
+
+    private var earningsByDay: [(String, [EarningsEvent])] {
+        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.locale = Locale(identifier: "en_US_POSIX")
+        let today = f.string(from: Date())
+        let end = f.string(from: Date().addingTimeInterval(7 * 86400))
+        let week = earnings.filter { $0.date >= today && $0.date <= end }
+        return Dictionary(grouping: week, by: \.date).sorted { $0.key < $1.key }.map { ($0.key, Array($0.value.prefix(5))) }
+    }
+
+    private func dayLabel(_ iso: String) -> String {
+        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.locale = Locale(identifier: "en_US_POSIX")
+        guard let d = f.date(from: iso) else { return iso }
+        return d.formatted(.dateTime.month(.abbreviated).day().weekday(.abbreviated))
+    }
+
+    private var earningsSection: some View {
+        let days = earningsByDay
+        return VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(L("财报日历"))
+            if days.isEmpty {
+                Text("未来一周暂无重要财报")
+                    .font(.footnote).foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity).padding(.vertical, 20)
+                    .card(padding: 0)
+            } else {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(days.enumerated()), id: \.element.0) { i, day in
+                        Text(dayLabel(day.0)).font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                            .padding(.horizontal, 16).padding(.top, i == 0 ? 12 : 10).padding(.bottom, 4)
+                        ForEach(day.1) { e in
+                            NavigationLink(destination: StockDetailView(code: e.symbol, name: e.name, market: .us)) {
+                                HStack(spacing: 8) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(e.symbol).font(.subheadline.weight(.bold))
+                                        Text(e.name).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                                    }
+                                    Spacer()
+                                    if let eps = e.epsEstimate {
+                                        Text(L("预期 EPS %@", eps)).font(.caption2).monospacedDigit().foregroundStyle(.secondary)
+                                    }
+                                    if let t = e.timing {
+                                        Text(t == "BMO" ? L("盘前") : L("盘后"))
+                                            .font(.caption2.weight(.medium))
+                                            .padding(.horizontal, 7).padding(.vertical, 3)
+                                            .background(DS.surfaceHi, in: Capsule())
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                .padding(.horizontal, 16).padding(.vertical, 7)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    Spacer().frame(height: 8)
+                }
+                .card(padding: 0)
+            }
+        }
+    }
 
     // MARK: Session
 

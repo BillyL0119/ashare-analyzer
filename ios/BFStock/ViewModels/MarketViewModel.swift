@@ -5,6 +5,7 @@ final class MarketViewModel: ObservableObject {
     @Published var overview: MarketOverview?
     @Published var usOverview: USOverview?
     @Published var usError: String?
+    @Published var earnings: [EarningsEvent] = []
     @Published var isLoadingUS = false
     @Published var cnHotStocks: [HotStock] = []
     @Published var usHotStocks: [HotStock] = []
@@ -28,10 +29,16 @@ final class MarketViewModel: ObservableObject {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.loadOverview() }
             group.addTask { await self.loadUSOverview() }
+            group.addTask { await self.loadEarnings() }
             group.addTask { await self.loadHotStocks() }
             group.addTask { await self.loadSectors() }
             group.addTask { await self.loadSentiment() }
         }
+    }
+
+    func loadEarnings() async {
+        if earnings.isEmpty, let c: EarningsCalendar = APIClient.shared.cached("/earnings/calendar") { earnings = c.us }
+        if let c: EarningsCalendar = try? await APIClient.shared.get("/earnings/calendar", persist: true) { earnings = c.us }
     }
 
     func loadUSOverview() async {

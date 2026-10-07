@@ -4400,6 +4400,35 @@
         }
       }
     },
+    "未来一周暂无重要财报": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No major earnings this week"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun résultat majeur cette semaine"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今週の主要決算はありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이번 주 주요 실적 발표 없음"
+          }
+        }
+      }
+    },
     "本应用仅供学习和教育目的，不构成任何投资建议。股市有风险，投资需谨慎。行情数据可能存在延迟。AI 老师内容由 AI 生成，仅供参考。": {
       "extractionState": "manual",
       "localizations": {
@@ -5009,6 +5038,35 @@
         }
       }
     },
+    "盘前": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pre-mkt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avant ouv."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寄り前"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장전"
+          }
+        }
+      }
+    },
     "盘前交易": {
       "extractionState": "manual",
       "localizations": {
@@ -5034,6 +5092,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "프리마켓"
+          }
+        }
+      }
+    },
+    "盘后": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After-mkt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Après clôt."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引け後"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장후"
           }
         }
       }
@@ -6024,6 +6111,35 @@
         }
       }
     },
+    "财报日历": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Earnings calendar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendrier des résultats"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "決算カレンダー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실적 캘린더"
+          }
+        }
+      }
+    },
     "贪婪": {
       "extractionState": "manual",
       "localizations": {
@@ -6484,6 +6600,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "경기소비재"
+          }
+        }
+      }
+    },
+    "预期 EPS %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Est. EPS %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BPA prév. %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予想EPS %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예상 EPS %@"
           }
         }
       }

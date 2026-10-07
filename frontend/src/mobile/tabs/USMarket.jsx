@@ -143,6 +143,43 @@ function Mega({ d }) {
   )
 }
 
+const LOCALE = { zh: 'zh-CN', en: 'en-US', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR' }
+
+function Earnings() {
+  const t = useT(); const nav = useNavigate(); const lang = useLangStore((s) => s.lang)
+  const { data } = useAPI('/earnings/calendar')
+  if (!data) return null
+  const today = new Date().toISOString().slice(0, 10)
+  const end = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10)
+  const groups = {}
+  for (const e of data.us || []) {
+    if (e.date >= today && e.date <= end) (groups[e.date] ||= []).push(e)
+  }
+  const days = Object.keys(groups).sort()
+  const label = (d) => new Date(d + 'T12:00:00').toLocaleDateString(LOCALE[lang] || 'en-US', { month: 'short', day: 'numeric', weekday: 'short' })
+  return (
+    <Section title={t('财报日历')}>
+      {days.length === 0 ? <div className="m-card m-label" style={{ textAlign: 'center' }}>{t('未来一周暂无重要财报')}</div> : (
+        <div className="m-card flush">
+          {days.map((d) => (
+            <div key={d}>
+              <div className="m-label" style={{ padding: '10px 16px 4px', fontWeight: 700 }}>{label(d)}</div>
+              {groups[d].slice(0, 5).map((e) => (
+                <button key={e.symbol} className="m-row" style={{ padding: '9px 16px' }} onClick={() => nav(`/stock/us/${e.symbol}`)}>
+                  <div className="m-grow"><div style={{ fontWeight: 700, fontSize: 14.5 }}>{e.symbol}</div>
+                    <div className="m-label" style={{ marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.name}</div></div>
+                  {e.eps_estimate != null && <span className="m-num m-label">{t('预期 EPS %@', e.eps_estimate)}</span>}
+                  {e.timing && <span className="m-chip">{e.timing === 'BMO' ? t('盘前') : t('盘后')}</span>}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </Section>
+  )
+}
+
 export default function USMarket() {
   const { data, error, reload } = useAPI('/us/market/overview', { refreshMs: 60000 })
   return (
@@ -151,6 +188,7 @@ export default function USMarket() {
       <Mega d={data} />
       <Movers d={data} />
       <Sectors d={data} />
+      <Earnings />
     </>
   )
 }

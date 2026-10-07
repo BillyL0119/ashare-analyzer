@@ -155,3 +155,18 @@ struct USOverview: Codable {
     let megaCaps: [USQuote]
     let breadth: USBreadth
 }
+
+// MARK: - Earnings calendar (/earnings/calendar)
+
+struct EarningsEvent: Codable, Identifiable {
+    var id: String { "\(date)_\(symbol)" }
+    let date: String          // yyyy-MM-dd
+    let symbol: String
+    let name: String
+    let epsEstimate: String?
+    let timing: String?       // "BMO" | "AMC" | nil
+}
+
+struct EarningsCalendar: Codable {
+    let us: [EarningsEvent]
+}

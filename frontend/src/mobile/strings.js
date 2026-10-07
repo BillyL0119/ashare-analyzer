@@ -1051,6 +1051,36 @@ export const STR = {
   "52주 최고",
   "Plus haut 52 sem."
  ],
+ "财报日历": [
+  "Earnings calendar",
+  "決算カレンダー",
+  "실적 캘린더",
+  "Calendrier des résultats"
+ ],
+ "预期 EPS %@": [
+  "Est. EPS %@",
+  "予想EPS %@",
+  "예상 EPS %@",
+  "BPA prév. %@"
+ ],
+ "盘前": [
+  "Pre-mkt",
+  "寄り前",
+  "장전",
+  "Avant ouv."
+ ],
+ "盘后": [
+  "After-mkt",
+  "引け後",
+  "장후",
+  "Après clôt."
+ ],
+ "未来一周暂无重要财报": [
+  "No major earnings this week",
+  "今週の主要決算はありません",
+  "이번 주 주요 실적 발표 없음",
+  "Aucun résultat majeur cette semaine"
+ ],
  "美股热门": [
   "US Movers",
   "米国株ランキング",

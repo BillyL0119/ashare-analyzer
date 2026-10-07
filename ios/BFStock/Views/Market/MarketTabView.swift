@@ -24,6 +24,7 @@ struct MarketTabView: View {
                     if mode.wrappedValue == .us {
                         USMarketSection(
                             overview: vm.usOverview,
+                            earnings: vm.earnings,
                             isLoading: vm.isLoadingUS,
                             error: vm.usError,
                             onRetry: { Task { await vm.loadUSOverview() } }
