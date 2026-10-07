@@ -279,7 +279,7 @@ export default function Market({ onSettings }) {
       <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
       <div className="m-stack">
         {mode === 'us' ? (
-          <><USMarket /><Watchlist /><Global /></>
+          <><USMarket afterOverview={<Watchlist />} /><Global /></>
         ) : (
           <><Overview /><Watchlist /><Global /><Sectors /><Hot /></>
         )}

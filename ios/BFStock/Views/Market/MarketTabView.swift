@@ -25,11 +25,11 @@ struct MarketTabView: View {
                         USMarketSection(
                             overview: vm.usOverview,
                             earnings: vm.earnings,
+                            afterOverview: AnyView(WatchlistSection()),
                             isLoading: vm.isLoadingUS,
                             error: vm.usError,
                             onRetry: { Task { await vm.loadUSOverview() } }
                         )
-                        WatchlistSection()
                         GlobalMarketSection(
                             sentiment: vm.sentiment,
                             isLoading: vm.isLoadingSentiment,

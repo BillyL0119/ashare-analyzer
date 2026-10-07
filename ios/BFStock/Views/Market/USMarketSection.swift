@@ -4,6 +4,7 @@ import SwiftUI
 struct USMarketSection: View {
     let overview: USOverview?
     var earnings: [EarningsEvent] = []
+    var afterOverview: AnyView? = nil
     let isLoading: Bool
     let error: String?
     let onRetry: () -> Void
@@ -14,6 +15,7 @@ struct USMarketSection: View {
         if let ov = overview {
             VStack(spacing: 26) {
                 overviewCard(ov)
+                if let extra = afterOverview { extra }
                 megaCaps(ov.megaCaps)
                 movers(ov)
                 sectors(ov.sectors)

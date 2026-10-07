@@ -180,11 +180,12 @@ function Earnings() {
   )
 }
 
-export default function USMarket() {
+export default function USMarket({ afterOverview }) {
   const { data, error, reload } = useAPI('/us/market/overview', { refreshMs: 60000 })
   return (
     <>
       <Overview d={data} error={error} reload={reload} />
+      {afterOverview}
       <Mega d={data} />
       <Movers d={data} />
       <Sectors d={data} />
