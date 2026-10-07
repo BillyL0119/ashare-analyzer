@@ -47,6 +47,8 @@ struct StockDetailView: View {
 
                 StockScoreSection(symbol: code)
 
+                SimilarStocksSection(code: code, market: market)
+
                 StockNewsSection(
                     items: vm.newsItems,
                     overall: vm.newsOverall,

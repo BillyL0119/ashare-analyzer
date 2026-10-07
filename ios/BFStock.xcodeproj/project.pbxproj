@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5DE5C3B67F8A470AA0104F20 /* SimilarStocksSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A54DA3A48D944108EE8DB30 /* SimilarStocksSection.swift */; };
 		90A501B6BD9D4A68B90BC0CF /* MockInterviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BADB0F453FA478EAA363CDC /* MockInterviewView.swift */; };
 		F5176E3D5751469FBBFCF5B7 /* CareerGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355B4C3237A54038890DEB2F /* CareerGuideView.swift */; };
 		E14B7911CFCC40ACA8B37AD2 /* UniversitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF86EFE9C0694641A5F6617F /* UniversitiesView.swift */; };
@@ -60,6 +61,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8A54DA3A48D944108EE8DB30 /* SimilarStocksSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarStocksSection.swift; sourceTree = "<group>"; };
 		5BADB0F453FA478EAA363CDC /* MockInterviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInterviewView.swift; sourceTree = "<group>"; };
 		355B4C3237A54038890DEB2F /* CareerGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGuideView.swift; sourceTree = "<group>"; };
 		AF86EFE9C0694641A5F6617F /* UniversitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversitiesView.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				D4E5F6A7B8C9D0E1F2A3B4C6 /* USMarketSection.swift */,
 				E5F6789012345678AB4CD5E0 /* GlobalMarketSection.swift */,
 				65F28593429044E896F90F86 /* StockScoreSection.swift */,
+				8A54DA3A48D944108EE8DB30 /* SimilarStocksSection.swift */,
 			);
 			path = Market;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DE5C3B67F8A470AA0104F20 /* SimilarStocksSection.swift in Sources */,
 				90A501B6BD9D4A68B90BC0CF /* MockInterviewView.swift in Sources */,
 				F5176E3D5751469FBBFCF5B7 /* CareerGuideView.swift in Sources */,
 				E14B7911CFCC40ACA8B37AD2 /* UniversitiesView.swift in Sources */,

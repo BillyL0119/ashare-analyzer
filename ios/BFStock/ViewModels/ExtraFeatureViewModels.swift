@@ -193,3 +193,30 @@ final class MockInterviewViewModel: ObservableObject {
         isStreaming = false
     }
 }
+
+@MainActor
+final class SimilarViewModel: ObservableObject {
+    @Published var peers: [SimilarPeer] = []
+    @Published var industry: String?
+    @Published var isLoading = false
+    @Published var failed = false
+    private let code: String
+    private let market: Market
+
+    init(code: String, market: Market) { self.code = code; self.market = market }
+
+    func load() async {
+        guard peers.isEmpty else { return }
+        isLoading = true
+        failed = false
+        do {
+            let path = market == .us ? "/us/similar/\(code)" : "/similar/\(code)"
+            let r: SimilarResponse = try await APIClient.shared.get(path)
+            peers = r.results
+            industry = r.industry
+        } catch {
+            failed = true
+        }
+        isLoading = false
+    }
+}

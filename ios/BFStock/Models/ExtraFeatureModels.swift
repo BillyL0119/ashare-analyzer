@@ -173,3 +173,18 @@ struct CareerRole: Decodable, Identifiable {
 struct CareerRolesResponse: Decodable {
     let roles: [CareerRole]
 }
+
+// MARK: - Similar trends (/similar/{code}, /us/similar/{symbol})
+
+struct SimilarPeer: Decodable, Identifiable {
+    var id: String { code }
+    let code: String
+    let name: String
+    let correlation: Double
+    let sparkline: [Double]
+}
+
+struct SimilarResponse: Decodable {
+    let industry: String?
+    let results: [SimilarPeer]
+}
