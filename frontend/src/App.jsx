@@ -8,6 +8,7 @@ import WelcomeModal from './components/WelcomeModal'
 import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
 import GlobalSentiment from './components/GlobalSentiment'
+import USMarketPanel from './components/USMarketPanel'
 import StatsDisplay from './components/StatsDisplay'
 import QuoteBanner from './components/QuoteBanner'
 import AuthModal from './components/AuthModal'
@@ -683,6 +684,9 @@ export default function App() {
             <>
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
+              )}
+              {selectedSymbols.length === 0 && (
+                <div className="bfs-enter-2"><ErrorBoundary fallback={null}><USMarketPanel lang={lang} /></ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><ErrorBoundary><GlobalSentiment lang={lang} /></ErrorBoundary></div>
