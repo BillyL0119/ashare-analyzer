@@ -205,68 +205,76 @@ def _get_report_period() -> str:
     return "年报"
 
 
+_csi300: tuple = (0.0, set())
+
+
+def _csi300_codes() -> set:
+    """CSI 300 constituents (cached 24h): the A-share names worth listing."""
+    global _csi300
+    ts, codes = _csi300
+    if codes and time.time() - ts < 86400:
+        return codes
+    try:
+        import akshare as ak
+        df = ak.index_stock_cons_csindex(symbol="000300")
+        codes = {str(c).zfill(6) for c in df["成分券代码"]}
+        _csi300 = (time.time(), codes)
+    except Exception as e:
+        logger.warning("csi300 list failed: %s", e)
+    return codes
+
+
+def _disclosure_date(row):
+    """Latest scheduled date: the last change, else the first appointment."""
+    import pandas as pd
+    for col in ("三次变更", "二次变更", "初次变更", "首次预约"):
+        v = row.get(col)
+        if v is not None and not pd.isna(v):
+            return pd.Timestamp(v).date()
+    return None
+
+
 def _fetch_ashare_earnings() -> list:
+    """A-share disclosure schedule (akshare period names are year-prefixed, e.g. '2026三季')."""
     events = []
     try:
         import akshare as ak
-        period = _get_report_period()
-        for period_try in [period, "一季报", "中报", "三季报", "年报"]:
+        y = _today().year
+        keep = _csi300_codes()
+        seen = set()
+        for period in (f"{y}三季", f"{y}半年报", f"{y}一季", f"{y - 1}年报"):
             try:
-                df = ak.stock_report_disclosure(market="沪深A股", period=period_try)
-                if df is None or df.empty:
-                    continue
-                # Identify columns
-                date_col = next(
-                    (c for c in df.columns if any(k in c for k in ["披露", "公告", "日期", "date"])),
-                    None,
-                )
-                code_col = next(
-                    (c for c in df.columns if any(k in c for k in ["代码", "code"])),
-                    None,
-                )
-                name_col = next(
-                    (c for c in df.columns if any(k in c for k in ["名称", "name"])),
-                    None,
-                )
-                if date_col is None or code_col is None:
-                    logger.debug("A-share %s: unexpected cols %s", period_try, list(df.columns))
-                    continue
-
-                seen = set()
-                for _, row in df.iterrows():
-                    try:
-                        raw = str(row[date_col])
-                        if not raw or raw in ("nan", "None", ""):
-                            continue
-                        d = datetime.strptime(raw[:10], "%Y-%m-%d").date()
-                        if not _in_window(d):
-                            continue
-                        code = str(row[code_col]).zfill(6)
-                        if code in seen:
-                            continue
-                        seen.add(code)
-                        name = str(row[name_col]) if name_col else code
-                        events.append({
-                            "date": d.isoformat(),
-                            "symbol": code,
-                            "name": name,
-                            "market": "cn",
-                            "eps_estimate": None,
-                            "eps_actual": None,
-                            "revenue_estimate": None,
-                            "revenue_actual": None,
-                            "timing": period_try,
-                        })
-                    except Exception:
-                        continue
-                if events:
-                    break  # got data from this period
+                df = ak.stock_report_disclosure(market="沪深京", period=period)
             except Exception as e:
-                logger.debug("A-share %s: %s", period_try, e)
+                logger.debug("A-share %s: %s", period, e)
                 continue
+            if df is None or df.empty:
+                continue
+            for _, row in df.iterrows():
+                try:
+                    d = _disclosure_date(row)
+                    if d is None or not _in_window(d):
+                        continue
+                    code = str(row["股票代码"]).zfill(6)
+                    if code in seen or (keep and code not in keep):
+                        continue
+                    seen.add(code)
+                    events.append({
+                        "date": d.isoformat(),
+                        "symbol": code,
+                        "name": str(row["股票简称"]).replace(" ", ""),
+                        "market": "cn",
+                        "eps_estimate": None,
+                        "eps_actual": None,
+                        "revenue_estimate": None,
+                        "revenue_actual": None,
+                        "timing": period[4:] if period[:4].isdigit() else period,
+                    })
+                except Exception:
+                    continue
     except Exception as e:
         logger.warning("A-share earnings fetch failed: %s", e)
-    events.sort(key=lambda e: e["date"])
+    events.sort(key=lambda e: (e["date"], e["symbol"]))
     return events
 
 
