@@ -674,13 +674,24 @@ def get_us_similar(symbol: str):
             except Exception:
                 return None, []
 
-        ref_series, _ = _get_series_and_sparkline(sym)
+        # Fetch the target and all peers concurrently (history fetches are network bound).
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            fetched = list(pool.map(_get_series_and_sparkline, [sym] + candidates))
+        ref_series = fetched[0][0]
         if ref_series is None or len(ref_series) < 20:
             return {"symbol": sym, "industry": sector or "", "results": []}
 
+        # Company names for all peers in one Tencent call (Polygon is rate limited and was hit once per peer).
+        live_names: dict = {}
+        try:
+            from routers.us_market import us_quotes
+            live_names = {k: v.get("name") for k, v in us_quotes(candidates).items() if v.get("name")}
+        except Exception:
+            pass
+
         results = []
-        for peer in candidates:
-            peer_series, sparkline = _get_series_and_sparkline(peer)
+        for peer, (peer_series, sparkline) in zip(candidates, fetched[1:]):
             if peer_series is None or len(peer_series) < 20:
                 continue
             # Align by date — overlapping trading days only
@@ -690,16 +701,9 @@ def get_us_similar(symbol: str):
             corr = float(combined["ref"].corr(combined["peer"]))
             if np.isnan(corr):
                 continue
-            # Name lookup: POPULAR_TICKERS → fresh Polygon → stale cache → symbol code
-            peer_name = next(
+            peer_name = live_names.get(peer) or next(
                 (tk["name"] for tk in POPULAR_TICKERS if tk["code"] == peer), None
             )
-            if not peer_name:
-                try:
-                    info = _fetch_company_info(peer)
-                    peer_name = info.get("name") or None
-                except Exception:
-                    peer_name = None
             if not peer_name:
                 stale_info = read_cache(f"{peer}_info", max_age_hours=9999) or {}
                 peer_name = stale_info.get("name") or peer
