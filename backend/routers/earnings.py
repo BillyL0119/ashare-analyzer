@@ -297,3 +297,19 @@ def earnings_calendar():
         _cache_ts = now
         _cache_data = result
     return result
+
+
+def _warm_loop():
+    """Keep the calendar hot: first request after a restart used to take ~13s."""
+    global _cache_ts
+    while True:
+        try:
+            _cache_ts = 0          # force a rebuild
+            earnings_calendar()
+        except Exception as e:
+            logger.warning("earnings warm-up failed: %s", e)
+        time.sleep(_CACHE_TTL - 300)
+
+
+import threading as _threading
+_threading.Thread(target=_warm_loop, daemon=True, name="earnings-warm").start()
