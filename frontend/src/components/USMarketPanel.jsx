@@ -23,6 +23,13 @@ const UP = 'var(--green-bright)', DOWN = 'var(--red-bright)'
 const col = (p) => (p > 0 ? UP : p < 0 ? DOWN : 'var(--text-secondary)')
 const pct = (p) => `${p > 0 ? '+' : ''}${p.toFixed(2)}%`
 const num = (v) => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const CSS = `
+.usp-hit { transition: background .15s, border-color .15s, transform .15s; }
+.usp-hit:hover { background: var(--bg-hover) !important; }
+.usp-tile:hover { border-color: var(--border-glow) !important; transform: translateY(-1px); }
+.usp-hit:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .usp-hit { transition: none; } .usp-tile:hover { transform: none; } }
+`
 const card = { background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12 }
 
 function countdown(iso, t) {
@@ -58,7 +65,8 @@ export default function USMarketPanel({ lang }) {
   const b = d.breadth
 
   return (
-    <div style={{ ...card, padding: 14, marginBottom: 10, display: 'grid', gap: 14 }}>
+    <div style={{ ...card, padding: 16, marginBottom: 10, display: 'grid', gap: 16 }}>
+      <style>{CSS}</style>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <span style={{ width: 7, height: 7, borderRadius: 4, background: s.state === 'regular' ? UP : s.state === 'closed' ? 'var(--text-muted)' : 'var(--accent-gold)' }} />
         <strong style={{ fontSize: 14 }}>{t.title}</strong>
@@ -70,8 +78,8 @@ export default function USMarketPanel({ lang }) {
         {d.indices.map((i) => (
           <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 10, padding: '10px 12px' }}>
             <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{zh ? INDEX_ZH[i.name] || i.name : i.name}</div>
-            <div style={{ fontSize: 18, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{num(i.price)}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: col(i.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(i.pct)}</div>
+            <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums', margin: '2px 0' }}>{num(i.price)}</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: col(i.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(i.pct)}{i.change != null && <span style={{ marginLeft: 8, opacity: 0.8 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}</div>
           </div>
         ))}
       </div>
@@ -89,10 +97,10 @@ export default function USMarketPanel({ lang }) {
         <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.mega}</div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
           {d.mega_caps.map((q) => (
-            <button key={q.symbol} onClick={() => openUS(q)} style={{ flex: '0 0 auto', minWidth: 92, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 10, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
-              <div style={{ fontWeight: 700, fontSize: 13 }}>{q.symbol}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</div>
+            <button key={q.symbol} className="usp-hit usp-tile" onClick={() => openUS(q)} style={{ flex: '0 0 auto', minWidth: 104, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 10, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>{q.symbol}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</div>
             </button>
           ))}
         </div>
@@ -106,11 +114,11 @@ export default function USMarketPanel({ lang }) {
             ))}
           </div>
           {rows.map((q) => (
-            <button key={q.symbol} onClick={() => openUS(q)} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 8, padding: '6px 4px', background: 'none', border: 'none', borderBottom: '1px solid var(--border-primary)', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}>
-              <span style={{ width: 52, fontWeight: 700, fontSize: 13 }}>{q.symbol}</span>
+            <button key={q.symbol} className="usp-hit" onClick={() => openUS(q)} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '8px 6px', borderRadius: 6, background: 'none', border: 'none', borderBottom: '1px solid var(--border-primary)', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}>
+              <span style={{ width: 56, fontWeight: 700, fontSize: 14 }}>{q.symbol}</span>
               <span style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.name}</span>
-              <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</span>
-              <span style={{ width: 62, textAlign: 'right', fontSize: 12, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</span>
+              <span style={{ fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</span>
+              <span style={{ width: 66, textAlign: 'right', fontSize: 12, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</span>
             </button>
           ))}
         </div>
@@ -120,10 +128,10 @@ export default function USMarketPanel({ lang }) {
             {d.sectors.map((x) => {
               const c = col(x.pct)
               return (
-                <button key={x.symbol} onClick={() => openUS({ symbol: x.symbol, name: x.name })} style={{ textAlign: 'left', border: 'none', borderRadius: 8, padding: '8px 9px', cursor: 'pointer', color: 'inherit', background: `color-mix(in srgb, ${c} ${Math.round(8 + 22 * Math.abs(x.pct) / maxAbs)}%, var(--bg-tertiary))` }}>
-                  <div style={{ fontSize: 11, lineHeight: 1.25, minHeight: 28 }}>{(zh && SECTOR.zh[x.name]) || x.name}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: c, fontVariantNumeric: 'tabular-nums' }}>{pct(x.pct)}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{x.symbol}</div>
+                <button key={x.symbol} className="usp-hit usp-tile" onClick={() => openUS({ symbol: x.symbol, name: x.name })} style={{ textAlign: 'left', border: '1px solid transparent', borderRadius: 8, padding: '10px 11px', cursor: 'pointer', color: 'inherit', background: `color-mix(in srgb, ${c} ${Math.round(8 + 22 * Math.abs(x.pct) / maxAbs)}%, var(--bg-tertiary))` }}>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.25, minHeight: 31 }}>{(zh && SECTOR.zh[x.name]) || x.name}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: c, fontVariantNumeric: 'tabular-nums' }}>{pct(x.pct)}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{x.symbol}</div>
                 </button>
               )
             })}

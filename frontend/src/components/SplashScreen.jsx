@@ -244,7 +244,7 @@ export default function SplashScreen({ onContentVisible, onDone }) {
             fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             animation: `bfsFadeUp 0.56s cubic-bezier(0.22, 1, 0.36, 1) ${isMobile ? 0.95 : 1.42}s both`,
           }}>
-            AI-Powered Stock Analysis · A股 · 美股
+            AI-Powered Stock Analysis · 美股 · A股
           </div>
 
           {/* ── Separator line ────────────────────────────────── */}
