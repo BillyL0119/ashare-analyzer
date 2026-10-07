@@ -68,7 +68,7 @@ enum Lang {
     static var usesMyriad: Bool { ["zh", "ja", "ko"].contains(code) }
 
     /// Suffix the backend uses for translated study content (`title_ja`, `body_fr`, ...).
-    static var contentSuffix: String? { ["ja", "ko", "fr"].contains(code) ? code : nil }
+    static var contentSuffix: String? { ["en", "ja", "ko", "fr"].contains(code) ? code : nil }
 
     static var bundle: Bundle {
         let lproj = (AppLanguage(rawValue: code) ?? .en).lproj ?? code

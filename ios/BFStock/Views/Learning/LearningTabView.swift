@@ -13,7 +13,7 @@ struct LearningTabView: View {
         "stocks":   L("股票入门"),
     ]
 
-    private let examOrder = ["alevel", "igcse", "ap_macro", "ap_micro", "ib", "stocks"]
+    private let examOrder = ["stocks", "alevel", "igcse", "ap_macro", "ap_micro", "ib"]
 
     var body: some View {
         NavigationStack {

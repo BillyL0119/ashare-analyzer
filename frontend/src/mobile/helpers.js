@@ -14,5 +14,8 @@ export const marketOf = (code) => (/^\d{6}$/.test(code) ? 'cn' : 'us')
 export function loc(obj, field, lang) {
   if (!obj) return ''
   if (['ja', 'ko', 'fr'].includes(lang) && obj[`${field}_${lang}`]) return obj[`${field}_${lang}`]
-  return obj[field] ?? ''
+  if (lang === 'en' && obj[`${field}_en`]) return obj[`${field}_en`]
+  const v = obj[field] ?? ''
+  // curriculum titles are stored as "中文 / English"; show the Chinese half in zh
+  return lang === 'zh' && field === 'title' && typeof v === 'string' && v.includes(' / ') ? v.split(' / ')[0] : v
 }

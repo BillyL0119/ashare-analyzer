@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 final class LearningViewModel: ObservableObject {
     @Published var curricula: [Curriculum] = []
-    @Published var selectedKey: String = "alevel"
+    @Published var selectedKey: String = "stocks"
     @Published var isLoading = false
     @Published var error: String?
     private var didRefresh = false

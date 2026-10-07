@@ -49,7 +49,10 @@ extension KeyedDecodingContainer where K == DynamicKey {
            !v.isEmpty {
             return v
         }
-        return try decode(String.self, forKey: DynamicKey(stringValue: base))
+        let v = try decode(String.self, forKey: DynamicKey(stringValue: base))
+        // Curriculum titles are stored as "中文 / English"; Chinese UI shows the Chinese half.
+        if base == "title", Lang.code == "zh", let zh = v.components(separatedBy: " / ").first, zh != v { return zh }
+        return v
     }
 
     func localizedIfPresent(_ base: String) -> String? {

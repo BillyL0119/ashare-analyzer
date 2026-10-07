@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import useLangStore from '../../store/langStore'
 import { useT } from '../i18n'
@@ -7,7 +7,7 @@ import { loc } from '../helpers'
 import { Icon } from '../icons'
 import { ErrorBox, Section, Skeleton, SkeletonRows } from '../ui'
 
-const EXAM_ORDER = ['alevel', 'igcse', 'ap_macro', 'ap_micro', 'ib', 'stocks']
+const EXAM_ORDER = ['stocks', 'alevel', 'igcse', 'ap_macro', 'ap_micro', 'ib']
 const EXAM_LABEL = { alevel: 'A-Level', igcse: 'IGCSE', ap_macro: 'AP Macro', ap_micro: 'AP Micro', ib: 'IB', stocks: '股票入门' }
 const KEY = 'bfs_m_progress'
 
@@ -24,8 +24,9 @@ function useProgress() {
 function List() {
   const t = useT(); const nav = useNavigate(); const lang = useLangStore((s) => s.lang)
   const { data, error, reload } = useAPI('/study/curriculum')
-  const [exam, setExam] = useState(() => localStorage.getItem('bfs_m_exam') || 'alevel')
+  const [exam, setExam] = useState(() => localStorage.getItem('bfs_m_exam') || 'stocks')
   const progress = useProgress()
+  useEffect(() => { document.querySelector('.m-strip [aria-pressed="true"]')?.scrollIntoView({ inline: 'center', block: 'nearest' }) }, [exam])
   const cur = data?.curricula?.find((c) => c.key === exam)
   const all = useMemo(() => (cur ? (cur.papers ? cur.papers.flatMap((p) => p.topics) : cur.topics || []) : []), [cur])
   const done = all.filter((x) => progress.has(exam, x.id)).length
