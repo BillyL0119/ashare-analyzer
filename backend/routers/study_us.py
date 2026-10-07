@@ -138,3 +138,20 @@ US_PAPER = {
         },
     ],
 }
+
+
+def _inject_translations():
+    from .study_us_translations import US_PAPER_TITLE, US_TRANSLATIONS
+    for lang, val in US_PAPER_TITLE.items():
+        US_PAPER[f"title_{lang}"] = val
+    for topic in US_PAPER["topics"]:
+        trans = US_TRANSLATIONS.get(topic["id"], {})
+        for lang, val in trans.get("title", {}).items():
+            topic[f"title_{lang}"] = val
+        for section, sec_trans in zip(topic["sections"], trans.get("sections", [])):
+            for field in ("heading", "body", "real_world", "exam_tip"):
+                for lang, val in sec_trans.get(field, {}).items():
+                    section[f"{field}_{lang}"] = val
+
+
+_inject_translations()
