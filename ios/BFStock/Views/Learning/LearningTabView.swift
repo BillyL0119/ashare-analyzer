@@ -113,6 +113,27 @@ struct LearningTabView: View {
                     .overlay(RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous).strokeBorder(DS.stroke))
                 }
                 .buttonStyle(.plain)
+                NavigationLink(destination: CareerGuideView()) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "briefcase.fill")
+                            .font(.title3).foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(LinearGradient(colors: [DS.accent, Color(r: 0x8B, g: 0x6C, b: 0xFF)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                                        in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("求职指南").font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                            Text("了解8个金融岗位：日常工作、技能、薪资，还能模拟面试")
+                                .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.leading)
+                        }
+                        Spacer(minLength: 4)
+                        Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous).strokeBorder(DS.stroke))
+                }
+                .buttonStyle(.plain)
             }
             .padding(.horizontal, 16)
             .padding(.top, 4)

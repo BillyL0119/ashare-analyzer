@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 // MARK: - Stock score (/stock/score/{symbol})
 
@@ -116,4 +116,60 @@ struct University: Decodable, Identifiable {
     let url: String?
     let requirements: UniRequirements?
     let employment: [String]?
+}
+
+// MARK: - Career guide (/career/roles)
+
+struct CareerRole: Decodable, Identifiable {
+    let id: String
+    let title: String
+    let titleEn: String
+    let icon: String
+    let color: String
+    let tagline: String
+    let taglineEn: String
+    let description: String
+    let descriptionEn: String
+    let coreScenario: String
+    let coreScenarioEn: String
+    let skills: [String]
+    let skillsEn: [String]
+    let differentiators: [String]
+    let differentiatorsEn: [String]
+    let certs: [String]
+    let certsEn: [String]
+    let entry: String
+    let entryEn: String
+    let career: String
+    let careerEn: String
+    let salary: String
+    let salaryEn: String
+    let disclaimer: String
+    let disclaimerEn: String
+    let typicalDay: [String]
+    let typicalDayEn: [String]
+
+    private var zh: Bool { Lang.code == "zh" }
+    var displayTitle: String { zh ? title : titleEn }
+    var displayTagline: String { zh ? tagline : taglineEn }
+    var displayDescription: String { zh ? description : descriptionEn }
+    var displayScenario: String { zh ? coreScenario : coreScenarioEn }
+    var displaySkills: [String] { zh ? skills : skillsEn }
+    var displayDifferentiators: [String] { zh ? differentiators : differentiatorsEn }
+    var displayCerts: [String] { zh ? certs : certsEn }
+    var displayEntry: String { zh ? entry : entryEn }
+    var displayCareer: String { zh ? career : careerEn }
+    var displaySalary: String { zh ? salary : salaryEn }
+    var displayDisclaimer: String { zh ? disclaimer : disclaimerEn }
+    var displayTypicalDay: [String] { zh ? typicalDay : typicalDayEn }
+
+    var tint: Color {
+        let h = color.trimmingCharacters(in: CharacterSet(charactersIn: "#"))
+        guard h.count == 6, let v = UInt32(h, radix: 16) else { return DS.accent }
+        return Color(red: Double((v >> 16) & 255) / 255, green: Double((v >> 8) & 255) / 255, blue: Double(v & 255) / 255)
+    }
+}
+
+struct CareerRolesResponse: Decodable {
+    let roles: [CareerRole]
 }

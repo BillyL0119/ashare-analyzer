@@ -192,7 +192,7 @@ struct AITeacherTabView: View {
 
 // MARK: - Chat Bubble
 
-private struct ChatBubble: View {
+struct ChatBubble: View {
     let message: ChatMessage
 
     private var isUser: Bool { message.role == "user" }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90A501B6BD9D4A68B90BC0CF /* MockInterviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BADB0F453FA478EAA363CDC /* MockInterviewView.swift */; };
+		F5176E3D5751469FBBFCF5B7 /* CareerGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355B4C3237A54038890DEB2F /* CareerGuideView.swift */; };
 		E14B7911CFCC40ACA8B37AD2 /* UniversitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF86EFE9C0694641A5F6617F /* UniversitiesView.swift */; };
 		05BB778D94EC4327951826CF /* DailyKnowledgeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6540DA16713144E2873BB013 /* DailyKnowledgeCard.swift */; };
 		D70AF5970251478AB82AF519 /* NewsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7088D33364465FBCA686B8 /* NewsTabView.swift */; };
@@ -58,6 +60,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5BADB0F453FA478EAA363CDC /* MockInterviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInterviewView.swift; sourceTree = "<group>"; };
+		355B4C3237A54038890DEB2F /* CareerGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGuideView.swift; sourceTree = "<group>"; };
 		AF86EFE9C0694641A5F6617F /* UniversitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversitiesView.swift; sourceTree = "<group>"; };
 		6540DA16713144E2873BB013 /* DailyKnowledgeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyKnowledgeCard.swift; sourceTree = "<group>"; };
 		AB7088D33364465FBCA686B8 /* NewsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTabView.swift; sourceTree = "<group>"; };
@@ -110,6 +114,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		3ED2A7A101604B6D88734109 /* Career */ = {
+			isa = PBXGroup;
+			children = (
+				355B4C3237A54038890DEB2F /* CareerGuideView.swift */,
+				5BADB0F453FA478EAA363CDC /* MockInterviewView.swift */,
+			);
+			path = Career;
+			sourceTree = "<group>";
+		};
 		AB2920E52ED0403B8EA92DB9 /* Universities */ = {
 			isa = PBXGroup;
 			children = (
@@ -219,6 +232,7 @@
 				AE4C2BAD9B07C8AB0DD31BA3 /* Watchlist */,
 				E3F519285DA64A7EAF526F45 /* News */,
 				AB2920E52ED0403B8EA92DB9 /* Universities */,
+				3ED2A7A101604B6D88734109 /* Career */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -357,6 +371,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90A501B6BD9D4A68B90BC0CF /* MockInterviewView.swift in Sources */,
+				F5176E3D5751469FBBFCF5B7 /* CareerGuideView.swift in Sources */,
 				E14B7911CFCC40ACA8B37AD2 /* UniversitiesView.swift in Sources */,
 				05BB778D94EC4327951826CF /* DailyKnowledgeCard.swift in Sources */,
 				D70AF5970251478AB82AF519 /* NewsTabView.swift in Sources */,

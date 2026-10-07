@@ -697,6 +697,35 @@
         }
       }
     },
+    "AI面试官会一次问一个问题，4-5轮后给出评分和改进建议": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI interviewer asks one question at a time and scores you after 4-5 rounds"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'IA pose une question à la fois et vous note après 4 à 5 échanges"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI面接官が1問ずつ質問し、4〜5往復後に採点とアドバイスをします"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 면접관이 한 번에 한 문제씩 묻고 4~5회 후 점수와 조언을 줍니다"
+          }
+        }
+      }
+    },
     "A股": {
       "extractionState": "manual",
       "localizations": {
@@ -1616,6 +1645,35 @@
         }
       }
     },
+    "与相近岗位的区别": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How it differs"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Différences avec les métiers proches"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "近い職種との違い"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유사 직무와의 차이"
+          }
+        }
+      }
+    },
     "专业方向": {
       "extractionState": "manual",
       "localizations": {
@@ -1728,6 +1786,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "매수"
+          }
+        }
+      }
+    },
+    "了解8个金融岗位：日常工作、技能、薪资，还能模拟面试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 finance roles: daily work, skills, pay — plus mock interviews"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 métiers de la finance : quotidien, compétences, salaires et entretiens simulés"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金融8職種の仕事内容・スキル・年収と模擬面接"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "금융 8개 직무: 업무·역량·연봉과 모의 면접"
           }
         }
       }
@@ -2283,6 +2370,35 @@
         }
       }
     },
+    "入门门槛": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entry requirements"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conditions d'accès"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "応募条件"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "진입 요건"
+          }
+        }
+      }
+    },
     "全球商学院指南": {
       "extractionState": "manual",
       "localizations": {
@@ -2482,6 +2598,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "닫기"
+          }
+        }
+      }
+    },
+    "典型场景": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typical scenario"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scénario type"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "典型的なシーン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대표 상황"
+          }
+        }
+      }
+    },
+    "典型的一天": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A typical day"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une journée type"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "典型的な一日"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "하루 일과"
           }
         }
       }
@@ -3907,6 +4081,35 @@
         }
       }
     },
+    "开始面试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start interview"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "面接を始める"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "면접 시작"
+          }
+        }
+      }
+    },
     "必需消费": {
       "extractionState": "manual",
       "localizations": {
@@ -4367,6 +4570,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "기술적"
+          }
+        }
+      }
+    },
+    "技术面试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technical"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technique"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "技術面接"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기술 면접"
           }
         }
       }
@@ -5270,6 +5502,35 @@
         }
       }
     },
+    "核心技能": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core skills"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compétences clés"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コアスキル"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "핵심 역량"
+          }
+        }
+      }
+    },
     "模拟盘": {
       "extractionState": "manual",
       "localizations": {
@@ -5328,6 +5589,35 @@
         }
       }
     },
+    "模拟面试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mock interview"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entretien simulé"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模擬面接"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모의 면접"
+          }
+        }
+      }
+    },
     "欧洲": {
       "extractionState": "manual",
       "localizations": {
@@ -5382,6 +5672,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "오늘의 뉴스"
+          }
+        }
+      }
+    },
+    "求职指南": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Career guide"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guide carrière"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャリアガイド"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "커리어 가이드"
           }
         }
       }
@@ -6314,6 +6633,35 @@
         }
       }
     },
+    "综合面试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprehensive"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "総合面接"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종합 면접"
+          }
+        }
+      }
+    },
     "编辑": {
       "extractionState": "manual",
       "localizations": {
@@ -6600,6 +6948,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "시험 팁"
+          }
+        }
+      }
+    },
+    "职业路径": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Career path"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parcours de carrière"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャリアパス"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "커리어 경로"
           }
         }
       }
@@ -6923,6 +7300,35 @@
         }
       }
     },
+    "薪资参考": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pay range"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fourchette de salaire"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "給与の目安"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연봉 참고"
+          }
+        }
+      }
+    },
     "行业板块": {
       "extractionState": "manual",
       "localizations": {
@@ -6948,6 +7354,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "업종"
+          }
+        }
+      }
+    },
+    "行为面试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behavioral"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comportemental"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "行動面接"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인성 면접"
           }
         }
       }
@@ -7035,6 +7470,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "웹사이트 방문"
+          }
+        }
+      }
+    },
+    "证书建议": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certifications"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certifications"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "おすすめ資格"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "추천 자격증"
           }
         }
       }
@@ -7329,6 +7793,35 @@
         }
       }
     },
+    "输入你的回答…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type your answer…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre réponse…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回答を入力…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "답변을 입력…"
+          }
+        }
+      }
+    },
     "输入问题…": {
       "extractionState": "manual",
       "localizations": {
@@ -7441,6 +7934,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "다우존스"
+          }
+        }
+      }
+    },
+    "重新开始": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommencer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "やり直す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작"
           }
         }
       }
