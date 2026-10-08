@@ -136,6 +136,7 @@ def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh")
     """One-sentence overall sentiment summary via DeepSeek (same provider as the AI teacher). "" on any failure."""
     key = os.environ.get("DEEPSEEK_API_KEY", "")
     if not key or not headlines:
+        logger.warning("AI summary skipped: key set=%s headlines=%d", bool(key), len(headlines))
         return ""
     try:
         from openai import OpenAI
@@ -154,7 +155,7 @@ def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh")
         )
         return (resp.choices[0].message.content or "").strip()
     except Exception as exc:
-        logger.debug("AI summary failed: %s", exc)
+        logger.warning("AI summary failed (%s): %s", type(exc).__name__, str(exc)[:200])
         return ""
 
 
