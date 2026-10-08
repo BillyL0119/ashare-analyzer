@@ -318,7 +318,10 @@ def _find_recent_history_cache(sym: str, max_days: int = 7) -> list:
     return []
 
 
-_TENCENT_SUFFIX: dict = {}   # ticker -> working exchange suffix (".OQ" Nasdaq, ".N" NYSE, ".AM" NYSE American)
+# ticker -> working exchange suffix (".OQ" Nasdaq, ".N" NYSE, ".AM" NYSE Arca / American); learned at runtime,
+# seeded with the SPDR ETFs so the first call does not probe three exchanges.
+_TENCENT_SUFFIX: dict = {s: ".AM" for s in
+                         ("SPY", "XLK", "XLF", "XLV", "XLE", "XLI", "XLP", "XLY", "XLB", "XLU", "XLRE", "XLC", "GLD", "SLV")}
 
 
 def _tencent_history(sym: str, days: int = 365) -> list:

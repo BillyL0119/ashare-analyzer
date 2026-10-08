@@ -143,44 +143,42 @@ def _build_cn() -> dict:
 # ── US sector fetch ───────────────────────────────────────────────────────────
 
 def _build_us() -> dict:
-    import yfinance as yf
+    """11 SPDR sector ETFs from Tencent's kline feed (yfinance is rate limited from the server)."""
+    from routers.us_stocks import _tencent_history
 
-    tickers = list(_US_ETFS.keys())
-    # Download 30 trading days of data
-    data = yf.download(tickers, period="2mo", progress=False, auto_adjust=True)
+    def one(sym: str):
+        candles = _tencent_history(sym, 90)
+        if len(candles) < 21:                       # one retry: the feed occasionally drops a request
+            candles = _tencent_history(sym, 90)
+        close = pd.Series([c["close"] for c in candles], dtype=float)
+        vol = pd.Series([c["volume"] for c in candles], dtype=float)
+        if len(close) < 21:
+            raise ValueError("not enough history")
+        vol_ratio = 1.0
+        avg20 = vol.iloc[-21:-1].mean()
+        if avg20 > 0:
+            vol_ratio = round(float(vol.iloc[-1]) / float(avg20), 2)
+        return {
+            "name":      sym,
+            "name_zh":   _US_ETFS[sym]["name_zh"],
+            "name_en":   _US_ETFS[sym]["name_en"],
+            "today_pct": _pct_change_n(close, 1),
+            "pct_5d":    _pct_change_n(close, 5),
+            "pct_20d":   _pct_change_n(close, 20),
+            "vol_ratio": vol_ratio,
+            "leader":    sym,
+        }
 
     sectors = []
-    for sym, meta in _US_ETFS.items():
-        try:
-            if "Close" in data.columns.get_level_values(0):
-                close = data["Close"][sym].dropna()
-                vol   = data["Volume"][sym].dropna()
-            else:
-                close = data[sym]["Close"].dropna()
-                vol   = data[sym]["Volume"].dropna()
-
-            today_pct = _pct_change_n(close, 1)
-            pct_5d    = _pct_change_n(close, 5)
-            pct_20d   = _pct_change_n(close, 20)
-
-            vol_ratio = 1.0
-            if len(vol) >= 21:
-                avg20 = vol.iloc[-21:-1].mean()
-                if avg20 > 0:
-                    vol_ratio = round(float(vol.iloc[-1]) / float(avg20), 2)
-
-            sectors.append({
-                "name":       sym,
-                "name_zh":    meta["name_zh"],
-                "name_en":    meta["name_en"],
-                "today_pct":  today_pct,
-                "pct_5d":     pct_5d,
-                "pct_20d":    pct_20d,
-                "vol_ratio":  vol_ratio,
-                "leader":     sym,
-            })
-        except Exception as e:
-            logger.warning("US ETF %s failed: %s", sym, e)
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        futures = {pool.submit(one, sym): sym for sym in _US_ETFS}
+        for fut in as_completed(futures):
+            try:
+                sectors.append(fut.result())
+            except Exception as e:
+                logger.warning("US ETF %s failed: %s", futures[fut], e)
+    if not sectors:
+        raise RuntimeError("no US sector data")
 
     sectors.sort(key=lambda x: x["today_pct"], reverse=True)
     return {
