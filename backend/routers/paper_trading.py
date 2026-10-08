@@ -124,19 +124,13 @@ def _get_realtime_price(symbol: str) -> tuple[float, str]:
 
 
 def _get_us_realtime_price(symbol: str) -> tuple[float, str]:
-    """Return (price, name) for a US ticker via yfinance."""
+    """Return (price, name) for a US ticker from Tencent's quote feed (yfinance is rate limited from the server)."""
+    sym = symbol.upper().replace("-", ".")
     try:
-        import yfinance as yf
-        ticker = yf.Ticker(symbol.upper())
-        info = ticker.info
-        price = (
-            info.get("currentPrice")
-            or info.get("regularMarketPrice")
-            or info.get("previousClose")
-        )
-        if price:
-            name = info.get("shortName") or info.get("longName") or symbol.upper()
-            return float(price), name
+        from routers.us_market import us_quotes
+        q = us_quotes([sym]).get(sym)
+        if q and q.get("price"):
+            return float(q["price"]), q.get("name") or sym
     except Exception as e:
         logger.warning("US realtime price for %s: %s", symbol, e)
     raise HTTPException(status_code=503, detail=f"Cannot fetch price for {symbol}. Try again later.")
