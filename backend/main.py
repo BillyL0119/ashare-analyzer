@@ -241,7 +241,7 @@ async def seo_us_stock(symbol: str):
     e = _html.escape
     name = e(q["name"])
     sign = "+" if q["pct"] > 0 else ""
-    title = f"{name} ({sym}) 美股行情 · K线 · AI分析 | Best Friend Stock"
+    title = f"{name} ({sym}) 美股行情 · K线 · AI分析 | BestFriendStock"
     desc = (f"{name}（{sym}）美股实时行情：最新价 ${q['price']:.2f}，涨跌幅 {sign}{q['pct']:.2f}%。"
             f"查看K线图、MACD/RSI 技术指标、新闻情绪和 AI 分析，并可用模拟盘练习交易。仅供学习，不构成投资建议。")
     url = f"https://bestfriendstock.com/stock/us/{sym}"
@@ -268,7 +268,7 @@ async def bot_render():
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Best Friend Stock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习</title>
+  <title>BestFriendStock（Best Friend Stock）| 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习</title>
   <meta name="description" content="专为学生设计的免费股票分析平台。支持美股、A股K线图、AI智能分析、模拟炒股（百万虚拟资金T+1）、A-Level/IB/AP/IGCSE经济学学习中心、全球商学院指南（QS前100）。" />
   <link rel="canonical" href="https://bestfriendstock.com/" />
 </head>

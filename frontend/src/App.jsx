@@ -165,13 +165,13 @@ export default function App() {
       return
     }
     const titles = {
-      analysis:     'Best Friend Stock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
-      news:         'Best Friend Stock | 每日大事件 - 市场重大新闻',
-      paper:        'Best Friend Stock | 模拟炒股 - 100万虚拟资金T+1练习',
-      study:        'Best Friend Stock | 经济学学习中心 - A-Level IB AP IGCSE',
-      universities: 'Best Friend Stock | 全球商学院指南 - 90+顶尖商学院数据库',
-      bank_views:   'Best Friend Stock | 大行观点 - 顶级投行研究报告',
-      career:       'Best Friend Stock | 求职指南 - 金融行业职业规划',
+      analysis:     'BestFriendStock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
+      news:         'BestFriendStock | 每日大事件 - 市场重大新闻',
+      paper:        'BestFriendStock | 模拟炒股 - 100万虚拟资金T+1练习',
+      study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE',
+      universities: 'BestFriendStock | 全球商学院指南 - 90+顶尖商学院数据库',
+      bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究报告',
+      career:       'BestFriendStock | 求职指南 - 金融行业职业规划',
     }
     document.title = titles[appTab] || titles.analysis
     let canonical = document.querySelector('link[rel="canonical"]')
