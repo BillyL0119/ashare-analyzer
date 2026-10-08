@@ -116,7 +116,60 @@ def _fetch_cn_board_hist(row) -> dict | None:
         return None
 
 
+def _fetch_ths_board(row) -> dict | None:
+    """One Tonghuashun industry board: today's move from the summary row, 5d/20d/volume ratio from its index history."""
+    try:
+        import akshare as ak
+        name = str(row["板块"])
+        today_pct = _safe_float(row.get("涨跌幅", 0))
+        leader = str(row.get("领涨股", ""))
+        base = {"name": name, "name_zh": name, "name_en": name, "today_pct": today_pct,
+                "pct_5d": 0.0, "pct_20d": 0.0, "vol_ratio": 1.0, "leader": leader}
+        hist = ak.stock_board_industry_index_ths(
+            symbol=name,
+            start_date=(datetime.now() - timedelta(days=45)).strftime("%Y%m%d"),
+            end_date=datetime.now().strftime("%Y%m%d"),
+        )
+        if hist is None or hist.empty:
+            return base
+        close = pd.to_numeric(hist["收盘价"], errors="coerce").dropna()
+        vol = pd.to_numeric(hist["成交额"], errors="coerce").dropna()
+        base["pct_5d"] = _pct_change_n(close, 5)
+        base["pct_20d"] = _pct_change_n(close, 20)
+        if len(vol) >= 21:
+            avg20 = vol.iloc[-21:-1].mean()
+            if avg20 > 0:
+                base["vol_ratio"] = round(float(vol.iloc[-1]) / float(avg20), 2)
+        return base
+    except Exception as e:
+        logger.warning("THS board failed for %s: %s", row.get("板块", "?"), e)
+        return None
+
+
+def _build_cn_ths() -> dict:
+    import akshare as ak
+    rows = ak.stock_board_industry_summary_ths().to_dict("records")
+    sectors = []
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        for res in ex.map(_fetch_ths_board, rows):
+            if res:
+                sectors.append(res)
+    if not sectors:
+        raise RuntimeError("no THS sector data")
+    sectors.sort(key=lambda x: x["today_pct"], reverse=True)
+    return {"market": "cn", "date": datetime.now().strftime("%Y-%m-%d"), "sectors": sectors}
+
+
 def _build_cn() -> dict:
+    """Tonghuashun first (Eastmoney connections are dropped from the server), Eastmoney as the fallback."""
+    try:
+        return _build_cn_ths()
+    except Exception as e:
+        logger.warning("THS sector build failed (%s); trying Eastmoney", e)
+    return _build_cn_em()
+
+
+def _build_cn_em() -> dict:
     import akshare as ak
 
     # Step 1: get all boards with today data
@@ -221,3 +274,19 @@ def sector_rotation(market: str = Query("cn", regex="^(cn|us)$")):
                 return _us_data
             return {"market": "us", "date": "", "sectors": [], "error": str(e)}
         return _us_data
+
+
+def _warm_cn_loop():
+    """The CN build takes ~20s (90 boards); keep it hot so users never wait for it."""
+    global _cn_ts, _cn_data
+    while True:
+        try:
+            data = _build_cn()
+            _cn_data, _cn_ts = data, time.time()
+        except Exception as e:
+            logger.warning("CN sector warm-up failed: %s", e)
+        time.sleep(_CACHE_TTL - 300)
+
+
+import threading as _threading
+_threading.Thread(target=_warm_cn_loop, daemon=True, name="sectors-cn-warm").start()
