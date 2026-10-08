@@ -327,7 +327,7 @@ _TENCENT_SUFFIX: dict = {s: ".AM" for s in
 def _tencent_history(sym: str, days: int = 365) -> list:
     """Daily candles (forward-adjusted) from Tencent's kline feed: no key, no rate limit. [] on failure."""
     import requests
-    want = max(min(int(days * 0.72) + 20, 700), 60)   # trading days
+    want = max(min(int(days * 0.72) + 20, 1400), 60)  # trading days (Tencent serves ~5y in one call)
     sym = sym.replace("-", ".")                         # BRK-B -> BRK.B
     suffixes = [_TENCENT_SUFFIX[sym]] if sym in _TENCENT_SUFFIX else [".OQ", ".N", ".AM"]
     for suf in suffixes:

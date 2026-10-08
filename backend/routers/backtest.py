@@ -230,11 +230,10 @@ def backtest(
             dates = [str(d)[:10] for d in df.index.tolist()]
             closes = df["close"].dropna().tolist()
         else:
-            import yfinance as yf
-            yf_period = {"1y": "1y", "2y": "2y", "3y": "3y", "5y": "5y"}[period]
-            hist = yf.Ticker(symbol).history(period=yf_period).sort_index()
-            dates = [str(d)[:10] for d in hist.index.tolist()]
-            closes = hist["Close"].dropna().tolist()
+            from routers.us_stocks import _tencent_history   # yfinance is rate limited from the server
+            candles = [c for c in _tencent_history(symbol.upper(), limit * 365 // 252 + 10) if c.get("close")][-limit:]
+            dates = [c["date"] for c in candles]
+            closes = [c["close"] for c in candles]
 
         if len(closes) < 30:
             raise HTTPException(status_code=400, detail="Insufficient price data for backtest")
@@ -254,10 +253,8 @@ def backtest(
                 bm_df = ak.stock_zh_index_daily(symbol="sh000300").sort_index().tail(limit)
                 bm_closes = bm_df["close"].dropna().tolist()
             else:
-                import yfinance as yf
-                yf_period = {"1y": "1y", "2y": "2y", "3y": "3y", "5y": "5y"}[period]
-                bm_hist = yf.Ticker("^GSPC").history(period=yf_period).sort_index()
-                bm_closes = bm_hist["Close"].dropna().tolist()
+                from routers.us_stocks import _tencent_history
+                bm_closes = [c["close"] for c in _tencent_history("SPY", limit * 365 // 252 + 10) if c.get("close")][-limit:]
         except Exception as e:
             logger.warning("Benchmark data failed: %s", e)
 
