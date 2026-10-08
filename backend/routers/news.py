@@ -140,7 +140,7 @@ def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh")
         return ""
     try:
         from openai import OpenAI
-        client = OpenAI(api_key=key, base_url="https://api.deepseek.com", timeout=20)
+        client = OpenAI(api_key=key, base_url="https://api.deepseek.com", timeout=75, max_retries=0)
         joined = "\n".join(f"- {h}" for h in headlines[:10])
         if lang == "en":
             system = ("You are an equity analyst. In ONE sentence (max 30 words), summarise how the following "
