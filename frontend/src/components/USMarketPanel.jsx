@@ -95,9 +95,9 @@ export default function USMarketPanel({ lang }) {
 
       <div>
         <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.mega}</div>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(96px, 1fr))', gap: 8 }}>
           {d.mega_caps.map((q) => (
-            <button key={q.symbol} className="usp-hit usp-tile" onClick={() => openUS(q)} style={{ flex: '0 0 auto', minWidth: 104, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 10, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
+            <button key={q.symbol} className="usp-hit usp-tile" onClick={() => openUS(q)} style={{ minWidth: 0, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 10, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
               <div style={{ fontWeight: 700, fontSize: 14 }}>{q.symbol}</div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</div>
@@ -124,18 +124,23 @@ export default function USMarketPanel({ lang }) {
         </div>
         <div>
           <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.sectors}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
-            {d.sectors.map((x) => {
-              const c = col(x.pct)
-              return (
-                <button key={x.symbol} className="usp-hit usp-tile" onClick={() => openUS({ symbol: x.symbol, name: x.name })} style={{ textAlign: 'left', border: '1px solid transparent', borderRadius: 8, padding: '10px 11px', cursor: 'pointer', color: 'inherit', background: `color-mix(in srgb, ${c} ${Math.round(8 + 22 * Math.abs(x.pct) / maxAbs)}%, var(--bg-tertiary))` }}>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.25, minHeight: 31 }}>{(zh && SECTOR.zh[x.name]) || x.name}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: c, fontVariantNumeric: 'tabular-nums' }}>{pct(x.pct)}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{x.symbol}</div>
-                </button>
-              )
-            })}
-          </div>
+          {/* Diverging bars: zero in the middle, length to scale with the largest move */}
+          {d.sectors.map((x) => {
+            const c = col(x.pct)
+            const w = (Math.abs(x.pct) / maxAbs) * 50
+            return (
+              <button key={x.symbol} className="usp-hit" onClick={() => openUS({ symbol: x.symbol, name: x.name })} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr) 62px', alignItems: 'center', gap: 10, width: '100%', padding: '7px 6px', borderRadius: 6, background: 'none', border: 'none', borderBottom: '1px solid var(--border-primary)', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}>
+                <span style={{ fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {(zh && SECTOR.zh[x.name]) || x.name}<span style={{ marginLeft: 6, fontSize: 11, color: 'var(--text-muted)' }}>{x.symbol}</span>
+                </span>
+                <span style={{ position: 'relative', height: 8, borderRadius: 4, background: 'var(--bg-tertiary)' }}>
+                  <span style={{ position: 'absolute', left: '50%', top: -2, bottom: -2, width: 1, background: 'var(--border-glow)' }} />
+                  <span style={{ position: 'absolute', top: 0, bottom: 0, borderRadius: 4, background: c, width: `${Math.max(w, 1.5)}%`, ...(x.pct >= 0 ? { left: '50%' } : { right: '50%' }) }} />
+                </span>
+                <span style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: c, fontVariantNumeric: 'tabular-nums' }}>{pct(x.pct)}</span>
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>
