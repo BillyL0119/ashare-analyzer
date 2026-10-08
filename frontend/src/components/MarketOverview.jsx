@@ -185,8 +185,8 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
       {/* ── Data source note ── */}
       <div style={{ fontSize: 11, color: '#374151', textAlign: 'center', lineHeight: 1.8 }}>
         {zh
-          ? '数据来源：AkShare · Yahoo Finance · Sina Finance · 实时更新'
-          : 'Data: AkShare · Yahoo Finance · Sina Finance · Real-time updates'}
+          ? '数据来源：AkShare · 腾讯财经 · Sina Finance · 实时更新'
+          : 'Data: AkShare · Tencent Finance · Sina Finance · Real-time updates'}
         <br />
         {zh
           ? '由两名高中生 Billy 和 Frank 合作开发 · 仅供学习用途'

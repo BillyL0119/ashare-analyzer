@@ -17,18 +17,21 @@ const ACCENT      = '#0ea5e9'
 const ACCENT2     = '#8b5cf6'
 
 // Map pct to color (red-neutral-green spectrum)
-function pctColor(pct) {
-  if (pct > 3)   return GREEN_DARK
-  if (pct > 1.5) return GREEN_MID
-  if (pct > 0.3) return GREEN_LIGHT
+function pctColor(pct, cn = false) {
+  const up   = cn ? [RED_DARK, RED_MID, RED_LIGHT]       : [GREEN_DARK, GREEN_MID, GREEN_LIGHT]
+  const down = cn ? [GREEN_LIGHT, GREEN_MID, GREEN_DARK] : [RED_LIGHT, RED_MID, RED_DARK]
+  if (pct > 3)   return up[0]
+  if (pct > 1.5) return up[1]
+  if (pct > 0.3) return up[2]
   if (pct > -0.3) return NEUTRAL
-  if (pct > -1.5) return RED_LIGHT
-  if (pct > -3)  return RED_MID
-  return RED_DARK
+  if (pct > -1.5) return down[0]
+  if (pct > -3)  return down[1]
+  return down[2]
 }
 
-function pctTextColor(pct) {
-  return pct >= 0 ? '#22c55e' : '#ef4444'
+function pctTextColor(pct, cn = false) {
+  const up = cn ? '#ef4444' : '#22c55e', down = cn ? '#22c55e' : '#ef4444'
+  return pct >= 0 ? up : down
 }
 
 function fmt(n) {
@@ -72,7 +75,7 @@ function buildSummary(sectors, period, zh) {
 
 // ── Treemap chart ─────────────────────────────────────────────────────────────
 
-function Treemap({ sectors, lang }) {
+function Treemap({ sectors, lang, cn }) {
   const t = T[lang] || T.en
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
@@ -84,8 +87,7 @@ function Treemap({ sectors, lang }) {
       pct:   s.today_pct,
       pct5d: s.pct_5d,
       vol:   s.vol_ratio,
-      itemStyle: { color: pctColor(s.today_pct) },
-      label:  { show: true, formatter: '{name|\n}{pct|}' },
+      itemStyle: { color: pctColor(s.today_pct, cn) },
     }))
 
     return {
@@ -98,7 +100,7 @@ function Treemap({ sectors, lang }) {
         formatter: (p) => {
           const d = p.data
           return `<b>${p.name}</b><br/>
-今日 / Today: <b style="color:${pctColor(d.pct)}">${fmt(d.pct)}</b><br/>
+今日 / Today: <b style="color:${pctColor(d.pct, cn)}">${fmt(d.pct)}</b><br/>
 近5日 / 5-day: ${fmt(d.pct5d)}<br/>
 量比 / Vol ratio: ${d.vol?.toFixed(2) ?? 'N/A'}`
         },
@@ -108,14 +110,15 @@ function Treemap({ sectors, lang }) {
         roam: false,
         nodeClick: false,
         breadcrumb: { show: false },
-        width: '100%',
-        height: '100%',
+        left: 0, top: 0, right: 0, bottom: 0,
         data,
+        visibleMin: 600,
         label: {
           show: true,
           color: '#fff',
           fontSize: 11,
           fontWeight: 600,
+          overflow: 'truncate',
           formatter: (p) => {
             const pct = p.data.pct
             const sign = pct >= 0 ? '+' : ''
@@ -129,11 +132,12 @@ function Treemap({ sectors, lang }) {
         levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 } }],
       }],
     }
-  }, [sectors, lang, theme])
+  }, [sectors, lang, theme, cn])
 
   return (
     <ReactECharts
       option={option}
+      notMerge
       style={{ height: 360, width: '100%' }}
       opts={{ renderer: 'canvas' }}
     />
@@ -142,7 +146,7 @@ function Treemap({ sectors, lang }) {
 
 // ── Bar chart ranking ─────────────────────────────────────────────────────────
 
-function BarRanking({ sectors, period, lang }) {
+function BarRanking({ sectors, period, lang, cn }) {
   const t = T[lang] || T.en
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
@@ -153,7 +157,7 @@ function BarRanking({ sectors, period, lang }) {
   const option = useMemo(() => {
     const names  = sorted.map(s => zh ? s.name_zh : s.name_en)
     const values = sorted.map(s => s[key])
-    const colors = values.map(v => pctColor(v))
+    const colors = values.map(v => pctColor(v, cn))
 
     return {
       backgroundColor: 'transparent',
@@ -348,9 +352,9 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             borderRadius: 12, padding: '14px', marginBottom: 14, overflow: 'hidden',
           }}>
             {view === 'treemap' ? (
-              <Treemap sectors={sectors} lang={lang} />
+              <Treemap sectors={sectors} lang={lang} cn={market === 'cn'} />
             ) : (
-              <BarRanking sectors={sectors} period={period} lang={lang} />
+              <BarRanking sectors={sectors} period={period} lang={lang} cn={market === 'cn'} />
             )}
           </div>
 
@@ -358,13 +362,13 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {view === 'treemap' && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 14, flexWrap: 'wrap' }}>
               {[
-                [GREEN_DARK,  '>+3%'],
-                [GREEN_MID,   '+1.5~3%'],
-                [GREEN_LIGHT, '+0.3~1.5%'],
-                [NEUTRAL,     '±0.3%'],
-                [RED_LIGHT,   '-0.3~1.5%'],
-                [RED_MID,     '-1.5~3%'],
-                [RED_DARK,    '<-3%'],
+                [pctColor(4, market === 'cn'),    '>+3%'],
+                [pctColor(2, market === 'cn'),    '+1.5~3%'],
+                [pctColor(1, market === 'cn'),    '+0.3~1.5%'],
+                [NEUTRAL,                          '±0.3%'],
+                [pctColor(-1, market === 'cn'),   '-0.3~1.5%'],
+                [pctColor(-2, market === 'cn'),   '-1.5~3%'],
+                [pctColor(-4, market === 'cn'),   '<-3%'],
               ].map(([color, label]) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <div style={{ width: 14, height: 10, borderRadius: 2, background: color }} />
@@ -419,20 +423,20 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <div style={{
                         width: 4, height: 16, borderRadius: 2,
-                        background: pctColor(s[pctKey]),
+                        background: pctColor(s[pctKey], market === 'cn'),
                         flexShrink: 0,
                       }} />
                       <span style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: i < 3 ? 700 : 400 }}>
                         {zh ? s.name_zh : (s[`name_${lang}`] || s.name_en)}
                       </span>
                     </div>
-                    <span style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: pctTextColor(s.today_pct) }}>
+                    <span style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: pctTextColor(s.today_pct, market === 'cn') }}>
                       {fmt(s.today_pct)}
                     </span>
-                    <span style={{ textAlign: 'right', fontSize: 12, color: pctTextColor(s.pct_5d) }}>
+                    <span style={{ textAlign: 'right', fontSize: 12, color: pctTextColor(s.pct_5d, market === 'cn') }}>
                       {fmt(s.pct_5d)}
                     </span>
-                    <span style={{ textAlign: 'right', fontSize: 12, color: pctTextColor(s.pct_20d) }}>
+                    <span style={{ textAlign: 'right', fontSize: 12, color: pctTextColor(s.pct_20d, market === 'cn') }}>
                       {fmt(s.pct_20d)}
                     </span>
                     <span style={{ textAlign: 'right', fontSize: 11, color: s.vol_ratio > 1.2 ? GREEN_MID : s.vol_ratio < 0.8 ? RED_MID : 'var(--text-muted)' }}>

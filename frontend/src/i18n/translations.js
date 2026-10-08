@@ -1,7 +1,7 @@
 export const T = {
   zh: {
     appTitle: 'Best Friend Stock',
-    dataSource: '数据来源: AkShare / Yahoo Finance',
+    dataSource: '数据来源: AkShare / Tencent Finance',
     marketCN: 'A股',
     marketUS: '美股',
     from: '起始:',
@@ -405,7 +405,7 @@ export const T = {
     earLoading: '加载财报数据...',
     earLongLoad: '首次加载需获取实时数据，约需15秒',
     earEmpty: '未来30天暂无即将发布的财报',
-    earFooter: '点击公司可加载到主分析页 · 美股数据来源：Yahoo Finance · A股数据来源：东方财富',
+    earFooter: '点击公司可加载到主分析页 · 美股数据来源：Nasdaq · A股数据来源：东方财富',
     earToday: '今天', earTomorrow: '明天', earCompanies: '家',
     // ComparePanel tabs
     earningsTab: '财报日历', globalNews: '全球新闻',
@@ -490,7 +490,7 @@ export const T = {
   },
   en: {
     appTitle: 'Best Friend Stock',
-    dataSource: 'Data: AkShare / Yahoo Finance',
+    dataSource: 'Data: AkShare / Tencent Finance',
     marketCN: 'A-Share',
     marketUS: 'US Stock',
     from: 'From:',
@@ -894,7 +894,7 @@ export const T = {
     earLoading: 'Loading earnings data...',
     earLongLoad: 'First load fetches live data, ~15s',
     earEmpty: 'No upcoming earnings in the next 30 days',
-    earFooter: 'Click company to load analysis · US: Yahoo Finance · A-Share: EastMoney',
+    earFooter: 'Click company to load analysis · US: Nasdaq · A-Share: EastMoney',
     earToday: 'Today', earTomorrow: 'Tomorrow', earCompanies: 'companies',
     // ComparePanel tabs
     earningsTab: 'Earnings Calendar', globalNews: 'Global News',
@@ -979,7 +979,7 @@ export const T = {
   },
   ja: {
     appTitle: 'Best Friend Stock',
-    dataSource: 'データ: AkShare / Yahoo Finance',
+    dataSource: 'データ: AkShare / Tencent Finance',
     marketCN: 'A株',
     marketUS: '米国株',
     from: '開始:',
@@ -1383,7 +1383,7 @@ export const T = {
     earLoading: '決算データ読込中...',
     earLongLoad: '初回はリアルタイム取得 (~15秒)',
     earEmpty: '30日間に決算なし',
-    earFooter: '企業をクリックで分析 · 米: Yahoo Finance · 中: EastMoney',
+    earFooter: '企業をクリックで分析 · 米: Nasdaq · 中: EastMoney',
     earToday: '今日', earTomorrow: '明日', earCompanies: '社',
     // ComparePanel tabs
     earningsTab: '決算カレンダー', globalNews: 'グローバルニュース',
@@ -1468,7 +1468,7 @@ export const T = {
   },
   ko: {
     appTitle: 'Best Friend Stock',
-    dataSource: '데이터: AkShare / Yahoo Finance',
+    dataSource: '데이터: AkShare / Tencent Finance',
     marketCN: 'A주',
     marketUS: '미국주식',
     from: '시작:',
@@ -1872,7 +1872,7 @@ export const T = {
     earLoading: '실적 로딩 중...',
     earLongLoad: '첫 로딩은 실시간 취득 (~15초)',
     earEmpty: '30일간 실적 발표 없음',
-    earFooter: '기업 클릭으로 분석 · 미: Yahoo Finance · A주: EastMoney',
+    earFooter: '기업 클릭으로 분석 · 미: Nasdaq · A주: EastMoney',
     earToday: '오늘', earTomorrow: '내일', earCompanies: '개사',
     // ComparePanel tabs
     earningsTab: '실적 달력', globalNews: '글로벌 뉴스',
@@ -1957,7 +1957,7 @@ export const T = {
   },
   fr: {
     appTitle: 'Best Friend Stock',
-    dataSource: 'Données: AkShare / Yahoo Finance',
+    dataSource: 'Données: AkShare / Tencent Finance',
     marketCN: 'Actions A',
     marketUS: 'Bourse US',
     from: 'Du:',
@@ -2361,7 +2361,7 @@ export const T = {
     earLoading: 'Chargement résultats...',
     earLongLoad: 'Premier chargement en temps réel (~15s)',
     earEmpty: 'Aucun résultat prévu dans les 30 jours',
-    earFooter: 'Cliquez pour analyser · US: Yahoo Finance · A-Share: EastMoney',
+    earFooter: 'Cliquez pour analyser · US: Nasdaq · A-Share: EastMoney',
     earToday: "Aujourd'hui", earTomorrow: 'Demain', earCompanies: 'sociétés',
     // ComparePanel tabs
     earningsTab: 'Cal. résultats', globalNews: 'Actualités mondiales',
