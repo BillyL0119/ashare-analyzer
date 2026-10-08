@@ -132,20 +132,29 @@ def _ai_sentiment(title: str, content: str = "") -> dict:
     return result
 
 
-def _ai_overall_summary(stock_name: str, headlines: list[str]) -> str:
-    """Generate one-sentence overall sentiment summary via Claude."""
+def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh") -> str:
+    """One-sentence overall sentiment summary via DeepSeek (same provider as the AI teacher). "" on any failure."""
+    key = os.environ.get("DEEPSEEK_API_KEY", "")
+    if not key or not headlines:
+        return ""
     try:
-        import anthropic
-        client = anthropic.Anthropic()
+        from openai import OpenAI
+        client = OpenAI(api_key=key, base_url="https://api.deepseek.com", timeout=20)
         joined = "\n".join(f"- {h}" for h in headlines[:10])
-        msg = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=100,
-            system="你是A股投资分析师，请用一句话总结以下新闻对该股票的整体舆情影响（30字以内）：",
-            messages=[{"role": "user", "content": f"股票：{stock_name}\n新闻标题：\n{joined}"}],
+        if lang == "en":
+            system = ("You are an equity analyst. In ONE sentence (max 30 words), summarise how the following "
+                      "headlines are likely to affect sentiment around this stock. No preamble.")
+            user = f"Stock: {stock_name}\nHeadlines:\n{joined}"
+        else:
+            system = "你是投资分析师，请用一句话总结以下新闻对该股票的整体舆情影响（30字以内）："
+            user = f"股票：{stock_name}\n新闻标题：\n{joined}"
+        resp = client.chat.completions.create(
+            model="deepseek-chat", max_tokens=100,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
         )
-        return msg.content[0].text.strip()
-    except Exception:
+        return (resp.choices[0].message.content or "").strip()
+    except Exception as exc:
+        logger.debug("AI summary failed: %s", exc)
         return ""
 
 
@@ -1098,7 +1107,7 @@ def get_news(symbol: str, market: str = Query("cn")):
 
             def _fill_summary(resp=response, name=stock_name, titles=[n["title"] for n in processed]):
                 try:
-                    text = _ai_overall_summary(name, titles)
+                    text = _ai_overall_summary(name, titles, "en")
                     if text:
                         resp["overall"]["ai_summary"] = text
                 except Exception as exc:
