@@ -3,6 +3,8 @@ Multi-Exam Economics Study Center — /api/study/*
 Supports: A-Level (Cambridge 9708), IGCSE (Cambridge 0455), AP Macroeconomics, AP Microeconomics, IB Economics SL/HL
 """
 
+import logging
+from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
@@ -13,6 +15,7 @@ from .igcse_translations import IGCSE_TRANSLATIONS
 from .ib_translations import IB_TRANSLATIONS
 
 router = APIRouter()
+logger = logging.getLogger("study")
 
 
 def _inject_ap_macro_translations():
@@ -1644,27 +1647,65 @@ ECONOMIC_EVENTS = [
 _events_price_cache: dict = {}
 
 
+def _index_history(sym: str):
+    """Daily closes (date-indexed pandas Series) for an index, or None. Free sources only; yfinance is
+    rate limited from the server, so it is the last resort.
+      000001.SS : Sina via akshare (from 1990)
+      ^GSPC     : Sina via akshare (from 2004; nothing free earlier)
+      ^IXIC     : Nasdaq's public index history API (full history), Sina as fallback
+    """
+    import pandas as pd
+    try:
+        import akshare as ak
+        if sym == "000001.SS":
+            df = ak.stock_zh_index_daily(symbol="sh000001")
+            return pd.Series(df["close"].values, index=pd.to_datetime(df["date"])).dropna()
+        if sym == "^GSPC":
+            df = ak.index_us_stock_sina(symbol=".INX")
+            return pd.Series(df["close"].values, index=pd.to_datetime(df["date"])).dropna()
+        if sym == "^IXIC":
+            import requests
+            r = requests.get(
+                "https://api.nasdaq.com/api/quote/COMP/historical",
+                params={"assetclass": "index", "fromdate": "1990-01-01", "todate": datetime.now().strftime("%Y-%m-%d"), "limit": 9999},
+                headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
+            rows = ((r.json().get("data") or {}).get("tradesTable") or {}).get("rows") or []
+            if rows:
+                return pd.Series(
+                    [float(x["close"].replace(",", "")) for x in rows],
+                    index=pd.to_datetime([x["date"] for x in rows], format="%m/%d/%Y"),
+                ).sort_index().dropna()
+            df = ak.index_us_stock_sina(symbol=".IXIC")
+            return pd.Series(df["close"].values, index=pd.to_datetime(df["date"])).dropna()
+    except Exception as exc:
+        logger.warning("event index %s failed: %s", sym, exc)
+    return None
+
+
 def _fetch_event_prices(event: dict) -> dict:
-    """Fetch and normalise price data for an event's tickers using yfinance."""
-    import yfinance as yf
+    """Normalised (=100 at start) close series for an event's tickers."""
+    import pandas as pd
     prices = {}
     for t in event["tickers"]:
         sym = t["symbol"]
         try:
-            df = yf.download(sym, start=event["price_start"], end=event["price_end"],
-                             auto_adjust=True, progress=False)
-            if df.empty:
+            series = _index_history(sym)
+            if series is None:
+                import yfinance as yf          # last resort
+                df = yf.download(sym, start=event["price_start"], end=event["price_end"], auto_adjust=True, progress=False)
+                series = df["Close"].squeeze().dropna() if not df.empty else None
+            if series is None or len(series) == 0:
                 prices[sym] = []
                 continue
-            close_col = "Close"
-            series = df[close_col].dropna()
-            # Normalise to 100 at start so both indices are comparable
+            series = series.sort_index()
+            series = series[(series.index >= pd.Timestamp(event["price_start"])) & (series.index <= pd.Timestamp(event["price_end"]))]
+            if len(series) < 2:
+                prices[sym] = []                # the source does not reach back this far
+                continue
             base = float(series.iloc[0])
-            prices[sym] = [
-                {"date": str(idx.date()), "value": round(float(v) / base * 100, 2)}
-                for idx, v in series.items()
-            ]
-        except Exception:
+            prices[sym] = [{"date": str(idx.date()), "value": round(float(v) / base * 100, 2)} for idx, v in series.items()]
+        except Exception as exc:
+            logger.warning("event prices %s failed: %s", sym, exc)
             prices[sym] = []
     return prices
 
@@ -1696,5 +1737,9 @@ def get_event_prices(event_id: str):
     if event is None:
         raise HTTPException(status_code=404, detail=f"Event '{event_id}' not found")
     if event_id not in _events_price_cache:
-        _events_price_cache[event_id] = _fetch_event_prices(event)
+        fetched = _fetch_event_prices(event)
+        if any(fetched.values()):
+            _events_price_cache[event_id] = fetched
+        else:
+            return {"event_id": event_id, "prices": fetched, "tickers": event["tickers"]}
     return {"event_id": event_id, "prices": _events_price_cache[event_id], "tickers": event["tickers"]}
