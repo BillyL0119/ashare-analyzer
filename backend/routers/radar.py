@@ -71,20 +71,29 @@ def _is_us(symbol: str) -> bool:
     return not symbol.isdigit()
 
 
-def _score_from_series(pe, pb, closes, volumes, mkt_closes) -> dict:
-    """Shared scoring: same formulas for both markets."""
+def _score_from_series(pe, pb, closes, volumes, mkt_closes, us: bool = False) -> dict:
+    """Shared scoring. US ranges are wider: growth stocks routinely trade at PE 30-60 and PB 10+."""
     scores: dict[str, int] = {}
-    scores["valuation"] = round(_clamp((80 - pe) / 75 * 100)) if pe and pe > 0 else 50
-    scores["pb"] = round(_clamp((15 - pb) / 14.5 * 100)) if pb and pb > 0 else 50
+    if us:
+        # PE 10 -> 100, PE 70 -> 0 (linear); PB on a log scale: 1 -> 100, 40 -> 0
+        scores["valuation"] = round(_clamp((70 - pe) / 60 * 100)) if pe and pe > 0 else 50
+        scores["pb"] = round(_clamp((1 - math.log(max(pb, 1.0)) / math.log(40)) * 100)) if pb and pb > 0 else 50
+    else:
+        scores["valuation"] = round(_clamp((80 - pe) / 75 * 100)) if pe and pe > 0 else 50
+        scores["pb"] = round(_clamp((15 - pb) / 14.5 * 100)) if pb and pb > 0 else 50
     if len(closes) < 20:
         scores.update({"momentum": 50, "stability": 50, "volume": 50, "similarity": 50})
         return scores
     arr = np.array(closes, dtype=float)
     rets = np.diff(arr) / arr[:-1]
     total_ret = (closes[-1] - closes[0]) / closes[0] * 100
-    scores["momentum"] = round(_clamp((total_ret + 50) / 150 * 100))
     ann_vol = float(np.std(rets) * np.sqrt(252) * 100)
-    scores["stability"] = round(_clamp((80 - ann_vol) / 80 * 100))
+    if us:
+        scores["momentum"] = round(_clamp((total_ret + 40) / 160 * 100))      # -40% .. +120%
+        scores["stability"] = round(_clamp((70 - ann_vol) / 55 * 100))        # vol 15% -> 100, 70% -> 0
+    else:
+        scores["momentum"] = round(_clamp((total_ret + 50) / 150 * 100))
+        scores["stability"] = round(_clamp((80 - ann_vol) / 80 * 100))
     if len(volumes) >= 30:
         recent_avg = float(np.mean(volumes[-30:]))
         full_avg = float(np.mean(volumes)) or recent_avg
@@ -123,7 +132,7 @@ def _compute_us(symbol: str) -> tuple:
         name = (us_quotes([symbol]).get(symbol) or {}).get("name") or symbol
     except Exception:
         pass
-    return _score_from_series(_safe(fund.get("pe")), _safe(fund.get("pb")), closes, volumes, mkt), name
+    return _score_from_series(_safe(fund.get("pe")), _safe(fund.get("pb")), closes, volumes, mkt, us=True), name
 
 
 def _compute(symbol: str) -> dict:
