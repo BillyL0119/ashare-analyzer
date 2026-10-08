@@ -45,6 +45,8 @@ struct StockDetailView: View {
                     quoteGrid(q)
                 }
 
+                MonteCarloSection(code: code, market: market)
+
                 StockScoreSection(symbol: code)
 
                 SimilarStocksSection(code: code, market: market)

@@ -220,3 +220,25 @@ final class SimilarViewModel: ObservableObject {
         isLoading = false
     }
 }
+
+@MainActor
+final class MonteCarloViewModel: ObservableObject {
+    @Published var result: MonteCarloResult?
+    @Published var horizon = 126          // trading days
+    @Published var isLoading = false
+    @Published var failed = false
+    private let code: String
+
+    init(code: String) { self.code = code }
+
+    func run() async {
+        isLoading = true
+        failed = false
+        do {
+            result = try await APIClient.shared.post("/simulation/\(code)", body: MonteCarloRequest(days: horizon, simulations: 1000))
+        } catch {
+            failed = true
+        }
+        isLoading = false
+    }
+}

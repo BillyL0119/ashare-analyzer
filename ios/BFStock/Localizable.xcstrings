@@ -523,6 +523,35 @@
         }
       }
     },
+    "3个月": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3M"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 mois"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3か月"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3개월"
+          }
+        }
+      }
+    },
     "52周最低": {
       "extractionState": "manual",
       "localizations": {
@@ -610,6 +639,35 @@
         }
       }
     },
+    "6个月": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6M"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6 mois"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6か月"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6개월"
+          }
+        }
+      }
+    },
     "90所全球顶尖商学院，含QS排名、学费与申请要求": {
       "extractionState": "manual",
       "localizations": {
@@ -635,6 +693,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "QS 순위·학비·지원 요건이 담긴 세계 90개 대학"
+          }
+        }
+      }
+    },
+    "95%最差价": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "95% worst case"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pire cas 95 %"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "95%最悪値"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "95% 최악 가격"
           }
         }
       }
@@ -1558,6 +1645,35 @@
         }
       }
     },
+    "上涨概率": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chance of gain"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probabilité de hausse"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上昇確率"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상승 확률"
+          }
+        }
+      }
+    },
     "上证指数": {
       "extractionState": "manual",
       "localizations": {
@@ -1699,6 +1815,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "전공 분야"
+          }
+        }
+      }
+    },
+    "中位价格": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Median price"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prix médian"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中央値"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중앙 가격"
           }
         }
       }
@@ -3439,6 +3584,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "부동산"
+          }
+        }
+      }
+    },
+    "基于历史收益率和波动率的随机模拟，只是一种可能性的范围，不构成预测或投资建议": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Random simulation from historical returns and volatility: a range of possibilities, not a forecast or investment advice"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simulation aléatoire fondée sur les rendements et la volatilité passés : une fourchette de possibles, ni une prévision ni un conseil"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "過去の収益率とボラティリティに基づく乱数シミュレーション。可能性の幅であり、予測や投資助言ではありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "과거 수익률과 변동성에 기반한 무작위 시뮬레이션입니다. 가능성의 범위일 뿐 예측이나 투자 조언이 아닙니다"
           }
         }
       }
@@ -5328,6 +5502,35 @@
         }
       }
     },
+    "月": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "m"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "m"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "か月"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개월"
+          }
+        }
+      }
+    },
     "服务器错误": {
       "extractionState": "manual",
       "localizations": {
@@ -6078,6 +6281,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "현재가"
+          }
+        }
+      }
+    },
+    "现在": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auj."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재"
           }
         }
       }
@@ -7387,6 +7619,35 @@
         }
       }
     },
+    "蒙特卡洛模拟": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monte Carlo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monte-Carlo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "モンテカルロ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "몬테카를로"
+          }
+        }
+      }
+    },
     "薪资参考": {
       "extractionState": "manual",
       "localizations": {
@@ -8282,6 +8543,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "예상 EPS %@"
+          }
+        }
+      }
+    },
+    "预期收益": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expected return"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rendement attendu"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期待収益"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기대 수익"
           }
         }
       }

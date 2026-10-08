@@ -188,3 +188,28 @@ struct SimilarResponse: Decodable {
     let industry: String?
     let results: [SimilarPeer]
 }
+
+// MARK: - Monte Carlo (/simulation/{code})
+
+struct MonteCarloStats: Decodable {
+    let expectedReturn: Double
+    let stdReturn: Double
+    let probGain: Double
+    let var95Price: Double
+    let var95Pct: Double
+    let minPrice: Double
+    let maxPrice: Double
+    let medianPrice: Double
+}
+
+struct MonteCarloResult: Decodable {
+    let currentPrice: Double
+    let days: Int
+    let paths: [String: [Double]]     // "p10" ... "p90"
+    let stats: MonteCarloStats
+}
+
+struct MonteCarloRequest: Encodable {
+    let days: Int
+    let simulations: Int
+}
