@@ -39,17 +39,21 @@ struct USMarketSection: View {
 
     private func overviewCard(_ ov: USOverview) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 6) {
-                Circle().fill(sessionColor(ov.session.state)).frame(width: 6, height: 6)
-                Text("美股大盘").font(.subheadline.weight(.semibold))
-                Text(sessionLabel(ov.session))
-                    .font(.caption2.weight(.medium))
-                    .padding(.horizontal, 7).padding(.vertical, 3)
-                    .background(DS.surfaceHi, in: Capsule())
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text(ov.session.etTime.suffix(5) + " ET")
-                    .font(.system(.caption, design: .rounded)).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    Text("美股大盘").font(.headline)
+                    Spacer()
+                    HStack(spacing: 5) {
+                        Circle().fill(sessionColor(ov.session.state)).frame(width: 6, height: 6)
+                        Text(sessionState(ov.session)).font(.caption.weight(.semibold))
+                    }
+                    .padding(.horizontal, 9).padding(.vertical, 4)
+                    .background(sessionColor(ov.session.state).opacity(0.14), in: Capsule())
+                    .foregroundStyle(sessionColor(ov.session.state))
+                }
+                Text([ov.session.state == "regular" ? nil : countdown(ov.session.nextOpenUtc), String(ov.session.etTime.suffix(5)) + " ET"]
+                        .compactMap { $0 }.joined(separator: " · "))
+                    .font(.system(.caption, design: .rounded)).monospacedDigit().foregroundStyle(.secondary)
             }
             if let hero = ov.indices.first {
                 IndexTileUS(quote: hero, style: .hero)
@@ -247,13 +251,12 @@ struct USMarketSection: View {
         switch s { case "regular": return Theme.usUp; case "pre", "post": return .orange; default: return .secondary }
     }
 
-    private func sessionLabel(_ s: USSession) -> String {
+    private func sessionState(_ s: USSession) -> String {
         switch s.state {
         case "regular": return L("交易中")
-        case "pre", "post":
-            return (s.state == "pre" ? L("盘前交易") : L("盘后交易")) + countdown(s.nextOpenUtc).map { " · " + $0 }.orEmpty
-        default:
-            return L("休市") + countdown(s.nextOpenUtc).map { " · " + $0 }.orEmpty
+        case "pre": return L("盘前交易")
+        case "post": return L("盘后交易")
+        default: return L("休市")
         }
     }
 
@@ -266,9 +269,6 @@ struct USMarketSection: View {
     }
 }
 
-private extension Optional where Wrapped == String {
-    var orEmpty: String { self ?? "" }
-}
 
 private struct IndexTileUS: View {
     enum Style { case hero, compact }

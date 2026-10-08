@@ -275,6 +275,7 @@ T = {
     "中位价格": ("Median price", "中央値", "중앙 가격", "Prix médian"),
     "95%最差价": ("95% worst case", "95%最悪値", "95% 최악 가격", "Pire cas 95 %"),
     "基于历史收益率和波动率的随机模拟，只是一种可能性的范围，不构成预测或投资建议": ("Random simulation from historical returns and volatility: a range of possibilities, not a forecast or investment advice", "過去の収益率とボラティリティに基づく乱数シミュレーション。可能性の幅であり、予測や投資助言ではありません", "과거 수익률과 변동성에 기반한 무작위 시뮬레이션입니다. 가능성의 범위일 뿐 예측이나 투자 조언이 아닙니다", "Simulation aléatoire fondée sur les rendements et la volatilité passés : une fourchette de possibles, ni une prévision ni un conseil"),
+    "刚刚": ("Just now", "たった今", "방금", "À l'instant"),
     "美股热门": ("US Movers", "米国株ランキング", "미국 주식 순위", "Mouvements US"),
     "涨幅榜": ("Top gainers", "値上がり", "상승률", "Plus fortes hausses"),
     "跌幅榜": ("Top losers", "値下がり", "하락률", "Plus fortes baisses"),

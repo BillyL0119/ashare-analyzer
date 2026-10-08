@@ -2921,6 +2921,35 @@
         }
       }
     },
+    "刚刚": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just now"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À l'instant"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "たった今"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "방금"
+          }
+        }
+      }
+    },
     "创业板指": {
       "extractionState": "manual",
       "localizations": {
