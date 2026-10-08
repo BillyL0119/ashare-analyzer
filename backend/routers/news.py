@@ -1075,12 +1075,12 @@ def get_news(symbol: str, market: str = Query("cn")):
             total = len(processed)
             score = round((pos - neg) / total, 3) if total > 0 else 0.0
 
-            ai_summary = _ai_overall_summary(stock_name, [n["title"] for n in processed])
-            if not ai_summary:
-                ai_summary = (
-                    f"Overall sentiment is {'positive' if pos > neg else 'negative' if neg > pos else 'neutral'}. "
-                    f"{total} articles found."
-                )
+            # Answer now with the keyword summary; the LLM summary (several seconds) is filled in
+            # from a background thread and shows up on the next request (same dict lives in the cache).
+            ai_summary = (
+                f"Overall sentiment is {'positive' if pos > neg else 'negative' if neg > pos else 'neutral'}. "
+                f"{total} articles found."
+            )
 
             response = {
                 "symbol": sym_upper,
@@ -1095,6 +1095,17 @@ def get_news(symbol: str, market: str = Query("cn")):
                 },
             }
             _result_cache[cache_key] = (now, response)
+
+            def _fill_summary(resp=response, name=stock_name, titles=[n["title"] for n in processed]):
+                try:
+                    text = _ai_overall_summary(name, titles)
+                    if text:
+                        resp["overall"]["ai_summary"] = text
+                except Exception as exc:
+                    logger.debug("background AI summary failed for %s: %s", name, exc)
+
+            import threading as _th
+            _th.Thread(target=_fill_summary, daemon=True, name="news-ai-summary").start()
             return response
 
         # ── CN market (original logic) ──
