@@ -33,13 +33,23 @@ def run_simulation(code: str, body: SimulationRequest):
     end = datetime.now().strftime("%Y%m%d")
     start = (datetime.now() - timedelta(days=365 * 3)).strftime("%Y%m%d")
 
-    df = get_stock_history(code, "daily", start, end, "qfq")
-    if df is None or df.empty:
-        df = get_stock_history(code, "daily", "19900101", end, "qfq")
-    if df is None or df.empty:
-        raise HTTPException(status_code=404, detail=f"{code} 暂无数据")
-
-    close = df["close"].values
+    if code.isdigit():
+        df = get_stock_history(code, "daily", start, end, "qfq")
+        if df is None or df.empty:
+            df = get_stock_history(code, "daily", "19900101", end, "qfq")
+        if df is None or df.empty:
+            raise HTTPException(status_code=404, detail=f"{code} 暂无数据")
+        close = df["close"].values
+    else:
+        # US tickers: Tencent kline (the A-share history service has no US data)
+        from routers.us_stocks import _tencent_history
+        sym = code.upper().replace("-", ".")
+        if len(sym) > 10 or not sym.replace(".", "").isalnum():
+            raise HTTPException(status_code=404, detail=f"{code} 暂无数据")
+        candles = _tencent_history(sym, 365 * 3)
+        if not candles:
+            raise HTTPException(status_code=404, detail=f"{code} 暂无数据")
+        close = np.array([c["close"] for c in candles if c.get("close")], dtype=float)
     if len(close) < 10:
         raise HTTPException(status_code=400, detail="历史数据不足，无法进行模拟")
 
