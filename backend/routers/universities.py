@@ -177,9 +177,16 @@ async def interview_report(body: IvReportBody):
     user_msg = f"以下是完整的模拟面试记录：\n\n{transcript}\n\n请生成评估报告。"
     return _stream_deepseek(_report_system(body.profile), [{"role": "user", "content": user_msg}])
 
+_uni_cache: dict = {}
+
 def load_universities():
+    mtime = os.path.getmtime(DATA_PATH)
+    if _uni_cache.get("mtime") == mtime:
+        return _uni_cache["data"]
     with open(DATA_PATH, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        data = json.load(f)
+    _uni_cache.update({"data": data, "mtime": mtime})
+    return data
 
 
 @router.get('')

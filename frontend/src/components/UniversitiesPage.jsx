@@ -702,7 +702,8 @@ function SchoolInput({ value, onChange, unis }) {
           borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
           fontSize: 13, outline: 'none',
         }}
-        onFocus_real={e => { e.target.style.borderColor = BLUE }}
+        onFocus={e => { e.target.style.borderColor = BLUE }}
+        onBlur={e => { e.target.style.borderColor = 'var(--border-primary)' }}
       />
       {open && suggestions.length > 0 && (
         <div style={{
@@ -1447,8 +1448,9 @@ function Hero({ lang, stats }) {
 }
 
 // ── Sticky filters ────────────────────────────────────────────────────────────
-function StickyFilters({ lang, filters, onChange }) {
+function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
   const t = lang === 'zh'
+  const hasFilters = filters.region || filters.language || filters.specialty || filters.search
 
   const pill = (active) => ({
     padding: '5px 14px', borderRadius: 20, border: 'none',
@@ -1529,10 +1531,42 @@ function StickyFilters({ lang, filters, onChange }) {
           {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
 
-        {/* Count */}
-        <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>
-          {/* filled in parent */}
-        </span>
+        {/* Sort */}
+        <select
+          value={filters.sort}
+          onChange={e => onChange({ ...filters, sort: e.target.value })}
+          style={{
+            background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+            borderRadius: 8, color: 'var(--text-muted)',
+            padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
+          }}
+        >
+          <option value="rank">{t ? '按 QS 排名' : 'Sort: QS Rank'}</option>
+          <option value="name">{t ? '按名称 A→Z' : 'Sort: Name A→Z'}</option>
+        </select>
+
+        {/* Count + clear */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+          {typeof shownCount === 'number' && (
+            <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+              {t ? `${shownCount} / ${totalCount} 所` : `${shownCount} / ${totalCount}`}
+            </span>
+          )}
+          {hasFilters && (
+            <button
+              onClick={() => onChange({ region: '', language: '', specialty: '', search: '', sort: filters.sort })}
+              style={{
+                padding: '4px 12px', borderRadius: 20, border: `1px solid var(--border-primary)`,
+                background: 'transparent', color: 'var(--text-muted)',
+                fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+            >
+              {t ? '清除筛选' : 'Clear'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -1545,7 +1579,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   const [stats,    setStats]    = useState(null)
   const [loading,  setLoading]  = useState(true)
   const [selected, setSelected] = useState(null)
-  const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '' })
+  const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '', sort: 'rank' })
 
   // Fetch all data once — split into two independent fetches so a stats
   // failure never prevents the main school list from loading.
@@ -1584,8 +1618,11 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         u.country.toLowerCase().includes(kw)
       )
     }
-    // Sort by QS rank ascending; schools without a rank go to the end
-    list = [...list].sort((a, b) => (a.qs_rank || 9999) - (b.qs_rank || 9999))
+    if (filters.sort === 'name') {
+      list = [...list].sort((a, b) => a.name.localeCompare(b.name))
+    } else {
+      list = [...list].sort((a, b) => (a.qs_rank || 9999) - (b.qs_rank || 9999))
+    }
     return list
   }, [allUnis, filters])
 
@@ -1615,14 +1652,13 @@ export default function UniversitiesPage({ lang = 'zh' }) {
 
         <InterviewEntryCard lang={lang} onOpen={() => setShowInterview(true)} />
 
-        <StickyFilters lang={lang} filters={filters} onChange={setFilters} />
-
-        {/* Result count */}
-        {!loading && (
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16, textAlign: 'right' }}>
-            {t ? `显示 ${displayed.length} / ${allUnis.length} 所学校` : `Showing ${displayed.length} of ${allUnis.length} schools`}
-          </div>
-        )}
+        <StickyFilters
+          lang={lang}
+          filters={filters}
+          onChange={setFilters}
+          totalCount={allUnis.length}
+          shownCount={loading ? undefined : displayed.length}
+        />
 
         {/* Grid */}
         {loading ? (
