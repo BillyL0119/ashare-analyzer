@@ -489,6 +489,285 @@ function UniModal({ uni, lang, onClose }) {
   )
 }
 
+// ── Compare rows config ────────────────────────────────────────────────────────
+const COMPARE_ROWS = [
+  { key: 'location',    label: 'Location',       label_cn: '地点',
+    fmt: (u) => `${countryFlag(u.country)} ${u.city}` },
+  { key: 'language',    label: 'Language',       label_cn: '授课语言',
+    fmt: (u) => u.language === 'english' ? 'English' : 'Bilingual' },
+  { key: 'tuition',     label: 'Tuition',        label_cn: '学费',
+    fmt: (u) => u.tuition_usd || '—' },
+  { key: 'acceptance',  label: 'Acceptance Rate', label_cn: '录取率',
+    fmt: (u) => u.requirements?.acceptance_rate || '—' },
+  { key: 'gmat',        label: 'GMAT Median',    label_cn: 'GMAT 中位数',
+    fmt: (u) => u.requirements?.gmat_median ? String(u.requirements.gmat_median) : '—' },
+  { key: 'toefl_ielts', label: 'TOEFL / IELTS',  label_cn: 'TOEFL / IELTS',
+    fmt: (u) => [
+      u.requirements?.toefl ? `TOEFL ${u.requirements.toefl}+` : null,
+      u.requirements?.ielts ? `IELTS ${u.requirements.ielts}+` : null,
+    ].filter(Boolean).join(' · ') || '—' },
+  { key: 'specialties', label: 'Specialties',    label_cn: '强势专业', fmt: null },
+]
+
+// ── Compare modal ──────────────────────────────────────────────────────────────
+function CompareModal({ schools, lang, onClose }) {
+  const zh = lang === 'zh'
+  useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', h)
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', h); document.body.style.overflow = '' }
+  }, [onClose])
+
+  const colTpl = `160px repeat(${schools.length}, 1fr)`
+
+  return (
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9200,
+        background: 'rgba(0,0,0,0.8)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16, backdropFilter: 'blur(6px)',
+      }}
+    >
+      <div style={{
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-primary)',
+        borderRadius: 18, width: '100%', maxWidth: 960,
+        maxHeight: '90vh',
+        display: 'flex', flexDirection: 'column',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
+        animation: 'bfsPageFadeIn 0.18s ease both',
+        overflow: 'hidden',
+      }}>
+        {/* Header */}
+        <div style={{
+          flexShrink: 0, padding: '18px 24px',
+          borderBottom: '1px solid var(--border-primary)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>
+            {zh ? '学校横向对比' : 'School Comparison'}
+          </div>
+          <button onClick={onClose} style={{
+            background: 'none', border: '1px solid var(--border-primary)',
+            color: 'var(--text-muted)', borderRadius: 8,
+            width: 32, height: 32, cursor: 'pointer', fontSize: 18,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-muted)'; e.currentTarget.style.color = 'var(--text-primary)' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+          >×</button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'auto' }}>
+          {/* Sticky school name headers */}
+          <div style={{
+            display: 'grid', gridTemplateColumns: colTpl,
+            position: 'sticky', top: 0, zIndex: 2,
+            background: 'var(--bg-secondary)',
+            borderBottom: '1px solid var(--border-primary)',
+            padding: '16px 24px', gap: 12,
+          }}>
+            <div />
+            {schools.map(u => (
+              <div key={u.id} style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                gap: 8, textAlign: 'center', padding: '0 4px',
+              }}>
+                <SchoolLogo name={u.name} size={48} />
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>
+                  {u.name}
+                </div>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  {u.qs_rank && (
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
+                      background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
+                      QS #{u.qs_rank}
+                    </span>
+                  )}
+                  {u.business_rank && (
+                    <span style={{
+                      fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 5,
+                      background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33`,
+                      maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {u.business_rank.split('/')[0].trim()}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ padding: '0 24px 24px' }}>
+            {COMPARE_ROWS.map(({ key, label, label_cn, fmt }) => (
+              <div
+                key={key}
+                style={{
+                  display: 'grid', gridTemplateColumns: colTpl, gap: 12,
+                  padding: '12px 0', borderBottom: '1px solid var(--border-primary)',
+                  alignItems: 'start',
+                }}
+              >
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'center' }}>
+                  {zh ? label_cn : label}
+                </div>
+                {schools.map(u => (
+                  <div key={u.id} style={{
+                    fontSize: 13, color: 'var(--text-primary)', fontWeight: 500,
+                    background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                    borderRadius: 8, padding: '8px 12px', minHeight: 38,
+                    display: 'flex', alignItems: 'center',
+                  }}>
+                    {key === 'specialties' ? (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                        {(u.specialties || []).map(s => <TagPill key={s} label={s} />)}
+                      </div>
+                    ) : (
+                      <span style={{ lineHeight: 1.5 }}>{fmt(u)}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+
+            {/* Employment row */}
+            <div style={{
+              display: 'grid', gridTemplateColumns: colTpl, gap: 12,
+              padding: '12px 0', borderBottom: '1px solid var(--border-primary)',
+              alignItems: 'start',
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'flex-start', paddingTop: 8 }}>
+                {zh ? '就业去向' : 'Employment'}
+              </div>
+              {schools.map(u => (
+                <div key={u.id} style={{
+                  background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  borderRadius: 8, padding: '8px 12px',
+                }}>
+                  {(u.employment || []).slice(0, 4).map((e, i) => (
+                    <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>• {e}</div>
+                  ))}
+                  {!u.employment && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>}
+                </div>
+              ))}
+            </div>
+
+            {/* Website links row */}
+            <div style={{ display: 'grid', gridTemplateColumns: colTpl, gap: 12, paddingTop: 16 }}>
+              <div />
+              {schools.map(u => (
+                <a key={u.id} href={u.url} target="_blank" rel="noopener noreferrer" style={{
+                  display: 'block', textAlign: 'center', padding: '8px 0',
+                  borderRadius: 8, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
+                  color: GREEN, fontSize: 13, fontWeight: 600, textDecoration: 'none',
+                }}>
+                  {zh ? '官网 →' : 'Website →'}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Compare bar ────────────────────────────────────────────────────────────────
+function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
+  const zh = lang === 'zh'
+  const schools = compared.map(id => allUnis.find(u => u.id === id)).filter(Boolean)
+  if (schools.length === 0) return null
+
+  return (
+    <div style={{
+      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 8000,
+      background: 'rgba(2,8,19,0.96)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderTop: `1px solid ${BLUE}44`,
+      padding: '12px 24px',
+      display: 'flex', alignItems: 'center', gap: 14,
+      boxShadow: `0 -8px 40px rgba(14,165,233,0.12)`,
+      animation: 'bfsPageFadeIn 0.15s ease both',
+    }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: BLUE, flexShrink: 0 }}>
+        {zh ? `对比 (${schools.length}/3)` : `Compare (${schools.length}/3)`}
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, flex: 1, overflowX: 'auto' }}>
+        {schools.map(u => (
+          <div key={u.id} style={{
+            display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0,
+            background: `${BLUE}15`, border: `1px solid ${BLUE}33`,
+            borderRadius: 8, padding: '5px 8px',
+          }}>
+            <SchoolLogo name={u.name} size={22} />
+            <span style={{
+              fontSize: 12, color: 'var(--text-primary)', fontWeight: 600,
+              maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            }}>
+              {u.name}
+            </span>
+            <button
+              onClick={() => onRemove(u.id)}
+              style={{
+                background: 'none', border: 'none', color: 'var(--text-muted)',
+                cursor: 'pointer', fontSize: 15, padding: 0, lineHeight: 1, flexShrink: 0,
+              }}
+            >×</button>
+          </div>
+        ))}
+        {Array.from({ length: 3 - schools.length }).map((_, i) => (
+          <div key={i} style={{
+            width: 110, height: 34, flexShrink: 0,
+            border: '1px dashed var(--border-primary)',
+            borderRadius: 8,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ fontSize: 11, color: 'var(--border-primary)' }}>
+              {zh ? '+ 添加' : '+ Add'}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+        <button
+          onClick={onClear}
+          style={{
+            padding: '7px 14px', borderRadius: 8,
+            border: '1px solid var(--border-primary)',
+            background: 'transparent', color: 'var(--text-muted)',
+            fontSize: 12, cursor: 'pointer', transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+        >
+          {zh ? '清除' : 'Clear'}
+        </button>
+        <button
+          onClick={onOpen}
+          disabled={schools.length < 2}
+          style={{
+            padding: '7px 18px', borderRadius: 8, border: 'none',
+            background: schools.length >= 2
+              ? `linear-gradient(135deg, ${BLUE}, ${PURPLE})`
+              : 'var(--border-primary)',
+            color: schools.length >= 2 ? '#fff' : 'var(--text-muted)',
+            fontSize: 13, fontWeight: 700,
+            cursor: schools.length >= 2 ? 'pointer' : 'not-allowed',
+          }}
+        >
+          {zh ? `对比 ${schools.length} 所` : `Compare ${schools.length}`}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ── Interview: constants ───────────────────────────────────────────────────────
 const IV_PROGRAMS = [
   '本科申请 Undergraduate', '预MBA Pre-MBA', 'MBA', '理学硕士 Master\'s / MSc',
@@ -1303,7 +1582,7 @@ function InterviewEntryCard({ lang, onOpen }) {
 }
 
 // ── University card ───────────────────────────────────────────────────────────
-function UniCard({ uni, lang, onClick }) {
+function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare }) {
   const [hovered, setHovered] = useState(false)
   const t = lang === 'zh'
 
@@ -1315,12 +1594,14 @@ function UniCard({ uni, lang, onClick }) {
       style={{
         position: 'relative',
         background: 'var(--bg-secondary)',
-        border: `1px solid ${hovered ? BLUE + '55' : 'var(--border-primary)'}`,
+        border: `1px solid ${isCompared ? BLUE + '66' : hovered ? BLUE + '44' : 'var(--border-primary)'}`,
         borderRadius: 14,
         padding: '44px 16px 16px',
         cursor: 'pointer',
         transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.15s',
-        boxShadow: hovered ? `0 0 28px rgba(14,165,233,0.12), 0 4px 20px rgba(0,0,0,0.3)` : '0 2px 8px rgba(0,0,0,0.2)',
+        boxShadow: isCompared
+          ? `0 0 28px rgba(14,165,233,0.2), 0 4px 20px rgba(0,0,0,0.3)`
+          : hovered ? `0 0 28px rgba(14,165,233,0.12), 0 4px 20px rgba(0,0,0,0.3)` : '0 2px 8px rgba(0,0,0,0.2)',
         transform: hovered ? 'translateY(-2px)' : 'none',
         display: 'flex',
         flexDirection: 'column',
@@ -1328,6 +1609,27 @@ function UniCard({ uni, lang, onClick }) {
       }}
     >
       <RankBadge rank={uni.qs_rank} />
+
+      {/* Compare toggle — visible on hover or when active */}
+      {onToggleCompare && (
+        <div
+          onClick={e => { e.stopPropagation(); onToggleCompare(uni.id) }}
+          style={{
+            position: 'absolute', top: 12, right: 12,
+            width: 24, height: 24, borderRadius: 6,
+            border: `1px solid ${isCompared ? BLUE + '99' : 'var(--border-primary)'}`,
+            background: isCompared ? `${BLUE}25` : 'transparent',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: 12, fontWeight: 700,
+            color: isCompared ? BLUE : 'var(--text-muted)',
+            transition: 'all 0.15s',
+            opacity: hovered || isCompared ? 1 : 0,
+          }}
+          title={isCompared ? (t ? '移出对比' : 'Remove from compare') : (t ? '加入对比' : 'Add to compare')}
+        >
+          {isCompared ? '✓' : '+'}
+        </div>
+      )}
 
       {/* School identity */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
@@ -1580,6 +1882,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   const [loading,  setLoading]  = useState(true)
   const [selected, setSelected] = useState(null)
   const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '', sort: 'rank' })
+  const [compared,    setCompared]    = useState([])
+  const [showCompare, setShowCompare] = useState(false)
 
   // Fetch all data once — split into two independent fetches so a stats
   // failure never prevents the main school list from loading.
@@ -1629,7 +1933,14 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   const [showInterview, setShowInterview] = useState(false)
 
   const handleCardClick = useCallback((uni) => setSelected(uni), [])
-  const handleClose = useCallback(() => setSelected(null), [])
+  const handleClose     = useCallback(() => setSelected(null), [])
+  const toggleCompare   = useCallback((id) => {
+    setCompared(prev =>
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : prev.length < 3 ? [...prev, id] : prev
+    )
+  }, [])
 
   return (
     <>
@@ -1647,7 +1958,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         }
       `}</style>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 60 }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: compared.length > 0 ? 100 : 60 }}>
         <Hero lang={lang} stats={stats} />
 
         <InterviewEntryCard lang={lang} onOpen={() => setShowInterview(true)} />
@@ -1677,6 +1988,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
                 uni={uni}
                 lang={lang}
                 onClick={handleCardClick}
+                isCompared={compared.includes(uni.id)}
+                onToggleCompare={toggleCompare}
               />
             ))}
           </div>
@@ -1696,6 +2009,27 @@ export default function UniversitiesPage({ lang = 'zh' }) {
 
       {/* Interview modal */}
       {showInterview && <InterviewModal unis={allUnis} lang={lang} onClose={() => setShowInterview(false)} />}
+
+      {/* Compare bar */}
+      {compared.length > 0 && (
+        <CompareBar
+          compared={compared}
+          allUnis={allUnis}
+          onRemove={(id) => setCompared(prev => prev.filter(x => x !== id))}
+          onClear={() => { setCompared([]); setShowCompare(false) }}
+          onOpen={() => setShowCompare(true)}
+          lang={lang}
+        />
+      )}
+
+      {/* Compare modal */}
+      {showCompare && compared.length >= 2 && (
+        <CompareModal
+          schools={compared.map(id => allUnis.find(u => u.id === id)).filter(Boolean)}
+          lang={lang}
+          onClose={() => setShowCompare(false)}
+        />
+      )}
     </>
   )
 }
