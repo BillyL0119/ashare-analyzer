@@ -1509,10 +1509,7 @@ ECONOMIC_EVENTS = [
             {"exam": "AP宏观", "point": "国际收支危机；经常账户赤字；IMF角色；货币危机与资本外逃。"},
             {"exam": "IB", "point": "汇率制度（HL）；金融账户；国际金融机构（IMF）；J曲线效应。"},
         ],
-        "tickers": [
-            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
-            {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"},
-        ],
+        "tickers": [{"symbol": "^IXIC", "label": "纳斯达克", "color": "#6366f1"}, {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"}],
         "price_start": "1997-01-01",
         "price_end": "1999-06-30",
     },
@@ -1534,10 +1531,7 @@ ECONOMIC_EVENTS = [
             {"exam": "AP宏观", "point": "商业周期；总需求转移；衰退性缺口；货币政策角色（崩溃后联储降息）。"},
             {"exam": "IB", "point": "市场失灵（投机）；商业周期；凯恩斯主义与货币主义的政策回应。"},
         ],
-        "tickers": [
-            {"symbol": "^GSPC", "label": "S&P 500", "color": "#6366f1"},
-            {"symbol": "^IXIC", "label": "纳斯达克", "color": "#10b981"},
-        ],
+        "tickers": [{"symbol": "^IXIC", "label": "纳斯达克", "color": "#10b981"}, {"symbol": "000001.SS", "label": "上证指数", "color": "#f59e0b"}],
         "price_start": "1999-09-01",
         "price_end": "2003-03-31",
     },
