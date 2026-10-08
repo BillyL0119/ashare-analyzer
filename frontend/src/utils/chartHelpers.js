@@ -1,5 +1,13 @@
+import useCompareStore from '../store/compareStore'
+
+// US convention is green-up / red-down, A-shares are red-up / green-down.
+const RISE_CN = '#ef5350', FALL_CN = '#26a69a'
+export const riseColor = (market) => (market === 'us' ? FALL_CN : RISE_CN)
+export const fallColor = (market) => (market === 'us' ? RISE_CN : FALL_CN)
+
 // ── Theme-reactive palette ────────────────────────────────────────────────────
 export function getChartTheme() {
+  const market = useCompareStore.getState().market
   const isLight =
     typeof document !== 'undefined' &&
     document.documentElement.getAttribute('data-theme') === 'light'
@@ -10,16 +18,16 @@ export function getChartTheme() {
     border:     isLight ? '#e2e8f0'              : '#1a2f50',
     tooltipBg:  isLight ? 'rgba(255,255,255,0.97)' : 'rgba(2,8,19,0.95)',
     tooltipText:isLight ? '#0f172a'              : '#94a3b8',
-    up:      '#ef5350',
-    down:    '#26a69a',
+    up:      riseColor(market),
+    down:    fallColor(market),
     ma5:     '#f0e68c',
     ma10:    '#8ab4f8',
     ma20:    '#ff9800',
     ma60:    '#c084fc',
     dif:        isLight ? '#374151'              : '#e8eaed',
     dea:     '#ff9800',
-    macdUp:  '#ef5350',
-    macdDown:'#26a69a',
+    macdUp:  riseColor(market),
+    macdDown:fallColor(market),
     rsi6:    '#8ab4f8',
     rsi12:   '#ff9800',
     rsi24:   '#c084fc',

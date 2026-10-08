@@ -3,6 +3,7 @@ import useWatchlistStore from '../store/watchlistStore'
 import useCompareStore from '../store/compareStore'
 import { getRealtimeQuote, getUSRealtime } from '../api/stockApi'
 import { T } from '../i18n/translations'
+import { riseColor, fallColor } from '../utils/chartHelpers'
 
 const ACCENT_BLUE = '#8ab4f8'
 
@@ -18,7 +19,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
   }, [stock.code, isUS])
 
   const pct = quote?.pct_change ?? null
-  const pctColor = pct == null ? 'var(--text-muted)' : pct >= 0 ? '#26a69a' : '#ef5350'
+  const pctColor = pct == null ? 'var(--text-muted)' : pct >= 0 ? riseColor(stock.market) : fallColor(stock.market)
   const currSym = isUS ? '$' : '¥'
 
   return (

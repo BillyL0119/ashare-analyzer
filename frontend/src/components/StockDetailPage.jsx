@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
-
-const UP   = '#ef5350'
-const DOWN = '#26a69a'
+import { THEME } from '../utils/chartHelpers'
 const BDR  = 'var(--border-primary)'
 const BG   = 'var(--bg-tertiary)'
 
@@ -174,11 +172,11 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
               </div>
               {price !== null && (
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 8 }}>
-                  <span style={{ fontSize: 28, fontWeight: 700, color: up ? UP : DOWN, fontFamily: 'monospace' }}>
+                  <span style={{ fontSize: 28, fontWeight: 700, color: up ? THEME.up : THEME.down, fontFamily: 'monospace' }}>
                     {Number(price).toFixed(2)}
                   </span>
                   {change !== null && (
-                    <span style={{ fontSize: 15, color: up ? UP : DOWN, fontWeight: 600 }}>
+                    <span style={{ fontSize: 15, color: up ? THEME.up : THEME.down, fontWeight: 600 }}>
                       {up ? '+' : ''}{Number(change).toFixed(2)}%
                     </span>
                   )}
