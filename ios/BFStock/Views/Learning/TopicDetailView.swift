@@ -4,6 +4,8 @@ struct TopicDetailView: View {
     let exam: String
     let topicID: String
     let topicTitle: String
+    /// Topics of the whole course in order, so the page can offer the next lesson.
+    var course: [TopicSummary] = []
 
     @StateObject private var vm = TopicViewModel()
     @ObservedObject private var progress = LearningProgressStore.shared
@@ -24,6 +26,14 @@ struct TopicDetailView: View {
                         }
 
                         completeButton
+
+                        if let next = nextTopic {
+                            NavigationLink(destination: TopicDetailView(exam: exam, topicID: next.topicID,
+                                                                        topicTitle: next.title, course: course)) {
+                                nextCard(next)
+                            }
+                            .buttonStyle(.plain)
+                        }
 
                         Text("disclaimer")
                             .font(.caption2)
@@ -67,6 +77,32 @@ struct TopicDetailView: View {
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.success, trigger: done)
+    }
+
+    private var nextTopic: TopicSummary? {
+        guard let i = course.firstIndex(where: { $0.topicID == topicID }), i + 1 < course.count else { return nil }
+        return course[i + 1]
+    }
+
+    private func nextCard(_ next: TopicSummary) -> some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("下一课").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                Text(next.title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                    .multilineTextAlignment(.leading).lineLimit(2)
+            }
+            Spacer(minLength: 8)
+            Image(systemName: "arrow.right")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(DS.accent)
+                .frame(width: 34, height: 34)
+                .background(DS.accent.opacity(0.14), in: Circle())
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous).strokeBorder(DS.stroke))
+        .contentShape(Rectangle())
     }
 
     private var examName: String {

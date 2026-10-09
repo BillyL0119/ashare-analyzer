@@ -281,6 +281,7 @@ T = {
     "暂无持仓": ("No positions yet", "ポジションはありません", "보유 종목 없음", "Aucune position"),
     "用虚拟资金练习买卖，不承担真实风险": ("Practice with virtual cash, no real risk", "仮想資金で売買を練習。実際のリスクはありません", "가상 자금으로 연습하세요. 실제 위험은 없습니다", "Entraînez-vous avec de l'argent virtuel, sans risque réel"),
     "买入第一只股票": ("Buy your first stock", "最初の銘柄を買う", "첫 종목 매수", "Acheter une première action"),
+    "下一课": ("Next lesson", "次のレッスン", "다음 강의", "Leçon suivante"),
     "美股热门": ("US Movers", "米国株ランキング", "미국 주식 순위", "Mouvements US"),
     "涨幅榜": ("Top gainers", "値上がり", "상승률", "Plus fortes hausses"),
     "跌幅榜": ("Top losers", "値下がり", "하락률", "Plus fortes baisses"),

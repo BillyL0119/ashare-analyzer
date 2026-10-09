@@ -86,11 +86,11 @@ struct LearningTabView: View {
                                     .monospacedDigit()
                                     .foregroundStyle(.secondary)
                             }
-                            topicCard(paper.topics, exam: curriculum.key)
+                            topicCard(paper.topics, exam: curriculum.key, course: curriculum.allTopics)
                         }
                     }
                 } else {
-                    topicCard(curriculum.allTopics, exam: curriculum.key)
+                    topicCard(curriculum.allTopics, exam: curriculum.key, course: curriculum.allTopics)
                 }
                 NavigationLink(destination: UniversitiesView()) {
                     HStack(spacing: 12) {
@@ -170,11 +170,11 @@ struct LearningTabView: View {
         .card()
     }
 
-    private func topicCard(_ topics: [TopicSummary], exam: String) -> some View {
+    private func topicCard(_ topics: [TopicSummary], exam: String, course: [TopicSummary]) -> some View {
         VStack(spacing: 0) {
             ForEach(Array(topics.enumerated()), id: \.element.id) { idx, topic in
                 NavigationLink(destination: TopicDetailView(
-                    exam: exam, topicID: topic.topicID, topicTitle: topic.title
+                    exam: exam, topicID: topic.topicID, topicTitle: topic.title, course: course
                 )) {
                     TopicRow(topic: topic, done: progress.isDone(exam, topic.topicID))
                         .padding(.horizontal, 16)

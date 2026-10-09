@@ -81,7 +81,16 @@ function Topic() {
   const t = useT(); const nav = useNavigate(); const lang = useLangStore((s) => s.lang)
   const progress = useProgress()
   const { data, error, reload } = useAPI(`/study/topic/${exam}/${topic}`)
+  const { data: cur } = useAPI('/study/curriculum')
   const [open, setOpen] = useState({})
+  const course = useMemo(() => {
+    const c = cur?.curricula?.find((x) => x.key === exam)
+    return c ? (c.papers ? c.papers.flatMap((p) => p.topics) : c.topics || []) : []
+  }, [cur, exam])
+  const idx = course.findIndex((x) => x.id === topic)
+  const nextTopic = idx >= 0 ? course[idx + 1] || null : null
+  // key terms only exist in zh and en
+  const terms = (s) => (lang !== 'zh' && s.key_terms_en?.length ? s.key_terms_en : s.key_terms) || []
   const done = progress.has(exam, topic)
   const examName = EXAM_LABEL[exam]?.startsWith('股') ? t(EXAM_LABEL[exam]) : (EXAM_LABEL[exam] || exam.toUpperCase())
 
@@ -109,9 +118,9 @@ function Topic() {
                 {isOpen && (
                   <>
                     <p style={{ margin: 0, lineHeight: 1.65, fontSize: 15.5, whiteSpace: 'pre-wrap' }}>{loc(s, 'body', lang)}</p>
-                    {s.key_terms?.length > 0 && (
+                    {terms(s).length > 0 && (
                       <div><div className="m-label" style={{ marginBottom: 8, fontWeight: 650 }}>{t('关键术语')}</div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{s.key_terms.map((k) => <span key={k} className="m-chip" style={{ fontSize: 12.5, padding: '5px 10px', color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{k}</span>)}</div></div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{terms(s).map((k) => <span key={k} className="m-chip" style={{ fontSize: 12.5, padding: '5px 10px', color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{k}</span>)}</div></div>
                     )}
                     {loc(s, 'real_world', lang) && <Callout icon="🌐" title={t('真实案例')} color="var(--accent)" text={loc(s, 'real_world', lang)} />}
                     {loc(s, 'exam_tip', lang) && <Callout icon="💡" title={t('考试技巧')} color="#F28B3C" text={loc(s, 'exam_tip', lang)} />}
@@ -123,6 +132,17 @@ function Topic() {
           <button className="m-btn" onClick={() => progress.toggle(exam, topic)} style={done ? { background: 'color-mix(in srgb, #2FB86A 16%, transparent)', color: '#2FB86A' } : undefined}>
             <span style={{ width: 20, height: 20, marginRight: 8, display: 'inline-block' }}>{Icon.check}</span>{done ? t('已学完') : t('标记为已学完')}
           </button>
+          {nextTopic && (
+            <button className="m-card" onClick={() => { setOpen({}); nav(`/study/${exam}/${nextTopic.id}`); window.scrollTo(0, 0) }} style={{ display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left', width: '100%' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="m-label" style={{ fontWeight: 650 }}>{t('下一课')}</div>
+                <div style={{ fontWeight: 650, fontSize: 15, marginTop: 3 }}>{loc(nextTopic, 'title', lang)}</div>
+              </div>
+              <span style={{ width: 34, height: 34, borderRadius: 17, flex: 'none', display: 'grid', placeItems: 'center', color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+              </span>
+            </button>
+          )}
           <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>
         </>
       )}

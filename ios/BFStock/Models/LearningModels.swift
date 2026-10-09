@@ -109,7 +109,10 @@ struct TopicSection: Decodable, Identifiable {
         let c = try decoder.container(keyedBy: DynamicKey.self)
         heading = try c.localized("heading")
         body = try c.localized("body")
-        keyTerms = try c.decodeIfPresent([String].self, forKey: DynamicKey(stringValue: "keyTerms"))
+        // Key terms exist in zh and en only; any non-Chinese UI gets the English list when present.
+        let zhTerms = try c.decodeIfPresent([String].self, forKey: DynamicKey(stringValue: "keyTerms"))
+        let enTerms = (try? c.decodeIfPresent([String].self, forKey: DynamicKey(stringValue: "keyTermsEn"))) ?? nil
+        keyTerms = Lang.code == "zh" || (enTerms ?? []).isEmpty ? zhTerms : enTerms
         examTip = c.localizedIfPresent("examTip")
         realWorld = c.localizedIfPresent("realWorld")
     }

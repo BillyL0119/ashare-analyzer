@@ -1525,6 +1525,12 @@ export const STR = {
   "첫 종목 매수",
   "Acheter une première action"
  ],
+ "下一课": [
+  "Next lesson",
+  "次のレッスン",
+  "다음 강의",
+  "Leçon suivante"
+ ],
  "美股热门": [
   "US Movers",
   "米国株ランキング",
