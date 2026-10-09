@@ -66,7 +66,7 @@ function SkeletonCard() {
 }
 
 // ── QS Rank badge ─────────────────────────────────────────────────────────────
-function RankBadge({ rank }) {
+function RankBadge({ rank, label = 'QS' }) {
   if (!rank) return null
   const isTop10  = rank <= 10
   const isTop50  = rank <= 50
@@ -80,7 +80,33 @@ function RankBadge({ rank }) {
       padding: '2px 8px',
       fontSize: 11, fontWeight: 700, color,
     }}>
-      QS #{rank}
+      {label} #{rank}
+    </div>
+  )
+}
+
+// Business-school rank vs overall rank, e.g. "QS 商科 #11 · 综合 #62" plus a gap chip
+function bmGap(uni) {
+  if (!uni.qs_bm_rank_num || !uni.qs_rank) return null
+  return uni.qs_rank - uni.qs_bm_rank_num
+}
+
+function BusinessRankLine({ uni, zh }) {
+  if (!uni.qs_bm_rank) return null
+  const gap = bmGap(uni)
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+      <span style={{ fontSize: 11, color: BLUE, fontWeight: 700 }}>
+        {zh ? 'QS 商科' : 'QS Business'} #{uni.qs_bm_rank.replace('=', '')}
+      </span>
+      {gap >= 10 && (
+        <span style={{
+          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 5,
+          background: `${GREEN}1f`, color: GREEN, border: `1px solid ${GREEN}40`,
+        }}>
+          {zh ? `比综合排名高 ${gap} 位` : `${gap} places above overall`}
+        </span>
+      )}
     </div>
   )
 }
@@ -126,6 +152,11 @@ function countryFlag(country) {
     'Hong Kong': '🇭🇰', 'Singapore': '🇸🇬',
     'China': '🇨🇳', 'Japan': '🇯🇵', 'South Korea': '🇰🇷', 'Taiwan': '🇹🇼',
     'Australia': '🇦🇺', 'New Zealand': '🇳🇿',
+    'Hong Kong SAR': '🇭🇰', 'China (Mainland)': '🇨🇳', 'Macau SAR': '🇲🇴',
+    'Italy': '🇮🇹', 'Germany': '🇩🇪', 'Austria': '🇦🇹', 'Belgium': '🇧🇪', 'Ireland': '🇮🇪',
+    'Norway': '🇳🇴', 'Finland': '🇫🇮', 'Portugal': '🇵🇹', 'India': '🇮🇳', 'Malaysia': '🇲🇾',
+    'Mexico': '🇲🇽', 'Chile': '🇨🇱', 'Colombia': '🇨🇴', 'Brazil': '🇧🇷', 'Argentina': '🇦🇷',
+    'Costa Rica': '🇨🇷', 'Lebanon': '🇱🇧', 'Egypt': '🇪🇬', 'South Africa': '🇿🇦', 'Thailand': '🇹🇭',
   }
   return map[country] || '🌐'
 }
@@ -226,13 +257,13 @@ function UniModal({ uni, lang, onClose }) {
                 {uni.qs_rank && (
                   <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                     background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
-                    QS #{uni.qs_rank}
+                    {zh ? 'QS 综合' : 'QS overall'} #{uni.qs_rank}
                   </span>
                 )}
-                {uni.business_rank && (
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 6,
+                {uni.qs_bm_rank && (
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                     background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}44` }}>
-                    {uni.business_rank}
+                    {zh ? 'QS 商科' : 'QS Business'} #{uni.qs_bm_rank.replace('=', '')}
                   </span>
                 )}
                 <a href={uni.url} target="_blank" rel="noopener noreferrer"
@@ -584,16 +615,15 @@ function CompareModal({ schools, lang, onClose }) {
                   {u.qs_rank && (
                     <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                       background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
-                      QS #{u.qs_rank}
+                      {zh ? '综合' : 'QS'} #{u.qs_rank}
                     </span>
                   )}
-                  {u.business_rank && (
+                  {u.qs_bm_rank && (
                     <span style={{
-                      fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 5,
+                      fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                       background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33`,
-                      maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
-                      {u.business_rank.split('/')[0].trim()}
+                      {zh ? '商科' : 'Business'} #{u.qs_bm_rank.replace('=', '')}
                     </span>
                   )}
                 </div>
@@ -1582,7 +1612,7 @@ function InterviewEntryCard({ lang, onOpen }) {
 }
 
 // ── University card ───────────────────────────────────────────────────────────
-function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare }) {
+function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rankBy = 'rank' }) {
   const [hovered, setHovered] = useState(false)
   const t = lang === 'zh'
 
@@ -1608,7 +1638,9 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare }) {
         gap: 10,
       }}
     >
-      <RankBadge rank={uni.qs_rank} />
+      {rankBy === 'business'
+        ? <RankBadge rank={uni.qs_bm_rank?.replace('=', '')} label={t ? '商科' : 'Business'} />
+        : <RankBadge rank={uni.qs_rank} label={t ? 'QS 综合' : 'QS'} />}
 
       {/* Compare toggle — visible on hover or when active */}
       {onToggleCompare && (
@@ -1654,12 +1686,10 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare }) {
         {countryFlag(uni.country)} {uni.city}
       </div>
 
-      {/* Business rank */}
-      {uni.business_rank && (
-        <div style={{ fontSize: 11, color: BLUE, fontWeight: 600 }}>
-          {uni.business_rank}
-        </div>
-      )}
+      {/* Business rank (QS Business & Management Studies) */}
+      {rankBy === 'business'
+        ? uni.qs_rank && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{t ? 'QS 综合' : 'QS overall'} #{uni.qs_rank}</div>
+        : <BusinessRankLine uni={uni} zh={t} />}
 
       {/* Specialties */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
@@ -1676,6 +1706,221 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare }) {
           {t ? '查看详情 →' : 'Details →'}
         </span>
       </div>
+    </div>
+  )
+}
+
+
+// ── Business school leaderboard (QS Business & Management Studies) ────────────
+const BM_REGION = {
+  'United States': 'north_america', 'Canada': 'north_america',
+  'United Kingdom': 'uk',
+  'France': 'europe', 'Italy': 'europe', 'Spain': 'europe', 'Denmark': 'europe', 'Netherlands': 'europe',
+  'Switzerland': 'europe', 'Sweden': 'europe', 'Austria': 'europe', 'Germany': 'europe', 'Finland': 'europe',
+  'Portugal': 'europe', 'Belgium': 'europe', 'Norway': 'europe', 'Ireland': 'europe',
+  'Singapore': 'asia', 'Hong Kong SAR': 'asia', 'China (Mainland)': 'asia', 'India': 'asia', 'South Korea': 'asia',
+  'Japan': 'asia', 'Taiwan': 'asia', 'Malaysia': 'asia',
+  'Australia': 'oceania', 'New Zealand': 'oceania',
+}
+const BM_REGIONS = [...REGIONS, { key: 'other', label: 'Latin America & other', label_cn: '拉美及其他' }]
+const BM_PAGE = 50
+
+function GapChip({ entry, zh }) {
+  if (!entry.overall_num) {
+    return (
+      <span className="bm-gap" style={{ color: PURPLE, background: `${PURPLE}18`, borderColor: `${PURPLE}40` }}>
+        {zh ? '独立商学院' : 'Standalone school'}
+      </span>
+    )
+  }
+  const gap = entry.overall_num - entry.rank_num
+  if (gap >= 5) {
+    return (
+      <span className="bm-gap" style={{ color: GREEN, background: `${GREEN}18`, borderColor: `${GREEN}40` }}>
+        ↑ {gap}
+      </span>
+    )
+  }
+  if (gap <= -5) {
+    return <span className="bm-gap" style={{ color: 'var(--text-secondary)', background: 'transparent', borderColor: 'var(--border-primary)' }}>↓ {-gap}</span>
+  }
+  return <span className="bm-gap" style={{ color: 'var(--text-secondary)', background: 'transparent', borderColor: 'var(--border-primary)' }}>{zh ? '相近' : 'Similar'}</span>
+}
+
+function BusinessRanking({ lang, allUnis, onOpen }) {
+  const zh = lang === 'zh'
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(false)
+  const [region, setRegion] = useState('')
+  const [sortBy, setSortBy] = useState('rank')   // 'rank' | 'gap'
+  const [limit, setLimit] = useState(BM_PAGE)
+
+  useEffect(() => {
+    fetch(`${API}/api/universities/business-rankings`)
+      .then(r => r.json())
+      .then(d => { if (d && Array.isArray(d.entries)) setData(d); else setError(true) })
+      .catch(() => setError(true))
+  }, [])
+
+  const byId = useMemo(() => Object.fromEntries(allUnis.map(u => [u.id, u])), [allUnis])
+
+  const rows = useMemo(() => {
+    if (!data) return []
+    let list = data.entries
+    if (region) list = list.filter(e => (BM_REGION[e.country] || 'other') === region)
+    if (sortBy === 'gap') {
+      // Relative strength: how many times better the business rank is than the overall rank.
+      const ratio = (e) => e.overall_num ? e.overall_num / e.rank_num : -Infinity
+      list = [...list].sort((a, b) => ratio(b) - ratio(a) || a.rank_num - b.rank_num)
+    }
+    return list
+  }, [data, region, sortBy])
+
+  const aboveOverall = data ? data.entries.filter(e => e.rank_num <= 50 && (!e.overall_num || e.overall_num - e.rank_num >= 10)).length : 0
+
+  const pill = (active) => ({
+    padding: '5px 12px', borderRadius: 20,
+    border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
+    background: active ? `${BLUE}22` : 'transparent',
+    color: active ? BLUE : 'var(--text-secondary)',
+    cursor: 'pointer', fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
+  })
+
+  if (error) {
+    return <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '60px 0', fontSize: 14 }}>
+      {zh ? '排行榜加载失败，请稍后刷新重试' : 'Could not load the ranking. Refresh to try again.'}
+    </div>
+  }
+
+  return (
+    <div>
+      {/* Intro */}
+      <div style={{
+        display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap',
+        background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+        borderRadius: 14, padding: '16px 18px', marginBottom: 16,
+      }}>
+        <div style={{ flex: '1 1 420px', minWidth: 0 }}>
+          <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>
+            {zh ? 'QS 商科排名 2026' : 'QS Business & Management Studies 2026'}
+          </div>
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            {zh
+              ? '综合排名衡量整所大学；商科排名只看商学与管理学科本身的学术声誉、雇主声誉和研究影响力。LSE、Bocconi、INSEAD 这类学校的商科远比综合排名靠前。右侧对比列显示同一所大学在 QS 综合排名 2027 中的位置。'
+              : 'Overall rankings measure a whole university. This subject ranking looks only at business and management: academic reputation, employer reputation and research impact. Schools such as LSE, Bocconi and INSEAD rank far higher here than overall. The comparison column shows the same university in the QS World University Rankings 2027.'}
+          </div>
+        </div>
+        {data && (
+          <div style={{ display: 'flex', gap: 20 }}>
+            <div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: GREEN, fontVariantNumeric: 'tabular-nums' }}>{aboveOverall}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', maxWidth: 170, lineHeight: 1.5 }}>
+                {zh ? '商科前 50 中比综合排名高 10 位以上或独立商学院' : 'of the top 50 rank 10+ places higher than overall, or have no overall rank'}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Controls */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {BM_REGIONS.map(r => (
+            <button key={r.key || 'all'} onClick={() => { setRegion(r.key); setLimit(BM_PAGE) }} style={pill(region === r.key)}>
+              {zh ? r.label_cn : r.label}
+            </button>
+          ))}
+        </div>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 5 }}>
+          <button onClick={() => setSortBy('rank')} style={pill(sortBy === 'rank')}>{zh ? '按商科排名' : 'By business rank'}</button>
+          <button onClick={() => setSortBy('gap')} style={pill(sortBy === 'gap')}>{zh ? '商科相对综合最强' : 'Strongest vs overall'}</button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="bm-table" role="table" aria-label={zh ? 'QS 商科排名' : 'QS business ranking'}>
+        <div className="bm-row bm-head" role="row">
+          <span role="columnheader">{zh ? '商科' : 'Rank'}</span>
+          <span role="columnheader">{zh ? '学校' : 'School'}</span>
+          <span role="columnheader" className="bm-col-overall">{zh ? 'QS 综合' : 'QS overall'}</span>
+          <span role="columnheader" className="bm-col-gap">{zh ? '对比综合' : 'vs overall'}</span>
+        </div>
+        {!data ? (
+          Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 52, margin: '6px 0', borderRadius: 8 }} />)
+        ) : rows.slice(0, limit).map(e => {
+          const profile = e.school_ids.map(id => byId[id]).filter(Boolean)
+          const main = profile[0]
+          return (
+            <div
+              key={e.name}
+              role="row"
+              className={`bm-row${main ? ' bm-link' : ''}`}
+              onClick={main ? () => onOpen(main) : undefined}
+              tabIndex={main ? 0 : undefined}
+              onKeyDown={main ? (ev) => { if (ev.key === 'Enter') onOpen(main) } : undefined}
+            >
+              <span className="bm-rank" style={{ color: e.rank_num <= 10 ? AMBER : e.rank_num <= 50 ? BLUE : 'var(--text-secondary)' }}>
+                {e.rank}
+              </span>
+              <span style={{ minWidth: 0 }}>
+                <span className="bm-name">{main ? profile.map(p => p.name).join(' / ') : e.name}</span>
+                <span className="bm-sub">
+                  {countryFlag(e.country)} {main ? `${e.name} · ${e.city}` : `${e.city}, ${e.country}`}
+                  {main && <span className="bm-more">{zh ? ' · 查看资料 →' : ' · View profile →'}</span>}
+                </span>
+              </span>
+              <span className="bm-col-overall bm-overall">{e.overall ? `#${e.overall.replace('=', '')}` : '—'}</span>
+              <span className="bm-col-gap"><GapChip entry={e} zh={zh} /></span>
+            </div>
+          )
+        })}
+      </div>
+
+      {data && rows.length > limit && (
+        <button
+          onClick={() => setLimit(l => l + BM_PAGE)}
+          style={{
+            display: 'block', width: '100%', marginTop: 10, padding: '11px 0', borderRadius: 10,
+            border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)',
+            color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
+          }}
+        >
+          {zh ? `显示更多（还有 ${rows.length - limit} 所）` : `Show more (${rows.length - limit} left)`}
+        </button>
+      )}
+
+      {data && (
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 14, lineHeight: 1.7 }}>
+          {zh ? '来源：' : 'Sources: '}
+          <a href={data.url} target="_blank" rel="noopener noreferrer" style={{ color: BLUE }}>{data.source}</a>
+          {zh ? `（${data.published} 发布）；` : ` (published ${data.published}); `}
+          <a href={data.overall_url} target="_blank" rel="noopener noreferrer" style={{ color: BLUE }}>{data.overall_source}</a>
+          {zh ? `（${data.overall_published} 发布）。「独立商学院」指未参加 QS 综合排名的学校。点击带资料的学校可查看详情。` : ` (published ${data.overall_published}). "Standalone school" means the institution is not in the overall ranking. Rows with a profile open its details.`}
+        </div>
+      )}
+
+      <style>{`
+        .bm-table { border: 1px solid var(--border-primary); border-radius: 14px; overflow: hidden; background: var(--bg-secondary); }
+        .bm-row { display: grid; grid-template-columns: 64px minmax(0,1fr) 110px 130px; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid var(--border-primary); }
+        .bm-head { border-top: none; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 12px; padding-bottom: 8px; }
+        .bm-link { cursor: pointer; transition: background 0.15s; }
+        .bm-link:hover { background: var(--bg-hover); }
+        .bm-link:focus-visible { outline: 2px solid ${BLUE}; outline-offset: -2px; }
+        .bm-rank { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .bm-name { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bm-sub { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bm-more { color: ${BLUE}; display: none; }
+        @media (hover: hover) {
+          .bm-link:hover .bm-more, .bm-link:focus-visible .bm-more { display: inline; }
+        }
+        .bm-overall { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+        .bm-gap { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; border: 1px solid; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        @media (max-width: 640px) {
+          .bm-row { grid-template-columns: 44px minmax(0,1fr) auto; padding: 10px 12px; }
+          .bm-col-overall { display: none; }
+          .bm-rank { font-size: 15px; }
+        }
+      `}</style>
     </div>
   )
 }
@@ -1704,7 +1949,7 @@ function Hero({ lang, stats }) {
         background: `${BLUE}15`, border: `1px solid ${BLUE}30`,
         borderRadius: 20, padding: '4px 14px', marginBottom: 16,
       }}>
-        {t ? 'QS 世界大学前100 商学院' : 'QS Top-Ranked University Business Schools'}
+        {t ? 'QS 综合排名 2027 · QS 商科排名 2026' : 'QS overall 2027 · QS business & management 2026'}
       </div>
 
       <h1 style={{
@@ -1843,7 +2088,8 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
-          <option value="rank">{t ? '按 QS 排名' : 'Sort: QS Rank'}</option>
+          <option value="rank">{t ? '按 QS 综合排名' : 'Sort: QS overall'}</option>
+          <option value="business">{t ? '按 QS 商科排名' : 'Sort: QS business'}</option>
           <option value="name">{t ? '按名称 A→Z' : 'Sort: Name A→Z'}</option>
         </select>
 
@@ -1884,6 +2130,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '', sort: 'rank' })
   const [compared,    setCompared]    = useState([])
   const [showCompare, setShowCompare] = useState(false)
+  const [view, setView] = useState(() => new URLSearchParams(window.location.search).get('view') === 'business' ? 'business' : 'schools')
 
   // Fetch all data once — split into two independent fetches so a stats
   // failure never prevents the main school list from loading.
@@ -1924,6 +2171,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
     }
     if (filters.sort === 'name') {
       list = [...list].sort((a, b) => a.name.localeCompare(b.name))
+    } else if (filters.sort === 'business') {
+      list = [...list].sort((a, b) => (a.qs_bm_rank_num || 9999) - (b.qs_bm_rank_num || 9999))
     } else {
       list = [...list].sort((a, b) => (a.qs_rank || 9999) - (b.qs_rank || 9999))
     }
@@ -1963,6 +2212,35 @@ export default function UniversitiesPage({ lang = 'zh' }) {
 
         <InterviewEntryCard lang={lang} onOpen={() => setShowInterview(true)} />
 
+        {/* View switch: school directory vs business-school leaderboard */}
+        <div role="tablist" style={{
+          display: 'flex', gap: 4, padding: 4, marginBottom: 18, width: 'fit-content', maxWidth: '100%',
+          background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12,
+        }}>
+          {[
+            { key: 'schools',  label: t ? `院校库 · ${allUnis.length || ''}` : `School directory · ${allUnis.length || ''}` },
+            { key: 'business', label: t ? '🏆 商学院排行榜' : '🏆 Business school ranking' },
+          ].map(v => (
+            <button
+              key={v.key}
+              role="tab"
+              aria-selected={view === v.key}
+              onClick={() => setView(v.key)}
+              style={{
+                padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap',
+                background: view === v.key ? `linear-gradient(135deg, ${BLUE}, ${PURPLE})` : 'transparent',
+                color: view === v.key ? '#fff' : 'var(--text-secondary)',
+              }}
+            >
+              {v.label.replace(/ · $/, '')}
+            </button>
+          ))}
+        </div>
+
+        {view === 'business' ? (
+          <BusinessRanking lang={lang} allUnis={allUnis} onOpen={handleCardClick} />
+        ) : (<>
         <StickyFilters
           lang={lang}
           filters={filters}
@@ -1990,16 +2268,18 @@ export default function UniversitiesPage({ lang = 'zh' }) {
                 onClick={handleCardClick}
                 isCompared={compared.includes(uni.id)}
                 onToggleCompare={toggleCompare}
+                rankBy={filters.sort === 'business' ? 'business' : 'rank'}
               />
             ))}
           </div>
         )}
+        </>)}
 
         {/* Footer note */}
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--border-primary)', marginTop: 40, lineHeight: 1.6 }}>
           {t
-            ? '数据参考来源：QS World University Rankings 2024、Financial Times Business School Rankings 2024。学费为参考区间，请以各院校官方网站为准。'
-            : 'Data sourced from QS World University Rankings 2024 and FT Business School Rankings 2024. Tuition figures are approximate — always verify with the official school website.'
+            ? '排名来源：QS World University Rankings 2027（综合）、QS World University Rankings by Subject 2026: Business & Management Studies（商科）。学费为参考区间，请以各院校官方网站为准。'
+            : 'Rankings: QS World University Rankings 2027 (overall) and QS World University Rankings by Subject 2026: Business & Management Studies. Tuition figures are approximate — always verify with the official school website.'
           }
         </div>
       </div>
