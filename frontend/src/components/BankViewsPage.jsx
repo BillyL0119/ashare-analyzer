@@ -37,15 +37,16 @@ function getActionLabel(cfg, lang) {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+// Brand colours are too dark to read as text on the dark theme, so they only tint the dot.
 function BankTag({ name }) {
-  const color = bankColor(name)
   return (
     <span style={{
-      fontSize: 10, padding: '2px 7px', borderRadius: 6, fontWeight: 700,
-      background: color + '28', color: color,
-      border: `1px solid ${color}44`,
-      flexShrink: 0,
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      fontSize: 11, padding: '1px 8px 1px 6px', borderRadius: 6, fontWeight: 600,
+      background: 'var(--bg-tertiary)', color: 'var(--text-primary)',
+      border: '1px solid var(--border-primary)', flexShrink: 0,
     }}>
+      <span style={{ width: 7, height: 7, borderRadius: 2, background: bankColor(name), filter: 'saturate(1.4) brightness(1.5)' }} />
       {name}
     </span>
   )
@@ -81,77 +82,69 @@ function Pill({ active, color, onClick, children }) {
   )
 }
 
-function NewsCard({ item, t, lang }) {
+const hasCJK = (text) => /[\u4e00-\u9fff]/.test(text || '')
+
+function ViewRow({ item, t, lang, first }) {
   const isLink = item.url && item.url.startsWith('http')
+  // ai_summary is a Chinese one-liner: useful to Chinese readers of English headlines only.
+  const gist = lang === 'zh' && item.ai_summary && item.ai_summary !== item.title && !hasCJK(item.title)
+    ? item.ai_summary : null
   return (
     <a
       href={isLink ? item.url : undefined}
       target={isLink ? '_blank' : undefined}
       rel="noopener noreferrer"
-      style={{ textDecoration: 'none', display: 'block' }}
+      className={isLink ? 'bfs-news-row' : undefined}
+      style={{
+        display: 'flex', gap: 12, alignItems: 'flex-start',
+        padding: '14px 16px', textDecoration: 'none',
+        borderTop: first ? 'none' : '1px solid var(--border-primary)',
+        cursor: isLink ? 'pointer' : 'default',
+      }}
     >
-      <div
-        className={isLink ? 'bfs-card' : undefined}
-        style={{
-          background: 'var(--bg-secondary)',
-          border: '1px solid var(--border-primary)',
-          borderRadius: 12, padding: '14px 16px', marginBottom: 8,
-        }}
-      >
-        {/* Bank tags + action badge row */}
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8, alignItems: 'center' }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6, alignItems: 'center' }}>
           {(item.banks || []).map(b => <BankTag key={b} name={b} />)}
           <ActionBadge type={item.action_type} lang={lang} />
         </div>
-
-        {/* AI summary */}
-        {item.ai_summary && (
-          <div style={{
-            display: 'flex', alignItems: 'flex-start', gap: 6,
-            background: 'rgba(14,165,233,0.07)',
-            border: '1px solid rgba(14,165,233,0.15)',
-            borderRadius: 8, padding: '5px 10px', marginBottom: 8,
-          }}>
-            <span style={{
-              fontSize: 10, fontWeight: 700, color: '#0ea5e9',
-              background: 'rgba(14,165,233,0.15)',
-              padding: '1px 5px', borderRadius: 4, flexShrink: 0, marginTop: 1,
-            }}>AI速读</span>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-              {item.ai_summary}
-            </span>
-          </div>
-        )}
-
-        {/* Title */}
-        <div style={{
-          fontSize: 14, fontWeight: 500, color: 'var(--text-primary)',
-          lineHeight: 1.5, marginBottom: item.summary ? 6 : 0,
+        <div className="bfs-news-title" style={{
+          fontSize: 14, fontWeight: 500, color: 'var(--text-primary)', lineHeight: 1.5,
         }}>
           {item.title}
         </div>
-
-        {/* summary field intentionally omitted — show title + link only */}
-
-        {/* Meta row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+        {gist && (
+          <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5, marginTop: 3 }}>
+            <span style={{ color: '#0ea5e9', fontWeight: 600, marginRight: 6 }}>AI 速读</span>
+            {gist}
+          </div>
+        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
           <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>
             {t.bvSource}{item.source}
           </span>
           <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             {relativeTime(item.published_at, lang)}
           </span>
         </div>
       </div>
+      {isLink && <span className="bfs-news-arrow" aria-hidden="true">↗</span>}
     </a>
   )
 }
 
 function SkeletonCard() {
   return (
-    <div className="skeleton" style={{ height: 110, borderRadius: 12, marginBottom: 8 }} />
+    <div className="skeleton" style={{ height: 84, borderRadius: 10, marginBottom: 8 }} />
   )
+}
+
+const DISCLAIMER = {
+  zh: '仅供学习，不构成投资建议。数据来源可能存在延迟。',
+  en: 'For learning only, not investment advice. Feeds may be delayed.',
+  ja: '学習用です。投資助言ではありません。配信に遅れが生じる場合があります。',
+  ko: '학습용이며 투자 조언이 아닙니다. 피드가 지연될 수 있습니다.',
+  fr: "À but pédagogique uniquement, pas un conseil en investissement. Les flux peuvent être retardés.",
 }
 
 const PAGE_SIZE = 20
@@ -167,8 +160,10 @@ export default function BankViewsPage({ lang = 'zh' }) {
   const [actionFilter, setActionFilter] = useState('all')
   const [page, setPage] = useState(1)
   const timerRef = useRef(null)
+  const bankRef = useRef('all')
 
-  const fetchData = useCallback((bf = bankFilter, af = actionFilter) => {
+  const fetchData = useCallback((bf = bankFilter) => {
+    bankRef.current = bf
     setLoading(true)
     const params = {}
     if (bf !== 'all') params.bank = bf
@@ -185,14 +180,14 @@ export default function BankViewsPage({ lang = 'zh' }) {
   }, []) // eslint-disable-line
 
   useEffect(() => {
-    fetchData('all', 'all')
-    timerRef.current = setInterval(() => fetchData(bankFilter, actionFilter), REFRESH_MS)
+    fetchData('all')
+    timerRef.current = setInterval(() => fetchData(bankRef.current), REFRESH_MS)
     return () => clearInterval(timerRef.current)
   }, []) // eslint-disable-line
 
   const selectBank = (b) => {
     setBankFilter(b)
-    fetchData(b, actionFilter)
+    fetchData(b)
   }
 
   const selectAction = (a) => {
@@ -222,7 +217,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
             {t.bvNote}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
-            仅供学习，不构成投资建议。数据来源可能存在延迟。
+            {DISCLAIMER[lang] || DISCLAIMER.en}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
@@ -232,7 +227,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
             </span>
           )}
           <button
-            onClick={() => fetchData(bankFilter, actionFilter)}
+            onClick={() => fetchData(bankFilter)}
             disabled={loading}
             style={{
               padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.4)',
@@ -260,7 +255,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
             {t.bvAll}
           </Pill>
           {allBanks.map(b => (
-            <Pill key={b} active={bankFilter === b} color={bankColor(b)} onClick={() => selectBank(b)}>
+            <Pill key={b} active={bankFilter === b} color="#0ea5e9" onClick={() => selectBank(b)}>
               {b}
             </Pill>
           ))}
@@ -276,7 +271,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
 
       {/* Action type filter */}
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 16 }}>
-        <Pill active={actionFilter === 'all'} color="#6b7280" onClick={() => selectAction('all')}>
+        <Pill active={actionFilter === 'all'} color="#0ea5e9" onClick={() => selectAction('all')}>
           {t.bvAllTypes}
         </Pill>
         {Object.entries(ACTION_CONFIG).map(([k, cfg]) => (
@@ -295,9 +290,14 @@ export default function BankViewsPage({ lang = 'zh' }) {
         </div>
       ) : (
         <>
-          {displayed.map((item, i) => (
-            <NewsCard key={`${item.source}-${i}`} item={item} t={t} lang={lang} />
-          ))}
+          <div style={{
+            background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+            borderRadius: 12, overflow: 'hidden', marginBottom: 8,
+          }}>
+            {displayed.map((item, i) => (
+              <ViewRow key={`${item.source}-${i}`} item={item} t={t} lang={lang} first={i === 0} />
+            ))}
+          </div>
           {hasMore && (
             <button
               onClick={() => setPage(p => p + 1)}
@@ -316,6 +316,14 @@ export default function BankViewsPage({ lang = 'zh' }) {
         </>
       )}
 
+      <style>{`
+        .bfs-news-row { transition: background 0.15s; }
+        .bfs-news-row:hover { background: var(--bg-hover); }
+        .bfs-news-row:hover .bfs-news-title { color: #38bdf8; }
+        .bfs-news-row:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; }
+        .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
+        .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
+      `}</style>
     </div>
   )
 }

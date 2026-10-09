@@ -18,7 +18,7 @@ import hashlib
 import os
 import threading
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger("news")
@@ -281,12 +281,23 @@ def _classify(text: str) -> str:
     return 'market'
 
 
+_BJ = timezone(timedelta(hours=8))
+
+
+def _bj_iso(dt: Optional[datetime] = None) -> str:
+    """Beijing time with an explicit +08:00 offset, so every feed sorts and parses the same way.
+    Naive datetimes are server-local, and the server runs in Asia/Shanghai."""
+    dt = dt or datetime.now(_BJ)
+    dt = dt.replace(tzinfo=_BJ) if dt.tzinfo is None else dt.astimezone(_BJ)
+    return dt.isoformat(timespec='seconds')
+
+
 def _rss_time_to_iso(s: str) -> str:
     if not s:
-        return datetime.utcnow().isoformat() + 'Z'
+        return _bj_iso()
     try:
         import email.utils
-        return email.utils.parsedate_to_datetime(s).isoformat()
+        return _bj_iso(email.utils.parsedate_to_datetime(s))
     except Exception:
         return s
 
@@ -335,9 +346,9 @@ def _fetch_sina_global(limit: int = 15) -> list[dict]:
                 continue
             mtime = item.get('mtime', '')
             try:
-                pub_iso = datetime.fromtimestamp(int(mtime)).isoformat()
+                pub_iso = _bj_iso(datetime.fromtimestamp(int(mtime), _BJ))
             except Exception:
-                pub_iso = datetime.utcnow().isoformat()
+                pub_iso = _bj_iso()
             result.append({
                 'title': title,
                 'summary': (item.get('intro') or '')[:300],
@@ -442,9 +453,9 @@ def _fetch_cls_market() -> list[dict]:
             content = re.sub(r'<[^>]+>', '', item.get('content') or '').strip()[:300]
             pub_ts = item.get('ctime', 0)
             try:
-                pub_iso = datetime.fromtimestamp(int(pub_ts)).isoformat()
+                pub_iso = _bj_iso(datetime.fromtimestamp(int(pub_ts), _BJ))
             except Exception:
-                pub_iso = datetime.utcnow().isoformat()
+                pub_iso = _bj_iso()
             result.append({
                 'title': title,
                 'summary': content,
@@ -479,9 +490,9 @@ def _fetch_em_market_flash() -> list[dict]:
                 continue
             mtime = item.get('mtime', '')
             try:
-                pub_iso = datetime.fromtimestamp(int(mtime)).isoformat()
+                pub_iso = _bj_iso(datetime.fromtimestamp(int(mtime), _BJ))
             except Exception:
-                pub_iso = datetime.utcnow().isoformat()
+                pub_iso = _bj_iso()
             result.append({
                 'title': title,
                 'summary': (item.get('intro') or '')[:300],
@@ -516,9 +527,9 @@ def _fetch_sina_cn_stock() -> list[dict]:
                 continue
             mtime = item.get('mtime', '')
             try:
-                pub_iso = datetime.fromtimestamp(int(mtime)).isoformat()
+                pub_iso = _bj_iso(datetime.fromtimestamp(int(mtime), _BJ))
             except Exception:
-                pub_iso = datetime.utcnow().isoformat()
+                pub_iso = _bj_iso()
             result.append({
                 'title': title,
                 'summary': (item.get('intro') or '')[:300],
@@ -562,9 +573,9 @@ def _fetch_eastmoney_market() -> list[dict]:
             content = re.sub(r'<[^>]+>', '', item.get('digest') or item.get('content') or '').strip()[:300]
             pub_str = item.get('showTime') or item.get('pub_date') or ''
             try:
-                pub_iso = datetime.strptime(pub_str, '%Y-%m-%d %H:%M:%S').isoformat()
+                pub_iso = _bj_iso(datetime.strptime(pub_str, '%Y-%m-%d %H:%M:%S'))
             except Exception:
-                pub_iso = datetime.utcnow().isoformat()
+                pub_iso = _bj_iso()
             result.append({
                 'title': title,
                 'summary': content,
@@ -753,9 +764,9 @@ def _fetch_bank_ticker_news(bank_en: str, bank_zh: str, ticker: str) -> list[dic
             pub_raw = (item.findtext('pubDate') or '').strip()
             try:
                 import email.utils as _eu
-                pub_iso = _eu.parsedate_to_datetime(pub_raw).isoformat()
+                pub_iso = _bj_iso(_eu.parsedate_to_datetime(pub_raw))
             except Exception:
-                pub_iso = datetime.utcnow().isoformat()
+                pub_iso = _bj_iso()
             search = title.lower()
             # Detect additional banks mentioned in title
             extra_en, extra_zh = _detect_banks(search)

@@ -7,6 +7,9 @@ const SOURCE_COLORS = {
   '财联社':          '#e8a020',
   '新浪财经':        '#e8321e',
   '新浪财经要闻':    '#e8321e',
+  '新浪A股':         '#e8321e',
+  'BBC Business':    '#bb1919',
+  'Guardian Business':'#3b82f6',
   'Reuters Business':'#ff8c00',
   'Yahoo Finance':   '#6001d2',
   'MarketWatch':     '#00a651',
@@ -22,11 +25,20 @@ function SourceBadge({ name }) {
   const letter = [...name].find(c => /[\w\u4e00-\u9fa5]/.test(c)) || '?'
   return (
     <div style={{
-      width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-      background: color, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 13, fontWeight: 700, color: '#fff',
+      width: 28, height: 28, borderRadius: 8, flexShrink: 0, marginTop: 1,
+      background: color + '22', color, border: `1px solid ${color}44`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 12, fontWeight: 700,
     }}>
       {letter.toUpperCase()}
+      <style>{`
+        .bfs-news-row { transition: background 0.15s; }
+        .bfs-news-row:hover { background: var(--bg-hover); }
+        .bfs-news-row:hover .bfs-news-title { color: #38bdf8; }
+        .bfs-news-row:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; }
+        .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
+        .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
+      `}</style>
     </div>
   )
 }
@@ -80,62 +92,54 @@ function Pill({ active, color, onClick, children }) {
   )
 }
 
-function NewsCard({ item, lang }) {
-  const href = item.url || '#'
+function NewsRow({ item, lang, first }) {
   const isLink = item.url && item.url.startsWith('http')
   return (
     <a
-      href={isLink ? href : undefined}
+      href={isLink ? item.url : undefined}
       target={isLink ? '_blank' : undefined}
       rel="noopener noreferrer"
-      style={{ textDecoration: 'none', display: 'block', cursor: isLink ? 'pointer' : 'default' }}
+      className={isLink ? 'bfs-news-row' : undefined}
+      style={{
+        display: 'flex', gap: 12, alignItems: 'flex-start',
+        padding: '13px 16px', textDecoration: 'none',
+        borderTop: first ? 'none' : '1px solid var(--border-primary)',
+        cursor: isLink ? 'pointer' : 'default',
+      }}
     >
-      <div
-        className={isLink ? 'bfs-card' : undefined}
-        style={{
-          background: 'var(--bg-secondary)',
-          border: '1px solid var(--border-primary)',
-          borderRadius: 12,
-          padding: '14px 16px',
-          marginBottom: 8,
-        }}
-      >
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-          <SourceBadge name={item.source} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {/* Meta row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{item.source}</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, lang)}</span>
-              <span style={{
-                fontSize: 10, padding: '1px 5px', borderRadius: 6,
-                background: item.lang === 'cn' ? 'rgba(232,50,30,0.1)' : 'rgba(14,100,233,0.1)',
-                color: item.lang === 'cn' ? '#e8321e' : '#5b9cf6', fontWeight: 500,
-              }}>
-                {item.lang === 'cn' ? '中' : 'EN'}
-              </span>
-              <CategoryDot category={item.category} lang={lang} />
-            </div>
-            {/* Title */}
-            <div style={{
-              fontSize: 14, fontWeight: 500, color: 'var(--text-primary)',
-              lineHeight: 1.5, marginBottom: item.summary ? 6 : 0,
-            }}>
-              {item.title}
-            </div>
-            {/* summary field intentionally omitted — show title + link only */}
-          </div>
+      <SourceBadge name={item.source} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="bfs-news-title" style={{
+          fontSize: 14, fontWeight: 500, color: 'var(--text-primary)', lineHeight: 1.5,
+        }}>
+          {item.title}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{item.source}</span>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+            {relativeTime(item.published_at, lang)}
+          </span>
+          <CategoryDot category={item.category} lang={lang} />
         </div>
       </div>
+      {isLink && <span className="bfs-news-arrow" aria-hidden="true">↗</span>}
     </a>
   )
 }
 
 function SkeletonCard() {
   return (
-    <div className="skeleton" style={{ height: 90, borderRadius: 12, marginBottom: 8 }} />
+    <div className="skeleton" style={{ height: 64, borderRadius: 10, marginBottom: 8 }} />
   )
+}
+
+const DISCLAIMER = {
+  zh: '仅供学习，不构成投资建议。数据来源可能存在延迟。',
+  en: 'For learning only, not investment advice. Feeds may be delayed.',
+  ja: '学習用です。投資助言ではありません。配信に遅れが生じる場合があります。',
+  ko: '학습용이며 투자 조언이 아닙니다. 피드가 지연될 수 있습니다.',
+  fr: "À but pédagogique uniquement, pas un conseil en investissement. Les flux peuvent être retardés.",
 }
 
 const PAGE_SIZE = 20
@@ -147,11 +151,14 @@ export default function DailyNewsPage({ lang = 'zh' }) {
   const [loading,   setLoading]   = useState(false)
   const [updatedAt, setUpdatedAt] = useState(null)
   const [catFilter, setCatFilter] = useState('all')
-  const [langFilter, setLangFilter] = useState('all')
+  // Non-Chinese readers start on the English feed; they can still switch to All / 中文.
+  const [langFilter, setLangFilter] = useState(lang === 'zh' ? 'all' : 'en')
   const [page,      setPage]      = useState(1)
   const timerRef = useRef(null)
+  const filtersRef = useRef({ cat: 'all', lang: langFilter })
 
   const fetchNews = useCallback((cf = catFilter, lf = langFilter) => {
+    filtersRef.current = { cat: cf, lang: lf }
     setLoading(true)
     getDailyMarketNews({
       lang:     lf !== 'all' ? lf : undefined,
@@ -168,8 +175,8 @@ export default function DailyNewsPage({ lang = 'zh' }) {
   }, [])  // eslint-disable-line
 
   useEffect(() => {
-    fetchNews('all', 'all')
-    timerRef.current = setInterval(() => fetchNews(catFilter, langFilter), REFRESH_MS)
+    fetchNews('all', langFilter)
+    timerRef.current = setInterval(() => fetchNews(filtersRef.current.cat, filtersRef.current.lang), REFRESH_MS)
     return () => clearInterval(timerRef.current)
   }, [])  // eslint-disable-line
 
@@ -198,7 +205,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             {t.dnSubtitle}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
-            仅供学习，不构成投资建议。数据来源可能存在延迟。
+            {DISCLAIMER[lang] || DISCLAIMER.en}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -269,35 +276,6 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         )}
       </div>
 
-      {/* Stats strip */}
-      {items.length > 0 && (
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-          {Object.entries(CAT_CONFIG).filter(([k]) => k !== 'all').map(([k, cfg]) => {
-            const count = items.filter(i => i.category === k).length
-            if (count === 0) return null
-            return (
-              <div
-                key={k}
-                onClick={() => setCategory(k)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  padding: '4px 10px', borderRadius: 8, cursor: 'pointer',
-                  background: 'var(--bg-secondary)',
-                  border: `1px solid ${cfg.color}33`,
-                  transition: 'background 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = cfg.color + '11'}
-                onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
-              >
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.color, flexShrink: 0 }} />
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{getCatLabel(cfg, lang)}</span>
-                <span style={{ fontSize: 11, color: cfg.color, fontWeight: 600 }}>{count}</span>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
       {/* News list */}
       {loading && items.length === 0 ? (
         <div>{[0,1,2,3,4,5].map(i => <SkeletonCard key={i} />)}</div>
@@ -310,9 +288,14 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         </div>
       ) : (
         <>
-          {displayed.map((item, i) => (
-            <NewsCard key={`${item.source}-${i}`} item={item} lang={lang} />
-          ))}
+          <div style={{
+            background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+            borderRadius: 12, overflow: 'hidden', marginBottom: 8,
+          }}>
+            {displayed.map((item, i) => (
+              <NewsRow key={`${item.source}-${i}`} item={item} lang={lang} first={i === 0} />
+            ))}
+          </div>
           {hasMore && (
             <button
               onClick={() => setPage(p => p + 1)}
@@ -332,6 +315,14 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         </>
       )}
 
+      <style>{`
+        .bfs-news-row { transition: background 0.15s; }
+        .bfs-news-row:hover { background: var(--bg-hover); }
+        .bfs-news-row:hover .bfs-news-title { color: #38bdf8; }
+        .bfs-news-row:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; }
+        .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
+        .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
+      `}</style>
     </div>
   )
 }
