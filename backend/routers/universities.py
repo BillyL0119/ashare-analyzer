@@ -238,6 +238,21 @@ def get_stats():
     }
 
 
+BM_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'business_rankings.json')
+_bm_cache: dict = {}
+
+
+@router.get('/business-rankings')
+def business_rankings():
+    """QS Business & Management Studies ranking (top 150) with each university's overall QS rank.
+    `school_ids` link a row to profiles in universities.json."""
+    mtime = os.path.getmtime(BM_PATH)
+    if _bm_cache.get("mtime") != mtime:
+        with open(BM_PATH, 'r', encoding='utf-8') as f:
+            _bm_cache.update({"data": json.load(f), "mtime": mtime})
+    return _bm_cache["data"]
+
+
 @router.get('/{uni_id}')
 def get_university(uni_id: str):
     unis = load_universities()

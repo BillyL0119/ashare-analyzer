@@ -1,0 +1,1671 @@
+{
+ "source": "QS World University Rankings by Subject 2026: Business & Management Studies",
+ "published": "2026-03-25",
+ "url": "https://www.topuniversities.com/university-subject-rankings/business-management-studies",
+ "overall_source": "QS World University Rankings 2027",
+ "overall_published": "2026-06-18",
+ "overall_url": "https://www.topuniversities.com/world-university-rankings",
+ "entries": [
+  {
+   "rank": "1",
+   "rank_num": 1,
+   "name": "Harvard University",
+   "country": "United States",
+   "city": "Cambridge",
+   "overall": "5",
+   "overall_num": 5,
+   "school_ids": [
+    "harvard-hbs"
+   ]
+  },
+  {
+   "rank": "2",
+   "rank_num": 2,
+   "name": "Stanford University",
+   "country": "United States",
+   "city": "Stanford",
+   "overall": "=2",
+   "overall_num": 2,
+   "school_ids": [
+    "stanford-gsb"
+   ]
+  },
+  {
+   "rank": "3",
+   "rank_num": 3,
+   "name": "Massachusetts Institute of Technology (MIT)",
+   "country": "United States",
+   "city": "Cambridge",
+   "overall": "1",
+   "overall_num": 1,
+   "school_ids": [
+    "mit-sloan"
+   ]
+  },
+  {
+   "rank": "4",
+   "rank_num": 4,
+   "name": "INSEAD",
+   "country": "France",
+   "city": "Fontainebleau",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "insead"
+   ]
+  },
+  {
+   "rank": "5",
+   "rank_num": 5,
+   "name": "University of Oxford",
+   "country": "United Kingdom",
+   "city": "Oxford",
+   "overall": "4",
+   "overall_num": 4,
+   "school_ids": [
+    "oxford-said"
+   ]
+  },
+  {
+   "rank": "6",
+   "rank_num": 6,
+   "name": "University of Cambridge",
+   "country": "United Kingdom",
+   "city": "Cambridge",
+   "overall": "6",
+   "overall_num": 6,
+   "school_ids": [
+    "cambridge-judge"
+   ]
+  },
+  {
+   "rank": "7",
+   "rank_num": 7,
+   "name": "University of Pennsylvania",
+   "country": "United States",
+   "city": "Philadelphia",
+   "overall": "15",
+   "overall_num": 15,
+   "school_ids": [
+    "penn-wharton"
+   ]
+  },
+  {
+   "rank": "8",
+   "rank_num": 8,
+   "name": "National University of Singapore (NUS)",
+   "country": "Singapore",
+   "city": "Singapore",
+   "overall": "10",
+   "overall_num": 10,
+   "school_ids": [
+    "nus-business"
+   ]
+  },
+  {
+   "rank": "9",
+   "rank_num": 9,
+   "name": "London Business School",
+   "country": "United Kingdom",
+   "city": "London",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "10",
+   "rank_num": 10,
+   "name": "Bocconi University",
+   "country": "Italy",
+   "city": "Milan",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "bocconi"
+   ]
+  },
+  {
+   "rank": "11",
+   "rank_num": 11,
+   "name": "The London School of Economics and Political Science (LSE)",
+   "country": "United Kingdom",
+   "city": "London",
+   "overall": "62",
+   "overall_num": 62,
+   "school_ids": [
+    "lse-management"
+   ]
+  },
+  {
+   "rank": "12",
+   "rank_num": 12,
+   "name": "HEC Paris",
+   "country": "France",
+   "city": "Paris",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "hec-paris"
+   ]
+  },
+  {
+   "rank": "13",
+   "rank_num": 13,
+   "name": "University of California, Berkeley (UCB)",
+   "country": "United States",
+   "city": "Berkeley",
+   "overall": "=20",
+   "overall_num": 20,
+   "school_ids": []
+  },
+  {
+   "rank": "14",
+   "rank_num": 14,
+   "name": "Nanyang Technological University, Singapore (NTU Singapore)",
+   "country": "Singapore",
+   "city": "Singapore",
+   "overall": "12",
+   "overall_num": 12,
+   "school_ids": [
+    "ntu-nanyang"
+   ]
+  },
+  {
+   "rank": "15",
+   "rank_num": 15,
+   "name": "Columbia University",
+   "country": "United States",
+   "city": "New York City",
+   "overall": "=43",
+   "overall_num": 43,
+   "school_ids": [
+    "columbia-cbs"
+   ]
+  },
+  {
+   "rank": "16",
+   "rank_num": 16,
+   "name": "New York University (NYU)",
+   "country": "United States",
+   "city": "New York City",
+   "overall": "58",
+   "overall_num": 58,
+   "school_ids": [
+    "nyu-stern"
+   ]
+  },
+  {
+   "rank": "17",
+   "rank_num": 17,
+   "name": "Northwestern University",
+   "country": "United States",
+   "city": "Evanston",
+   "overall": "=45",
+   "overall_num": 45,
+   "school_ids": [
+    "northwestern-kellogg"
+   ]
+  },
+  {
+   "rank": "18",
+   "rank_num": 18,
+   "name": "Universitat Ramon Llull",
+   "country": "Spain",
+   "city": "Barcelona",
+   "overall": "=474",
+   "overall_num": 474,
+   "school_ids": [
+    "esade"
+   ]
+  },
+  {
+   "rank": "19",
+   "rank_num": 19,
+   "name": "Copenhagen Business School",
+   "country": "Denmark",
+   "city": "Frederiksberg",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "cbs-copenhagen"
+   ]
+  },
+  {
+   "rank": "20",
+   "rank_num": 20,
+   "name": "Yale University",
+   "country": "United States",
+   "city": "New Haven",
+   "overall": "=16",
+   "overall_num": 16,
+   "school_ids": [
+    "yale-som"
+   ]
+  },
+  {
+   "rank": "21",
+   "rank_num": 21,
+   "name": "Indian Institute of Management (IIM) - Ahmedabad",
+   "country": "India",
+   "city": "Ahmedabad",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "iim-ahmedabad"
+   ]
+  },
+  {
+   "rank": "=22",
+   "rank_num": 22,
+   "name": "Imperial College London",
+   "country": "United Kingdom",
+   "city": "London",
+   "overall": "=2",
+   "overall_num": 2,
+   "school_ids": [
+    "imperial-business"
+   ]
+  },
+  {
+   "rank": "=22",
+   "rank_num": 22,
+   "name": "Tecnológico de Monterrey",
+   "country": "Mexico",
+   "city": "Monterrey",
+   "overall": "188",
+   "overall_num": 188,
+   "school_ids": []
+  },
+  {
+   "rank": "=24",
+   "rank_num": 24,
+   "name": "Erasmus University Rotterdam",
+   "country": "Netherlands",
+   "city": "Rotterdam",
+   "overall": "148",
+   "overall_num": 148,
+   "school_ids": [
+    "rsm-rotterdam"
+   ]
+  },
+  {
+   "rank": "=24",
+   "rank_num": 24,
+   "name": "University of Chicago",
+   "country": "United States",
+   "city": "Chicago",
+   "overall": "24",
+   "overall_num": 24,
+   "school_ids": [
+    "chicago-booth"
+   ]
+  },
+  {
+   "rank": "26",
+   "rank_num": 26,
+   "name": "IE University",
+   "country": "Spain",
+   "city": "Segovia",
+   "overall": "446",
+   "overall_num": 446,
+   "school_ids": [
+    "ie-business"
+   ]
+  },
+  {
+   "rank": "27",
+   "rank_num": 27,
+   "name": "Tsinghua University",
+   "country": "China (Mainland)",
+   "city": "Beijing",
+   "overall": "14",
+   "overall_num": 14,
+   "school_ids": [
+    "tsinghua-sem"
+   ]
+  },
+  {
+   "rank": "28",
+   "rank_num": 28,
+   "name": "University of Toronto",
+   "country": "Canada",
+   "city": "Toronto",
+   "overall": "32",
+   "overall_num": 32,
+   "school_ids": [
+    "toronto-rotman"
+   ]
+  },
+  {
+   "rank": "29",
+   "rank_num": 29,
+   "name": "Indian Institute of Management Bangalore (IIMB)",
+   "country": "India",
+   "city": "Bengaluru",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "iim-bangalore"
+   ]
+  },
+  {
+   "rank": "30",
+   "rank_num": 30,
+   "name": "The Hong Kong University of Science and Technology",
+   "country": "Hong Kong SAR",
+   "city": "Hong Kong",
+   "overall": "33",
+   "overall_num": 33,
+   "school_ids": [
+    "hkust-business"
+   ]
+  },
+  {
+   "rank": "31",
+   "rank_num": 31,
+   "name": "Cornell University",
+   "country": "United States",
+   "city": "Ithaca",
+   "overall": "=16",
+   "overall_num": 16,
+   "school_ids": []
+  },
+  {
+   "rank": "=32",
+   "rank_num": 32,
+   "name": "ESSEC Business School",
+   "country": "France",
+   "city": "Cergy",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=32",
+   "rank_num": 32,
+   "name": "The University of Hong Kong",
+   "country": "Hong Kong SAR",
+   "city": "Hong Kong",
+   "overall": "11",
+   "overall_num": 11,
+   "school_ids": [
+    "hku-business"
+   ]
+  },
+  {
+   "rank": "34",
+   "rank_num": 34,
+   "name": "Peking University",
+   "country": "China (Mainland)",
+   "city": "Beijing",
+   "overall": "13",
+   "overall_num": 13,
+   "school_ids": [
+    "pku-guanghua",
+    "pku-hsbc"
+   ]
+  },
+  {
+   "rank": "35",
+   "rank_num": 35,
+   "name": "University of Warwick",
+   "country": "United Kingdom",
+   "city": "England",
+   "overall": "=68",
+   "overall_num": 68,
+   "school_ids": [
+    "warwick-business"
+   ]
+  },
+  {
+   "rank": "=36",
+   "rank_num": 36,
+   "name": "University of Michigan-Ann Arbor",
+   "country": "United States",
+   "city": "Ann Arbor",
+   "overall": "51",
+   "overall_num": 51,
+   "school_ids": [
+    "michigan-ross"
+   ]
+  },
+  {
+   "rank": "=36",
+   "rank_num": 36,
+   "name": "University of Navarra",
+   "country": "Spain",
+   "city": "Pamplona",
+   "overall": "=279",
+   "overall_num": 279,
+   "school_ids": []
+  },
+  {
+   "rank": "=36",
+   "rank_num": 36,
+   "name": "University of St.Gallen",
+   "country": "Switzerland",
+   "city": "St. Gallen",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "st-gallen"
+   ]
+  },
+  {
+   "rank": "39",
+   "rank_num": 39,
+   "name": "Singapore Management University",
+   "country": "Singapore",
+   "city": "Singapore",
+   "overall": "=411",
+   "overall_num": 411,
+   "school_ids": [
+    "smu-lkcsb"
+   ]
+  },
+  {
+   "rank": "40",
+   "rank_num": 40,
+   "name": "ESCP Business School - Paris",
+   "country": "France",
+   "city": "Paris",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "41",
+   "rank_num": 41,
+   "name": "The University of Manchester",
+   "country": "United Kingdom",
+   "city": "Manchester",
+   "overall": "=40",
+   "overall_num": 40,
+   "school_ids": [
+    "manchester-mbs"
+   ]
+  },
+  {
+   "rank": "=42",
+   "rank_num": 42,
+   "name": "The University of Melbourne",
+   "country": "Australia",
+   "city": "Melbourne",
+   "overall": "=22",
+   "overall_num": 22,
+   "school_ids": [
+    "melbourne-business"
+   ]
+  },
+  {
+   "rank": "=42",
+   "rank_num": 42,
+   "name": "University of British Columbia",
+   "country": "Canada",
+   "city": "Vancouver",
+   "overall": "=45",
+   "overall_num": 45,
+   "school_ids": [
+    "ubc-sauder"
+   ]
+  },
+  {
+   "rank": "=44",
+   "rank_num": 44,
+   "name": "McGill University",
+   "country": "Canada",
+   "city": "Montreal",
+   "overall": "30",
+   "overall_num": 30,
+   "school_ids": [
+    "mcgill-desautels"
+   ]
+  },
+  {
+   "rank": "=44",
+   "rank_num": 44,
+   "name": "University of California, Los Angeles (UCLA)",
+   "country": "United States",
+   "city": "Los Angeles",
+   "overall": "49",
+   "overall_num": 49,
+   "school_ids": [
+    "ucla-anderson"
+   ]
+  },
+  {
+   "rank": "46",
+   "rank_num": 46,
+   "name": "Shanghai Jiao Tong University",
+   "country": "China (Mainland)",
+   "city": "Shanghai",
+   "overall": "36",
+   "overall_num": 36,
+   "school_ids": [
+    "sjtu-antai"
+   ]
+  },
+  {
+   "rank": "47",
+   "rank_num": 47,
+   "name": "Indian Institute of Management (IIM) - Calcutta",
+   "country": "India",
+   "city": "Kolkata",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "iim-calcutta"
+   ]
+  },
+  {
+   "rank": "48",
+   "rank_num": 48,
+   "name": "The University of New South Wales (UNSW Sydney)",
+   "country": "Australia",
+   "city": "Sydney",
+   "overall": "19",
+   "overall_num": 19,
+   "school_ids": [
+    "unsw-agsm"
+   ]
+  },
+  {
+   "rank": "49",
+   "rank_num": 49,
+   "name": "Seoul National University",
+   "country": "South Korea",
+   "city": "Seoul",
+   "overall": "38",
+   "overall_num": 38,
+   "school_ids": [
+    "snu-business"
+   ]
+  },
+  {
+   "rank": "50",
+   "rank_num": 50,
+   "name": "Korea University",
+   "country": "South Korea",
+   "city": "Seoul",
+   "overall": "=52",
+   "overall_num": 52,
+   "school_ids": []
+  },
+  {
+   "rank": "51",
+   "rank_num": 51,
+   "name": "Yonsei University",
+   "country": "South Korea",
+   "city": "Seoul",
+   "overall": "42",
+   "overall_num": 42,
+   "school_ids": [
+    "yonsei-business"
+   ]
+  },
+  {
+   "rank": "52",
+   "rank_num": 52,
+   "name": "The Hong Kong Polytechnic University",
+   "country": "Hong Kong SAR",
+   "city": "Hong Kong",
+   "overall": "50",
+   "overall_num": 50,
+   "school_ids": []
+  },
+  {
+   "rank": "53",
+   "rank_num": 53,
+   "name": "The Chinese University of Hong Kong (CUHK)",
+   "country": "Hong Kong SAR",
+   "city": "Hong Kong",
+   "overall": "18",
+   "overall_num": 18,
+   "school_ids": [
+    "cuhk-business"
+   ]
+  },
+  {
+   "rank": "54",
+   "rank_num": 54,
+   "name": "The University of Sydney",
+   "country": "Australia",
+   "city": "Sydney",
+   "overall": "28",
+   "overall_num": 28,
+   "school_ids": [
+    "sydney-business"
+   ]
+  },
+  {
+   "rank": "=55",
+   "rank_num": 55,
+   "name": "Pennsylvania State University",
+   "country": "United States",
+   "city": "University Park",
+   "overall": "=92",
+   "overall_num": 92,
+   "school_ids": []
+  },
+  {
+   "rank": "=55",
+   "rank_num": 55,
+   "name": "University of Texas at Austin",
+   "country": "United States",
+   "city": "Austin",
+   "overall": "72",
+   "overall_num": 72,
+   "school_ids": []
+  },
+  {
+   "rank": "=57",
+   "rank_num": 57,
+   "name": "Fudan University",
+   "country": "China (Mainland)",
+   "city": "Shanghai",
+   "overall": "26",
+   "overall_num": 26,
+   "school_ids": [
+    "fudan-management"
+   ]
+  },
+  {
+   "rank": "=57",
+   "rank_num": 57,
+   "name": "Monash University",
+   "country": "Australia",
+   "city": "Melbourne",
+   "overall": "31",
+   "overall_num": 31,
+   "school_ids": [
+    "monash-business"
+   ]
+  },
+  {
+   "rank": "59",
+   "rank_num": 59,
+   "name": "Luiss University",
+   "country": "Italy",
+   "city": "Rome",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "60",
+   "rank_num": 60,
+   "name": "Duke University",
+   "country": "United States",
+   "city": "Durham",
+   "overall": "70",
+   "overall_num": 70,
+   "school_ids": [
+    "duke-fuqua"
+   ]
+  },
+  {
+   "rank": "=61",
+   "rank_num": 61,
+   "name": "ETH Zurich",
+   "country": "Switzerland",
+   "city": "Zürich",
+   "overall": "=8",
+   "overall_num": 8,
+   "school_ids": [
+    "eth-zurich"
+   ]
+  },
+  {
+   "rank": "=61",
+   "rank_num": 61,
+   "name": "Universidad de los Andes - Colombia",
+   "country": "Colombia",
+   "city": "Bogotá",
+   "overall": "=233",
+   "overall_num": 233,
+   "school_ids": []
+  },
+  {
+   "rank": "63",
+   "rank_num": 63,
+   "name": "Oxford Brookes University",
+   "country": "United Kingdom",
+   "city": "Oxford",
+   "overall": "=411",
+   "overall_num": 411,
+   "school_ids": []
+  },
+  {
+   "rank": "=64",
+   "rank_num": 64,
+   "name": "Pontificia Universidad Católica de Chile (UC)",
+   "country": "Chile",
+   "city": "Santiago",
+   "overall": "=119",
+   "overall_num": 119,
+   "school_ids": []
+  },
+  {
+   "rank": "=64",
+   "rank_num": 64,
+   "name": "emlyon business school",
+   "country": "France",
+   "city": "LYON",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=66",
+   "rank_num": 66,
+   "name": "King's College London",
+   "country": "United Kingdom",
+   "city": "London",
+   "overall": "37",
+   "overall_num": 37,
+   "school_ids": []
+  },
+  {
+   "rank": "=66",
+   "rank_num": 66,
+   "name": "Politecnico di Milano",
+   "country": "Italy",
+   "city": "Milan",
+   "overall": "=87",
+   "overall_num": 87,
+   "school_ids": []
+  },
+  {
+   "rank": "68",
+   "rank_num": 68,
+   "name": "UCL",
+   "country": "United Kingdom",
+   "city": "London",
+   "overall": "=8",
+   "overall_num": 8,
+   "school_ids": [
+    "ucl-management"
+   ]
+  },
+  {
+   "rank": "69",
+   "rank_num": 69,
+   "name": "WU (Vienna University of Economics and Business)",
+   "country": "Austria",
+   "city": "Vienna",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "70",
+   "rank_num": 70,
+   "name": "Carnegie Mellon University",
+   "country": "United States",
+   "city": "Pittsburgh",
+   "overall": "55",
+   "overall_num": 55,
+   "school_ids": [
+    "cmu-tepper"
+   ]
+  },
+  {
+   "rank": "71",
+   "rank_num": 71,
+   "name": "Indian Institute of Technology Delhi (IITD)",
+   "country": "India",
+   "city": "New Delhi",
+   "overall": "118",
+   "overall_num": 118,
+   "school_ids": []
+  },
+  {
+   "rank": "72",
+   "rank_num": 72,
+   "name": "The University of Tokyo",
+   "country": "Japan",
+   "city": "Tokyo",
+   "overall": "39",
+   "overall_num": 39,
+   "school_ids": [
+    "utokyo-gsfs"
+   ]
+  },
+  {
+   "rank": "=73",
+   "rank_num": 73,
+   "name": "City University of Hong Kong (CityUHK)",
+   "country": "Hong Kong SAR",
+   "city": "Kowloon",
+   "overall": "=52",
+   "overall_num": 52,
+   "school_ids": [
+    "cityu-cb"
+   ]
+  },
+  {
+   "rank": "=73",
+   "rank_num": 73,
+   "name": "Stockholm School of Economics",
+   "country": "Sweden",
+   "city": "Stockholm",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "stockholm-sse"
+   ]
+  },
+  {
+   "rank": "75",
+   "rank_num": 75,
+   "name": "Indian Institute of Management (IIM) - Lucknow",
+   "country": "India",
+   "city": "Lucknow",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "76",
+   "rank_num": 76,
+   "name": "Western University",
+   "country": "Canada",
+   "city": "London",
+   "overall": "=142",
+   "overall_num": 142,
+   "school_ids": [
+    "western-ivey"
+   ]
+  },
+  {
+   "rank": "77",
+   "rank_num": 77,
+   "name": "University of Leeds",
+   "country": "United Kingdom",
+   "city": "Leeds",
+   "overall": "=77",
+   "overall_num": 77,
+   "school_ids": []
+  },
+  {
+   "rank": "78",
+   "rank_num": 78,
+   "name": "Indian Institute of Management (IIM) - Kozhikode",
+   "country": "India",
+   "city": "Kozhikode",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=79",
+   "rank_num": 79,
+   "name": "Boston University",
+   "country": "United States",
+   "city": "Boston",
+   "overall": "94",
+   "overall_num": 94,
+   "school_ids": []
+  },
+  {
+   "rank": "=79",
+   "rank_num": 79,
+   "name": "Zhejiang University",
+   "country": "China (Mainland)",
+   "city": "Hangzhou",
+   "overall": "47",
+   "overall_num": 47,
+   "school_ids": [
+    "zju-management"
+   ]
+  },
+  {
+   "rank": "81",
+   "rank_num": 81,
+   "name": "Princeton University",
+   "country": "United States",
+   "city": "Princeton",
+   "overall": "27",
+   "overall_num": 27,
+   "school_ids": []
+  },
+  {
+   "rank": "=82",
+   "rank_num": 82,
+   "name": "Arizona State University",
+   "country": "United States",
+   "city": "Phoenix",
+   "overall": "172",
+   "overall_num": 172,
+   "school_ids": [
+    "asu-wpcarey"
+   ]
+  },
+  {
+   "rank": "=82",
+   "rank_num": 82,
+   "name": "University of Bath",
+   "country": "United Kingdom",
+   "city": "Bath",
+   "overall": "125",
+   "overall_num": 125,
+   "school_ids": []
+  },
+  {
+   "rank": "84",
+   "rank_num": 84,
+   "name": "Indian Institute of Technology Bombay (IITB)",
+   "country": "India",
+   "city": "Mumbai",
+   "overall": "=134",
+   "overall_num": 134,
+   "school_ids": []
+  },
+  {
+   "rank": "=85",
+   "rank_num": 85,
+   "name": "Australian National University (ANU)",
+   "country": "Australia",
+   "city": "Canberra",
+   "overall": "29",
+   "overall_num": 29,
+   "school_ids": []
+  },
+  {
+   "rank": "=85",
+   "rank_num": 85,
+   "name": "Université de Montréal",
+   "country": "Canada",
+   "city": "Montreal",
+   "overall": "=162",
+   "overall_num": 162,
+   "school_ids": []
+  },
+  {
+   "rank": "87",
+   "rank_num": 87,
+   "name": "Texas A&M University",
+   "country": "United States",
+   "city": "College Station",
+   "overall": "169",
+   "overall_num": 169,
+   "school_ids": []
+  },
+  {
+   "rank": "=88",
+   "rank_num": 88,
+   "name": "Fundação Getulio Vargas (FGV)",
+   "country": "Brazil",
+   "city": "Rio de Janeiro",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=88",
+   "rank_num": 88,
+   "name": "University of Southern California",
+   "country": "United States",
+   "city": "Los Angeles",
+   "overall": "153",
+   "overall_num": 153,
+   "school_ids": [
+    "usc-marshall"
+   ]
+  },
+  {
+   "rank": "90",
+   "rank_num": 90,
+   "name": "EDHEC Business School",
+   "country": "France",
+   "city": "Lille",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=91",
+   "rank_num": 91,
+   "name": "Technical University of Munich",
+   "country": "Germany",
+   "city": "Munich",
+   "overall": "25",
+   "overall_num": 25,
+   "school_ids": []
+  },
+  {
+   "rank": "=91",
+   "rank_num": 91,
+   "name": "Universidad Adolfo Ibáñez",
+   "country": "Chile",
+   "city": "Santiago",
+   "overall": "=655",
+   "overall_num": 655,
+   "school_ids": []
+  },
+  {
+   "rank": "=93",
+   "rank_num": 93,
+   "name": "The University of Queensland",
+   "country": "Australia",
+   "city": "Brisbane",
+   "overall": "=40",
+   "overall_num": 40,
+   "school_ids": [
+    "uq-business"
+   ]
+  },
+  {
+   "rank": "=93",
+   "rank_num": 93,
+   "name": "Universidade de São Paulo",
+   "country": "Brazil",
+   "city": "São Paulo",
+   "overall": "133",
+   "overall_num": 133,
+   "school_ids": []
+  },
+  {
+   "rank": "=93",
+   "rank_num": 93,
+   "name": "University of Amsterdam",
+   "country": "Netherlands",
+   "city": "Amsterdam",
+   "overall": "60",
+   "overall_num": 60,
+   "school_ids": [
+    "amsterdam-business"
+   ]
+  },
+  {
+   "rank": "96",
+   "rank_num": 96,
+   "name": "Lancaster University",
+   "country": "United Kingdom",
+   "city": "Lancaster",
+   "overall": "164",
+   "overall_num": 164,
+   "school_ids": []
+  },
+  {
+   "rank": "97",
+   "rank_num": 97,
+   "name": "Georgia Institute of Technology",
+   "country": "United States",
+   "city": "Atlanta",
+   "overall": "=142",
+   "overall_num": 142,
+   "school_ids": []
+  },
+  {
+   "rank": "98",
+   "rank_num": 98,
+   "name": "INCAE Business School",
+   "country": "Costa Rica",
+   "city": "La Garita",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "99",
+   "rank_num": 99,
+   "name": "IMD",
+   "country": "Switzerland",
+   "city": "Lausanne",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "100",
+   "rank_num": 100,
+   "name": "Universidad de Chile",
+   "country": "Chile",
+   "city": "Santiago",
+   "overall": "=185",
+   "overall_num": 185,
+   "school_ids": []
+  },
+  {
+   "rank": "101",
+   "rank_num": 101,
+   "name": "Durham University",
+   "country": "United Kingdom",
+   "city": "Durham",
+   "overall": "85",
+   "overall_num": 85,
+   "school_ids": []
+  },
+  {
+   "rank": "102",
+   "rank_num": 102,
+   "name": "National Taiwan University (NTU)",
+   "country": "Taiwan",
+   "city": "Taipei",
+   "overall": "54",
+   "overall_num": 54,
+   "school_ids": []
+  },
+  {
+   "rank": "103",
+   "rank_num": 103,
+   "name": "Aalto University",
+   "country": "Finland",
+   "city": "Espoo (Helsinki capital region)",
+   "overall": "=126",
+   "overall_num": 126,
+   "school_ids": []
+  },
+  {
+   "rank": "=104",
+   "rank_num": 104,
+   "name": "Universiti Malaya (UM)",
+   "country": "Malaysia",
+   "city": "Kuala Lumpur",
+   "overall": "56",
+   "overall_num": 56,
+   "school_ids": [
+    "um-business"
+   ]
+  },
+  {
+   "rank": "=104",
+   "rank_num": 104,
+   "name": "Universität Mannheim",
+   "country": "Germany",
+   "city": "Mannheim",
+   "overall": "=425",
+   "overall_num": 425,
+   "school_ids": []
+  },
+  {
+   "rank": "=106",
+   "rank_num": 106,
+   "name": "Michigan State University",
+   "country": "United States",
+   "city": "East Lansing",
+   "overall": "182",
+   "overall_num": 182,
+   "school_ids": []
+  },
+  {
+   "rank": "=106",
+   "rank_num": 106,
+   "name": "Universidad Nacional Autónoma de México  (UNAM)",
+   "country": "Mexico",
+   "city": "Mexico City",
+   "overall": "145",
+   "overall_num": 145,
+   "school_ids": []
+  },
+  {
+   "rank": "108",
+   "rank_num": 108,
+   "name": "University of Washington",
+   "country": "United States",
+   "city": "Seattle",
+   "overall": "=92",
+   "overall_num": 92,
+   "school_ids": []
+  },
+  {
+   "rank": "=109",
+   "rank_num": 109,
+   "name": "The University of Edinburgh",
+   "country": "United Kingdom",
+   "city": "Edinburgh",
+   "overall": "35",
+   "overall_num": 35,
+   "school_ids": [
+    "edinburgh-business"
+   ]
+  },
+  {
+   "rank": "=109",
+   "rank_num": 109,
+   "name": "Waseda University",
+   "country": "Japan",
+   "city": "Tokyo",
+   "overall": "=201",
+   "overall_num": 201,
+   "school_ids": [
+    "waseda-business"
+   ]
+  },
+  {
+   "rank": "111",
+   "rank_num": 111,
+   "name": "University of Florida",
+   "country": "United States",
+   "city": "Gainesville",
+   "overall": "=228",
+   "overall_num": 228,
+   "school_ids": []
+  },
+  {
+   "rank": "=112",
+   "rank_num": 112,
+   "name": "Management and Science University",
+   "country": "Malaysia",
+   "city": "Shah Alam",
+   "overall": "=608",
+   "overall_num": 608,
+   "school_ids": []
+  },
+  {
+   "rank": "=112",
+   "rank_num": 112,
+   "name": "The University of Auckland",
+   "country": "New Zealand",
+   "city": "Auckland",
+   "overall": "67",
+   "overall_num": 67,
+   "school_ids": [
+    "auckland-business"
+   ]
+  },
+  {
+   "rank": "=114",
+   "rank_num": 114,
+   "name": "Babson College, F.W. Olin Graduate School of Business",
+   "country": "United States",
+   "city": "Wellesley",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=114",
+   "rank_num": 114,
+   "name": "City St George’s, University of London",
+   "country": "United Kingdom",
+   "city": "London",
+   "overall": "=361",
+   "overall_num": 361,
+   "school_ids": []
+  },
+  {
+   "rank": "=114",
+   "rank_num": 114,
+   "name": "Macquarie University (Sydney, Australia)",
+   "country": "Australia",
+   "city": "Sydney",
+   "overall": "=126",
+   "overall_num": 126,
+   "school_ids": [
+    "macquarie-business"
+   ]
+  },
+  {
+   "rank": "117",
+   "rank_num": 117,
+   "name": "Tilburg University",
+   "country": "Netherlands",
+   "city": "Tilburg",
+   "overall": "429",
+   "overall_num": 429,
+   "school_ids": []
+  },
+  {
+   "rank": "118",
+   "rank_num": 118,
+   "name": "Adelaide University",
+   "country": "Australia",
+   "city": "Adelaide",
+   "overall": "79",
+   "overall_num": 79,
+   "school_ids": []
+  },
+  {
+   "rank": "119",
+   "rank_num": 119,
+   "name": "Universidade Nova de Lisboa",
+   "country": "Portugal",
+   "city": "Lisbon",
+   "overall": "337",
+   "overall_num": 337,
+   "school_ids": []
+  },
+  {
+   "rank": "120",
+   "rank_num": 120,
+   "name": "KU Leuven",
+   "country": "Belgium",
+   "city": "Leuven",
+   "overall": "59",
+   "overall_num": 59,
+   "school_ids": []
+  },
+  {
+   "rank": "=121",
+   "rank_num": 121,
+   "name": "BI Norwegian Business School",
+   "country": "Norway",
+   "city": "Oslo",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=121",
+   "rank_num": 121,
+   "name": "The University of Technology Sydney (UTS)",
+   "country": "Australia",
+   "city": "Sydney",
+   "overall": "=87",
+   "overall_num": 87,
+   "school_ids": []
+  },
+  {
+   "rank": "=123",
+   "rank_num": 123,
+   "name": "Purdue University",
+   "country": "United States",
+   "city": "West Lafayette",
+   "overall": "=100",
+   "overall_num": 100,
+   "school_ids": []
+  },
+  {
+   "rank": "=123",
+   "rank_num": 123,
+   "name": "WHU - Otto Beisheim School of Management",
+   "country": "Germany",
+   "city": "Vallendar",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": [
+    "whu-beisheim"
+   ]
+  },
+  {
+   "rank": "125",
+   "rank_num": 125,
+   "name": "University of Minnesota (System)",
+   "country": "United States",
+   "city": "Minneapolis",
+   "overall": "=255",
+   "overall_num": 255,
+   "school_ids": [
+    "minnesota-carlson"
+   ]
+  },
+  {
+   "rank": "=126",
+   "rank_num": 126,
+   "name": "Alma Mater Studiorum - Università di Bologna",
+   "country": "Italy",
+   "city": "Bologna",
+   "overall": "=123",
+   "overall_num": 123,
+   "school_ids": []
+  },
+  {
+   "rank": "=126",
+   "rank_num": 126,
+   "name": "University of Birmingham",
+   "country": "United Kingdom",
+   "city": "Birmingham",
+   "overall": "=68",
+   "overall_num": 68,
+   "school_ids": []
+  },
+  {
+   "rank": "=126",
+   "rank_num": 126,
+   "name": "University of Illinois Urbana-Champaign",
+   "country": "United States",
+   "city": "Champaign",
+   "overall": "74",
+   "overall_num": 74,
+   "school_ids": []
+  },
+  {
+   "rank": "=126",
+   "rank_num": 126,
+   "name": "University of North Carolina at Chapel Hill",
+   "country": "United States",
+   "city": "Chapel Hill",
+   "overall": "=158",
+   "overall_num": 158,
+   "school_ids": []
+  },
+  {
+   "rank": "=126",
+   "rank_num": 126,
+   "name": "University of Virginia",
+   "country": "United States",
+   "city": "Charlottesville",
+   "overall": "268",
+   "overall_num": 268,
+   "school_ids": []
+  },
+  {
+   "rank": "=131",
+   "rank_num": 131,
+   "name": "Indiana University Bloomington",
+   "country": "United States",
+   "city": "Bloomington",
+   "overall": "=360",
+   "overall_num": 360,
+   "school_ids": [
+    "indiana-kelley"
+   ]
+  },
+  {
+   "rank": "=131",
+   "rank_num": 131,
+   "name": "Universidad Austral",
+   "country": "Argentina",
+   "city": "Pilar",
+   "overall": "=530",
+   "overall_num": 530,
+   "school_ids": []
+  },
+  {
+   "rank": "=131",
+   "rank_num": 131,
+   "name": "University of Alberta",
+   "country": "Canada",
+   "city": "Edmonton",
+   "overall": "96",
+   "overall_num": 96,
+   "school_ids": []
+  },
+  {
+   "rank": "=134",
+   "rank_num": 134,
+   "name": "Hitotsubashi University",
+   "country": "Japan",
+   "city": "Tokyo",
+   "overall": "=575",
+   "overall_num": 575,
+   "school_ids": [
+    "hitotsubashi-ics"
+   ]
+  },
+  {
+   "rank": "=134",
+   "rank_num": 134,
+   "name": "Trinity College Dublin, The University of Dublin",
+   "country": "Ireland",
+   "city": "Dublin",
+   "overall": "75",
+   "overall_num": 75,
+   "school_ids": [
+    "tcd-business"
+   ]
+  },
+  {
+   "rank": "136",
+   "rank_num": 136,
+   "name": "Dartmouth College",
+   "country": "United States",
+   "city": "Hanover",
+   "overall": "=270",
+   "overall_num": 270,
+   "school_ids": []
+  },
+  {
+   "rank": "137",
+   "rank_num": 137,
+   "name": "EPFL – École polytechnique fédérale de Lausanne",
+   "country": "Switzerland",
+   "city": "Lausanne",
+   "overall": "=22",
+   "overall_num": 22,
+   "school_ids": []
+  },
+  {
+   "rank": "138",
+   "rank_num": 138,
+   "name": "Keio University",
+   "country": "Japan",
+   "city": "Tokyo",
+   "overall": "=213",
+   "overall_num": 213,
+   "school_ids": []
+  },
+  {
+   "rank": "=139",
+   "rank_num": 139,
+   "name": "Cranfield University",
+   "country": "United Kingdom",
+   "city": "Bedford",
+   "overall": null,
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=139",
+   "rank_num": 139,
+   "name": "Renmin (People's) University of China",
+   "country": "China (Mainland)",
+   "city": "Beijing",
+   "overall": "=521",
+   "overall_num": 521,
+   "school_ids": []
+  },
+  {
+   "rank": "=141",
+   "rank_num": 141,
+   "name": "Cardiff University",
+   "country": "United Kingdom",
+   "city": "Cardiff",
+   "overall": "=179",
+   "overall_num": 179,
+   "school_ids": []
+  },
+  {
+   "rank": "=141",
+   "rank_num": 141,
+   "name": "Universidad EAFIT",
+   "country": "Colombia",
+   "city": "Medellin",
+   "overall": "1001-1200",
+   "overall_num": null,
+   "school_ids": []
+  },
+  {
+   "rank": "=141",
+   "rank_num": 141,
+   "name": "University of Liverpool",
+   "country": "United Kingdom",
+   "city": "Liverpool",
+   "overall": "139",
+   "overall_num": 139,
+   "school_ids": []
+  },
+  {
+   "rank": "=144",
+   "rank_num": 144,
+   "name": "Taylor's University",
+   "country": "Malaysia",
+   "city": "Kuala Lumpur",
+   "overall": "272",
+   "overall_num": 272,
+   "school_ids": []
+  },
+  {
+   "rank": "=144",
+   "rank_num": 144,
+   "name": "University of Nottingham",
+   "country": "United Kingdom",
+   "city": "Nottingham",
+   "overall": "=97",
+   "overall_num": 97,
+   "school_ids": []
+  },
+  {
+   "rank": "=144",
+   "rank_num": 144,
+   "name": "York University",
+   "country": "Canada",
+   "city": "Toronto",
+   "overall": "=322",
+   "overall_num": 322,
+   "school_ids": []
+  },
+  {
+   "rank": "=147",
+   "rank_num": 147,
+   "name": "Queen's University at Kingston",
+   "country": "Canada",
+   "city": "Kingston",
+   "overall": "=179",
+   "overall_num": 179,
+   "school_ids": []
+  },
+  {
+   "rank": "=147",
+   "rank_num": 147,
+   "name": "Swansea University",
+   "country": "United Kingdom",
+   "city": "Swansea",
+   "overall": "=322",
+   "overall_num": 322,
+   "school_ids": []
+  },
+  {
+   "rank": "=147",
+   "rank_num": 147,
+   "name": "Universidad de Buenos Aires (UBA)",
+   "country": "Argentina",
+   "city": "Ciudad Autónoma de Bs. A.",
+   "overall": "84",
+   "overall_num": 84,
+   "school_ids": []
+  },
+  {
+   "rank": "=150",
+   "rank_num": 150,
+   "name": "Indian Institute of Technology Kharagpur (IIT-KGP)",
+   "country": "India",
+   "city": "Kharagpur",
+   "overall": "205",
+   "overall_num": 205,
+   "school_ids": []
+  },
+  {
+   "rank": "=150",
+   "rank_num": 150,
+   "name": "Pontificia Universidad Javeriana",
+   "country": "Colombia",
+   "city": "Bogotá",
+   "overall": "=395",
+   "overall_num": 395,
+   "school_ids": []
+  },
+  {
+   "rank": "=150",
+   "rank_num": 150,
+   "name": "RMIT University",
+   "country": "Australia",
+   "city": "Melbourne",
+   "overall": "=119",
+   "overall_num": 119,
+   "school_ids": []
+  }
+ ]
+}
