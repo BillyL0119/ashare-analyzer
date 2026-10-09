@@ -27,18 +27,32 @@
     <!-- Canonical -->
     <link rel="canonical" href="https://bestfriendstock.com/" />
 
-    <!-- Path-based canonical/title update for SPA sub-pages -->
+    <!-- Path-based canonical/title/description for SPA sub-pages (runs before first paint, Googlebot renders JS) -->
     <script>
     (function() {
-      var p = window.location.pathname;
-      var canon = document.querySelector('link[rel="canonical"]');
-      var t = document.querySelector('title');
-      if (p === '/universities') {
-        if (canon) canon.setAttribute('href', 'https://bestfriendstock.com/universities');
-        if (t) t.textContent = 'Best Friend Stock | 全球商学院指南 - 90+顶尖商学院数据库';
-      } else if (p === '/ai-teacher') {
-        if (canon) canon.setAttribute('href', 'https://bestfriendstock.com/ai-teacher');
-        if (t) t.textContent = 'Best Friend Stock | AI经济学老师 - 免费AI经济学辅导';
+      var P = {
+        '/news':        ['BestFriendStock | 每日大事件 - 市场重大新闻', '每日精选全球财经大事件与市场新闻，帮助学生了解美股、A股背后的宏观与行业动态。'],
+        '/paper':       ['BestFriendStock | 模拟炒股 - 100万虚拟资金练习美股与A股', '用100万虚拟资金零风险练习美股与A股交易，含真实手续费与结算规则，附排行榜。'],
+        '/study':       ['BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门', 'A-Level、IB、AP、IGCSE 经济学与美股入门课程，结合真实市场案例，支持中英日韩法五种语言。'],
+        '/universities':['BestFriendStock | 全球商学院指南 - 90+顶尖商学院数据库', '收录90所全球顶尖商学院，含QS排名、学费、申请要求、就业去向与校友信息。'],
+        '/bank_views':  ['BestFriendStock | 大行观点 - 顶级投行研究观点', '汇总高盛、摩根士丹利、摩根大通等顶级投行的评级、目标价与市场展望。'],
+        '/career':      ['BestFriendStock | 求职指南 - 金融行业职业规划与模拟面试', '8个金融岗位的日常工作、技能、薪资与职业路径，并提供AI模拟面试。'],
+        '/ai-teacher':  ['BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导', '24小时在线的AI老师，随时解答美股、技术分析、财报与A-Level/IB/AP经济学问题。'],
+        '/privacy':     ['BestFriendStock | 隐私政策', 'BestFriendStock 隐私政策：我们收集哪些数据、如何使用以及你的选择。']
+      };
+      var p = window.location.pathname.replace(/\/+$/, '') || '/';
+      var m = p.match(/^\/stock\/(us|cn)\/([A-Za-z0-9.\-]{1,10})$/);
+      var url = 'https://bestfriendstock.com' + (p === '/' ? '/' : p);
+      var meta = P[p];
+      if (!meta && !m) return;
+      var set = function(sel, attr, val) { var el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
+      set('link[rel="canonical"]', 'href', url);
+      set('meta[property="og:url"]', 'content', url);
+      if (meta) {
+        var t = document.querySelector('title'); if (t) t.textContent = meta[0];
+        set('meta[name="description"]', 'content', meta[1]);
+        set('meta[property="og:title"]', 'content', meta[0]);
+        set('meta[property="og:description"]', 'content', meta[1]);
       }
     })();
     </script>

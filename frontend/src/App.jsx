@@ -22,6 +22,7 @@ const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
 const BankViewsPage      = lazy(() => import('./components/BankViewsPage'))
 const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
+const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
@@ -56,6 +57,7 @@ const TAB_PATHS = {
   universities: '/universities',
   bank_views:   '/bank_views',
   career:       '/career',
+  ai_teacher:   '/ai-teacher',
 }
 const PATH_TABS = Object.fromEntries(Object.entries(TAB_PATHS).map(([k, v]) => [v, k]))
 
@@ -167,11 +169,12 @@ export default function App() {
     const titles = {
       analysis:     'BestFriendStock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
       news:         'BestFriendStock | 每日大事件 - 市场重大新闻',
-      paper:        'BestFriendStock | 模拟炒股 - 100万虚拟资金T+1练习',
-      study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE',
+      paper:        'BestFriendStock | 模拟炒股 - 100万虚拟资金练习美股与A股',
+      study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门',
       universities: 'BestFriendStock | 全球商学院指南 - 90+顶尖商学院数据库',
-      bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究报告',
-      career:       'BestFriendStock | 求职指南 - 金融行业职业规划',
+      bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究观点',
+      career:       'BestFriendStock | 求职指南 - 金融行业职业规划与模拟面试',
+      ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
     document.title = titles[appTab] || titles.analysis
     let canonical = document.querySelector('link[rel="canonical"]')
@@ -682,6 +685,8 @@ export default function App() {
             <BankViewsPage lang={lang} />
           ) : appTab === 'career' ? (
             <CareerGuidePage lang={lang} />
+          ) : appTab === 'ai_teacher' ? (
+            <AITeacherPage lang={lang} />
           ) : (
             <>
               {selectedSymbols.length === 0 && (
