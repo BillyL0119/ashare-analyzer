@@ -1531,6 +1531,24 @@ export const STR = {
   "다음 강의",
   "Leçon suivante"
  ],
+ "北京时间": [
+  "Beijing time",
+  "北京時間",
+  "베이징 시간",
+  "heure de Pékin"
+ ],
+ "集合竞价": [
+  "Pre-open auction",
+  "寄付前",
+  "동시호가",
+  "Pré-ouverture"
+ ],
+ "午间休市": [
+  "Lunch break",
+  "昼休み",
+  "점심 휴장",
+  "Pause déjeuner"
+ ],
  "美股热门": [
   "US Movers",
   "米国株ランキング",

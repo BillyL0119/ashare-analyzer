@@ -20,19 +20,25 @@ function useCountdown(iso) {
   return { days: Math.floor(mins / 1440), hours: Math.floor(mins / 60), mins: mins % 60 }
 }
 
-function SessionPill({ session }) {
+/** State pill on the right, countdown + ET time as a caption under the title (same layout as the A-share card). */
+function SessionHeader({ session, asOf }) {
   const t = useT()
   const cd = useCountdown(session.next_open_utc)
   const label = { regular: t('交易中'), pre: t('盘前交易'), post: t('盘后交易'), closed: t('休市') }[session.state]
-  const color = session.state === 'regular' ? 'var(--cn-down)' : session.state === 'closed' ? 'var(--text-3)' : '#F28B3C'
+  const color = session.state === 'regular' ? 'var(--cn-down)' : session.state === 'closed' ? 'var(--text-2)' : '#F28B3C'
   let opens = null
-  if (session.state !== 'regular' && cd) opens = cd.hours >= 48 ? t('%lld天', cd.days) : t('%lld小时 %lld分钟', cd.hours, cd.mins)
+  if (session.state !== 'regular' && cd) opens = t('距开盘 %@', cd.hours >= 48 ? t('%lld天', cd.days) : t('%lld小时 %lld分钟', cd.hours, cd.mins))
+  const time = (session.et_time || asOf || '').slice(11, 16)
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 650 }}>
-      <span style={{ width: 8, height: 8, borderRadius: 4, background: color, boxShadow: session.state === 'regular' ? `0 0 0 3px color-mix(in srgb, ${color} 25%, transparent)` : 'none' }} />
-      <span style={{ color }}>{label}</span>
-      {opens && <span className="m-muted" style={{ fontWeight: 500 }}>· {t('距开盘 %@', opens)}</span>}
-    </span>
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <b style={{ fontSize: 17 }}>{t('美股大盘')}</b>
+        <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 999, fontSize: 12, fontWeight: 650, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
+          <span style={{ width: 6, height: 6, borderRadius: 3, background: color }} />{label}
+        </span>
+      </div>
+      <div className="m-label m-num" style={{ marginTop: 4 }}>{[opens, time && `${time} ET`].filter(Boolean).join(' · ')}</div>
+    </div>
   )
 }
 
@@ -72,9 +78,7 @@ function Overview({ d, error, reload }) {
   const b = d.breadth
   return (
     <div className="m-card" style={{ display: 'grid', gap: 14 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <b style={{ fontSize: 14 }}>{t('美股大盘')}</b><SessionPill session={d.session} />
-      </div>
+      <SessionHeader session={d.session} asOf={d.as_of} />
       {d.indices[0] && <IndexCard hero i={d.indices[0]} />}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>{d.indices.slice(1).map((i) => <IndexCard key={i.symbol || i.name} i={i} />)}</div>
       {b?.sample > 0 && (
@@ -83,7 +87,7 @@ function Overview({ d, error, reload }) {
             <span style={{ flex: b.advancing, background: 'var(--cn-down)' }} /><span style={{ flex: Math.max(b.sample - b.advancing - b.declining, 0), background: 'var(--text-3)', opacity: .4 }} /><span style={{ flex: b.declining, background: 'var(--cn-up)' }} />
           </div>
           <div className="m-label m-num" style={{ marginTop: 7, display: 'flex', justifyContent: 'space-between' }}>
-            <span>{t('上涨 %lld · 下跌 %lld', b.advancing, b.declining)}</span>{d.as_of && <span>{d.as_of.slice(5, 16)} ET</span>}
+            <span>{t('上涨 %lld · 下跌 %lld', b.advancing, b.declining)}</span><span>{t('数据延迟，仅供参考')}</span>
           </div>
         </div>
       )}

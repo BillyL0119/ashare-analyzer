@@ -80,35 +80,84 @@ function SearchBox() {
   )
 }
 
-function IndexTile({ name, q }) {
-  const p = q ? q.change_pct * 100 : null
+// The API rounds change_pct to 4 decimals of a fraction, so tiny moves read as 0; recompute from points.
+const idxPct = (q) => {
+  if (!q) return null
+  if (q.change_pct === 0 && q.change && q.value - q.change > 0) return (q.change / (q.value - q.change)) * 100
+  return q.change_pct * 100
+}
+
+function IndexTile({ name, q, hero }) {
+  const p = idxPct(q)
   const c = changeColor(p, 'cn')
+  const bg = `linear-gradient(135deg, color-mix(in srgb, ${c} 16%, transparent), var(--surface-hi))`
+  if (hero) {
+    return (
+      <div className="m-tile" style={{ background: bg, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ minWidth: 0 }}>
+          <div className="m-label">{name}</div>
+          <div className="m-big m-num" style={{ marginTop: 4, fontSize: 32, lineHeight: 1.1 }}>{q ? num(q.value) : '--'}</div>
+        </div>
+        <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
+          <Pill value={p} market="cn" width={84} />
+          {q && <span className="m-num" style={{ color: c, fontWeight: 650, fontSize: 12.5 }}>{q.change > 0 ? '+' : ''}{num(q.change)}</span>}
+        </div>
+      </div>
+    )
+  }
   return (
-    <div className="m-tile" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${c} 16%, transparent), var(--surface-hi))` }}>
+    <div className="m-tile" style={{ background: bg, padding: '10px 12px', minWidth: 0 }}>
       <div className="m-label">{name}</div>
-      <div className="m-big m-num" style={{ margin: '5px 0 3px', fontSize: 16 }}>{q ? num(q.value) : '--'}</div>
+      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 15, fontWeight: 800 }}>{q ? num(q.value) : '--'}</div>
       <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(p)}</div>
     </div>
   )
+}
+
+/** A-share session from Beijing time; a stale data date means today is a weekend or holiday. */
+function cnSession(dataDate, t) {
+  const now = new Date()
+  const bj = new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000)
+  const today = `${bj.getFullYear()}-${String(bj.getMonth() + 1).padStart(2, '0')}-${String(bj.getDate()).padStart(2, '0')}`
+  const closed = [t('休市'), 'var(--text-2)']
+  if (today !== dataDate || bj.getDay() === 0 || bj.getDay() === 6) return closed
+  const m = bj.getHours() * 60 + bj.getMinutes()
+  if (m >= 555 && m < 570) return [t('集合竞价'), '#F28B3C']
+  if ((m >= 570 && m < 690) || (m >= 780 && m < 900)) return [t('交易中'), 'var(--cn-up)']
+  if (m >= 690 && m < 780) return [t('午间休市'), '#F28B3C']
+  return closed
 }
 
 function Overview() {
   const t = useT()
   const { data: d, error, reload } = useAPI('/market/overview')
   if (!d) return error ? <ErrorBox onRetry={reload} /> : (
-    <div className="m-card" style={{ display: 'grid', gap: 14 }}><Skeleton w={90} h={14} /><div className="m-tiles"><Skeleton h={78} r={14} /><Skeleton h={78} r={14} /><Skeleton h={78} r={14} /></div><Skeleton h={8} r={4} /></div>
+    <div className="m-card" style={{ display: 'grid', gap: 14 }}><Skeleton w={120} h={14} /><Skeleton h={82} r={14} /><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}><Skeleton h={66} r={14} /><Skeleton h={66} r={14} /></div><Skeleton h={8} r={4} /></div>
   )
   const up = d.advance_count, flat = d.flat_count, down = d.decline_count, total = up + flat + down
   const noIdx = !d.shanghai_index && !d.shenzhen_index && !d.chinext_index
   return (
     <div className="m-card" style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span style={{ width: 6, height: 6, borderRadius: 3, background: 'var(--accent)' }} />
-        <b style={{ fontSize: 14 }}>{t('A股大盘')}</b><span className="m-muted m-num" style={{ marginLeft: 'auto', fontSize: 12 }}>{d.date}</span>
-      </div>
+      {(() => {
+        const [label, color] = cnSession(d.date, t)
+        return (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <b style={{ fontSize: 17 }}>{t('A股大盘')}</b>
+              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 999, fontSize: 12, fontWeight: 650, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
+                <span style={{ width: 6, height: 6, borderRadius: 3, background: color }} />{label}
+              </span>
+            </div>
+            <div className="m-label m-num" style={{ marginTop: 4 }}>{d.date} {d.time} {t('北京时间')}</div>
+          </div>
+        )
+      })()}
       {noIdx ? <div className="m-tile m-muted" style={{ fontSize: 13 }}>{t('暂无指数数据，开盘后自动更新')}</div> : (
-        <div className="m-tiles">
-          <IndexTile name={t('上证指数')} q={d.shanghai_index} /><IndexTile name={t('深证成指')} q={d.shenzhen_index} /><IndexTile name={t('创业板指')} q={d.chinext_index} />
+        <div style={{ display: 'grid', gap: 8 }}>
+          <IndexTile hero name={t('上证指数')} q={d.shanghai_index} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
+            <IndexTile name={t('深证成指')} q={d.shenzhen_index} /><IndexTile name={t('创业板指')} q={d.chinext_index} />
+          </div>
         </div>
       )}
       <div>
