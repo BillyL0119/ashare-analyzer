@@ -15,15 +15,26 @@ const GREEN       = '#34d399'
 const PROGRESS_BG = 'var(--bg-hover)'
 
 const EXAMS = [
+  { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '美股与股票入门', title_en: 'US Stocks & Investing Basics', color: '#ec4899', board: 'US market · Fundamentals · Investing' },
+  { key: 'kline',  label: 'K线教学', label_en: 'Reading Charts', title: 'K线图入门', title_en: 'Reading Candlestick Charts', color: '#f472b6', board: 'Candlesticks' },
   { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#6366f1', board: 'Cambridge 9708' },
   { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#10b981', board: 'Cambridge 0455' },
   { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: '#f59e0b', board: 'College Board' },
   { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#ef4444', board: 'College Board' },
   { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#8b5cf6', board: 'IB SL/HL'       },
-  { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '股票知识入门',       title_en: 'Stock Market Basics',    color: '#ec4899', board: 'Stock Basics'   },
   { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#06b6d4', board: 'Timeline' },
-  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#0ea5e9', board: 'Google Gemini' },
+  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#0ea5e9', board: 'DeepSeek' },
 ]
+
+// Stock lessons store bilingual titles as "中文 / English"; show only the half for the reader.
+function localTitle(item, lang) {
+  if (!item) return ''
+  if (lang !== 'zh' && (item[`title_${lang}`] || item.title_en)) return item[`title_${lang}`] || item.title_en
+  const raw = item.title || ''
+  if (!raw.includes(' / ')) return raw
+  const [zhPart, enPart] = raw.split(' / ')
+  return lang === 'zh' ? zhPart : enPart
+}
 
 function storageKey(exam) { return `bfs_study_${exam}` }
 function loadProgress(exam) {
@@ -36,8 +47,7 @@ function saveProgress(exam, p) {
 // ── Sidebar topic row ─────────────────────────────────────────────────────────
 function TopicRow({ topic, active, read, accentColor, lang, onClick }) {
   const [hover, setHover] = useState(false)
-  const displayTitle = lang === 'zh' ? topic.title
-    : (topic[`title_${lang}`] || topic.title_en || topic.title)
+  const displayTitle = localTitle(topic, lang)
   return (
     <div
       onClick={onClick}
@@ -55,20 +65,20 @@ function TopicRow({ topic, active, read, accentColor, lang, onClick }) {
     >
       <span style={{
         fontSize: 14, flexShrink: 0,
-        color: read ? GREEN : active ? accentColor : 'rgba(154,160,166,0.4)',
+        color: read ? GREEN : active ? accentColor : 'var(--text-muted)',
       }}>
         {read ? '✓' : '●'}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
           fontSize: 12, lineHeight: 1.35,
-          color: active ? 'var(--text-primary)' : read ? 'var(--text-secondary)' : MUTED,
+          color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
           fontWeight: active ? 600 : 400,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>
           {displayTitle}
         </div>
-        <div style={{ fontSize: 10, color: 'rgba(154,160,166,0.5)', marginTop: 1 }}>
+        <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>
           {topic.estimated_time}
         </div>
       </div>
@@ -88,7 +98,7 @@ function hexToRgb(hex) {
 function PaperGroup({ paper, activeId, progress, accentColor, lang, onSelect }) {
   const [open, setOpen] = useState(true)
   const readCount = paper.topics.filter((t) => progress[t.id]).length
-  const paperTitle = lang === 'zh' ? paper.title : (paper.title_en || paper.title)
+  const paperTitle = localTitle(paper, lang)
 
   return (
     <div style={{ marginBottom: 8 }}>
@@ -399,8 +409,11 @@ function EconDiagram({ type }) {
 }
 
 // ── Section block ─────────────────────────────────────────────────────────────
-function SectionBlock({ section, index, total, accentColor, lang }) {
-  const t = T[lang] || T.en
+const REAL_WORLD_LABEL = { zh: '现实案例', en: 'REAL WORLD CONNECTION', ja: '現実の事例', ko: '실제 사례', fr: 'LIEN AVEC LE RÉEL' }
+const KEY_POINT_LABEL  = { zh: '要点', en: 'KEY POINT', ja: 'ポイント', ko: '핵심', fr: 'À RETENIR' }
+const EXAM_TIP_LABEL   = { zh: '考试要点', en: 'EXAM TIP', ja: '試験のポイント', ko: '시험 팁', fr: "CONSEIL D'EXAMEN" }
+
+function SectionBlock({ section, index, total, accentColor, lang, exam }) {
   const pick = (key) => {
     if (lang === 'zh') return section[key]
     if (lang === 'en') return section[`${key}_en`] || section[key]
@@ -446,7 +459,7 @@ function SectionBlock({ section, index, total, accentColor, lang }) {
           marginLeft: 15, marginBottom: 12,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', marginBottom: 6, letterSpacing: '0.05em' }}>
-            🌍 REAL WORLD CONNECTION
+            🌍 {REAL_WORLD_LABEL[lang] || REAL_WORLD_LABEL.en}
           </div>
           <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
             {realWorld}
@@ -463,7 +476,7 @@ function SectionBlock({ section, index, total, accentColor, lang }) {
           marginLeft: 15, marginBottom: 12,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: '#fbbf24', marginBottom: 6, letterSpacing: '0.05em' }}>
-            📝 {t.examTip}
+            📝 {(exam === 'stocks' ? KEY_POINT_LABEL : EXAM_TIP_LABEL)[lang] || EXAM_TIP_LABEL.en}
           </div>
           <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
             {examTip}
@@ -932,7 +945,7 @@ function EventTimeline({ zh }) {
 
 
 // ── Main component ────────────────────────────────────────────────────────────
-const VALID_EXAMS = ['alevel', 'igcse', 'ap_macro', 'ap_micro', 'ib', 'stocks', 'events', 'ai_teacher']
+const VALID_EXAMS = EXAMS.map((e) => e.key)
 
 export default function StudyCenter({ lang }) {
   const zh = lang === 'zh'
@@ -944,12 +957,12 @@ export default function StudyCenter({ lang }) {
 
   const examFromUrl = location.pathname.match(/^\/study\/(\w+)$/)?.[1]
   const [activeExam, setActiveExam] = useState(
-    () => VALID_EXAMS.includes(examFromUrl) ? examFromUrl : 'alevel'
+    () => VALID_EXAMS.includes(examFromUrl) ? examFromUrl : 'stocks'
   )
   const [curriculum,    setCurriculum]    = useState(null)
   const [activeId,      setActiveId]      = useState(null)
   const [topicData,     setTopicData]     = useState(null)
-  const [progress,      setProgress]      = useState(() => loadProgress('alevel'))
+  const [progress,      setProgress]      = useState(() => loadProgress('stocks'))
   const [loadingTopic,  setLoadingTopic]  = useState(false)
   const [loadingCurr,   setLoadingCurr]   = useState(false)
   const [mobileView,    setMobileView]    = useState('list') // 'list' | 'content'
@@ -960,7 +973,7 @@ export default function StudyCenter({ lang }) {
 
   // Fetch curriculum whenever exam changes (skip for events/stocks tabs)
   useEffect(() => {
-    if (activeExam === 'events' || activeExam === 'stocks') return
+    if (activeExam === 'events' || activeExam === 'kline' || activeExam === 'ai_teacher') return
     setLoadingCurr(true)
     setCurriculum(null)
     setActiveId(null)
@@ -1074,7 +1087,7 @@ export default function StudyCenter({ lang }) {
         {activeExam === 'events' && <EventTimeline zh={zh} />}
 
         {/* ── Stocks K-line lesson ── */}
-        {activeExam === 'stocks' && <KLineLesson zh={zh} />}
+        {activeExam === 'kline' && <KLineLesson zh={zh} />}
 
         {/* ── AI Teacher (full embedded) ── */}
         {activeExam === 'ai_teacher' && (
@@ -1084,7 +1097,7 @@ export default function StudyCenter({ lang }) {
         )}
 
         {/* ── Left sidebar ── */}
-        {activeExam !== 'events' && activeExam !== 'stocks' && activeExam !== 'ai_teacher' &&
+        {activeExam !== 'events' && activeExam !== 'kline' && activeExam !== 'ai_teacher' &&
         (!isMobile || mobileView === 'list') &&
         <div style={{
           width: isMobile ? '100%' : 260, flexShrink: 0, background: SIDEBAR_BG,
@@ -1148,7 +1161,7 @@ export default function StudyCenter({ lang }) {
         }
 
         {/* ── Right content area ── */}
-        {activeExam !== 'events' && activeExam !== 'stocks' && activeExam !== 'ai_teacher' &&
+        {activeExam !== 'events' && activeExam !== 'kline' && activeExam !== 'ai_teacher' &&
         (!isMobile || mobileView === 'content') &&
         <div style={{
           flex: 1, background: CONTENT_BG,
@@ -1197,8 +1210,7 @@ export default function StudyCenter({ lang }) {
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
                   <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>
-                    {lang === 'zh' ? topicData.title
-                      : (topicData[`title_${lang}`] || topicData.title_en || topicData.title)}
+                    {localTitle(topicData, lang)}
                   </h1>
                   {isRead && (
                     <span style={{
@@ -1212,13 +1224,14 @@ export default function StudyCenter({ lang }) {
                 </div>
                 <div style={{ marginTop: 6, fontSize: 12, color: MUTED }}>
                   ⏱ {topicData.estimated_time} &nbsp;·&nbsp; {topicData.sections?.length} {t.sections || 'sections'}
-                  &nbsp;·&nbsp; <span style={{ color: accentColor }}>{examMeta.label}</span>
+                  &nbsp;·&nbsp; <span style={{ color: accentColor }}>{lang === 'zh' ? examMeta.label : examMeta.label_en}</span>
                 </div>
               </div>
 
               {/* Sections */}
               {topicData.sections?.map((section, i) => (
                 <SectionBlock
+                  exam={activeExam}
                   key={i}
                   section={section}
                   index={i}
@@ -1297,7 +1310,7 @@ export default function StudyCenter({ lang }) {
                         fontSize: 14, fontWeight: 600, cursor: 'pointer',
                       }}
                     >
-                      {t.nextTopic || 'Next Topic →'} {lang === 'zh' ? next.title : (next[`title_${lang}`] || next.title_en || next.title)}
+                      {t.nextTopic || 'Next Topic →'} {localTitle(next, lang)}
                     </button>
                   )
                 })()}

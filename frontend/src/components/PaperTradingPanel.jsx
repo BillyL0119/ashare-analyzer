@@ -187,6 +187,17 @@ function ResetModal({ t, onConfirm, onClose }) {
 }
 
 // ── Main Component ───────────────────────────────────────────────────────────
+// Server nicknames are stored as "用户#1234"; translate the prefix for other languages.
+const NICK_PREFIX = { zh: '用户', en: 'Trader', ja: 'ユーザー', ko: '사용자', fr: 'Joueur' }
+function localNick(nick, lang) {
+  if (!nick) return ''
+  return nick.replace(/^用户#/, `${NICK_PREFIX[lang] || NICK_PREFIX.en} #`).replace(/^用户 #/, '用户#')
+}
+
+const QUICK_LABEL = { zh: '试试：', en: 'Try:', ja: '例：', ko: '예:', fr: 'Essayez :' }
+const QUICK_US = [['AAPL', 'Apple'], ['NVDA', 'NVIDIA'], ['MSFT', 'Microsoft'], ['TSLA', 'Tesla'], ['SPY', 'S&P 500 ETF'], ['QQQ', 'Nasdaq-100 ETF']]
+const QUICK_CN = [['600519', '贵州茅台'], ['000858', '五粮液'], ['300750', '宁德时代'], ['601318', '中国平安'], ['000001', '平安银行']]
+
 export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const t = T[lang] || T.en
 
@@ -197,7 +208,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const [err,      setErr]     = useState(null)
 
   // Market toggle for paper trading
-  const [ptMarket, setPtMarket] = useState('cn')   // 'cn' | 'us'
+  const [ptMarket, setPtMarket] = useState('us')   // 'us' | 'cn' (US first)
   const isUS = ptMarket === 'us'
   const currSym = isUS ? '$' : '¥'
 
@@ -419,11 +430,14 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         </div>
       )}
 
+      <style>{`.bfs-quick-pick:hover { color: var(--text-primary) !important; border-color: #0ea5e9 !important; }
+        .bfs-quick-pick:focus-visible { outline: 2px solid #0ea5e9; outline-offset: 1px; }`}</style>
+
       {/* ── Market toggle ── */}
       <div style={{ display: 'flex', gap: 6, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 24, padding: 4, width: 'fit-content' }}>
         {[
-          { key: 'cn', label: t.ptMktCN },
           { key: 'us', label: t.ptMktUS },
+          { key: 'cn', label: t.ptMktCN },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -446,7 +460,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div>
             <div style={{ fontSize: 12, color: MUTED, marginBottom: 4 }}>
-              {account?.nickname} · {t.ptGlobalRank}:
+              {localNick(account?.nickname, lang)} · {t.ptGlobalRank}:
               <span style={{ color: '#0ea5e9', fontWeight: 700, marginLeft: 4 }}>
                 {rank === -1 ? '--' : `#${rank}`}
               </span>
@@ -559,6 +573,29 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
             {t.ptBuy}
           </Btn>
         </div>
+
+        {/* Quick picks: give first-time traders somewhere to start */}
+        {!buyCode && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
+            <span style={{ fontSize: 11, color: MUTED, marginRight: 2 }}>{QUICK_LABEL[lang] || QUICK_LABEL.en}</span>
+            {(isUS ? QUICK_US : QUICK_CN).map(([code, name]) => (
+              <button
+                key={code}
+                className="bfs-quick-pick"
+                onClick={() => setBuyCode(code)}
+                title={name}
+                style={{
+                  padding: '3px 10px', borderRadius: 14, cursor: 'pointer',
+                  fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+                  background: 'var(--bg-tertiary)', color: 'var(--text-secondary)',
+                  border: `1px solid ${BDR}`,
+                }}
+              >
+                {isUS ? code : name}
+              </button>
+            ))}
+          </div>
+        )}
 
         {buyMsg && (
           <div style={{
@@ -750,7 +787,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
                         {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `#${entry.rank}`}
                       </td>
                       <td style={{ padding: '9px 10px', color: entry.is_me ? '#0ea5e9' : 'var(--text-primary)', fontWeight: entry.is_me ? 700 : 400 }}>
-                        {entry.nickname}
+                        {localNick(entry.nickname, lang)}
                         {entry.is_me && <span style={{ fontSize: 10, color: '#0ea5e9', marginLeft: 6, background: 'rgba(14,165,233,0.15)', padding: '1px 5px', borderRadius: 4 }}>{t.ptLbMe}</span>}
                       </td>
                       <td style={{ padding: '9px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>¥{fmt(entry.total_value, 0)}</td>
