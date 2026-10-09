@@ -3269,6 +3269,35 @@
         }
       }
     },
+    "北京时间": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beijing time"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "heure de Pékin"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "北京時間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "베이징 시간"
+          }
+        }
+      }
+    },
     "北美": {
       "extractionState": "manual",
       "localizations": {
@@ -3410,6 +3439,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "제약"
+          }
+        }
+      }
+    },
+    "午间休市": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lunch break"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause déjeuner"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "昼休み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "점심 휴장"
           }
         }
       }
@@ -8659,6 +8717,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "개인정보 처리방침"
+          }
+        }
+      }
+    },
+    "集合竞价": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pre-open auction"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pré-ouverture"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寄付前"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동시호가"
           }
         }
       }

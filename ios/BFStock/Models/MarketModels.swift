@@ -21,7 +21,12 @@ struct IndexQuote: Codable {
     let change: Double
     let changePct: Double  // fractional: 0.0073 = 0.73%
 
-    var pct: Double { changePct * 100 }  // convert to display percentage
+    /// Display percentage. The API rounds the fraction to 4 decimals, so tiny moves become 0;
+    /// recompute from the point change in that case.
+    var pct: Double {
+        if changePct == 0, change != 0, value - change > 0 { return change / (value - change) * 100 }
+        return changePct * 100
+    }
 }
 
 struct SectorPerf: Codable, Identifiable {
