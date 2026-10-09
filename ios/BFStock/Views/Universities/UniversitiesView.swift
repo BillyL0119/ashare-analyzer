@@ -5,11 +5,38 @@ struct UniversitiesView: View {
     @StateObject private var vm = UniversitiesViewModel()
     @State private var search = ""
     @State private var region = "all"
+    @State private var mode = "overall"   // "overall" (profiled schools by QS overall) | "business" (QS business top 150)
 
     private static let regions: [(String, String)] = [
         ("all", "全部"), ("north_america", "北美"), ("uk", "英国"), ("europe", "欧洲"),
         ("asia", "亚洲"), ("oceania", "大洋洲"),
     ]
+
+    /// Region for business-ranking rows, which only carry a country.
+    private static let countryRegion: [String: String] = [
+        "United States": "north_america", "Canada": "north_america", "United Kingdom": "uk",
+        "France": "europe", "Italy": "europe", "Spain": "europe", "Denmark": "europe", "Netherlands": "europe",
+        "Switzerland": "europe", "Sweden": "europe", "Austria": "europe", "Germany": "europe", "Finland": "europe",
+        "Portugal": "europe", "Belgium": "europe", "Norway": "europe", "Ireland": "europe",
+        "Singapore": "asia", "Hong Kong SAR": "asia", "China (Mainland)": "asia", "India": "asia", "South Korea": "asia",
+        "Japan": "asia", "Taiwan": "asia", "Malaysia": "asia", "Australia": "oceania", "New Zealand": "oceania",
+    ]
+
+    private var regionOptions: [(String, String)] {
+        mode == "business" ? Self.regions + [("other", "拉美及其他")] : Self.regions
+    }
+
+    private var byId: [String: University] { Dictionary(vm.all.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a }) }
+
+    private var businessRows: [BusinessRankEntry] {
+        let q = search.trimmingCharacters(in: .whitespaces).lowercased()
+        let ids = byId
+        return (vm.ranking?.entries ?? []).filter { e in
+            let r = Self.countryRegion[e.country] ?? "other"
+            let names = ([e.name, e.city, e.country] + e.schoolIds.compactMap { ids[$0]?.name }).joined(separator: " ").lowercased()
+            return (region == "all" || r == region) && (q.isEmpty || names.contains(q))
+        }
+    }
 
     private var filtered: [University] {
         let q = search.trimmingCharacters(in: .whitespaces).lowercased()
@@ -23,9 +50,20 @@ struct UniversitiesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            Picker("", selection: $mode) {
+                Text(L("综合排名")).tag("overall")
+                Text(L("商科排名")).tag("business")
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .onChange(of: mode) { _, new in
+                if new == "overall", region == "other" { region = "all" }
+            }
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(Self.regions, id: \.0) { key, label in
+                    ForEach(regionOptions, id: \.0) { key, label in
                         let on = region == key
                         Button { withAnimation(.easeInOut(duration: 0.15)) { region = key } } label: {
                             Text(L(label))
@@ -42,7 +80,9 @@ struct UniversitiesView: View {
             .padding(.vertical, 10)
             .sensoryFeedback(.selection, trigger: region)
 
-            if vm.all.isEmpty {
+            if mode == "business" {
+                businessList
+            } else if vm.all.isEmpty {
                 if let err = vm.error {
                     ErrorRetryView(message: err) { Task { await vm.load() } }.padding()
                     Spacer()
@@ -71,6 +111,92 @@ struct UniversitiesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $search, prompt: Text(L("搜索商学院")))
         .task { await vm.load() }
+        .task { await vm.loadRanking() }
+    }
+
+    @ViewBuilder
+    private var businessList: some View {
+        if vm.ranking == nil {
+            ScrollView { SkeletonRows(rows: 6, trailingPill: true).card(padding: 0).padding(.horizontal, 16) }
+        } else if businessRows.isEmpty {
+            Text("暂无结果").foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                Text(L("商科排名只看商学与管理学科的声誉和研究；不少学校的商科远高于综合排名。"))
+                    .font(.footnote).foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20).padding(.bottom, 8)
+                LazyVStack(spacing: 0) {
+                    let rows = businessRows
+                    let ids = byId
+                    ForEach(Array(rows.enumerated()), id: \.element.id) { idx, e in
+                        if let profile = e.schoolIds.compactMap({ ids[$0] }).first {
+                            NavigationLink(destination: UniversityDetailView(uni: profile)) {
+                                BusinessRankRow(entry: e, profile: profile)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            BusinessRankRow(entry: e, profile: nil)
+                        }
+                        if idx < rows.count - 1 { RowDivider() }
+                    }
+                }
+                .card(padding: 0)
+                .padding(.horizontal, 16)
+                Text(L("来源：QS 商科排名 2026 · QS 综合排名 2027"))
+                    .font(.caption2).foregroundStyle(.tertiary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20).padding(.top, 8).padding(.bottom, 24)
+            }
+        }
+    }
+}
+
+/// One row of the QS business ranking: rank, school, overall rank and how far apart they are.
+private struct BusinessRankRow: View {
+    let entry: BusinessRankEntry
+    let profile: University?
+
+    private var gap: Int? { entry.overallNum.map { $0 - entry.rankNum } }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(entry.rank)
+                .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                .foregroundStyle(entry.rankNum <= 10 ? Color.orange : DS.accent)
+                .frame(width: 40)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(profile?.name ?? entry.name)
+                    .font(.subheadline.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
+                Text(profile != nil ? "\(entry.name) · \(entry.city)" : "\(entry.city), \(entry.country)")
+                    .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                HStack(spacing: 6) {
+                    if let o = entry.overall {
+                        Text(L("综合 #%@", o.replacingOccurrences(of: "=", with: "")))
+                            .font(.caption2).foregroundStyle(.secondary)
+                    }
+                    if entry.overallNum == nil {
+                        tag(L("独立商学院"), color: .purple)
+                    } else if let g = gap, g >= 10 {
+                        tag(L("商科比综合高 %lld 位", g), color: .green)
+                    }
+                }
+            }
+            Spacer(minLength: 4)
+            if profile != nil {
+                Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.horizontal, 16).padding(.vertical, 10)
+        .contentShape(Rectangle())
+    }
+
+    private func tag(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(.caption2.weight(.semibold))
+            .padding(.horizontal, 6).padding(.vertical, 2)
+            .background(color.opacity(0.14), in: Capsule())
+            .foregroundStyle(color)
     }
 }
 
@@ -86,6 +212,10 @@ private struct UniversityRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(uni.name).font(.subheadline.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
                 Text("\(uni.city) · \(uni.country)").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                if let b = uni.qsBmRank {
+                    Text(L("QS 商科 #%@", b.replacingOccurrences(of: "=", with: "")))
+                        .font(.caption2.weight(.semibold)).foregroundStyle(DS.accent)
+                }
             }
             Spacer(minLength: 4)
             Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
@@ -133,12 +263,17 @@ struct UniversityDetailView: View {
             Text(uni.university).font(.subheadline).foregroundStyle(.secondary)
             HStack(spacing: 8) {
                 Text("\(uni.city) · \(uni.country)").font(.caption).foregroundStyle(.secondary)
+            }
+            HStack(spacing: 8) {
                 if let r = uni.qsRank {
-                    Text("QS #\(r)").font(.caption.weight(.bold)).foregroundStyle(DS.accent)
+                    Text(L("QS 综合 #%@", String(r))).font(.caption.weight(.bold)).foregroundStyle(Color.orange)
+                        .padding(.horizontal, 8).padding(.vertical, 3).background(Color.orange.opacity(0.12), in: Capsule())
+                }
+                if let b = uni.qsBmRank {
+                    Text(L("QS 商科 #%@", b.replacingOccurrences(of: "=", with: ""))).font(.caption.weight(.bold)).foregroundStyle(DS.accent)
                         .padding(.horizontal, 8).padding(.vertical, 3).background(DS.accent.opacity(0.12), in: Capsule())
                 }
             }
-            if let b = uni.businessRank, !b.isEmpty { Text(b).font(.caption).foregroundStyle(.secondary) }
         }
     }
 

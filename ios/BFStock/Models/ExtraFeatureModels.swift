@@ -104,7 +104,8 @@ struct University: Decodable, Identifiable {
     let country: String
     let city: String
     let qsRank: Int?
-    let businessRank: String?
+    let qsBmRank: String?
+    let qsBmRankNum: Int?
     let established: Int?
     let programs: [String]
     let specialties: [String]
@@ -116,6 +117,27 @@ struct University: Decodable, Identifiable {
     let url: String?
     let requirements: UniRequirements?
     let employment: [String]?
+}
+
+/// QS Business & Management Studies ranking (/universities/business-rankings).
+struct BusinessRankings: Decodable {
+    let source: String
+    let published: String
+    let overallSource: String
+    let overallPublished: String
+    let entries: [BusinessRankEntry]
+}
+
+struct BusinessRankEntry: Decodable, Identifiable {
+    let rank: String
+    let rankNum: Int
+    let name: String
+    let country: String
+    let city: String
+    let overall: String?
+    let overallNum: Int?
+    let schoolIds: [String]
+    var id: String { name }
 }
 
 // MARK: - Career guide (/career/roles)

@@ -668,35 +668,6 @@
         }
       }
     },
-    "90所全球顶尖商学院，含QS排名、学费与申请要求": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "90 top schools with QS rank, tuition and admission"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "90 grandes écoles : classement QS, frais, admission"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QS順位・学費・出願要件つき、世界のトップ90校"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QS 순위·학비·지원 요건이 담긴 세계 90개 대학"
-          }
-        }
-      }
-    },
     "95%最差价": {
       "extractionState": "manual",
       "localizations": {
@@ -1041,6 +1012,93 @@
           "stringUnit": {
             "state": "translated",
             "value": "PER은 어떻게 보나요?"
+          }
+        }
+      }
+    },
+    "QS 商科 #%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS Business #%@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS Business #%@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS ビジネス #%@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS 경영학 #%@"
+          }
+        }
+      }
+    },
+    "QS 商科排名前 150 + 90 所商学院的学费与申请要求": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS business ranking top 150, plus tuition and admission for 90 schools"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top 150 QS en business, frais et admission de 90 écoles"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS ビジネス分野トップ150と90校の学費・出願要件"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS 경영학 순위 150위와 90개 학교의 학비·지원 요건"
+          }
+        }
+      }
+    },
+    "QS 综合 #%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS overall #%@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS général #%@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS 総合 #%@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QS 종합 #%@"
           }
         }
       }
@@ -3704,6 +3762,93 @@
         }
       }
     },
+    "商科排名": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Business"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Business"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ビジネス分野"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "경영학 순위"
+          }
+        }
+      }
+    },
+    "商科排名只看商学与管理学科的声誉和研究；不少学校的商科远高于综合排名。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This ranking looks only at business and management reputation and research, so many schools rank far higher here than overall."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce classement ne retient que la réputation et la recherche en gestion : beaucoup d'écoles y sont bien mieux placées qu'au classement général."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この分野別ランキングはビジネス・経営学の評判と研究のみを評価するため、総合順位より大きく上位になる大学が多くあります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "경영학 분야의 평판과 연구만 평가하므로 종합 순위보다 훨씬 높은 학교가 많습니다."
+          }
+        }
+      }
+    },
+    "商科比综合高 %lld 位": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld places above overall"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld places au-dessus du général"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "総合より %lld 位上"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종합보다 %lld위 높음"
+          }
+        }
+      }
+    },
     "地产": {
       "extractionState": "manual",
       "localizations": {
@@ -4951,6 +5096,35 @@
         }
       }
     },
+    "拉美及其他": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latin America & other"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amérique latine et autres"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中南米・その他"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중남미 및 기타"
+          }
+        }
+      }
+    },
     "持仓": {
       "extractionState": "manual",
       "localizations": {
@@ -5850,6 +6024,35 @@
         }
       }
     },
+    "来源：QS 商科排名 2026 · QS 综合排名 2027": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources: QS Business & Management Studies 2026 · QS World University Rankings 2027"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources : QS Business & Management Studies 2026 · QS World University Rankings 2027"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出典：QS ビジネス・経営学 2026 · QS 世界大学ランキング 2027"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "출처: QS 경영학 2026 · QS 세계대학순위 2027"
+          }
+        }
+      }
+    },
     "极度恐慌": {
       "extractionState": "manual",
       "localizations": {
@@ -6484,6 +6687,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "인기 종목"
+          }
+        }
+      }
+    },
+    "独立商学院": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standalone school"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "École indépendante"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "単科ビジネススクール"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "독립 경영대학원"
           }
         }
       }
@@ -7180,6 +7412,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "나스닥"
+          }
+        }
+      }
+    },
+    "综合 #%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overall #%@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Général #%@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "総合 #%@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종합 #%@"
+          }
+        }
+      }
+    },
+    "综合排名": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overall"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classement général"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "総合ランキング"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종합 순위"
           }
         }
       }

@@ -57,19 +57,26 @@ final class DailyKnowledgeViewModel: ObservableObject {
 
 @MainActor
 final class UniversitiesViewModel: ObservableObject {
+    func loadRanking() async {
+        if ranking == nil, let c: BusinessRankings = APIClient.shared.cached("/universities/business-rankings") { ranking = c }
+        if let r: BusinessRankings = try? await APIClient.shared.get("/universities/business-rankings", persist: true) { ranking = r }
+    }
+
     @Published var all: [University] = []
     @Published var isLoading = false
     @Published var error: String?
 
+    @Published var ranking: BusinessRankings?
+
+    /// Shows the cached list at once, then refreshes it so new fields (e.g. business ranks) arrive.
     func load() async {
         if all.isEmpty, let c: [University] = APIClient.shared.cached("/universities") { all = c }
-        guard all.isEmpty else { return }
-        isLoading = true
+        isLoading = all.isEmpty
         error = nil
         do {
             all = try await APIClient.shared.get("/universities", persist: true)
         } catch {
-            self.error = error.localizedDescription
+            if all.isEmpty { self.error = error.localizedDescription }
         }
         isLoading = false
     }
