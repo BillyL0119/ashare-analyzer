@@ -13,7 +13,8 @@ CN rules:
 US rules:
   Buy:  $0 commission (zero-commission brokers)
   Sell: SEC fee = $0.000008 per share (negligible, included for realism)
-  T+2: shares bought today can be sold after 2 trading days
+  No sell lock: US shares can be sold the same day they are bought
+  (settlement is T+1 since May 2024, but that does not stop a sale)
   Lot size: 1 share
   Initial cash: $100,000
 """
@@ -190,9 +191,9 @@ def _compute_us_portfolio(account: dict) -> dict:
         shares = pos["shares"]
         avg_cost = pos["avg_cost"]
         buy_date = pos.get("buy_date", "")
-        # T+2: available 2 days after buy_date
+        # US positions are sellable immediately (older positions may still carry a T+2 date).
         avail_date = pos.get("available_date", "")
-        available = shares if (not avail_date or avail_date <= today) else 0
+        available = shares
 
         try:
             price, _ = _get_us_realtime_price(symbol)
@@ -385,7 +386,7 @@ def buy_stock(body: BuyBody):
         )
 
         us_portfolio = account.setdefault("us_portfolio", {})
-        avail_date   = _t2_available_date(today)
+        avail_date   = today
         if symbol in us_portfolio:
             old = us_portfolio[symbol]
             old_cost_basis = old["avg_cost"] * old["shares"]
@@ -502,12 +503,6 @@ def _next_trading_day(date_str: str) -> str:
     return d.strftime("%Y-%m-%d")
 
 
-def _t2_available_date(date_str: str) -> str:
-    """Return date + 2 calendar days (T+2 settlement for US)."""
-    d = datetime.strptime(date_str, "%Y-%m-%d") + timedelta(days=2)
-    return d.strftime("%Y-%m-%d")
-
-
 @router.post("/sell")
 def sell_stock(body: SellBody):
     account = _load_account(body.device_id)
@@ -531,12 +526,6 @@ def sell_stock(body: SellBody):
             raise HTTPException(status_code=400, detail=f"You don't hold any {symbol}")
 
         pos = us_portfolio[symbol]
-        avail_date = pos.get("available_date", "")
-        if avail_date and avail_date > today:
-            raise HTTPException(
-                status_code=400,
-                detail=f"T+2 Settlement: {symbol} can be sold from {avail_date}"
-            )
 
         if pos["shares"] < shares:
             raise HTTPException(

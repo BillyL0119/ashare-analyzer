@@ -107,8 +107,30 @@ struct TradeSheet: View {
                     RoundedRectangle(cornerRadius: DS.radius, style: .continuous)
                         .strokeBorder(focus == .symbol ? DS.accent : DS.stroke, lineWidth: focus == .symbol ? 1.5 : 1)
                 )
+
+            // Quick picks give first-time traders somewhere to start.
+            if buySymbol.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(market == .cn ? Self.quickCN : Self.quickUS, id: \.self) { code in
+                            Button { buySymbol = code } label: {
+                                Text(code)
+                                    .font(.system(.subheadline, design: .monospaced).weight(.semibold))
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 7)
+                                    .background(DS.surface, in: Capsule())
+                                    .overlay(Capsule().strokeBorder(DS.stroke))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
         }
     }
+
+    private static let quickUS = ["AAPL", "NVDA", "MSFT", "TSLA", "SPY", "QQQ"]
+    private static let quickCN = ["600519", "300750", "000858", "601318", "000001"]
 
     @ViewBuilder
     private var sellHeader: some View {

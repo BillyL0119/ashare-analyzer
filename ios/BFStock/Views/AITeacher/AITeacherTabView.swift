@@ -111,7 +111,8 @@ struct AITeacherTabView: View {
                                 Image(systemName: icon)
                                     .font(.callout.weight(.semibold))
                                     .foregroundStyle(DS.accent)
-                                Text(text)
+                                // Word joiners keep "P/E" from breaking after the slash.
+                                Text(text.replacingOccurrences(of: "P/E", with: "P\u{2060}/\u{2060}E"))
                                     .font(.subheadline.weight(.medium))
                                     .multilineTextAlignment(.leading)
                                     .lineLimit(2)
