@@ -171,7 +171,7 @@ export default function Paper() {
       </div>
 
       {!view ? <Skeleton h={220} r={24} /> : (
-        <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `linear-gradient(135deg, color-mix(in srgb, ${accent} 20%, var(--surface)), var(--surface) 60%)` }}>
+        <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `linear-gradient(135deg, color-mix(in srgb, ${view.ret === 0 ? 'var(--accent)' : accent} 20%, var(--surface)), var(--surface) 60%)` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="m-muted" style={{ fontWeight: 650, fontSize: 14 }}>{cn ? t('A股账户') : t('美股账户')}</span>
             <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>🏆 #{acc.rank}</span>
@@ -181,8 +181,22 @@ export default function Paper() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}><Pill value={view.ret} market={market} /><span className="m-label">{t('总收益率')}</span></div>
           </div>
           <div className="m-tiles" style={{ background: 'var(--surface-hi)', borderRadius: 14, padding: '12px 0' }}>
-            <div style={{ flex: 1, textAlign: 'center' }}><div className="m-label">{t('可用现金')}</div><div className="m-num" style={{ fontWeight: 700, marginTop: 3 }}>{cur}{Math.round(view.cash).toLocaleString()}</div></div>
-            <div style={{ flex: 1, textAlign: 'center', borderLeft: '1px solid var(--stroke)' }}><div className="m-label">{t('仅供学习')}</div><div style={{ fontWeight: 700, fontSize: 13, marginTop: 3 }}>{t('不构成投资建议')}</div></div>
+            {(() => {
+              const base = view.ret > -100 ? view.total / (1 + view.ret / 100) : 0
+              const pl = view.total - base
+              const flat = Math.abs(pl) < 0.5
+              const g = (v) => cur + Math.round(v).toLocaleString('en-US')
+              return [
+                [t('可用现金'), g(view.cash), null],
+                [t('持仓市值'), g(Math.max(view.total - view.cash, 0)), null],
+                [t('总盈亏'), (flat ? '' : pl > 0 ? '+' : '-') + g(Math.abs(pl)), flat ? null : changeColor(pl, market)],
+              ].map(([k, v, c], i) => (
+                <div key={k} style={{ flex: 1, textAlign: 'center', borderLeft: i ? '1px solid var(--stroke)' : 'none', minWidth: 0 }}>
+                  <div className="m-label">{k}</div>
+                  <div className="m-num" style={{ fontWeight: 700, marginTop: 3, fontSize: 15, color: c || undefined, whiteSpace: 'nowrap' }}>{v}</div>
+                </div>
+              ))
+            })()}
           </div>
         </div>
       )}
@@ -190,7 +204,14 @@ export default function Paper() {
       <Section title={t('持仓')} action={null}>
         <div style={{ margin: '-4px 4px 10px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'cn', label: t('A股') }, { value: 'us', label: t('美股') }]} /></div>
         {view && (view.positions.length === 0 ? (
-          <div className="m-card m-empty">{t('暂无持仓，点击 + 买入第一只股票')}</div>
+          <div className="m-card" style={{ display: 'grid', justifyItems: 'center', gap: 10, padding: '28px 16px', textAlign: 'center' }}>
+            <span style={{ width: 54, height: 54, borderRadius: 27, display: 'grid', placeItems: 'center', background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)' }}>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7" /><polyline points="15 7 21 7 21 13" /></svg>
+            </span>
+            <b style={{ fontSize: 16 }}>{t('暂无持仓')}</b>
+            <span className="m-label">{t('用虚拟资金练习买卖，不承担真实风险')}</span>
+            <button onClick={() => setSheet({ mode: 'buy' })} style={{ marginTop: 4, padding: '10px 22px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 650, fontSize: 14 }}>{t('买入第一只股票')}</button>
+          </div>
         ) : (
           <div className="m-card flush">
             {view.positions.map(([sym, p]) => (

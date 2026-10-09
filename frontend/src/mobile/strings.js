@@ -651,9 +651,9 @@ export const STR = {
  ],
  "全部": [
   "All",
-  "全部",
-  "전부",
-  "Tout"
+  "すべて",
+  "전체",
+  "Tous"
  ],
  "预计成交金额": [
   "Estimated proceeds",
@@ -1182,6 +1182,348 @@ export const STR = {
   "今日の知識",
   "오늘의 지식",
   "Notion du jour"
+ ],
+ "全球商学院指南": [
+  "Business school guide",
+  "ビジネススクールガイド",
+  "글로벌 비즈니스 스쿨 가이드",
+  "Guide des business schools"
+ ],
+ "搜索商学院": [
+  "Search schools",
+  "スクールを検索",
+  "학교 검색",
+  "Rechercher une école"
+ ],
+ "北美": [
+  "North America",
+  "北米",
+  "북미",
+  "Amérique du Nord"
+ ],
+ "英国": [
+  "UK",
+  "英国",
+  "영국",
+  "Royaume-Uni"
+ ],
+ "欧洲": [
+  "Europe",
+  "ヨーロッパ",
+  "유럽",
+  "Europe"
+ ],
+ "亚洲": [
+  "Asia",
+  "アジア",
+  "아시아",
+  "Asie"
+ ],
+ "大洋洲": [
+  "Oceania",
+  "オセアニア",
+  "오세아니아",
+  "Océanie"
+ ],
+ "项目": [
+  "Programs",
+  "プログラム",
+  "프로그램",
+  "Programmes"
+ ],
+ "专业方向": [
+  "Specialties",
+  "専門分野",
+  "전공 분야",
+  "Spécialités"
+ ],
+ "申请要求": [
+  "Admission",
+  "出願要件",
+  "지원 요건",
+  "Admission"
+ ],
+ "就业去向": [
+  "Employment",
+  "就職先",
+  "취업 분야",
+  "Débouchés"
+ ],
+ "知名校友": [
+  "Notable alumni",
+  "著名な卒業生",
+  "유명 동문",
+  "Anciens célèbres"
+ ],
+ "访问官网": [
+  "Visit website",
+  "公式サイトを開く",
+  "공식 웹사이트",
+  "Site officiel"
+ ],
+ "创办": [
+  "Founded",
+  "創立",
+  "설립",
+  "Fondée"
+ ],
+ "学费": [
+  "Tuition",
+  "学費",
+  "학비",
+  "Frais"
+ ],
+ "授课语言": [
+  "Language",
+  "授業言語",
+  "수업 언어",
+  "Langue"
+ ],
+ "接受": [
+  "Accepted",
+  "可",
+  "인정",
+  "Accepté"
+ ],
+ "不接受": [
+  "Not accepted",
+  "不可",
+  "불가",
+  "Non accepté"
+ ],
+ "商学院指南": [
+  "Business schools",
+  "ビジネススクール",
+  "비즈니스 스쿨",
+  "Business schools"
+ ],
+ "90所全球顶尖商学院，含QS排名、学费与申请要求": [
+  "90 top schools with QS rank, tuition and admission",
+  "QS順位・学費・出願要件つき、世界のトップ90校",
+  "QS 순위·학비·지원 요건이 담긴 세계 90개 대학",
+  "90 grandes écoles : classement QS, frais, admission"
+ ],
+ "求职指南": [
+  "Career guide",
+  "キャリアガイド",
+  "커리어 가이드",
+  "Guide carrière"
+ ],
+ "了解8个金融岗位：日常工作、技能、薪资，还能模拟面试": [
+  "8 finance roles: daily work, skills, pay — plus mock interviews",
+  "金融8職種の仕事内容・スキル・年収と模擬面接",
+  "금융 8개 직무: 업무·역량·연봉과 모의 면접",
+  "8 métiers de la finance : quotidien, compétences, salaires et entretiens simulés"
+ ],
+ "典型场景": [
+  "Typical scenario",
+  "典型的なシーン",
+  "대표 상황",
+  "Scénario type"
+ ],
+ "典型的一天": [
+  "A typical day",
+  "典型的な一日",
+  "하루 일과",
+  "Une journée type"
+ ],
+ "核心技能": [
+  "Core skills",
+  "コアスキル",
+  "핵심 역량",
+  "Compétences clés"
+ ],
+ "与相近岗位的区别": [
+  "How it differs",
+  "近い職種との違い",
+  "유사 직무와의 차이",
+  "Différences avec les métiers proches"
+ ],
+ "证书建议": [
+  "Certifications",
+  "おすすめ資格",
+  "추천 자격증",
+  "Certifications"
+ ],
+ "入门门槛": [
+  "Entry requirements",
+  "応募条件",
+  "진입 요건",
+  "Conditions d'accès"
+ ],
+ "职业路径": [
+  "Career path",
+  "キャリアパス",
+  "커리어 경로",
+  "Parcours de carrière"
+ ],
+ "薪资参考": [
+  "Pay range",
+  "給与の目安",
+  "연봉 참고",
+  "Fourchette de salaire"
+ ],
+ "模拟面试": [
+  "Mock interview",
+  "模擬面接",
+  "모의 면접",
+  "Entretien simulé"
+ ],
+ "技术面试": [
+  "Technical",
+  "技術面接",
+  "기술 면접",
+  "Technique"
+ ],
+ "行为面试": [
+  "Behavioral",
+  "行動面接",
+  "인성 면접",
+  "Comportemental"
+ ],
+ "综合面试": [
+  "Comprehensive",
+  "総合面接",
+  "종합 면접",
+  "Complet"
+ ],
+ "AI面试官会一次问一个问题，4-5轮后给出评分和改进建议": [
+  "The AI interviewer asks one question at a time and scores you after 4-5 rounds",
+  "AI面接官が1問ずつ質問し、4〜5往復後に採点とアドバイスをします",
+  "AI 면접관이 한 번에 한 문제씩 묻고 4~5회 후 점수와 조언을 줍니다",
+  "L'IA pose une question à la fois et vous note après 4 à 5 échanges"
+ ],
+ "开始面试": [
+  "Start interview",
+  "面接を始める",
+  "면접 시작",
+  "Commencer"
+ ],
+ "重新开始": [
+  "Restart",
+  "やり直す",
+  "다시 시작",
+  "Recommencer"
+ ],
+ "输入你的回答…": [
+  "Type your answer…",
+  "回答を入力…",
+  "답변을 입력…",
+  "Votre réponse…"
+ ],
+ "相似走势": [
+  "Similar trends",
+  "似た値動き",
+  "유사 흐름",
+  "Tendances similaires"
+ ],
+ "相关度": [
+  "Correlation",
+  "相関",
+  "상관도",
+  "Corrélation"
+ ],
+ "暂无相似股票": [
+  "No similar stocks",
+  "似た銘柄はありません",
+  "유사 종목 없음",
+  "Aucune action similaire"
+ ],
+ "蒙特卡洛模拟": [
+  "Monte Carlo",
+  "モンテカルロ",
+  "몬테카를로",
+  "Monte-Carlo"
+ ],
+ "3个月": [
+  "3M",
+  "3か月",
+  "3개월",
+  "3 mois"
+ ],
+ "6个月": [
+  "6M",
+  "6か月",
+  "6개월",
+  "6 mois"
+ ],
+ "现在": [
+  "Now",
+  "現在",
+  "현재",
+  "Auj."
+ ],
+ "月": [
+  "m",
+  "か月",
+  "개월",
+  "m"
+ ],
+ "上涨概率": [
+  "Chance of gain",
+  "上昇確率",
+  "상승 확률",
+  "Probabilité de hausse"
+ ],
+ "预期收益": [
+  "Expected return",
+  "期待収益",
+  "기대 수익",
+  "Rendement attendu"
+ ],
+ "中位价格": [
+  "Median price",
+  "中央値",
+  "중앙 가격",
+  "Prix médian"
+ ],
+ "95%最差价": [
+  "95% worst case",
+  "95%最悪値",
+  "95% 최악 가격",
+  "Pire cas 95 %"
+ ],
+ "基于历史收益率和波动率的随机模拟，只是一种可能性的范围，不构成预测或投资建议": [
+  "Random simulation from historical returns and volatility: a range of possibilities, not a forecast or investment advice",
+  "過去の収益率とボラティリティに基づく乱数シミュレーション。可能性の幅であり、予測や投資助言ではありません",
+  "과거 수익률과 변동성에 기반한 무작위 시뮬레이션입니다. 가능성의 범위일 뿐 예측이나 투자 조언이 아닙니다",
+  "Simulation aléatoire fondée sur les rendements et la volatilité passés : une fourchette de possibles, ni une prévision ni un conseil"
+ ],
+ "刚刚": [
+  "Just now",
+  "たった今",
+  "방금",
+  "À l'instant"
+ ],
+ "持仓市值": [
+  "Holdings",
+  "保有資産",
+  "보유 자산",
+  "Positions"
+ ],
+ "总盈亏": [
+  "Total P&L",
+  "損益合計",
+  "총 손익",
+  "P&L total"
+ ],
+ "暂无持仓": [
+  "No positions yet",
+  "ポジションはありません",
+  "보유 종목 없음",
+  "Aucune position"
+ ],
+ "用虚拟资金练习买卖，不承担真实风险": [
+  "Practice with virtual cash, no real risk",
+  "仮想資金で売買を練習。実際のリスクはありません",
+  "가상 자금으로 연습하세요. 실제 위험은 없습니다",
+  "Entraînez-vous avec de l'argent virtuel, sans risque réel"
+ ],
+ "买入第一只股票": [
+  "Buy your first stock",
+  "最初の銘柄を買う",
+  "첫 종목 매수",
+  "Acheter une première action"
  ],
  "美股热门": [
   "US Movers",
