@@ -79,8 +79,9 @@ private struct NewsFeedRow: View {
         return names.prefix(2).joined(separator: " · ")
     }
 
-    /// Feed timestamps are naive Beijing time ("2026-10-09T05:36:50").
+    /// Feed timestamps carry a +08:00 offset; older cached responses were naive Beijing time.
     private var date: Date? {
+        if let d = ISO8601DateFormatter().date(from: item.publishedAt) { return d }
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
         f.timeZone = TimeZone(identifier: "Asia/Shanghai")

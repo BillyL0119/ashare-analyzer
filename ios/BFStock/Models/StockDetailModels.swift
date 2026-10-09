@@ -210,6 +210,7 @@ extension [Candle] {
         var upper  = [Double?](repeating: nil, count: count)
         var middle = [Double?](repeating: nil, count: count)
         var lower  = [Double?](repeating: nil, count: count)
+        guard count >= n else { return (upper, middle, lower) }
         for i in (n - 1)..<count {
             let window = self[(i - n + 1)...i]
             let sma = window.reduce(0.0) { $0 + $1.close } / Double(n)

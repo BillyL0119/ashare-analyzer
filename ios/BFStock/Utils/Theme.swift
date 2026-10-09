@@ -76,6 +76,8 @@ enum DS {
         LinearGradient(colors: [accent, accentAlt], startPoint: .topLeading, endPoint: .bottomTrailing)
     }
     static let ma5  = Color(light: Color(r: 0xD9, g: 0x91, b: 0x00), dark: Color(r: 0xFA, g: 0xCC, b: 0x15))
+    static let ma10 = Color(light: Color(r: 0x9B, g: 0x3D, b: 0xD6), dark: Color(r: 0xC0, g: 0x84, b: 0xFC))
+    static let ma20 = Color(light: Color(r: 0x25, g: 0x63, b: 0xEB), dark: Color(r: 0x60, g: 0xA5, b: 0xFA))
     static let boll = Color(light: Color(r: 0x0E, g: 0x74, b: 0x90), dark: Color(r: 0x22, g: 0xD3, b: 0xEE))
     static let radius: CGFloat = 20
     static let tileRadius: CGFloat = 14

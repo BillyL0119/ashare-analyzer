@@ -272,8 +272,8 @@ struct StockDetailView: View {
     private var maLegend: some View {
         HStack(spacing: 16) {
             maItem("MA5",  color: DS.ma5, values: vm.ma5)
-            maItem("MA10", color: .purple, values: vm.ma10)
-            maItem("MA20", color: .orange, values: vm.ma20)
+            maItem("MA10", color: DS.ma10, values: vm.ma10)
+            maItem("MA20", color: DS.ma20, values: vm.ma20)
         }
         .font(.caption)
     }
@@ -320,9 +320,11 @@ struct StockDetailView: View {
 
     private func macdLegendRow(_ m: (macdLine: [Double?], signalLine: [Double?], histogram: [Double?])) -> some View {
         HStack(spacing: 12) {
-            legendLabel("MACD", color: .primary, values: m.macdLine)
-            legendLabel("DEA",  color: DS.ma5,  values: m.signalLine)
-            legendLabel("DIFF", color: .secondary, values: m.histogram)
+            // US convention: MACD / Signal / Histogram; A-share convention: DIF / DEA / MACD bars.
+            let us = market == .us
+            legendLabel(us ? "MACD" : "DIF", color: .primary, values: m.macdLine)
+            legendLabel(us ? "Signal" : "DEA", color: DS.ma5, values: m.signalLine)
+            legendLabel(us ? "Hist" : "MACD", color: .secondary, values: m.histogram)
         }
         .font(.caption)
     }

@@ -6,7 +6,10 @@ final class StockDetailViewModel: ObservableObject {
     let market: Market
 
     @Published var quote: RealtimeQuote?
-    @Published var candles: [Candle] = []
+    /// Fetched series, including extra leading days so MA/MACD/BOLL are warmed up at the left edge.
+    @Published private var history: [Candle] = []
+    /// The visible window for the selected period.
+    var candles: [Candle] { Array(history.suffix(period.count)) }
     @Published var period: ChartPeriod = .d30
     @Published var isLoadingQuote = false
     @Published var isLoadingChart = false
@@ -68,14 +71,14 @@ final class StockDetailViewModel: ObservableObject {
         do {
             if market == .cn {
                 let hist: StockHistory = try await APIClient.shared.get(
-                    "/stocks/\(code)/history", params: ["count": "\(period.count)"]
+                    "/stocks/\(code)/history", params: ["count": "\(fetchCount)"]
                 )
-                candles = hist.candles
+                history = hist.candles
             } else {
                 let hist: USStockHistory = try await APIClient.shared.get(
-                    "/us/stock/\(code)/history", params: ["count": "\(period.count)"]
+                    "/us/stock/\(code)/history", params: ["count": "\(fetchCount)"]
                 )
-                candles = hist.data.map { $0.toCandle() }
+                history = hist.data.map { $0.toCandle() }
             }
         } catch {
             chartError = errorMessage(error)
@@ -83,25 +86,34 @@ final class StockDetailViewModel: ObservableObject {
         isLoadingChart = false
     }
 
+    /// MACD needs 26 + 9 days before its first value; 60 covers every indicator.
+    private var fetchCount: Int { period.count + 60 }
+
     func changePeriod(_ p: ChartPeriod) {
         period = p
-        Task { await loadCandles() }
+        // A shorter window is already in memory; only fetch when more history is needed.
+        if history.count < fetchCount { Task { await loadCandles() } }
     }
+
+    /// Indicator values for the visible window, computed on the full history.
+    private func visible(_ series: [Double?]) -> [Double?] { Array(series.suffix(candles.count)) }
 
     @Published var indicator: Indicator = .none
 
     // Computed MA series
-    var ma5:  [Double?] { candles.ma(5)  }
-    var ma10: [Double?] { candles.ma(10) }
-    var ma20: [Double?] { candles.ma(20) }
+    var ma5:  [Double?] { visible(history.ma(5))  }
+    var ma10: [Double?] { visible(history.ma(10)) }
+    var ma20: [Double?] { visible(history.ma(20)) }
 
-    // Technical indicators (computed from candles)
+    // Technical indicators (computed from the full history)
     var macdTuple: (macdLine: [Double?], signalLine: [Double?], histogram: [Double?]) {
-        candles.macd()
+        let m = history.macd()
+        return (visible(m.macdLine), visible(m.signalLine), visible(m.histogram))
     }
-    var rsi14: [Double?] { candles.rsi() }
+    var rsi14: [Double?] { visible(history.rsi()) }
     var bollTuple: (upper: [Double?], middle: [Double?], lower: [Double?]) {
-        candles.bollingerBands()
+        let b = history.bollingerBands()
+        return (visible(b.upper), visible(b.middle), visible(b.lower))
     }
 
     // Y-axis range with 2% padding

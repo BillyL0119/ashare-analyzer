@@ -52,6 +52,11 @@ enum Formatters {
         scaled(value, myriadDecimals: 1, unit: L("股"))
     }
 
+    /// Compact axis tick for volume charts ("100M", "1.2亿"); the unit is implied by the chart.
+    static func volumeTick(_ value: Double) -> String {
+        scaled(value, myriadDecimals: 1).replacingOccurrences(of: ".00", with: "")
+    }
+
     /// A-share volume is quoted in lots (手) of 100 shares.
     static func volume(_ value: Double) -> String {
         scaled(value, myriadDecimals: 1, unit: L("手"))
