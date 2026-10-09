@@ -7,16 +7,72 @@ const ACCENT_BLUE   = '#8ab4f8'
 const ACCENT_PURPLE = '#c084fc'
 const BDR           = 'rgba(138,180,248,0.10)'
 
+const SUBTITLE = {
+  zh: '专为学生设计的美股与 A 股智能分析平台 · 完全免费',
+  en: 'Smart US & China Stock Analysis for Students · Completely Free',
+  ja: '学生のための米国株・中国株分析プラットフォーム · 完全無料',
+  ko: '학생을 위한 미국·중국 주식 분석 플랫폼 · 완전 무료',
+  fr: 'Analyse des actions US et chinoises pour étudiants · Entièrement gratuit',
+}
+
 // action.appTab  → switch the main app tab
 // action.viewMode → switch ComparePanel viewMode (sub-tab)
 // action.openKnowledge → open the daily knowledge popup
 const FEATURES = [
-  { icon: '📈', zh: '相似走势分析', en: 'Similar Trends',   descZh: '找到与目标股票走势高度相关的同行，判断行业性行情还是个股独立行情', descEn: 'Find stocks moving in sync with your target to identify sector vs individual momentum', action: { appTab: 'analysis', viewMode: 'similar' } },
-  { icon: '🤖', zh: 'AI 智能分析',  en: 'AI Analysis',      descZh: 'Claude AI 一键生成投资洞察，分析技术面、基本面与市场情绪', descEn: 'Claude AI generates investment insights instantly — technicals, fundamentals, and sentiment', action: { appTab: 'analysis', viewMode: 'analysis' } },
-  { icon: '📰', zh: '新闻舆情',     en: 'News Sentiment',   descZh: '实时中英文新闻 AI 情感评分，快速把握市场对个股的看法', descEn: 'Real-time Chinese & English news with AI sentiment scoring for each stock', action: { appTab: 'analysis', viewMode: 'news' } },
-  { icon: '🎮', zh: '模拟炒股',     en: 'Paper Trading',    descZh: '100万虚拟资金，T+1规则，真实手续费，练好再用真钱', descEn: 'Practice with ¥1,000,000 virtual money, T+1 rules, and real commission fees', action: { appTab: 'paper' } },
-  { icon: '📚', zh: '备考学习',     en: 'Exam Study',       descZh: 'A-Level、IB、IGCSE、AP 经济学全套内容，含真实市场案例', descEn: 'A-Level, IB, IGCSE, AP Economics content with real A-share market examples', action: { appTab: 'study' } },
-  { icon: '💡', zh: '每日知识',     en: 'Daily Knowledge',  descZh: '每天一个经济学概念 + 一个金融知识，积少成多', descEn: 'One economics concept + one finance insight delivered daily', action: { openKnowledge: true } },
+  { icon: '📈', action: { appTab: 'analysis', viewMode: 'analysis' },
+    title: { zh: 'AI 个股分析', en: 'AI Stock Analysis', ja: 'AI 個別株分析', ko: 'AI 종목 분석', fr: 'Analyse IA' },
+    desc: {
+      zh: 'K 线、综合评分、相似走势与 AI 解读，美股和 A 股都支持',
+      en: 'Charts, a five-factor score, similar movers and an AI write-up for any US or China stock',
+      ja: 'チャート、総合スコア、類似銘柄、AI 解説。米国株と中国株に対応',
+      ko: '차트, 종합 점수, 유사 종목, AI 해설까지. 미국·중국 주식 모두 지원',
+      fr: 'Graphiques, score global, valeurs similaires et analyse IA, actions US et chinoises',
+    } },
+  { icon: '📰', action: { appTab: 'news' },
+    title: { zh: '每日资讯', en: 'Daily News', ja: 'デイリーニュース', ko: '데일리 뉴스', fr: 'Actualités' },
+    desc: {
+      zh: '美股与 A 股要闻、投行观点，每只股票附 AI 情绪评分',
+      en: 'Market headlines and bank research views, with AI sentiment for each stock',
+      ja: '市場ニュースと投資銀行の見解。銘柄ごとに AI センチメント付き',
+      ko: '시장 뉴스와 투자은행 리포트, 종목별 AI 감성 점수 제공',
+      fr: 'Actualités et avis des banques, avec sentiment IA par action',
+    } },
+  { icon: '🎮', action: { appTab: 'paper' },
+    title: { zh: '模拟炒股', en: 'Paper Trading', ja: '模擬トレード', ko: '모의 투자', fr: 'Bourse virtuelle' },
+    desc: {
+      zh: '$100,000 美股虚拟资金（另有 ¥100 万 A 股账户），按实时价格下单',
+      en: '$100,000 in virtual cash for US stocks, plus a ¥1M China account, filled at live prices',
+      ja: '米国株用に仮想資金 $100,000（中国株口座 ¥100 万も）。リアルタイム価格で約定',
+      ko: '미국 주식용 가상자금 $100,000 (중국 주식 ¥100만 계좌 별도), 실시간 가격 체결',
+      fr: '100 000 $ virtuels pour les actions US, plus un compte chinois de 1 M ¥, au prix réel',
+    } },
+  { icon: '📚', action: { appTab: 'study' },
+    title: { zh: '学习中心', en: 'Study Center', ja: '学習センター', ko: '학습 센터', fr: "Centre d'étude" },
+    desc: {
+      zh: '从美股入门课到 A-Level、IB、AP 经济学，配真实市场案例',
+      en: 'From a US stock primer to A-Level, IB and AP Economics, with real market cases',
+      ja: '米国株入門から A-Level・IB・AP 経済学まで。実際の市場事例つき',
+      ko: '미국 주식 입문부터 A-Level·IB·AP 경제학까지, 실제 시장 사례 포함',
+      fr: "De l'initiation aux actions US jusqu'à l'économie A-Level, IB et AP, avec cas réels",
+    } },
+  { icon: '🤖', action: { appTab: 'ai_teacher' },
+    title: { zh: 'AI 老师', en: 'AI Teacher', ja: 'AI 先生', ko: 'AI 선생님', fr: 'Professeur IA' },
+    desc: {
+      zh: '随时问投资和经济学问题，按你的水平讲解',
+      en: 'Ask anything about investing or economics and get an answer pitched at your level',
+      ja: '投資や経済学の疑問をいつでも質問。レベルに合わせて解説',
+      ko: '투자·경제학 질문을 언제든지, 내 수준에 맞춰 설명',
+      fr: "Posez vos questions d'investissement ou d'économie, expliquées à votre niveau",
+    } },
+  { icon: '💼', action: { appTab: 'career' },
+    title: { zh: '金融职业', en: 'Finance Careers', ja: '金融キャリア', ko: '금융 커리어', fr: 'Carrières finance' },
+    desc: {
+      zh: '了解投行、研究、交易等岗位，再用 AI 做一次模拟面试',
+      en: 'See what banking, research and trading roles involve, then try an AI mock interview',
+      ja: '投資銀行・リサーチ・トレーディングの仕事を知り、AI 模擬面接に挑戦',
+      ko: 'IB·리서치·트레이딩 직무를 알아보고 AI 모의 면접까지',
+      fr: 'Découvrez banque, recherche et trading, puis passez un entretien blanc avec l’IA',
+    } },
 ]
 
 function FeatureCard({ feature, lang, index, onClick }) {
@@ -63,7 +119,7 @@ function FeatureCard({ feature, lang, index, onClick }) {
           color: hover ? ACCENT_BLUE : 'var(--text-primary)',
           transition: 'color 0.3s',
         }}>
-          {lang === 'zh' ? feature.zh : feature.en}
+          {feature.title[lang] || feature.title.en}
         </span>
         <span style={{
           fontSize: 13, color: ACCENT_BLUE,
@@ -72,8 +128,8 @@ function FeatureCard({ feature, lang, index, onClick }) {
           transition: 'opacity 0.25s ease, transform 0.25s ease',
         }}>→</span>
       </div>
-      <div style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>
-        {lang === 'zh' ? feature.descZh : feature.descEn}
+      <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+        {feature.desc[lang] || feature.desc.en}
       </div>
     </div>
   )
@@ -130,11 +186,9 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
         </h1>
 
         <p className="bfs-hero-sub" style={{
-          fontSize: 15, color: '#6b7280', margin: '0 0 32px', lineHeight: 1.6,
+          fontSize: 15, color: 'var(--text-secondary)', margin: '0 0 32px', lineHeight: 1.6,
         }}>
-          {zh
-            ? '专为学生设计的美股与 A 股智能分析平台 · 完全免费'
-            : 'Smart US & A-Share Analysis for Students · Completely Free'}
+          {SUBTITLE[lang] || SUBTITLE.en}
         </p>
 
         {/* CTA buttons */}
@@ -178,26 +232,19 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
         gap: isMobile ? 10 : 14, width: '100%', marginBottom: 36,
       }}>
         {FEATURES.map((f, i) => (
-          <FeatureCard key={f.zh} feature={f} lang={lang} index={i} onClick={() => handleCardClick(f.action)} />
+          <FeatureCard key={f.title.en} feature={f} lang={lang} index={i} onClick={() => handleCardClick(f.action)} />
         ))}
       </div>
 
       {/* ── Data source note ── */}
-      <div style={{ fontSize: 11, color: '#374151', textAlign: 'center', lineHeight: 1.8 }}>
+      <div style={{ fontSize: 11, color: 'var(--text-secondary)', opacity: 0.75, textAlign: 'center', lineHeight: 1.8 }}>
         {zh
-          ? '数据来源：AkShare · 腾讯财经 · Sina Finance · 实时更新'
-          : 'Data: AkShare · Tencent Finance · Sina Finance · Real-time updates'}
+          ? '数据来源：腾讯财经 · 纳斯达克 · 新浪财经 · AkShare'
+          : 'Data: Tencent Finance · Nasdaq · Sina Finance · AkShare'}
         <br />
         {zh
           ? '由两名高中生 Billy 和 Frank 合作开发 · 仅供学习用途'
           : 'Built by two high school students, Billy & Frank · For educational use only'}
-        <br />
-        <a
-          href="mailto:billyl090119@gmail.com"
-          style={{ color: '#9ca3af', fontSize: 10, textDecoration: 'none' }}
-        >
-          {t.moContact}
-        </a>
       </div>
 
       <style>{`

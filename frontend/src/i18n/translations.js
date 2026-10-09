@@ -1,7 +1,7 @@
 export const T = {
   zh: {
     appTitle: 'Best Friend Stock',
-    dataSource: '数据来源: AkShare / Tencent Finance',
+    dataSource: '数据来源：腾讯财经 / 纳斯达克 / AkShare',
     marketCN: 'A股',
     marketUS: '美股',
     from: '起始:',
@@ -490,7 +490,7 @@ export const T = {
   },
   en: {
     appTitle: 'Best Friend Stock',
-    dataSource: 'Data: AkShare / Tencent Finance',
+    dataSource: 'Data: Tencent Finance / Nasdaq / AkShare',
     marketCN: 'A-Share',
     marketUS: 'US Stock',
     from: 'From:',
@@ -979,7 +979,7 @@ export const T = {
   },
   ja: {
     appTitle: 'Best Friend Stock',
-    dataSource: 'データ: AkShare / Tencent Finance',
+    dataSource: 'データ: Tencent Finance / Nasdaq / AkShare',
     marketCN: 'A株',
     marketUS: '米国株',
     from: '開始:',
@@ -1468,7 +1468,7 @@ export const T = {
   },
   ko: {
     appTitle: 'Best Friend Stock',
-    dataSource: '데이터: AkShare / Tencent Finance',
+    dataSource: '데이터: Tencent Finance / Nasdaq / AkShare',
     marketCN: 'A주',
     marketUS: '미국주식',
     from: '시작:',
@@ -1957,7 +1957,7 @@ export const T = {
   },
   fr: {
     appTitle: 'Best Friend Stock',
-    dataSource: 'Données: AkShare / Tencent Finance',
+    dataSource: 'Données: Tencent Finance / Nasdaq / AkShare',
     marketCN: 'Actions A',
     marketUS: 'Bourse US',
     from: 'Du:',
