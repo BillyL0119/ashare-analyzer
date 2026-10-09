@@ -46,6 +46,9 @@ export default function StockCard({ stock }) {
     echarts.connect(groupId)
   }, [groupId])
 
+  // Opened from a URL the stock only knows its code; fall back to the name the data endpoint returns.
+  const displayName = [name, data?.name, quote?.name].find((n) => n && n !== code) || ''
+
   const priceDelta = quote?.pct_change ?? 0
   const priceColor = priceDelta >= 0 ? THEME.up : THEME.down
 
@@ -98,7 +101,7 @@ export default function StockCard({ stock }) {
           <span style={{ color: '#64b5f6', fontFamily: 'monospace', fontSize: 14, fontWeight: 600 }}>
             {code}
           </span>
-          <span style={{ color: THEME.text, fontSize: 14 }}>{name}</span>
+          {displayName && <span style={{ color: THEME.text, fontSize: 14 }}>{displayName}</span>}
         </div>
 
         {quote && (

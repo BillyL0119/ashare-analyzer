@@ -157,9 +157,10 @@ export default function App() {
   // Update document title and canonical on tab/stock change for SEO
   useEffect(() => {
     // When stocks are selected in the analysis tab, show a stock-specific title
+    // A stock opened from a URL only knows its code at first: keep the server-rendered title (it carries the company name)
+    if (location.pathname.startsWith('/stock/') && (selectedSymbols.length === 0 ||
+        (selectedSymbols.length === 1 && (!selectedSymbols[0].name || selectedSymbols[0].name === selectedSymbols[0].code)))) return
     if (appTab === 'analysis' && selectedSymbols.length > 0) {
-      // A stock opened from a URL only knows its code: keep the server-rendered title (it carries the company name)
-      if (selectedSymbols.length === 1 && (!selectedSymbols[0].name || selectedSymbols[0].name === selectedSymbols[0].code)) return
       const label = selectedSymbols.length === 1
         ? `${selectedSymbols[0].name} (${selectedSymbols[0].code})`
         : selectedSymbols.map(s => s.code).join(' vs ')
