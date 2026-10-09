@@ -1935,6 +1935,35 @@
         }
       }
     },
+    "买入第一只股票": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buy your first stock"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acheter une première action"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最初の銘柄を買う"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "첫 종목 매수"
+          }
+        }
+      }
+    },
     "了解8个金融岗位：日常工作、技能、薪资，还能模拟面试": {
       "extractionState": "manual",
       "localizations": {
@@ -4429,6 +4458,35 @@
         }
       }
     },
+    "总盈亏": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total P&L"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "P&L total"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "損益合計"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "총 손익"
+          }
+        }
+      }
+    },
     "恐慌": {
       "extractionState": "manual",
       "localizations": {
@@ -4835,6 +4893,35 @@
         }
       }
     },
+    "持仓市值": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Holdings"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Positions"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保有資産"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보유 자산"
+          }
+        }
+      }
+    },
     "指标": {
       "extractionState": "manual",
       "localizations": {
@@ -5208,6 +5295,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "전일 종가"
+          }
+        }
+      }
+    },
+    "暂无持仓": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No positions yet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune position"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ポジションはありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보유 종목 없음"
           }
         }
       }
@@ -6339,6 +6455,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "현재"
+          }
+        }
+      }
+    },
+    "用虚拟资金练习买卖，不承担真实风险": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Practice with virtual cash, no real risk"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entraînez-vous avec de l'argent virtuel, sans risque réel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仮想資金で売買を練習。実際のリスクはありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가상 자금으로 연습하세요. 실제 위험은 없습니다"
           }
         }
       }

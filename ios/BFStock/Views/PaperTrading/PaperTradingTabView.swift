@@ -146,16 +146,32 @@ struct PaperTradingTabView: View {
 
             Group {
                 if positions.isEmpty {
-                    VStack(spacing: 8) {
-                        Image(systemName: "tray")
-                            .font(.title2)
-                            .foregroundStyle(.tertiary)
-                        Text("暂无持仓，点击 + 买入第一只股票")
-                            .font(.subheadline)
+                    VStack(spacing: 12) {
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                            .font(.system(size: 26, weight: .semibold))
+                            .foregroundStyle(DS.accent)
+                            .frame(width: 56, height: 56)
+                            .background(DS.accent.opacity(0.12), in: Circle())
+                        Text("暂无持仓")
+                            .font(.headline)
+                        Text("用虚拟资金练习买卖，不承担真实风险")
+                            .font(.footnote)
                             .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        Button {
+                            showBuySheet = true
+                        } label: {
+                            Text("买入第一只股票")
+                                .font(.subheadline.weight(.semibold))
+                                .padding(.horizontal, 22).padding(.vertical, 10)
+                                .background(DS.accent, in: Capsule())
+                                .foregroundStyle(.white)
+                        }
+                        .buttonStyle(.plain)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 28)
+                    .padding(.vertical, 30)
+                    .padding(.horizontal, 16)
                 } else {
                     VStack(spacing: 0) {
                         ForEach(Array(positions.enumerated()), id: \.element.0) { idx, item in
@@ -265,9 +281,18 @@ private struct AccountHeaderView: View {
     private var cash: Double       { market == .cn ? account.cash       : account.usCash       }
     private var currency: String   { market == .cn ? "¥" : "$" }
     private var isUp: Bool         { returnPct >= 0 }
+    /// Starting capital, recovered from value and return (US $100k, A-share ¥1M).
+    private var profit: Double {
+        let base = returnPct > -100 ? totalValue / (1 + returnPct / 100) : 0
+        return totalValue - base
+    }
+
+    private func money(_ v: Double) -> String {
+        currency + v.formatted(.number.precision(.fractionLength(0)).grouping(.automatic))
+    }
 
     var body: some View {
-        let color = plColor(returnPct, market: market)
+        let color = returnPct == 0 ? DS.accent : plColor(returnPct, market: market)
         VStack(alignment: .leading, spacing: 18) {
             HStack {
                 Text(market == .cn ? L("A股账户") : L("美股账户"))
@@ -304,9 +329,12 @@ private struct AccountHeaderView: View {
             }
 
             HStack(spacing: 0) {
-                StatCell(label: L("可用现金"), value: "\(currency)\(String(format: "%.0f", cash))")
+                StatCell(label: L("可用现金"), value: money(cash))
                 Rectangle().fill(DS.stroke).frame(width: 1, height: 30)
-                StatCell(label: L("仅供学习"), value: L("不构成投资建议"))
+                StatCell(label: L("持仓市值"), value: money(max(totalValue - cash, 0)))
+                Rectangle().fill(DS.stroke).frame(width: 1, height: 30)
+                StatCell(label: L("总盈亏"), value: (abs(profit) < 0.5 ? "" : (profit > 0 ? "+" : "-")) + money(abs(profit)),
+                         tint: abs(profit) < 0.5 ? nil : plColor(profit, market: market))
             }
             .padding(.vertical, 12)
             .background(DS.surfaceHi.opacity(0.8), in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
@@ -325,10 +353,13 @@ private struct AccountHeaderView: View {
 private struct StatCell: View {
     let label: String
     let value: String
+    var tint: Color? = nil
     var body: some View {
         VStack(spacing: 2) {
             Text(label).font(.caption).foregroundStyle(.secondary)
-            Text(value).font(.subheadline.weight(.medium))
+            Text(value).font(.system(.subheadline, design: .rounded).weight(.semibold)).monospacedDigit()
+                .foregroundStyle(tint ?? .primary)
+                .minimumScaleFactor(0.7).lineLimit(1)
         }
         .frame(maxWidth: .infinity)
     }
