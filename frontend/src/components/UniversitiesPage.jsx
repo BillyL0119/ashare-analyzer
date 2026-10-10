@@ -554,7 +554,7 @@ function CompareModal({ schools, lang, onClose }) {
     return () => { window.removeEventListener('keydown', h); document.body.style.overflow = '' }
   }, [onClose])
 
-  const colTpl = `160px repeat(${schools.length}, 1fr)`
+  const colTpl = `160px repeat(${schools.length}, minmax(0, 1fr))`
 
   return (
     <div
@@ -1640,6 +1640,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
+        minWidth: 0,
       }}
     >
       {rankBy === 'business'
@@ -1707,7 +1708,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
         </span>
         <span style={{
           fontSize: 11, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
-          transition: 'color 0.15s',
+          transition: 'color 0.15s', whiteSpace: 'nowrap', flexShrink: 0,
         }}>
           {t ? '查看详情 →' : 'Details →'}
         </span>
@@ -2202,14 +2203,14 @@ export default function UniversitiesPage({ lang = 'zh' }) {
       <style>{`
         .uni-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 16px;
         }
         @media (max-width: 900px) {
-          .uni-grid { grid-template-columns: repeat(2, 1fr); }
+          .uni-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
         @media (max-width: 580px) {
-          .uni-grid { grid-template-columns: 1fr; }
+          .uni-grid { grid-template-columns: minmax(0, 1fr); }
         }
       `}</style>
 
