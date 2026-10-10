@@ -839,12 +839,12 @@
   "country": "China",
   "city": "Beijing",
   "qs_rank": 13,
-  "established": 1978,
+  "established": 1985,
   "programs": [
-   "Undergraduate",
-   "MBA",
+   "Undergraduate (business & economics)",
+   "International MBA (English)",
+   "MBA (Chinese)",
    "EMBA",
-   "MSc",
    "PhD"
   ],
   "specialties": [
@@ -853,9 +853,9 @@
    "Marketing",
    "Economics"
   ],
-  "description_en": "PKU Guanghua is backed by Peking University, China's foremost liberal arts and research university. Particularly strong in Finance, Economics, and Accounting research, Guanghua has close ties to China's policymaking circles and central bank. Located in the Zhongguancun tech hub of Beijing, students have direct access to China's innovation leaders.",
-  "description_cn": "北京大学光华管理学院依托中国最重要的文理研究型大学北京大学。在金融、经济学和会计研究领域尤为出色，与中国政策圈和央行联系紧密。坐落于北京中关村科技园，学生可直接接触中国创新领袖。",
-  "tuition_usd": null,
+  "description_en": "Guanghua School of Management is Peking University's business school, known for research in finance, economics and accounting and for close ties to Chinese policymaking and industry. Its full-time International MBA is a two-year programme taught in English in Beijing, and Chinese-language MBA and EMBA programmes serve domestic students.",
+  "description_cn": "北京大学光华管理学院是北大的商学院，以金融、经济和会计研究见长，与国内政策界和产业界联系紧密。全日制国际 MBA 为在北京上课的两年制英文项目，另有中文 MBA 和 EMBA 项目面向国内学生。",
+  "tuition_usd": "International MBA RMB 188,000 total (2026 prospectus)",
   "language": "bilingual",
   "notable_alumni": [],
   "url": "https://www.gsm.pku.edu.cn",
@@ -870,9 +870,34 @@
   "qs_bm_rank": "34",
   "qs_bm_rank_num": 34,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gre_accepted": true,
+   "deadlines": {
+    "r1": "Oct 25, 2026",
+    "r2": "Nov 29, 2026",
+    "r3": "Jan 3, 2027",
+    "r4": "Mar 7, 2027",
+    "r5": "Apr 15, 2027"
+   }
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "International MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Full-time, English-taught MBA in Beijing; tuition RMB 188,000 for the whole programme (2026 prospectus), excluding textbooks and off-site field trips.",
+    "description_cn": "北京校区全日制英文 MBA；学费全程 18.8 万元（2026 年简章），不含教材和异地实践费用。"
+   },
+   {
+    "name": "Undergraduate programmes",
+    "duration": "4 years",
+    "language": "Chinese",
+    "description_en": "Undergraduate degrees in business and economics; mainland students are admitted through the gaokao.",
+    "description_cn": "商科与经济学本科学位；内地学生通过高考录取。"
+   }
+  ]
  },
  {
   "id": "pku-hsbc",
@@ -927,10 +952,10 @@
   "qs_rank": 14,
   "established": 1984,
   "programs": [
-   "Undergraduate",
-   "MBA",
-   "EMBA",
-   "MiMM",
+   "Undergraduate (economics & management)",
+   "Tsinghua Global MBA (with MIT Sloan)",
+   "Tsinghua MBA (Chinese)",
+   "Tsinghua-INSEAD EMBA",
    "PhD"
   ],
   "specialties": [
@@ -939,9 +964,9 @@
    "Strategy",
    "Technology Management"
   ],
-  "description_en": "Tsinghua SEM is China's most prestigious business school, benefiting from 'China's MIT' reputation. Its EMBA program is the most sought-after in China, attracting the country's top business leaders. Deep connections to China's government, tech giants (Huawei, Tencent, Alibaba), and the Beijing financial community make it essential for anyone targeting China's market.",
-  "description_cn": "清华大学经管学院是中国最负盛名的商学院，依托「中国麻省理工」的声誉。其EMBA项目是中国最受追捧的高管教育项目，吸引了中国顶级商业领袖。与中国政府、科技巨头（华为、腾讯、阿里巴巴）及北京金融界的深厚联系，使其成为目标中国市场人才不可或缺的选择。",
-  "tuition_usd": null,
+  "description_en": "Tsinghua University School of Economics and Management was founded in 1984 with Zhu Rongji, later Premier of China, as its founding dean. Its full-time Tsinghua Global MBA is taught in English and run in collaboration with MIT Sloan, and it also offers Chinese-language MBAs and the Tsinghua-INSEAD Executive MBA.",
+  "description_cn": "清华大学经济管理学院成立于 1984 年，首任院长为后来的国务院总理朱镕基。全日制清华全球 MBA 为英文授课，与 MIT 斯隆管理学院合作；学院另设中文 MBA 和清华-INSEAD EMBA。",
+  "tuition_usd": "Tsinghua Global MBA RMB 198,000 total · Chinese part-time MBA RMB 418,000",
   "language": "bilingual",
   "notable_alumni": [
    "Zhu Rongji"
@@ -956,36 +981,30 @@
    "Undergraduate",
    "Mainland China"
   ],
-  "requirements": null,
+  "requirements": {
+   "gre_accepted": true,
+   "deadlines": {
+    "r1": "Oct 19, 2026",
+    "r2": "Dec 14, 2026",
+    "r3": "Feb 22, 2027",
+    "r4": "Mar 31, 2027"
+   }
+  },
   "employment": null,
   "programs_detail": [
    {
-    "name": "MBA (中英双语)",
-    "duration": "2 years",
-    "language": "Bilingual",
-    "description_en": "China's top MBA at Tsinghua; bilingual programme with US and European exchange partnerships.",
-    "description_cn": "清华大学中国顶尖MBA，双语项目，与美国和欧洲顶尖院校设有交换合作。"
-   },
-   {
-    "name": "MBA (Global)",
-    "duration": "1 year",
+    "name": "Tsinghua Global MBA",
+    "duration": "About 2 years",
     "language": "English",
-    "description_en": "English-language MBA attracting international students and senior returning professionals.",
-    "description_cn": "英语授课MBA，面向国际学生和有海外经验的归国职业人士。"
+    "description_en": "Full-time, English-taught MBA in collaboration with MIT Sloan; tuition RMB 198,000 for the programme. International applicants need at least three years of work experience after a bachelor's degree.",
+    "description_cn": "与 MIT 斯隆合作的全日制英文 MBA，学费全程 19.8 万元；国际申请者本科毕业后需至少三年工作经验。"
    },
    {
-    "name": "Master of Finance (MFin)",
-    "duration": "2 years",
-    "language": "Bilingual",
-    "description_en": "Quantitative finance master with deep links to Beijing's financial regulators and state institutions.",
-    "description_cn": "定量金融硕士，与北京金融监管机构和国家机构紧密联系。"
-   },
-   {
-    "name": "EMBA",
-    "duration": "2 years",
-    "language": "Chinese",
-    "description_en": "Executive MBA designed for senior Chinese executives, with world-class faculty.",
-    "description_cn": "面向中国高级管理人员的EMBA，配备世界级师资阵容。"
+    "name": "Tsinghua-INSEAD EMBA",
+    "duration": "Part-time",
+    "language": "English",
+    "description_en": "Dual-degree Executive MBA run with INSEAD.",
+    "description_cn": "与 INSEAD 合办的双学位高管 MBA。"
    }
   ],
   "alumni_detail": [
@@ -1206,10 +1225,11 @@
   "qs_rank": 18,
   "established": 1963,
   "programs": [
-   "Undergraduate",
-   "MBA",
-   "MSc Finance",
-   "MAcc",
+   "BBA programmes",
+   "Full-time MBA",
+   "Part-time MBA",
+   "EMBA",
+   "MSc programmes",
    "PhD"
   ],
   "specialties": [
@@ -1218,9 +1238,9 @@
    "Marketing",
    "Strategy"
   ],
-  "description_en": "CUHK Business School has the largest alumni network in Hong Kong and strong connections to mainland China's business community. It was the first school in Hong Kong to offer an MBA programme. Strong partnerships with leading mainland Chinese universities enable dual-degree and exchange opportunities not available elsewhere in Hong Kong.",
-  "description_cn": "香港中文大学商学院拥有香港最大的校友网络和与中国内地商界的紧密联系。是香港第一所开设MBA项目的商学院，与国内顶尖高校的合作伙伴关系提供了香港其他院校无法比拟的双学位和交流机会。",
-  "tuition_usd": null,
+  "description_en": "CUHK Business School is the business faculty of the Chinese University of Hong Kong, whose MBA programme dates from 1966. Undergraduates choose among several BBA programmes taught largely in English, and the full-time MBA has a highly international class and strong links with mainland China.",
+  "description_cn": "港中大商学院是香港中文大学的商科学院，其 MBA 项目始于 1966 年。本科生可在多个以英文为主授课的 BBA 项目中选择；全日制 MBA 学生国际化程度很高，与内地联系紧密。",
+  "tuition_usd": "BBA HK$214,000/year (non-local, 2026/27) · Full-time MBA HK$620,000 (2027 intake)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.bschool.cuhk.edu.hk",
@@ -1235,9 +1255,35 @@
   "qs_bm_rank": "53",
   "qs_bm_rank_num": 53,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gmat_median": "Optional (GMAT/GRE not required)",
+   "gre_accepted": true,
+   "deadlines": {
+    "r1": "Oct 31, 2026",
+    "r2": "Dec 15, 2026",
+    "r3": "Jan 31, 2027",
+    "r4": "Mar 15, 2027",
+    "r5": "Apr 30, 2027"
+   }
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BBA programmes",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Undergraduate business degrees; non-local tuition is HK$214,000 a year for the 2026/27 intake (HK$230,000 for 2027/28).",
+    "description_cn": "本科商科学位；2026/27 入学的非本地学费为每年 HK$214,000（2027/28 为 HK$230,000）。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "Requires at least two years of full-time work experience; GMAT/GRE is optional. Tuition HK$620,000 for the 2027 intake, subject to university approval.",
+    "description_cn": "要求至少两年全职工作经验，GMAT/GRE 非必需；2027 年入学学费 HK$620,000（待校方批准）。"
+   }
+  ]
  },
  {
   "id": "unsw-agsm",
