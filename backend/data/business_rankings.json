@@ -110,7 +110,9 @@
    "city": "London",
    "overall": null,
    "overall_num": null,
-   "school_ids": []
+   "school_ids": [
+    "lbs"
+   ]
   },
   {
    "rank": "10",
@@ -156,7 +158,9 @@
    "city": "Berkeley",
    "overall": "=20",
    "overall_num": 20,
-   "school_ids": []
+   "school_ids": [
+    "berkeley-haas"
+   ]
   },
   {
    "rank": "14",
@@ -274,7 +278,9 @@
    "city": "Monterrey",
    "overall": "188",
    "overall_num": 188,
-   "school_ids": []
+   "school_ids": [
+    "egade"
+   ]
   },
   {
    "rank": "=24",
@@ -368,7 +374,9 @@
    "city": "Ithaca",
    "overall": "=16",
    "overall_num": 16,
-   "school_ids": []
+   "school_ids": [
+    "cornell-johnson"
+   ]
   },
   {
    "rank": "=32",
@@ -378,7 +386,9 @@
    "city": "Cergy",
    "overall": null,
    "overall_num": null,
-   "school_ids": []
+   "school_ids": [
+    "essec"
+   ]
   },
   {
    "rank": "=32",
@@ -437,7 +447,9 @@
    "city": "Pamplona",
    "overall": "=279",
    "overall_num": 279,
-   "school_ids": []
+   "school_ids": [
+    "iese"
+   ]
   },
   {
    "rank": "=36",
@@ -471,7 +483,9 @@
    "city": "Paris",
    "overall": null,
    "overall_num": null,
-   "school_ids": []
+   "school_ids": [
+    "escp"
+   ]
   },
   {
    "rank": "41",
@@ -589,7 +603,9 @@
    "city": "Seoul",
    "overall": "=52",
    "overall_num": 52,
-   "school_ids": []
+   "school_ids": [
+    "korea-kubs"
+   ]
   },
   {
    "rank": "51",
@@ -611,7 +627,9 @@
    "city": "Hong Kong",
    "overall": "50",
    "overall_num": 50,
-   "school_ids": []
+   "school_ids": [
+    "polyu-business"
+   ]
   },
   {
    "rank": "53",
@@ -645,7 +663,9 @@
    "city": "University Park",
    "overall": "=92",
    "overall_num": 92,
-   "school_ids": []
+   "school_ids": [
+    "psu-smeal"
+   ]
   },
   {
    "rank": "=55",
@@ -655,7 +675,9 @@
    "city": "Austin",
    "overall": "72",
    "overall_num": 72,
-   "school_ids": []
+   "school_ids": [
+    "ut-mccombs"
+   ]
   },
   {
    "rank": "=57",
@@ -689,7 +711,9 @@
    "city": "Rome",
    "overall": null,
    "overall_num": null,
-   "school_ids": []
+   "school_ids": [
+    "luiss"
+   ]
   },
   {
    "rank": "60",

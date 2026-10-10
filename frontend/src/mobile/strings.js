@@ -1357,11 +1357,11 @@ export const STR = {
   "비즈니스 스쿨",
   "Business schools"
  ],
- "QS 商科排名前 150 + 90 所商学院的学费与申请要求": [
-  "QS business ranking top 150, plus tuition and admission for 90 schools",
-  "QS ビジネス分野トップ150と90校の学費・出願要件",
-  "QS 경영학 순위 150위와 90개 학교의 학비·지원 요건",
-  "Top 150 QS en business, frais et admission de 90 écoles"
+ "QS 商科排名前 150 + 100 多所商学院的学费与申请要求": [
+  "QS business ranking top 150, plus tuition and admission for 100+ schools",
+  "QS ビジネス分野トップ150と100校以上の学費・出願要件",
+  "QS 경영학 순위 150위와 100여 개 학교의 학비·지원 요건",
+  "Top 150 QS en business, frais et admission de plus de 100 écoles"
  ],
  "求职指南": [
   "Career guide",

@@ -101,7 +101,7 @@ struct LearningTabView: View {
                                         in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                         VStack(alignment: .leading, spacing: 2) {
                             Text("全球商学院指南").font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
-                            Text("QS 商科排名前 150 + 90 所商学院的学费与申请要求")
+                            Text("QS 商科排名前 150 + 100 多所商学院的学费与申请要求")
                                 .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.leading)
                         }
                         Spacer(minLength: 4)

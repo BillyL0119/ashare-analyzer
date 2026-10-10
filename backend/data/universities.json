@@ -5887,5 +5887,756 @@
   ],
   "qs_bm_rank": "=123",
   "qs_bm_rank_num": 123
+ },
+ {
+  "id": "lbs",
+  "name": "London Business School",
+  "university": "London Business School (University of London)",
+  "region": "uk",
+  "country": "United Kingdom",
+  "city": "London, UK",
+  "qs_rank": null,
+  "established": 1964,
+  "programs": [
+   "MBA",
+   "Masters in Management",
+   "Masters in Finance",
+   "Executive MBA",
+   "PhD"
+  ],
+  "specialties": [
+   "Finance",
+   "Consulting",
+   "Strategy",
+   "Entrepreneurship"
+  ],
+  "description_en": "London Business School is a stand-alone graduate business school in Regent's Park, part of the University of London. Because it only teaches business, it does not appear in the overall university rankings, yet it ranks 9th in the world for business and management. Its MBA can be finished in 15 to 21 months, and London's position as a global finance and consulting hub shapes recruiting.",
+  "description_cn": "伦敦商学院是位于伦敦摄政公园的独立研究生商学院，隶属伦敦大学。它只开设商科，因此不参加大学综合排名，但在 QS 商科排名中位列全球第 9。MBA 可在 15 至 21 个月内完成，伦敦作为全球金融与咨询中心，为学生求职提供了天然优势。",
+  "tuition_usd": "£123,950 (MBA total, 2026 intake)",
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://www.london.edu",
+  "tags": [
+   "Finance",
+   "Consulting",
+   "Top 10",
+   "MBA",
+   "MiM",
+   "London"
+  ],
+  "requirements": {
+   "gre_accepted": true,
+   "deadlines": {
+    "r1": "Sep 3, 2026",
+    "r2": "Jan 6, 2027",
+    "r3": "Mar 22, 2027"
+   }
+  },
+  "employment": [
+   "Consulting 40%",
+   "Finance 25%",
+   "Technology 24%",
+   "Diversified 11%"
+  ],
+  "programs_detail": [
+   {
+    "name": "MBA",
+    "duration": "15–21 months",
+    "language": "English",
+    "description_en": "Flexible-length MBA with electives across finance, strategy and entrepreneurship; around 500 students per class from more than 60 countries.",
+    "description_cn": "弹性学制 MBA，可选修金融、战略、创业等方向；每届约 500 人，来自 60 多个国家。"
+   },
+   {
+    "name": "Masters in Management (MiM)",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "Pre-experience management master for recent graduates.",
+    "description_cn": "面向应届毕业生的管理学硕士，无需工作经验。"
+   },
+   {
+    "name": "Masters in Finance (MiF)",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "Finance master for professionals with work experience.",
+    "description_cn": "面向有工作经验人士的金融硕士。"
+   }
+  ],
+  "qs_bm_rank": "9",
+  "qs_bm_rank_num": 9,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "berkeley-haas",
+  "name": "Haas School of Business",
+  "university": "University of California, Berkeley",
+  "region": "north_america",
+  "country": "United States",
+  "city": "Berkeley, CA",
+  "qs_rank": 20,
+  "established": 1898,
+  "programs": [
+   "BS Business Administration",
+   "Full-time MBA",
+   "Evening & Weekend MBA",
+   "Executive MBA",
+   "Master of Financial Engineering",
+   "PhD"
+  ],
+  "specialties": [
+   "Tech",
+   "Entrepreneurship",
+   "Finance",
+   "Sustainability"
+  ],
+  "description_en": "Berkeley Haas is the business school of the University of California, Berkeley, and one of the oldest business schools in the United States. Its proximity to Silicon Valley makes technology the largest destination for its MBA graduates, and its culture is defined by four principles, including 'Question the Status Quo'. It also runs a highly selective undergraduate business programme.",
+  "description_cn": "伯克利哈斯商学院是加州大学伯克利分校的商学院，也是美国历史最悠久的商学院之一。紧邻硅谷，科技行业是其 MBA 毕业生的第一大去向；学院文化以「质疑现状」等四条原则为核心。本科商科项目同样竞争激烈。",
+  "tuition_usd": "~$92,675/year (MBA, non-resident, 2026–27)",
+  "language": "english",
+  "notable_alumni": [
+   "Paul Otellini (former CEO, Intel)"
+  ],
+  "url": "https://haas.berkeley.edu",
+  "tags": [
+   "Tech",
+   "Entrepreneurship",
+   "Top 15",
+   "MBA",
+   "Undergraduate",
+   "California"
+  ],
+  "requirements": {
+   "gpa": "3.67 average",
+   "gmat_median": "730 (Focus 675)",
+   "gre_accepted": true,
+   "acceptance_rate": "~21%",
+   "deadlines": {
+    "r1": "Sep 10, 2026",
+    "r2": "Jan 7, 2027",
+    "r3": "Apr 1, 2027"
+   }
+  },
+  "employment": [
+   "Technology 38.6%",
+   "Consulting 26.8%",
+   "Financial Services 15.7%",
+   "Energy 5.2%"
+  ],
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "About 270 students per class; strong in technology, venture capital and sustainability.",
+    "description_cn": "每届约 270 人，科技、风险投资和可持续发展方向突出。"
+   },
+   {
+    "name": "Undergraduate BS in Business Administration",
+    "duration": "4 years (2 at Haas)",
+    "language": "English",
+    "description_en": "Most students apply to Haas after completing their first two years of study at Berkeley.",
+    "description_cn": "大多数学生在伯克利完成前两年学习后申请进入哈斯。"
+   },
+   {
+    "name": "Master of Financial Engineering (MFE)",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "Quantitative finance master aimed at trading, risk and asset management roles.",
+    "description_cn": "定量金融硕士，面向交易、风险管理和资产管理岗位。"
+   }
+  ],
+  "qs_bm_rank": "13",
+  "qs_bm_rank_num": 13,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "cornell-johnson",
+  "name": "Johnson Graduate School of Management",
+  "university": "Cornell University",
+  "region": "north_america",
+  "country": "United States",
+  "city": "Ithaca, NY",
+  "qs_rank": 16,
+  "established": 1946,
+  "programs": [
+   "Two-Year MBA",
+   "Johnson Cornell Tech MBA (1 year, NYC)",
+   "Executive MBA",
+   "MS Business Analytics",
+   "PhD"
+  ],
+  "specialties": [
+   "Finance",
+   "Consulting",
+   "Tech"
+  ],
+  "description_en": "Johnson is Cornell's graduate business school and part of the SC Johnson College of Business. It is known for placing a large share of its MBAs in finance, especially investment banking, and offers a one-year tech-focused MBA at the Cornell Tech campus in New York City in addition to the classic two-year MBA in Ithaca.",
+  "description_cn": "约翰逊管理学院是康奈尔大学的研究生商学院，隶属 SC Johnson 商学院。它以金融（尤其是投资银行）就业比例高著称；除伊萨卡的两年制 MBA 外，还在纽约 Cornell Tech 校区开设一年制科技方向 MBA。",
+  "tuition_usd": "~$88,934/year (Two-Year MBA, 2026–27)",
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://www.johnson.cornell.edu",
+  "tags": [
+   "Finance",
+   "Investment Banking",
+   "Ivy League",
+   "MBA",
+   "New York"
+  ],
+  "requirements": {
+   "gpa": "3.4 median",
+   "gmat_median": 710,
+   "gre_accepted": true,
+   "acceptance_rate": "~28%",
+   "deadlines": {
+    "r1": "Sep 17, 2026",
+    "r2": "Jan 5, 2027",
+    "r3": "Apr 6, 2027"
+   }
+  },
+  "employment": [
+   "Financial Services 41%",
+   "Consulting 28%",
+   "Technology 11%",
+   "Consumer Goods 5%"
+  ],
+  "programs_detail": [
+   {
+    "name": "Two-Year MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "About 280 students per class in Ithaca; immersion semesters in finance, consulting and technology.",
+    "description_cn": "伊萨卡校区，每届约 280 人，第二学期可选金融、咨询、科技等沉浸式课程。"
+   },
+   {
+    "name": "Johnson Cornell Tech MBA",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "Accelerated MBA on Roosevelt Island, New York City, built around product and technology work.",
+    "description_cn": "位于纽约罗斯福岛的一年制 MBA，围绕产品与科技实践设计。"
+   }
+  ],
+  "qs_bm_rank": "31",
+  "qs_bm_rank_num": 31,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "ut-mccombs",
+  "name": "McCombs School of Business",
+  "university": "University of Texas at Austin",
+  "region": "north_america",
+  "country": "United States",
+  "city": "Austin, TX",
+  "qs_rank": 72,
+  "established": 1922,
+  "programs": [
+   "BBA",
+   "Full-time MBA",
+   "Master in Professional Accounting (MPA)",
+   "MS Finance",
+   "MS Business Analytics",
+   "PhD"
+  ],
+  "specialties": [
+   "Accounting",
+   "Finance",
+   "Energy",
+   "Tech"
+  ],
+  "description_en": "McCombs is the business school of the University of Texas at Austin. Its accounting programmes are among the strongest in the United States, and Austin's growing tech scene plus Texas's energy industry shape its MBA recruiting. In-state tuition makes it one of the better-value top business schools for Texas residents.",
+  "description_cn": "麦库姆斯商学院是德克萨斯大学奥斯汀分校的商学院，会计专业位居全美前列。奥斯汀快速发展的科技产业和德州的能源行业是其 MBA 招聘的重要来源；对德州本地学生而言学费性价比很高。",
+  "tuition_usd": "~$61,214/year (MBA, non-resident, 2025–26)",
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://www.mccombs.utexas.edu",
+  "tags": [
+   "Accounting",
+   "Energy",
+   "Tech",
+   "MBA",
+   "Undergraduate",
+   "Texas"
+  ],
+  "requirements": {
+   "gpa": "3.53 median",
+   "gmat_median": "Focus 655",
+   "gre_accepted": true,
+   "acceptance_rate": "~33%",
+   "deadlines": {
+    "r1": "Oct 15, 2026",
+    "r2": "Jan 15, 2027",
+    "r3": "Apr 1, 2027"
+   }
+  },
+  "employment": [
+   "Consulting 28%",
+   "Technology 22%",
+   "Financial Services 19%",
+   "Energy 6%"
+  ],
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "About 235 students per class in Austin.",
+    "description_cn": "奥斯汀校区，每届约 235 人。"
+   },
+   {
+    "name": "Master in Professional Accounting (MPA)",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "Leading accounting master preparing students for the CPA exam and Big Four careers.",
+    "description_cn": "顶尖会计硕士，帮助学生准备 CPA 考试并进入四大会计师事务所。"
+   },
+   {
+    "name": "BBA",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Undergraduate business degree with majors including accounting, finance and MIS.",
+    "description_cn": "本科商科学位，可选会计、金融、信息系统等专业。"
+   }
+  ],
+  "qs_bm_rank": "=55",
+  "qs_bm_rank_num": 55,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "iese",
+  "name": "IESE Business School",
+  "university": "University of Navarra",
+  "region": "europe",
+  "country": "Spain",
+  "city": "Barcelona & Madrid, Spain",
+  "qs_rank": 279,
+  "established": 1958,
+  "programs": [
+   "MBA",
+   "Master in Management",
+   "Executive MBA",
+   "Global Executive MBA",
+   "PhD"
+  ],
+  "specialties": [
+   "General Management",
+   "Consulting",
+   "Finance"
+  ],
+  "description_en": "IESE is the graduate business school of the University of Navarra, with main campuses in Barcelona and Madrid and centres in Munich, New York and São Paulo. It is known for case-method teaching and general-management training. The University of Navarra ranks about 279th overall, but 36th for business, almost entirely because of IESE.",
+  "description_cn": "IESE 是纳瓦拉大学的研究生商学院，主校区位于巴塞罗那和马德里，并在慕尼黑、纽约和圣保罗设有中心，以案例教学和综合管理培养著称。纳瓦拉大学综合排名约第 279，商科却排第 36，几乎全靠 IESE。",
+  "tuition_usd": "~€114,000–117,000 (MBA total)",
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://www.iese.edu",
+  "tags": [
+   "Consulting",
+   "General Management",
+   "Case Method",
+   "MBA",
+   "Spain"
+  ],
+  "requirements": {
+   "gmat_median": "Range 580–750",
+   "gre_accepted": true,
+   "deadlines": {
+    "r1": "Sep 23, 2026",
+    "r2": "Jan 7, 2027",
+    "r3": "Mar 9, 2027",
+    "r4": "May 6, 2027"
+   }
+  },
+  "employment": [
+   "Consulting 41%",
+   "Diversified 33%",
+   "Finance 16%",
+   "Technology 9%"
+  ],
+  "programs_detail": [
+   {
+    "name": "MBA",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "About 420 students per class from more than 50 nationalities; taught through the case method.",
+    "description_cn": "每届约 420 人，来自 50 多个国家，以案例教学为主。"
+   },
+   {
+    "name": "Master in Management (MiM)",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "Pre-experience management master for recent graduates.",
+    "description_cn": "面向应届毕业生的管理学硕士。"
+   }
+  ],
+  "qs_bm_rank": "=36",
+  "qs_bm_rank_num": 36,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "essec",
+  "name": "ESSEC Business School",
+  "university": "ESSEC Business School",
+  "region": "europe",
+  "country": "France",
+  "city": "Cergy (Paris), Singapore & Rabat",
+  "qs_rank": null,
+  "established": 1907,
+  "programs": [
+   "Global BBA",
+   "Master in Management (Grande École)",
+   "MSc in Finance",
+   "Global MBA",
+   "Executive MBA",
+   "PhD"
+  ],
+  "specialties": [
+   "Finance",
+   "Luxury Management",
+   "Consulting"
+  ],
+  "description_en": "ESSEC is one of France's leading grandes écoles de commerce, with campuses near Paris (Cergy), in Singapore and in Rabat. It is known for its Master in Management, finance programmes and luxury brand management. As a specialist business school it is not in the overall university rankings.",
+  "description_cn": "ESSEC 是法国顶尖的高等商学院之一，在巴黎近郊（塞尔吉）、新加坡和拉巴特设有校区，以管理学硕士、金融项目和奢侈品管理闻名。作为专门的商学院，它不参加大学综合排名。",
+  "tuition_usd": "~€38,500 (MiM, 1-year track)",
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://www.essec.edu",
+  "tags": [
+   "Finance",
+   "Luxury",
+   "MiM",
+   "France",
+   "Singapore"
+  ],
+  "requirements": null,
+  "employment": null,
+  "programs_detail": [
+   {
+    "name": "Master in Management (Grande École)",
+    "duration": "1–3 years",
+    "language": "English",
+    "description_en": "Flagship MiM with a one-year intensive track and a flexible longer track that can include a Singapore term.",
+    "description_cn": "旗舰管理学硕士，有一年制强化轨道和可包含新加坡学期的灵活长轨道。"
+   },
+   {
+    "name": "Global BBA",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Undergraduate business degree taught in English across ESSEC's campuses.",
+    "description_cn": "英文授课的四年制本科商科，可在多个校区学习。"
+   }
+  ],
+  "qs_bm_rank": "=32",
+  "qs_bm_rank_num": 32,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "escp",
+  "name": "ESCP Business School",
+  "university": "ESCP Business School",
+  "region": "europe",
+  "country": "France",
+  "city": "Paris, London, Berlin, Madrid, Turin & Warsaw",
+  "qs_rank": null,
+  "established": 1819,
+  "programs": [
+   "Bachelor in Management (BSc)",
+   "Master in Management",
+   "MSc programmes",
+   "Executive MBA",
+   "PhD"
+  ],
+  "specialties": [
+   "General Management",
+   "Finance",
+   "Entrepreneurship"
+  ],
+  "description_en": "Founded in Paris in 1819, ESCP is often described as the world's oldest business school. It runs one school across six European campuses, and students usually study in two or three countries during a degree. Tuition is the same on every campus.",
+  "description_cn": "ESCP 于 1819 年创立于巴黎，常被称为全球历史最悠久的商学院。它在欧洲六个城市设有校区，学生在读期间通常会在两到三个国家学习；各校区学费相同。",
+  "tuition_usd": "~€56,000 (MiM total, non-EU, 2 years)",
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://escp.eu",
+  "tags": [
+   "Multi-campus",
+   "MiM",
+   "Bachelor",
+   "Europe",
+   "Paris",
+   "London"
+  ],
+  "requirements": null,
+  "employment": null,
+  "programs_detail": [
+   {
+    "name": "Master in Management (MiM)",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Study across two or three of ESCP's European campuses.",
+    "description_cn": "在 ESCP 的两到三个欧洲校区学习。"
+   },
+   {
+    "name": "Bachelor in Management (BSc)",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Undergraduate degree studied in three countries, one year each.",
+    "description_cn": "本科学位，三年分别在三个国家学习。"
+   }
+  ],
+  "qs_bm_rank": "40",
+  "qs_bm_rank_num": 40,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "egade",
+  "name": "EGADE Business School",
+  "university": "Tecnológico de Monterrey",
+  "region": "north_america",
+  "country": "Mexico",
+  "city": "Monterrey & Mexico City, Mexico",
+  "qs_rank": 188,
+  "established": 1995,
+  "programs": [
+   "MBA",
+   "Global MBA",
+   "Executive MBA",
+   "Specialised masters",
+   "PhD"
+  ],
+  "specialties": [
+   "General Management",
+   "Finance",
+   "Innovation"
+  ],
+  "description_en": "EGADE is the graduate business school of Tecnológico de Monterrey, one of Latin America's leading private universities. Tec de Monterrey ranks 22nd in the world for business and management, far above its overall rank, and EGADE holds AACSB, EQUIS and AMBA accreditation.",
+  "description_cn": "EGADE 是蒙特雷科技大学的研究生商学院，后者是拉丁美洲顶尖的私立大学之一。蒙特雷科技大学商科全球第 22，远高于其综合排名；EGADE 拥有 AACSB、EQUIS、AMBA 三重认证。",
+  "tuition_usd": "~US$50,000 (Full-time MBA, est.)",
+  "language": "bilingual",
+  "notable_alumni": [],
+  "url": "https://egade.tec.mx",
+  "tags": [
+   "Latin America",
+   "Triple Crown",
+   "MBA",
+   "Mexico"
+  ],
+  "requirements": {
+   "gmat_median": "609 (2023 class)",
+   "gre_accepted": true,
+   "acceptance_rate": "~23% (2023)"
+  },
+  "employment": null,
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "MBA with international residencies; recruiting strongest in technology services, finance and manufacturing.",
+    "description_cn": "包含海外驻留学习的 MBA，科技服务、金融和制造业招聘最活跃。"
+   }
+  ],
+  "qs_bm_rank": "=22",
+  "qs_bm_rank_num": 22,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "korea-kubs",
+  "name": "Korea University Business School",
+  "university": "Korea University",
+  "region": "asia",
+  "country": "South Korea",
+  "city": "Seoul, South Korea",
+  "qs_rank": 52,
+  "established": 1905,
+  "programs": [
+   "Undergraduate Business Administration",
+   "MBA",
+   "MS / PhD"
+  ],
+  "specialties": [
+   "Finance",
+   "Accounting",
+   "Management"
+  ],
+  "description_en": "Korea University Business School traces its roots to Bosung College, founded in 1905, and is regarded as Korea's first business school. It was the first in Korea to earn AACSB (2005) and EQUIS (2007) accreditation, and it hosts a large number of exchange students each year.",
+  "description_cn": "高丽大学商学院可追溯到 1905 年创立的普成专门学校，被视为韩国第一所商学院。它是韩国首家获得 AACSB（2005 年）和 EQUIS（2007 年）认证的商学院，每年接收大量交换生。",
+  "tuition_usd": null,
+  "language": "bilingual",
+  "notable_alumni": [],
+  "url": "https://biz.korea.ac.kr/eng/",
+  "tags": [
+   "Asia",
+   "AACSB",
+   "EQUIS",
+   "Undergraduate",
+   "Seoul"
+  ],
+  "requirements": null,
+  "employment": null,
+  "programs_detail": [
+   {
+    "name": "Undergraduate Business Administration",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Bachelor's degree in business administration on the Anam campus in Seoul.",
+    "description_cn": "首尔安岩校区的工商管理本科学位。"
+   },
+   {
+    "name": "MBA",
+    "duration": "Varies",
+    "language": "English",
+    "description_en": "Full-time and part-time MBA programmes.",
+    "description_cn": "提供全日制和在职 MBA 项目。"
+   }
+  ],
+  "qs_bm_rank": "50",
+  "qs_bm_rank_num": 50,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "polyu-business",
+  "name": "PolyU Faculty of Business",
+  "university": "The Hong Kong Polytechnic University",
+  "region": "asia",
+  "country": "Hong Kong",
+  "city": "Hung Hom, Hong Kong",
+  "qs_rank": 50,
+  "established": null,
+  "programs": [
+   "BBA",
+   "MSc programmes",
+   "DBA",
+   "PhD"
+  ],
+  "specialties": [
+   "Accounting",
+   "Finance",
+   "Logistics"
+  ],
+  "description_en": "PolyU's Faculty of Business includes the School of Accounting and Finance, the Department of Management and Marketing, and the Department of Logistics and Maritime Studies. Its logistics and shipping expertise reflects Hong Kong's role as a global port, and it offers a broad range of BBA majors and taught master's programmes.",
+  "description_cn": "香港理工大学商学院下设会计及金融学院、管理及市场学系、物流及航运学系。依托香港国际港口城市的地位，物流与航运是其特色方向，同时开设多个 BBA 专业和授课型硕士。",
+  "tuition_usd": null,
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://www.polyu.edu.hk/fb/",
+  "tags": [
+   "Hong Kong",
+   "Accounting",
+   "Logistics",
+   "Undergraduate"
+  ],
+  "requirements": null,
+  "employment": null,
+  "programs_detail": [
+   {
+    "name": "BBA",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Undergraduate degree with majors such as accounting, finance, marketing and logistics.",
+    "description_cn": "本科学位，可选会计、金融、市场营销、物流等专业。"
+   }
+  ],
+  "qs_bm_rank": "52",
+  "qs_bm_rank_num": 52,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "psu-smeal",
+  "name": "Smeal College of Business",
+  "university": "Pennsylvania State University",
+  "region": "north_america",
+  "country": "United States",
+  "city": "University Park, PA",
+  "qs_rank": 92,
+  "established": 1953,
+  "programs": [
+   "BS (undergraduate)",
+   "One-Year MBA",
+   "Online MBA",
+   "MS programmes",
+   "PhD"
+  ],
+  "specialties": [
+   "Supply Chain",
+   "Finance",
+   "Accounting"
+  ],
+  "description_en": "Smeal is Penn State's business school, launched in 1953 and named after Frank and Mary Jean Smeal in 1990. It runs one of the largest undergraduate business programmes in the United States and is particularly well known for supply chain management. Its MBA is a one-year residential programme.",
+  "description_cn": "斯米尔商学院是宾州州立大学的商学院，1953 年成立，1990 年以 Frank 和 Mary Jean Smeal 夫妇命名。它拥有全美规模最大的本科商科项目之一，供应链管理尤其知名；MBA 为一年制全日制项目。",
+  "tuition_usd": "$44,574/year (undergraduate, out-of-state, 2026–27)",
+  "language": "english",
+  "notable_alumni": [],
+  "url": "https://www.smeal.psu.edu",
+  "tags": [
+   "Supply Chain",
+   "Undergraduate",
+   "Big Ten",
+   "Pennsylvania"
+  ],
+  "requirements": null,
+  "employment": null,
+  "programs_detail": [
+   {
+    "name": "Undergraduate BS",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Majors include supply chain, finance, accounting, marketing and management.",
+    "description_cn": "可选供应链、金融、会计、市场营销、管理等专业。"
+   },
+   {
+    "name": "One-Year MBA",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "Residential MBA at University Park.",
+    "description_cn": "在大学公园校区的一年制全日制 MBA。"
+   }
+  ],
+  "qs_bm_rank": "=55",
+  "qs_bm_rank_num": 55,
+  "profile_added": "2026-10"
+ },
+ {
+  "id": "luiss",
+  "name": "Luiss University – Business & Management",
+  "university": "Luiss Guido Carli University",
+  "region": "europe",
+  "country": "Italy",
+  "city": "Rome, Italy",
+  "qs_rank": null,
+  "established": 1966,
+  "programs": [
+   "Bachelor in Economics & Business (English)",
+   "Bachelor in Management and Computer Science",
+   "Master in Management",
+   "Luiss Business School MBA"
+  ],
+  "specialties": [
+   "Economics",
+   "Finance",
+   "Management"
+  ],
+  "description_en": "Luiss is a private university in Rome focused on economics, business, law and political science. It offers several English-taught bachelor's and master's degrees in business, and its graduate unit, Luiss Business School, runs MBA and executive programmes.",
+  "description_cn": "Luiss 是位于罗马的私立大学，专注经济、商科、法律和政治学，开设多个英文授课的商科本科和硕士项目；旗下 Luiss 商学院提供 MBA 和高管教育。",
+  "tuition_usd": "~€12,300/year (undergraduate, international, est.)",
+  "language": "bilingual",
+  "notable_alumni": [],
+  "url": "https://www.luiss.edu",
+  "tags": [
+   "Italy",
+   "Rome",
+   "Undergraduate",
+   "Economics"
+  ],
+  "requirements": null,
+  "employment": null,
+  "programs_detail": [
+   {
+    "name": "Bachelor in Economics & Business",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "English-taught bachelor's with majors in management, economics and finance.",
+    "description_cn": "英文授课本科，可选管理、经济、金融方向。"
+   }
+  ],
+  "qs_bm_rank": "59",
+  "qs_bm_rank_num": 59,
+  "profile_added": "2026-10"
  }
 ]

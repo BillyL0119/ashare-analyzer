@@ -1045,31 +1045,31 @@
         }
       }
     },
-    "QS 商科排名前 150 + 90 所商学院的学费与申请要求": {
+    "QS 商科排名前 150 + 100 多所商学院的学费与申请要求": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "QS business ranking top 150, plus tuition and admission for 90 schools"
+            "value": "QS business ranking top 150, plus tuition and admission for 100+ schools"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Top 150 QS en business, frais et admission de 90 écoles"
+            "value": "Top 150 QS en business, frais et admission de plus de 100 écoles"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "QS ビジネス分野トップ150と90校の学費・出願要件"
+            "value": "QS ビジネス分野トップ150と100校以上の学費・出願要件"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "QS 경영학 순위 150위와 90개 학교의 학비·지원 요건"
+            "value": "QS 경영학 순위 150위와 100여 개 학교의 학비·지원 요건"
           }
         }
       }

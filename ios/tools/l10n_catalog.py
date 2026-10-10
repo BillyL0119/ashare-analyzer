@@ -253,7 +253,7 @@ T = {
     "接受": ("Accepted", "可", "인정", "Accepté"),
     "不接受": ("Not accepted", "不可", "불가", "Non accepté"),
     "商学院指南": ("Business schools", "ビジネススクール", "비즈니스 스쿨", "Business schools"),
-    "QS 商科排名前 150 + 90 所商学院的学费与申请要求": ("QS business ranking top 150, plus tuition and admission for 90 schools", "QS ビジネス分野トップ150と90校の学費・出願要件", "QS 경영학 순위 150위와 90개 학교의 학비·지원 요건", "Top 150 QS en business, frais et admission de 90 écoles"),
+    "QS 商科排名前 150 + 100 多所商学院的学费与申请要求": ("QS business ranking top 150, plus tuition and admission for 100+ schools", "QS ビジネス分野トップ150と100校以上の学費・出願要件", "QS 경영학 순위 150위와 100여 개 학교의 학비·지원 요건", "Top 150 QS en business, frais et admission de plus de 100 écoles"),
     "求职指南": ("Career guide", "キャリアガイド", "커리어 가이드", "Guide carrière"),
     "了解8个金融岗位：日常工作、技能、薪资，还能模拟面试": ("8 finance roles: daily work, skills, pay — plus mock interviews", "金融8職種の仕事内容・スキル・年収と模擬面接", "금융 8개 직무: 업무·역량·연봉과 모의 면접", "8 métiers de la finance : quotidien, compétences, salaires et entretiens simulés"),
     "典型场景": ("Typical scenario", "典型的なシーン", "대표 상황", "Scénario type"),

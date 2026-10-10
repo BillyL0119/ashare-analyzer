@@ -172,7 +172,7 @@ export default function App() {
       news:         'BestFriendStock | 每日大事件 - 市场重大新闻',
       paper:        'BestFriendStock | 模拟炒股 - 100万虚拟资金练习美股与A股',
       study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门',
-      universities: 'BestFriendStock | 全球商学院指南 - 90+顶尖商学院数据库',
+      universities: 'BestFriendStock | 全球商学院指南 - 100+顶尖商学院数据库',
       bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究观点',
       career:       'BestFriendStock | 求职指南 - 金融行业职业规划与模拟面试',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
