@@ -150,7 +150,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
         className="tab-bar"
         style={{
           display: 'flex',
-          gap: 6,
+          gap: 4,
           alignItems: 'center',
           flexWrap: isMobile ? 'nowrap' : 'wrap',
           overflowX: isMobile ? 'auto' : 'visible',
@@ -162,55 +162,66 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
       >
         <span style={{ color: 'var(--text-muted)', fontSize: 12, letterSpacing: '0.3px', marginRight: 2 }}>{t.viewMode}</span>
         {[
-          { key: 'sideBySide', label: t.sideBySide },
-          { key: 'overlay', label: t.overlay },
-          { key: 'analysis', label: t.analysis },
-          { key: 'monteCarlo', label: t.monteCarlo },
-          // factor & financial rely on A-share specific data sources
-          ...(market !== 'us' ? [
-            { key: 'factor', label: t.factorAnalysis },
-            { key: 'financial', label: t.financialAnalysis },
-          ] : []),
-          { key: 'similar', label: t.similarTrend },
-          { key: 'news', label: t.newsSentiment },
-          { key: 'global_news', label: t.globalNews },
-          { key: 'radar', label: t.radarTab },
-          // calendar is A-share only
-          ...(market !== 'us' ? [{ key: 'calendar', label: t.calendarTab }] : []),
-          { key: 'earnings', label: t.earningsTab },
-          { key: 'score',   label: t.scoreTab },
-          { key: 'backtest',label: t.backtestTab },
-          { key: 'sectors',  label: t.sectorsTab },
-          { key: 'comments', label: t.commentsTab },
-        ].map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setViewMode(key)}
-            style={{
-              padding: isMobile ? '4px 10px' : '5px 14px',
-              borderRadius: 20,
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: isMobile ? 11 : 12,
-              fontWeight: viewMode === key ? 600 : 400,
-              letterSpacing: '0.2px',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-              background: 'transparent',
-              color: viewMode === key ? '#0ea5e9' : 'var(--text-secondary)',
-              transition: 'all 0.2s ease',
-              boxShadow: viewMode === key ? 'inset 0 -2px 0 #0ea5e9' : 'none',
-            }}
-            onMouseEnter={(e) => {
-              if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
-            }}
-            onMouseLeave={(e) => {
-              if (viewMode !== key) e.currentTarget.style.color = 'var(--text-secondary)'
-            }}
-          >
-            {label}
-          </button>
-        ))}
+          // Grouped: charts · research · news & market · community (a divider sits between groups)
+          [
+            { key: 'sideBySide', label: t.sideBySide },
+            { key: 'overlay', label: t.overlay },
+            { key: 'analysis', label: t.analysis },
+            { key: 'monteCarlo', label: t.monteCarlo },
+            { key: 'backtest', label: t.backtestTab },
+          ],
+          [
+            { key: 'score', label: t.scoreTab },
+            { key: 'radar', label: t.radarTab },
+            { key: 'similar', label: t.similarTrend },
+            // factor & financial rely on A-share specific data sources
+            ...(market !== 'us' ? [
+              { key: 'factor', label: t.factorAnalysis },
+              { key: 'financial', label: t.financialAnalysis },
+            ] : []),
+          ],
+          [
+            { key: 'news', label: t.newsSentiment },
+            { key: 'global_news', label: t.globalNews },
+            { key: 'earnings', label: t.earningsTab },
+            // calendar is A-share only
+            ...(market !== 'us' ? [{ key: 'calendar', label: t.calendarTab }] : []),
+            { key: 'sectors', label: t.sectorsTab },
+          ],
+          [{ key: 'comments', label: t.commentsTab }],
+        ].map((group, gi) => [
+          gi > 0 && <span key={`sep-${gi}`} aria-hidden="true" style={{ width: 1, height: 16, background: 'var(--border-primary)', flexShrink: 0, margin: '0 2px' }} />,
+          ...group.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setViewMode(key)}
+              aria-pressed={viewMode === key}
+              style={{
+                padding: isMobile ? '4px 10px' : '5px 10px',
+                borderRadius: 20,
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: isMobile ? 11 : 12,
+                fontWeight: viewMode === key ? 600 : 400,
+                letterSpacing: '0.2px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                background: 'transparent',
+                color: viewMode === key ? '#0ea5e9' : 'var(--text-secondary)',
+                transition: 'all 0.2s ease',
+                boxShadow: viewMode === key ? 'inset 0 -2px 0 #0ea5e9' : 'none',
+              }}
+              onMouseEnter={(e) => {
+                if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
+              }}
+              onMouseLeave={(e) => {
+                if (viewMode !== key) e.currentTarget.style.color = 'var(--text-secondary)'
+              }}
+            >
+              {label}
+            </button>
+          )),
+        ])}
       </div>
 
       {/* Date range — shown only for chart/analysis modes, hidden on mobile */}

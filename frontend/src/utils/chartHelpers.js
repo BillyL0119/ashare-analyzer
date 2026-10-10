@@ -42,15 +42,19 @@ export const THEME = new Proxy({}, {
 })
 
 // ── Shared data zoom (built per call so colours are reactive) ─────────────────
-function makeDataZoom(T) {
+// Sub-charts (volume, MACD, RSI) are echarts.connect-ed to the K-line chart, so only the
+// main chart needs a visible slider; the others keep the inside zoom to stay in sync.
+function makeDataZoom(T, withSlider = true) {
+  const inside = {
+    type: 'inside',
+    xAxisIndex: [0],
+    start: 60,
+    end: 100,
+    zoomOnMouseWheel: true,
+  }
+  if (!withSlider) return [inside]
   return [
-    {
-      type: 'inside',
-      xAxisIndex: [0],
-      start: 60,
-      end: 100,
-      zoomOnMouseWheel: true,
-    },
+    inside,
     {
       type: 'slider',
       xAxisIndex: [0],
@@ -64,6 +68,20 @@ function makeDataZoom(T) {
       handleStyle: { color: T.text },
     },
   ]
+}
+
+// Category date axis: short MM-DD labels, thinned by echarts so they never overlap.
+function dateAxisLabel(T) {
+  return { color: T.text, fontSize: 10, hideOverlap: true, margin: 8, formatter: (v) => String(v).slice(5) }
+}
+
+// Volume in the reader's units: 万/亿 for Chinese, K/M/B for everything else.
+function formatVolume(v, lang) {
+  if (lang === 'zh') return v >= 1e8 ? `${(v / 1e8).toFixed(1)}亿` : `${(v / 1e4).toFixed(0)}万`
+  if (v >= 1e9) return `${(v / 1e9).toFixed(2)}B`
+  if (v >= 1e6) return `${(v / 1e6).toFixed(1)}M`
+  if (v >= 1e3) return `${(v / 1e3).toFixed(0)}K`
+  return String(v)
 }
 
 export function buildKLineOption(candles, maData, lang = 'zh', upColor, downColor) {
@@ -144,11 +162,11 @@ export function buildKLineOption(candles, maData, lang = 'zh', upColor, downColo
       textStyle: { color: T.text, fontSize: 11 },
       itemWidth: 16, itemHeight: 8,
     },
-    grid: { top: 36, bottom: 36, left: 64, right: 12, containLabel: false },
+    grid: { top: 36, bottom: 52, left: 64, right: 12, containLabel: false },
     xAxis: {
       type: 'category',
       data: dates,
-      axisLabel: { color: T.text, fontSize: 10 },
+      axisLabel: dateAxisLabel(T),
       axisLine: { lineStyle: { color: T.border } },
       splitLine: { show: false },
       axisTick: { show: false },
@@ -185,10 +203,10 @@ export function buildVolumeOption(candles, lang = 'zh', upColor, downColor) {
       textStyle: { color: T.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const p = params[0]
-        return `${p.axisValue}<br/>${volLabel}: ${(p.value / 100000000).toFixed(2)}${lang === 'en' ? 'B' : '亿'}`
+        return `${p.axisValue}<br/>${volLabel}: ${formatVolume(p.value, lang)}`
       },
     },
-    grid: { top: 8, bottom: 36, left: 64, right: 12 },
+    grid: { top: 8, bottom: 8, left: 64, right: 12 },
     xAxis: {
       type: 'category',
       data: dates,
@@ -197,17 +215,14 @@ export function buildVolumeOption(candles, lang = 'zh', upColor, downColor) {
       axisTick: { show: false },
     },
     yAxis: {
-      scale: true,
+      min: 0,  // bars must start at zero or volume differences look exaggerated
       splitLine: { lineStyle: { color: T.border, type: 'dashed' } },
       axisLabel: {
         color: T.text, fontSize: 9,
-        formatter: (v) =>
-          v >= 1e8
-            ? `${(v / 1e8).toFixed(1)}${lang === 'en' ? 'B' : '亿'}`
-            : `${(v / 1e4).toFixed(0)}${lang === 'en' ? 'W' : '万'}`,
+        formatter: (v) => formatVolume(v, lang),
       },
     },
-    dataZoom: makeDataZoom(T),
+    dataZoom: makeDataZoom(T, false),
     series: [{ name: volLabel, type: 'bar', data: volumes, barMaxWidth: 8 }],
   }
 }
@@ -245,7 +260,7 @@ export function buildMACDOption(macdData) {
       textStyle: { color: T.text, fontSize: 10 },
       itemWidth: 14, itemHeight: 6,
     },
-    grid: { top: 24, bottom: 36, left: 64, right: 12 },
+    grid: { top: 24, bottom: 8, left: 64, right: 12 },
     xAxis: {
       type: 'category',
       data: dates,
@@ -258,7 +273,7 @@ export function buildMACDOption(macdData) {
       splitLine: { lineStyle: { color: T.border, type: 'dashed' } },
       axisLabel: { color: T.text, fontSize: 9 },
     },
-    dataZoom: makeDataZoom(T),
+    dataZoom: makeDataZoom(T, false),
     series: [
       { name: 'MACD', type: 'bar',  data: histData, barMaxWidth: 6 },
       { name: 'DIF',  type: 'line', data: difData,  showSymbol: false, lineStyle: { width: 1.5, color: T.dif  }, itemStyle: { color: T.dif  } },
@@ -285,7 +300,7 @@ export function buildRSIOption(rsiData) {
       textStyle: { color: T.text, fontSize: 10 },
       itemWidth: 14, itemHeight: 6,
     },
-    grid: { top: 24, bottom: 36, left: 64, right: 12 },
+    grid: { top: 24, bottom: 8, left: 64, right: 12 },
     xAxis: {
       type: 'category',
       data: dates,
@@ -298,7 +313,7 @@ export function buildRSIOption(rsiData) {
       splitLine: { lineStyle: { color: T.border, type: 'dashed' } },
       axisLabel: { color: T.text, fontSize: 9 },
     },
-    dataZoom: makeDataZoom(T),
+    dataZoom: makeDataZoom(T, false),
     series: [
       {
         name: 'RSI6', type: 'line', data: rsiData.map((d) => d.rsi6),
@@ -367,11 +382,11 @@ export function buildOverlayOption(symbolsData, lang = 'zh') {
       },
     },
     legend: { top: 8, textStyle: { color: T.text } },
-    grid: { top: 48, bottom: 36, left: 64, right: 12 },
+    grid: { top: 48, bottom: 52, left: 64, right: 12 },
     xAxis: {
       type: 'category',
       data: allDates,
-      axisLabel: { color: T.text, fontSize: 10 },
+      axisLabel: dateAxisLabel(T),
       axisLine: { lineStyle: { color: T.border } },
     },
     yAxis: {

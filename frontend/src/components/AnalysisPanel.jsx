@@ -5,6 +5,7 @@ import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
+import AddComparisonStocks from './AddComparisonStocks'
 
 const COLORS = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
 
@@ -98,7 +99,7 @@ export default function AnalysisPanel({ stocks }) {
   }, [stocks, period, startDate, endDate, adjust, lang])
 
   if (stocks.length < 2) {
-    return <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)', fontSize: 14 }}>{t.needTwoStocks}</div>
+    return <AddComparisonStocks lang={lang} />
   }
 
   if (loading) {

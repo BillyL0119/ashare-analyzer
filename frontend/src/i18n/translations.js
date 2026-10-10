@@ -409,7 +409,7 @@ export const T = {
     earToday: '今天', earTomorrow: '明天', earCompanies: '家',
     // ComparePanel tabs
     earningsTab: '财报日历', globalNews: '全球新闻',
-    sectorsTab: '🔄 板块', commentsTab: '💬 评论',
+    sectorsTab: '板块', commentsTab: '评论',
     // StockCard
     klineLearn: '学习K线图基础知识', klineBtn: 'K线教学',
     exportTooltip: '导出PDF报告', exportBtn: '导出报告',
@@ -898,7 +898,7 @@ export const T = {
     earToday: 'Today', earTomorrow: 'Tomorrow', earCompanies: 'companies',
     // ComparePanel tabs
     earningsTab: 'Earnings Calendar', globalNews: 'Global News',
-    sectorsTab: '🔄 Sectors', commentsTab: '💬 Comments',
+    sectorsTab: 'Sectors', commentsTab: 'Comments',
     // StockCard
     klineLearn: 'Learn candlestick basics', klineBtn: 'Learn',
     exportTooltip: 'Export PDF Report', exportBtn: 'Export PDF',
@@ -1387,7 +1387,7 @@ export const T = {
     earToday: '今日', earTomorrow: '明日', earCompanies: '社',
     // ComparePanel tabs
     earningsTab: '決算カレンダー', globalNews: 'グローバルニュース',
-    sectorsTab: '🔄 セクター', commentsTab: '💬 コメント',
+    sectorsTab: 'セクター', commentsTab: 'コメント',
     // StockCard
     klineLearn: 'ローソク足の基礎を学ぶ', klineBtn: 'K線学習',
     exportTooltip: 'PDFレポートを出力', exportBtn: 'PDF出力',
@@ -1876,7 +1876,7 @@ export const T = {
     earToday: '오늘', earTomorrow: '내일', earCompanies: '개사',
     // ComparePanel tabs
     earningsTab: '실적 달력', globalNews: '글로벌 뉴스',
-    sectorsTab: '🔄 섹터', commentsTab: '💬 댓글',
+    sectorsTab: '섹터', commentsTab: '댓글',
     // StockCard
     klineLearn: '캔들스틱 기초 학습', klineBtn: 'K선 학습',
     exportTooltip: 'PDF 보고서 내보내기', exportBtn: 'PDF 내보내기',
@@ -2365,7 +2365,7 @@ export const T = {
     earToday: "Aujourd'hui", earTomorrow: 'Demain', earCompanies: 'sociétés',
     // ComparePanel tabs
     earningsTab: 'Cal. résultats', globalNews: 'Actualités mondiales',
-    sectorsTab: '🔄 Secteurs', commentsTab: '💬 Commentaires',
+    sectorsTab: 'Secteurs', commentsTab: 'Commentaires',
     // StockCard
     klineLearn: 'Apprendre les chandeliers', klineBtn: 'Apprendre',
     exportTooltip: 'Exporter rapport PDF', exportBtn: 'Exporter PDF',

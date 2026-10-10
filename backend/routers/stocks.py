@@ -287,6 +287,42 @@ def stock_history(
     )
 
 
+def _is_us_symbol(symbol: str) -> bool:
+    return not symbol.isdigit()
+
+
+def _us_history_df(symbol: str, period: str, start_date: str, end_date: str):
+    """US daily candles from Tencent shaped like get_stock_history's DataFrame."""
+    import pandas as pd
+    from routers.us_stocks import _tencent_history
+    from services.stock_service import _resample_to_period
+    days = max((datetime.now() - datetime.strptime(start_date, "%Y%m%d")).days + 10, 60)
+    rows = _tencent_history(symbol.upper(), days)
+    if not rows:
+        return None
+    df = pd.DataFrame(rows)
+    df["date"] = df["date"].astype(str)
+    lo, hi = f"{start_date[:4]}-{start_date[4:6]}-{start_date[6:]}", f"{end_date[:4]}-{end_date[4:6]}-{end_date[6:]}"
+    df = df[(df["date"] >= lo) & (df["date"] <= hi)]
+    if df.empty:
+        return None
+    df["pct_change"] = (df["close"].pct_change() * 100).fillna(0.0)
+    df["amount"] = 0.0
+    df["turnover"] = 0.0
+    if period in ("weekly", "monthly"):
+        df = _resample_to_period(df, period)
+    return df.reset_index(drop=True)
+
+
+def _us_name(symbol: str) -> str:
+    try:
+        from routers.us_market import us_quotes
+        q = us_quotes([symbol.upper()]).get(symbol.upper()) or {}
+        return q.get("name") or symbol.upper()
+    except Exception:
+        return symbol.upper()
+
+
 @router.get("/pair-analysis")
 def pair_analysis(
     symbol1: str = Query(...),
@@ -303,21 +339,21 @@ def pair_analysis(
     if not start_date:
         start_date = (datetime.now() - timedelta(days=365)).strftime("%Y%m%d")
 
-    df1 = get_stock_history(symbol1, period, start_date, end_date, adjust)
-    if df1 is None or df1.empty:
-        df1 = get_stock_history(symbol1, period, "19900101", end_date, adjust)
+    def load(sym):
+        if _is_us_symbol(sym):
+            return _us_history_df(sym, period, start_date, end_date)
+        df = get_stock_history(sym, period, start_date, end_date, adjust)
+        if df is None or df.empty:
+            df = get_stock_history(sym, period, "19900101", end_date, adjust)
+        return df
 
-    df2 = get_stock_history(symbol2, period, start_date, end_date, adjust)
-    if df2 is None or df2.empty:
-        df2 = get_stock_history(symbol2, period, "19900101", end_date, adjust)
+    df1, df2 = load(symbol1), load(symbol2)
+    for sym, df in ((symbol1, df1), (symbol2, df2)):
+        if df is None or df.empty:
+            raise HTTPException(status_code=404, detail=f"No data for {sym}" if lang == "en" else f"{sym} 暂无数据")
 
-    if df1 is None or df1.empty:
-        raise HTTPException(status_code=404, detail=f"{symbol1} 暂无数据")
-    if df2 is None or df2.empty:
-        raise HTTPException(status_code=404, detail=f"{symbol2} 暂无数据")
-
-    name1 = get_stock_name(symbol1)
-    name2 = get_stock_name(symbol2)
+    name1 = _us_name(symbol1) if _is_us_symbol(symbol1) else get_stock_name(symbol1)
+    name2 = _us_name(symbol2) if _is_us_symbol(symbol2) else get_stock_name(symbol2)
 
     result = analyze_pair(df1, name1, df2, name2, lang=lang)
     if "error" in result:
