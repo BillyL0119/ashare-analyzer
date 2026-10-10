@@ -1,9 +1,9 @@
 import akshare as ak
 import pandas as pd
 import requests
-from functools import lru_cache
 from typing import List, Optional
 import math
+import threading
 
 SINA_HEADERS = {"Referer": "https://finance.sina.com.cn", "User-Agent": "Mozilla/5.0"}
 _name_cache: dict = {}
@@ -76,10 +76,22 @@ def _is_b_share(code: str) -> bool:
     return c.startswith("2") or c.startswith("9")
 
 
-@lru_cache(maxsize=1)
-def get_stock_list() -> List[dict]:
-    """Fetch full A-share code+name list. Cached after first call."""
+_stock_list: List[dict] = []
+_stock_list_lock = threading.Lock()
+
+
+def get_stock_list(wait: bool = True) -> List[dict]:
+    """Full A-share code+name list (downloads in ~5-12s; preloaded at startup).
+    Only a successful download is cached, so a transient failure is retried on the next call.
+    wait=False returns [] instead of blocking while another thread is still downloading."""
+    global _stock_list
+    if _stock_list:
+        return _stock_list
+    if not _stock_list_lock.acquire(blocking=wait):
+        return []
     try:
+        if _stock_list:
+            return _stock_list
         df = ak.stock_info_a_code_name()
         records = df[["code", "name"]].to_dict(orient="records")
         # Populate name cache so get_stock_name() can serve from memory
@@ -87,10 +99,13 @@ def get_stock_list() -> List[dict]:
             code, name = r.get("code", ""), r.get("name", "")
             if code and name:
                 _name_cache[code] = name
+        _stock_list = records
         return records
     except Exception as e:
         print(f"Error fetching stock list: {e}")
         return []
+    finally:
+        _stock_list_lock.release()
 
 
 def _search_via_sina(q: str) -> List[dict]:
@@ -149,8 +164,8 @@ def _search_via_eastmoney(q: str) -> List[dict]:
 
 
 def _search_via_local(q: str) -> List[dict]:
-    """Local full-list fallback using cached AkShare stock list."""
-    stocks = get_stock_list()
+    """Local full-list fallback using cached AkShare stock list (skipped while it is still loading)."""
+    stocks = get_stock_list(wait=False)
     if not stocks:
         return []
     q_lower = q.lower()
