@@ -322,7 +322,9 @@ function UniModal({ uni, lang, onClose }) {
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {zh ? '学费参考' : 'Tuition'}
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: AMBER }}>{uni.tuition_usd || (zh ? '详见官网' : 'See official site')}</div>
+                  <div style={{ fontSize: (uni.tuition_usd || '').length > 40 ? 13 : 16, fontWeight: 700, color: AMBER, lineHeight: 1.5 }}>
+                    {uni.tuition_usd ? uni.tuition_usd.split(' · ').map(part => <div key={part}>{part}</div>) : (zh ? '详见官网' : 'See official site')}
+                  </div>
                 </div>
 
                 {/* Acceptance rate */}
@@ -1700,7 +1702,9 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
 
       {/* Footer: tuition + CTA */}
       <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid var(--border-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{uni.tuition_usd || (t ? '学费见官网' : 'Tuition: see website')}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>
+          {uni.tuition_usd ? uni.tuition_usd.split(' · ')[0] : (t ? '学费见官网' : 'Tuition: see website')}
+        </span>
         <span style={{
           fontSize: 11, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
           transition: 'color 0.15s',
