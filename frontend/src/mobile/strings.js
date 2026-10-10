@@ -1225,6 +1225,24 @@ export const STR = {
   "오세아니아",
   "Océanie"
  ],
+ "第 %@ 轮截止": [
+  "Round %@ deadline",
+  "第%@ラウンド締切",
+  "%@차 마감",
+  "Date limite tour %@"
+ ],
+ "录取率": [
+  "Acceptance rate",
+  "合格率",
+  "합격률",
+  "Taux d'admission"
+ ],
+ "详见官网": [
+  "See official site",
+  "公式サイト参照",
+  "공식 사이트 참조",
+  "Voir le site officiel"
+ ],
  "拉美及其他": [
   "Latin America & other",
   "中南米・その他",

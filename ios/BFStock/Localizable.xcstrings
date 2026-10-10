@@ -4574,6 +4574,35 @@
         }
       }
     },
+    "录取率": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acceptance rate"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taux d'admission"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合格率"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "합격률"
+          }
+        }
+      }
+    },
     "必需消费": {
       "extractionState": "manual",
       "localizations": {
@@ -7358,6 +7387,35 @@
         }
       }
     },
+    "第 %@ 轮截止": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Round %@ deadline"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date limite tour %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第%@ラウンド締切"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@차 마감"
+          }
+        }
+      }
+    },
     "策略": {
       "extractionState": "manual",
       "localizations": {
@@ -8427,6 +8485,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "투자의견"
+          }
+        }
+      }
+    },
+    "详见官网": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See official site"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir le site officiel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公式サイト参照"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공식 사이트 참조"
           }
         }
       }

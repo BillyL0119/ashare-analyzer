@@ -322,7 +322,7 @@ function UniModal({ uni, lang, onClose }) {
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {zh ? '学费参考' : 'Tuition'}
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: AMBER }}>{uni.tuition_usd || '—'}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: AMBER }}>{uni.tuition_usd || (zh ? '详见官网' : 'See official site')}</div>
                 </div>
 
                 {/* Acceptance rate */}
@@ -430,6 +430,7 @@ function UniModal({ uni, lang, onClose }) {
                     <InfoRow label={zh ? '录取率' : 'Acceptance Rate'} value={req.acceptance_rate} valueColor={GREEN} />
                   </div>
 
+                  {(req.toefl || req.ielts) && (
                   <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                     borderRadius: 10, padding: '14px 16px' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
@@ -439,6 +440,7 @@ function UniModal({ uni, lang, onClose }) {
                     <InfoRow label="TOEFL" value={req.toefl ? `${req.toefl}+` : null} valueColor={PURPLE} />
                     <InfoRow label="IELTS" value={req.ielts ? `${req.ielts}+` : null} valueColor={PURPLE} />
                   </div>
+                  )}
 
                   {req.deadlines && (
                     <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
@@ -447,7 +449,7 @@ function UniModal({ uni, lang, onClose }) {
                         textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                         {zh ? '申请截止日期' : 'Application Deadlines'}
                       </div>
-                      {['r1','r2','r3','r4'].map(r => req.deadlines[r] && (
+                      {['r1','r2','r3','r4','r5'].map(r => req.deadlines[r] && (
                         <InfoRow key={r} label={`Round ${r[1]}`} value={req.deadlines[r]} valueColor={AMBER} />
                       ))}
                     </div>
@@ -1698,7 +1700,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
 
       {/* Footer: tuition + CTA */}
       <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid var(--border-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{uni.tuition_usd}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{uni.tuition_usd || (t ? '学费见官网' : 'Tuition: see website')}</span>
         <span style={{
           fontSize: 11, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
           transition: 'color 0.15s',
@@ -2278,8 +2280,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         {/* Footer note */}
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--border-primary)', marginTop: 40, lineHeight: 1.6 }}>
           {t
-            ? '排名来源：QS World University Rankings 2027（综合）、QS World University Rankings by Subject 2026: Business & Management Studies（商科）。学费为参考区间，请以各院校官方网站为准。'
-            : 'Rankings: QS World University Rankings 2027 (overall) and QS World University Rankings by Subject 2026: Business & Management Studies. Tuition figures are approximate — always verify with the official school website.'
+            ? '排名来源：QS World University Rankings 2027（综合）、QS World University Rankings by Subject 2026: Business & Management Studies（商科）。学费、GMAT、截止日期和就业数据于 2026 年 10 月对照各校报告核对；无法核实的项目留空，请以各院校官网为准。'
+            : 'Rankings: QS World University Rankings 2027 (overall) and QS World University Rankings by Subject 2026: Business & Management Studies. Tuition, GMAT, deadlines and employment figures were checked against school reports in October 2026; anything that could not be verified is left blank, so always confirm with the official school website.'
           }
         </div>
       </div>

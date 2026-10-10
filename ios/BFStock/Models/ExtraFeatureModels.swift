@@ -78,21 +78,30 @@ struct DailyKnowledge: Decodable {
 
 struct UniRequirements: Decodable {
     let gpa: String?
-    let gmatMedian: Double?
+    /// Either a number (e.g. 710) or a labelled figure (e.g. "730 median (Focus 685)").
+    let gmat: String?
     let greAccepted: Bool?
     let toefl: Double?
     let ielts: Double?
+    let acceptanceRate: String?
+    let deadlines: [String: String]?
 
-    private enum K: String, CodingKey { case gpa, gmatMedian, greAccepted, toefl, ielts }
+    private enum K: String, CodingKey { case gpa, gmatMedian, greAccepted, toefl, ielts, acceptanceRate, deadlines }
 
     // Fields vary across schools (strings, numbers, nulls): read each one leniently.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: K.self)
         gpa = try? c.decodeIfPresent(String.self, forKey: .gpa)
-        gmatMedian = try? c.decodeIfPresent(Double.self, forKey: .gmatMedian)
+        if let n = try? c.decodeIfPresent(Double.self, forKey: .gmatMedian) {
+            gmat = String(Int(n))
+        } else {
+            gmat = try? c.decodeIfPresent(String.self, forKey: .gmatMedian)
+        }
         greAccepted = try? c.decodeIfPresent(Bool.self, forKey: .greAccepted)
         toefl = try? c.decodeIfPresent(Double.self, forKey: .toefl)
         ielts = try? c.decodeIfPresent(Double.self, forKey: .ielts)
+        acceptanceRate = try? c.decodeIfPresent(String.self, forKey: .acceptanceRate)
+        deadlines = try? c.decodeIfPresent([String: String].self, forKey: .deadlines)
     }
 }
 

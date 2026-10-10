@@ -280,7 +280,7 @@ struct UniversityDetailView: View {
     private var facts: some View {
         let items: [(String, String)] = [
             (L("创办"), uni.established.map(String.init) ?? "–"),
-            (L("学费"), uni.tuitionUsd ?? "–"),
+            (L("学费"), uni.tuitionUsd ?? L("详见官网")),
             (L("授课语言"), (uni.language ?? "–").capitalized),
         ]
         return HStack(alignment: .top, spacing: 0) {
@@ -314,17 +314,25 @@ struct UniversityDetailView: View {
     private func requirements(_ r: UniRequirements) -> some View {
         var rows: [(String, String)] = []
         if let g = r.gpa, !g.isEmpty { rows.append(("GPA", g)) }
-        if let g = r.gmatMedian { rows.append(("GMAT", String(Int(g)))) }
+        if let g = r.gmat, !g.isEmpty { rows.append(("GMAT", g)) }
         if let g = r.greAccepted { rows.append(("GRE", g ? L("接受") : L("不接受"))) }
         if let t = r.toefl { rows.append(("TOEFL", String(Int(t)))) }
         if let i = r.ielts { rows.append(("IELTS", String(format: "%.1f", i))) }
+        if let a = r.acceptanceRate, !a.isEmpty { rows.append((L("录取率"), a)) }
+        for key in ["r1", "r2", "r3", "r4", "r5"] {
+            if let d = r.deadlines?[key] { rows.append((L("第 %@ 轮截止", String(key.dropFirst())), d)) }
+        }
         return Group {
             if !rows.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(L("申请要求")).font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
                     VStack(spacing: 0) {
                         ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
-                            HStack { Text(row.0).font(.subheadline); Spacer(); Text(row.1).font(.subheadline.weight(.semibold)).monospacedDigit() }
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(row.0).font(.subheadline)
+                                Spacer(minLength: 12)
+                                Text(row.1).font(.subheadline.weight(.semibold)).monospacedDigit().multilineTextAlignment(.trailing)
+                            }
                                 .padding(.horizontal, 14).padding(.vertical, 10)
                             if i < rows.count - 1 { RowDivider() }
                         }
