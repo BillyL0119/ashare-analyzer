@@ -8,7 +8,7 @@ import useThemeStore from '../store/themeStore'
 
 const SENT_COLOR = {
   positive: '#26a69a',
-  neutral: 'var(--text-muted)',
+  neutral: '#7d8ca3',
   negative: '#ef5350',
 }
 

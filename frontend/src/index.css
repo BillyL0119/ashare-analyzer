@@ -9,7 +9,7 @@
   --border-glow:     #2a4a7f;
   --text-primary:    #e2e8f0;
   --text-secondary:  #94a3b8;
-  --text-muted:      #475569;
+  --text-muted:      #73839a;
   --card-bg:         #060f1e;
   --nav-bg:          rgba(2, 8, 19, 0.95);
   --nav-bg-dim:      rgba(2, 8, 19, 0.88);
@@ -125,7 +125,7 @@ body {
   --border-glow:     #a0b0c8;
   --text-primary:    #0d1b2a;
   --text-secondary:  #3d5166;
-  --text-muted:      #7a8fa0;
+  --text-muted:      #5b6e80;
   --card-bg:         #ffffff;
   --nav-bg:          rgba(240, 244, 248, 0.97);
   --nav-bg-dim:      rgba(240, 244, 248, 0.92);

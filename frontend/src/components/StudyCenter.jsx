@@ -1060,14 +1060,15 @@ export default function StudyCenter({ lang }) {
               key={exam.key}
               onClick={() => { if (exam.key === 'ai_teacher') setAiInitialMsg(''); setActiveExam(exam.key) }}
               style={{
-                padding: '7px 18px',
+                padding: '7px 14px',
+                whiteSpace: 'nowrap', flexShrink: 0,
                 borderRadius: '8px 8px 0 0',
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 13,
                 fontWeight: active ? 700 : 500,
                 background: active ? CONTENT_BG : 'transparent',
-                color: active ? exam.color : MUTED,
+                color: active ? exam.color : 'var(--text-secondary)',
                 borderTop: active ? `2px solid ${exam.color}` : '2px solid transparent',
                 borderLeft: active ? `1px solid ${BDR}` : '1px solid transparent',
                 borderRight: active ? `1px solid ${BDR}` : '1px solid transparent',

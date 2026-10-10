@@ -1,4 +1,19 @@
+import { getInstanceByDom } from 'echarts/core'
 import useCompareStore from '../store/compareStore'
+
+// ECharts 6 inside-zoom swallows every wheel event over the chart, even when
+// zoomOnMouseWheel is 'ctrl'. For those charts, stop plain wheel events in the
+// capture phase so the page scrolls; ctrl+wheel / trackpad pinch still zooms.
+if (typeof window !== 'undefined' && !window.__bfsWheelGuard) {
+  window.__bfsWheelGuard = true
+  window.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || e.metaKey) return
+    const host = e.target?.closest?.('[_echarts_instance_]')
+    if (!host) return
+    const zooms = getInstanceByDom(host)?.getOption()?.dataZoom || []
+    if (zooms.some((z) => z.type === 'inside' && z.zoomOnMouseWheel === 'ctrl')) e.stopPropagation()
+  }, { capture: true })
+}
 
 // US convention is green-up / red-down, A-shares are red-up / green-down.
 const RISE_CN = '#ef5350', FALL_CN = '#26a69a'
@@ -50,7 +65,9 @@ function makeDataZoom(T, withSlider = true) {
     xAxisIndex: [0],
     start: 60,
     end: 100,
-    zoomOnMouseWheel: true,
+    // Plain wheel scrolls the page; ctrl+wheel (or trackpad pinch) zooms, drag pans.
+    zoomOnMouseWheel: 'ctrl',
+    moveOnMouseWheel: false,
   }
   if (!withSlider) return [inside]
   return [
@@ -141,10 +158,13 @@ export function buildKLineOption(candles, maData, lang = 'zh', upColor, downColo
       formatter: (params) => {
         const kline = params.find((p) => p.seriesName === labels.kline)
         if (!kline) return ''
-        const [o, c, l, h] = kline.data
+        // Read from the source candle: kline.data may carry the category index first.
+        const cd = candles[kline.dataIndex] || {}
+        const f = (v) => (v == null ? '--' : Number(v).toFixed(2))
+        const o = f(cd.open), c = f(cd.close), l = f(cd.low), h = f(cd.high)
         const date  = kline.axisValue
-        const pct   = candles[kline.dataIndex]?.pct_change ?? 0
-        const color = c >= o ? upColor : downColor
+        const pct   = cd.pct_change ?? 0
+        const color = cd.close >= cd.open ? upColor : downColor
         let html = `<div style="font-weight:bold;margin-bottom:4px">${date}</div>`
         html += `<div>${labels.open}: <span style="color:${color}">${o}</span></div>`
         html += `<div>${labels.close}: <span style="color:${color}">${c}</span></div>`
@@ -229,6 +249,7 @@ export function buildVolumeOption(candles, lang = 'zh', upColor, downColor) {
 
 export function buildMACDOption(macdData) {
   const T = getChartTheme()
+  const us = useCompareStore.getState().market === 'us'
 
   const dates    = macdData.map((d) => d.date.slice(0, 10))
   const difData  = macdData.map((d) => d.dif)
@@ -275,9 +296,10 @@ export function buildMACDOption(macdData) {
     },
     dataZoom: makeDataZoom(T, false),
     series: [
-      { name: 'MACD', type: 'bar',  data: histData, barMaxWidth: 6 },
-      { name: 'DIF',  type: 'line', data: difData,  showSymbol: false, lineStyle: { width: 1.5, color: T.dif  }, itemStyle: { color: T.dif  } },
-      { name: 'DEA',  type: 'line', data: deaData,  showSymbol: false, lineStyle: { width: 1.5, color: T.dea  }, itemStyle: { color: T.dea  } },
+      // US convention: MACD line / Signal / Histogram; A-shares: DIF / DEA / MACD
+      { name: us ? 'Hist' : 'MACD', type: 'bar',  data: histData, barMaxWidth: 6 },
+      { name: us ? 'MACD' : 'DIF',  type: 'line', data: difData,  showSymbol: false, lineStyle: { width: 1.5, color: T.dif  }, itemStyle: { color: T.dif  } },
+      { name: us ? 'Signal' : 'DEA', type: 'line', data: deaData,  showSymbol: false, lineStyle: { width: 1.5, color: T.dea  }, itemStyle: { color: T.dea  } },
     ],
   }
 }

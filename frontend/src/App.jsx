@@ -706,25 +706,6 @@ export default function App() {
         </ErrorBoundary>
       </main>
 
-      {/* Hidden stats entry — bottom left corner */}
-      <div style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 800 }}>
-        <button
-          onClick={() => setShowStats(true)}
-          style={{
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--border-primary)',
-            borderRadius: 20,
-            padding: '6px 12px',
-            fontSize: 12,
-            color: 'var(--text-muted)',
-            cursor: 'pointer',
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          📊
-        </button>
-      </div>
-
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
       {/* Toast notification for saved preferences */}
       {toast && (
@@ -763,6 +744,13 @@ export default function App() {
         >
           {t.contactLink}
         </a>
+        {' · '}
+        <button
+          onClick={() => setShowStats(true)}
+          style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: '#9ca3af', cursor: 'pointer' }}
+        >
+          {lang === 'zh' ? '访问统计' : 'Site stats'}
+        </button>
       </footer>
 
       <style>{`

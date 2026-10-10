@@ -306,10 +306,10 @@ function JobCard({ role, zh }) {
         <span style={{ fontSize: 22 }}>{role.icon}</span>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: role.color }}>{title}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{tagline}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{tagline}</div>
         </div>
         <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>
-          {expanded ? '收起 ▲' : '展开 ▼'}
+          {zh ? (expanded ? '收起 ▲' : '展开 ▼') : (expanded ? 'Less ▲' : 'More ▼')}
         </span>
       </div>
 

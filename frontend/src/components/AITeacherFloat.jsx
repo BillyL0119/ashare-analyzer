@@ -207,7 +207,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                 }}>
                   {t.atTitle}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Gemini · {t.atFree}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>DeepSeek · {t.atFree}</div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>

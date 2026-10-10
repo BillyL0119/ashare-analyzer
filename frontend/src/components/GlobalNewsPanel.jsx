@@ -184,7 +184,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
 
       {/* Disclaimer */}
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
-        仅供学习，不构成投资建议。数据来源可能存在延迟。
+        {lang === 'zh' ? '仅供学习，不构成投资建议。数据来源可能存在延迟。' : 'For learning only. Not investment advice. Data may be delayed.'}
       </div>
 
       {/* Filters */}

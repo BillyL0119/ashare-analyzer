@@ -461,7 +461,7 @@ export const T = {
     atPlaceholder: '输入问题...', atError: (e) => `错误：${e}`, atNetError: (e) => `网络错误：${e}`,
     // AITeacherPage
     atTopics: '话题分类', atClearMsg: '对话已清空，有什么问题尽管问！',
-    atSubtitle: '专为学生设计的股市 + 经济学 AI 老师 · 完全免费 · Powered by Google Gemini',
+    atSubtitle: '专为学生设计的股市 + 经济学 AI 老师 · 完全免费 · Powered by DeepSeek',
     atWelcome: '你好！我是 BestFriendStock 的 AI 老师 🎓\n\n我可以帮你：\n• 解读K线、MACD、RSI等技术指标\n• 分析PE、财务报表等基本面\n• 讲解 A-Level / AP / IB 经济学考点\n• 用真实市场案例说明经济学概念\n\n左侧选择话题，或直接输入你的问题！',
     atPlaceholderFull: '输入你的问题（Enter 发送，Shift+Enter 换行）...',
     atDisclaimer: '仅供学习参考，不构成投资建议 · 10次/分钟限流',
@@ -950,7 +950,7 @@ export const T = {
     atPlaceholder: 'Ask anything...', atError: (e) => `Error: ${e}`, atNetError: (e) => `Network error: ${e}`,
     // AITeacherPage
     atTopics: 'Topics', atClearMsg: 'Chat cleared! Ask me anything.',
-    atSubtitle: 'AI tutor for stock analysis & economics · Completely free · Powered by Google Gemini',
+    atSubtitle: 'AI tutor for stock analysis & economics · Completely free · Powered by DeepSeek',
     atWelcome: 'Hello! I\'m the BestFriendStock AI Tutor 🎓\n\nI can help you:\n• Explain technical indicators (K-line, MACD, RSI)\n• Analyse fundamentals (P/E, financial statements)\n• Cover A-Level / AP / IB Economics exam points\n• Connect real market cases to economic theory\n\nPick a topic from the left, or type your question!',
     atPlaceholderFull: 'Ask your question (Enter to send, Shift+Enter for new line)...',
     atDisclaimer: 'For educational purposes only, not investment advice · 10 req/min limit',
@@ -1439,7 +1439,7 @@ export const T = {
     atPlaceholder: '質問を入力...', atError: (e) => `エラー：${e}`, atNetError: (e) => `ネットエラー：${e}`,
     // AITeacherPage
     atTopics: 'トピック', atClearMsg: '会話をクリアしました。何でもどうぞ！',
-    atSubtitle: '株式分析・経済学のAI先生 · 完全無料 · Powered by Google Gemini',
+    atSubtitle: '株式分析・経済学のAI先生 · 完全無料 · Powered by DeepSeek',
     atWelcome: 'こんにちは！BestFriendStockのAI先生です 🎓\n\nお手伝いできること：\n• テクニカル指標（K線、MACD、RSI）の解説\n• ファンダメンタルズ（PER、財務諸表）の分析\n• A-Level / AP / IB 経済学の試験ポイント\n• 実際の市場事例と経済理論の関連付け\n\n左からトピックを選ぶか、質問を入力してください！',
     atPlaceholderFull: '質問を入力（Enterで送信、Shift+Enterで改行）...',
     atDisclaimer: '学習参考のみ・投資助言ではありません · 毎分10回制限',
@@ -1928,7 +1928,7 @@ export const T = {
     atPlaceholder: '질문 입력...', atError: (e) => `오류：${e}`, atNetError: (e) => `네트워크 오류：${e}`,
     // AITeacherPage
     atTopics: '주제', atClearMsg: '대화가 삭제되었습니다. 무엇이든 물어보세요!',
-    atSubtitle: '주식 분석 & 경제학 AI 선생님 · 완전 무료 · Powered by Google Gemini',
+    atSubtitle: '주식 분석 & 경제학 AI 선생님 · 완전 무료 · Powered by DeepSeek',
     atWelcome: '안녕하세요! BestFriendStock AI 선생님입니다 🎓\n\n도움드릴 수 있는 것:\n• 기술적 지표(K선, MACD, RSI) 설명\n• 기본 분석(PER, 재무제표)\n• A-Level / AP / IB 경제학 시험 포인트\n• 실제 시장 사례와 경제 이론 연결\n\n왼쪽에서 주제를 선택하거나 질문을 입력하세요!',
     atPlaceholderFull: '질문 입력 (Enter로 전송, Shift+Enter로 줄바꿈)...',
     atDisclaimer: '학습 참고용만 · 투자 조언이 아님 · 분당 10회 제한',
@@ -2417,7 +2417,7 @@ export const T = {
     atPlaceholder: 'Posez une question...', atError: (e) => `Erreur : ${e}`, atNetError: (e) => `Erreur réseau : ${e}`,
     // AITeacherPage
     atTopics: 'Sujets', atClearMsg: 'Conversation effacée ! Posez vos questions.',
-    atSubtitle: "Tuteur IA pour l'analyse boursière & l'économie · Entièrement gratuit · Powered by Google Gemini",
+    atSubtitle: "Tuteur IA pour l'analyse boursière & l'économie · Entièrement gratuit · Powered by DeepSeek",
     atWelcome: "Bonjour ! Je suis le tuteur IA de BestFriendStock 🎓\n\nJe peux vous aider à :\n• Expliquer les indicateurs techniques (chandeliers, MACD, RSI)\n• Analyser les fondamentaux (PER, états financiers)\n• Couvrir les points d'examen A-Level / AP / IB\n• Relier les cas de marché réels à la théorie économique\n\nChoisissez un sujet à gauche ou posez votre question !",
     atPlaceholderFull: 'Posez votre question (Entrée pour envoyer, Maj+Entrée pour retour à la ligne)...',
     atDisclaimer: "À des fins éducatives uniquement, non un conseil en investissement · Limite 10 req/min",

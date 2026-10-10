@@ -4,16 +4,17 @@ import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { trackSearch } from '../utils/analytics'
+import { riseColor, fallColor } from '../utils/chartHelpers'
 
-function PctBadge({ val }) {
+function PctBadge({ val, market }) {
   if (val == null) return null
   const pos = val >= 0
-  const color = pos ? '#22c55e' : '#ef4444'
+  const color = pos ? riseColor(market) : fallColor(market)
   const sign = pos ? '+' : ''
   return (
     <span style={{
-      color, fontSize: 11, fontWeight: 600,
-      background: pos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+      color, fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+      background: `${color}1a`,
       border: `1px solid ${color}33`,
       borderRadius: 4, padding: '1px 5px', flexShrink: 0,
     }}>
@@ -180,7 +181,7 @@ export default function SearchBar() {
 
       {/* Hot stocks panel */}
       {showHot && (
-        <div style={dropdownStyle}>
+        <div style={{ ...dropdownStyle, right: 'auto', width: 'min(520px, calc(100vw - 32px))' }}>
           <div style={{ padding: '8px 12px 6px', fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.4px', borderBottom: '1px solid var(--border-primary)' }}>
             {t.sbHot}
           </div>
@@ -189,52 +190,33 @@ export default function SearchBar() {
               {t.loading}
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-              {/* CN column */}
-              <div style={{ borderRight: '1px solid var(--border-primary)' }}>
-                <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
-                  {t.marketCN}
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)' }}>
+              {(market === 'us' ? ['us', 'cn'] : ['cn', 'us']).map((m, col) => (
+                <div key={m} style={{ minWidth: 0, borderLeft: col ? '1px solid var(--border-primary)' : 'none' }}>
+                  <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
+                    {m === 'us' ? t.marketUS : t.marketCN}
+                  </div>
+                  {(m === 'us' ? hotUS : hotCN).map((s, i) => {
+                    const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
+                    return (
+                      <div
+                        key={s.code}
+                        onClick={() => !alreadyAdded && !isFull && handleSelect({ ...s, _market: m })}
+                        style={rowStyle(alreadyAdded || isFull)}
+                        onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                      >
+                        <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
+                        {m === 'us' && (
+                          <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
+                        )}
+                        <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
+                        <PctBadge val={s.change_pct} market={m} />
+                      </div>
+                    )
+                  })}
                 </div>
-                {hotCN.map((s, i) => {
-                  const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
-                  return (
-                    <div
-                      key={s.code}
-                      onClick={() => !alreadyAdded && !isFull && handleSelect({ ...s, _market: 'cn' })}
-                      style={rowStyle(alreadyAdded || isFull)}
-                      onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-                    >
-                      <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
-                      <span style={{ color: 'var(--text-secondary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
-                      <PctBadge val={s.change_pct} />
-                    </div>
-                  )
-                })}
-              </div>
-              {/* US column */}
-              <div>
-                <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
-                  {t.marketUS}
-                </div>
-                {hotUS.map((s, i) => {
-                  const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
-                  return (
-                    <div
-                      key={s.code}
-                      onClick={() => !alreadyAdded && !isFull && handleSelect({ ...s, _market: 'us' })}
-                      style={rowStyle(alreadyAdded || isFull)}
-                      onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-                    >
-                      <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
-                      <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
-                      <span style={{ color: 'var(--text-secondary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
-                      <PctBadge val={s.change_pct} />
-                    </div>
-                  )
-                })}
-              </div>
+              ))}
             </div>
           )}
         </div>
@@ -255,16 +237,16 @@ export default function SearchBar() {
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
               >
                 <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
-                <span style={{ color: 'var(--text-secondary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
+                <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                 <span style={{
                   fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
                   background: isUS ? 'rgba(14,165,233,0.12)' : 'rgba(34,197,94,0.12)',
                   color: isUS ? '#0ea5e9' : '#22c55e',
                   border: `1px solid ${isUS ? 'rgba(14,165,233,0.25)' : 'rgba(34,197,94,0.25)'}`,
                 }}>
-                  {isUS ? 'US' : 'A股'}
+                  {isUS ? 'US' : (lang === 'zh' ? 'A股' : 'CN')}
                 </span>
-                <PctBadge val={s.change_pct} />
+                <PctBadge val={s.change_pct} market={s._market} />
                 {alreadyAdded && <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>{t.added}</span>}
               </div>
             )

@@ -30,7 +30,8 @@ function tagColor(tag) {
   for (const [k, v] of Object.entries(SPECIALTY_COLORS)) {
     if (tag.toLowerCase().includes(k.toLowerCase())) return v
   }
-  return 'var(--text-muted)'
+  // Hex (not a CSS var) so TagPill can append alpha for its background/border.
+  return '#7d8ca3'
 }
 
 // Generate a deterministic gradient from school name
@@ -70,7 +71,7 @@ function RankBadge({ rank, label = 'QS' }) {
   if (!rank) return null
   const isTop10  = rank <= 10
   const isTop50  = rank <= 50
-  const color    = isTop10 ? AMBER : isTop50 ? BLUE : 'var(--text-muted)'
+  const color    = isTop10 ? AMBER : isTop50 ? BLUE : '#7d8ca3'
   return (
     <div style={{
       position: 'absolute', top: 12, left: 12,
