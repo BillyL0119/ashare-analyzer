@@ -53,8 +53,10 @@ async def warmup_caches():
     """Pre-warm slow caches (sentiment) so first user request is fast."""
     import asyncio
     from routers.market import warmup_sentiment
+    from routers.news import get_bank_views
     loop = asyncio.get_event_loop()
     loop.run_in_executor(None, warmup_sentiment)
+    loop.run_in_executor(None, get_bank_views, 'all')   # ~5s build, so the first visitor doesn't wait
 
 from security import SecurityMiddleware, allowed_origins
 
