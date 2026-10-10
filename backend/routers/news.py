@@ -861,6 +861,102 @@ def _bank_ai_summary(title: str, summary: str, banks: list) -> str | None:
             return None
 
 
+def _build_bank_views() -> None:
+    """Fetch, filter and summarise bank-view articles into _bank_views_cache (slow: ~5s)."""
+    now = time.time()
+
+    # ── Primary: per-ticker Yahoo Finance (reliable, bank-focused by design) ──
+    ticker_items: list[dict] = []
+    with ThreadPoolExecutor(max_workers=12) as ex:
+        futs = [
+            ex.submit(_fetch_bank_ticker_news, b['en'], b['zh'], b['ticker'])
+            for b in _BANK_TICKERS
+        ]
+        for f in as_completed(futs):
+            try:
+                ticker_items.extend(f.result())
+            except Exception:
+                pass
+
+    # ── Secondary: general pool filtered for bank + view keyword ──
+    pool_raw: list[dict] = []
+    with ThreadPoolExecutor(max_workers=10) as ex:
+        futs2 = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
+        futs2 += [
+            ex.submit(_fetch_sina_global, 20),
+            ex.submit(_fetch_em_market_flash),
+            ex.submit(_fetch_eastmoney_market),
+        ]
+        for f in as_completed(futs2):
+            try:
+                pool_raw.extend(f.result())
+            except Exception:
+                pass
+
+    pool_filtered: list[dict] = []
+    for item in pool_raw:
+        search = (item.get('title', '') + ' ' + item.get('summary', '')).lower()
+        names_en, names_zh = _detect_banks(search)
+        if not names_en:
+            continue
+        if not any(kw in search for kw in _VIEW_KW):
+            continue
+        entry = dict(item)
+        entry['banks']       = names_en
+        entry['banks_zh']    = names_zh
+        entry['action_type'] = _detect_bank_action(search)
+        pool_filtered.append(entry)
+
+    all_items = ticker_items + pool_filtered
+    all_items.sort(key=lambda x: x.get('published_at', ''), reverse=True)
+    deduped = _deduplicate_news(all_items)
+    all_banks = sorted({b for it in deduped for b in it.get('banks', [])})
+
+    logger.info(
+        "bank-views: ticker=%d pool_raw=%d pool_filtered=%d deduped=%d",
+        len(ticker_items), len(pool_raw), len(pool_filtered), len(deduped),
+    )
+
+    # ── Generate AI summaries for newly seen articles (max 8 per refresh) ──
+    if _DEEPSEEK_KEY:
+        uncached = [
+            it for it in deduped
+            if hashlib.md5(it['title'].encode('utf-8', errors='ignore')).hexdigest()
+            not in _bank_ai_cache
+        ][:8]
+        if uncached:
+            with ThreadPoolExecutor(max_workers=3) as ai_ex:
+                ai_futs = [
+                    ai_ex.submit(
+                        _bank_ai_summary,
+                        it['title'], it.get('summary', ''), it.get('banks', [])
+                    )
+                    for it in uncached
+                ]
+                for fa in as_completed(ai_futs):
+                    try:
+                        fa.result()
+                    except Exception:
+                        pass
+
+    # Attach cached AI summaries to all items
+    for it in deduped:
+        h = hashlib.md5(it['title'].encode('utf-8', errors='ignore')).hexdigest()
+        cached_ai = _bank_ai_cache.get(h)
+        it['ai_summary'] = cached_ai[1] if cached_ai else None
+
+    payload = {
+        'items':      deduped,
+        'total':      len(deduped),
+        'updated_at': datetime.utcnow().isoformat() + 'Z',
+        'banks':      all_banks,
+    }
+    _bank_views_cache['bv'] = (now, payload)
+
+
+_bank_views_lock = threading.Lock()
+
+
 @router.get('/bank-views')
 def get_bank_views(bank: Optional[str] = Query('all')):
     """
@@ -871,98 +967,23 @@ def get_bank_views(bank: Optional[str] = Query('all')):
     Secondary: existing RSS/Sina/Eastmoney pool filtered for bank+view keywords.
     No proprietary research platforms accessed.
     """
-    now = time.time()
-    if 'bv' not in _bank_views_cache or now - _bank_views_cache['bv'][0] >= _BANK_VIEWS_TTL:
-
-        # ── Primary: per-ticker Yahoo Finance (reliable, bank-focused by design) ──
-        ticker_items: list[dict] = []
-        with ThreadPoolExecutor(max_workers=12) as ex:
-            futs = [
-                ex.submit(_fetch_bank_ticker_news, b['en'], b['zh'], b['ticker'])
-                for b in _BANK_TICKERS
-            ]
-            for f in as_completed(futs):
-                try:
-                    ticker_items.extend(f.result())
-                except Exception:
-                    pass
-
-        # ── Secondary: general pool filtered for bank + view keyword ──
-        pool_raw: list[dict] = []
-        with ThreadPoolExecutor(max_workers=10) as ex:
-            futs2 = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
-            futs2 += [
-                ex.submit(_fetch_sina_global, 20),
-                ex.submit(_fetch_em_market_flash),
-                ex.submit(_fetch_eastmoney_market),
-            ]
-            for f in as_completed(futs2):
-                try:
-                    pool_raw.extend(f.result())
-                except Exception:
-                    pass
-
-        pool_filtered: list[dict] = []
-        for item in pool_raw:
-            search = (item.get('title', '') + ' ' + item.get('summary', '')).lower()
-            names_en, names_zh = _detect_banks(search)
-            if not names_en:
-                continue
-            if not any(kw in search for kw in _VIEW_KW):
-                continue
-            entry = dict(item)
-            entry['banks']       = names_en
-            entry['banks_zh']    = names_zh
-            entry['action_type'] = _detect_bank_action(search)
-            pool_filtered.append(entry)
-
-        all_items = ticker_items + pool_filtered
-        all_items.sort(key=lambda x: x.get('published_at', ''), reverse=True)
-        deduped = _deduplicate_news(all_items)
-        all_banks = sorted({b for it in deduped for b in it.get('banks', [])})
-
-        logger.info(
-            "bank-views: ticker=%d pool_raw=%d pool_filtered=%d deduped=%d",
-            len(ticker_items), len(pool_raw), len(pool_filtered), len(deduped),
-        )
-
-        # ── Generate AI summaries for newly seen articles (max 8 per refresh) ──
-        if _DEEPSEEK_KEY:
-            uncached = [
-                it for it in deduped
-                if hashlib.md5(it['title'].encode('utf-8', errors='ignore')).hexdigest()
-                not in _bank_ai_cache
-            ][:8]
-            if uncached:
-                with ThreadPoolExecutor(max_workers=3) as ai_ex:
-                    ai_futs = [
-                        ai_ex.submit(
-                            _bank_ai_summary,
-                            it['title'], it.get('summary', ''), it.get('banks', [])
-                        )
-                        for it in uncached
-                    ]
-                    for fa in as_completed(ai_futs):
-                        try:
-                            fa.result()
-                        except Exception:
-                            pass
-
-        # Attach cached AI summaries to all items
-        for it in deduped:
-            h = hashlib.md5(it['title'].encode('utf-8', errors='ignore')).hexdigest()
-            cached_ai = _bank_ai_cache.get(h)
-            it['ai_summary'] = cached_ai[1] if cached_ai else None
-
-        payload = {
-            'items':      deduped,
-            'total':      len(deduped),
-            'updated_at': datetime.utcnow().isoformat() + 'Z',
-            'banks':      all_banks,
-        }
-        _bank_views_cache['bv'] = (now, payload)
-    else:
-        payload = _bank_views_cache['bv'][1]
+    # Stale-while-revalidate: only the first request after a restart waits for the ~5s build;
+    # an expired cache is served as is while a background thread refreshes it.
+    hit = _bank_views_cache.get('bv')
+    if hit is None:
+        with _bank_views_lock:
+            if 'bv' not in _bank_views_cache:
+                _build_bank_views()
+    elif time.time() - hit[0] >= _BANK_VIEWS_TTL and _bank_views_lock.acquire(blocking=False):
+        def _refresh():
+            try:
+                _build_bank_views()
+            except Exception as exc:
+                logger.warning("bank views refresh failed: %s", exc)
+            finally:
+                _bank_views_lock.release()
+        threading.Thread(target=_refresh, daemon=True, name="bank-views-refresh").start()
+    payload = _bank_views_cache['bv'][1]
 
     items = payload['items']
     if bank and bank != 'all':
@@ -1126,14 +1147,35 @@ def _relevance(item: dict, symbol: str, keywords: list[str]) -> int:
     return 0
 
 
-def _us_symbol_news(symbol: str, want: int = 15) -> list[dict]:
-    """Yahoo RSS + Nasdaq for one ticker, keeping only items that are actually about it."""
-    with ThreadPoolExecutor(max_workers=3) as ex:
-        f_y = ex.submit(_fetch_yahoo_rss_us, symbol)
-        f_n = ex.submit(_fetch_nasdaq_symbol_news, symbol)
-        f_k = ex.submit(_us_name_keywords, symbol)
-        items = (f_y.result() or []) + (f_n.result() or [])
-        keywords = f_k.result() or []
+_news_pool = ThreadPoolExecutor(max_workers=6, thread_name_prefix="us-news")
+_nasdaq_cache: dict = {}        # symbol -> (ts, rows)
+_NASDAQ_BUDGET = 2.0            # seconds the response waits for Nasdaq (it takes 1-5s)
+
+
+def _nasdaq_cached(symbol: str) -> list[dict]:
+    hit = _nasdaq_cache.get(symbol)
+    if hit and time.time() - hit[0] < _RESULT_TTL:
+        return hit[1]
+    rows = _fetch_nasdaq_symbol_news(symbol)
+    if rows:
+        _nasdaq_cache[symbol] = (time.time(), rows)
+    return rows
+
+
+def _us_symbol_news(symbol: str, want: int = 15) -> tuple[list[dict], bool]:
+    """Yahoo RSS + Nasdaq for one ticker, keeping only items that are actually about it.
+    Returns (items, complete). If Nasdaq misses its time budget the answer uses Yahoo alone
+    (complete=False); the Nasdaq fetch keeps running and lands in its own cache for next time."""
+    f_y = _news_pool.submit(_fetch_yahoo_rss_us, symbol)
+    f_n = _news_pool.submit(_nasdaq_cached, symbol)
+    f_k = _news_pool.submit(_us_name_keywords, symbol)
+    items = f_y.result() or []
+    keywords = f_k.result() or []
+    complete = True
+    try:
+        items += f_n.result(timeout=_NASDAQ_BUDGET) or []
+    except Exception:
+        complete = False
 
     import email.utils as _eu
     def _ts(it):
@@ -1159,7 +1201,7 @@ def _us_symbol_news(symbol: str, want: int = 15) -> list[dict]:
         it = dict(it)
         it.pop("_related", None)
         out.append(it)
-    return out
+    return out, complete
 
 
 @router.get("/{symbol}")
@@ -1182,7 +1224,9 @@ def get_news(symbol: str, market: str = Query("cn")):
         # ── US market: English-only Yahoo Finance ──
         if market == "us":
             sym_upper = symbol.upper()
-            news_raw = _us_symbol_news(sym_upper)
+            news_raw, complete = _us_symbol_news(sym_upper)
+            # Partial (Nasdaq was late): cache for ~60s only, so the next request gets the merged list
+            cache_ts = now if complete else now - _RESULT_TTL + 60
             stock_name = sym_upper
 
             if not news_raw:
@@ -1198,7 +1242,7 @@ def get_news(symbol: str, market: str = Query("cn")):
                         "ai_summary": "No news data available.",
                     },
                 }
-                _result_cache[cache_key] = (now, response)
+                _result_cache[cache_key] = (cache_ts, response)
                 return response
 
             processed = []
@@ -1240,7 +1284,7 @@ def get_news(symbol: str, market: str = Query("cn")):
                     "ai_summary": ai_summary,
                 },
             }
-            _result_cache[cache_key] = (now, response)
+            _result_cache[cache_key] = (cache_ts, response)
 
             def _fill_summary(resp=response, name=stock_name, titles=[n["title"] for n in processed]):
                 try:
