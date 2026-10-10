@@ -3,11 +3,11 @@ import { getPairAnalysis } from '../api/stockApi'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
-import { THEME } from '../utils/chartHelpers'
+import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import AddComparisonStocks from './AddComparisonStocks'
 
-const COLORS = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
+const COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
 
 function GaugeBar({ value, label, color }) {
   const pct = Math.round(((value + 1) / 2) * 100)
@@ -24,19 +24,22 @@ function GaugeBar({ value, label, color }) {
   )
 }
 
+// The higher value of a highlighted metric takes the market's "up" colour (green for US, red for A-shares).
 function StatRow({ label, v1, v2, highlight = false }) {
+  const market = useCompareStore((st) => st.market)
+  const up = riseColor(market), down = fallColor(market)
   return (
     <tr style={{ borderBottom: `1px solid ${THEME.border}` }}>
       <td style={{ padding: '7px 10px', color: 'var(--text-muted)', fontSize: 12, whiteSpace: 'nowrap' }}>{label}</td>
       <td style={{
         padding: '7px 10px', textAlign: 'right', fontSize: 12, fontWeight: highlight ? 600 : 400,
-        color: highlight ? (parseFloat(v1) > parseFloat(v2) ? '#ef5350' : parseFloat(v1) < parseFloat(v2) ? '#26a69a' : THEME.text) : THEME.text,
+        color: highlight ? (parseFloat(v1) > parseFloat(v2) ? up : parseFloat(v1) < parseFloat(v2) ? down : THEME.text) : THEME.text,
       }}>
         {v1}
       </td>
       <td style={{
         padding: '7px 10px', textAlign: 'right', fontSize: 12, fontWeight: highlight ? 600 : 400,
-        color: highlight ? (parseFloat(v2) > parseFloat(v1) ? '#ef5350' : parseFloat(v2) < parseFloat(v1) ? '#26a69a' : THEME.text) : THEME.text,
+        color: highlight ? (parseFloat(v2) > parseFloat(v1) ? up : parseFloat(v2) < parseFloat(v1) ? down : THEME.text) : THEME.text,
       }}>
         {v2}
       </td>
@@ -120,10 +123,10 @@ export default function AnalysisPanel({ stocks }) {
           <div key={idx} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               <span style={{ color: colorA, fontWeight: 700, fontSize: 15 }}>{a.name}</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{a.code}</span>
+              {a.name !== a.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{a.code}</span>}
               <span style={{ color: 'var(--text-muted)', margin: '0 4px' }}>vs</span>
               <span style={{ color: colorB, fontWeight: 700, fontSize: 15 }}>{b.name}</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{b.code}</span>
+              {b.name !== b.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{b.code}</span>}
               {data && (
                 <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
                   {t.tradingDays(data.trading_days)}

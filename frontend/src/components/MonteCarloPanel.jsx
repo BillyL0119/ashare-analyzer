@@ -7,7 +7,7 @@ import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const COLORS = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
+const COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
 
 // Geometric Brownian Motion Monte Carlo simulation (pure JS, runs in browser)
 function runMonteCarlo(closes, nSims = 500, nDays = 252) {

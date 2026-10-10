@@ -342,7 +342,7 @@ export function buildRSIOption(rsiData) {
 
 export function buildOverlayOption(symbolsData, lang = 'zh') {
   const T      = getChartTheme()
-  const colors = ['#64b5f6', '#ef5350', '#66bb6a', '#ffca28']
+  const colors = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
   const allDates = [...new Set(
     symbolsData.flatMap((s) => s.candles.map((c) => c.date.slice(0, 10)))
   )].sort()
