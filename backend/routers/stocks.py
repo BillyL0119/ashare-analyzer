@@ -103,31 +103,14 @@ def _sina_sym(code: str) -> str:
 
 
 def _fetch_pct_batch(codes: list) -> dict:
-    """Batch-fetch change_pct for A-share codes via Sina HQ API (single request)."""
-    if not codes:
-        return {}
-    try:
-        syms = ",".join(_sina_sym(c) for c in codes)
-        r = _req.get(f"http://hq.sinajs.cn/list={syms}", headers=_SINA_HDRS, timeout=4)
-        r.encoding = "gbk"
-        out: dict = {}
-        for line in r.text.splitlines():
-            if '="' not in line:
-                continue
-            key = line.split('"')[0].split("_")[-1]   # e.g. sh600519
-            code = key[2:] if len(key) > 2 else key
-            vals = line.split('"')[1].split(",")
-            if len(vals) > 3:
-                try:
-                    yest = float(vals[2])
-                    cur  = float(vals[3])
-                    if yest > 0 and cur > 0:
-                        out[code] = round((cur - yest) / yest * 100, 2)
-                except Exception:
-                    pass
-        return out
-    except Exception:
-        return {}
+    """change_pct for A-share codes in one Tencent request (was Sina, which 403s from the server
+    after ~5s, so every search waited 4s and still showed no change)."""
+    from services.stock_service import tencent_quotes
+    return {
+        c: round((q["price"] - q["prev_close"]) / q["prev_close"] * 100, 2)
+        for c, q in tencent_quotes(codes, timeout=3).items()
+        if q["price"] > 0 and q["prev_close"] > 0
+    }
 
 
 @router.get("/search")

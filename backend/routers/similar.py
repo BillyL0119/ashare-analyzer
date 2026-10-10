@@ -92,7 +92,7 @@ def _load_name_map():
     except Exception as exc:
         logger.warning("stock_zh_a_spot_em failed: %s", exc)
 
-    # ── Source 2: Sina batch HQ API (globally accessible CDN) ─────────────────
+    # ── Source 2: Tencent batch quotes ─────────────────────────────────────────
     try:
         all_codes: list[str] = []
         for codes in _INDUSTRY_MAP.get("industries", {}).values():
@@ -100,36 +100,12 @@ def _load_name_map():
         all_codes.extend(_FALLBACK_PEERS)
         all_codes = list(dict.fromkeys(all_codes))   # deduplicate, preserve order
 
-        # Sina accepts up to ~200 symbols per request; do in chunks of 100
-        chunk_size = 100
-        for i in range(0, len(all_codes), chunk_size):
-            chunk = all_codes[i : i + chunk_size]
-            sina_list = ",".join(_to_sina_symbol(c) for c in chunk)
-            try:
-                r = _requests.get(
-                    f"http://hq.sinajs.cn/list={sina_list}",
-                    headers={
-                        "Referer": "https://finance.sina.com.cn",
-                        "User-Agent": "Mozilla/5.0",
-                    },
-                    timeout=10,
-                )
-                r.encoding = "gbk"
-                for line in r.text.splitlines():
-                    # var hq_str_sh600519="贵州茅台,1500.00,...";
-                    if '="' not in line:
-                        continue
-                    left, _, rest = line.partition('="')
-                    name = rest.split(",")[0].strip()
-                    # Extract bare code: hq_str_sh600519 → 600519
-                    var = left.split("hq_str_")[-1]   # sh600519
-                    code = var[2:] if len(var) > 2 else ""
-                    if code and name and not name.startswith(("sh", "sz", "bj")):
-                        _name_map[code] = name
-            except Exception as chunk_exc:
-                logger.debug("Sina chunk %d failed: %s", i, chunk_exc)
-
-        logger.info("Name map loaded via Sina batch: %d stocks", len(_name_map))
+        # Tencent quotes (Sina hq.sinajs.cn 403s from the server)
+        from services.stock_service import tencent_quotes
+        for code, q in tencent_quotes(all_codes, timeout=10).items():
+            if q["name"]:
+                _name_map[code] = q["name"]
+        logger.info("Name map loaded via Tencent batch: %d stocks", len(_name_map))
     except Exception as exc:
         logger.error("Sina batch name lookup failed: %s", exc)
 

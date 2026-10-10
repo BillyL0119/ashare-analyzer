@@ -9,26 +9,40 @@ SINA_HEADERS = {"Referer": "https://finance.sina.com.cn", "User-Agent": "Mozilla
 _name_cache: dict = {}
 
 
+def tencent_quotes(codes: list, timeout: float = 4) -> dict:
+    """{bare_code: {"name", "price", "prev_close"}} for A-share codes via qt.gtimg.cn, in chunks.
+    Sina hq.sinajs.cn answers 403 after ~5s from our server, so nothing should call it."""
+    out: dict = {}
+    codes = [c for c in dict.fromkeys(c.strip() for c in codes) if c]
+    for i in range(0, len(codes), 60):
+        chunk = codes[i:i + 60]
+        try:
+            r = requests.get("https://qt.gtimg.cn/q=" + ",".join(_get_sina_symbol(c) for c in chunk), timeout=timeout)
+            r.encoding = "gbk"
+        except Exception:
+            continue
+        for line in r.text.splitlines():
+            if '="' not in line:
+                continue
+            vals = line.split('"')[1].split("~")
+            if len(vals) < 5 or not vals[2]:
+                continue
+            try:
+                price, prev = float(vals[3] or 0), float(vals[4] or 0)
+            except ValueError:
+                price, prev = 0.0, 0.0
+            out[vals[2]] = {"name": vals[1].replace(" ", ""), "price": price, "prev_close": prev}
+    return out
+
+
 def _fetch_stock_name_from_sina(symbol: str) -> str:
-    """Fetch stock name from Sina HQ API."""
+    """Stock name (kept the old name for callers; now served by Tencent quotes)."""
     if symbol in _name_cache:
         return _name_cache[symbol]
-    try:
-        sina_sym = _get_sina_symbol(symbol)
-        r = requests.get(
-            f"http://hq.sinajs.cn/list={sina_sym}",
-            headers=SINA_HEADERS,
-            timeout=5,
-        )
-        # Response: var hq_str_sz300394="天孚通信,305.57,...";
-        text = r.text
-        if '"' in text:
-            name = text.split('"')[1].split(",")[0]
-            if name:
-                _name_cache[symbol] = name
-                return name
-    except Exception:
-        pass
+    q = tencent_quotes([symbol]).get(symbol.strip()[-6:])
+    if q and q["name"]:
+        _name_cache[symbol] = q["name"]
+        return q["name"]
     return symbol
 
 

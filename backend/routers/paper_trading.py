@@ -27,6 +27,7 @@ import os
 import json
 import glob
 import random
+import time
 import hashlib
 import logging
 
@@ -251,21 +252,56 @@ def _all_accounts() -> list[dict]:
     return accounts
 
 
-def _approx_total(a: dict, market: str) -> float:
-    """Cash + holdings at cost (no price calls), per market."""
+_price_cache: dict = {}   # (market, symbol) -> (ts, price)
+
+
+def _live_prices(market: str, symbols: set) -> dict:
+    """Latest prices for the leaderboard, one batch request per market, cached 2 min."""
+    now = time.time()
+    fresh = {sym: p for (m, sym), (ts, p) in _price_cache.items() if m == market and sym in symbols and now - ts < 120}
+    missing = [sym for sym in symbols if sym not in fresh]
+    if missing:
+        try:
+            if market == "us":
+                from routers.us_market import us_quotes
+                got = {k: float(v.get("price") or 0) for k, v in us_quotes(missing).items()}
+            else:
+                from services.stock_service import tencent_quotes
+                got = {k: v["price"] for k, v in tencent_quotes(missing, timeout=3).items()}
+        except Exception:
+            got = {}
+        for sym, price in got.items():
+            if price > 0:
+                _price_cache[(market, sym)] = (now, price)
+                fresh[sym] = price
+    return fresh
+
+
+def _account_value(a: dict, market: str, prices: dict) -> float:
+    """Cash + holdings at the latest price (cost basis when a quote is missing)."""
     if market == "us":
-        return a.get("us_cash", _US_INITIAL_CASH) + sum(p["avg_cost"] * p["shares"] for p in a.get("us_portfolio", {}).values())
-    return a.get("cash", _INITIAL_CASH) + sum(p["avg_cost"] * p["shares"] for p in a.get("portfolio", {}).values())
+        cash, pf = a.get("us_cash", _US_INITIAL_CASH), a.get("us_portfolio", {})
+    else:
+        cash, pf = a.get("cash", _INITIAL_CASH), a.get("portfolio", {})
+    return cash + sum(p["shares"] * prices.get(sym, p["avg_cost"]) for sym, p in pf.items())
 
 
 def _has_traded(a: dict, market: str) -> bool:
     return bool(a.get("us_transactions" if market == "us" else "transactions"))
 
 
-def _ranked(market: str) -> list[dict]:
-    """Accounts that have traded in `market`, best first. Untouched accounts don't compete."""
+def _ranked_with_values(market: str) -> list[tuple[dict, float]]:
+    """(account, value) for accounts that have traded in `market`, best first.
+    Valued at market prices so open gains count; untouched accounts don't compete."""
     accs = [a for a in _all_accounts() if _has_traded(a, market)]
-    return sorted(accs, key=lambda a: _approx_total(a, market), reverse=True)
+    key = "us_portfolio" if market == "us" else "portfolio"
+    prices = _live_prices(market, {sym for a in accs for sym in a.get(key, {})})
+    valued = [(a, _account_value(a, market, prices)) for a in accs]
+    return sorted(valued, key=lambda x: x[1], reverse=True)
+
+
+def _ranked(market: str) -> list[dict]:
+    return [a for a, _ in _ranked_with_values(market)]
 
 
 def _rank_of(device_id: str, sorted_accounts: list[dict]) -> int:
@@ -665,13 +701,12 @@ def sell_stock(body: SellBody):
 
 @router.get("/leaderboard")
 def leaderboard(device_id: str = "", market: str = "cn"):
-    """Top 20 for one market (holdings at cost), only accounts that have traded there.
+    """Top 20 for one market (holdings at market price), only accounts that have traded there.
     `market` defaults to cn so older app builds keep their previous behaviour."""
     market = "us" if market.lower() == "us" else "cn"
     initial = _US_INITIAL_CASH if market == "us" else _INITIAL_CASH
     result = []
-    for i, a in enumerate(_ranked(market)[:20], 1):
-        total = _approx_total(a, market)
+    for i, (a, total) in enumerate(_ranked_with_values(market)[:20], 1):
         result.append({
             "rank":        i,
             "nickname":    a.get("nickname", "用户#????"),

@@ -54,20 +54,11 @@ SINA_HEADERS = {
 def _get_stock_name(code: str) -> str:
     if code in _name_cache:
         return _name_cache[code]
-    try:
-        prefix = "sh" if code.startswith(("60", "68")) else "sz"
-        r = requests.get(
-            f"http://hq.sinajs.cn/list={prefix}{code}",
-            headers=SINA_HEADERS, timeout=5,
-        )
-        text = r.text
-        if '"' in text:
-            name = text.split('"')[1].split(",")[0].strip()
-            if name and len(name) > 1:
-                _name_cache[code] = name
-                return name
-    except Exception:
-        pass
+    from services.stock_service import tencent_quotes
+    q = tencent_quotes([code], timeout=3).get(code)
+    if q and len(q["name"]) > 1:
+        _name_cache[code] = q["name"]
+        return q["name"]
     return code
 
 
