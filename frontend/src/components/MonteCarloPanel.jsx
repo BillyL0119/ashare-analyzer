@@ -9,8 +9,13 @@ import useThemeStore from '../store/themeStore'
 
 const COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
 
+// Share of the drift taken from the stock's own history; the rest is a long-run equity
+// return. Same rule as the backend (/simulation) used by the app.
+const HIST_WEIGHT = 0.25
+const PRIOR_ANNUAL = { us: 0.08, cn: 0.06 }
+
 // Geometric Brownian Motion Monte Carlo simulation (pure JS, runs in browser)
-function runMonteCarlo(closes, nSims = 500, nDays = 252) {
+function runMonteCarlo(closes, nSims = 500, nDays = 252, market = 'us') {
   const logReturns = []
   for (let i = 1; i < closes.length; i++) {
     logReturns.push(Math.log(closes[i] / closes[i - 1]))
@@ -20,7 +25,10 @@ function runMonteCarlo(closes, nSims = 500, nDays = 252) {
   const mean = logReturns.reduce((a, b) => a + b, 0) / logReturns.length
   const variance = logReturns.reduce((a, b) => a + (b - mean) ** 2, 0) / logReturns.length
   const sigma = Math.sqrt(variance)
-  const drift = mean - variance / 2
+  // `mean` is already a mean *log* return, so it is the daily log drift as is. A trailing mean is a
+  // noisy estimate (a big run-up would project itself forward), so shrink it toward the prior.
+  const prior = (PRIOR_ANNUAL[market] ?? 0.08) / 252 - variance / 2
+  const drift = HIST_WEIGHT * mean + (1 - HIST_WEIGHT) * prior
   const lastPrice = closes[closes.length - 1]
 
   // Run simulations using Box-Muller transform for normal distribution
@@ -54,7 +62,7 @@ function runMonteCarlo(closes, nSims = 500, nDays = 252) {
 
   const probProfit = (finalPrices.filter(p => p > lastPrice).length / nSims * 100).toFixed(1)
   const varPct = ((finalPrices[Math.floor(nSims * 0.05)] - lastPrice) / lastPrice * 100).toFixed(2)
-  const expectedReturn = ((p50[nDays] - lastPrice) / lastPrice * 100).toFixed(2)
+  const expectedReturn = ((finalPrices.reduce((a, b) => a + b, 0) / nSims - lastPrice) / lastPrice * 100).toFixed(2)
 
   return { p5, p25, p50, p75, p95, lastPrice, probProfit, varPct, expectedReturn, nDays, sigma: (sigma * Math.sqrt(252) * 100).toFixed(1) }
 }
@@ -111,7 +119,8 @@ function buildMCOption(result, name, color, historicalCloses, t, lang) {
       type: 'value',
       min: -(histLen - 1),
       max: nDays,
-      axisLabel: { color: THEME.text, fontSize: 10, formatter: (v) => (v <= 0 ? `${v}d` : `+${v}d`) },
+      // min/max (-59, +252) are off the tick grid and collide with the nearest tick label
+      axisLabel: { color: THEME.text, fontSize: 10, showMinLabel: false, showMaxLabel: false, formatter: (v) => (v <= 0 ? `${v}d` : `+${v}d`) },
       splitLine: { show: false },
       axisLine: { lineStyle: { color: THEME.border } },
     },
@@ -151,9 +160,9 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
   useEffect(() => {
     if (!data || !data.candles || data.candles.length < 30) return
     const closes = data.candles.map((c) => c.close)
-    const mc = runMonteCarlo(closes, nSims, nDays)
+    const mc = runMonteCarlo(closes, nSims, nDays, market)
     setResult(mc)
-  }, [data, nSims, nDays, trigger])
+  }, [data, nSims, nDays, trigger, market])
 
   if (loading) {
     return (
@@ -219,8 +228,12 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
         notMerge
         style={{ height: 340, width: '100%' }}
         opts={{ renderer: 'canvas' }}
-        notMerge={true}
       />
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 8 }}>
+        {lang === 'zh'
+          ? `趋势假设：25% 取自该股历史收益，75% 取长期股市平均回报（约 ${market === 'cn' ? 6 : 8}%/年）；波动率取自历史。模拟只展示可能的范围，不是预测。`
+          : `Drift: 25% from this stock's past returns, 75% from a long-run market average (about ${market === 'cn' ? 6 : 8}%/yr); volatility from history. The fan shows a range of outcomes, not a forecast.`}
+      </div>
     </div>
   )
 }

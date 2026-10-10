@@ -95,16 +95,19 @@ function TradeSheet({ market, mode, pos, symbol: sym0, onClose, onDone }) {
   )
 }
 
-function Board({ onClose }) {
+function Board({ market, onClose }) {
   const t = useT()
+  const cur = market === 'cn' ? '¥' : '$'
   const [rows, setRows] = useState(null); const [err, setErr] = useState(false)
-  useEffect(() => { fetch(`/api/paper/leaderboard?device_id=${deviceId()}`).then((r) => r.json()).then(setRows).catch(() => setErr(true)) }, [])
+  useEffect(() => { fetch(`/api/paper/leaderboard?device_id=${deviceId()}&market=${market}`).then((r) => r.json()).then(setRows).catch(() => setErr(true)) }, [market])
   const medal = ['#F5C542', '#B8C2D0', '#D98A4E']
   return (
     <Sheet onClose={onClose}>
       <div className="m-stack" style={{ gap: 16 }}>
         <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('收益排行榜')}</div>
-        {err ? <ErrorBox onRetry={() => { setErr(false); window.location.reload() }} /> : !rows ? <Skeleton h={180} r={20} /> : (
+        {err ? <ErrorBox onRetry={() => { setErr(false); window.location.reload() }} /> : !rows ? <Skeleton h={180} r={20} /> : rows.length === 0 ? (
+          <div className="m-muted" style={{ textAlign: 'center', fontSize: 14, padding: '24px 8px' }}>{t('还没有人在这个市场交易过，完成第一笔交易就能上榜')}</div>
+        ) : (
           <>
             <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
               {[1, 0, 2].filter((i) => rows[i]).map((i) => {
@@ -113,7 +116,7 @@ function Board({ onClose }) {
                   <div key={i} className="m-card" style={{ flex: 1, textAlign: 'center', padding: first ? '20px 6px' : '14px 6px', borderColor: r.is_me ? 'var(--accent)' : `color-mix(in srgb, ${medal[i]} 40%, transparent)`, background: `linear-gradient(180deg, color-mix(in srgb, ${medal[i]} 22%, var(--surface)), var(--surface))` }}>
                     <div style={{ color: medal[i], fontWeight: 800, fontSize: first ? 30 : 24 }} className="m-num">{r.rank}</div>
                     <div style={{ fontSize: 12, fontWeight: 650, margin: '6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.nickname}{r.is_me ? t('（我）') : ''}</div>
-                    <Pill value={r.return_pct} market="cn" minWidth={0} />
+                    <Pill value={r.return_pct} market={market} minWidth={0} />
                   </div>
                 )
               })}
@@ -122,8 +125,8 @@ function Board({ onClose }) {
               {rows.slice(3).map((r) => (
                 <div className="m-row" key={r.rank} style={r.is_me ? { background: 'color-mix(in srgb, var(--accent) 12%, transparent)' } : undefined}>
                   <span className="m-num m-muted" style={{ width: 24, fontWeight: 700 }}>{r.rank}</span>
-                  <div className="m-grow"><div className="m-name">{r.nickname}</div><div className="m-sub m-num">¥{Math.round(r.total_value).toLocaleString()}</div></div>
-                  <Pill value={r.return_pct} market="cn" />
+                  <div className="m-grow"><div className="m-name">{r.nickname}</div><div className="m-sub m-num">{cur}{Math.round(r.total_value).toLocaleString()}</div></div>
+                  <Pill value={r.return_pct} market={market} />
                 </div>
               ))}
             </div>
@@ -174,7 +177,9 @@ export default function Paper() {
         <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `linear-gradient(135deg, color-mix(in srgb, ${view.ret === 0 ? 'var(--accent)' : accent} 20%, var(--surface)), var(--surface) 60%)` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="m-muted" style={{ fontWeight: 650, fontSize: 14 }}>{cn ? t('A股账户') : t('美股账户')}</span>
-            <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>🏆 #{acc.rank}</span>
+            {(cn ? acc.rank : acc.us_rank) > 0 && (
+              <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>🏆 #{cn ? acc.rank : acc.us_rank}</span>
+            )}
           </div>
           <div>
             <div className="m-num" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -.5 }}><span className="m-muted" style={{ fontSize: 22, fontWeight: 650 }}>{cur}</span> {Number(view.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
@@ -244,7 +249,7 @@ export default function Paper() {
         background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', boxShadow: '0 8px 22px color-mix(in srgb, var(--accent) 45%, transparent)', zIndex: 15 }}>+</button>
 
       {sheet?.mode && <TradeSheet market={market} mode={sheet.mode} pos={sheet.pos} symbol={sheet.symbol} onClose={() => setSheet(null)} onDone={done} />}
-      {sheet === 'board' && <Board onClose={() => setSheet(null)} />}
+      {sheet === 'board' && <Board market={market} onClose={() => setSheet(null)} />}
       {sheet === 'reset' && (
         <Sheet onClose={() => setSheet(null)}>
           <div className="m-stack" style={{ gap: 14, textAlign: 'center' }}>

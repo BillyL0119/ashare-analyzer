@@ -1,7 +1,7 @@
 import SwiftUI
 import Charts
 
-/// 1,000 random price paths from the stock's own historical drift and volatility, shown as a probability fan.
+/// 1,000 random price paths (historical volatility; drift shrunk toward a long-run market return by the backend), shown as a probability fan.
 struct MonteCarloSection: View {
     let market: Market
     @StateObject private var vm: MonteCarloViewModel
@@ -25,7 +25,7 @@ struct MonteCarloSection: View {
                 if let r = vm.result {
                     chart(r)
                     stats(r.stats, price: r.currentPrice)
-                    Text("基于历史收益率和波动率的随机模拟，只是一种可能性的范围，不构成预测或投资建议")
+                    Text(L("趋势按 25% 该股历史收益 + 75% 长期股市平均回报估算，波动率取自历史。只展示可能的范围，不构成预测或投资建议"))
                         .font(.caption2).foregroundStyle(.secondary)
                 } else if vm.failed {
                     ErrorRetryView(message: L("加载失败")) { Task { await vm.run() } }

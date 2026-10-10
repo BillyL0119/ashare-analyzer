@@ -1567,17 +1567,23 @@ export const STR = {
   "95% 최악 가격",
   "Pire cas 95 %"
  ],
- "基于历史收益率和波动率的随机模拟，只是一种可能性的范围，不构成预测或投资建议": [
-  "Random simulation from historical returns and volatility: a range of possibilities, not a forecast or investment advice",
-  "過去の収益率とボラティリティに基づく乱数シミュレーション。可能性の幅であり、予測や投資助言ではありません",
-  "과거 수익률과 변동성에 기반한 무작위 시뮬레이션입니다. 가능성의 범위일 뿐 예측이나 투자 조언이 아닙니다",
-  "Simulation aléatoire fondée sur les rendements et la volatilité passés : une fourchette de possibles, ni une prévision ni un conseil"
+ "趋势按 25% 该股历史收益 + 75% 长期股市平均回报估算，波动率取自历史。只展示可能的范围，不构成预测或投资建议": [
+  "Drift: 25% this stock's past returns + 75% a long-run market average; volatility from history. A range of outcomes, not a forecast or investment advice",
+  "トレンドは25%を過去の収益、75%を長期の市場平均リターンで推定し、ボラティリティは過去データから算出。可能性の幅であり、予測や投資助言ではありません",
+  "추세는 25%를 해당 종목의 과거 수익률, 75%를 장기 시장 평균 수익률로 추정하고 변동성은 과거 데이터를 사용합니다. 가능성의 범위일 뿐 예측이나 투자 조언이 아닙니다",
+  "Tendance : 25 % des rendements passés du titre + 75 % d'une moyenne de marché à long terme ; volatilité historique. Une fourchette de possibles, ni une prévision ni un conseil"
  ],
  "刚刚": [
   "Just now",
   "たった今",
   "방금",
   "À l'instant"
+ ],
+ "还没有人在这个市场交易过，完成第一笔交易就能上榜": [
+  "No one has traded in this market yet. Make a trade to get on the board.",
+  "この市場ではまだ誰も取引していません。最初の取引でランキングに載ります",
+  "아직 이 시장에서 거래한 사람이 없습니다. 첫 거래를 하면 순위에 오릅니다",
+  "Personne n'a encore négocié sur ce marché. Passez un ordre pour entrer au classement."
  ],
  "持仓市值": [
   "Holdings",

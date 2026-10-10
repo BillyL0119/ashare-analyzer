@@ -10,6 +10,8 @@ struct PaperAccount: Decodable {
     let totalValue: Double
     let returnPct: Double
     let rank: Int
+    /// US-market rank; -1 until the account has traded US stocks (absent on older backends).
+    let usRank: Int?
     let transactions: [PaperTransaction]
     // US
     let usCash: Double

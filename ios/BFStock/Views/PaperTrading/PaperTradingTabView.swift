@@ -40,7 +40,7 @@ struct PaperTradingTabView: View {
             }
         }
         .sheet(isPresented: $showLeaderboard) {
-            LeaderboardView(vm: vm)
+            LeaderboardView(vm: vm, market: selectedMarket)
         }
         .alert("确认重置账户", isPresented: $showResetConfirm) {
             Button("重置", role: .destructive) { Task { await vm.resetAccount() } }
@@ -250,8 +250,7 @@ struct PaperTradingTabView: View {
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                showLeaderboard = true
-                Task { await vm.loadLeaderboard() }
+                showLeaderboard = true   // the sheet loads its own market's board
             } label: {
                 Image(systemName: "trophy")
             }
@@ -299,12 +298,16 @@ private struct AccountHeaderView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
-                Label("#\(account.rank)", systemImage: "trophy.fill")
-                    .font(.system(.caption, design: .rounded).weight(.semibold))
-                    .foregroundStyle(DS.accent)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(DS.accent.opacity(0.14), in: Capsule())
+                // Per-market rank; hidden until the account has traded in this market
+                let rank = market == .us ? (account.usRank ?? -1) : account.rank
+                if rank > 0 {
+                    Label("#\(rank)", systemImage: "trophy.fill")
+                        .font(.system(.caption, design: .rounded).weight(.semibold))
+                        .foregroundStyle(DS.accent)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(DS.accent.opacity(0.14), in: Capsule())
+                }
             }
 
             VStack(alignment: .leading, spacing: 8) {

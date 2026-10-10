@@ -9,6 +9,7 @@ final class PaperTradingViewModel: ObservableObject {
     @Published var tradeError: String?
     @Published var isTradingBusy = false
     @Published var leaderboard: [LeaderboardEntry] = []
+    @Published var leaderboardLoaded = false
 
     private let deviceID: String
 
@@ -73,14 +74,16 @@ final class PaperTradingViewModel: ObservableObject {
         }
     }
 
-    func loadLeaderboard() async {
+    func loadLeaderboard(market: Market) async {
+        leaderboardLoaded = false
+        defer { leaderboardLoaded = true }
         do {
             let entries: [LeaderboardEntry] = try await APIClient.shared.get(
-                "/paper/leaderboard", params: ["device_id": deviceID]
+                "/paper/leaderboard", params: ["device_id": deviceID, "market": market.rawValue]
             )
             leaderboard = entries
         } catch {
-            // Non-critical, ignore silently
+            leaderboard = []   // non-critical: show the empty state
         }
     }
 

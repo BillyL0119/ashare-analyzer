@@ -25,6 +25,9 @@ def _safe_float(val):
         return None
 
 
+HIST_WEIGHT = 0.25
+
+
 @router.post("/{code}")
 def run_simulation(code: str, body: SimulationRequest):
     days = max(1, min(body.days, 1260))
@@ -54,9 +57,16 @@ def run_simulation(code: str, body: SimulationRequest):
         raise HTTPException(status_code=400, detail="历史数据不足，无法进行模拟")
 
     log_returns = np.diff(np.log(close))
-    mu = np.mean(log_returns)
+    mu_hist = np.mean(log_returns)
     sigma = np.std(log_returns)
     current_price = float(close[-1])
+
+    # Drift: a stock's own trailing mean return is a very noisy estimate (a strong run-up would
+    # project itself forward, e.g. ~90% "profit probability"). Shrink it toward a long-run equity
+    # return: 25% history + 75% prior (8%/yr US, 6%/yr A-shares, arithmetic -> daily log drift).
+    prior_annual = 0.06 if code.isdigit() else 0.08
+    mu_prior = prior_annual / 252 - sigma ** 2 / 2
+    mu = HIST_WEIGHT * mu_hist + (1 - HIST_WEIGHT) * mu_prior
 
     # Monte Carlo simulation
     rng = np.random.default_rng(42)
@@ -90,6 +100,9 @@ def run_simulation(code: str, body: SimulationRequest):
         "days": days,
         "simulations": simulations,
         "mu": _safe_float(mu),
+        "mu_hist": _safe_float(mu_hist),
+        "prior_annual": prior_annual,
+        "hist_weight": HIST_WEIGHT,
         "sigma": _safe_float(sigma),
         "time_labels": time_labels,
         "paths": {k: [_safe_float(v) for v in vals] for k, vals in pct_paths.items()},

@@ -27,6 +27,7 @@ import os
 import json
 import glob
 import random
+import hashlib
 import logging
 
 router = APIRouter()
@@ -79,7 +80,9 @@ def _save_account(account: dict) -> None:
 
 
 def _new_account(device_id: str) -> dict:
-    suffix = str(random.randint(1000, 9999))
+    # Deterministic per device: an account is only saved on its first trade, so the preview
+    # shown before that must not change name between requests.
+    suffix = str(int(hashlib.sha1(device_id.encode()).hexdigest(), 16) % 9000 + 1000)
     today = _beijing_today()
     return {
         "device_id": device_id,
@@ -248,6 +251,23 @@ def _all_accounts() -> list[dict]:
     return accounts
 
 
+def _approx_total(a: dict, market: str) -> float:
+    """Cash + holdings at cost (no price calls), per market."""
+    if market == "us":
+        return a.get("us_cash", _US_INITIAL_CASH) + sum(p["avg_cost"] * p["shares"] for p in a.get("us_portfolio", {}).values())
+    return a.get("cash", _INITIAL_CASH) + sum(p["avg_cost"] * p["shares"] for p in a.get("portfolio", {}).values())
+
+
+def _has_traded(a: dict, market: str) -> bool:
+    return bool(a.get("us_transactions" if market == "us" else "transactions"))
+
+
+def _ranked(market: str) -> list[dict]:
+    """Accounts that have traded in `market`, best first. Untouched accounts don't compete."""
+    accs = [a for a in _all_accounts() if _has_traded(a, market)]
+    return sorted(accs, key=lambda a: _approx_total(a, market), reverse=True)
+
+
 def _rank_of(device_id: str, sorted_accounts: list[dict]) -> int:
     for i, a in enumerate(sorted_accounts, 1):
         if a["device_id"] == device_id:
@@ -278,11 +298,10 @@ class SellBody(BaseModel):
 @router.post("/account")
 def create_or_get_account(body: DeviceBody):
     account = _load_account(body.device_id)
-    if account is None:
-        account = _new_account(body.device_id)
-    else:
-        account = _migrate_account(account)
-    _save_account(account)
+    is_new = account is None
+    # A visit alone no longer creates an account (it used to, filling the leaderboard with idle
+    # accounts): new devices get an unsaved preview; /buy saves it on the first trade.
+    account = _new_account(body.device_id) if is_new else _migrate_account(account)
 
     # CN
     enriched    = _compute_portfolio(account)
@@ -300,18 +319,19 @@ def create_or_get_account(body: DeviceBody):
     if not us_history or us_history[-1]["date"] != today:
         us_history.append({"date": today, "value": us_total})
         account["us_total_value_history"] = us_history[-90:]
-    _save_account(account)
+    if not is_new:
+        _save_account(account)
 
-    all_accs    = _all_accounts()
-    sorted_accs = sorted(all_accs, key=lambda a: a.get("cash", 0), reverse=True)
-    rank        = _rank_of(body.device_id, sorted_accs)
+    rank    = _rank_of(body.device_id, _ranked("cn"))
+    us_rank = _rank_of(body.device_id, _ranked("us"))
 
     return {
         **account,
         "portfolio":        enriched,
         "total_value":      total,
         "return_pct":       _return_pct(total),
-        "rank":             rank,
+        "rank":             rank,       # -1 until this device has traded A-shares
+        "us_rank":          us_rank,    # -1 until it has traded US stocks
         "transactions":     account.get("transactions", [])[-20:],
         "us_portfolio":     us_enriched,
         "us_total_value":   us_total,
@@ -329,16 +349,7 @@ def get_account(device_id: str):
     enriched = _compute_portfolio(account)
     total    = _total_value(account, enriched)
 
-    # Compute leaderboard rank properly
-    all_accs = _all_accounts()
-
-    def _approx_total(a: dict) -> float:
-        # Use raw cash + portfolio cost as rough proxy (avoids repeated price calls)
-        pv = sum(pos["avg_cost"] * pos["shares"] for pos in a.get("portfolio", {}).values())
-        return a.get("cash", 0) + pv
-
-    sorted_accs = sorted(all_accs, key=_approx_total, reverse=True)
-    rank = _rank_of(device_id, sorted_accs)
+    rank = _rank_of(device_id, _ranked("cn"))
 
     return {
         "cash":                 account["cash"],
@@ -355,9 +366,8 @@ def get_account(device_id: str):
 @router.post("/buy")
 def buy_stock(body: BuyBody):
     account = _load_account(body.device_id)
-    if account is None:
-        raise HTTPException(status_code=404, detail="账户不存在，请先创建")
-    account = _migrate_account(account)
+    # First trade creates the account (it is saved below together with the trade)
+    account = _new_account(body.device_id) if account is None else _migrate_account(account)
 
     today  = _beijing_today()
     market = (body.market or "cn").lower()
@@ -654,27 +664,21 @@ def sell_stock(body: SellBody):
 
 
 @router.get("/leaderboard")
-def leaderboard(device_id: str = ""):
-    all_accs = _all_accounts()
-
-    def _approx_total(a: dict) -> float:
-        pv = sum(pos["avg_cost"] * pos["shares"] for pos in a.get("portfolio", {}).values())
-        return a.get("cash", 0) + pv
-
-    sorted_accs = sorted(all_accs, key=_approx_total, reverse=True)
-
+def leaderboard(device_id: str = "", market: str = "cn"):
+    """Top 20 for one market (holdings at cost), only accounts that have traded there.
+    `market` defaults to cn so older app builds keep their previous behaviour."""
+    market = "us" if market.lower() == "us" else "cn"
+    initial = _US_INITIAL_CASH if market == "us" else _INITIAL_CASH
     result = []
-    for i, a in enumerate(sorted_accs[:20], 1):
-        total  = _approx_total(a)
-        ret    = round((total - _INITIAL_CASH) / _INITIAL_CASH * 100, 2)
+    for i, a in enumerate(_ranked(market)[:20], 1):
+        total = _approx_total(a, market)
         result.append({
             "rank":        i,
             "nickname":    a.get("nickname", "用户#????"),
-            "return_pct":  ret,
+            "return_pct":  round((total - initial) / initial * 100, 2),
             "total_value": round(total, 2),
             "is_me":       device_id != "" and a["device_id"] == device_id,
         })
-
     return result
 
 
@@ -682,7 +686,8 @@ def leaderboard(device_id: str = ""):
 def reset_account(body: DeviceBody):
     account = _load_account(body.device_id)
     if account is None:
-        raise HTTPException(status_code=404, detail="账户不存在")
+        # Never traded: the preview is already a fresh account
+        return {"success": True, "message": "账户已重置，初始资金 100万元"}
 
     nickname = account.get("nickname", f"用户#{random.randint(1000,9999)}")
     fresh = _new_account(body.device_id)

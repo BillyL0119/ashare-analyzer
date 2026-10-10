@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LeaderboardView: View {
     @ObservedObject var vm: PaperTradingViewModel
+    let market: Market
     @Environment(\.dismiss) private var dismiss
 
     private var top3: [LeaderboardEntry] { Array(vm.leaderboard.prefix(3)) }
@@ -10,8 +11,15 @@ struct LeaderboardView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if vm.leaderboard.isEmpty {
+                if !vm.leaderboardLoaded {
                     ProgressView("加载排行榜…")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if vm.leaderboard.isEmpty {
+                    Text(L("还没有人在这个市场交易过，完成第一笔交易就能上榜"))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(32)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ScrollView {
@@ -20,7 +28,7 @@ struct LeaderboardView: View {
                             if !rest.isEmpty {
                                 VStack(spacing: 0) {
                                     ForEach(Array(rest.enumerated()), id: \.element.id) { idx, entry in
-                                        LeaderboardRow(entry: entry)
+                                        LeaderboardRow(entry: entry, market: market)
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 11)
                                             .background(entry.isMe ? DS.accent.opacity(0.12) : Color.clear)
@@ -46,7 +54,7 @@ struct LeaderboardView: View {
         }
         .presentationDetents([.medium, .large])
         .presentationBackground(DS.bg)
-        .task { await vm.loadLeaderboard() }
+        .task { await vm.loadLeaderboard(market: market) }
     }
 
     // Order 2 – 1 – 3 with the winner raised.
@@ -54,7 +62,7 @@ struct LeaderboardView: View {
         let order: [Int] = top3.count >= 3 ? [1, 0, 2] : Array(top3.indices)
         return HStack(alignment: .bottom, spacing: 10) {
             ForEach(order, id: \.self) { i in
-                PodiumCard(entry: top3[i], isFirst: top3[i].rank == 1)
+                PodiumCard(entry: top3[i], isFirst: top3[i].rank == 1, market: market)
             }
         }
     }
@@ -72,6 +80,7 @@ private func medalColor(_ rank: Int) -> Color? {
 private struct PodiumCard: View {
     let entry: LeaderboardEntry
     let isFirst: Bool
+    let market: Market
 
     var body: some View {
         let medal = medalColor(entry.rank) ?? .secondary
@@ -86,9 +95,9 @@ private struct PodiumCard: View {
                 .font(.caption.weight(.semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-            PctPill(pct: entry.returnPct, market: .cn, minWidth: 0)
+            PctPill(pct: entry.returnPct, market: market, minWidth: 0)
                 .fixedSize()
-            Text("¥\(entry.totalValue, format: .number.precision(.fractionLength(0)))")
+            Text((market == .us ? "$" : "¥") + entry.totalValue.formatted(.number.precision(.fractionLength(0))))
                 .font(.system(.caption2, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
@@ -110,6 +119,7 @@ private struct PodiumCard: View {
 
 private struct LeaderboardRow: View {
     let entry: LeaderboardEntry
+    let market: Market
 
     var body: some View {
         HStack(spacing: 12) {
@@ -132,14 +142,14 @@ private struct LeaderboardRow: View {
                             .background(DS.accent, in: Capsule())
                     }
                 }
-                Text("¥\(entry.totalValue, format: .number.precision(.fractionLength(0)))")
+                Text((market == .us ? "$" : "¥") + entry.totalValue.formatted(.number.precision(.fractionLength(0))))
                     .font(.caption)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
-            PctPill(pct: entry.returnPct, market: .cn)
+            PctPill(pct: entry.returnPct, market: market)
         }
     }
 }

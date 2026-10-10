@@ -223,7 +223,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const [sellModal,   setSellModal]  = useState(null)  // {symbol, pos}
   const [showTxn,     setShowTxn]    = useState(false)
   const [showBoard,   setShowBoard]  = useState(false)
-  const [leaderboard, setLeaderboard]= useState([])
+  const [leaderboard, setLeaderboard]= useState(null)   // null = loading
   const [resetModal,  setResetModal] = useState(false)
   const [actionMsg,   setActionMsg]  = useState(null)
 
@@ -249,14 +249,16 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   }, [accountKey])
 
   const fetchLeaderboard = useCallback(async () => {
+    setLeaderboard(null)
     try {
-      const res = await fetch(`/api/paper/leaderboard?device_id=${accountKey}`)
+      const res = await fetch(`/api/paper/leaderboard?device_id=${accountKey}&market=${ptMarket}`)
       const data = await res.json()
       setLeaderboard(Array.isArray(data) ? data : [])
     } catch (e) {
       console.error('leaderboard:', e)
+      setLeaderboard([])
     }
-  }, [accountKey])
+  }, [accountKey, ptMarket])
 
   useEffect(() => {
     if (authLoading) return
@@ -354,7 +356,8 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const cash       = isUS ? (account?.us_cash ?? 100_000) : (account?.cash ?? 1_000_000)
   const retPct     = isUS ? (account?.us_return_pct ?? 0) : (account?.return_pct ?? 0)
   const commission = isUS ? (account?.us_total_commission_paid ?? 0) : (account?.total_commission_paid ?? 0)
-  const rank       = account?.rank ?? '--'
+  // Per-market rank; -1 until this account has traded in that market
+  const rank       = (isUS ? account?.us_rank : account?.rank) ?? -1
 
   const portfolioValue = Object.values(portfolio).reduce((s, p) => s + (p.market_value || 0), 0)
 
@@ -761,9 +764,9 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
 
         {showBoard && (
           <div style={{ marginTop: 14, overflowX: 'auto' }}>
-            {leaderboard.length === 0 ? (
+            {leaderboard === null || leaderboard.length === 0 ? (
               <div style={{ color: MUTED, fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
-                {t.ptLoadingLb}
+                {leaderboard === null ? t.ptLoadingLb : (lang === 'zh' ? '还没有人在这个市场交易过，完成第一笔交易就能上榜' : 'No one has traded in this market yet. Make a trade to get on the board.')}
               </div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -790,7 +793,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
                         {localNick(entry.nickname, lang)}
                         {entry.is_me && <span style={{ fontSize: 10, color: '#0ea5e9', marginLeft: 6, background: 'rgba(14,165,233,0.15)', padding: '1px 5px', borderRadius: 4 }}>{t.ptLbMe}</span>}
                       </td>
-                      <td style={{ padding: '9px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>¥{fmt(entry.total_value, 0)}</td>
+                      <td style={{ padding: '9px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>{currSym}{fmt(entry.total_value, 0)}</td>
                       <td style={{ padding: '9px 10px' }}><PctBadge value={entry.return_pct} /></td>
                     </tr>
                   ))}
