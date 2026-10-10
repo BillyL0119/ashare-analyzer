@@ -104,7 +104,7 @@ function Board({ market, onClose }) {
   return (
     <Sheet onClose={onClose}>
       <div className="m-stack" style={{ gap: 16 }}>
-        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('收益排行榜')}</div>
+        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('收益排行榜')} · {market === 'cn' ? t('A股') : t('美股')}</div>
         {err ? <ErrorBox onRetry={() => { setErr(false); window.location.reload() }} /> : !rows ? <Skeleton h={180} r={20} /> : rows.length === 0 ? (
           <div className="m-muted" style={{ textAlign: 'center', fontSize: 14, padding: '24px 8px' }}>{t('还没有人在这个市场交易过，完成第一笔交易就能上榜')}</div>
         ) : (
@@ -172,6 +172,8 @@ export default function Paper() {
         <b>{t('模拟盘')}</b>
         <button className="m-iconbtn" onClick={() => setSheet('board')} aria-label={t('收益排行榜')}>🏆</button>
       </div>
+      {/* The switch drives the whole page (account card, positions, trades), so it sits on top */}
+      <div style={{ margin: '-8px 2px -6px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
 
       {!view ? <Skeleton h={220} r={24} /> : (
         <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `linear-gradient(135deg, color-mix(in srgb, ${view.ret === 0 ? 'var(--accent)' : accent} 20%, var(--surface)), var(--surface) 60%)` }}>
@@ -207,7 +209,6 @@ export default function Paper() {
       )}
 
       <Section title={t('持仓')} action={null}>
-        <div style={{ margin: '-4px 4px 10px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
         {view && (view.positions.length === 0 ? (
           <div className="m-card" style={{ display: 'grid', justifyItems: 'center', gap: 10, padding: '28px 16px', textAlign: 'center' }}>
             <span style={{ width: 54, height: 54, borderRadius: 27, display: 'grid', placeItems: 'center', background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)' }}>

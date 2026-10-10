@@ -80,6 +80,9 @@ struct PaperTradingTabView: View {
     private func accountBody(_ account: PaperAccount) -> some View {
         ScrollView {
             VStack(spacing: 22) {
+                // The switch drives the whole page (account card, positions, trades), so it sits on top
+                marketPicker
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 AccountHeaderView(account: account, market: selectedMarket)
 
                 positionsList(account)
@@ -140,7 +143,6 @@ struct PaperTradingTabView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                    marketPicker
                 }
             }
 

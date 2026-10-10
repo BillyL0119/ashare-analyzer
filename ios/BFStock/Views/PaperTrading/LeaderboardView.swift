@@ -44,7 +44,7 @@ struct LeaderboardView: View {
                 }
             }
             .background(DS.bg.ignoresSafeArea())
-            .navigationTitle("收益排行榜")
+            .navigationTitle(L("收益排行榜") + " · " + (market == .us ? L("美股") : L("A股")))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
