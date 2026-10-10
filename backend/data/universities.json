@@ -621,11 +621,13 @@
   "qs_rank": 10,
   "established": 1965,
   "programs": [
-   "Undergraduate (BBA)",
-   "MBA",
-   "MSc Finance",
-   "PhD",
-   "EMBA"
+   "BBA",
+   "BBA (Accountancy)",
+   "Full-time MBA",
+   "Part-time MBA",
+   "UCLA–NUS Executive MBA",
+   "MSc programmes",
+   "PhD"
   ],
   "specialties": [
    "Finance",
@@ -633,11 +635,16 @@
    "Strategy",
    "Real Estate"
   ],
-  "description_en": "NUS Business School is one of Asia's leading business schools. Singapore's role as Southeast Asia's financial hub and NUS's place among the world's top universities make it a strong choice for students targeting Asian markets, and its MBA curriculum has a strong Asia focus.",
-  "description_cn": "新加坡国立大学商学院是亚洲顶尖商学院之一。新加坡作为东南亚金融中心，加上国大跻身全球顶尖大学之列，使其成为瞄准亚洲市场的学生的理想选择；MBA 课程具有鲜明的亚洲视角。",
-  "tuition_usd": null,
+  "description_en": "NUS Business School is the business school of the National University of Singapore, with roots in the business administration department founded in 1965. Its BBA and BBA (Accountancy) programmes are among the most sought-after undergraduate business degrees in Asia, its MBA has a strong Asia focus, and Singapore's role as Southeast Asia's financial hub shapes recruiting.",
+  "description_cn": "新加坡国立大学商学院前身是 1965 年设立的工商管理系。其 BBA 和 BBA（会计）是亚洲最热门的本科商科学位之一，MBA 课程以亚洲视角见长；新加坡作为东南亚金融中心，为学生求职提供了天然优势。",
+  "tuition_usd": "MBA S$99,953 (2026 intake, incl. GST) · BBA (international) ~S$22,000/year with Tuition Grant or ~S$33,000+/year without (est.)",
   "language": "english",
-  "notable_alumni": [],
+  "notable_alumni": [
+   "Bahren Shaari",
+   "Tan Wang Cheow",
+   "Ronald Ong",
+   "Robert Yap"
+  ],
   "url": "https://biz.nus.edu.sg",
   "tags": [
    "Finance",
@@ -648,39 +655,56 @@
    "Singapore",
    "Southeast Asia"
   ],
-  "requirements": null,
+  "requirements": {
+   "gmat_median": "670 average (Focus 615)",
+   "gre_accepted": true
+  },
   "employment": null,
   "programs_detail": [
    {
-    "name": "MBA",
-    "duration": "1 year",
+    "name": "BBA / BBA (Accountancy)",
+    "duration": "3–4 years",
     "language": "English",
-    "description_en": "Asia's gateway MBA with exceptional China, India, and ASEAN business exposure.",
-    "description_cn": "亚洲门户MBA，深度融入中国、印度和东南亚商业生态。"
+    "description_en": "Undergraduate business degrees. International students can take the MOE Tuition Grant, which lowers fees but requires three years of work with a Singapore entity after graduation.",
+    "description_cn": "本科商科学位。国际学生可申请新加坡教育部学费补助，学费更低，但毕业后须在新加坡机构工作三年。"
    },
    {
-    "name": "MBA (Finance Specialisation)",
-    "duration": "1 year",
+    "name": "Full-time MBA",
+    "duration": "Full-time",
     "language": "English",
-    "description_en": "MBA track tailored for banking, trading, and investment management careers in Asia.",
-    "description_cn": "专为亚洲银行、交易和投资管理职业定制的MBA专业方向。"
+    "description_en": "Asia-focused MBA; tuition S$99,953 including GST for the 2026 intake. The class's average GMAT is 670 (GMAT Focus 615).",
+    "description_cn": "以亚洲为重点的 MBA；2026 年入学学费 S$99,953（含消费税），班级 GMAT 平均 670（Focus 615）。"
    },
    {
-    "name": "BBA (Undergraduate)",
-    "duration": "4 years",
+    "name": "UCLA–NUS Executive MBA",
+    "duration": "Part-time",
     "language": "English",
-    "description_en": "Top-ranked Asian undergraduate business degree with dual-degree options across 30+ partner universities.",
-    "description_cn": "亚洲顶尖本科商科学位，可与30多所合作大学联合开设双学位。"
-   },
-   {
-    "name": "MSc Finance",
-    "duration": "1 year",
-    "language": "English",
-    "description_en": "Quantitative finance master targeting Singapore and regional financial hubs.",
-    "description_cn": "面向新加坡和地区金融中心职位的量化金融硕士。"
+    "description_en": "Executive MBA run jointly with UCLA Anderson.",
+    "description_cn": "与 UCLA 安德森管理学院合办的高管 MBA。"
    }
   ],
-  "alumni_detail": [],
+  "alumni_detail": [
+   {
+    "name": "Bahren Shaari",
+    "role": "CEO, Bank of Singapore (BBA)",
+    "year": 1984
+   },
+   {
+    "name": "Tan Wang Cheow",
+    "role": "Founder and Executive Chairman, Food Empire Holdings (BBA Accounting)",
+    "year": 1981
+   },
+   {
+    "name": "Ronald Ong",
+    "role": "Chairman and CEO, Morgan Stanley ASEAN (BBA)",
+    "year": null
+   },
+   {
+    "name": "Robert Yap",
+    "role": "Chairman and CEO, YCH Group (BBA)",
+    "year": null
+   }
+  ],
   "qs_bm_rank": "8",
   "qs_bm_rank_num": 8,
   "data_checked": "2026-10"
@@ -693,12 +717,15 @@
   "country": "Hong Kong",
   "city": "Hong Kong",
   "qs_rank": 11,
-  "established": 1913,
+  "established": null,
   "programs": [
-   "Undergraduate",
-   "MBA",
-   "MSc Finance",
-   "MSc Accounting",
+   "BBA",
+   "BBA (Accounting and Finance)",
+   "BBA (Information Systems)",
+   "BEcon & Fin",
+   "Full-time MBA",
+   "Part-time MBA",
+   "HKU–Fudan IMBA",
    "PhD"
   ],
   "specialties": [
@@ -707,9 +734,9 @@
    "Economics",
    "International Business"
   ],
-  "description_en": "HKU Business School is the oldest and one of the most prestigious business schools in Hong Kong, combining British academic tradition with deep Chinese market knowledge. Hong Kong's status as Asia's premier international financial centre, combined with its unique role as the gateway between East and West, creates unparalleled learning and career opportunities.",
-  "description_cn": "香港大学经管学院是香港历史最悠久、最负盛名的商学院之一，融合英国学术传统与深厚的中国市场知识。香港作为亚洲首要国际金融中心的地位，以及其沟通东西方的独特角色，创造了无可比拟的学习和职业机遇。",
-  "tuition_usd": null,
+  "description_en": "HKU Business School is the business faculty of the University of Hong Kong, the city's oldest university (founded 1911). It offers a family of four-year undergraduate degrees in business, finance and economics, a 12-month full-time MBA and several part-time and joint MBAs, and its location gives students direct access to Hong Kong's banks, exchanges and professional-services firms.",
+  "description_cn": "港大商学院是香港大学的商科学院；港大创立于 1911 年，是香港历史最悠久的大学。学院开设一系列四年制商科、金融和经济本科学位，以及 12 个月全日制 MBA 和多个在职、联合 MBA 项目，学生可直接接触香港的银行、交易所和专业服务机构。",
+  "tuition_usd": "BBA ~HK$224,000/year (non-local, 2026/27, est.) · Full-time MBA HK$588,000 (2026/27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.business.hku.hk",
@@ -724,9 +751,41 @@
   "qs_bm_rank": "=32",
   "qs_bm_rank_num": 32,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gre_accepted": true
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BBA / BBA (Accounting and Finance) / BBA (Information Systems)",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Four-year undergraduate business degrees; non-local students pay the non-STEM rate (about HK$224,000 a year for 2026/27).",
+    "description_cn": "四年制本科商科学位；非本地学生按非 STEM 学费标准缴费（2026/27 约每年 HK$224,000）。"
+   },
+   {
+    "name": "BEcon & Fin",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Combined economics and finance undergraduate degree.",
+    "description_cn": "经济学与金融学结合的本科学位。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "12 months",
+    "language": "English",
+    "description_en": "One-year MBA for applicants with at least two years of full-time work experience; requires a GMAT or GRE score. Tuition HK$588,000 for 2026/27.",
+    "description_cn": "一年制 MBA，要求至少两年全职工作经验并提交 GMAT 或 GRE 成绩；2026/27 学费 HK$588,000。"
+   },
+   {
+    "name": "HKU–Fudan IMBA",
+    "duration": "Part-time",
+    "language": "English",
+    "description_en": "International MBA run jointly with Fudan University in Shanghai.",
+    "description_cn": "与上海复旦大学合办的国际 MBA。"
+   }
+  ]
  },
  {
   "id": "ntu-nanyang",
@@ -1639,10 +1698,11 @@
   "qs_rank": 33,
   "established": 1991,
   "programs": [
-   "Undergraduate",
-   "MBA",
-   "MSc Finance",
-   "MSc Investment Management",
+   "BBA programmes",
+   "BSc in Quantitative Finance",
+   "Full-time MBA",
+   "Kellogg-HKUST Executive MBA",
+   "MSc programmes",
    "PhD"
   ],
   "specialties": [
@@ -1651,9 +1711,9 @@
    "Accounting",
    "Technology Management"
   ],
-  "description_en": "HKUST Business School is one of Asia's leading business schools. Founded in 1991, HKUST rose quickly through research strength and close ties with mainland China's technology and financial sectors.",
-  "description_cn": "香港科技大学商学院是亚洲顶尖商学院之一。港科大成立于 1991 年，凭借科研实力以及与内地科技、金融业的紧密联系迅速崛起。",
-  "tuition_usd": null,
+  "description_en": "HKUST Business School opened with the Hong Kong University of Science and Technology in 1991 and quickly built a strong research reputation in Asia. Undergraduates choose from BBA programmes and majors such as finance, accounting, economics, information systems and operations management; its full-time MBA lasts 12 or 16 months with a highly international class, and the Kellogg-HKUST Executive MBA is run with Northwestern's Kellogg School.",
+  "description_cn": "港科大商学院随香港科技大学于 1991 年成立，很快在亚洲建立起很强的研究声誉。本科生可选择多个 BBA 项目，以及金融、会计、经济、信息系统、运营管理等专业；全日制 MBA 为 12 或 16 个月，国际学生比例很高；与西北大学凯洛格商学院合办 Kellogg-HKUST EMBA。",
+  "tuition_usd": "BBA HK$215,000/year (non-local, 2026/27) · Full-time MBA HK$600,000 (Aug 2027 intake)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://bm.hkust.edu.hk",
@@ -1669,9 +1729,41 @@
   "qs_bm_rank": "30",
   "qs_bm_rank_num": 30,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gre_accepted": true,
+   "deadlines": {
+    "r1": "Oct 7, 2026",
+    "r2": "Dec 3, 2026",
+    "r3": "Jan 28, 2027",
+    "r4": "Mar 25, 2027",
+    "r5": "May 13, 2027 (rolling, international)"
+   }
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BBA programmes",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Undergraduate business degrees with majors including finance, accounting, economics, information systems, marketing and operations management. Non-local tuition is HK$215,000 a year for 2026/27 entry.",
+    "description_cn": "本科商科学位，可选金融、会计、经济、信息系统、市场营销、运营管理等专业；2026/27 入学的非本地学费为每年 HK$215,000。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "12 or 16 months",
+    "language": "English",
+    "description_en": "Students customise about 60% of the curriculum; 84% of the class is international. Tuition HK$600,000 for the August 2027 intake.",
+    "description_cn": "约 60% 课程可自主选择，84% 学生来自海外；2027 年 8 月入学学费 HK$600,000。"
+   },
+   {
+    "name": "Kellogg-HKUST Executive MBA",
+    "duration": "Part-time",
+    "language": "English",
+    "description_en": "Executive MBA run jointly with Northwestern University's Kellogg School of Management.",
+    "description_cn": "与西北大学凯洛格管理学院合办的高管 MBA。"
+   }
+  ]
  },
  {
   "id": "edinburgh-business",
