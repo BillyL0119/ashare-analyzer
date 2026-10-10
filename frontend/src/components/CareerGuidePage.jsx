@@ -7,7 +7,8 @@
  */
 import { useState, useRef, useEffect, useCallback } from 'react'
 import useThemeStore from '../store/themeStore'
-import { ROLES } from './careerData'
+import { CareersView, FirmsView } from './career/CareerViews'
+import { FIRMS } from './career/firms'
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
@@ -235,173 +236,6 @@ const cardStyle = {
   border: '1px solid var(--border-primary)',
   borderRadius: 10,
   padding: '16px 18px',
-}
-
-function Tag({ label, color }) {
-  return (
-    <span style={{
-      display: 'inline-block',
-      padding: '2px 8px',
-      borderRadius: 4,
-      fontSize: 11,
-      fontWeight: 600,
-      background: color ? `${color}22` : 'var(--bg-hover)',
-      color: color || 'var(--text-muted)',
-      border: `1px solid ${color ? `${color}44` : 'var(--border-primary)'}`,
-    }}>
-      {label}
-    </span>
-  )
-}
-
-// ── Sub-module 1: Job Library ──────────────────────────────────────────────────
-
-function Section({ title, children }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div style={{ borderTop: '1px solid var(--border-primary)', paddingTop: 8, marginTop: 8 }}>
-      <button
-        onClick={() => setOpen(v => !v)}
-        style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600,
-          padding: 0, display: 'flex', alignItems: 'center', gap: 4, width: '100%', textAlign: 'left',
-        }}
-      >
-        <span style={{ fontSize: 10, transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s', display: 'inline-block' }}>▶</span>
-        {title}
-      </button>
-      {open && <div style={{ marginTop: 8, paddingLeft: 14 }}>{children}</div>}
-    </div>
-  )
-}
-
-function JobCard({ role, zh }) {
-  const [expanded, setExpanded] = useState(false)
-  const title = zh ? role.title : role.titleEn
-  const tagline = zh ? role.tagline : role.taglineEn
-  const desc = zh ? role.description : role.descriptionEn
-  const skills = zh ? role.skills : role.skillsEn
-  const certs = zh ? role.certs : role.certsEn
-  const entry = zh ? role.entry : role.entryEn
-  const career = zh ? role.career : role.careerEn
-  const salary = zh ? role.salary : role.salaryEn
-  const disclaimer = zh ? role.disclaimer : role.disclaimerEn
-  const coreScenario = zh ? (role.coreScenario || '') : (role.coreScenarioEn || '')
-  const differentiators = zh ? (role.differentiators || []) : (role.differentiatorsEn || [])
-  const typicalDay = zh ? (role.typicalDay || null) : (role.typicalDayEn || null)
-
-  return (
-    <div
-      className="bfs-card"
-      style={{
-        ...cardStyle,
-        cursor: 'pointer',
-        borderColor: expanded ? `${role.color}55` : 'var(--border-primary)',
-      }}
-      onClick={() => setExpanded(v => !v)}
-    >
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ fontSize: 22 }}>{role.icon}</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: role.color }}>{title}</div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{tagline}</div>
-        </div>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>
-          {zh ? (expanded ? '收起 ▲' : '展开 ▼') : (expanded ? 'Less ▲' : 'More ▼')}
-        </span>
-      </div>
-
-      {expanded && (
-        <div onClick={e => e.stopPropagation()} style={{ marginTop: 14 }}>
-          {/* Description */}
-          <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 12 }}>{desc}</p>
-
-          {/* Core Scenario */}
-          {coreScenario && (
-            <Section title={zh ? '典型工作场景' : 'Typical Work Scenario'}>
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.8, margin: 0 }}>{coreScenario}</p>
-            </Section>
-          )}
-
-          {/* Core skills */}
-          <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 11, color: role.color, fontWeight: 700, marginBottom: 6 }}>
-              {zh ? '核心技能工具' : 'Core Skills & Tools'}
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-              {skills.map((s, i) => <Tag key={i} label={s} color={role.color} />)}
-            </div>
-          </div>
-
-          {/* Differentiators */}
-          {differentiators.length > 0 && (
-            <Section title={zh ? '与相近岗位的区别' : 'How This Role Differs'}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {differentiators.map((d, i) => (
-                  <div key={i} style={{
-                    fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7,
-                    paddingLeft: 10, borderLeft: `2px solid ${role.color}55`,
-                  }}>
-                    {d}
-                  </div>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          <Section title={zh ? '推荐证书' : 'Recommended Certifications'}>
-            <ul style={{ margin: 0, padding: '0 0 0 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.9 }}>
-              {certs.map((c, i) => <li key={i}>{c}</li>)}
-            </ul>
-          </Section>
-
-          <Section title={zh ? '入行要求' : 'Entry Requirements'}>
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>{entry}</p>
-          </Section>
-
-          <Section title={zh ? '职业晋升路径' : 'Career Path'}>
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>{career}</p>
-          </Section>
-
-          <Section title={zh ? '薪资参考范围' : 'Salary Reference Range'}>
-            <p style={{ fontSize: 12, color: '#26a69a', lineHeight: 1.7, margin: 0 }}>{salary}</p>
-            <p style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4, margin: '4px 0 0' }}>{disclaimer}</p>
-          </Section>
-
-          <Section title={zh ? '典型一天工作流' : 'A Typical Day'}>
-            {typicalDay && Array.isArray(typicalDay) ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {typicalDay.map((item, i) => (
-                  <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace', padding: '2px 0' }}>
-                    {item}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0, fontFamily: 'monospace' }}>
-                {zh ? (role.typical || '') : (role.typicalEn || '')}
-              </p>
-            )}
-          </Section>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function JobLibrary({ zh }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
-        {zh
-          ? '点击任意岗位卡片展开详细信息。薪资数据为市场估算区间，仅供参考。'
-          : 'Click any role card to expand details. Salary data are market estimates for reference only.'}
-      </div>
-      {ROLES.map(role => <JobCard key={role.id} role={role} zh={zh} />)}
-    </div>
-  )
 }
 
 // ── Sub-module 2: Interview Questions ────────────────────────────────────────
@@ -912,83 +746,76 @@ function MockInterview({ zh, lang }) {
 export default function CareerGuidePage({ lang }) {
   useThemeStore((s) => s.theme)
   const zh = lang !== 'en'
-  const [subTab, setSubTab] = useState('jobs')
+  const [subTab, setSubTab] = useState('careers')
+  const [firmCat, setFirmCat] = useState('all')
+  const showFirms = (cat) => { setFirmCat(cat); setSubTab('firms'); window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
   const TABS = [
-    { key: 'jobs',      labelZh: '金融岗位库',    labelEn: 'Job Library' },
-    { key: 'questions', labelZh: '面试题库',       labelEn: 'Question Bank' },
-    { key: 'mock',      labelZh: 'AI 模拟面试',    labelEn: 'AI Mock Interview' },
+    { key: 'careers',   labelZh: '职业路径',   labelEn: 'Careers' },
+    { key: 'firms',     labelZh: '机构库',     labelEn: 'Firms' },
+    { key: 'questions', labelZh: '面试题库',   labelEn: 'Interview Questions' },
+    { key: 'mock',      labelZh: 'AI 模拟面试', labelEn: 'Mock Interview' },
+  ]
+  const stats = [
+    { n: 8, zh: '职业路径', en: 'career tracks' },
+    { n: FIRMS.length, zh: '家机构', en: 'firms' },
+    { n: QUESTIONS.length, zh: '道面试题', en: 'interview questions' },
   ]
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', paddingTop: 24, paddingBottom: 48 }}>
       {/* Page header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 12 }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
-            {zh ? '金融求职指南' : 'Finance Career Guide'}
-          </h1>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-            {zh
-              ? '8大金融岗位深度解析 · 精选面试题库 · AI模拟面试练习'
-              : '8 finance roles in depth · curated question bank · AI mock interview practice'}
-          </p>
-          {/* Stat chips */}
-          <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
-            {[
-              { icon: '💼', label: zh ? '8 大岗位' : '8 Roles' },
-              { icon: '📝', label: zh ? '精选题库' : 'Question Bank' },
-              { icon: '🤖', label: zh ? 'AI 模拟面试' : 'AI Mock Interview' },
-              { icon: '🌐', label: zh ? '中英双语' : 'Bilingual' },
-            ].map(chip => (
-              <span key={chip.label} style={{
-                display: 'flex', alignItems: 'center', gap: 4,
-                fontSize: 11, padding: '3px 9px', borderRadius: 20,
-                background: 'rgba(14,165,233,0.08)',
-                border: '1px solid rgba(14,165,233,0.18)',
-                color: 'var(--text-secondary)',
-              }}>
-                <span>{chip.icon}</span>{chip.label}
-              </span>
-            ))}
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 18 }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#0ea5e9' }}>
+            {zh ? '求职指南' : 'Career Guide'}
           </div>
+          <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+            {zh ? '金融行业职业中心' : 'Finance Careers'}
+          </h1>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 620, lineHeight: 1.6 }}>
+            {zh
+              ? '对比各条职业路径的薪酬、工时和招聘时间线，了解主要机构，练习面试。'
+              : 'Compare pay, hours and recruiting timelines across finance careers, browse the major firms, and practise interviews.'}
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 22 }}>
+          {stats.map((st) => (
+            <div key={st.en}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{st.n}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>{zh ? st.zh : st.en}</div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Divider */}
-      <div style={{
-        height: 1, marginBottom: 18,
-        background: 'linear-gradient(90deg, rgba(14,165,233,0.4) 0%, rgba(139,92,246,0.3) 50%, transparent 100%)',
-      }} />
-
       {/* Sub-tab nav */}
-      <div style={{
-        display: 'flex', gap: 4, marginBottom: 20,
-        background: 'var(--bg-secondary)',
-        border: '1px solid var(--border-primary)',
-        borderRadius: 8, padding: 4, width: 'fit-content',
-      }}>
-        {TABS.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setSubTab(tab.key)}
-            style={{
-              padding: '7px 16px', borderRadius: 6, border: 'none', cursor: 'pointer',
-              fontSize: 13, fontWeight: subTab === tab.key ? 600 : 400,
-              background: subTab === tab.key
-                ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'
-                : 'transparent',
-              color: subTab === tab.key ? '#fff' : 'var(--text-secondary)',
-              transition: 'all 0.15s',
-            }}
-          >
-            {zh ? tab.labelZh : tab.labelEn}
-          </button>
-        ))}
+      <div role="tablist" style={{ display: 'flex', gap: 2, marginBottom: 20, borderBottom: '1px solid var(--border-primary)', overflowX: 'auto' }}>
+        {TABS.map(tab => {
+          const on = subTab === tab.key
+          return (
+            <button
+              key={tab.key}
+              role="tab"
+              aria-selected={on}
+              onClick={() => { if (tab.key === 'firms') setFirmCat('all'); setSubTab(tab.key) }}
+              style={{
+                padding: '10px 16px', border: 'none', cursor: 'pointer', background: 'transparent', whiteSpace: 'nowrap',
+                fontSize: 14, fontWeight: on ? 700 : 500,
+                color: on ? 'var(--text-primary)' : 'var(--text-muted)',
+                borderBottom: `2px solid ${on ? '#0ea5e9' : 'transparent'}`, marginBottom: -1,
+                transition: 'color 0.15s',
+              }}
+            >
+              {zh ? tab.labelZh : tab.labelEn}
+            </button>
+          )
+        })}
       </div>
 
       {/* Sub-tab content */}
-      {subTab === 'jobs'      && <JobLibrary zh={zh} />}
+      {subTab === 'careers'   && <CareersView zh={zh} onShowFirms={showFirms} />}
+      {subTab === 'firms'     && <FirmsView key={firmCat} zh={zh} initialCat={firmCat} />}
       {subTab === 'questions' && <QuestionBank zh={zh} />}
       {subTab === 'mock'      && <MockInterview zh={zh} lang={lang} />}
 
