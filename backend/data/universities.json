@@ -122,7 +122,7 @@
   ],
   "description_en": "Imperial College Business School sits within one of the world's leading science and engineering universities, which shapes its strengths in finance, analytics and innovation. Its MSc Finance and other specialist masters are popular with students aiming for London's finance and fintech sectors.",
   "description_cn": "帝国理工商学院依托全球顶尖的理工科大学，在金融、数据分析和创新方向优势明显；金融硕士等专业硕士项目深受希望进入伦敦金融与金融科技行业的学生欢迎。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc Economics, Finance & Data Science £42,700/year (international, 2026 entry) · Full-time MBA ~£78,000 (2026 entry)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.imperial.ac.uk/business-school",
@@ -138,32 +138,18 @@
   "employment": null,
   "programs_detail": [
    {
-    "name": "MSc Finance",
-    "duration": "1 year",
+    "name": "BSc Economics, Finance and Data Science",
+    "duration": "3 years",
     "language": "English",
-    "description_en": "FT-ranked #1 Finance MSc in UK; deep quant curriculum for IBD, asset management, trading.",
-    "description_cn": "英国金融时报排名第一的金融硕士，深度量化课程，面向投行、资管和交易职位。"
+    "description_en": "Undergraduate degree run by the Business School; overseas fee £42,700 a year for 2026 entry.",
+    "description_cn": "商学院开设的本科学位，2026 年入学海外学费每年 £42,700。"
    },
    {
-    "name": "MBA",
+    "name": "Full-time MBA",
     "duration": "1 year",
     "language": "English",
-    "description_en": "1-year MBA at world-leading science & engineering university with strong tech sector links.",
-    "description_cn": "全球顶尖理工大学的一年制MBA，与科技产业紧密联系。"
-   },
-   {
-    "name": "MSc Accounting",
-    "duration": "1 year",
-    "language": "English",
-    "description_en": "Rigorous accounting master with strong Big 4 and financial services placement.",
-    "description_cn": "严格的会计硕士，在四大和金融服务行业的就业表现卓越。"
-   },
-   {
-    "name": "MSc Innovation & Entrepreneurship",
-    "duration": "1 year",
-    "language": "English",
-    "description_en": "Startup-focused master embedded within Imperial's innovation ecosystem.",
-    "description_cn": "嵌入帝国理工创新生态系统的以初创企业为核心的硕士项目。"
+    "description_en": "One-year MBA; tuition about £78,000 for 2026 entry, the same for UK and international students.",
+    "description_cn": "一年制 MBA，2026 年入学学费约 £78,000，英国与国际学生相同。"
    }
   ],
   "alumni_detail": [],
@@ -549,7 +535,7 @@
   ],
   "description_en": "ETH Zurich's Department of Management, Technology and Economics (D-MTEC) brings management and economics teaching into one of the world's leading science and engineering universities. It suits students interested in technology management, quantitative finance and economics, in one of Europe's major financial centres.",
   "description_cn": "苏黎世联邦理工学院管理、技术与经济系（D-MTEC）把管理与经济学教学融入全球顶尖的理工科大学，适合对科技管理、量化金融和经济学感兴趣的学生，地处欧洲重要金融中心苏黎世。",
-  "tuition_usd": null,
+  "tuition_usd": "CHF 2,190/semester (international students, since autumn 2025)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://mtec.ethz.ch",
@@ -567,7 +553,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Degree programmes",
+    "duration": "Varies",
+    "language": "English",
+    "description_en": "Since autumn 2025 most international students pay CHF 2,190 a semester (Swiss students CHF 730).",
+    "description_cn": "自 2025 年秋季起，大多数国际学生每学期 CHF 2,190（瑞士学生 CHF 730）。"
+   }
+  ]
  },
  {
   "id": "ucl-management",
@@ -590,9 +585,9 @@
    "Analytics",
    "Technology Management"
   ],
-  "description_en": "UCL School of Management is one of the newest but fastest-growing business schools in the world, benefiting from UCL's top-10 global university status. Based in London's Knowledge Quarter near the British Library and the Francis Crick Institute, it is at the heart of London's innovation ecosystem. Strong links to UCL's science, engineering, and health faculties create unique interdisciplinary opportunities.",
-  "description_cn": "UCL管理学院是全球最新但发展最快的商学院之一，依托UCL全球前十大学的地位。坐落于伦敦知识区，毗邻大英图书馆和弗朗西斯·克里克研究所，处于伦敦创新生态系统的核心。与UCL理工和医学院的紧密联系创造了独特的跨学科机遇。",
-  "tuition_usd": null,
+  "description_en": "UCL School of Management is the business school of University College London, based at One Canada Square in Canary Wharf, London's financial district. It draws on UCL's strengths in science, engineering and health, and its BSc and MSci in Management Science combine analytics with business.",
+  "description_cn": "伦敦大学学院管理学院位于伦敦金融区金丝雀码头的一号加拿大广场，依托 UCL 在理工和医学方面的实力，本科管理科学（BSc/MSci）把数据分析与商科结合在一起。",
+  "tuition_usd": "BSc Management Science £42,700/year (international, 2026/27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.ucl.ac.uk/management",
@@ -609,7 +604,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BSc / MSci Management Science",
+    "duration": "3–4 years",
+    "language": "English",
+    "description_en": "Undergraduate degree combining analytics and management; overseas fee £42,700 a year for 2026/27.",
+    "description_cn": "结合数据分析与管理的本科学位；2026/27 海外学费每年 £42,700。"
+   }
+  ]
  },
  {
   "id": "nus-business",
@@ -1335,7 +1339,7 @@
   ],
   "description_en": "UNSW Business School is Sydney's highest-ranked business faculty and one of Asia-Pacific's most comprehensive. Its location in Australia's largest city, home to the ASX and a thriving financial services sector, creates outstanding finance career pathways. AGSM (Australian Graduate School of Management) runs top-ranked postgraduate programmes.",
   "description_cn": "新南威尔士大学商学院是悉尼排名最高的商学院，也是亚太地区最全面的商学院之一。坐落于澳大利亚最大城市，毗邻澳大利亚证券交易所（ASX）和蓬勃的金融服务业，提供出色的金融职业路径。澳大利亚管理研究生院（AGSM）开设顶尖研究生项目。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor of Commerce ~A$56,500/year (international, 2026) · AGSM full-time MBA ~A$86,760 total (2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.agsm.edu.au",
@@ -1352,7 +1356,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Indicative international fee A$56,500 for the first year of 2026 study (about A$180,500 for the degree).",
+    "description_cn": "2026 年国际学生首年学费约 A$56,500（全程约 A$180,500）。"
+   },
+   {
+    "name": "AGSM full-time MBA",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "Full-time MBA at the Australian Graduate School of Management; about A$86,760 in total for 2026.",
+    "description_cn": "澳大利亚管理研究生院全日制 MBA，2026 年总学费约 A$86,760。"
+   }
+  ]
  },
  {
   "id": "jhu-carey",
@@ -1378,7 +1398,7 @@
   ],
   "description_en": "Johns Hopkins Carey Business School leverages the prestige of one of the world's leading research universities. Its proximity to JHU's renowned medical and public health institutions creates unrivalled opportunities in healthcare management. The school emphasizes research-based business education with a strong focus on social impact and analytics.",
   "description_cn": "约翰斯·霍普金斯大学凯瑞商学院依托世界顶尖研究型大学的声望。毗邻霍普金斯著名医疗和公共卫生机构，创造了无与伦比的医疗管理职业机遇。学院强调以研究为基础的商业教育，高度关注社会影响和数据分析。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA ~$75,000/year (2025-26)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://carey.jhu.edu",
@@ -1394,7 +1414,16 @@
   "qs_bm_rank": "251-300",
   "qs_bm_rank_num": 251,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition about $75,000 a year (2025-26).",
+    "description_cn": "学费 about $75,000 a year (2025-26)。"
+   }
+  ]
  },
  {
   "id": "melbourne-business",
@@ -1417,9 +1446,9 @@
    "Strategy",
    "Leadership"
   ],
-  "description_en": "Melbourne Business School is Australia's most internationally recognised business school, consistently ranked in the global top 50. Melbourne is regularly voted one of the world's most liveable cities, and its diverse, cosmopolitan economy provides exceptional career opportunities across finance, healthcare, and technology. Strong links to the Asia-Pacific region are a key differentiator.",
-  "description_cn": "墨尔本商学院是澳大利亚国际知名度最高的商学院，持续跻身全球前50。墨尔本多次荣获全球最宜居城市，其多元化、国际化的经济体在金融、医疗和科技领域提供非凡的职业机遇，与亚太地区的紧密联系是其关键竞争优势。",
-  "tuition_usd": null,
+  "description_en": "The University of Melbourne's business faculty teaches the Bachelor of Commerce, while Melbourne Business School runs the university's MBA and executive programmes. Melbourne's economy spans finance, healthcare and technology, and the school has strong links across the Asia-Pacific region.",
+  "description_cn": "墨尔本大学商学院负责商学士（BCom）教学，墨尔本商学院（MBS）负责 MBA 和高管教育。墨尔本的经济涵盖金融、医疗和科技，学校与亚太地区联系紧密。",
+  "tuition_usd": "Bachelor of Commerce A$52,360–59,052/year (international, 2026) · MBS full-time MBA A$120,384 (international, 2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://mbs.edu",
@@ -1436,7 +1465,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "International fee A$52,360–59,052 a year in 2026, depending on subjects.",
+    "description_cn": "2026 年国际学生学费每年 A$52,360–59,052，视所选科目而定。"
+   },
+   {
+    "name": "Melbourne Business School full-time MBA",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "International tuition A$120,384 for 2026, paid per module.",
+    "description_cn": "2026 年国际学生学费 A$120,384，按模块缴纳。"
+   }
+  ]
  },
  {
   "id": "chicago-booth",
@@ -1634,7 +1679,7 @@
   ],
   "description_en": "The University of Sydney is Australia's oldest and most prestigious university, and its Business School carries that heritage. Located on a stunning heritage campus in the heart of Sydney, students benefit from extraordinary institutional prestige and a vibrant alumni network spanning finance, law, and technology sectors across the Asia-Pacific.",
   "description_cn": "悉尼大学是澳大利亚历史最悠久、最负盛名的大学，其商学院传承这一荣誉。坐落于悉尼市中心美丽的历史校园，学生得益于非凡的院校声望和横跨亚太地区金融、法律和科技领域的活跃校友网络。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor of Commerce ~A$56,300/year (international, 2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.sydney.edu.au/business",
@@ -1651,7 +1696,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "International first-year tuition about A$56,300 in 2026, charged per unit of study.",
+    "description_cn": "2026 年国际学生首年学费约 A$56,300，按学分收费。"
+   }
+  ]
  },
  {
   "id": "mcgill-desautels",
@@ -1674,9 +1728,9 @@
    "Accounting",
    "Strategy"
   ],
-  "description_en": "McGill Desautels is one of Canada's most prestigious business schools, located in the cosmopolitan city of Montreal. Its BCom is the most selective undergraduate business program in Quebec. As part of McGill University — one of the world's top research universities — students benefit from extraordinary interdisciplinary resources.",
-  "description_cn": "麦吉尔大学德萨泰斯管理学院是加拿大最负盛名的商学院之一，坐落于国际化都市蒙特利尔。其商学学士（BCom）是魁北克竞争最激烈的本科商科项目。作为全球顶尖研究型大学麦吉尔的组成部分，学生享有非凡的跨学科资源。",
-  "tuition_usd": null,
+  "description_en": "Desautels Faculty of Management is McGill University's business school in Montreal, a bilingual city with strong finance and consulting communities. Undergraduates study for the BCom, and international students admitted in 2026-27 keep the same per-credit tuition rate for their whole degree.",
+  "description_cn": "迪索特尔管理学院是麦吉尔大学位于蒙特利尔的商学院，这座双语城市的金融和咨询行业发达。本科生攻读 BCom；2026-27 入学的国际生整个学制内按同一学分单价收费。",
+  "tuition_usd": "BCom ~CAD 71,687/year tuition (international, 2026-27) · MBA ~CAD 108,500 (international)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.mcgill.ca/desautels",
@@ -1693,7 +1747,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce (BCom)",
+    "duration": "3–4 years",
+    "language": "English",
+    "description_en": "International tuition about CAD 71,687 a year for 30 credits in 2026-27 (about CAD 75,321 with fees), with the rate locked for the degree.",
+    "description_cn": "2026-27 国际学生 30 学分学费约 CAD 71,687/年（含杂费约 CAD 75,321），学制内单价锁定。"
+   },
+   {
+    "name": "MBA",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "International tuition about CAD 108,500 for 48 credits.",
+    "description_cn": "国际学生 48 学分学费约 CAD 108,500。"
+   }
+  ]
  },
  {
   "id": "monash-business",
@@ -1718,7 +1788,7 @@
   ],
   "description_en": "Monash Business School is one of the largest and most internationally diverse business schools in Australia. It attracts a highly multicultural student cohort reflecting Melbourne's global character. Research excellence in finance and economics, combined with a large global alumni network across Asia-Pacific, makes Monash an attractive option for international students.",
   "description_cn": "莫纳什大学商学院是澳大利亚规模最大、国际化程度最高的商学院之一，吸引了彰显墨尔本国际化特色的高度多元文化学生群体。在金融和经济学领域的研究卓越，加上遍布亚太地区的庞大全球校友网络，使莫纳什成为国际学生的理想选择。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor of Commerce ~A$55,900/year (international, 2026, est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.monash.edu/business",
@@ -1735,7 +1805,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "International fee about A$55,900 a year for 2026.",
+    "description_cn": "2026 年国际学生学费约每年 A$55,900。"
+   }
+  ]
  },
  {
   "id": "toronto-rotman",
@@ -1759,9 +1838,9 @@
    "Accounting",
    "Consulting"
   ],
-  "description_en": "Rotman is Canada's top-ranked business school and sits in Toronto's Bay Street financial district, Canada's equivalent of Wall Street. Roger Martin, the school's former dean, created the influential Integrative Thinking methodology. Strong in finance and consulting, Rotman graduates are highly competitive across North American markets.",
-  "description_cn": "罗特曼管理学院是加拿大排名第一的商学院，坐落于加拿大华尔街——多伦多湾街金融区。前院长罗杰·马丁创造了颇具影响力的整合性思维方法论。在金融和咨询领域实力强劲，毕业生在北美市场极具竞争力。",
-  "tuition_usd": null,
+  "description_en": "Rotman is the University of Toronto's business school, close to Bay Street, Canada's financial district. Former dean Roger Martin made it known for 'integrative thinking', and it is strong in finance and consulting. Undergraduates study through Rotman Commerce.",
+  "description_cn": "罗特曼管理学院是多伦多大学的商学院，邻近加拿大金融区湾街。前院长罗杰·马丁提出的「整合思维」让学院闻名，金融和咨询方向实力强；本科生通过 Rotman Commerce 学习商科。",
+  "tuition_usd": "Full-time MBA ~CAD 139,000–145,000 total (international, est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.rotman.utoronto.ca",
@@ -1777,7 +1856,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "20 months",
+    "language": "English",
+    "description_en": "International students pay roughly CAD 139,000–145,000 in academic fees for the programme.",
+    "description_cn": "国际学生学杂费全程约 CAD 139,000–145,000。"
+   },
+   {
+    "name": "Rotman Commerce (BCom)",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Undergraduate commerce degree; international first-year students pay the international Arts & Science rate, and upper years a program fee.",
+    "description_cn": "本科商学学位；国际生第一年按文理学院国际学费收费，高年级按项目收费。"
+   }
+  ]
  },
  {
   "id": "hkust-business",
@@ -1878,9 +1973,9 @@
    "Economics",
    "Strategy"
   ],
-  "description_en": "Edinburgh Business School sits within one of the world's oldest and most respected universities, with a history dating back to 1583. Scotland's capital offers a vibrant financial services sector and an exceptionally liveable city. The school is known for its research excellence and strong ties to Scotland's growing financial and technology sectors.",
-  "description_cn": "爱丁堡大学商学院所在的爱丁堡大学历史可追溯至1583年，是全球最古老、最受尊重的大学之一。苏格兰首府爱丁堡拥有充满活力的金融服务业和极宜居的城市环境，学院以卓越的科研成果和与苏格兰金融及科技产业的紧密联系著称。",
-  "tuition_usd": null,
+  "description_en": "The University of Edinburgh Business School is part of one of the UK's oldest universities, founded in 1583. Scotland's capital has a substantial financial services sector, and the school offers undergraduate business degrees, specialist master's programmes and a one-year full-time MBA. (It is a different institution from Heriot-Watt's Edinburgh Business School.)",
+  "description_cn": "爱丁堡大学商学院隶属于创建于 1583 年的爱丁堡大学，是英国历史最悠久的大学之一。苏格兰首府拥有规模可观的金融服务业；学院开设本科商科、专业硕士和一年制全日制 MBA。（它与赫瑞瓦特大学的 Edinburgh Business School 不是同一所学校。）",
+  "tuition_usd": "Full-time MBA ~£45,410 (2026) · Online MBA £36,000",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.business-school.ed.ac.uk",
@@ -1897,7 +1992,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "12 months",
+    "language": "English",
+    "description_en": "One-year MBA; tuition about £45,410, the same for UK and international students.",
+    "description_cn": "一年制 MBA，学费约 £45,410，英国与国际学生相同。"
+   },
+   {
+    "name": "Online MBA",
+    "duration": "Part-time",
+    "language": "English",
+    "description_en": "Online MBA at £36,000 for 2026 entry, with no increases between years.",
+    "description_cn": "在线 MBA，2026 年入学 £36,000，学制内不涨价。"
+   }
+  ]
  },
  {
   "id": "sjtu-antai",
@@ -1978,7 +2089,7 @@
   ],
   "description_en": "Alliance Manchester Business School is one of the UK's largest business schools. Founded in 1965 alongside London Business School as one of the UK's first two business schools, it has a long heritage in management education, and Manchester's economy offers links to manufacturing, fintech and the creative industries.",
   "description_cn": "曼彻斯特大学联盟商学院是英国规模最大的商学院之一。它于 1965 年与伦敦商学院一起成为英国最早的两所商学院，管理教育底蕴深厚；曼彻斯特的经济为学生提供制造业、金融科技和创意产业的人脉资源。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc Management £33,100/year (international, 2026/27) · Full-time MBA £51,500 (Sept 2027 start)",
   "language": "english",
   "notable_alumni": [
    "Sir Terry Leahy"
@@ -2003,7 +2114,23 @@
   ],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BSc Management (and specialisms)",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Undergraduate management degree; international fee £33,100 for 2026/27.",
+    "description_cn": "本科管理学位；2026/27 国际学生学费 £33,100。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "15 or 18 months",
+    "language": "English",
+    "description_en": "Full-time MBA starting September 2027; fee £51,500 with scholarships available.",
+    "description_cn": "2027 年 9 月开学的全日制 MBA，学费 £51,500，可申请奖学金。"
+   }
+  ]
  },
  {
   "id": "snu-business",
@@ -2030,7 +2157,7 @@
   ],
   "description_en": "Seoul National University Business School is Korea's most prestigious business school. Its graduates permeate Korea's leading chaebols including Samsung, Hyundai, LG, and SK, as well as government ministries. The school's global MBA program conducts its curriculum in English and attracts top international students.",
   "description_cn": "首尔国立大学商学院是韩国最负盛名的商学院。其毕业生遍布韩国主要财阀，包括三星、现代、LG和SK，以及政府部委。学院的全球MBA项目以英语授课，吸引了顶尖国际学生。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA KRW 43,130,000 total (4 semesters, 2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://gsba.snu.ac.kr",
@@ -2047,7 +2174,16 @@
   "qs_bm_rank": "49",
   "qs_bm_rank_num": 49,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time / Global MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "English-taught MBA; tuition KRW 43,130,000 over four semesters plus an admission fee.",
+    "description_cn": "英文授课 MBA，四个学期学费共 KRW 43,130,000，另收入学费。"
+   }
+  ]
  },
  {
   "id": "utokyo-gsfs",
@@ -2070,9 +2206,9 @@
    "Strategy",
    "Public Policy"
   ],
-  "description_en": "The University of Tokyo — Japan's most prestigious university — offers management and economics programmes that attract Japan's brightest minds. Tokyo's status as the world's 3rd-largest financial market and Japan's deep corporate sector provide extraordinary career opportunities. The school is increasingly offering English-language programmes to attract international talent.",
-  "description_cn": "东京大学是日本最负盛名的大学，提供吸引日本最优秀人才的管理和经济学项目。东京是全球第三大金融市场，日本深厚的企业资源提供了非凡的职业机遇。学院正在增加英语授课项目以吸引国际人才。",
-  "tuition_usd": null,
+  "description_en": "The University of Tokyo is Japan's leading university. Its graduate schools teach economics and management, increasingly with English-taught programmes for international students, and Tokyo offers access to one of the world's largest economies and financial markets.",
+  "description_cn": "东京大学是日本最顶尖的大学，研究生院开设经济与管理方向课程，面向国际学生的英文项目越来越多；东京让学生能接触到全球最大经济体和金融市场之一。",
+  "tuition_usd": "Graduate ¥535,800/year · Undergraduate ¥642,960/year",
   "language": "bilingual",
   "notable_alumni": [],
   "url": "https://www.e.u-tokyo.ac.jp",
@@ -2088,7 +2224,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Master's programmes",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Annual tuition ¥535,800, the same across fields (2026/27).",
+    "description_cn": "2026/27 硕士学费每年 ¥535,800，各专业相同。"
+   },
+   {
+    "name": "Undergraduate programmes",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Annual tuition ¥642,960.",
+    "description_cn": "本科学费每年 ¥642,960。"
+   }
+  ]
  },
  {
   "id": "uq-business",
@@ -2115,7 +2267,7 @@
   ],
   "description_en": "UQ Business School is one of Australia's leading business schools, based in Brisbane. The University of Queensland draws on Queensland's resources economy and Asia-Pacific ties, and Brisbane's role as host of the 2032 Olympics is bringing new investment to the city.",
   "description_cn": "昆士兰大学商学院是澳大利亚领先的商学院之一，位于布里斯班。学校依托昆士兰的资源型经济和亚太联系；布里斯班将举办 2032 年奥运会，正迎来新的投资。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor of Commerce A$56,800/year (international, 2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://business.uq.edu.au",
@@ -2132,7 +2284,16 @@
   "qs_bm_rank": "=93",
   "qs_bm_rank_num": 93,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "International fee A$56,800 for 2026 (St Lucia campus).",
+    "description_cn": "2026 年国际学生学费 A$56,800（圣卢西亚校区）。"
+   }
+  ]
  },
  {
   "id": "yonsei-business",
@@ -2157,7 +2318,7 @@
   ],
   "description_en": "Yonsei is one of Korea's three most prestigious universities (SKY universities), and its Business School is among the country's most selective. Seoul's emergence as a global hub for finance, technology, and K-culture creates vibrant career opportunities. Strong ties to Korea's chaebols (Samsung, LG, Hyundai) provide excellent corporate connections.",
   "description_cn": "延世大学是韩国最负盛名的三所大学（SKY）之一，其商学院是韩国竞争最激烈的商科院校之一。首尔作为金融、科技和韩流文化全球中心的崛起创造了充满活力的职业机遇。与韩国财阀（三星、LG、现代）的紧密联系提供了出色的企业资源。",
-  "tuition_usd": null,
+  "tuition_usd": "Undergraduate business ₩4,804,000 first semester, ₩4,590,000 after (international, 2026)",
   "language": "bilingual",
   "notable_alumni": [],
   "url": "https://biz.yonsei.ac.kr",
@@ -2174,7 +2335,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Business Administration",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "International students pay ₩4,804,000 for the first semester and ₩4,590,000 per semester afterwards (2026).",
+    "description_cn": "2026 年国际生第一学期 ₩4,804,000，之后每学期 ₩4,590,000。"
+   }
+  ]
  },
  {
   "id": "columbia-cbs",
@@ -2392,9 +2562,9 @@
    "Marketing",
    "Sustainability"
   ],
-  "description_en": "UBC Sauder sits on the Pacific coast of Canada, just a 2-hour flight from major Asian financial centres. This geographic advantage, combined with Vancouver's vibrant tech and resources sectors, creates unique Asia-Pacific business opportunities. The Centre for Urban Economics and Real Estate is among the best globally.",
-  "description_cn": "UBC商学院位于加拿大太平洋海岸，距亚洲主要金融中心仅两小时航程。这一地理优势，结合温哥华蓬勃发展的科技和资源产业，创造了独特的亚太商业机遇。其城市经济和房地产研究中心跻身全球最佳之列。",
-  "tuition_usd": null,
+  "description_en": "UBC Sauder School of Business is the University of British Columbia's business school in Vancouver, a Pacific port city with close links to Asia and growing technology and resources sectors. Its BCom is one of Canada's most popular undergraduate business degrees, and it is also known for real estate and urban economics research.",
+  "description_cn": "UBC 桑德商学院是不列颠哥伦比亚大学位于温哥华的商学院；温哥华是与亚洲联系紧密的太平洋港口城市，科技和资源产业不断发展。其 BCom 是加拿大最受欢迎的本科商科学位之一，房地产与城市经济研究也很有名。",
+  "tuition_usd": "BCom CAD 66,679/year (international, 2026/27) · MBA ~CAD 108,421 (international, 16 months)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.sauder.ubc.ca",
@@ -2411,7 +2581,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce (BCom)",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "International tuition CAD 66,679 for year 1 in 2026/27; later increases capped at 3% a year.",
+    "description_cn": "2026/27 国际学生第一年学费 CAD 66,679，之后每年涨幅不超过 3%。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "16 months",
+    "language": "English",
+    "description_en": "International program fee about CAD 108,421.",
+    "description_cn": "国际学生项目费约 CAD 108,421。"
+   }
+  ]
  },
  {
   "id": "zju-management",
@@ -2438,7 +2624,7 @@
   ],
   "description_en": "Zhejiang University School of Management is strategically located in Hangzhou, China's digital economy capital, home to Alibaba, NetEase, and Hikvision. The school's emphasis on entrepreneurship and digital innovation reflects its environment. Its proximity to China's e-commerce epicenter creates exceptional opportunities in tech entrepreneurship.",
   "description_cn": "浙江大学管理学院战略性地坐落于杭州——中国数字经济之都，阿里巴巴、网易和海康威视的所在地。学院对创业和数字创新的强调反映了其所处环境。毗邻中国电子商务中心，为科技创业提供了卓越机遇。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA ~RMB 218,000 total · ZIBS iMBA RMB 218,000 (est.)",
   "language": "chinese",
   "notable_alumni": [],
   "url": "https://www.sm.zju.edu.cn",
@@ -2454,7 +2640,23 @@
   "qs_bm_rank": "=79",
   "qs_bm_rank_num": 79,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition about RMB 218,000 for the programme.",
+    "description_cn": "学费全程约 21.8 万元。"
+   },
+   {
+    "name": "iMBA (Zhejiang University International Business School, Haining)",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "English-taught MBA at ZJU's international business school; RMB 109,000 a year.",
+    "description_cn": "浙大国际联合商学院（海宁）英文 MBA，每年 10.9 万元。"
+   }
+  ]
  },
  {
   "id": "ucla-anderson",
@@ -2629,7 +2831,7 @@
   ],
   "description_en": "CityU College of Business is known for its strong industry connections and practical, career-focused programmes. Its accounting and finance programmes are particularly strong, and the school enjoys excellent links to Hong Kong's business community. An accessible entry point to Hong Kong's competitive financial and professional services sectors.",
   "description_cn": "香港城市大学商学院以其强大的行业联系和注重实践的职业导向项目著称。会计和金融项目尤为突出，与香港商界拥有出色的联系，是进入香港竞争激烈的金融和专业服务业的理想起点。",
-  "tuition_usd": null,
+  "tuition_usd": "BBA HK$240,000/year (non-local, 2027/28 entry)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.cb.cityu.edu.hk",
@@ -2646,7 +2848,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BBA programmes",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Non-local tuition HK$240,000 a year for 2027/28 entry, plus a HK$20,000 acceptance fee.",
+    "description_cn": "2027/28 入学非本地学费每年 HK$240,000，另交 HK$20,000 留位费。"
+   }
+  ]
  },
  {
   "id": "cmu-tepper",
@@ -2771,7 +2982,7 @@
   ],
   "description_en": "Kyoto University's Graduate School of Management is one of Japan's most respected business programmes. Japan's ancient capital provides a unique cultural backdrop for studying business, innovation, and sustainability. The school has a particular strength in connecting business education with Kyoto's world-class technology and pharmaceutical industries.",
   "description_cn": "京都大学管理学院是日本最受尊敬的商科项目之一。日本古都为研究商业、创新和可持续发展提供了独特的文化背景，学院在将商业教育与京都世界级科技和制药产业相结合方面具有独特优势。",
-  "tuition_usd": null,
+  "tuition_usd": "International MBA ¥535,800/year + ¥282,000 admission (tentative, 2026)",
   "language": "bilingual",
   "notable_alumni": [],
   "url": "https://www.gsm.kyoto-u.ac.jp",
@@ -2788,7 +2999,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "International MBA",
+    "duration": "Varies",
+    "language": "English",
+    "description_en": "Annual tuition ¥535,800 and admission fee ¥282,000 (tentative, 2026); MEXT scholars are exempt.",
+    "description_cn": "学费每年 ¥535,800，入学金 ¥282,000（2026 年暂定）；日本政府奖学金生免缴。"
+   }
+  ]
  },
  {
   "id": "nyu-stern",
@@ -2900,7 +3120,7 @@
   ],
   "description_en": "Amsterdam Business School sits within one of Europe's most beautiful and liveable cities and one of its oldest universities. Amsterdam serves as the European hub for hundreds of multinationals, including ASML, ING, Heineken, and Booking.com, giving students extraordinary internship and career access. Strong research tradition in finance, marketing, and economics.",
   "description_cn": "阿姆斯特丹商学院所在的阿姆斯特丹大学是欧洲最古老的大学之一，城市美丽宜居。阿姆斯特丹是数百家跨国公司的欧洲总部所在地，包括ASML、ING、喜力和Booking.com，为学生提供非凡的实习和职业机会。在金融、营销和经济学领域拥有深厚的研究传统。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc Economics & Business €13,900/year (non-EU, 2026/27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://abs.uva.nl",
@@ -2917,7 +3137,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor programmes in Economics and Business",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Non-EU institutional fee €13,900 for 2026/27; Business Administration has a 15 January deadline.",
+    "description_cn": "2026/27 非欧盟学费 €13,900；工商管理专业 1 月 15 日截止申请。"
+   }
+  ]
  },
  {
   "id": "lse-management",
@@ -2943,7 +3172,7 @@
   ],
   "description_en": "LSE is globally recognised as the leading social science university, producing numerous Nobel Prize winners in Economics. Its finance and economics programmes are world-renowned, and its alumni hold leadership positions in central banks, governments, and top financial institutions worldwide. The school's central London location is unbeatable for networking.",
   "description_cn": "伦敦政治经济学院是全球公认的顶尖社会科学大学，培养了众多诺贝尔经济学奖得主。其金融和经济学项目享誉全球，校友在全球各地央行、政府机构和顶尖金融机构担任领导职位。学院位于伦敦市中心，人脉资源无可比拟。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc Management £35,700/year (overseas, 2026/27) · MSc Management (12 months) £42,900 (2026/27)",
   "language": "english",
   "notable_alumni": [
    "George Soros",
@@ -2963,32 +3192,18 @@
   "employment": null,
   "programs_detail": [
    {
-    "name": "MSc Management",
-    "duration": "1 year",
-    "language": "English",
-    "description_en": "Rigorous management master drawing on LSE's world-leading social science research.",
-    "description_cn": "严格的管理硕士，依托LSE世界顶尖的社会科学研究积淀。"
-   },
-   {
-    "name": "MSc Finance",
-    "duration": "1 year",
-    "language": "English",
-    "description_en": "Finance master grounded in economic theory, targeting banking, asset management, and research.",
-    "description_cn": "以经济理论为基础的金融硕士，面向银行、资产管理和研究职位。"
-   },
-   {
     "name": "BSc Management",
     "duration": "3 years",
     "language": "English",
-    "description_en": "Highly selective undergraduate programme combining management, economics, and social science.",
-    "description_cn": "竞争激烈的本科项目，融合管理学、经济学和社会科学。"
+    "description_en": "Undergraduate management degree; overseas fee £35,700 a year for 2026/27 entry, fixed for the length of the degree.",
+    "description_cn": "本科管理学位；2026/27 入学海外学费每年 £35,700，学制内不变。"
    },
    {
-    "name": "MPA (Master of Public Administration)",
+    "name": "MSc Management (12 months)",
     "duration": "1 year",
     "language": "English",
-    "description_en": "Leading public policy master attracting future government and international organisation leaders.",
-    "description_cn": "顶尖公共政策硕士，吸引未来政府和国际组织领导者。"
+    "description_en": "Pre-experience master's in management; £42,900 for 2026/27 for both home and overseas students.",
+    "description_cn": "无需工作经验的管理学硕士；2026/27 学费 £42,900，本地与海外学生相同。"
    }
   ],
   "alumni_detail": [
@@ -3079,7 +3294,7 @@
   ],
   "description_en": "University of Auckland Business School is New Zealand's largest and most internationally recognized business school, triple-accredited (AACSB, EQUIS, AMBA). Auckland is New Zealand's commercial capital with strong ties to Australia and Pacific Rim economies. The school's research strength in finance and information systems, combined with New Zealand's quality of life, makes it compelling for international students.",
   "description_cn": "奥克兰大学商学院是新西兰最大、国际认可度最高的商学院，拥有三重认证（AACSB、EQUIS、AMBA）。奥克兰是新西兰的商业之都，与澳大利亚和太平洋沿岸经济体联系紧密。学院在金融和信息系统方面的研究实力，加上新西兰的生活品质，使其成为国际学生的优选目的地。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor of Commerce NZ$48,133/year (international, 2026 est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.auckland.ac.nz/business",
@@ -3095,7 +3310,16 @@
   "qs_bm_rank": "=112",
   "qs_bm_rank_num": 112,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Estimated international fee NZ$48,133 for full-time study in 2026 (NZ$51,020 for 2027), plus a student services fee.",
+    "description_cn": "2026 年国际学生全日制学费估计 NZ$48,133（2027 年 NZ$51,020），另收学生服务费。"
+   }
+  ]
  },
  {
   "id": "warwick-business",
@@ -3121,7 +3345,7 @@
   ],
   "description_en": "Warwick Business School is triple-accredited (AACSB, EQUIS, AMBA) and known for finance and accounting research. It runs a well-regarded distance-learning MBA, and its London base at The Shard complements the main campus near Coventry.",
   "description_cn": "华威商学院拥有 AACSB、EQUIS、AMBA 三重认证，金融与会计研究实力强；远程 MBA 项目口碑良好，位于伦敦碎片大厦的校区与考文垂附近的主校区互为补充。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc Management £35,530/year (international, 2026/27) · Full-time MBA £59,500 (2026/27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.wbs.ac.uk",
@@ -3138,7 +3362,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BSc Management",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Undergraduate management degree; international fee £35,530 for 2026/27.",
+    "description_cn": "本科管理学位；2026/27 国际学生学费 £35,530。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "12 months",
+    "language": "English",
+    "description_en": "Full-time MBA; £59,500 for 2026/27, with scholarships of 10–50% of tuition available.",
+    "description_cn": "全日制 MBA，2026/27 学费 £59,500，可获 10%–50% 学费奖学金。"
+   }
+  ]
  },
  {
   "id": "duke-fuqua",
@@ -3234,7 +3474,7 @@
   ],
   "description_en": "Trinity Business School at Trinity College Dublin benefits from Ireland's position as the European hub for technology giants including Google, Apple, Facebook, and LinkedIn. Dublin's vibrant tech ecosystem and Trinity's 400-year academic heritage create a unique environment for business education.",
   "description_cn": "都柏林圣三一学院商学院受益于爱尔兰作为谷歌、苹果、脸书和领英等科技巨头欧洲总部的地位。都柏林充满活力的科技生态系统和圣三一学院400年的学术遗产，为商业教育创造了独特环境。",
-  "tuition_usd": null,
+  "tuition_usd": "MBA €36,000 (non-EU)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://business.tcd.ie",
@@ -3250,7 +3490,16 @@
   "qs_bm_rank": "=134",
   "qs_bm_rank_num": 134,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "MBA",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "Non-EU tuition €36,000.",
+    "description_cn": "非欧盟学生学费 €36,000。"
+   }
+  ]
  },
  {
   "id": "usc-marshall",
@@ -3276,7 +3525,7 @@
   ],
   "description_en": "USC Marshall School of Business in Los Angeles is uniquely positioned at the intersection of finance, technology, and entertainment. Its strong alumni network in Hollywood and Silicon Beach, combined with access to LA's global business community, makes it a top choice for those seeking careers in media, tech, and international business.",
   "description_cn": "南加大马歇尔商学院地处洛杉矶，独特地处于金融、科技与娱乐行业的交汇点。强大的好莱坞和硅滩校友网络，加上进入洛杉矶全球商业社区的渠道，使其成为媒体、科技和国际商业领域求职者的首选。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $86,295 (year 1, 2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.marshall.usc.edu",
@@ -3292,7 +3541,16 @@
   "qs_bm_rank": "=88",
   "qs_bm_rank_num": 88,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $86,295 in year 1 and $78,450 in year 2 (2026-27 rates).",
+    "description_cn": "学费 $86,295 in year 1 and $78,450 in year 2 (2026-27 rates)。"
+   }
+  ]
  },
  {
   "id": "rice-jones",
@@ -3318,7 +3576,7 @@
   ],
   "description_en": "Rice Jones Graduate School of Business sits at the heart of Houston, the global capital of the energy industry. Its MBA program is uniquely positioned for careers in energy, health sciences, and finance, while maintaining the intimacy and collaborative culture of Rice University.",
   "description_cn": "莱斯大学琼斯商学院位于全球能源工业之都休斯顿的核心地带。其MBA项目在能源、健康科学和金融领域的职业发展上独树一帜，同时保持着莱斯大学亲密协作的文化。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA ~$79,116/year (2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://business.rice.edu",
@@ -3334,7 +3592,16 @@
   "qs_bm_rank": "201-250",
   "qs_bm_rank_num": 201,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition about $79,116 a year (2026-27).",
+    "description_cn": "学费 about $79,116 a year (2026-27)。"
+   }
+  ]
  },
  {
   "id": "ucdavis-gsm",
@@ -3359,7 +3626,7 @@
   ],
   "description_en": "UC Davis Graduate School of Management leverages California's land-grant research university strengths and its proximity to Sacramento and the San Francisco Bay Area. The school is renowned for its wine business program, agribusiness management, and data analytics focus.",
   "description_cn": "加州大学戴维斯分校管理研究生院依托加州土地授予研究型大学的优势及毗邻萨克拉门托和旧金山湾区的地理优势。学院以葡萄酒商业项目、农业综合经营管理和数据分析方向著称。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $53,371 (year 1, 2026-27) + $12,245/year non-resident supplement",
   "language": "english",
   "notable_alumni": [],
   "url": "https://gsm.ucdavis.edu",
@@ -3375,7 +3642,16 @@
   "qs_bm_rank": "301-350",
   "qs_bm_rank_num": 301,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $53,371 in year 1 and $50,428 in year 2 (2026-27), plus $12,245 a year nonresident supplemental tuition.",
+    "description_cn": "学费 $53,371 in year 1 and $50,428 in year 2 (2026-27), plus $12,245 a year nonresident supplemental tuition。"
+   }
+  ]
  },
  {
   "id": "rsm-rotterdam",
@@ -3401,7 +3677,7 @@
   ],
   "description_en": "Rotterdam School of Management at Erasmus University is Europe's gateway to global business, located in Rotterdam—Europe's largest port city. RSM is triple-accredited and consistently ranked among Europe's best. Its highly international community and strong links to multinational corporations create extraordinary career opportunities.",
   "description_cn": "鹿特丹伊拉斯谟大学管理学院是欧洲进入全球商业的门户，坐落于欧洲最大港口城市鹿特丹。RSM三重认证，长期跻身欧洲最佳之列。高度国际化的社区及与跨国公司的紧密联系，创造了非凡的职业机遇。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc IBA €14,000/year (non-EEA, 2026-27) · International Full-time MBA €70,000 (Jan 2027 start)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.rsm.nl",
@@ -3417,7 +3693,23 @@
   "qs_bm_rank": "=24",
   "qs_bm_rank_num": 24,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BSc International Business Administration",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Non-EEA tuition €14,000 for 2026-27 (about €15,200 for 2027-28); 750 places, application deadline 15 January.",
+    "description_cn": "2026-27 非欧洲经济区学费 €14,000（2027-28 约 €15,200）；名额 750 个，1 月 15 日截止申请。"
+   },
+   {
+    "name": "International Full-time MBA",
+    "duration": "12 months",
+    "language": "English",
+    "description_en": "€70,000 for the January 2027 start.",
+    "description_cn": "2027 年 1 月入学学费 €70,000。"
+   }
+  ]
  },
  {
   "id": "western-ivey",
@@ -3442,7 +3734,7 @@
   ],
   "description_en": "Ivey is Canada's best-known case-method business school. Its HBA (Honors Business Administration) undergraduate degree, taken in the final two years of study, is one of the most respected business degrees in Canada.",
   "description_cn": "毅伟商学院是加拿大最知名的案例教学商学院。其本科后两年的 HBA（荣誉工商管理）学位是加拿大最受认可的商科学位之一。",
-  "tuition_usd": null,
+  "tuition_usd": "HBA CAD 70,040/year (international, 2026-27) · MBA ~CAD 132,994 (international, est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.ivey.uwo.ca",
@@ -3459,7 +3751,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "HBA (Honors Business Administration)",
+    "duration": "2 years (years 3–4)",
+    "language": "English",
+    "description_en": "International tuition CAD 70,040 a year in 2026-27, plus about CAD 2,600 in ancillary fees.",
+    "description_cn": "2026-27 国际学生学费每年 CAD 70,040，另有约 CAD 2,600 杂费。"
+   },
+   {
+    "name": "MBA",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "International tuition about CAD 132,994.",
+    "description_cn": "国际学生学费约 CAD 132,994。"
+   }
+  ]
  },
  {
   "id": "wustl-olin",
@@ -3486,7 +3794,7 @@
   ],
   "description_en": "Washington University's Olin Business School benefits from WashU's exceptional research standing and St. Louis's growing innovation ecosystem. The school is known for its collaborative culture and access to the university's excellence in medicine, law, and engineering, enabling truly cross-disciplinary education.",
   "description_cn": "华盛顿大学奥林商学院受益于WashU卓越的研究地位和圣路易斯蓬勃发展的创新生态系统。学院以其协作文化以及进入医学、法学和工程学卓越领域的渠道而著称，实现真正跨学科教育。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA ~$75,460/year (2026-27, reported)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://olin.wustl.edu",
@@ -3501,7 +3809,16 @@
   "qs_bm_rank": "251-300",
   "qs_bm_rank_num": 251,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition about $75,460 a year (2026-27, reported).",
+    "description_cn": "学费 about $75,460 a year (2026-27, reported)。"
+   }
+  ]
  },
  {
   "id": "asu-wpcarey",
@@ -3569,7 +3886,7 @@
   ],
   "description_en": "IIM Ahmedabad is India's best-known management institute. It was founded in 1961 with support from the Ford Foundation and Harvard Business School, uses the case method, and admits students to its flagship PGP through the highly competitive CAT exam.",
   "description_cn": "印度管理学院艾哈迈达巴德分校是印度最知名的管理学院，1961 年在福特基金会和哈佛商学院支持下创立，采用案例教学，旗舰 PGP 项目通过竞争极其激烈的 CAT 考试录取。",
-  "tuition_usd": null,
+  "tuition_usd": "PGP ~₹27.5 lakh total (2025-27 batch; 2026-28 not yet published)",
   "language": "english",
   "notable_alumni": [
    "Raghuram Rajan"
@@ -3594,7 +3911,16 @@
     "year": 1987
    }
   ],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Post Graduate Programme (PGP / MBA)",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Total programme fee ₹27.5 lakh for the 2025-27 batch (₹20.1 lakh tuition); admission through the CAT exam.",
+    "description_cn": "2025-27 届总费用 27.5 万卢比（其中学费 20.1 万）；通过 CAT 考试录取。"
+   }
+  ]
  },
  {
   "id": "emory-goizueta",
@@ -3621,7 +3947,7 @@
   ],
   "description_en": "Emory Goizueta Business School is situated in Atlanta, home to Coca-Cola, Delta Air Lines, and CNN. Named for the late Roberto Goizueta, former CEO of Coca-Cola, the school emphasizes principled leadership and maintains a tight-knit community that fosters exceptional alumni loyalty.",
   "description_cn": "埃默里大学戈伊苏埃塔商学院位于亚特兰大，可口可乐、达美航空和CNN的所在地。学院以可口可乐前CEO Roberto Goizueta命名，强调有原则的领导力，并维系着一个紧密的社区，培育卓越的校友忠诚度。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA ~$79,200/year (2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://goizueta.emory.edu",
@@ -3637,7 +3963,16 @@
   "qs_bm_rank": "301-350",
   "qs_bm_rank_num": 301,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition about $79,200 a year (2026-27).",
+    "description_cn": "学费 about $79,200 a year (2026-27)。"
+   }
+  ]
  },
  {
   "id": "uct-gsb",
@@ -3663,7 +3998,7 @@
   ],
   "description_en": "UCT Graduate School of Business is Africa's top-ranked business school, consistently recognized by the FT as the continent's leading MBA program. The school's emphasis on African-context business education, sustainable development, and inclusive growth sets it apart globally. Its alumni network spans African governments, development banks, and corporations from Cape Town to Cairo.",
   "description_cn": "开普敦大学商业研究生院是非洲排名最高的商学院，长期被FT认定为非洲大陆领先的MBA项目。学院对非洲背景商业教育、可持续发展和包容性增长的重视使其在全球独树一帜。其校友网络遍及从开普敦到开罗的非洲各国政府、开发银行和企业。",
-  "tuition_usd": null,
+  "tuition_usd": "Executive MBA R509,000 (Jan 2027 start) · Full-time MBA fee to be confirmed",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.gsb.uct.ac.za",
@@ -3680,7 +4015,23 @@
   "qs_bm_rank": "301-350",
   "qs_bm_rank_num": 301,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Executive MBA",
+    "duration": "Part-time",
+    "language": "English",
+    "description_en": "R509,000 for the January 2027 start.",
+    "description_cn": "2027 年 1 月入学 R509,000。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "2026 fees are provisional and subject to council approval.",
+    "description_cn": "2026 年学费为暂定，需校董会批准。"
+   }
+  ]
  },
  {
   "id": "ohio-state-fisher",
@@ -3707,7 +4058,7 @@
   ],
   "description_en": "Ohio State Fisher College of Business is a flagship business school of one of America's largest research universities. Located in Columbus—home to major corporations including Nationwide, Cardinal Health, and JPMorgan Chase—Fisher benefits from direct industry access and a massive alumni network of over 500,000 worldwide.",
   "description_cn": "俄亥俄州立大学费舍尔商学院是美国最大研究型大学之一的旗舰商学院。位于哥伦布市，受益于直接的行业渠道和超过50万人的庞大全球校友网络。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $62,538/year non-resident & international ($31,347 Ohio residents, 2026-27)",
   "language": "english",
   "notable_alumni": [
    "Les Wexner"
@@ -3731,7 +4082,16 @@
     "year": null
    }
   ],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $62,538 a year for non-residents and international students, $31,347 for Ohio residents (2026-27).",
+    "description_cn": "学费 $62,538 a year for non-residents and international students, $31,347 for Ohio residents (2026-27)。"
+   }
+  ]
  },
  {
   "id": "waseda-business",
@@ -3756,7 +4116,7 @@
   ],
   "description_en": "Waseda Business School is one of Japan's most prestigious MBA programs, offered by Japan's leading private research university. The school's strong international focus, extensive global partnerships, and central Tokyo location make it a top destination for professionals seeking to advance careers in Japan and across Asia.",
   "description_cn": "早稻田大学商学院是日本最负盛名的MBA项目之一，由日本领先的私立研究型大学早稻田大学提供。学院强烈的国际化导向、广泛的全球合作伙伴关系以及位于东京中心，使其成为寻求在日本和整个亚洲推进职业发展的专业人士的首选目的地。",
-  "tuition_usd": null,
+  "tuition_usd": "International MBA ¥4,176,000 total (2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.waseda.jp/fcom/wbs/",
@@ -3772,7 +4132,16 @@
   "qs_bm_rank": "=109",
   "qs_bm_rank_num": 109,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "International MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "¥4,176,000 in total including registration and other fees (2026 fee table).",
+    "description_cn": "含注册等费用总计 ¥4,176,000（2026 年收费表）。"
+   }
+  ]
  },
  {
   "id": "macquarie-business",
@@ -3799,7 +4168,7 @@
   ],
   "description_en": "Macquarie Business School in Sydney is renowned for producing finance professionals who excel in Sydney's financial services sector. The school's actuarial studies and applied finance programs are among the most respected in Australia. Its location in Sydney's innovation district and strong industry partnerships with financial services firms make it a powerhouse for finance career development.",
   "description_cn": "悉尼麦考瑞大学商学院以培养能在该市繁荣金融服务业中脱颖而出的金融专才而闻名。学院的精算研究和应用金融项目是澳大利亚最受尊重的之一。位于悉尼创新区的地理优势，加上与金融服务公司的强大行业合作伙伴关系，使其成为金融职业发展的重要机构。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor of Commerce ~A$46,900/year (international, 2026, est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.mq.edu.au/macquarie-business-school",
@@ -3816,7 +4185,16 @@
   "qs_bm_rank": "=114",
   "qs_bm_rank_num": 114,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "International fee about A$46,900 a year for 2026.",
+    "description_cn": "2026 年国际学生学费约每年 A$46,900。"
+   }
+  ]
  },
  {
   "id": "chulalongkorn-business",
@@ -3841,7 +4219,7 @@
   ],
   "description_en": "Chulalongkorn's Sasin School of Management is Thailand's most prestigious business school and the only school in Thailand with partnerships with both Kellogg (Northwestern) and Wharton (Penn). Located in Bangkok, ASEAN's largest city, Sasin offers exceptional access to Thailand's corporate landscape and ASEAN business opportunities.",
   "description_cn": "朱拉隆功大学Sasin管理学院是泰国最负盛名的商学院，也是泰国唯一同时与凯洛格（西北大学）和沃顿（宾夕法尼亚大学）合作的学院。位于曼谷——东盟最大的城市和商业中心，Sasin提供了进入泰国企业界和东盟商业机遇的卓越渠道。",
-  "tuition_usd": null,
+  "tuition_usd": "Flexible MBA THB 1,600,000 · Executive MBA THB 2,200,000",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.sasin.edu",
@@ -3857,7 +4235,23 @@
   "qs_bm_rank": "201-250",
   "qs_bm_rank_num": 201,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Flexible MBA (daytime or evening)",
+    "duration": "Varies",
+    "language": "English",
+    "description_en": "THB 1,600,000 including courses, materials and student activities.",
+    "description_cn": "THB 1,600,000，含课程、教材和学生活动费用。"
+   },
+   {
+    "name": "Executive MBA",
+    "duration": "Part-time",
+    "language": "English",
+    "description_en": "THB 2,200,000.",
+    "description_cn": "THB 2,200,000。"
+   }
+  ]
  },
  {
   "id": "aub-business",
@@ -3883,7 +4277,7 @@
   ],
   "description_en": "The American University of Beirut Olayan School of Business is the Middle East's most historically prestigious business school, combining American liberal arts education with deep regional expertise. AUB consistently attracts top talent from across the Arab world. Its graduates lead major financial institutions, government bodies, and corporations throughout the MENA region.",
   "description_cn": "贝鲁特美国大学欧拉雅商学院是中东历史最悠久、最负盛名的商学院，将美式博雅教育与深厚的地区专业知识相结合。AUB持续吸引来自阿拉伯世界各地的顶尖人才。其毕业生在整个中东和北非地区的主要金融机构、政府机构和企业中担任领导职位。",
-  "tuition_usd": null,
+  "tuition_usd": "Undergraduate business ~US$881–990 per credit (2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.aub.edu.lb/osb",
@@ -3899,7 +4293,16 @@
   "qs_bm_rank": "151-200",
   "qs_bm_rank_num": 151,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Undergraduate business programmes",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Tuition is charged per credit, about US$881–990 per credit at the Olayan School of Business in 2026-27.",
+    "description_cn": "按学分收费，2026-27 奥拉扬商学院每学分约 US$881–990。"
+   }
+  ]
  },
  {
   "id": "vuw-business",
@@ -3926,7 +4329,7 @@
   ],
   "description_en": "Victoria University of Wellington's business school is New Zealand's capital city business school, home to the national government and major public sector institutions. This location creates unrivalled opportunities in public sector management and the intersection of business and government. It is New Zealand's leading school for public management.",
   "description_cn": "惠灵顿维多利亚大学商学院是新西兰首都的商学院，这里是国家政府和主要公共机构所在地。这一位置在公共部门管理以及商业与政府交汇处创造了无与伦比的机遇。是新西兰领先的公共管理学院。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor of Commerce ~NZ$37,546/year (international, 2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.wgtn.ac.nz/business",
@@ -3943,7 +4346,16 @@
   "qs_bm_rank": "301-350",
   "qs_bm_rank_num": 301,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Commerce",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "International fee NZ$312.88 per point, about NZ$37,546 for a full-time year in 2026.",
+    "description_cn": "国际学生每学分 NZ$312.88，2026 年全日制一年约 NZ$37,546。"
+   }
+  ]
  },
  {
   "id": "iim-bangalore",
@@ -3966,9 +4378,9 @@
    "Strategy",
    "Entrepreneurship"
   ],
-  "description_en": "IIM Bangalore is India's premier management institute for technology and entrepreneurship, located at the heart of India's Silicon Valley. Its proximity to Bangalore's booming IT ecosystem, including Infosys and Wipro, gives graduates exceptional access to technology management roles. IIMB is also recognized for its public policy and social sector impact programs.",
-  "description_cn": "印度管理学院班加罗尔分院是印度科技和创业领域首屈一指的管理学院，位于印度硅谷的核心地带。毗邻班加罗尔蓬勃发展的IT生态系统，包括印孚瑟斯和威普罗，为毕业生提供了卓越的科技管理职位渠道。IIMB还以其公共政策和社会部门影响力项目而著称。",
-  "tuition_usd": null,
+  "description_en": "IIM Bangalore is one of India's top management institutes, located in Bengaluru, the centre of India's technology industry. Its two-year Post Graduate Programme (MBA) is admitted through the CAT exam, and the institute is also known for entrepreneurship and public policy programmes.",
+  "description_cn": "印度管理学院班加罗尔分校是印度顶尖的管理学院之一，位于印度科技产业中心班加罗尔。两年制研究生项目（MBA）通过 CAT 考试录取，创业与公共政策项目也很有名。",
+  "tuition_usd": "PGP ₹26 lakh total + ₹30,000 deposit (2026-28)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.iimb.ac.in",
@@ -3984,7 +4396,16 @@
   "qs_bm_rank": "29",
   "qs_bm_rank_num": 29,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Post Graduate Programme (PGP / MBA)",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Programme fee ₹26 lakh for 2026-28 (covering tuition, hostel, library and insurance) plus a ₹30,000 caution deposit.",
+    "description_cn": "2026-28 届项目费 26 万卢比（含学费、宿舍、图书馆和保险），另交 3 万卢比押金。"
+   }
+  ]
  },
  {
   "id": "minnesota-carlson",
@@ -4012,7 +4433,7 @@
   ],
   "description_en": "Carlson School of Management at the University of Minnesota is the business hub of the Twin Cities, home to more Fortune 500 companies per capita than any other metro area. Its strong ties to 3M, Target, and UnitedHealth Group create exceptional internship and employment opportunities.",
   "description_cn": "明尼苏达大学卡尔森管理学院是双城地区的商业中心，这里人均财富500强企业数量位居全美都会区首位。与3M、塔吉特和联合健康集团等行业巨头的紧密联系，为学生创造了卓越的实习和就业机会。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $64,460/year non-resident & international (2026-27 entry)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://carlsonschool.umn.edu",
@@ -4028,7 +4449,16 @@
   "qs_bm_rank": "125",
   "qs_bm_rank_num": 125,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $64,460 a year for non-residents and international students ($49,100 for Minnesota and reciprocity residents), plus annual fees.",
+    "description_cn": "学费 $64,460 a year for non-residents and international students ($49,100 for Minnesota and reciprocity residents), plus annual fees。"
+   }
+  ]
  },
  {
   "id": "vanderbilt-owen",
@@ -4054,7 +4484,7 @@
   ],
   "description_en": "Vanderbilt Owen Graduate School of Management is part of a world-class research university in Nashville. The school's small program size creates an unusually close-knit community. Its healthcare management track benefits from Vanderbilt's world-renowned medical center.",
   "description_cn": "范德堡大学欧文管理研究生院隶属纳什维尔一所世界级研究型大学。学院小规模的项目形成了异常紧密的社区。医疗管理方向受益于范德堡大学世界知名的医疗中心。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $76,700/year (2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://business.vanderbilt.edu",
@@ -4069,7 +4499,16 @@
   "qs_bm_rank": "501-550",
   "qs_bm_rank_num": 501,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $76,700 a year (2026-27).",
+    "description_cn": "学费 $76,700 a year (2026-27)。"
+   }
+  ]
  },
  {
   "id": "sysu-business",
@@ -4178,9 +4617,9 @@
    "Strategy",
    "Consulting"
   ],
-  "description_en": "IIM Calcutta, founded in 1961, is India's oldest IIM and has pioneered management education in the country. Co-founded with assistance from MIT Sloan and the Ford Foundation, IIM-C is particularly recognized for its strength in finance, operations, and strategy. Its graduates are among the most sought-after by top global consulting and investment banking firms recruiting in India.",
-  "description_cn": "印度管理学院加尔各答分院创建于1961年，是印度历史最悠久的IIM，开创了该国管理教育的先河。在麻省理工斯隆和福特基金会协助下创立，IIM-C在金融、运营和战略方面的优势尤为突出。其毕业生是在印度招聘的顶级全球咨询和投资银行公司最青睐的对象之一。",
-  "tuition_usd": null,
+  "description_en": "IIM Calcutta, founded in 1961 in collaboration with MIT Sloan and the Ford Foundation, was India's first IIM. It is especially strong in finance, operations and strategy, and its two-year MBA is admitted through the CAT exam.",
+  "description_cn": "印度管理学院加尔各答分校于 1961 年在 MIT 斯隆管理学院和福特基金会协助下创立，是印度第一所 IIM，金融、运营和战略方向尤其突出；两年制 MBA 通过 CAT 考试录取。",
+  "tuition_usd": "MBA ~₹27 lakh total (2026-28, est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.iimcal.ac.in",
@@ -4197,7 +4636,16 @@
   "qs_bm_rank": "47",
   "qs_bm_rank_num": 47,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Total fee about ₹27 lakh for the 2026-28 batch (sources differ).",
+    "description_cn": "2026-28 届总费用约 27 万卢比（各来源略有出入）。"
+   }
+  ]
  },
  {
   "id": "georgetown-mcd",
@@ -4223,7 +4671,7 @@
   ],
   "description_en": "Georgetown McDonough benefits from its unique Washington D.C. location at the nexus of global politics, policy, and finance. Its Jesuit tradition emphasizes ethics and service alongside business excellence. Exceptional consulting, finance, and international business placements leverage DC's proximity to government agencies, think tanks, and international organizations.",
   "description_cn": "乔治城大学麦克多诺商学院依托华盛顿特区这一全球政治、政策和金融交汇点的独特地理优势，耶稣会传统强调商业卓越与伦理服务并重。出色的咨询、金融和国际商务就业成绩得益于邻近政府机构、智库和国际组织。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $75,016/year (2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://msb.georgetown.edu",
@@ -4239,7 +4687,16 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $75,016 a year (2026-27); total cost of attendance about $115,171.",
+    "description_cn": "学费 $75,016 a year (2026-27); total cost of attendance about $115,171。"
+   }
+  ]
  },
  {
   "id": "notre-dame-mendoza",
@@ -4266,7 +4723,7 @@
   ],
   "description_en": "Notre Dame Mendoza College of Business is consistently ranked among the nation's top MBA programs and is particularly celebrated for its emphasis on ethical leadership and integrity. Notre Dame's strong identity fosters a values-driven culture, and its tight-knit alumni community provides exceptional networking.",
   "description_cn": "圣母大学门多萨商学院长期跻身全美顶级MBA项目之列，以强调道德领导力和诚信而著称。圣母大学鲜明的身份培育了价值观导向的文化，其紧密的校友社区提供了卓越的社交网络。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $75,460/year (2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://mendoza.nd.edu",
@@ -4282,7 +4739,16 @@
   "qs_bm_rank": "251-300",
   "qs_bm_rank_num": 251,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $75,460 a year (2026-27); total cost of attendance about $107,800.",
+    "description_cn": "学费 $75,460 a year (2026-27); total cost of attendance about $107,800。"
+   }
+  ]
  },
  {
   "id": "indiana-kelley",
@@ -4309,7 +4775,7 @@
   ],
   "description_en": "Indiana University's Kelley School of Business is especially known for its highly ranked accounting programme and its large undergraduate business programme, including a direct-admit pathway for first-year students. Its online MBA is also well regarded.",
   "description_cn": "印第安纳大学凯利商学院以排名靠前的会计专业和庞大的本科商科项目著称，并为新生提供直录通道；其在线 MBA 同样口碑良好。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA $55,695/year non-resident & international (2025-26)",
   "language": "english",
   "notable_alumni": [
    "Mark Cuban"
@@ -4333,7 +4799,16 @@
     "year": 1981
    }
   ],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Tuition $55,695 a year for non-residents and international students, $29,573 for Indiana residents (2025-26).",
+    "description_cn": "学费 $55,695 a year for non-residents and international students, $29,573 for Indiana residents (2025-26)。"
+   }
+  ]
  },
  {
   "id": "smu-lkcsb",
@@ -4418,7 +4893,7 @@
   ],
   "description_en": "Hitotsubashi ICS (International Corporate Strategy) is Japan's most internationally recognized business school, offering a fully English-language MBA program designed for global business leaders. Located in central Tokyo, the school bridges Japan's corporate world and global business. Its alumni network spans major Japanese corporations, financial institutions, and global consulting firms.",
   "description_cn": "一桥大学ICS（国际企业战略）是日本最具国际认可度的商学院，提供专为全球商业领袖设计的全英文MBA项目。位于东京中心，学院是日本企业界和全球商业之间的桥梁。其校友网络遍及日本主要企业集团、金融机构和全球咨询公司。",
-  "tuition_usd": null,
+  "tuition_usd": "MBA ¥642,960/year + ¥282,000 matriculation (preliminary)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://ics.hit-u.ac.jp",
@@ -4434,7 +4909,16 @@
   "qs_bm_rank": "=134",
   "qs_bm_rank_num": 134,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "MBA (English)",
+    "duration": "1 year",
+    "language": "English",
+    "description_en": "Annual tuition ¥642,960 and a ¥282,000 matriculation fee (preliminary), plus about ¥120,000–230,000 for case materials.",
+    "description_cn": "学费每年 ¥642,960，入学金 ¥282,000（暂定），另需约 ¥120,000–230,000 案例材料费。"
+   }
+  ]
  },
  {
   "id": "auc-business",
@@ -4460,7 +4944,7 @@
   ],
   "description_en": "The American University in Cairo School of Business is Egypt's most prestigious business school. Located in New Cairo, AUC brings American-style education to one of the world's largest markets. Egypt's strategic position between Africa, the Middle East, and Europe, combined with its massive young population, offers graduates unique exposure to emerging market dynamics.",
   "description_cn": "开罗美国大学商学院是埃及最负盛名的商学院之一。位于新开罗的现代化校园，AUC商学院将美式教育引入世界最大市场之一。埃及介于非洲、中东和欧洲之间的战略位置，加上其庞大的年轻人口，为毕业生提供了接触新兴市场动态的独特机遇。",
-  "tuition_usd": null,
+  "tuition_usd": "Undergraduate US$735 per credit hour (international, 2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.aucegypt.edu/business",
@@ -4476,7 +4960,16 @@
   "qs_bm_rank": "201-250",
   "qs_bm_rank_num": 201,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Undergraduate business programmes",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "International undergraduates pay US$735 per credit hour, in US dollars.",
+    "description_cn": "国际本科生每学分 US$735，以美元缴纳。"
+   }
+  ]
  },
  {
   "id": "bocconi",
@@ -4503,7 +4996,7 @@
   ],
   "description_en": "Bocconi University and its SDA Bocconi School of Management are Europe's premier economics and business institution in Italy, placed in Milan—Europe's fashion and design capital and a major financial center. Bocconi is uniquely positioned for careers in luxury goods, fashion, media, and European finance.",
   "description_cn": "博科尼大学及其SDA博科尼管理学院是意大利乃至欧洲顶尖的经济与商业机构，坐落于米兰——欧洲时尚设计之都和主要金融中心之一。博科尼在奢侈品、时尚、媒体和欧洲金融领域的职业发展上独具优势。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc €17,000/year (first-year tuition and fees, 2026/27)",
   "language": "english",
   "notable_alumni": [
    "Mario Monti"
@@ -4528,7 +5021,16 @@
     "year": null
    }
   ],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Science programmes",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "First-year tuition and fees of €17,000 for 2026/27; full tuition waivers are available.",
+    "description_cn": "2026/27 首年学杂费 €17,000，可申请全额学费减免。"
+   }
+  ]
  },
  {
   "id": "ceibs",
@@ -4554,7 +5056,7 @@
   ],
   "description_en": "CEIBS was founded in 1994 as a joint venture between the Shanghai municipal government and the European Union. It combines China market expertise with global management teaching and is widely regarded as one of Asia's leading MBA and EMBA providers.",
   "description_cn": "中欧国际工商学院于 1994 年由上海市政府与欧盟合作创办，将中国市场洞察与全球管理教学相结合，被普遍视为亚洲领先的 MBA 和 EMBA 院校之一。",
-  "tuition_usd": null,
+  "tuition_usd": "16-month MBA RMB 488,000 (2027 intake)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.ceibs.edu",
@@ -4572,31 +5074,10 @@
   "programs_detail": [
    {
     "name": "MBA",
-    "duration": "17 months",
-    "language": "English / Chinese",
-    "description_en": "Asia's highest-ranked MBA in FT rankings, combining Chinese market expertise with global perspective.",
-    "description_cn": "亚洲《金融时报》排名最高的MBA，融合中国市场专业知识与全球视野。"
-   },
-   {
-    "name": "Global EMBA (GEMBA)",
-    "duration": "14 months",
-    "language": "English",
-    "description_en": "Executive MBA entirely in English for senior professionals with significant international exposure.",
-    "description_cn": "面向具有丰富国际经验的高级专业人士的全英语高管MBA。"
-   },
-   {
-    "name": "EMBA (中英双语)",
     "duration": "16 months",
-    "language": "Bilingual",
-    "description_en": "Bilingual EMBA covering China business strategy for senior executives.",
-    "description_cn": "面向高级管理人员的双语EMBA，深度涵盖中国商业战略。"
-   },
-   {
-    "name": "Finance MBA (FiMBA)",
-    "duration": "17 months",
     "language": "English",
-    "description_en": "Specialised MBA for finance professionals targeting China's capital markets and banking sector.",
-    "description_cn": "面向金融专业人士的专项MBA，聚焦中国资本市场和银行业。"
+    "description_en": "Tuition RMB 488,000 for the 2027 intake; early-action deadline 14 October 2026.",
+    "description_cn": "2027 年入学学费 48.8 万元；提前批截止 2026 年 10 月 14 日。"
    }
   ],
   "alumni_detail": [],
@@ -4628,7 +5109,7 @@
   ],
   "description_en": "ESADE Business School in Barcelona is consistently ranked among Europe's top business schools, distinguished by its Jesuit humanistic values and strong emphasis on leadership development and social responsibility. Its triple-accredited programs and diverse international student body make it a premier destination for global business education.",
   "description_cn": "巴塞罗那ESADE商学院长期跻身欧洲顶级商学院之列，以耶稣会人文主义价值观和对领导力发展与社会责任的高度重视而独树一帜。三重认证项目和多元化的国际学生群体使其成为全球商业教育的顶级目的地。",
-  "tuition_usd": null,
+  "tuition_usd": "BBA €21,300/year (2027-28) · Full-time MBA ~€79,300 (Sept 2026 intake, est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.esade.edu",
@@ -4644,7 +5125,23 @@
   "qs_bm_rank": "18",
   "qs_bm_rank_num": 18,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Business Administration (BBA)",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "€21,300 per academic year for 2027-28.",
+    "description_cn": "2027-28 学年学费每年 €21,300。"
+   },
+   {
+    "name": "Full-time MBA",
+    "duration": "12–18 months",
+    "language": "English",
+    "description_en": "Tuition about €79,300 for the September 2026 intake.",
+    "description_cn": "2026 年 9 月入学学费约 €79,300。"
+   }
+  ]
  },
  {
   "id": "hec-paris",
@@ -4761,9 +5258,9 @@
    "Consulting",
    "Technology"
   ],
-  "description_en": "IE Business School in Madrid is one of Europe's most entrepreneurial business schools, known for innovation in pedagogy and a strong startup culture. It attracts a highly international student body from 130+ countries and places graduates across top firms globally. Madrid's growing tech and startup scene provides an exciting backdrop.",
-  "description_cn": "马德里IE商学院是欧洲最具创业精神的商学院之一，以教学法创新和浓厚的创业文化著称。吸引来自130多个国家的高度国际化学生，毕业生遍布全球顶尖企业。马德里日益蓬勃的科技和创业生态提供了充满活力的学习环境。",
-  "tuition_usd": null,
+  "description_en": "IE Business School in Madrid is known for its entrepreneurial focus, innovative teaching and a highly international student body. Its International MBA runs for 11 or 15 months, and IE University's Bachelor in Business Administration is taught in English in Madrid and Segovia.",
+  "description_cn": "马德里的 IE 商学院以创业导向、创新教学和高度国际化的学生群体著称。国际 MBA 学制 11 或 15 个月；IE 大学的工商管理本科在马德里和塞哥维亚以英文授课。",
+  "tuition_usd": "International MBA €89,900 (+ €1,200 foundation fee) · BBA €29,000/year (2026-27)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.ie.edu",
@@ -4780,7 +5277,23 @@
   "alumni_detail": [],
   "requirements": null,
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "International MBA",
+    "duration": "11 or 15 months",
+    "language": "English",
+    "description_en": "Tuition €89,900, reviewed annually, plus a one-off €1,200 contribution to the IE Foundation.",
+    "description_cn": "学费 €89,900（每年调整），另一次性缴纳 €1,200 IE 基金会费用。"
+   },
+   {
+    "name": "Bachelor in Business Administration",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "€29,000 a year for 2026-27, rising by a fixed 2.9% a year during the programme.",
+    "description_cn": "2026-27 学费每年 €29,000，学制内每年固定上涨 2.9%。"
+   }
+  ]
  },
  {
   "id": "insead",
@@ -4905,7 +5418,7 @@
   ],
   "description_en": "NHH Norwegian School of Economics is the leading business school in Norway and among the most respected in the Nordic region. Bergen is the historic capital of the Norwegian maritime and energy industries. NHH's strong economics tradition, combined with Norway's enormous sovereign wealth fund ecosystem, makes it exceptional for finance, energy, and shipping careers.",
   "description_cn": "挪威经济学院（NHH）是挪威首屈一指的商学院，也是北欧地区最受推崇的商学院之一。卑尔根是挪威海事和能源产业的历史之都。NHH强大的经济学传统，结合挪威庞大的主权财富基金生态系统，使其在金融、能源和航运职业方面表现卓越。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor NOK 142,000/year · Master NOK 204,000/year (non-EU, 2026/27 cohort)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.nhh.no",
@@ -4922,7 +5435,23 @@
   "qs_bm_rank": null,
   "qs_bm_rank_num": null,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor in Economics and Business Administration",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Non-EU students starting in 2026/27 pay NOK 142,000 a year, fixed for the programme.",
+    "description_cn": "2026/27 入学的非欧盟学生每年 NOK 142,000，学制内不变。"
+   },
+   {
+    "name": "MSc in Economics and Business Administration",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Non-EU students starting in 2026/27 pay NOK 204,000 a year.",
+    "description_cn": "2026/27 入学的非欧盟学生每年 NOK 204,000。"
+   }
+  ]
  },
  {
   "id": "stockholm-sse",
@@ -4949,7 +5478,7 @@
   ],
   "description_en": "Stockholm School of Economics (SSE) is the preeminent business school in the Nordic region, known for its high academic standards and influential alumni network. As a standalone business school with a strong research tradition, SSE combines rigorous economics with practical business education in one of Europe's most innovative cities.",
   "description_cn": "斯德哥尔摩经济学院（SSE）是北欧地区卓越的商学院，以高学术标准和影响力深远的校友网络著称。作为拥有强大研究传统的独立商学院，SSE在欧洲最具创新活力的城市之一，将严格的经济学与实践商业教育相结合。",
-  "tuition_usd": null,
+  "tuition_usd": "BSc ~SEK 120,000/year (non-EU/EEA, est.)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.hhs.se",
@@ -4965,7 +5494,16 @@
   "qs_bm_rank": "=73",
   "qs_bm_rank_num": 73,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "BSc in Business & Economics",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Free for EU/EEA and Swiss citizens; other students pay about SEK 120,000 a year, with scholarships available.",
+    "description_cn": "欧盟/欧洲经济区及瑞士公民免学费；其他学生每年约 SEK 120,000，可申请奖学金。"
+   }
+  ]
  },
  {
   "id": "st-gallen",
@@ -4992,7 +5530,7 @@
   ],
   "description_en": "The University of St. Gallen (HSG) is Switzerland's premier business school, consistently ranked among Europe's best. Close to Lake Constance and an hour from Zurich, HSG combines strong academic research with practical business education. Its emphasis on law and economics integration sets it apart, with exceptional access to German, Swiss, and Austrian business.",
   "description_cn": "圣加仑大学（HSG）是瑞士顶尖商学院，长期跻身欧洲最佳之列。毗邻博登湖，距苏黎世仅一小时，HSG将强大的学术研究与实践商业教育相结合。其对法学与经济学融合的强调使其与众不同，为进入德国、瑞士和奥地利商业提供了卓越渠道。",
-  "tuition_usd": null,
+  "tuition_usd": "Bachelor ~CHF 3,344/semester · Master CHF 3,557.50/semester (foreign students, from autumn 2026)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.unisg.ch",
@@ -5008,7 +5546,23 @@
   "qs_bm_rank": "=36",
   "qs_bm_rank_num": 36,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor programmes",
+    "duration": "3 years",
+    "language": "English",
+    "description_en": "Foreign students pay about CHF 3,344 a semester from autumn 2026.",
+    "description_cn": "2026 年秋季起外国学生每学期约 CHF 3,344。"
+   },
+   {
+    "name": "Master programmes",
+    "duration": "1.5–2 years",
+    "language": "English",
+    "description_en": "Foreign students pay CHF 3,557.50 a semester from autumn 2026.",
+    "description_cn": "2026 年秋季起外国学生每学期 CHF 3,557.50。"
+   }
+  ]
  },
  {
   "id": "whu-beisheim",
@@ -5034,7 +5588,7 @@
   ],
   "description_en": "WHU – Otto Beisheim School of Management is Germany's top private business school and consistently ranked among Europe's elite. Known for its entrepreneurial spirit, international orientation, and strong alumni network, WHU produces highly sought-after graduates for top consulting firms, investment banks, and tech companies across Europe.",
   "description_cn": "WHU奥托拜斯海姆管理学院是德国顶尖私立商学院，长期跻身欧洲精英之列。以创业精神、国际化导向和强大的校友网络著称，WHU培养了备受欧洲顶级咨询公司、投资银行和科技公司青睐的优秀毕业生。",
-  "tuition_usd": null,
+  "tuition_usd": "Full-time MBA ~€49,500 (est.) · Part-time MBA €48,000",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.whu.edu",
@@ -5050,7 +5604,23 @@
   "qs_bm_rank": "=123",
   "qs_bm_rank_num": 123,
   "alumni_detail": [],
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Full-time MBA",
+    "duration": "12 months",
+    "language": "English",
+    "description_en": "Düsseldorf campus; tuition about €49,500.",
+    "description_cn": "杜塞尔多夫校区，学费约 €49,500。"
+   },
+   {
+    "name": "Part-time MBA",
+    "duration": "24 months",
+    "language": "English",
+    "description_en": "€48,000.",
+    "description_cn": "€48,000。"
+   }
+  ]
  },
  {
   "id": "lbs",
@@ -5676,7 +6246,7 @@
   ],
   "description_en": "PolyU's Faculty of Business includes the School of Accounting and Finance, the Department of Management and Marketing, and the Department of Logistics and Maritime Studies. Its logistics and shipping expertise reflects Hong Kong's role as a global port, and it offers a broad range of BBA majors and taught master's programmes.",
   "description_cn": "香港理工大学商学院下设会计及金融学院、管理及市场学系、物流及航运学系。依托香港国际港口城市的地位，物流与航运是其特色方向，同时开设多个 BBA 专业和授课型硕士。",
-  "tuition_usd": null,
+  "tuition_usd": "BBA HK$200,000/year (non-local, 2026/27) · HK$240,000 (2027/28)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.polyu.edu.hk/fb/",
@@ -5693,13 +6263,14 @@
     "name": "BBA",
     "duration": "4 years",
     "language": "English",
-    "description_en": "Undergraduate degree with majors such as accounting, finance, marketing and logistics.",
-    "description_cn": "本科学位，可选会计、金融、市场营销、物流等专业。"
+    "description_en": "Non-local tuition about HK$200,000 a year for 2026/27 and HK$240,000 for 2027/28 entry, plus a HK$20,000 initial fee.",
+    "description_cn": "非本地学费 2026/27 约每年 HK$200,000，2027/28 入学为 HK$240,000，另交 HK$20,000 留位费。"
    }
   ],
   "qs_bm_rank": "52",
   "qs_bm_rank_num": 52,
-  "profile_added": "2026-10"
+  "profile_added": "2026-10",
+  "data_checked": "2026-10"
  },
  {
   "id": "psu-smeal",
