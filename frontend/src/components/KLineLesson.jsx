@@ -321,7 +321,7 @@ export default function KLineLesson({ zh }) {
                     <div style={{ fontSize: 15, fontWeight: 700, color: hoveredPart.color, marginBottom: 8 }}>
                       {zh ? hoveredPart.label_zh : hoveredPart.label_en}
                     </div>
-                    <div style={{ fontSize: 13, color: '#c9d1d9', lineHeight: 1.7 }}>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
                       {zh ? hoveredPart.desc_zh : hoveredPart.desc_en}
                     </div>
                   </div>
@@ -468,7 +468,7 @@ export default function KLineLesson({ zh }) {
                           ))}
                         </svg>
                         <div style={{ flex: 1, minWidth: 200, paddingTop: 14 }}>
-                          <div style={{ fontSize: 12, color: '#c9d1d9', lineHeight: 1.8 }}>
+                          <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
                             {zh ? pat.meaning_zh : pat.meaning_en}
                           </div>
                         </div>
@@ -534,7 +534,7 @@ export default function KLineLesson({ zh }) {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {(zh ? q.opts_zh : q.opts_en).map((opt, i) => {
-                    let bg = CARD, border = `1px solid ${BDR}`, color = '#c9d1d9'
+                    let bg = CARD, border = `1px solid ${BDR}`, color = 'var(--text-secondary)'
                     if (revealed) {
                       if (i === q.answer) { bg = 'rgba(52,211,153,0.1)'; border = `1px solid ${GREEN}55`; color = GREEN }
                       else if (i === selected) { bg = 'rgba(239,68,68,0.1)'; border = `1px solid ${RED}55`; color = RED }
@@ -565,7 +565,7 @@ export default function KLineLesson({ zh }) {
                         ? (zh ? '✓ 正确！' : '✓ Correct!')
                         : (zh ? '✗ 答错了，正确答案是：' + (zh ? q.opts_zh : q.opts_en)[q.answer] : '✗ Incorrect. The answer is: ' + (zh ? q.opts_zh : q.opts_en)[q.answer])}
                     </div>
-                    <div style={{ fontSize: 12, color: '#c9d1d9', lineHeight: 1.7 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
                       {zh ? q.exp_zh : q.exp_en}
                     </div>
                   </div>

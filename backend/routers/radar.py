@@ -75,9 +75,10 @@ def _score_from_series(pe, pb, closes, volumes, mkt_closes, us: bool = False) ->
     """Shared scoring. US ranges are wider: growth stocks routinely trade at PE 30-60 and PB 10+."""
     scores: dict[str, int] = {}
     if us:
-        # PE 10 -> 100, PE 70 -> 0 (linear); PB on a log scale: 1 -> 100, 40 -> 0
+        # PE 10 -> 100, PE 70 -> 0 (linear); PB on a log scale: 1 -> 100, 10 -> 50, 100 -> 0
+        # (buybacks push some mega caps' PB past 40, e.g. AAPL ~56, which shouldn't read as a flat 0)
         scores["valuation"] = round(_clamp((70 - pe) / 60 * 100)) if pe and pe > 0 else 50
-        scores["pb"] = round(_clamp((1 - math.log(max(pb, 1.0)) / math.log(40)) * 100)) if pb and pb > 0 else 50
+        scores["pb"] = round(_clamp((1 - math.log(max(pb, 1.0)) / math.log(100)) * 100)) if pb and pb > 0 else 50
     else:
         scores["valuation"] = round(_clamp((80 - pe) / 75 * 100)) if pe and pe > 0 else 50
         scores["pb"] = round(_clamp((15 - pb) / 14.5 * 100)) if pb and pb > 0 else 50

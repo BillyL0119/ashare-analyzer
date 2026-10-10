@@ -75,20 +75,29 @@ function buildSummary(sectors, period, zh) {
 
 // ── Treemap chart ─────────────────────────────────────────────────────────────
 
-function Treemap({ sectors, lang, cn }) {
+// Dark label on the pale fills, white on the saturated ones
+const labelColor = (fill) => ([GREEN_LIGHT, RED_LIGHT].includes(fill) ? '#0f172a' : '#fff')
+
+function Treemap({ sectors, period, lang, cn }) {
   const t = T[lang] || T.en
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
 
   const option = useMemo(() => {
-    const data = sectors.map(s => ({
-      name:  zh ? s.name_zh : s.name_en,
-      value: Math.max(1, Math.abs(s.today_pct) * 100 + 50),  // size proportional to volatility
-      pct:   s.today_pct,
-      pct5d: s.pct_5d,
-      vol:   s.vol_ratio,
-      itemStyle: { color: pctColor(s.today_pct, cn) },
-    }))
+    const key = period === 'today' ? 'today_pct' : period === '5d' ? 'pct_5d' : 'pct_20d'
+    const data = sectors.map(s => {
+      const fill = pctColor(s[key], cn)
+      return {
+        name:  zh ? s.name_zh : s.name_en,
+        value: Math.max(1, Math.abs(s[key]) * 100 + 50),  // size proportional to the move
+        pct:   s[key],
+        today: s.today_pct,
+        pct5d: s.pct_5d,
+        vol:   s.vol_ratio,
+        itemStyle: { color: fill },
+        label: { color: labelColor(fill) },
+      }
+    })
 
     return {
       backgroundColor: 'transparent',
@@ -100,7 +109,7 @@ function Treemap({ sectors, lang, cn }) {
         formatter: (p) => {
           const d = p.data
           return `<b>${p.name}</b><br/>
-今日 / Today: <b style="color:${pctColor(d.pct, cn)}">${fmt(d.pct)}</b><br/>
+今日 / Today: <b style="color:${pctTextColor(d.today, cn)}">${fmt(d.today)}</b><br/>
 近5日 / 5-day: ${fmt(d.pct5d)}<br/>
 量比 / Vol ratio: ${d.vol?.toFixed(2) ?? 'N/A'}`
         },
@@ -132,7 +141,7 @@ function Treemap({ sectors, lang, cn }) {
         levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 } }],
       }],
     }
-  }, [sectors, lang, theme, cn])
+  }, [sectors, period, lang, theme, cn])
 
   return (
     <ReactECharts
@@ -352,7 +361,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             borderRadius: 12, padding: '14px', marginBottom: 14, overflow: 'hidden',
           }}>
             {view === 'treemap' ? (
-              <Treemap sectors={sectors} lang={lang} cn={market === 'cn'} />
+              <Treemap sectors={sectors} period={period} lang={lang} cn={market === 'cn'} />
             ) : (
               <BarRanking sectors={sectors} period={period} lang={lang} cn={market === 'cn'} />
             )}

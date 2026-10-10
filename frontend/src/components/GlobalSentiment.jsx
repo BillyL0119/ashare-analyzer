@@ -7,6 +7,7 @@ import {
   Marker, Graticule, Sphere,
 } from 'react-simple-maps'
 import ReactECharts from '../lib/echarts'
+import { THEME } from '../utils/chartHelpers'
 import worldAtlas from 'world-atlas/countries-110m.json'
 
 // ── Geo data (self-hosted via npm world-atlas) ────────────────────────────────
@@ -109,7 +110,7 @@ function buildGauge(score) {
           ],
         },
       },
-      pointer: { length: '62%', width: 4, itemStyle: { color: 'var(--text-primary)' } },
+      pointer: { length: '62%', width: 4, itemStyle: { color: THEME.tooltipText } },
       axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
       title: { show: false },
       detail: {

@@ -63,7 +63,7 @@ function InterpretationBlock({ text }) {
         return (
           <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '10px 14px' }}>
             <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{title}</div>
-            <div style={{ color: '#c9d1d9', fontSize: 13, lineHeight: 1.7 }}>{renderBold(body)}</div>
+            <div style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.7 }}>{renderBold(body)}</div>
           </div>
         )
       })}

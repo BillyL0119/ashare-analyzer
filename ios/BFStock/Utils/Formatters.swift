@@ -4,9 +4,25 @@ enum Formatters {
 
     // MARK: Price
 
+    /// Grouped like the website: 7,811.54 (decimals fixed so columns line up).
     static func price(_ value: Double, decimals: Int = 2) -> String {
-        String(format: "%.\(decimals)f", value)
+        let f = priceFormatters[decimals] ?? makePriceFormatter(decimals)
+        return f.string(from: NSNumber(value: value)) ?? String(format: "%.\(decimals)f", value)
     }
+
+    private static func makePriceFormatter(_ decimals: Int) -> NumberFormatter {
+        let f = NumberFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.numberStyle = .decimal
+        f.usesGroupingSeparator = true
+        f.groupingSeparator = ","
+        f.minimumFractionDigits = decimals
+        f.maximumFractionDigits = decimals
+        return f
+    }
+    private static let priceFormatters: [Int: NumberFormatter] = Dictionary(
+        uniqueKeysWithValues: (0...4).map { ($0, makePriceFormatter($0)) }
+    )
 
     // MARK: Change percentage / absolute
 

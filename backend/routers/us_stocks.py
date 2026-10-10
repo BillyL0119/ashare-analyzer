@@ -676,7 +676,7 @@ def search_us_stocks(q: str = Query(..., min_length=1)):
 @router.get("/similar/{symbol}")
 def get_us_similar(symbol: str):
     sym = symbol.upper()
-    cache_key = f"{sym}_similar_us"
+    cache_key = f"{sym}_similar_us_v2"  # v2: share-class duplicates removed
 
     cached = read_cache(cache_key, max_age_hours=24)
     # An empty or thin list is a failed/partial run (rate-limited era): recompute, it is fast now.
@@ -758,6 +758,16 @@ def get_us_similar(symbol: str):
             })
 
         results.sort(key=lambda x: x["correlation"], reverse=True)
+        # One row per company: drop the other share class (GOOG/GOOGL) and the target's own twin.
+        twins = [{"GOOG", "GOOGL"}, {"BRK.A", "BRK.B"}, {"FOX", "FOXA"}, {"NWS", "NWSA"}]
+        same_co = lambda a, b: any(a in t and b in t for t in twins)
+        deduped, seen_names = [], set()
+        for r in results:
+            if same_co(r["code"], sym) or r["name"] in seen_names or any(same_co(r["code"], d["code"]) for d in deduped):
+                continue
+            seen_names.add(r["name"])
+            deduped.append(r)
+        results = deduped
         results = results[:10]
 
         response = {"symbol": sym, "industry": sector or "", "results": results}

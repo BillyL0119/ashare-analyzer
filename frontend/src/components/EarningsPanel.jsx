@@ -74,7 +74,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
           <div style={{ fontSize: 10, color: MUTED, marginBottom: 1 }}>EPS</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
             {hasEps && (
-              <span style={{ fontSize: 12, color: '#c9d1d9' }}>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
                 {t.earEst} {item.eps_estimate}
               </span>
             )}
@@ -106,7 +106,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
             {hasRevest && (
-              <span style={{ fontSize: 11, color: '#c9d1d9' }}>
+              <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                 {t.earEst}{item.revenue_estimate}
               </span>
             )}

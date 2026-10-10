@@ -591,8 +591,9 @@ def _summary(total, grade, tech, fund, sent, risk) -> tuple:
         zh += "主要特点：" + "、".join(pts_zh) + "。建议结合市场行情综合决策。"
         en += " Key points: " + ", ".join(pts_en) + ". Combine with market conditions."
     else:
-        zh += "整体状况良好，请结合市场行情综合判断，注意风险。"
-        en += " Overall in good shape. Assess market conditions and manage risk."
+        # No factor stands out: stay neutral (this branch also runs for C/D grades)
+        zh += "各维度表现较均衡，没有明显的强项或短板。请结合市场行情综合判断，注意风险。"
+        en += " Scores are balanced across dimensions, with no clear strength or weakness. Weigh market conditions and manage risk."
     return zh, en
 
 

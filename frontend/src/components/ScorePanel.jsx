@@ -13,6 +13,15 @@ const GRADE_COLOR = {
   B: '#fbbf24', C: '#f97316', D: '#ef4444',
 }
 
+// English labels for the backend's per-factor keys (it sends raw keys like "pe", "drawdown")
+const FACTOR_EN = {
+  trend: 'Trend', rsi: 'RSI', macd: 'MACD', pe: 'P/E', pb: 'P/B', roe: 'ROE', revenue: 'Revenue',
+  volume: 'Volume', news: 'News', volatility: 'Volatility', drawdown: 'Drawdown',
+}
+const factorLabel = (d, isCN) => isCN
+  ? (d.dim_zh || d.dim)
+  : (FACTOR_EN[d.dim] || (d.dim ? d.dim.charAt(0).toUpperCase() + d.dim.slice(1) : d.dim_zh))
+
 const DIM_LABEL = {
   technical:   { zh: '技术面', en: 'Technical' },
   fundamental: { zh: '基本面', en: 'Fundamental' },
@@ -29,7 +38,7 @@ function ScoreRing({ score, grade }) {
   return (
     <div style={{ position: 'relative', width: 140, height: 140, flexShrink: 0 }}>
       <svg width={140} height={140} style={{ transform: 'rotate(-90deg)' }}>
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={10} />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={THEME.border} strokeWidth={10} />
         <circle
           cx={cx} cy={cy} r={r} fill="none"
           stroke={color} strokeWidth={10}
@@ -64,11 +73,12 @@ function RadarChart({ dimensions }) {
     radar: {
       indicator: indicators,
       shape: 'polygon',
+      radius: '68%',
       splitNumber: 4,
-      axisName: { color: 'var(--text-muted)', fontSize: 12 },
-      splitLine: { lineStyle: { color: 'rgba(138,180,248,0.1)' } },
-      splitArea: { show: false },
-      axisLine: { lineStyle: { color: 'rgba(138,180,248,0.15)' } },
+      axisName: { color: THEME.text, fontSize: 12, fontWeight: 600 },
+      splitLine: { lineStyle: { color: THEME.border } },
+      splitArea: { show: true, areaStyle: { color: ['transparent', 'rgba(138,180,248,0.05)'] } },
+      axisLine: { lineStyle: { color: THEME.border } },
     },
     series: [{
       type: 'radar',
@@ -79,7 +89,7 @@ function RadarChart({ dimensions }) {
         symbolSize: 5,
         lineStyle: { color: ACCENT, width: 2 },
         itemStyle: { color: ACCENT },
-        areaStyle: { color: 'rgba(138,180,248,0.15)' },
+        areaStyle: { color: 'rgba(138,180,248,0.25)' },
       }],
     }],
   }
@@ -92,7 +102,7 @@ function DimCard({ dimKey, dim, isCN }) {
   const barColor = pct >= 70 ? '#22c55e' : pct >= 50 ? '#fbbf24' : '#ef4444'
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(138,180,248,0.1)',
+      background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
       borderRadius: 10, padding: '12px 14px',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -103,7 +113,7 @@ function DimCard({ dimKey, dim, isCN }) {
           {dim.score} / {dim.max}
         </span>
       </div>
-      <div style={{ height: 5, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden', marginBottom: 10 }}>
+      <div style={{ height: 5, background: 'var(--border-primary)', borderRadius: 3, overflow: 'hidden', marginBottom: 10 }}>
         <div style={{
           height: '100%', width: `${pct}%`, borderRadius: 3,
           background: `linear-gradient(90deg, ${barColor}aa, ${barColor})`,
@@ -112,18 +122,18 @@ function DimCard({ dimKey, dim, isCN }) {
       </div>
       {dim.details.map((d, i) => (
         <div key={i} style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-          padding: '5px 0', borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+          display: 'grid', gridTemplateColumns: '68px minmax(0, 1fr) auto', alignItems: 'baseline',
+          padding: '6px 0', borderTop: i > 0 ? '1px solid var(--border-primary)' : 'none',
           gap: 8,
         }}>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>
-            {isCN ? (d.dim_zh || d.dim) : (d.dim || d.dim_zh)}
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>
+            {factorLabel(d, isCN)}
           </span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'right', flex: 1 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.45 }}>
             {isCN ? d.note_zh : d.note_en}
           </span>
           <span style={{
-            fontSize: 11, fontWeight: 700, flexShrink: 0,
+            fontSize: 11, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
             color: d.score >= d.max * 0.7 ? '#22c55e' : d.score >= d.max * 0.4 ? '#fbbf24' : '#ef4444',
           }}>
             {d.score}/{d.max}
@@ -220,7 +230,7 @@ export default function ScorePanel({ stocks }) {
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
               <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{s.name || s.code}</span>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.code}</span>
+              {s.name && s.name !== s.code && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.code}</span>}
               <div style={{
                 marginLeft: 'auto', padding: '2px 12px',
                 background: `${gradeColor}22`, border: `1px solid ${gradeColor}55`,
@@ -239,9 +249,9 @@ export default function ScorePanel({ stocks }) {
                 <ScoreRing score={d.total} grade={d.grade} />
               </div>
               <div style={{
-                flex: '1 1 200px', minWidth: 0, fontSize: 12, lineHeight: 1.7, color: 'var(--text-muted)',
-                background: 'rgba(255,255,255,0.02)', borderRadius: 8,
-                border: '1px solid rgba(138,180,248,0.07)', padding: '10px 14px',
+                flex: '1 1 200px', minWidth: 0, fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)',
+                background: 'var(--bg-tertiary)', borderRadius: 8,
+                border: '1px solid var(--border-primary)', padding: '10px 14px', alignSelf: 'center',
               }}>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
                   {isCN ? '综合评语' : 'Summary'}

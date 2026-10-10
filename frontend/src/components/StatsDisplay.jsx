@@ -149,8 +149,8 @@ export default function StatsDisplay({ lang, onClose }) {
       smooth: true,
       symbol: 'circle',
       symbolSize: 4,
-      lineStyle: { width: 2.5, color: 'var(--accent-blue)' },
-      itemStyle: { color: 'var(--accent-blue)' },
+      lineStyle: { width: 2.5, color: '#0ea5e9' },
+      itemStyle: { color: '#0ea5e9' },
       areaStyle: {
         color: {
           type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
@@ -192,7 +192,7 @@ export default function StatsDisplay({ lang, onClose }) {
         center: ['38%', '50%'],
         avoidLabelOverlap: false,
         label: { show: false },
-        emphasis: { label: { show: true, fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' } },
+        emphasis: { label: { show: true, fontSize: 12, fontWeight: 700, color: THEME.tooltipText } },
         data: entries.map(([key, val], i) => ({
           name: (FEATURE_LABELS[key]?.[lang] ?? key),
           value: val,

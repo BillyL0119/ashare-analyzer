@@ -78,19 +78,19 @@ export default function RadarPanel({ stocks }) {
       radius: isMobile ? '52%' : '62%',
       splitNumber: 4,
       axisName: {
-        color: 'var(--text-muted)',
-        fontSize: isMobile ? 10 : 11,
+        color: THEME.text,
+        fontSize: isMobile ? 10 : 12, fontWeight: 600,
       },
       splitLine: {
-        lineStyle: { color: 'rgba(255,255,255,0.08)' },
+        lineStyle: { color: THEME.border },
       },
       splitArea: {
         areaStyle: {
-          color: ['rgba(255,255,255,0.025)', 'rgba(255,255,255,0.01)'],
+          color: ['transparent', 'rgba(138,180,248,0.05)'],
         },
       },
       axisLine: {
-        lineStyle: { color: 'rgba(255,255,255,0.1)' },
+        lineStyle: { color: THEME.border },
       },
     },
     series: [
@@ -108,8 +108,8 @@ export default function RadarPanel({ stocks }) {
     ],
     tooltip: {
       trigger: 'item',
-      backgroundColor: 'rgba(10,15,26,0.95)',
-      borderColor: 'rgba(138,180,248,0.2)',
+      backgroundColor: THEME.tooltipBg,
+      borderColor: THEME.border,
       textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const vals = params.value

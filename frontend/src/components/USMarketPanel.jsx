@@ -32,12 +32,20 @@ const CSS = `
 `
 const card = { background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12 }
 
-function countdown(iso, t) {
+const OPENS_AT = {
+  zh: (w) => `美东时间 ${w} 开盘`, en: (w) => `Opens ${w} ET`, ja: (w) => `米国東部時間 ${w} 開場`,
+  ko: (w) => `미국 동부시간 ${w} 개장`, fr: (w) => `Ouverture ${w} (heure de New York)`,
+}
+const LOCALE = { zh: 'zh-CN', en: 'en-US', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR' }
+
+// Same rule as the phone UI and the iOS app: countdown within 12h, otherwise the opening day + time in ET.
+function countdown(iso, t, lang) {
   if (!iso) return ''
   const mins = Math.floor((new Date(iso).getTime() - Date.now()) / 60000)
   if (mins <= 0) return ''
-  const txt = mins >= 2880 ? `${Math.floor(mins / 1440)}${t.d}` : `${Math.floor(mins / 60)}${t.h} ${mins % 60}${t.m}`
-  return `${t.opens} ${txt}`
+  if (mins < 720) return `${t.opens} ${Math.floor(mins / 60)}${t.h} ${mins % 60}${t.m}`
+  const when = new Intl.DateTimeFormat(LOCALE[lang] || 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }).format(new Date(iso))
+  return (OPENS_AT[lang] || OPENS_AT.en)(when)
 }
 
 export default function USMarketPanel({ lang }) {
@@ -59,7 +67,7 @@ export default function USMarketPanel({ lang }) {
 
   const s = d.session
   const label = t[s.state] || t.closed
-  const cd = s.state === 'regular' ? '' : countdown(s.next_open_utc, t)
+  const cd = s.state === 'regular' ? '' : countdown(s.next_open_utc, t, lang)
   const rows = tab === 'gainers' ? d.gainers : tab === 'losers' ? d.losers : d.active_20.slice(0, 10)
   const maxAbs = Math.max(...d.sectors.map((x) => Math.abs(x.pct)), 0.01)
   const b = d.breadth
