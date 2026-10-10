@@ -24,7 +24,7 @@ function PctBadge({ val, market }) {
   )
 }
 
-export default function SearchBar({ fullWidth = false }) {
+export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [open, setOpen] = useState(false)
@@ -122,6 +122,9 @@ export default function SearchBar({ fullWidth = false }) {
     fetchHot()
   }
 
+  // Opened from the phone header's search icon: show the hot list straight away
+  useEffect(() => { if (autoFocus) handleFocus() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') { setOpen(false); e.target.blur() }
   }
@@ -166,6 +169,7 @@ export default function SearchBar({ fullWidth = false }) {
           onFocus={handleFocus}
           onBlur={() => setFocused(false)}
           onKeyDown={handleKeyDown}
+          autoFocus={autoFocus}
           placeholder={isFull ? t.searchFull : t.searchPlaceholder}
           disabled={isFull}
           style={{
@@ -190,7 +194,7 @@ export default function SearchBar({ fullWidth = false }) {
 
       {/* Hot stocks panel */}
       {showHot && (
-        <div style={{ ...dropdownStyle, right: 'auto', width: 'min(520px, calc(100vw - 32px))' }}>
+        <div style={{ ...dropdownStyle, right: 'auto', width: fullWidth ? '100%' : 'min(520px, calc(100vw - 32px))' }}>
           <div style={{ padding: '8px 12px 6px', fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.4px', borderBottom: '1px solid var(--border-primary)' }}>
             {t.sbHot}
           </div>

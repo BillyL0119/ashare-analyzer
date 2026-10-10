@@ -96,6 +96,13 @@ export default function App() {
   const [showLangDropdown, setShowLangDropdown] = useState(false)
   const [toast,          setToast]          = useState(null)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  // Phones: search lives behind an icon so the sticky header stays one row tall
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
+  useEffect(() => { setShowMobileSearch(false) }, [location.pathname])
+  useEffect(() => {
+    if (!isMobile) return
+    document.querySelector('.bfs-nav-tab.is-active')?.scrollIntoView({ inline: 'center', block: 'nearest' })
+  }, [isMobile, location.pathname])
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200) }
   const watchlist      = useWatchlistStore((s) => s.list)
   const watchlistCount = watchlist.length
@@ -332,12 +339,12 @@ export default function App() {
                 boxShadow: market === key ? '0 2px 12px rgba(14,165,233,0.3)' : 'none',
               }}
             >
-              {label}
+              {isMobile && key === 'us' && lang === 'en' ? 'US' : label}
             </button>
           ))}
         </div>
 
-        {isMobile ? <div style={{ order: 10, flexBasis: '100%' }}><SearchBar fullWidth /></div> : <SearchBar />}
+        {isMobile ? (showMobileSearch && <div style={{ order: 10, flexBasis: '100%' }}><SearchBar fullWidth autoFocus /></div>) : <SearchBar />}
 
         {/* Right-side controls pushed to the far right */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: isMobile ? 5 : 8, flexShrink: 0 }}>
@@ -418,6 +425,23 @@ export default function App() {
               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
             >
               {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+          )}
+
+          {isMobile && (
+            <button
+              onClick={() => setShowMobileSearch(v => !v)}
+              aria-label={t.searchPlaceholder}
+              aria-expanded={showMobileSearch}
+              style={{
+                width: 34, height: 34, borderRadius: '50%', flexShrink: 0, cursor: 'pointer',
+                border: `1px solid ${showMobileSearch ? '#0ea5e9' : 'var(--border-primary)'}`,
+                background: showMobileSearch ? 'rgba(14,165,233,0.15)' : 'transparent',
+                color: showMobileSearch ? '#0ea5e9' : 'var(--text-secondary)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
             </button>
           )}
 
@@ -603,6 +627,19 @@ export default function App() {
                   </div>
                 )}
               </>
+            ) : isMobile ? (
+              <button
+                onClick={() => setShowAuth(true)}
+                aria-label={t.signIn}
+                title={t.signIn}
+                style={{
+                  width: 34, height: 34, borderRadius: '50%', cursor: 'pointer',
+                  border: '1px solid rgba(14,165,233,0.35)', background: 'rgba(14,165,233,0.08)', color: '#0ea5e9',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></svg>
+              </button>
             ) : (
               <button
                 onClick={() => setShowAuth(true)}
@@ -667,9 +704,11 @@ export default function App() {
             {label}
           </button>
         ))}
-        <div style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 11, letterSpacing: '0.3px', flexShrink: 0, paddingLeft: 16 }}>
-          {t.dataSource}
-        </div>
+        {!isMobile && (
+          <div style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 11, letterSpacing: '0.3px', flexShrink: 0, paddingLeft: 16 }}>
+            {t.dataSource}
+          </div>
+        )}
       </div>
       </div>{/* end sticky nav wrapper */}
 

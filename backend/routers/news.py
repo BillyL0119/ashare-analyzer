@@ -1037,6 +1037,140 @@ def _fetch_yahoo_rss_us(symbol: str) -> list[dict]:
         return []
 
 
+_NASDAQ_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/126 Safari/537.36",
+    "Accept": "application/json",
+}
+_AGO_RE = re.compile(r"(\d+)\s+(minute|hour|day|week)s?\s+ago", re.I)
+
+
+def _fetch_nasdaq_symbol_news(symbol: str, limit: int = 40) -> list[dict]:
+    """Nasdaq.com articles tagged with `symbol` (rows carry related_symbols, relative 'ago' times)."""
+    try:
+        r = requests.get(
+            "https://api.nasdaq.com/api/news/topic/articlebysymbol",
+            params={"q": f"{symbol.lower()}|stocks", "offset": 0, "limit": limit, "fallback": "true"},
+            headers=_NASDAQ_HEADERS, timeout=10,
+        )
+        rows = ((r.json() or {}).get("data") or {}).get("rows") or []
+    except Exception as exc:
+        logger.debug("Nasdaq news failed for %s: %s", symbol, exc)
+        return []
+    now = datetime.now(timezone.utc)
+    out = []
+    for row in rows:
+        title = (row.get("title") or "").strip()
+        if not title:
+            continue
+        m = _AGO_RE.search(row.get("ago") or "")
+        if m:
+            n, unit = int(m.group(1)), m.group(2).lower()
+            dt = now - timedelta(**{unit + "s": n})
+        else:
+            try:
+                dt = datetime.strptime(row.get("created") or "", "%b %d, %Y").replace(tzinfo=timezone.utc)
+            except ValueError:
+                dt = now
+        url = row.get("url") or ""
+        out.append({
+            "title": title,
+            "content": "",
+            "source": row.get("publisher") or "Nasdaq",
+            # Same RFC 822 shape as the Yahoo RSS items
+            "time": dt.strftime("%a, %d %b %Y %H:%M:%S +0000"),
+            "url": url if url.startswith("http") else "https://www.nasdaq.com" + url,
+            "lang": "en",
+            "_related": [x.split("|")[0] for x in row.get("related_symbols") or []],
+        })
+    return out
+
+
+# Extra words that identify a company in headlines (products, brands, former names).
+_US_NAME_ALIASES = {
+    "AAPL": ["Apple", "iPhone", "iPad", "Mac", "App Store"],
+    "MSFT": ["Microsoft", "Azure", "Copilot"],
+    "GOOGL": ["Alphabet", "Google", "YouTube", "Waymo", "Gemini"],
+    "GOOG": ["Alphabet", "Google", "YouTube", "Waymo", "Gemini"],
+    "AMZN": ["Amazon", "AWS"],
+    "META": ["Meta", "Facebook", "Instagram", "WhatsApp"],
+    "NVDA": ["Nvidia"],
+    "TSLA": ["Tesla"],
+    "BRK.B": ["Berkshire"],
+    "JPM": ["JPMorgan"],
+    "AMD": ["AMD"],
+    "NFLX": ["Netflix"],
+}
+_NAME_SUFFIX_RE = re.compile(
+    r"[,.]?\s+(Inc|Incorporated|Corp|Corporation|Co|Company|Ltd|Limited|plc|PLC|Holdings?|Group|"
+    r"Platforms|Technologies|Technology|Class [A-C]|N\.?V|S\.?A|AG|SE|L\.?P)\.?\b.*$"
+)
+
+
+def _us_name_keywords(symbol: str) -> list[str]:
+    words = list(_US_NAME_ALIASES.get(symbol, []))
+    try:
+        from routers.us_market import us_quotes
+        name = (us_quotes([symbol]).get(symbol) or {}).get("name") or ""
+    except Exception:
+        name = ""
+    core = _NAME_SUFFIX_RE.sub("", name).strip(" ,.")
+    if len(core) >= 3:
+        words.append(core)
+    return words
+
+
+def _relevance(item: dict, symbol: str, keywords: list[str]) -> int:
+    """3 = headline names the company, 2 = summary does, 1 = tagged with few tickers incl. this one."""
+    pats = [re.compile(r"\b" + re.escape(symbol) + r"\b")] + [
+        re.compile(r"\b" + re.escape(k) + r"(?:'s|’s)?\b", re.I) for k in keywords
+    ]
+    if any(p.search(item["title"]) for p in pats):
+        return 3
+    if any(p.search(item.get("content") or "") for p in pats):
+        return 2
+    rel = item.get("_related")
+    if rel and symbol.lower() in rel and len(rel) <= 3:
+        return 1
+    return 0
+
+
+def _us_symbol_news(symbol: str, want: int = 15) -> list[dict]:
+    """Yahoo RSS + Nasdaq for one ticker, keeping only items that are actually about it."""
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        f_y = ex.submit(_fetch_yahoo_rss_us, symbol)
+        f_n = ex.submit(_fetch_nasdaq_symbol_news, symbol)
+        f_k = ex.submit(_us_name_keywords, symbol)
+        items = (f_y.result() or []) + (f_n.result() or [])
+        keywords = f_k.result() or []
+
+    import email.utils as _eu
+    def _ts(it):
+        try:
+            return _eu.parsedate_to_datetime(it["time"]).timestamp()
+        except Exception:
+            return 0.0
+
+    scored, seen = [], []
+    for it in items:
+        if any(_titles_similar(it["title"], t) for t in seen):
+            continue
+        seen.append(it["title"])
+        scored.append((_relevance(it, symbol, keywords), _ts(it), it))
+
+    strong = [x for x in scored if x[0] >= 2]
+    # A thin feed still beats an empty card: top up with weakly tagged items, never with untagged noise.
+    if len(strong) < 6:
+        strong += [x for x in scored if x[0] == 1][: 6 - len(strong)]
+    strong.sort(key=lambda x: x[1], reverse=True)
+    out = []
+    for _, _, it in strong[:want]:
+        it = dict(it)
+        it.pop("_related", None)
+        out.append(it)
+    return out
+
+
 @router.get("/{symbol}")
 def get_news(symbol: str, market: str = Query("cn")):
     """
@@ -1057,7 +1191,7 @@ def get_news(symbol: str, market: str = Query("cn")):
         # ── US market: English-only Yahoo Finance ──
         if market == "us":
             sym_upper = symbol.upper()
-            news_raw = _fetch_yahoo_rss_us(sym_upper)
+            news_raw = _us_symbol_news(sym_upper)
             stock_name = sym_upper
 
             if not news_raw:
