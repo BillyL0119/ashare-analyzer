@@ -130,6 +130,8 @@ struct PctPill: View {
         Text(pct.map { Formatters.changePct($0) } ?? "--")
             .font(.system(.footnote, design: .rounded).weight(.semibold))
             .monospacedDigit()
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)   // "+14.21%" must shrink, never wrap inside a fixed-width pill
             .foregroundStyle(color)
             .contentTransition(.numericText(value: pct ?? 0))
             .animation(.snappy(duration: 0.45), value: pct)

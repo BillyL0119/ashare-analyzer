@@ -1243,6 +1243,12 @@ export const STR = {
   "공식 사이트 참조",
   "Voir le site officiel"
  ],
+ "美东时间 %@ 开盘": [
+  "Opens %@ ET",
+  "米東部時間 %@ に開場",
+  "미 동부시간 %@ 개장",
+  "Ouverture %@ (heure de New York)"
+ ],
  "拉美及其他": [
   "Latin America & other",
   "中南米・その他",
@@ -1634,22 +1640,22 @@ export const STR = {
   "Mouvements US"
  ],
  "涨幅榜": [
-  "Top gainers",
+  "Gainers",
   "値上がり",
   "상승률",
-  "Plus fortes hausses"
+  "Hausses"
  ],
  "跌幅榜": [
-  "Top losers",
+  "Losers",
   "値下がり",
   "하락률",
-  "Plus fortes baisses"
+  "Baisses"
  ],
  "活跃榜": [
-  "Most active",
+  "Active",
   "出来高上位",
   "거래대금",
-  "Plus actives"
+  "Actives"
  ],
  "七巨头": [
   "Magnificent 7",

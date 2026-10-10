@@ -38,6 +38,8 @@ struct ContentView: View {
         }
         // Cap dynamic type so numeric-heavy UIs don't break at xxxLarge
         .dynamicTypeSize(.xSmall ... .accessibility1)
+        // The splash is a dark blue screen; hide the status bar rather than show dark text on it.
+        .statusBarHidden(showSplash)
         .task {
             try? await Task.sleep(for: .seconds(1.7))
             withAnimation(.easeInOut(duration: 0.5)) { showSplash = false }

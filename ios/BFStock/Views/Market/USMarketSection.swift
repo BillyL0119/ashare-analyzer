@@ -51,8 +51,9 @@ struct USMarketSection: View {
                     .background(sessionColor(ov.session.state).opacity(0.14), in: Capsule())
                     .foregroundStyle(sessionColor(ov.session.state))
                 }
-                Text([ov.session.state == "regular" ? nil : countdown(ov.session.nextOpenUtc), String(ov.session.etTime.suffix(5)) + " ET"]
-                        .compactMap { $0 }.joined(separator: " · "))
+                Text(ov.session.state == "regular"
+                        ? String(ov.session.etTime.suffix(5)) + " ET"
+                        : (nextOpenText(ov.session.nextOpenUtc) ?? String(ov.session.etTime.suffix(5)) + " ET"))
                     .font(.system(.caption, design: .rounded)).monospacedDigit().foregroundStyle(.secondary)
             }
             if let hero = ov.indices.first {
@@ -260,12 +261,19 @@ struct USMarketSection: View {
         }
     }
 
-    private func countdown(_ iso: String?) -> String? {
+    /// "Opens in 3 h 20 min" within 12 hours, otherwise "Opens Mon 9:30 AM ET" in New York time.
+    private func nextOpenText(_ iso: String?) -> String? {
         guard let iso, let d = ISO8601DateFormatter().date(from: iso) else { return nil }
         let mins = Int(d.timeIntervalSinceNow / 60)
         guard mins > 0 else { return nil }
-        let text = mins >= 2880 ? L("%lld天", mins / 1440) : L("%lld小时 %lld分钟", mins / 60, mins % 60)
-        return L("距开盘 %@", text)
+        if mins < 720 {
+            return L("距开盘 %@", L("%lld小时 %lld分钟", mins / 60, mins % 60))
+        }
+        let f = DateFormatter()
+        f.locale = Lang.locale
+        f.timeZone = TimeZone(identifier: "America/New_York")
+        f.setLocalizedDateFormatFromTemplate("EEE jmm")
+        return L("美东时间 %@ 开盘", f.string(from: d))
     }
 }
 

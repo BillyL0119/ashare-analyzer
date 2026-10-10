@@ -6465,13 +6465,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Most active"
+            "value": "Active"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plus actives"
+            "value": "Actives"
           }
         },
         "ja": {
@@ -6552,13 +6552,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Top gainers"
+            "value": "Gainers"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plus fortes hausses"
+            "value": "Hausses"
           }
         },
         "ja": {
@@ -7677,6 +7677,35 @@
         }
       }
     },
+    "美东时间 %@ 开盘": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens %@ ET"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouverture %@ (heure de New York)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "米東部時間 %@ に開場"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미 동부시간 %@ 개장"
+          }
+        }
+      }
+    },
     "美股": {
       "extractionState": "manual",
       "localizations": {
@@ -8698,13 +8727,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Top losers"
+            "value": "Losers"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plus fortes baisses"
+            "value": "Baisses"
           }
         },
         "ja": {
