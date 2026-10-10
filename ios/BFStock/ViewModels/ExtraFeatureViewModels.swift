@@ -85,11 +85,15 @@ final class UniversitiesViewModel: ObservableObject {
 @MainActor
 final class CareerViewModel: ObservableObject {
     @Published var roles: [CareerRole] = []
+    @Published var guide: CareerGuideData?
     @Published var isLoading = false
     @Published var error: String?
 
     func load() async {
         if roles.isEmpty, let c: CareerRolesResponse = APIClient.shared.cached("/career/roles") { roles = c.roles }
+        if guide == nil, let g: CareerGuideData = APIClient.shared.cached("/career/guide") { guide = g }
+        // Refresh the structured data quietly (pay ladders, firm list); the long-form roles rarely change
+        Task { if let g: CareerGuideData = try? await APIClient.shared.get("/career/guide", persist: true) { guide = g } }
         guard roles.isEmpty else { return }
         isLoading = true
         error = nil

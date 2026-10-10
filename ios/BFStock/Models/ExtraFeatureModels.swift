@@ -205,6 +205,80 @@ struct CareerRolesResponse: Decodable {
     let roles: [CareerRole]
 }
 
+// MARK: - Career guide data (/career/guide), shared with the web Career Guide
+
+/// Text the backend sends in Chinese and English; other app languages fall back to English.
+struct LocText: Decodable, Hashable {
+    let zh: String
+    let en: String
+    var text: String { Lang.code == "zh" ? zh : en }
+}
+
+struct LocList: Decodable {
+    let zh: [String]
+    let en: [String]
+    var items: [String] { Lang.code == "zh" ? zh : en }
+}
+
+struct CareerLadderRow: Decodable {
+    let level: LocText
+    let years: String
+    let base: String
+    let allIn: String
+}
+
+struct CareerStep: Decodable {
+    let when: LocText
+    let what: LocText
+}
+
+struct TrackMeta: Decodable {
+    let short: LocText
+    let hours: String
+    let entryAllIn: String
+    let recruitStart: LocText
+    let exits: LocList
+    let ladder: [CareerLadderRow]
+    let timeline: [CareerStep]
+}
+
+struct FirmCategory: Decodable, Identifiable, Hashable {
+    let key: String
+    let zh: String
+    let en: String
+    var id: String { key }
+    var name: String { Lang.code == "zh" ? zh : en }
+}
+
+struct Firm: Decodable, Identifiable {
+    let name: String
+    let cat: String
+    let hq: String
+    let ticker: String?
+    let known: LocText
+    var id: String { name }
+
+    /// (code, market) when the listing is one our stock pages cover (US or A-share).
+    var stock: (code: String, market: Market)? {
+        guard let t = ticker else { return nil }
+        let parts = t.split(separator: ":", maxSplits: 1).map(String.init)
+        guard parts.count == 2, let m = Market(rawValue: parts[0]) else { return nil }
+        return (parts[1], m)
+    }
+    /// Symbol for listings elsewhere (e.g. EQT in Stockholm), shown without a link.
+    var otherListing: String? {
+        guard let t = ticker, stock == nil else { return nil }
+        return t.split(separator: ":").last.map(String.init)
+    }
+}
+
+struct CareerGuideData: Decodable {
+    let meta: [String: TrackMeta]
+    let trackFirms: [String: [String]]
+    let categories: [FirmCategory]
+    let firms: [Firm]
+}
+
 // MARK: - Similar trends (/similar/{code}, /us/similar/{symbol})
 
 struct SimilarPeer: Decodable, Identifiable {

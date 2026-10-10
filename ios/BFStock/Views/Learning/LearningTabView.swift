@@ -122,7 +122,7 @@ struct LearningTabView: View {
                                         in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                         VStack(alignment: .leading, spacing: 2) {
                             Text("求职指南").font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
-                            Text("了解8个金融岗位：日常工作、技能、薪资，还能模拟面试")
+                            Text("对比 8 条职业路径的薪酬与工时，查看 70 家机构，还能模拟面试")
                                 .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.leading)
                         }
                         Spacer(minLength: 4)

@@ -146,6 +146,35 @@
         }
       }
     },
+    "%lld 家": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld firms"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld établissements"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld社"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld곳"
+          }
+        }
+      }
+    },
     "%lld 平盘": {
       "extractionState": "manual",
       "localizations": {
@@ -1935,6 +1964,35 @@
         }
       }
     },
+    "中国市场": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "China market"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marché chinois"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中国市場"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중국 시장"
+          }
+        }
+      }
+    },
     "中性": {
       "extractionState": "manual",
       "localizations": {
@@ -2047,35 +2105,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "첫 종목 매수"
-          }
-        }
-      }
-    },
-    "了解8个金融岗位：日常工作、技能、薪资，还能模拟面试": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "8 finance roles: daily work, skills, pay — plus mock interviews"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "8 métiers de la finance : quotidien, compétences, salaires et entretiens simulés"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "金融8職種の仕事内容・スキル・年収と模擬面接"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "금융 8개 직무: 업무·역량·연봉과 모의 면접"
           }
         }
       }
@@ -2627,6 +2656,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "면책 조항"
+          }
+        }
+      }
+    },
+    "入门总薪酬": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entry-level all-in"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rémunération débutant"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "初年度の総報酬"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "신입 총보상"
           }
         }
       }
@@ -3733,6 +3791,35 @@
         }
       }
     },
+    "各级别薪酬（美国，估算）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pay by level (US, estimates)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rémunération par niveau (US, estimations)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "職位別報酬（米国・推定）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "직급별 보상 (미국, 추정)"
+          }
+        }
+      }
+    },
     "商学院指南": {
       "extractionState": "manual",
       "localizations": {
@@ -4284,6 +4371,64 @@
         }
       }
     },
+    "对比 8 条职业路径的薪酬与工时，查看 70 家机构，还能模拟面试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare pay and hours across 8 career tracks, browse 70 firms, practise mock interviews"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparez 8 carrières, parcourez 70 établissements et entraînez-vous aux entretiens"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8つのキャリアの報酬と労働時間を比較、70社を一覧、模擬面接も"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8개 커리어의 보상과 근무시간 비교, 70개 기관 정보, 모의 면접까지"
+          }
+        }
+      }
+    },
+    "对比各条职业路径的薪酬、工时和招聘时间线，了解主要机构，练习面试。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare pay, hours and recruiting timelines across finance careers, browse the major firms, and practise interviews."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparez rémunération, horaires et calendrier de recrutement des métiers de la finance, découvrez les grands établissements et entraînez-vous aux entretiens."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金融キャリアの報酬・労働時間・採用スケジュールを比較し、主要企業を知り、面接を練習しましょう。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "금융 커리어별 보상, 근무시간, 채용 일정을 비교하고 주요 기관을 살펴보며 면접을 연습하세요."
+          }
+        }
+      }
+    },
     "就业去向": {
       "extractionState": "manual",
       "localizations": {
@@ -4454,6 +4599,93 @@
           "stringUnit": {
             "state": "translated",
             "value": "PER"
+          }
+        }
+      }
+    },
+    "常见去向": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exit opportunities"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débouchés"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主なキャリアの行き先"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이직 경로"
+          }
+        }
+      }
+    },
+    "年限": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Years"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Années"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年数"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연차"
+          }
+        }
+      }
+    },
+    "底薪": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fixe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基本給"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본급"
           }
         }
       }
@@ -4715,6 +4947,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "총 손익"
+          }
+        }
+      }
+    },
+    "总薪酬": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All-in"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "総報酬"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "총보상"
           }
         }
       }
@@ -5125,6 +5386,93 @@
         }
       }
     },
+    "招聘时间线": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recruiting timeline"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendrier de recrutement"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "採用スケジュール"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "채용 일정"
+          }
+        }
+      }
+    },
+    "招聘机构": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where they hire"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Où recruter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "採用企業"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "채용 기관"
+          }
+        }
+      }
+    },
+    "招聘起点": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recruiting starts"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Début du recrutement"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "採用開始時期"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "채용 시작"
+          }
+        }
+      }
+    },
     "持仓": {
       "extractionState": "manual",
       "localizations": {
@@ -5295,6 +5643,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "학교 검색"
+          }
+        }
+      }
+    },
+    "搜索机构、城市、业务": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search firm, city, business"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher un établissement, une ville, un métier"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "企業・都市・業務で検索"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기관, 도시, 업무 검색"
           }
         }
       }
@@ -5498,6 +5875,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "신에너지"
+          }
+        }
+      }
+    },
+    "方向": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Track"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filière"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分野"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "분야"
           }
         }
       }
@@ -5821,6 +6227,35 @@
         }
       }
     },
+    "最常见去向": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Most common exit"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débouché principal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主な転職先"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "주요 이직처"
+          }
+        }
+      }
+    },
     "最近交易": {
       "extractionState": "manual",
       "localizations": {
@@ -5966,6 +6401,35 @@
         }
       }
     },
+    "未上市": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not listed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non coté"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "非上場"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비상장"
+          }
+        }
+      }
+    },
     "未来一周暂无重要财报": {
       "extractionState": "manual",
       "localizations": {
@@ -6020,6 +6484,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 앱은 학습 및 교육 목적이며 투자 조언이 아닙니다. 투자에는 위험이 따르며 시세 데이터는 지연될 수 있습니다. AI 선생님의 내용은 AI가 생성한 참고용 정보입니다."
+          }
+        }
+      }
+    },
+    "机构": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Firms"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Établissements"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "企業"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기관"
+          }
+        }
+      }
+    },
+    "机构库": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Firms"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Établissements"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "企業一覧"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기관"
           }
         }
       }
@@ -6198,6 +6720,35 @@
         }
       }
     },
+    "根据银行公开的薪酬调整、行业薪酬调查和媒体报道整理的大致区间，因机构、部门、城市、年份和个人表现差异很大。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rough ranges compiled from public bank pay announcements, compensation surveys and press coverage; they vary widely by firm, group, city, year and performance."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fourchettes indicatives tirées des annonces salariales des banques, d'enquêtes de rémunération et de la presse ; elles varient fortement selon l'établissement, l'équipe, la ville, l'année et la performance."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "銀行の公表した給与改定、報酬調査、報道をもとにした概算です。企業・部門・都市・年・個人の成果によって大きく異なります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "은행의 공개 급여 조정, 보상 조사, 언론 보도를 바탕으로 정리한 대략적인 범위이며 기관, 부서, 도시, 연도, 성과에 따라 크게 다릅니다."
+          }
+        }
+      }
+    },
     "模拟盘": {
       "extractionState": "manual",
       "localizations": {
@@ -6314,6 +6865,35 @@
         }
       }
     },
+    "每周工时": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hours per week"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heures par semaine"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "週の労働時間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "주당 근무시간"
+          }
+        }
+      }
+    },
     "每日新闻": {
       "extractionState": "manual",
       "localizations": {
@@ -6397,6 +6977,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "자동차"
+          }
+        }
+      }
+    },
+    "没有匹配的机构": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No firms match"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun établissement ne correspond"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "該当する企業がありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일치하는 기관이 없습니다"
           }
         }
       }
@@ -6658,6 +7267,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "지우기"
+          }
+        }
+      }
+    },
+    "点击股票代码可查看该机构的股票分析。“未上市”指机构本身未上市（私人合伙或子公司）。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap a ticker to open the firm's stock analysis. \"Not listed\" means the firm itself is not public (a partnership or a subsidiary)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez un symbole pour ouvrir l'analyse boursière. « Non coté » signifie que l'établissement lui-même n'est pas coté (partenariat ou filiale)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ティッカーをタップすると株価分析を開きます。「非上場」は企業自体が上場していないこと（パートナーシップや子会社）を意味します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "티커를 누르면 해당 기관의 주식 분석이 열립니다. '비상장'은 기관 자체가 상장되지 않았음을 뜻합니다(파트너십 또는 자회사)."
           }
         }
       }
@@ -7416,6 +8054,35 @@
         }
       }
     },
+    "级别": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niveau"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "職位"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "직급"
+          }
+        }
+      }
+    },
     "纳斯达克": {
       "extractionState": "manual",
       "localizations": {
@@ -7677,6 +8344,35 @@
         }
       }
     },
+    "美国市场 · 薪资为估算区间": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "US market · pay figures are estimates"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marché US · rémunérations estimées"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "米国市場・報酬は推定値"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미국 시장 · 보상은 추정치"
+          }
+        }
+      }
+    },
     "美股": {
       "extractionState": "manual",
       "localizations": {
@@ -7880,31 +8576,89 @@
         }
       }
     },
+    "职业方向": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Career track"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filière"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャリア"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "커리어"
+          }
+        }
+      }
+    },
     "职业路径": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Career path"
+            "value": "Career tracks"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Parcours de carrière"
+            "value": "Carrières"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "キャリアパス"
+            "value": "キャリア"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "커리어 경로"
+            "value": "커리어"
+          }
+        }
+      }
+    },
+    "职业路径对比": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare career tracks"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparer les carrières"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャリア比較"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "커리어 비교"
           }
         }
       }
@@ -8924,6 +9678,35 @@
         }
       }
     },
+    "这份工作做什么": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What the job is"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En quoi consiste le poste"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仕事内容"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "하는 일"
+          }
+        }
+      }
+    },
     "通信服务": {
       "extractionState": "manual",
       "localizations": {
@@ -9094,6 +9877,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "금융"
+          }
+        }
+      }
+    },
+    "金融行业职业中心": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finance Careers"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carrières en finance"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金融キャリアセンター"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "금융 커리어 센터"
           }
         }
       }
