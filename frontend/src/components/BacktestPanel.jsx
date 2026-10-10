@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import ReactECharts from '../lib/echarts'
 import useLangStore from '../store/langStore'
 import { getBacktest } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
+import useCompareStore from '../store/compareStore'
 
 const ACCENT = '#0ea5e9'
 const ACCENT2 = '#8b5cf6'
@@ -42,7 +43,12 @@ function MetricCard({ label, value, sub, color }) {
   )
 }
 
-function EquityChart({ data, isCN }) {
+// Axis label in the market's currency: $1.2M for US, ¥120万 for A-shares.
+function money(v, us) {
+  return us ? `$${(v / 1e6).toFixed(2)}M` : `¥${(v / 10000).toFixed(0)}万`
+}
+
+function EquityChart({ data, isCN, us }) {
   const dates = data.dates || []
   const equity = data.equity || []
   const benchmark = data.benchmark_equity || []
@@ -79,19 +85,19 @@ function EquityChart({ data, isCN }) {
       trigger: 'axis',
       backgroundColor: 'rgba(5,10,22,0.95)',
       borderColor: 'rgba(14,165,233,0.3)',
-      textStyle: { color: 'var(--text-primary)', fontSize: 12 },
+      textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const date = params[0]?.axisValue || ''
         let s = `<div style="font-weight:600;margin-bottom:4px">${date}</div>`
         params.forEach((p) => {
           const v = Number(p.value).toLocaleString(undefined, { maximumFractionDigits: 0 })
-          s += `<div>${p.seriesName}: ¥${v}</div>`
+          s += `<div>${p.seriesName}: ${us ? '$' : '¥'}${v}</div>`
         })
         return s
       },
     },
     legend: {
-      textStyle: { color: 'var(--text-muted)', fontSize: 11 },
+      textStyle: { color: THEME.text, fontSize: 11 },
       top: 4,
     },
     grid: { top: 40, right: 16, bottom: 36, left: 70 },
@@ -99,17 +105,18 @@ function EquityChart({ data, isCN }) {
       type: 'category',
       data: dates,
       axisLine: { lineStyle: { color: 'rgba(14,165,233,0.1)' } },
-      axisLabel: { color: 'var(--text-muted)', fontSize: 10,
+      axisLabel: { color: THEME.text, fontSize: 10,
         formatter: (v) => v?.slice(0, 7) || v,
         interval: Math.floor(dates.length / 6),
       },
     },
     yAxis: {
       type: 'value',
+      scale: true,  // fit the curves instead of starting at $0
       axisLine: { show: false },
       splitLine: { lineStyle: { color: 'rgba(14,165,233,0.06)' } },
-      axisLabel: { color: 'var(--text-muted)', fontSize: 10,
-        formatter: (v) => `¥${(v / 10000).toFixed(0)}万`,
+      axisLabel: { color: THEME.text, fontSize: 10,
+        formatter: (v) => money(v, us),
       },
     },
     series,
@@ -199,6 +206,7 @@ export default function BacktestPanel({ stocks }) {
   const [activeStock, setActiveStock] = useState(null)
 
   const stock = activeStock || stocks?.[0]
+  const us = useCompareStore((st) => st.market) === 'us'
 
   const run = useCallback(async () => {
     if (!stock) return
@@ -213,6 +221,9 @@ export default function BacktestPanel({ stocks }) {
     }
   }, [stock, strategy, period])
 
+  // Run straight away so the tab opens on a result instead of an empty form.
+  useEffect(() => { run() }, [run])
+
   if (!stocks?.length) return (
     <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
       {isCN ? '请先搜索并添加股票' : 'Please add a stock first'}
@@ -223,7 +234,7 @@ export default function BacktestPanel({ stocks }) {
     padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
     fontSize: 12, fontWeight: active ? 600 : 400,
     background: active ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'var(--bg-hover)',
-    color: active ? '#fff' : 'var(--text-muted)', transition: 'all 0.2s',
+    color: active ? '#fff' : 'var(--text-secondary)', transition: 'all 0.2s',
     whiteSpace: 'nowrap',
   })
 
@@ -238,6 +249,13 @@ export default function BacktestPanel({ stocks }) {
         borderRadius: 12, padding: '14px 18px',
       }}>
         {/* Stock selector (if multiple stocks) */}
+        {stocks.length === 1 && (
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 10 }}>
+            {isCN ? '回测股票：' : 'Backtesting: '}
+            <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{stock.code}</span>
+            {stock.name && stock.name !== stock.code && <span style={{ marginLeft: 6 }}>{stock.name}</span>}
+          </div>
+        )}
         {stocks.length > 1 && (
           <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 12, color: 'var(--text-muted)', alignSelf: 'center' }}>
@@ -358,9 +376,9 @@ export default function BacktestPanel({ stocks }) {
           {/* Equity curve */}
           <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: '14px 16px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
-              {isCN ? '资金曲线（初始100万）' : 'Equity Curve (Initial ¥1M)'}
+              {isCN ? `资金曲线（初始 100 万${us ? '美元' : '元'}）` : `Equity Curve (initial ${us ? '$1M' : '¥1M'})`}
             </div>
-            <EquityChart data={result} isCN={isCN} />
+            <EquityChart data={result} isCN={isCN} us={us} />
           </div>
 
           {/* Trade log */}

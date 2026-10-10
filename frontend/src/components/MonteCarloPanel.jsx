@@ -4,7 +4,7 @@ import { useStockData } from '../hooks/useStockData'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
-import { THEME } from '../utils/chartHelpers'
+import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
 const COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
@@ -59,61 +59,61 @@ function runMonteCarlo(closes, nSims = 500, nDays = 252) {
   return { p5, p25, p50, p75, p95, lastPrice, probProfit, varPct, expectedReturn, nDays, sigma: (sigma * Math.sqrt(252) * 100).toFixed(1) }
 }
 
-function buildMCOption(result, name, color, historicalCloses, t) {
-  const { p5, p25, p50, p75, p95, nDays, lastPrice } = result
+function hexA(hex, alpha) {
+  const h = hex.replace('#', '')
+  const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16)
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`
+}
+
+// Fan chart: history flows into a dashed median, with shaded 90% (P5–P95) and 50% (P25–P75) bands.
+function buildMCOption(result, name, color, historicalCloses, t, lang) {
+  const { p5, p25, p50, p75, p95, nDays } = result
   const histLen = Math.min(historicalCloses.length, 60)
   const histSlice = historicalCloses.slice(-histLen)
-
-  // X-axis: historical days (negative) + forecast days (positive)
-  const xData = []
-  for (let i = histLen - 1; i >= 1; i--) xData.push(-i)
-  for (let i = 0; i <= nDays; i++) xData.push(i)
-
   const histSeries = histSlice.map((v, i) => [i - histLen + 1, +v.toFixed(3)])
-
-  // For fan chart: use 'band' technique with upper-lower pairs
-  const forecastOffset = histLen - 1
+  const zh = lang === 'zh'
+  const L = {
+    median: t.mcP50,
+    inner: zh ? '50% 区间（P25–P75）' : '50% range (P25–P75)',
+    outer: zh ? '90% 区间（P5–P95）' : '90% range (P5–P95)',
+    today: zh ? '今天' : 'Today',
+    day: zh ? '天' : 'Day',
+  }
+  const band = (lo, hi) => hi.map((v, i) => [i, +(v - lo[i]).toFixed(3)])
+  const pts = (arr) => arr.map((v, i) => [i, v])
 
   return {
     backgroundColor: THEME.gridBg,
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: THEME.tooltipBg,
       borderColor: THEME.border,
-      textStyle: { color: THEME.text, fontSize: 11 },
+      textStyle: { color: THEME.tooltipText, fontSize: 11 },
       formatter: (params) => {
-        let html = `<div style="font-weight:bold">${t.mcTitle}: Day ${params[0]?.axisValue}</div>`
-        params.forEach((p) => {
-          if (p.data != null && p.seriesName) {
-            const val = Array.isArray(p.data) ? p.data[1] : p.data
-            if (val != null)
-              html += `<div style="color:${p.color}">${p.seriesName}: ${Number(val).toFixed(2)}</div>`
-          }
-        })
-        return html
+        const x = Math.round(params[0]?.axisValue ?? 0)
+        if (x <= 0) {
+          const h = histSeries.find((d) => d[0] === x)
+          return h ? `<div style="font-weight:600">${x}d</div><div>${t.mcHistorical}: ${h[1].toFixed(2)}</div>` : ''
+        }
+        const row = (label, v) => `<div>${label}: <b>${v.toFixed(2)}</b></div>`
+        return `<div style="font-weight:600;margin-bottom:2px">${L.day} +${x}</div>` +
+          row('P95', p95[x]) + row('P75', p75[x]) + row(L.median, p50[x]) + row('P25', p25[x]) + row('P5', p5[x])
       },
     },
     legend: {
-      top: 4,
-      left: 8,
+      top: 4, left: 8,
       textStyle: { color: THEME.text, fontSize: 10 },
-      itemWidth: 14,
-      itemHeight: 6,
-      data: [t.mcHistorical, t.mcP5, t.mcP25, t.mcP50, t.mcP75, t.mcP95],
+      itemWidth: 14, itemHeight: 8,
+      data: [t.mcHistorical, L.median, L.inner, L.outer],
     },
-    grid: { top: 36, bottom: 36, left: 70, right: 20 },
+    grid: { top: 56, bottom: 30, left: 60, right: 20 },
     xAxis: {
       type: 'value',
       min: -(histLen - 1),
       max: nDays,
-      axisLabel: {
-        color: THEME.text,
-        fontSize: 10,
-        formatter: (v) => v <= 0 ? `${v}d` : `+${v}d`,
-      },
-      splitLine: { lineStyle: { color: THEME.border, type: 'dashed' } },
+      axisLabel: { color: THEME.text, fontSize: 10, formatter: (v) => (v <= 0 ? `${v}d` : `+${v}d`) },
+      splitLine: { show: false },
       axisLine: { lineStyle: { color: THEME.border } },
-      markLine: { data: [{ xAxis: 0 }] },
     },
     yAxis: {
       scale: true,
@@ -121,69 +121,28 @@ function buildMCOption(result, name, color, historicalCloses, t) {
       axisLabel: { color: THEME.text, fontSize: 10 },
     },
     series: [
-      // Historical
-      {
-        name: t.mcHistorical,
-        type: 'line',
-        data: histSeries,
-        showSymbol: false,
-        lineStyle: { width: 2, color },
-        itemStyle: { color },
-        z: 10,
-      },
-      // P5
-      {
-        name: t.mcP5,
-        type: 'line',
-        data: p5.map((v, i) => [i, v]),
-        showSymbol: false,
-        lineStyle: { width: 1, color: '#ef5350', type: 'dashed' },
-        itemStyle: { color: '#ef5350' },
-        areaStyle: null,
-      },
-      // P25
-      {
-        name: t.mcP25,
-        type: 'line',
-        data: p25.map((v, i) => [i, v]),
-        showSymbol: false,
-        lineStyle: { width: 1, color: '#ff9800', type: 'dashed' },
-        itemStyle: { color: '#ff9800' },
-      },
-      // P50 (median)
-      {
-        name: t.mcP50,
-        type: 'line',
-        data: p50.map((v, i) => [i, v]),
-        showSymbol: false,
-        lineStyle: { width: 2, color: '#66bb6a' },
-        itemStyle: { color: '#66bb6a' },
-        z: 9,
-      },
-      // P75
-      {
-        name: t.mcP75,
-        type: 'line',
-        data: p75.map((v, i) => [i, v]),
-        showSymbol: false,
-        lineStyle: { width: 1, color: '#ff9800', type: 'dashed' },
-        itemStyle: { color: '#ff9800' },
-      },
-      // P95
-      {
-        name: t.mcP95,
-        type: 'line',
-        data: p95.map((v, i) => [i, v]),
-        showSymbol: false,
-        lineStyle: { width: 1, color: '#ef5350', type: 'dashed' },
-        itemStyle: { color: '#ef5350' },
-      },
+      // Outer band: invisible P5 base + (P95 − P5) stacked on top
+      { name: '_p5', type: 'line', smooth: 0.3, data: pts(p5), stack: 'outer', showSymbol: false, lineStyle: { opacity: 0 }, silent: true, tooltip: { show: false } },
+      { name: L.outer, type: 'line', smooth: 0.3, data: band(p5, p95), stack: 'outer', showSymbol: false, lineStyle: { opacity: 0 },
+        areaStyle: { color: hexA(color, 0.12) }, itemStyle: { color: hexA(color, 0.35) }, silent: true },
+      // Inner band
+      { name: '_p25', type: 'line', smooth: 0.3, data: pts(p25), stack: 'inner', showSymbol: false, lineStyle: { opacity: 0 }, silent: true },
+      { name: L.inner, type: 'line', smooth: 0.3, data: band(p25, p75), stack: 'inner', showSymbol: false, lineStyle: { opacity: 0 },
+        areaStyle: { color: hexA(color, 0.24) }, itemStyle: { color: hexA(color, 0.6) }, silent: true },
+      // Median
+      { name: L.median, type: 'line', smooth: 0.3, data: pts(p50), showSymbol: false, z: 9,
+        lineStyle: { width: 2, color, type: 'dashed' }, itemStyle: { color } },
+      // History, with a "today" marker
+      { name: t.mcHistorical, type: 'line', data: histSeries, showSymbol: false, z: 10,
+        lineStyle: { width: 2, color }, itemStyle: { color },
+        markLine: { symbol: 'none', silent: true, label: { formatter: L.today, color: THEME.text, fontSize: 10 },
+          lineStyle: { color: THEME.border, type: 'solid' }, data: [{ xAxis: 0 }] } },
     ],
   }
 }
 
 function StockMC({ stock, color, nSims, nDays, trigger }) {
-  const { period, startDate, endDate, adjust } = useCompareStore()
+  const { period, startDate, endDate, adjust, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const { data, loading } = useStockData(stock.code, { period, startDate, endDate, adjust })
@@ -214,14 +173,15 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 
   const statStyle = { textAlign: 'center', flex: 1 }
   const statLabel = { color: 'var(--text-muted)', fontSize: 11, marginBottom: 4 }
-  const statVal = (color) => ({ color, fontWeight: 700, fontSize: 18 })
+  const statVal = (color) => ({ color, fontWeight: 700, fontSize: 18, fontVariantNumeric: 'tabular-nums' })
+  const up = riseColor(market), down = fallColor(market)
 
   return (
     <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 14, marginBottom: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
-        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
+        {stock.name !== stock.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>}
         <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
           {t.mcCurrentPrice}: {result.lastPrice.toFixed(2)} &nbsp;|&nbsp;
           {lang === 'en' ? 'Ann. Vol' : '年化波动率'}: {result.sigma}%
@@ -232,12 +192,12 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
       <div style={{ display: 'flex', background: 'var(--bg-tertiary)', borderRadius: 6, padding: '12px 8px', marginBottom: 14 }}>
         <div style={statStyle}>
           <div style={statLabel}>{t.mcProb}</div>
-          <div style={statVal(parseFloat(result.probProfit) >= 50 ? '#ef5350' : '#26a69a')}>{result.probProfit}%</div>
+          <div style={statVal(parseFloat(result.probProfit) >= 50 ? up : down)}>{result.probProfit}%</div>
         </div>
         <div style={{ width: 1, background: THEME.border }} />
         <div style={statStyle}>
           <div style={statLabel}>{t.mcExpected}</div>
-          <div style={statVal(parseFloat(result.expectedReturn) >= 0 ? '#ef5350' : '#26a69a')}>
+          <div style={statVal(parseFloat(result.expectedReturn) >= 0 ? up : down)}>
             {result.expectedReturn > 0 ? '+' : ''}{result.expectedReturn}%
           </div>
         </div>
@@ -249,13 +209,14 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
         <div style={{ width: 1, background: THEME.border }} />
         <div style={statStyle}>
           <div style={statLabel}>{t.mcP50} ({nDays}d)</div>
-          <div style={statVal('#66bb6a')}>{result.p50[nDays].toFixed(2)}</div>
+          <div style={statVal('var(--text-primary)')}>{result.p50[nDays].toFixed(2)}</div>
         </div>
       </div>
 
       {/* Chart */}
       <ReactECharts
-        option={buildMCOption(result, stock.name, color, data.candles.map((c) => c.close), t)}
+        option={buildMCOption(result, stock.name, color, data.candles.map((c) => c.close), t, lang)}
+        notMerge
         style={{ height: 340, width: '100%' }}
         opts={{ renderer: 'canvas' }}
         notMerge={true}

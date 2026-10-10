@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import ReactECharts from '../lib/echarts'
 import { T } from '../i18n/translations'
+import { THEME } from '../utils/chartHelpers'
 
 const BDR   = 'rgba(138,180,248,0.12)'
 const MUTED = 'var(--text-muted)'
@@ -123,7 +124,7 @@ export default function StatsDisplay({ lang, onClose }) {
       trigger: 'axis',
       backgroundColor: 'rgba(10,15,26,0.95)',
       borderColor: BDR,
-      textStyle: { color: 'var(--text-primary)', fontSize: 12 },
+      textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const d = params[0]
         return `${d.axisValue}<br/>${t.stVisits}: <b>${d.data}</b>`
@@ -177,7 +178,7 @@ export default function StatsDisplay({ lang, onClose }) {
         trigger: 'item',
         backgroundColor: 'rgba(10,15,26,0.95)',
         borderColor: BDR,
-        textStyle: { color: 'var(--text-primary)', fontSize: 12 },
+        textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (p) => `${p.name}: <b>${p.value}</b> (${p.percent}%)`,
       },
       legend: {

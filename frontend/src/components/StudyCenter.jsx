@@ -5,6 +5,7 @@ import KLineLesson from './KLineLesson'
 import { useMobile } from '../hooks/useMobile'
 import { T } from '../i18n/translations'
 import useAuthStore from '../store/authStore'
+import { THEME } from '../utils/chartHelpers'
 const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
@@ -711,7 +712,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
         trigger: 'axis',
         backgroundColor: '#1a2035',
         borderColor: 'rgba(14,165,233,0.2)',
-        textStyle: { color: 'var(--text-primary)', fontSize: 12 },
+        textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (params) => {
           let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
           params.forEach((p) => {
@@ -725,22 +726,22 @@ function EventPriceChart({ eventId, tickers, zh }) {
       },
       legend: {
         data: tickers.map((t) => t.label),
-        textStyle: { color: 'var(--text-muted)', fontSize: 12 },
+        textStyle: { color: THEME.text, fontSize: 12 },
         top: 8,
       },
       grid: { left: 48, right: 24, top: 40, bottom: 36 },
       xAxis: {
         type: 'time',
         axisLine: { lineStyle: { color: 'rgba(14,165,233,0.15)' } },
-        axisLabel: { color: 'var(--text-muted)', fontSize: 10 },
+        axisLabel: { color: THEME.text, fontSize: 10 },
         splitLine: { show: false },
       },
       yAxis: {
         type: 'value',
         name: zh ? '相对指数 (=100)' : 'Normalised (=100)',
-        nameTextStyle: { color: 'var(--text-muted)', fontSize: 10 },
+        nameTextStyle: { color: THEME.text, fontSize: 10 },
         axisLine: { show: false },
-        axisLabel: { color: 'var(--text-muted)', fontSize: 10 },
+        axisLabel: { color: THEME.text, fontSize: 10 },
         splitLine: { lineStyle: { color: 'rgba(14,165,233,0.07)' } },
       },
       series,

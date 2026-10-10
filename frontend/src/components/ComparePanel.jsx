@@ -84,7 +84,7 @@ function OverlayView({ lang }) {
 }
 
 // View modes where the date range is irrelevant
-const _NO_DATE_MODES = new Set(['news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments'])
+const _NO_DATE_MODES = new Set(['news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
 
 export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle

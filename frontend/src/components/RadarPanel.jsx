@@ -110,7 +110,7 @@ export default function RadarPanel({ stocks }) {
       trigger: 'item',
       backgroundColor: 'rgba(10,15,26,0.95)',
       borderColor: 'rgba(138,180,248,0.2)',
-      textStyle: { color: 'var(--text-primary)', fontSize: 12 },
+      textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const vals = params.value
         return [

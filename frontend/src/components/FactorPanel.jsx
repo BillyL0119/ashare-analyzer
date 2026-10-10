@@ -56,14 +56,14 @@ function RollingBetaChart({ rolling, t }) {
     xAxis: {
       type: 'category',
       data: dates,
-      axisLabel: { color: 'var(--text-muted)', fontSize: 11,
+      axisLabel: { color: THEME.text, fontSize: 11,
         formatter: (v) => v.substring(0, 4) !== dates[0].substring(0, 4) || dates.indexOf(v) === 0
           ? v.substring(0, 7) : v.substring(5, 7) },
       axisLine: { lineStyle: { color: THEME.border } },
     },
     yAxis: {
       type: 'value',
-      axisLabel: { color: 'var(--text-muted)', fontSize: 11 },
+      axisLabel: { color: THEME.text, fontSize: 11 },
       splitLine: { lineStyle: { color: THEME.border, type: 'dashed' } },
     },
     series: [
@@ -80,7 +80,7 @@ function RollingBetaChart({ rolling, t }) {
       {
         type: 'line',
         data: new Array(betas.length).fill(1),
-        lineStyle: { color: 'var(--text-muted)', width: 1, type: 'dashed' },
+        lineStyle: { color: THEME.text, width: 1, type: 'dashed' },
         symbol: 'none',
         tooltip: { show: false },
       },
