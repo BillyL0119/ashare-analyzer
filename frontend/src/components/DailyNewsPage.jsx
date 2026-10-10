@@ -252,7 +252,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         </div>
 
         {/* Separator */}
-        <div style={{ width: 1, height: 20, background: 'var(--border-primary)', margin: '0 4px', flexShrink: 0 }} />
+        <div className="dn-sep" style={{ width: 1, height: 20, background: 'var(--border-primary)', margin: '0 4px', flexShrink: 0 }} />
 
         {/* Language pills */}
         <div style={{ display: 'flex', gap: 4 }}>

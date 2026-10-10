@@ -685,3 +685,6 @@ code {
     min-width: 130px !important;
   }
 }
+
+/* Daily News: the filter-group divider wraps to the start of a line on phones */
+@media (max-width: 600px) { .dn-sep { display: none; } }

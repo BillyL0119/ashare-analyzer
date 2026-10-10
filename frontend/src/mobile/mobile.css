@@ -109,3 +109,7 @@
 .m-app p { margin: 0; }
 .m-app .m-title { font-size: 34px; margin: 6px 2px 18px; letter-spacing: -.5px; }
 .m-app textarea, .m-app input { max-width: none; }
+/* Pushed-screen header: full-bleed (index.css caps *{max-width:100%}) and pinned to the very top of
+   the scroll area. The scroller's top padding is safe-area + 6px, so pull the bar up by that much. */
+.m-app .m-nav { max-width: none; top: calc(-1 * (env(safe-area-inset-top, 0px) + 6px));
+  margin-top: calc(-1 * (env(safe-area-inset-top, 0px) + 6px)); padding-top: calc(env(safe-area-inset-top, 0px) + 14px); }

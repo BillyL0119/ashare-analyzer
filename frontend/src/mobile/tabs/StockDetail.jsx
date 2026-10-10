@@ -57,7 +57,7 @@ function KLine({ all, count, market, indicator }) {
       animation: false, backgroundColor: 'transparent',
       grid: gridsDef,
       xAxis: gridsDef.map((_, i) => axisCommon(i)),
-      yAxis: gridsDef.map((_, i) => ({ gridIndex: i, position: 'right', scale: i !== 1, splitNumber: i === 0 ? 4 : 2, axisLabel: { color: txt, fontSize: 10, formatter: i === 1 ? (v) => (v >= 1e8 ? (v / 1e8).toFixed(1) + 'B' : v >= 1e6 ? (v / 1e6).toFixed(0) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(0) + 'K' : v) : undefined },
+      yAxis: gridsDef.map((_, i) => ({ gridIndex: i, position: 'right', scale: i !== 1, splitNumber: i === 0 ? 4 : 2, axisLabel: { color: txt, fontSize: 10, formatter: i === 1 ? (v) => (v >= 1e9 ? +(v / 1e9).toFixed(1) + 'B' : v >= 1e6 ? Math.round(v / 1e6) + 'M' : v >= 1e3 ? Math.round(v / 1e3) + 'K' : v) : undefined },
         splitLine: { lineStyle: { color: grid } }, axisLine: { show: false }, axisTick: { show: false }, ...(i === 2 && indicator === 'rsi' ? { min: 0, max: 100 } : {}) })),
       axisPointer: { link: [{ xAxisIndex: 'all' }], lineStyle: { color: txt, type: 'dashed' } },
       tooltip: { trigger: 'axis', showContent: false, axisPointer: { type: 'cross', label: { show: false }, crossStyle: { color: txt, opacity: .6 } } },

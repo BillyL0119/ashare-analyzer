@@ -26,9 +26,20 @@ function SessionHeader({ session, asOf }) {
   const cd = useCountdown(session.next_open_utc)
   const label = { regular: t('交易中'), pre: t('盘前交易'), post: t('盘后交易'), closed: t('休市') }[session.state]
   const color = session.state === 'regular' ? 'var(--cn-down)' : session.state === 'closed' ? 'var(--text-2)' : '#F28B3C'
-  let opens = null
-  if (session.state !== 'regular' && cd) opens = t('距开盘 %@', cd.hours >= 48 ? t('%lld天', cd.days) : t('%lld小时 %lld分钟', cd.hours, cd.mins))
+  const lang = useLangStore((s) => s.lang)
   const time = (session.et_time || asOf || '').slice(11, 16)
+  // Same rule as the iOS app: live ET time while trading, a countdown within 12h,
+  // otherwise the opening day and time in ET ("Opens Mon 9:30 AM ET").
+  let caption = time && `${time} ET`
+  if (session.state !== 'regular' && cd && cd.hours * 60 + cd.mins > 0) {
+    if (cd.hours < 12) {
+      caption = t('距开盘 %@', t('%lld小时 %lld分钟', cd.hours, cd.mins))
+    } else {
+      const locale = { zh: 'zh-CN', en: 'en-US', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR' }[lang] || 'en-US'
+      const when = new Intl.DateTimeFormat(locale, { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }).format(new Date(session.next_open_utc))
+      caption = t('美东时间 %@ 开盘', when)
+    }
+  }
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -37,7 +48,7 @@ function SessionHeader({ session, asOf }) {
           <span style={{ width: 6, height: 6, borderRadius: 3, background: color }} />{label}
         </span>
       </div>
-      <div className="m-label m-num" style={{ marginTop: 4 }}>{[opens, time && `${time} ET`].filter(Boolean).join(' · ')}</div>
+      <div className="m-label m-num" style={{ marginTop: 4 }}>{caption}</div>
     </div>
   )
 }
@@ -126,7 +137,7 @@ function Sectors({ d }) {
   const maxAbs = Math.max(0.5, ...d.sectors.map((s) => Math.abs(s.pct)))
   return (
     <Section title={t('行业板块')}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>
         {d.sectors.map((s) => {
           const c = changeColor(s.pct, 'us'); const a = 10 + Math.round((Math.abs(s.pct) / maxAbs) * 34)
           return (

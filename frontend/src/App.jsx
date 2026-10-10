@@ -285,11 +285,13 @@ export default function App() {
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: 'none',
           boxShadow: scrolled ? (theme === 'light' ? '0 1px 4px rgba(0,0,0,0.12)' : '0 1px 32px rgba(0,0,0,0.6)') : 'none',
-          padding: isMobile ? '8px 12px' : '10px 24px',
+          padding: isMobile ? '8px 10px' : '10px 24px',
           display: 'flex',
           alignItems: 'center',
           gap: isMobile ? 8 : 18,
-          flexWrap: 'nowrap',
+          // Phones: search drops to its own full-width row so the top row fits 360px screens
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          rowGap: 8,
           transition: 'background 0.3s ease, box-shadow 0.3s ease',
           position: 'relative',
           zIndex: 10,
@@ -305,7 +307,7 @@ export default function App() {
           <img
             src="/logo-dark.png"
             alt="Best Friend Stock"
-            style={{ height: 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
+            style={{ height: isMobile ? 32 : 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />
           {!isMobile && (
             <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.2px' }}>
@@ -321,7 +323,7 @@ export default function App() {
               key={key}
               onClick={() => setMarket(key)}
               style={{
-                padding: isMobile ? '4px 10px' : '5px 16px',
+                padding: isMobile ? '4px 9px' : '5px 16px',
                 borderRadius: 20, border: 'none', cursor: 'pointer',
                 fontSize: isMobile ? 11 : 13, fontWeight: 600, letterSpacing: '0.2px',
                 background: market === key ? 'linear-gradient(135deg, var(--accent-blue), #38bdf8)' : 'transparent',
@@ -335,10 +337,10 @@ export default function App() {
           ))}
         </div>
 
-        <SearchBar />
+        {isMobile ? <div style={{ order: 10, flexBasis: '100%' }}><SearchBar fullWidth /></div> : <SearchBar />}
 
         {/* Right-side controls pushed to the far right */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: isMobile ? 6 : 8, flexShrink: 0 }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: isMobile ? 5 : 8, flexShrink: 0 }}>
 
           {/* Language dropdown — desktop only */}
           {!isMobile && (

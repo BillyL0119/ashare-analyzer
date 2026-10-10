@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useLocation } from 'react-router-dom'
 import { searchStocks, searchUSStocks, getHotStocks } from '../api/stockApi'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
@@ -23,7 +24,7 @@ function PctBadge({ val, market }) {
   )
 }
 
-export default function SearchBar() {
+export default function SearchBar({ fullWidth = false }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [open, setOpen] = useState(false)
@@ -77,6 +78,14 @@ export default function SearchBar() {
       setSearching(false)
     }
   }, [])
+
+  // Clear a leftover query when the user navigates elsewhere (e.g. opens a stock from a card).
+  const { pathname } = useLocation()
+  useEffect(() => {
+    setQuery('')
+    setResults([])
+    setOpen(false)
+  }, [pathname])
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
@@ -148,7 +157,7 @@ export default function SearchBar() {
   })
 
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', width: 300 }}>
+    <div ref={wrapperRef} style={{ position: 'relative', width: fullWidth ? '100%' : 300 }}>
       <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
         <input
           type="text"

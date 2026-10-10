@@ -70,4 +70,4 @@ export function useAPI(path, { enabled = true, persist = true, refreshMs = 0 } =
 }
 
 export const pct = (v) => (v == null ? '--' : `${v > 0 ? '+' : ''}${Number(v).toFixed(2)}%`)
-export const num = (v, d = 2) => (v == null || Number.isNaN(Number(v)) ? '--' : Number(v).toFixed(d))
+export const num = (v, d = 2) => (v == null || Number.isNaN(Number(v)) ? '--' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }))

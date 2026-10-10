@@ -2227,7 +2227,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         }}>
           {[
             { key: 'schools',  label: t ? `院校库 · ${allUnis.length || ''}` : `School directory · ${allUnis.length || ''}` },
-            { key: 'business', label: t ? '🏆 商学院排行榜' : '🏆 Business school ranking' },
+            { key: 'business', label: t ? '商学院排行榜' : 'Business school ranking' },
           ].map(v => (
             <button
               key={v.key}
@@ -2236,7 +2236,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
               onClick={() => setView(v.key)}
               style={{
                 padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
-                fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap',
+                fontSize: 13, fontWeight: 700, flex: '1 1 auto', minWidth: 0, lineHeight: 1.3,
                 background: view === v.key ? `linear-gradient(135deg, ${BLUE}, ${PURPLE})` : 'transparent',
                 color: view === v.key ? '#fff' : 'var(--text-secondary)',
               }}

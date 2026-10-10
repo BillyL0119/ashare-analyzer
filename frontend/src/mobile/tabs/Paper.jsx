@@ -202,7 +202,7 @@ export default function Paper() {
       )}
 
       <Section title={t('持仓')} action={null}>
-        <div style={{ margin: '-4px 4px 10px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'cn', label: t('A股') }, { value: 'us', label: t('美股') }]} /></div>
+        <div style={{ margin: '-4px 4px 10px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
         {view && (view.positions.length === 0 ? (
           <div className="m-card" style={{ display: 'grid', justifyItems: 'center', gap: 10, padding: '28px 16px', textAlign: 'center' }}>
             <span style={{ width: 54, height: 54, borderRadius: 27, display: 'grid', placeItems: 'center', background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)' }}>
