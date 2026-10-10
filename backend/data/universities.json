@@ -797,10 +797,11 @@
   "qs_rank": 12,
   "established": 1991,
   "programs": [
-   "Undergraduate (Accountancy/Business)",
-   "MBA",
-   "MSc Finance",
-   "MSc Accountancy",
+   "BBA",
+   "Nanyang MBA (full-time)",
+   "Nanyang Professional MBA (part-time)",
+   "Nanyang Executive MBA",
+   "MSc programmes",
    "PhD"
   ],
   "specialties": [
@@ -809,9 +810,9 @@
    "Marketing",
    "Analytics"
   ],
-  "description_en": "Nanyang Business School at NTU is known for its analytics-integrated curriculum and strong STEM foundation. NTU itself is one of the world's fastest-rising universities. The school's strong links to Singapore's deep pool of MNCs and its proximity to the ASEAN economic zone create exceptional graduate career opportunities.",
-  "description_cn": "南洋理工大学商学院以其全面整合数据分析的课程和强大的STEM基础著称。NTU本身是全球排名上升最快的大学之一。学院与新加坡众多跨国公司的紧密联系及毗邻东盟经济区的地理优势，为毕业生创造了非凡的职业机遇。",
-  "tuition_usd": null,
+  "description_en": "Nanyang Business School is the business school of Nanyang Technological University in Singapore. Its full-time Nanyang MBA is a one-year programme with a largely international class, and the 18-month Nanyang Professional MBA serves working professionals. Undergraduates study for the BBA, and international students can apply for Singapore's MOE Tuition Grant, which carries a three-year work obligation in Singapore.",
+  "description_cn": "南洋商学院是新加坡南洋理工大学的商学院。全日制南洋 MBA 为一年制，学生以国际生为主；18 个月的南洋专业 MBA 面向在职人士。本科生攻读 BBA，国际生可申请新加坡教育部学费补助，但毕业后须在新加坡工作三年。",
+  "tuition_usd": "Full-time MBA ~S$89,380 incl. GST (est.) · Professional MBA S$97,489.60 (Aug 2026 intake)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://www.ntu.edu.sg/nbs",
@@ -827,9 +828,34 @@
   "qs_bm_rank": "14",
   "qs_bm_rank_num": 14,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gre_accepted": true
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Nanyang MBA (full-time)",
+    "duration": "12 months",
+    "language": "English",
+    "description_en": "One-year MBA requiring a bachelor's degree, at least two years of work experience and a GMAT or GRE score; tuition is reported at about S$89,380 including GST.",
+    "description_cn": "一年制 MBA，要求本科学历、至少两年工作经验和 GMAT 或 GRE 成绩；学费据报约 S$89,380（含消费税）。"
+   },
+   {
+    "name": "Nanyang Professional MBA",
+    "duration": "18 months",
+    "language": "English",
+    "description_en": "Part-time MBA in Singapore; S$97,489.60 including GST for the August 2026 intake.",
+    "description_cn": "新加坡在职 MBA，2026 年 8 月入学学费 S$97,489.60（含消费税）。"
+   },
+   {
+    "name": "BBA",
+    "duration": "3–4 years",
+    "language": "English",
+    "description_en": "Undergraduate business degree; international students may take the MOE Tuition Grant with a three-year Singapore work bond.",
+    "description_cn": "本科商科学位；国际生可申请附带三年新加坡工作义务的教育部学费补助。"
+   }
+  ]
  },
  {
   "id": "pku-guanghua",
@@ -1532,10 +1558,11 @@
   "qs_rank": 26,
   "established": 1985,
   "programs": [
-   "Undergraduate",
-   "MBA",
+   "Undergraduate (management)",
+   "Fudan International MBA (with MIT Sloan)",
+   "MBA (Chinese)",
+   "HKU–Fudan IMBA",
    "EMBA",
-   "MSc",
    "PhD"
   ],
   "specialties": [
@@ -1544,9 +1571,9 @@
    "Strategy",
    "Information Systems"
   ],
-  "description_en": "Fudan School of Management benefits from Shanghai's position as China's financial capital. Strong in Marketing, Strategy, and Finance, the school has been building its international reputation rapidly through partnerships with global institutions. Shanghai's cosmopolitan environment, deep financial sector, and vibrant startup ecosystem create exceptional career prospects.",
-  "description_cn": "复旦大学管理学院得益于上海作为中国金融中心的地位，在营销、战略和金融领域实力雄厚。通过与全球机构的合作，学院正在快速提升国际声誉。上海的国际化环境、深厚的金融业和活跃的创业生态创造了非凡的职业前景。",
-  "tuition_usd": null,
+  "description_en": "Fudan University School of Management is one of China's leading business schools, based in Shanghai, the country's financial centre. Its full-time International MBA is run with MIT Sloan: graduates receive a Fudan MBA and an MIT Sloan learning certificate. It also offers Chinese-language MBAs and the HKU–Fudan IMBA with the University of Hong Kong.",
+  "description_cn": "复旦大学管理学院是中国顶尖商学院之一，位于中国金融中心上海。全日制国际 MBA 与 MIT 斯隆合作，毕业生获得复旦 MBA 学位和 MIT 斯隆学习证书（不是 MIT 学位）；学院另设中文 MBA，并与香港大学合办港大-复旦 IMBA。",
+  "tuition_usd": "International MBA RMB 369,800 total (from autumn 2026)",
   "language": "bilingual",
   "notable_alumni": [],
   "url": "https://www.fdsm.fudan.edu.cn",
@@ -1562,9 +1589,27 @@
   "qs_bm_rank": "=57",
   "qs_bm_rank_num": 57,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gre_accepted": true
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Fudan International MBA (with MIT Sloan)",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Full-time MBA; tuition RMB 369,800 for the programme (RMB 184,900 a year), textbooks about RMB 5,000 a year extra. Graduates receive a Fudan MBA degree plus an MIT Sloan learning certificate.",
+    "description_cn": "全日制 MBA，学费全程 36.98 万元（每年 18.49 万元），教材费另计约每年 5,000 元；毕业获复旦 MBA 学位和 MIT 斯隆学习证书。"
+   },
+   {
+    "name": "Undergraduate programmes",
+    "duration": "4 years",
+    "language": "Chinese",
+    "description_en": "Management undergraduate degrees; mainland students are admitted through the gaokao.",
+    "description_cn": "管理类本科学位；内地学生通过高考录取。"
+   }
+  ]
  },
  {
   "id": "sydney-business",
@@ -1862,12 +1907,12 @@
   "country": "China",
   "city": "Shanghai",
   "qs_rank": 36,
-  "established": 1903,
+  "established": null,
   "programs": [
-   "Undergraduate",
-   "MBA",
+   "Undergraduate (economics & management)",
+   "International MBA (IMBA)",
+   "MBA (Chinese)",
    "EMBA",
-   "MSc Finance",
    "PhD"
   ],
   "specialties": [
@@ -1876,9 +1921,9 @@
    "Accounting",
    "Operations Management"
   ],
-  "description_en": "SJTU Antai combines the strengths of one of China's top engineering universities with comprehensive management education. AACSB-accredited, the school emphasises quantitative methods and China business strategy. Its engineering alumni network provides unique cross-disciplinary career pathways in finance, technology, and manufacturing.",
-  "description_cn": "上海交通大学安泰经济与管理学院将中国顶尖理工大学的优势与全面的管理教育相结合，获AACSB认证，强调定量方法和中国商业战略。理工科校友网络为金融、科技和制造业提供了独特的跨学科职业路径。",
-  "tuition_usd": null,
+  "description_en": "Antai College of Economics and Management is Shanghai Jiao Tong University's business school, combining management education with one of China's leading engineering universities. Its full-time International MBA is taught in English in Shanghai, and the college also offers Chinese-language MBA, EMBA and undergraduate programmes.",
+  "description_cn": "安泰经济与管理学院是上海交通大学的商学院，将管理教育与中国顶尖的工科大学相结合。全日制国际 MBA 在上海以英文授课，另设中文 MBA、EMBA 和本科项目。",
+  "tuition_usd": "International MBA RMB 368,000 total (2026 intake)",
   "language": "bilingual",
   "notable_alumni": [],
   "url": "https://www.acem.sjtu.edu.cn",
@@ -1894,9 +1939,21 @@
   "qs_bm_rank": "46",
   "qs_bm_rank_num": 46,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gmat_median": "Scholarships: 25% of tuition at GMAT 680+ (Focus 625+)",
+   "gre_accepted": true
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "International MBA (IMBA)",
+    "duration": "2 years",
+    "language": "English",
+    "description_en": "Full-time English-taught MBA; tuition RMB 368,000, paid in two instalments. GMAT 680+ (Focus 625+) earns a 25% tuition scholarship and 630+ (Focus 585+) earns RMB 50,000.",
+    "description_cn": "全日制英文 MBA，学费 36.8 万元，分两次缴纳；GMAT 680 分以上（Focus 625+）可获 25% 学费奖学金，630 分以上（Focus 585+）可获 5 万元奖学金。"
+   }
+  ]
  },
  {
   "id": "manchester-mbs",
@@ -4289,9 +4346,10 @@
   "qs_rank": 411,
   "established": 2000,
   "programs": [
-   "Undergraduate (BSc)",
+   "Bachelor of Business Management (BBM)",
    "MBA",
-   "MSc Finance",
+   "Executive MBA",
+   "MSc programmes",
    "PhD"
   ],
   "specialties": [
@@ -4300,9 +4358,9 @@
    "Accounting",
    "Innovation"
   ],
-  "description_en": "SMU Lee Kong Chian School of Business is located in the heart of Singapore's civic and cultural district, steps from the financial CBD. Unlike NUS and NTU, SMU uses a seminar-style interactive pedagogy. Its city campus model and strong industry integration make it particularly effective for developing real-world business skills.",
-  "description_cn": "新加坡管理大学李光前商学院坐落于新加坡市政文化区核心，距金融中央商务区咫尺之遥。与NUS和NTU不同，SMU采用研讨会式互动教学法。城市校区模式和强大的行业整合使其在培养现实商业技能方面尤为有效。",
-  "tuition_usd": null,
+  "description_en": "Lee Kong Chian School of Business is the business school of Singapore Management University, founded in 2000 on a city campus close to Singapore's financial district. SMU is known for small, seminar-style classes and a four-year Bachelor of Business Management, and its MBA serves students aiming for careers in Asia.",
+  "description_cn": "李光前商学院是新加坡管理大学的商学院，成立于 2000 年，城市校区紧邻新加坡金融区。SMU 以小班研讨式教学和四年制工商管理学士（BBM）著称，MBA 面向希望在亚洲发展的学生。",
+  "tuition_usd": "BBM (international) ~S$26,200/year with Tuition Grant or ~S$47,700/year without (est.) · MBA S$82,840 (Aug 2027 intake, indicative)",
   "language": "english",
   "notable_alumni": [],
   "url": "https://business.smu.edu.sg",
@@ -4317,9 +4375,27 @@
   "qs_bm_rank": "39",
   "qs_bm_rank_num": 39,
   "alumni_detail": [],
-  "requirements": null,
+  "requirements": {
+   "gre_accepted": true
+  },
   "employment": null,
-  "data_checked": "2026-10"
+  "data_checked": "2026-10",
+  "programs_detail": [
+   {
+    "name": "Bachelor of Business Management (BBM)",
+    "duration": "4 years",
+    "language": "English",
+    "description_en": "Undergraduate business degree with fixed fees for the normal four-year duration. International students can take the MOE Tuition Grant, which requires three years of work with a Singapore entity after graduation.",
+    "description_cn": "本科商科学位，正常四年学制内学费固定；国际生可申请教育部学费补助，毕业后须在新加坡机构工作三年。"
+   },
+   {
+    "name": "MBA",
+    "duration": "Full-time",
+    "language": "English",
+    "description_en": "Tuition S$82,840 including GST for the August 2027 intake (indicative).",
+    "description_cn": "2027 年 8 月入学学费 S$82,840（含消费税，参考价）。"
+   }
+  ]
  },
  {
   "id": "hitotsubashi-ics",
