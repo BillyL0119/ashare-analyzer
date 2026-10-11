@@ -11,6 +11,7 @@ import pandas as pd
 import json
 import os
 import time
+import math
 import logging
 import requests
 import threading
@@ -538,6 +539,17 @@ def _score_label(score: float) -> tuple:
     return ("极度贪婪", "Extreme Greed")
 
 
+def _finite(obj):
+    """Copy of obj with NaN / inf floats replaced by None (JSON-safe)."""
+    if isinstance(obj, float):
+        return obj if math.isfinite(obj) else None
+    if isinstance(obj, dict):
+        return {k: _finite(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_finite(v) for v in obj]
+    return obj
+
+
 def _do_fetch_sentiment() -> dict:
     """Blocking fetch of all sentiment data. Writes to globals when done."""
     global _sentiment_ts, _sentiment_data, _sentiment_fetching
@@ -721,7 +733,9 @@ def _do_fetch_sentiment() -> dict:
         }
         # Right after a restart the A-share spot snapshot (breadth) is still loading: try again soon
         _sentiment_ts   = time.time() if any(p["key"] == "breadth" for p in cn_parts) else time.time() - _SENTIMENT_TTL + 120
-        _sentiment_data = result
+        # A NaN anywhere (a feed returning an empty close) made every cached response a 500:
+        # JSON cannot encode NaN. Replace non-finite numbers before caching.
+        _sentiment_data = result = _finite(result)
         return result
     except Exception as e:
         logger.error("sentiment fetch failed: %s", e)

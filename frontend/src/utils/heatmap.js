@@ -10,14 +10,18 @@ const NEUTRAL = [58, 63, 76]
 const GREEN = [22, 163, 74]
 const RED = [220, 38, 38]
 
-/** Tile colour for a % move: US green up / red down, A-shares red up / green down; full colour at ±3%. */
-export function tileColor(chg, market) {
-  if (chg == null) return `rgb(${NEUTRAL})`
+const NEUTRAL_LIGHT = [172, 182, 196]   // darker than the map's no-data land (#d8e4ee) so flat markets stay visible
+
+/** Tile colour for a % move: US green up / red down, A-shares red up / green down; full colour at ±3%.
+ *  `light` starts from a pale grey for light backgrounds (the world map in the light theme). */
+export function tileColor(chg, market, light = false) {
+  const base = light ? NEUTRAL_LIGHT : NEUTRAL
+  if (chg == null) return `rgb(${base})`
   const up = market === 'us' ? GREEN : RED
   const down = market === 'us' ? RED : GREEN
   const target = chg >= 0 ? up : down
-  const k = Math.min(Math.abs(chg) / 3, 1) ** 0.8
-  return `rgb(${NEUTRAL.map((n, i) => Math.round(n + (target[i] - n) * k))})`
+  const k = Math.min(Math.abs(chg) / 3, 1) ** (light ? 0.6 : 0.8)
+  return `rgb(${base.map((n, i) => Math.round(n + (target[i] - n) * k))})`
 }
 
 export function money(v, market) {

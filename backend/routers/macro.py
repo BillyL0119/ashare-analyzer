@@ -178,6 +178,29 @@ def _fetch_day(d: date) -> list:
         hit = _cache.get(iso)
         if hit and time.time() - hit[0] < ttl:
             return hit[1]
+        if hit and iso not in _refreshing:
+            # Stale: answer with the last copy now and refresh in the background
+            _refreshing.add(iso)
+            threading.Thread(target=_refresh_day, args=(d,), daemon=True).start()
+            return hit[1]
+        if hit:
+            return hit[1]
+    return _load_day(d)
+
+
+_refreshing: set = set()
+
+
+def _refresh_day(d: date) -> None:
+    try:
+        _load_day(d)
+    finally:
+        _refreshing.discard(d.isoformat())
+
+
+def _load_day(d: date) -> list:
+    iso = d.isoformat()
+    hit = _cache.get(iso)
     try:
         r = requests.get("https://api.nasdaq.com/api/calendar/economicevents", params={"date": iso},
                          headers=_HEADERS, timeout=10)

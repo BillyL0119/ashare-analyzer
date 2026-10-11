@@ -7,7 +7,7 @@ _os.environ.setdefault("TQDM_DISABLE", "1")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
+from fastapi.responses import Response, JSONResponse
 from routers import stocks
 from routers.indicators import router as indicators_router
 from routers.simulation import router as simulation_router
@@ -38,10 +38,31 @@ from routers.career import router as career_router
 from routers.fundamentals import router as fundamentals_router
 from routers.screener import router as screener_router
 
+class SafeJSONResponse(JSONResponse):
+    """JSON that never fails on NaN / inf (an empty value from a data feed): they become null.
+    The default encoder raises on them, turning a whole endpoint into a 500."""
+    def render(self, content) -> bytes:
+        import json as _json, math as _math
+
+        def clean(o):
+            if isinstance(o, float):
+                return o if _math.isfinite(o) else None
+            if isinstance(o, dict):
+                return {k: clean(v) for k, v in o.items()}
+            if isinstance(o, (list, tuple)):
+                return [clean(v) for v in o]
+            return o
+        try:
+            return _json.dumps(content, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode("utf-8")
+        except ValueError:
+            return _json.dumps(clean(content), ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode("utf-8")
+
+
 app = FastAPI(
     title="Best Friend Ashare API",
     description="China A-share market data and technical analysis",
     version="1.0.0",
+    default_response_class=SafeJSONResponse,
 )
 
 

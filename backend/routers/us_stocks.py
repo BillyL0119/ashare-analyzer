@@ -564,6 +564,14 @@ def _get_us_realtime_polygon(sym: str):
             cached_rt = read_cache(f"{sym}_realtime", max_age_hours=9999)
             if cached_rt:
                 return {**cached_rt, **info, "symbol": sym, "cached": True}
+            # A ticker that is not listed (e.g. "GOO" while typing "GOOG") is a 404, not a server error
+            try:
+                from routers.screener import _state as _scr
+                listed = {r["symbol"] for r in _scr.get("rows") or []}
+                if listed and sym not in listed:
+                    return JSONResponse({"error": "Unknown symbol", "cached": False}, status_code=404)
+            except Exception:
+                pass
             return JSONResponse({"error": "Unable to load data", "cached": False}, status_code=502)
 
         result = {

@@ -279,18 +279,21 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   // ── Quote lookup ──────────────────────────────────────────────────────────
   useEffect(() => {
     setQuoteInfo(null)
-    if (!buyCode) return
-    const minLen = isUS ? 1 : 6
-    if (buyCode.length < minLen) return
-    setQuoteLoading(true)
-    const url = isUS
-      ? `/api/us/stock/${buyCode.toUpperCase()}/realtime`
-      : `/api/stocks/${buyCode}/realtime`
-    fetch(url)
-      .then((r) => r.json())
-      .then((d) => setQuoteInfo(d.price ? { price: d.price, name: d.name } : null))
-      .catch(() => setQuoteInfo(null))
-      .finally(() => setQuoteLoading(false))
+    // US: any ticker; A-shares: a full 6-digit code. Wait for typing to settle (was one request per key).
+    if (!buyCode || (isUS ? !/^[A-Z0-9.\-]{1,10}$/i.test(buyCode) : !/^\d{6}$/.test(buyCode))) return
+    let alive = true
+    const id = setTimeout(() => {
+      setQuoteLoading(true)
+      const url = isUS
+        ? `/api/us/stock/${buyCode.toUpperCase()}/realtime`
+        : `/api/stocks/${buyCode}/realtime`
+      fetch(url)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (alive) setQuoteInfo(d?.price ? { price: d.price, name: d.name } : null) })
+        .catch(() => { if (alive) setQuoteInfo(null) })
+        .finally(() => { if (alive) setQuoteLoading(false) })
+    }, 350)
+    return () => { alive = false; clearTimeout(id) }
   }, [buyCode, isUS])
 
   // Reset shares when switching market

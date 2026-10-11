@@ -322,7 +322,7 @@ function WorldMap({ indices, lang }) {
   const tipEl = tip && countryData[tip.geoId] && (() => {
     const list = countryData[tip.geoId]
     const main = list[0]
-    const color = tileColor(main.change_pct, 'us')
+    const color = tileColor(main.change_pct, 'us', isLight)
     const W = 220, H = 40 + list.length * 46
     const left = tip.x + 16 + W > window.innerWidth - 8 ? tip.x - W - 16 : tip.x + 16
     const top = Math.max(8, tip.y + 16 + H > window.innerHeight - 8 ? tip.y - H - 16 : tip.y + 16)
@@ -371,7 +371,7 @@ function WorldMap({ indices, lang }) {
               const geoId = String(geo.id)
               const list = countryData[geoId]
               const pct = list ? list[0].change_pct : null
-              const fill = list ? tileColor(pct, 'us') : landEmpty
+              const fill = list ? tileColor(pct, 'us', isLight) : landEmpty
               const active = tip?.geoId === geoId
               return (
                 <Geography
@@ -396,7 +396,7 @@ function WorldMap({ indices, lang }) {
         {Object.entries(markers).map(([geoId, meta]) => {
           const list = countryData[geoId]
           if (!list) return null
-          const color = tileColor(list[0].change_pct, 'us')
+          const color = tileColor(list[0].change_pct, 'us', isLight)
           return (
             <Marker key={geoId} coordinates={meta.coords}>
               <circle r={7} fill={color} opacity={0.2} style={{ pointerEvents: 'none' }}>
@@ -414,7 +414,7 @@ function WorldMap({ indices, lang }) {
       {/* Colour scale (same as the market heatmap) */}
       <div style={{ position: 'absolute', bottom: 6, left: 10, display: 'flex', alignItems: 'center', gap: 4, pointerEvents: 'none', lineHeight: 1 }}>
         <span style={{ fontSize: 9, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>-3%</span>
-        {[-3, -2, -1, 0, 1, 2, 3].map((v) => <span key={v} style={{ width: 14, height: 7, borderRadius: 2, background: tileColor(v, 'us') }} />)}
+        {[-3, -2, -1, 0, 1, 2, 3].map((v) => <span key={v} style={{ width: 14, height: 7, borderRadius: 2, background: tileColor(v, 'us', isLight) }} />)}
         <span style={{ fontSize: 9, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>+3%</span>
       </div>
       <div style={{ position: 'absolute', bottom: 6, right: 10, fontSize: 9, color: 'var(--text-muted)', pointerEvents: 'none', lineHeight: 1 }}>
