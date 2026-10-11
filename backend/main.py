@@ -59,6 +59,18 @@ async def warmup_caches():
     loop.run_in_executor(None, warmup_sentiment)
     loop.run_in_executor(None, get_bank_views, 'all')   # ~5s build, so the first visitor doesn't wait
 
+    def _warm_fundamentals():
+        # Most-viewed US stocks: their fundamentals page then opens instantly (cold build ~4s each)
+        import time as _t
+        from routers.fundamentals import get_fundamentals
+        for sym in ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "AVGO", "JPM", "NFLX", "AMD", "PLTR"]:
+            try:
+                get_fundamentals(sym)
+            except Exception:
+                pass
+            _t.sleep(1)
+    loop.run_in_executor(None, _warm_fundamentals)
+
 from security import SecurityMiddleware, allowed_origins
 
 app.add_middleware(
