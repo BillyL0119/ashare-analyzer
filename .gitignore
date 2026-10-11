@@ -18,3 +18,7 @@ backend/data/roles.json
 backend/data/*.lock
 backend/data/*.tmp
 backend/data/us_cache/
+backend/data/analytics.json
+backend/data/paper_trading/
+backend/data/comments/
+backend/data/*.cache.json
