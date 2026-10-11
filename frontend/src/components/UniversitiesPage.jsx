@@ -2159,6 +2159,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
         {/* Specialty */}
         <select
           value={filters.specialty}
+          aria-label={tx('所有专业', 'All Specialties')}
           onChange={e => onChange({ ...filters, specialty: e.target.value })}
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
@@ -2173,6 +2174,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
         {/* Sort */}
         <select
           value={filters.sort}
+          aria-label={tx('排序', 'Sort')}
           onChange={e => onChange({ ...filters, sort: e.target.value })}
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',

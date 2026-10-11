@@ -559,6 +559,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
             </label>
             <input
               type="number"
+              aria-label={isUS ? t.ptSharesUS : t.ptSharesCN}
               value={buyShares}
               min={isUS ? 1 : 100}
               step={isUS ? 1 : 100}

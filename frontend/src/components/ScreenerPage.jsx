@@ -187,7 +187,7 @@ export default function ScreenerPage({ lang }) {
           </div>
           <div>
             <div className="sc-lbl">{t.sector}</div>
-            <select id="sc-sector" className="sc-in" value={f.sector} onChange={(e) => set({ sector: e.target.value, industry: '' })}>
+            <select id="sc-sector" aria-label={t.sector} className="sc-in" value={f.sector} onChange={(e) => set({ sector: e.target.value, industry: '' })}>
               <option value="">{t.anySector}</option>
               {(data?.sectors || []).map((s) => <option key={s.name} value={s.name}>{sectorName(s.name)} ({s.count})</option>)}
             </select>
@@ -218,14 +218,14 @@ export default function ScreenerPage({ lang }) {
           ))}
           <div>
             <div className="sc-lbl">{t.volume}</div>
-            <select id="sc-volume" className="sc-in" value={f.volume_min} onChange={(e) => set({ volume_min: e.target.value })}>
+            <select id="sc-volume" aria-label={t.volume} className="sc-in" value={f.volume_min} onChange={(e) => set({ volume_min: e.target.value })}>
               <option value="">{t.any}</option>
               {[[1e5, '100K'], [5e5, '500K'], [1e6, '1M'], [5e6, '5M'], [2e7, '20M']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </select>
           </div>
           <div>
             <div className="sc-lbl">{t.fromHigh}</div>
-            <select id="sc-near" className="sc-in" value={f.near_high} onChange={(e) => set({ near_high: e.target.value })}>
+            <select id="sc-near" aria-label={t.fromHigh} className="sc-in" value={f.near_high} onChange={(e) => set({ near_high: e.target.value })}>
               <option value="">{t.any}</option>
               {[3, 5, 10, 20].map((n) => <option key={n} value={n}>{t.within(n)}</option>)}
             </select>

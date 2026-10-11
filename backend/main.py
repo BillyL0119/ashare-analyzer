@@ -149,6 +149,24 @@ async def sitemap():
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://bestfriendstock.com/screener</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://bestfriendstock.com/heatmap</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://bestfriendstock.com/macro</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://bestfriendstock.com/stock/us/AAPL</loc>
     <lastmod>{today}</lastmod>
     <changefreq>daily</changefreq>

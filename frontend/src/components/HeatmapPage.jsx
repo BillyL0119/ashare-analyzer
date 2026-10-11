@@ -32,7 +32,7 @@ export default function HeatmapPage({ lang }) {
   const zh = lang === 'zh'
   const nav = useNavigate()
   const market = useCompareStore((s) => s.market)
-  const [limit, setLimit] = useState(300)
+  const [limit, setLimit] = useState(() => (window.innerWidth < 700 ? 100 : 300))   // phones: fewer, bigger tiles
   const [data, setData] = useState(null)
   const [state, setState] = useState('loading')
   const [nonce, setNonce] = useState(0)
@@ -55,6 +55,9 @@ export default function HeatmapPage({ lang }) {
   const option = useMemo(() => {
     if (!data || data.market !== market) return null
     const total = data.sectors.reduce((a, g) => a + g.market_cap, 0) || 1
+    const w = Math.min(window.innerWidth - 44, 1388)
+    const h = Math.max(Math.min(window.innerHeight * 0.68, 720), 420)
+    const area = w * h * 0.85                      // minus sector headers and gaps
     return {
       tooltip: {
         backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(138,180,248,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
@@ -89,8 +92,9 @@ export default function HeatmapPage({ lang }) {
           name: sectorLabel(g), value: g.market_cap, chg: g.change_pct,
           children: g.stocks.map((s) => {
             // Tiles too small for two lines of text show the ticker only, the smallest nothing
-            const share = s.market_cap / total
-            const label = share < 0.0009 ? { show: false } : share < 0.003 ? { formatter: (p) => `{s|${p.name}}` } : undefined
+            // Estimated tile area in pixels decides how much text fits (phones get a much smaller map)
+            const px = (s.market_cap / total) * area
+            const label = px < 1500 ? { show: false } : px < 2600 ? { formatter: (p) => `{s|${p.name}}` } : undefined
             return {
               name: tileLabel(s), sym: s.symbol, value: s.market_cap, chg: s.change_pct, price: s.price, sector: g.name,
               fullName: s.name, itemStyle: { color: tileColor(s.change_pct, market) }, ...(label ? { label } : {}),

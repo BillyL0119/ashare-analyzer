@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "NO_PROXY=* no_proxy=* vite",
-    "build": "vite build",
+    "build": "vite build && node tools/route_pages.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
