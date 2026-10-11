@@ -125,6 +125,152 @@ function News({ symbol, market }) {
   )
 }
 
+// Company fundamentals for US stocks (same API and strings as the iOS app's section)
+const usd = (v) => {
+  if (v == null) return '—'
+  const a = Math.abs(v), s = v < 0 ? '-' : ''
+  if (a >= 1e12) return `${s}$${(a / 1e12).toFixed(2)}T`
+  if (a >= 1e9) return `${s}$${(a / 1e9).toFixed(a >= 1e11 ? 0 : 1)}B`   // $216B, $27.0B: keeps 4 columns on a phone
+  if (a >= 1e6) return `${s}$${(a / 1e6).toFixed(0)}M`
+  return `${s}$${a.toFixed(0)}`
+}
+const shortPeriod = (p) => (/^FY\d{4}$/.test(p) ? 'FY' + p.slice(4) : p.replace(/ (\d{2})(\d{2})$/, ' $2'))
+
+function Fundamentals({ symbol, price }) {
+  const t = useT()
+  const { data: d, error, reload } = useAPI(`/us/fundamentals/${symbol}`)
+  const [freq, setFreq] = useState('annual')
+  const [more, setMore] = useState(false)
+  if (error) return <Section title={t('公司基本面')}><ErrorBox onRetry={reload} /></Section>
+  if (!d) return <Section title={t('公司基本面')}><Skeleton h={220} r={20} /></Section>
+  const up = changeColor(1, 'us'), down = changeColor(-1, 'us')
+  const f = (freq === 'quarterly' ? d.quarterly : d.annual) || d.annual
+  const ttm = d.earnings?.length >= 4 ? d.earnings.slice(-4).reduce((a, e) => a + (e.eps ?? 0), 0) : null
+  const target = d.analysts?.target ?? d.stats?.one_year_target
+  const upside = target && price ? ((target - price) / price) * 100 : null
+  const ne = d.next_earnings
+  const tiles = [
+    ttm != null && [t('每股收益 (近4季)'), `$${ttm.toFixed(2)}`],
+    (d.annual || d.stats?.dividend_yield) && [t('股息率'), d.stats?.dividend_yield ? `${d.stats.dividend_yield.toFixed(2)}%` : t('无'), d.stats?.annual_dividend ? `$${d.stats.annual_dividend.toFixed(2)}${t('/年')}` : null],
+    d.stats?.week52_low != null && [t('52 周区间'), `$${d.stats.week52_low.toFixed(0)}–${d.stats.week52_high.toFixed(0)}`],
+    target && [t('分析师目标价'), `$${target.toFixed(2)}`, upside != null ? <span style={{ color: upside >= 0 ? up : down }}>{upside >= 0 ? '+' : ''}{upside.toFixed(1)}% {t('空间')}</span> : null],
+    ne?.date && [t('下次财报'), new Date(`${ne.date}T12:00:00Z`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), ne.timing === 'after_close' ? t('盘后') : ne.timing === 'before_open' ? t('盘前') : null],
+    d.holders?.institutional_pct != null && [t('机构持股'), `${d.holders.institutional_pct.toFixed(1)}%`],
+  ].filter(Boolean)
+  const meta = [d.profile?.sector, d.profile?.industry].filter(Boolean).join(' · ')
+  const option = f && {
+    grid: { left: 44, right: 8, top: 26, bottom: 22 },
+    legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 8, textStyle: { color: css('--text-2'), fontSize: 11 } },
+    xAxis: { type: 'category', data: f.periods.map(shortPeriod), axisLabel: { color: css('--text-2'), fontSize: 10 }, axisTick: { show: false }, axisLine: { lineStyle: { color: css('--stroke') } } },
+    yAxis: { type: 'value', axisLabel: { color: css('--text-2'), fontSize: 10, formatter: (v) => `$${Math.round(v / 1e9)}B` }, splitLine: { lineStyle: { color: css('--stroke'), type: 'dashed' } } },
+    series: [
+      { name: t('营收'), type: 'bar', data: f.revenue, barMaxWidth: 22, itemStyle: { color: '#5B9CF6', borderRadius: [3, 3, 0, 0] } },
+      { name: t('净利润'), type: 'bar', data: f.net_income, barMaxWidth: 22, itemStyle: { color: '#26A69A', borderRadius: [3, 3, 0, 0] } },
+    ],
+  }
+  const a = d.analysts
+  const total = a ? a.buy + a.hold + a.sell : 0
+  return (
+    <Section title={t('公司基本面')}>
+      <div style={{ display: 'grid', gap: 12 }}>
+        {(meta || d.profile?.description) && (
+          <div className="m-card" style={{ display: 'grid', gap: 8 }}>
+            {meta && <div className="m-label" style={{ fontWeight: 650 }}>{meta}</div>}
+            {d.profile?.description && (
+              <div style={{ fontSize: 13.5, lineHeight: 1.55, ...(more ? {} : { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }) }}>{d.profile.description}</div>
+            )}
+            {d.profile?.description && <button style={{ justifySelf: 'start', color: 'var(--accent)', fontSize: 13, fontWeight: 650 }} onClick={() => setMore((v) => !v)}>{more ? t('收起') : t('展开')}</button>}
+          </div>
+        )}
+        {tiles.length > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10 }}>
+            {tiles.map(([k, v, sub]) => (
+              <div key={k} className="m-card" style={{ padding: 12 }}>
+                <div className="m-label">{k}</div>
+                <div className="m-num" style={{ fontWeight: 800, fontSize: 17, marginTop: 4 }}>{v}</div>
+                {sub && <div className="m-label" style={{ marginTop: 3 }}>{sub}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+        {f && (
+          <div className="m-card" style={{ display: 'grid', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <b style={{ fontSize: 15 }}>{t('财务表现')}</b>
+              {d.quarterly && <Segment value={freq} onChange={setFreq} options={[{ value: 'annual', label: t('年度') }, { value: 'quarterly', label: t('季度') }]} />}
+            </div>
+            <ReactECharts option={option} notMerge style={{ height: 180, width: '100%' }} />
+            <div style={{ overflowX: 'auto' }}>
+              <table className="m-num" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead><tr><th />{f.periods.map((p) => <th key={p} style={{ textAlign: 'right', fontWeight: 650, color: 'var(--text-2)', padding: '4px 0 6px 6px' }}>{shortPeriod(p)}</th>)}</tr></thead>
+                <tbody>
+                  {[[t('营收'), f.revenue, usd], [t('净利润'), f.net_income, usd], [t('毛利率'), f.gross_margin, (v) => (v == null ? '—' : `${v.toFixed(1)}%`)],
+                    [t('净利率'), f.net_margin, (v) => (v == null ? '—' : `${v.toFixed(1)}%`)], [t('自由现金流'), f.free_cash_flow, usd]].map(([k, vals, fmt]) => (
+                    <tr key={k}>
+                      <td style={{ fontWeight: 650, padding: '5px 0', whiteSpace: 'nowrap' }}>{k}</td>
+                      {vals.map((v, i) => <td key={i} style={{ textAlign: 'right', padding: '5px 0 5px 6px', whiteSpace: 'nowrap', color: v < 0 ? down : undefined }}>{fmt(v)}</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {d.earnings?.length > 0 && (
+          <div className="m-card" style={{ display: 'grid', gap: 10 }}>
+            <b style={{ fontSize: 15 }}>{t('盈利 vs 预期')}</b>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${d.earnings.length}, minmax(0, 1fr))`, gap: 6 }}>
+              {d.earnings.map((e) => (
+                <div key={e.quarter} className="m-num" style={{ textAlign: 'center', padding: '8px 2px', borderRadius: 10, background: 'var(--surface-hi)', display: 'grid', gap: 3 }}>
+                  <span className="m-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.quarter}</span>
+                  <b style={{ fontSize: 14 }}>{e.eps != null ? `$${e.eps.toFixed(2)}` : '—'}</b>
+                  <span className="m-label">{t('预期')} {e.estimate != null ? `$${e.estimate.toFixed(2)}` : '—'}</span>
+                  {e.surprise_pct != null && <span style={{ fontSize: 12, fontWeight: 800, color: e.surprise_pct >= 0 ? up : down }}>{e.surprise_pct >= 0 ? '+' : ''}{e.surprise_pct.toFixed(1)}%</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {a && (
+          <div className="m-card" style={{ display: 'grid', gap: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}><b style={{ fontSize: 15 }}>{t('分析师评级')}</b>{total > 0 && <span className="m-label">{t('%lld 位分析师', total)}</span>}</div>
+            {total > 0 && (
+              <>
+                <div style={{ display: 'flex', gap: 2, height: 10, borderRadius: 5, overflow: 'hidden' }}>
+                  {[[a.buy, up], [a.hold, '#F5A524'], [a.sell, down]].map(([n, c], i) => n > 0 && <span key={i} style={{ flex: n, background: c }} />)}
+                </div>
+                <div className="m-label" style={{ display: 'flex', gap: 14 }}>
+                  <span>{t('买入')} {a.buy}</span><span>{t('持有')} {a.hold}</span><span>{t('卖出')} {a.sell}</span>
+                </div>
+              </>
+            )}
+            {a.target != null && (
+              <div className="m-num" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 6 }}>
+                {[[t('最低'), a.target_low], [t('平均'), a.target], [t('最高'), a.target_high], [t('现价'), price]].map(([k, v], i) => (
+                  <div key={k}><div className="m-label">{k}</div><div style={{ fontWeight: 800, fontSize: 14, marginTop: 2, color: i === 1 ? 'var(--accent)' : undefined }}>{v != null ? `$${v.toFixed(2)}` : '—'}</div></div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {d.holders?.top?.length > 0 && (
+          <div className="m-card flush">
+            <div style={{ padding: '14px 16px 4px' }}><b style={{ fontSize: 15 }}>{t('主要机构股东')}</b></div>
+            {d.holders.top.slice(0, 5).map((r) => (
+              <div className="m-row" key={r.name}>
+                <div className="m-grow m-name" style={{ fontSize: 14, fontWeight: 600 }}>{r.name}</div>
+                <span className="m-num" style={{ fontWeight: 700 }}>{usd(r.value)}</span>
+                <span className="m-num" style={{ width: 62, textAlign: 'right', fontSize: 12.5, color: (r.change_pct ?? 0) >= 0 ? up : down }}>{r.change_pct != null ? `${r.change_pct >= 0 ? '+' : ''}${r.change_pct.toFixed(2)}%` : ''}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="m-label" style={{ padding: '0 4px' }}>{t('数据来源：Nasdaq · 单位美元 · 财年按公司口径')}</div>
+      </div>
+    </Section>
+  )
+}
+
 export default function StockDetail() {
   const { market, code } = useParams()
   const t = useT(); const nav = useNavigate()
@@ -224,6 +370,7 @@ export default function StockDetail() {
         )}
       </div>
 
+      {market === 'us' && <Fundamentals symbol={code} price={d?.price} />}
       <News symbol={code} market={market} />
       <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>
     </div>
