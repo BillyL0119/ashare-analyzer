@@ -5,6 +5,12 @@ import os as _os
 # (100+ MB) and buried real errors. Must be set before akshare/tqdm are imported.
 _os.environ.setdefault("TQDM_DISABLE", "1")
 
+# akshare's requests carry no timeout, so a data source that stops answering would hang its worker
+# thread forever (and, for cninfo/10jqka, the shared V8 lock with it). Clients that set their own
+# timeout (httpx/OpenAI, our requests calls) are unaffected; asyncio's sockets are non-blocking.
+import socket as _socket
+_socket.setdefaulttimeout(30)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, JSONResponse

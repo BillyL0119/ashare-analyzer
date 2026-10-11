@@ -4,6 +4,7 @@ import requests
 from typing import List, Optional
 import math
 import threading
+from services.js_runtime import v8_call
 
 SINA_HEADERS = {"Referer": "https://finance.sina.com.cn", "User-Agent": "Mozilla/5.0"}
 _name_cache: dict = {}
@@ -239,7 +240,7 @@ def _resample_to_period(df: pd.DataFrame, period: str) -> pd.DataFrame:
 def _fetch_b_share_daily(sina_symbol: str, start_date: str, end_date: str, adjust: str) -> Optional[pd.DataFrame]:
     """Fetch B-share OHLCV via akshare. Avoids py_mini_racer (crashes on Apple Silicon)."""
     try:
-        df = ak.stock_zh_b_daily(symbol=sina_symbol, start_date=start_date, end_date=end_date, adjust=adjust or "")
+        df = v8_call(ak.stock_zh_b_daily, symbol=sina_symbol, start_date=start_date, end_date=end_date, adjust=adjust or "")
         df["date"] = df["date"].astype(str)
         if "amount" not in df.columns:
             df["amount"] = 0.0
@@ -267,7 +268,7 @@ def get_stock_history(
         if _is_b_share(symbol):
             df = _fetch_b_share_daily(sina_symbol, start_date, end_date, ak_adjust)
         else:
-            df = ak.stock_zh_a_daily(
+            df = v8_call(ak.stock_zh_a_daily,
                 symbol=sina_symbol,
                 start_date=start_date,
                 end_date=end_date,

@@ -17,6 +17,7 @@ import requests
 import threading
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from services.js_runtime import v8_call
 
 router = APIRouter()
 logger = logging.getLogger("market")
@@ -370,7 +371,7 @@ _AK_GLOBAL_SINA_MAP = {
 def _ak_us_index(sina_sym: str, days: int = 252) -> dict:
     """Fetch US index history from AkShare/Sina (works reliably from CN servers)."""
     try:
-        df = ak.index_us_stock_sina(symbol=sina_sym)
+        df = v8_call(ak.index_us_stock_sina, symbol=sina_sym)
         df = df.dropna(subset=["close"]).tail(days)
         df = df.rename(columns={"close": "Close"})
         if len(df) < 2:
@@ -633,7 +634,7 @@ def _do_fetch_sentiment() -> dict:
         if sh_hist is None:
             try:
                 with ThreadPoolExecutor(max_workers=1) as _sh_ex:
-                    sh_df = _sh_ex.submit(ak.stock_zh_index_daily, "sh000001").result(timeout=10)
+                    sh_df = _sh_ex.submit(v8_call, ak.stock_zh_index_daily, "sh000001").result(timeout=10)
                 sh_df = sh_df.rename(columns={"close": "Close"}).tail(60)
                 if len(sh_df) >= 16:
                     sh_hist = sh_df

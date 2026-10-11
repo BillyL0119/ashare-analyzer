@@ -390,6 +390,8 @@ T = {
     "我的组合": ("My portfolio", "私のポートフォリオ", "내 포트폴리오", "Mon portefeuille"),
     "沪深300": ("CSI 300", "CSI 300", "CSI 300", "CSI 300"),
     "实时报价": ("Live quote", "リアルタイム株価", "실시간 시세", "Cours en direct"),
+    "代码或公司名，如 AAPL、苹果": ("Ticker or company, e.g. AAPL, Apple", "コードまたは社名（例: AAPL、Apple）", "코드 또는 회사명 (예: AAPL, Apple)", "Symbole ou société, ex. AAPL, Apple"),
+    "代码或名称，如 600519、茅台": ("Code or name, e.g. 600519, 茅台", "コードまたは銘柄名（例: 600519、茅台）", "코드 또는 종목명 (예: 600519, 茅台)", "Code ou nom, ex. 600519, 茅台"),
     "刚刚": ("Just now", "たった今", "방금", "À l'instant"),
     "还没有人在这个市场交易过，完成第一笔交易就能上榜": ("No one has traded in this market yet. Make a trade to get on the board.", "この市場ではまだ誰も取引していません。最初の取引でランキングに載ります", "아직 이 시장에서 거래한 사람이 없습니다. 첫 거래를 하면 순위에 오릅니다", "Personne n'a encore négocié sur ce marché. Passez un ordre pour entrer au classement."),
     "持仓市值": ("Holdings", "保有資産", "보유 자산", "Positions"),

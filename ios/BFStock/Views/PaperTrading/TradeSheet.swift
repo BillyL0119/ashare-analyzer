@@ -16,6 +16,7 @@ struct TradeSheet: View {
     @State private var buySymbol = ""
     @State private var quote: TradeQuote?
     @State private var quoteMissing = false
+    @State private var suggestions: [TradeSuggestion] = []
     @State private var sharesText = ""
     @State private var shares = 100
     @FocusState private var focus: Field?
@@ -112,11 +113,12 @@ struct TradeSheet: View {
     private var buyHeader: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeader(market == .cn ? L("A股 · 股票代码") : L("美股 · 股票代码"))
-            TextField(market == .cn ? L("如 000001") : L("如 AAPL"), text: $buySymbol)
-                .font(.system(size: 28, weight: .bold, design: .monospaced))
+            // Names work too ("google", "苹果"): people type the company, not the ticker
+            TextField(market == .cn ? L("代码或名称，如 600519、茅台") : L("代码或公司名，如 AAPL、苹果"), text: $buySymbol)
+                .font(buySymbol.isEmpty ? .body : .system(size: 28, weight: .bold, design: .monospaced))
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(market == .cn ? .never : .characters)
-                .keyboardType(market == .cn ? .numberPad : .asciiCapable)
+                .submitLabel(.search)
                 .focused($focus, equals: .symbol)
                 .padding(16)
                 .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.radius, style: .continuous))
@@ -130,8 +132,33 @@ struct TradeSheet: View {
                     Text(q.name ?? buySymbol.uppercased()).font(.subheadline.weight(.semibold)).lineLimit(1)
                     Text("· \(currency)\(String(format: "%.2f", p))").font(.subheadline).foregroundStyle(.secondary).monospacedDigit()
                 }
-            } else if quoteMissing {
+            } else if quoteMissing && visibleSuggestions.isEmpty {
                 Text(L("没有找到这只股票")).font(.subheadline).foregroundStyle(.red)
+            }
+
+            if !visibleSuggestions.isEmpty {
+                VStack(spacing: 0) {
+                    ForEach(visibleSuggestions) { s in
+                        Button { buySymbol = s.symbol } label: {
+                            HStack(spacing: 10) {
+                                Text(s.symbol)
+                                    .font(.system(.subheadline, design: .monospaced).weight(.bold))
+                                    .frame(minWidth: 64, alignment: .leading)
+                                Text(s.displayName).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                                Spacer(minLength: 8)
+                                if let p = s.price {
+                                    Text("\(currency)\(String(format: "%.2f", p))").font(.subheadline).monospacedDigit()
+                                }
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 11)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        if s.id != visibleSuggestions.last?.id { RowDivider() }
+                    }
+                }
+                .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.radius, style: .continuous))
             }
 
             // Quick picks give first-time traders somewhere to start.
@@ -157,19 +184,44 @@ struct TradeSheet: View {
 
     // MARK: - Live quote
 
+    /// Search matches, hidden once the box holds a ticker that has a quote.
+    private var visibleSuggestions: [TradeSuggestion] {
+        let sym = buySymbol.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        if quote?.price != nil, suggestions.contains(where: { $0.symbol == sym }) { return [] }
+        return suggestions
+    }
+
     private func lookUpQuote() async {
         guard isBuy else { return }
-        let sym = buySymbol.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let raw = buySymbol.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sym = raw.uppercased()
         quote = nil; quoteMissing = false
-        guard !sym.isEmpty, market == .us || sym.count == 6 else { return }
-        try? await Task.sleep(nanoseconds: 350_000_000)          // wait for typing to settle
+        if sym.isEmpty { suggestions = []; return }
+        try? await Task.sleep(nanoseconds: 300_000_000)          // wait for typing to settle
         guard !Task.isCancelled else { return }
-        let path = market == .us ? "/us/stock/\(sym)/realtime" : "/stocks/\(sym)/realtime"
-        if let q: TradeQuote = try? await APIClient.shared.get(path), q.price != nil {
-            if !Task.isCancelled { quote = q }
-        } else if !Task.isCancelled {
-            quoteMissing = true
+        let isCode = market == .cn ? (sym.count == 6 && sym.allSatisfy(\.isNumber))
+                                   : sym.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "." || $0 == "-") }
+        // Search (names) and quote (tickers) in parallel; a complete A-share code needs no search
+        async let found: [TradeSuggestion] = market == .cn && isCode ? [] : searchSuggestions(raw)
+        if isCode {
+            let path = market == .us ? "/us/stock/\(sym)/realtime" : "/stocks/\(sym)/realtime"
+            let q: TradeQuote? = try? await APIClient.shared.get(path)
+            if !Task.isCancelled {
+                if let q, q.price != nil { quote = q } else { quoteMissing = true }
+            }
         }
+        let r = await found
+        if !Task.isCancelled { suggestions = r }
+    }
+
+    private func searchSuggestions(_ q: String) async -> [TradeSuggestion] {
+        if market == .us {
+            let rows: [TradeSearchUS] = (try? await APIClient.shared.get("/us/search", params: ["q": q])) ?? []
+            return rows.prefix(6).map { TradeSuggestion(symbol: $0.symbol, name: $0.name, nameZh: $0.nameZh, price: $0.price) }
+        }
+        let rows: [StockSearchResult] = (try? await APIClient.shared.get("/stocks/search", params: ["q": q])) ?? []
+        return rows.filter { $0.market == nil || $0.market == "cn" }.prefix(6)
+            .map { TradeSuggestion(symbol: $0.code, name: $0.name, nameZh: nil, price: nil) }
     }
 
     private func buyCostCard(_ cost: Double) -> some View {
@@ -397,5 +449,23 @@ struct TradeSheet: View {
 /// Minimal quote used by the order form (both /us/stock/{sym}/realtime and /stocks/{code}/realtime).
 struct TradeQuote: Decodable {
     let name: String?
+    let price: Double?
+}
+
+/// A ticker match for the order form's symbol box.
+struct TradeSuggestion: Identifiable {
+    var id: String { symbol }
+    let symbol: String
+    let name: String
+    let nameZh: String?
+    let price: Double?
+
+    var displayName: String { Lang.code == "zh" ? (nameZh ?? name) : name }
+}
+
+private struct TradeSearchUS: Decodable {
+    let symbol: String
+    let name: String
+    let nameZh: String?
     let price: Double?
 }

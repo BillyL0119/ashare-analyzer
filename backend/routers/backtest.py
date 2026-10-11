@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException, Query
 import numpy as np
 import time
 import logging
+from services.js_runtime import v8_call
 
 router = APIRouter()
 logger = logging.getLogger("backtest")
@@ -225,7 +226,7 @@ def backtest(
         dates, closes = [], []
         if is_cn:
             import akshare as ak
-            df = ak.stock_zh_a_daily(symbol=_to_sina(symbol), adjust="qfq")
+            df = v8_call(ak.stock_zh_a_daily, symbol=_to_sina(symbol), adjust="qfq")
             df = df.sort_index().tail(limit)
             dates = [str(d)[:10] for d in df.index.tolist()]
             closes = df["close"].dropna().tolist()
@@ -250,7 +251,7 @@ def backtest(
         try:
             if is_cn:
                 import akshare as ak
-                bm_df = ak.stock_zh_index_daily(symbol="sh000300").sort_index().tail(limit)
+                bm_df = v8_call(ak.stock_zh_index_daily, symbol="sh000300").sort_index().tail(limit)
                 bm_closes = bm_df["close"].dropna().tolist()
             else:
                 from routers.us_stocks import _tencent_history

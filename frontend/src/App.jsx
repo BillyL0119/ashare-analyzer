@@ -201,7 +201,7 @@ export default function App() {
     const titles = {
       analysis:     'BestFriendStock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
       news:         'BestFriendStock | 每日大事件 - 市场重大新闻',
-      paper:        'BestFriendStock | 模拟炒股 - 100万虚拟资金练习美股与A股',
+      paper:        'BestFriendStock | 模拟炒股 - 用虚拟资金练习美股与A股交易',
       study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门',
       universities: 'BestFriendStock | 全球商学院指南 - 100+顶尖商学院数据库',
       bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究观点',
@@ -341,10 +341,10 @@ export default function App() {
           padding: isMobile ? '8px 10px' : '10px 24px',
           display: 'flex',
           alignItems: 'center',
-          gap: isMobile ? 8 : 18,
+          rowGap: 8,
+          columnGap: isMobile ? 8 : 18,
           // Phones: search drops to its own full-width row so the top row fits 360px screens
           flexWrap: isMobile ? 'wrap' : 'nowrap',
-          rowGap: 8,
           transition: 'background 0.3s ease, box-shadow 0.3s ease',
           position: 'relative',
           zIndex: 10,

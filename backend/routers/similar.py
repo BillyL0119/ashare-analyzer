@@ -4,7 +4,7 @@ Similar trend scanner — /api/similar/{symbol}
 Reliability improvements:
   - Per-stock 8s timeout via daemon thread
   - 3x retry with 0.5s backoff per data source
-  - Dual source: stock_zh_a_daily (Sina) → stock_zh_a_hist (EMF) fallback
+  - Sources: Tencent kline → stock_zh_a_daily (Sina) → stock_zh_a_hist (EMF) fallback
   - 2h fresh cache + 24h stale-while-revalidate fallback
   - Overall 120s deadline; break early rather than hang
   - data_quality: "full" | "partial" | "stale" in every response
@@ -14,12 +14,15 @@ Reliability improvements:
 from fastapi import APIRouter, HTTPException
 import akshare as ak
 import pandas as pd
+import requests
 import json
 import os
 import time
 import logging
 import threading
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+from services.js_runtime import v8_call
 
 logger = logging.getLogger("similar")
 router = APIRouter()
@@ -32,7 +35,7 @@ _RETRY_SLEEP   = 0.5     # seconds between retries
 _STOCK_TIMEOUT = 8       # per-stock fetch hard timeout (seconds)
 _TOTAL_TIMEOUT = 120     # overall endpoint deadline (seconds)
 _MIN_RESULTS   = 5       # minimum acceptable result count before using stale cache
-_PEER_SLEEP    = 0.3     # polite delay between peer fetches
+_PEER_WORKERS  = 6       # peers fetched in parallel (Tencent first; the Sina fallback serializes on V8_LOCK)
 
 # ── Module-level caches ───────────────────────────────────────────────────────
 _industry_cache: dict = {}   # symbol -> (industry_name, [codes])
@@ -206,7 +209,8 @@ def _normalize_df(df, code: str):
 
 def _src_sina(code: str, start: str, end: str, adjust: str):
     return _normalize_df(
-        ak.stock_zh_a_daily(
+        v8_call(
+            ak.stock_zh_a_daily,
             symbol=_to_sina_symbol(code),
             start_date=start,
             end_date=end,
@@ -214,6 +218,22 @@ def _src_sina(code: str, start: str, end: str, adjust: str):
         ),
         code,
     )
+
+
+def _src_tencent(code: str, start: str, end: str, adjust: str):
+    """Tencent's kline API: the requested window in one small request, no V8 decoding.
+    (Sina sends the whole ~6000-day history per stock and is decoded in mini_racer.)"""
+    sym = _to_sina_symbol(code)
+    s_date = f"{start[:4]}-{start[4:6]}-{start[6:]}"
+    e_date = f"{end[:4]}-{end[4:6]}-{end[6:]}"
+    r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
+                     params={"param": f"{sym},day,{s_date},{e_date},800,{adjust}"}, timeout=6)
+    node = (r.json().get("data") or {}).get(sym) or {}
+    rows = node.get(f"{adjust}day" if adjust else "day") or node.get("day") or []
+    if len(rows) < 10:
+        return None
+    return pd.Series([float(x[2]) for x in rows], index=pd.to_datetime([x[0] for x in rows]),
+                     name=code, dtype=float)
 
 
 def _src_hist(code: str, start: str, end: str, adjust: str):
@@ -241,6 +261,7 @@ def _get_closes(code: str, start: str, end: str) -> pd.Series:
     Returns empty Series if all sources/retries fail.
     """
     sources = [
+        (_src_tencent, (code, start, end, "qfq"), "tencent-qfq"),
         (_src_sina, (code, start, end, "qfq"), "sina-qfq"),
         (_src_sina, (code, start, end, ""),    "sina-raw"),
         (_src_hist, (code, start, end, "qfq"), "hist-qfq"),
@@ -363,6 +384,24 @@ def _get_closes_cached(code: str, start: str, end: str) -> pd.Series:
             logger.debug("Price cache write %s: %s", code, _e)
     return result
 
+def _fetch_closes_parallel(codes: list, start: str, end: str, deadline: float) -> tuple[dict, bool]:
+    """{code: closes} for every peer that finished before `deadline`, and whether it was hit.
+    Was one peer at a time with a 0.3s pause: 20 peers took 20-50s."""
+    ex = ThreadPoolExecutor(max_workers=_PEER_WORKERS)
+    futures = {code: ex.submit(_get_closes_cached, code, start, end) for code in codes}
+    out, hit = {}, False
+    for code, fut in futures.items():
+        try:
+            out[code] = fut.result(timeout=max(0.1, deadline - time.time()))
+        except FuturesTimeout:
+            hit = True
+        except Exception as e:
+            logger.debug("peer %s failed: %s", code, e)
+            out[code] = pd.Series(dtype=float, name=code)
+    ex.shutdown(wait=False, cancel_futures=True)
+    return out, hit
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 # NOTE: /{symbol}/cross must be registered BEFORE /{symbol} so FastAPI
 # doesn't accidentally shadow it (extra path segment makes them distinct,
@@ -432,18 +471,14 @@ def similar_cross(symbol: str):
         target_name = _get_stock_name(symbol)
         total_pool_size = len(pool)
 
-        # ── Fetch peers sequentially ───────────────────────────────────────────
-        peer_data: list[tuple[str, str, str, str, pd.Series]] = []
-        deadline_hit = False
-        for code, industry, itype in pool:
-            if time.time() > deadline:
-                deadline_hit = True
-                logger.warning("Cross deadline hit at %s for %s", code, symbol)
-                break
-            closes = _get_closes_cached(code, start_str, end_str)
-            name   = _get_stock_name(code)
-            peer_data.append((code, name, industry, itype, closes))
-            time.sleep(_PEER_SLEEP)
+        # ── Fetch peers in parallel (respect overall deadline) ─────────────────
+        closes_by_code, deadline_hit = _fetch_closes_parallel([c for c, _, _ in pool], start_str, end_str, deadline)
+        if deadline_hit:
+            logger.warning("Cross deadline hit for %s (%d of %d peers fetched)", symbol, len(closes_by_code), len(pool))
+        peer_data: list[tuple[str, str, str, str, pd.Series]] = [
+            (code, _get_stock_name(code), industry, itype, closes_by_code[code])
+            for code, industry, itype in pool if code in closes_by_code
+        ]
 
         # ── Compute correlations ───────────────────────────────────────────────
         results = []
@@ -582,20 +617,11 @@ def similar_stocks(symbol: str):
         industry_name, peer_codes = _find_industry(symbol)
         peer_codes = peer_codes[:20]
 
-        # ── Fetch peers sequentially (respect overall deadline) ────────────────
-        peer_data = []
-        deadline_hit = False
-        for code in peer_codes:
-            if time.time() > deadline:
-                remaining = len(peer_codes) - len(peer_data)
-                logger.warning("Deadline hit at peer %s for %s (%d peers skipped)",
-                               code, symbol, remaining)
-                deadline_hit = True
-                break
-            closes = _get_closes_cached(code, start_str, end_str)
-            name   = _get_stock_name(code)
-            peer_data.append((code, name, closes))
-            time.sleep(_PEER_SLEEP)
+        # ── Fetch peers in parallel (respect overall deadline) ─────────────────
+        closes_by_code, deadline_hit = _fetch_closes_parallel(peer_codes, start_str, end_str, deadline)
+        if deadline_hit:
+            logger.warning("Deadline hit for %s (%d of %d peers fetched)", symbol, len(closes_by_code), len(peer_codes))
+        peer_data = [(code, _get_stock_name(code), closes_by_code[code]) for code in peer_codes if code in closes_by_code]
 
         # ── Pearson correlation on aligned daily returns ────────────────────────
         results = []

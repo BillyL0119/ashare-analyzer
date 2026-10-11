@@ -20,6 +20,7 @@ import numpy as np
 import math
 import time
 import logging
+from services.js_runtime import v8_call
 
 router = APIRouter()
 logger = logging.getLogger("score")
@@ -605,7 +606,7 @@ def _compute(symbol: str) -> dict:
         closes, volumes = [], []
         try:
             import akshare as ak
-            df = ak.stock_zh_a_daily(symbol=_to_sina(symbol), adjust="qfq")
+            df = v8_call(ak.stock_zh_a_daily, symbol=_to_sina(symbol), adjust="qfq")
             df = df.sort_index().tail(252)
             closes  = df["close"].dropna().tolist()
             volumes = df["volume"].dropna().tolist() if "volume" in df.columns else []

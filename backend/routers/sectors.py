@@ -14,6 +14,7 @@ import logging
 import pandas as pd
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from services.js_runtime import V8_LOCK
 
 router = APIRouter()
 logger = logging.getLogger("sectors")
@@ -272,11 +273,20 @@ def _fetch_ths_board(row) -> dict | None:
         leader = str(row.get("领涨股", ""))
         base = {"name": name, "name_zh": name, "name_en": name, "today_pct": today_pct,
                 "pct_5d": 0.0, "pct_20d": 0.0, "vol_ratio": 1.0, "leader": leader}
-        hist = ak.stock_board_industry_index_ths(
-            symbol=name,
-            start_date=(datetime.now() - timedelta(days=45)).strftime("%Y%m%d"),
-            end_date=datetime.now().strftime("%Y%m%d"),
-        )
+        # 10jqka drops connections (SSL EOF) under bursts: one retry after a short pause
+        for attempt in range(2):
+            try:
+                with V8_LOCK:      # its hexin-v cookie is computed in mini_racer
+                    hist = ak.stock_board_industry_index_ths(
+                        symbol=name,
+                        start_date=(datetime.now() - timedelta(days=45)).strftime("%Y%m%d"),
+                        end_date=datetime.now().strftime("%Y%m%d"),
+                    )
+                break
+            except Exception:
+                if attempt:
+                    raise
+                time.sleep(1.5)
         if hist is None or hist.empty:
             return base
         close = pd.to_numeric(hist["收盘价"], errors="coerce").dropna()
@@ -295,9 +305,10 @@ def _fetch_ths_board(row) -> dict | None:
 
 def _build_cn_ths() -> dict:
     import akshare as ak
-    rows = ak.stock_board_industry_summary_ths().to_dict("records")
+    with V8_LOCK:
+        rows = ak.stock_board_industry_summary_ths().to_dict("records")
     sectors = []
-    with ThreadPoolExecutor(max_workers=8) as ex:
+    with ThreadPoolExecutor(max_workers=4) as ex:
         for res in ex.map(_fetch_ths_board, rows):
             if res:
                 sectors.append(res)
@@ -424,7 +435,7 @@ def sector_rotation(market: str = Query("cn", pattern="^(cn|us)$")):
 
 
 def _warm_cn_loop():
-    """The CN build takes ~20s (90 boards); keep it hot so users never wait for it."""
+    """The CN build takes about a minute (90 boards, one at a time through V8_LOCK); keep it hot so users never wait for it."""
     global _cn_ts, _cn_data
     while True:
         try:

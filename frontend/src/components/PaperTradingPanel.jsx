@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import useAuthStore from '../store/authStore'
 import { T } from '../i18n/translations'
 import PaperPerformance from './PaperPerformance'
+import useSymbolSuggest from '../hooks/useSymbolSuggest'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const BG        = 'var(--bg-primary)'
@@ -228,6 +229,12 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const [quoteInfo,  setQuoteInfo]  = useState(null)   // {price, name}
   const [quoteLoading, setQuoteLoading] = useState(false)
   const [buyMsg,     setBuyMsg]     = useState(null)   // {type:'success'|'error', text}
+  const [suggestOpen, setSuggestOpen] = useState(false)
+  const [suggestIdx,  setSuggestIdx]  = useState(0)
+  const suggestions = useSymbolSuggest(suggestOpen ? buyCode : '', ptMarket)
+  // Hide the list once the box holds a ticker that has a live quote
+  const showSuggest = suggestOpen && suggestions.length > 0 && !(quoteInfo && suggestions.some((s) => s.symbol === buyCode))
+  const pickSuggestion = (s) => { setBuyCode(s.symbol); setSuggestOpen(false); setSuggestIdx(0) }
 
   // UI state
   const [sellModal,   setSellModal]  = useState(null)  // {symbol, pos}
@@ -532,21 +539,60 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           {/* Code input */}
-          <div style={{ flex: '0 0 140px' }}>
-            <label style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
+          <div style={{ flex: '0 0 200px', position: 'relative' }}>
+            <label htmlFor="pt-buy-code" style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
               {isUS ? t.ptCodeLabelUS : t.ptCodeLabelCN}
             </label>
             <input
+              id="pt-buy-code"
               value={buyCode}
-              onChange={(e) => setBuyCode(e.target.value.trim().toUpperCase())}
-              placeholder={isUS ? 'AAPL' : '600519'}
-              maxLength={isUS ? 10 : 6}
+              onChange={(e) => { setBuyCode(e.target.value.trim().toUpperCase()); setSuggestOpen(true); setSuggestIdx(0) }}
+              onFocus={() => setSuggestOpen(true)}
+              onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
+              onKeyDown={(e) => {
+                if (!showSuggest) return
+                if (e.key === 'ArrowDown') { e.preventDefault(); setSuggestIdx((i) => Math.min(i + 1, suggestions.length - 1)) }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); setSuggestIdx((i) => Math.max(i - 1, 0)) }
+                else if (e.key === 'Enter') { e.preventDefault(); pickSuggestion(suggestions[suggestIdx] || suggestions[0]) }
+                else if (e.key === 'Escape') setSuggestOpen(false)
+              }}
+              placeholder={isUS ? 'AAPL / Apple' : '600519 / 茅台'}
+              maxLength={24}
+              autoComplete="off"
+              role="combobox"
+              aria-expanded={showSuggest}
+              aria-controls="pt-buy-suggest"
               style={{
                 width: '100%', boxSizing: 'border-box',
                 background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
                 borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
               }}
             />
+            {showSuggest && (
+              <div id="pt-buy-suggest" role="listbox" style={{
+                position: 'absolute', top: '100%', left: 0, width: 300, maxWidth: '86vw', marginTop: 4, zIndex: 30,
+                background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 10,
+                boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden',
+              }}>
+                {suggestions.map((s, i) => (
+                  <div key={s.symbol} role="option" aria-selected={i === suggestIdx}
+                    onMouseDown={(e) => { e.preventDefault(); pickSuggestion(s) }}
+                    onMouseEnter={() => setSuggestIdx(i)}
+                    style={{
+                      display: 'flex', alignItems: 'baseline', gap: 10, padding: '8px 12px', cursor: 'pointer',
+                      background: i === suggestIdx ? 'var(--bg-tertiary)' : 'transparent',
+                    }}>
+                    <span style={{ fontFamily: 'var(--mono, monospace)', fontWeight: 700, fontSize: 13, minWidth: 56, color: 'var(--text-primary)' }}>{s.symbol}</span>
+                    <span style={{ flex: 1, minWidth: 0, fontSize: 12, color: MUTED, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {lang === 'zh' && s.nameZh ? s.nameZh : s.name}
+                    </span>
+                    {s.price != null && (
+                      <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'var(--text-primary)' }}>{currSym}{fmt(s.price)}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
             {quoteInfo && (
               <div style={{ fontSize: 11, color: BUY_CLR, marginTop: 4 }}>
                 {quoteInfo.name} · {currSym}{fmt(quoteInfo.price)}

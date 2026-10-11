@@ -13,6 +13,7 @@ from .alevel_translations import ALEVEL_TRANSLATIONS
 from .ap_micro_translations import AP_MICRO_TRANSLATIONS
 from .igcse_translations import IGCSE_TRANSLATIONS
 from .ib_translations import IB_TRANSLATIONS
+from services.js_runtime import v8_call
 
 router = APIRouter()
 logger = logging.getLogger("study")
@@ -1652,10 +1653,10 @@ def _index_history(sym: str):
     try:
         import akshare as ak
         if sym == "000001.SS":
-            df = ak.stock_zh_index_daily(symbol="sh000001")
+            df = v8_call(ak.stock_zh_index_daily, symbol="sh000001")
             return pd.Series(df["close"].values, index=pd.to_datetime(df["date"])).dropna()
         if sym == "^GSPC":
-            df = ak.index_us_stock_sina(symbol=".INX")
+            df = v8_call(ak.index_us_stock_sina, symbol=".INX")
             return pd.Series(df["close"].values, index=pd.to_datetime(df["date"])).dropna()
         if sym == "^IXIC":
             import requests
@@ -1669,7 +1670,7 @@ def _index_history(sym: str):
                     [float(x["close"].replace(",", "")) for x in rows],
                     index=pd.to_datetime([x["date"] for x in rows], format="%m/%d/%Y"),
                 ).sort_index().dropna()
-            df = ak.index_us_stock_sina(symbol=".IXIC")
+            df = v8_call(ak.index_us_stock_sina, symbol=".IXIC")
             return pd.Series(df["close"].values, index=pd.to_datetime(df["date"])).dropna()
     except Exception as exc:
         logger.warning("event index %s failed: %s", sym, exc)

@@ -123,12 +123,12 @@ final class MarketViewModel: ObservableObject {
             isSearching = true
             searchError = nil
             do {
-                let hasCJK = query.unicodeScalars.contains { $0.value >= 0x2E80 }
                 let lettersOnly = query.allSatisfy { $0.isASCII && $0.isLetter }
                 async let cnTask: Result<[StockSearchResult], Error> = Self.fetch {
                     try await APIClient.shared.get("/stocks/search", params: ["q": query])
                 }
-                async let usTask: Result<[USSearchItem], Error> = hasCJK ? .success([]) : Self.fetch {
+                // US search also knows Chinese names (苹果 → AAPL), so it runs for every query
+                async let usTask: Result<[USSearchItem], Error> = Self.fetch {
                     try await APIClient.shared.get("/us/search", params: ["q": query])
                 }
                 let (cnRes, usRes) = await (cnTask, usTask)

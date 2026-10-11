@@ -20,6 +20,7 @@ import numpy as np
 import math
 import time
 import logging
+from services.js_runtime import v8_call
 
 router = APIRouter()
 logger = logging.getLogger("radar")
@@ -138,7 +139,7 @@ def _compute(symbol: str) -> dict:
     closes: list[float] = []
     volumes: list[float] = []
     try:
-        df = ak.stock_zh_a_daily(symbol=_to_sina(symbol), adjust="qfq")
+        df = v8_call(ak.stock_zh_a_daily, symbol=_to_sina(symbol), adjust="qfq")
         df = df.sort_index().tail(252)
         closes = df["close"].dropna().tolist()
         if "volume" in df.columns:
@@ -159,7 +160,7 @@ def _compute(symbol: str) -> dict:
     # ── CSI 300 for market correlation ───────────────────────────────────────
     mkt_closes: list[float] = []
     try:
-        mkt_df = ak.stock_zh_index_daily(symbol="sh000300")
+        mkt_df = v8_call(ak.stock_zh_index_daily, symbol="sh000300")
         mkt_df = mkt_df.sort_index().tail(252)
         mkt_closes = mkt_df["close"].dropna().tolist()
     except Exception as e:

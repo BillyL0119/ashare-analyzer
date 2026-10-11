@@ -2179,6 +2179,18 @@ export const STR = {
   "실시간 시세",
   "Cours en direct"
  ],
+ "代码或公司名，如 AAPL、苹果": [
+  "Ticker or company, e.g. AAPL, Apple",
+  "コードまたは社名（例: AAPL、Apple）",
+  "코드 또는 회사명 (예: AAPL, Apple)",
+  "Symbole ou société, ex. AAPL, Apple"
+ ],
+ "代码或名称，如 600519、茅台": [
+  "Code or name, e.g. 600519, 茅台",
+  "コードまたは銘柄名（例: 600519、茅台）",
+  "코드 또는 종목명 (예: 600519, 茅台)",
+  "Code ou nom, ex. 600519, 茅台"
+ ],
  "刚刚": [
   "Just now",
   "たった今",

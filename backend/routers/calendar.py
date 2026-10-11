@@ -127,8 +127,7 @@ def _fetch_earnings() -> list:
     return events
 
 
-import threading as _threading
-_cninfo_lock = _threading.Lock()
+from services.js_runtime import V8_LOCK as _cninfo_lock   # shared with the 10jqka sector calls
 
 
 def _dividend_watchlist() -> list[str]:
@@ -143,7 +142,8 @@ def _dividend_watchlist() -> list[str]:
 
 def _dividends_for(code: str) -> list:
     try:
-        df = ak.stock_dividend_cninfo(symbol=code)
+        with _cninfo_lock:          # per stock, so other V8 users wait at most ~1s
+            df = ak.stock_dividend_cninfo(symbol=code)
     except Exception:
         return []
     events = []
@@ -167,9 +167,8 @@ def _fetch_dividends() -> list:
     signing runs in an embedded V8 (mini_racer) that crashes the process when used from several
     threads at once. Runs in the background refresh, ~0.7s per stock."""
     events = []
-    with _cninfo_lock:
-        for code in _dividend_watchlist():
-            events.extend(_dividends_for(code))
+    for code in _dividend_watchlist():
+        events.extend(_dividends_for(code))
     return events
 
 

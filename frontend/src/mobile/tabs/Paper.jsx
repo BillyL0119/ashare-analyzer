@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useLangStore from '../../store/langStore'
 import PaperPerformance from '../PaperPerformance'
+import useSymbolSuggest from '../../hooks/useSymbolSuggest'
 import { useT } from '../i18n'
 import { num, pct } from '../data'
 import { changeColor } from '../helpers'
@@ -67,6 +68,10 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
   const quick = buy ? (market === 'cn' ? [100, 500, 1000, 5000] : [1, 10, 50, 100]) : [...new Set([0.25, 0.5, 0.75, 1].map((f) => Math.max(step, Math.floor((max * f) / step) * step)))]
   const quickLabel = (v) => (buy ? String(v) : v === max ? t('全部') : `${Math.round((v / max) * 100)}%`)
   const quote = useQuote(buy ? symbol : '', market)
+  // Company names ("google", "苹果") find their ticker; hidden once the box holds a quoted ticker
+  const suggestions = useSymbolSuggest(buy ? symbol : '', market)
+  const exact = suggestions.some((x) => x.symbol === symbol.trim().toUpperCase())
+  const showSuggest = suggestions.length > 0 && !(quote?.price && exact)
   const cost = buy && quote?.price ? quote.price * shares * (market === 'cn' ? 1.0003 : 1) : null
   const short = cost != null && cash != null && cost > cash
   const valid = buy ? symbol.trim() && shares > 0 && (market !== 'cn' || shares % 100 === 0) && !!quote?.price && !short : shares > 0 && shares <= (pos?.available_shares ?? 0)
@@ -85,12 +90,23 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
         {buy ? (
           <div className="m-card">
             <div className="m-label" style={{ marginBottom: 8 }}>{market === 'cn' ? t('A股 · 股票代码') : t('美股 · 股票代码')}</div>
-            <input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder={market === 'cn' ? t('如 000001') : t('如 AAPL')} autoCapitalize="characters" autoCorrect="off" inputMode={market === 'cn' ? 'numeric' : 'text'}
-              style={{ width: '100%', minWidth: 0, background: 'none', border: 0, outline: 0, fontSize: 28, fontWeight: 800, fontFamily: 'ui-monospace, Menlo, monospace' }} />
+            <input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder={market === 'cn' ? t('代码或名称，如 600519、茅台') : t('代码或公司名，如 AAPL、苹果')} autoCapitalize="characters" autoCorrect="off" autoComplete="off" enterKeyHint="search"
+              style={{ width: '100%', minWidth: 0, background: 'none', border: 0, outline: 0, fontSize: symbol ? 28 : 17, fontWeight: symbol ? 800 : 500, fontFamily: symbol ? 'ui-monospace, Menlo, monospace' : 'inherit' }} />
             <div style={{ minHeight: 18, fontSize: 13, marginTop: 4 }}>
               {quote?.price ? <span><b>{quote.name}</b> <span className="m-muted m-num">· {money(quote.price, cur)}</span></span>
-                : quote?.missing ? <span style={{ color: '#ef4444' }}>{t('没有找到这只股票')}</span> : null}
+                : quote?.missing && !showSuggest ? <span style={{ color: '#ef4444' }}>{t('没有找到这只股票')}</span> : null}
             </div>
+            {showSuggest && (
+              <div style={{ margin: '8px -16px -4px', width: 'calc(100% + 32px)' }}>
+                {suggestions.map((x) => (
+                  <button key={x.symbol} className="m-row" onClick={() => setSymbol(x.symbol)} style={{ padding: '10px 16px' }}>
+                    <span className="m-num" style={{ fontWeight: 800, minWidth: 64, fontFamily: 'ui-monospace, Menlo, monospace' }}>{x.symbol}</span>
+                    <span className="m-grow m-muted" style={{ fontSize: 13, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lang === 'zh' && x.nameZh ? x.nameZh : x.name}</span>
+                    {x.price != null && <span className="m-num" style={{ fontSize: 13 }}>{money(x.price, cur)}</span>}
+                  </button>
+                ))}
+              </div>
+            )}
             {!symbol.trim() && (
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
                 {PICKS[market].map(([code, label]) => (
