@@ -1,0 +1,29 @@
+{
+  "total_visits": 8,
+  "unique_devices": 1,
+  "daily_visits": {
+    "2026-10-11": {
+      "visits": 8,
+      "unique": 8
+    }
+  },
+  "stock_searches": {},
+  "feature_usage": {
+    "analysis": 2
+  },
+  "devices": [
+    "29r6jajqg1791675839220"
+  ],
+  "by_ui": {
+    "desktop": 6,
+    "mobile": 2
+  },
+  "by_source": {
+    "direct": 8
+  },
+  "daily_sources": {
+    "2026-10-11": {
+      "direct": 8
+    }
+  }
+}

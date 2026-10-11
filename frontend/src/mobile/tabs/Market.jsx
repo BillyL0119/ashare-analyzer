@@ -7,6 +7,7 @@ import { getJSON, useAPI, pct, num } from '../data'
 import { ErrorBox, Gauge, Pill, Section, Segment, Skeleton, SkeletonRows, Sparkline } from '../ui'
 import { changeColor, marketOf, marketOfRegion } from '../helpers'
 import USMarket from './USMarket'
+import MarketMap from '../MarketMap'
 import { Icon } from '../icons'
 const open = (nav, market, code) => nav(`/stock/${market}/${code}`)
 
@@ -328,9 +329,9 @@ export default function Market({ onSettings }) {
       <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
       <div className="m-stack">
         {mode === 'us' ? (
-          <><USMarket afterOverview={<Watchlist />} /><Global /></>
+          <><USMarket afterOverview={<><Watchlist /><MarketMap market="us" /></>} /><Global /></>
         ) : (
-          <><Overview /><Watchlist /><Global /><Sectors /><Hot /></>
+          <><Overview /><Watchlist /><MarketMap market="cn" /><Global /><Sectors /><Hot /></>
         )}
         <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>
         <div className="m-footer" style={{ marginTop: -18 }}>{t('数据延迟，仅供参考')}</div>

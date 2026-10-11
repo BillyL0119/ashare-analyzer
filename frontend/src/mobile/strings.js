@@ -2035,6 +2035,36 @@ export const STR = {
   "모든 미국 주식을 섹터·시총·밸류에이션·등락으로 필터링",
   "Filtrez toutes les actions US par secteur, taille, valorisation et variation"
  ],
+ "市场热力图": [
+  "Market Heatmap",
+  "マーケットヒートマップ",
+  "시장 히트맵",
+  "Carte thermique du marché"
+ ],
+ "面积代表市值，颜色代表今日涨跌": [
+  "Size = market cap, colour = today's move",
+  "面積は時価総額、色は本日の騰落",
+  "면적은 시가총액, 색상은 오늘 등락",
+  "Taille = capitalisation, couleur = variation du jour"
+ ],
+ "%lld 涨 · %lld 跌": [
+  "%lld up · %lld down",
+  "上昇 %lld · 下落 %lld",
+  "상승 %lld · 하락 %lld",
+  "%lld en hausse · %lld en baisse"
+ ],
+ "前 %lld": [
+  "Top %lld",
+  "上位 %lld",
+  "상위 %lld",
+  "Top %lld"
+ ],
+ "板块表现": [
+  "Sector performance",
+  "セクター別騰落",
+  "섹터별 등락",
+  "Performance par secteur"
+ ],
  "刚刚": [
   "Just now",
   "たった今",
