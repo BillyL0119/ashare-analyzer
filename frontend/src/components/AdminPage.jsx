@@ -37,33 +37,34 @@ const TXT = {
   },
 }
 
+// Class prefix is 'dash-', not 'ad-': ad blockers hide elements with ad-* classes.
 const CSS = `
-.ad-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
-.ad-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px 18px; min-width: 0; }
-.ad-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
-.ad-num { font-size: 28px; font-weight: 800; color: var(--text-primary); margin-top: 6px; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
-.ad-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.ad-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-.ad-h { font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px; }
-.ad-bar { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 12.5px; color: var(--text-secondary); }
-.ad-bar > span:first-child { min-width: 92px; }
-.ad-track { flex: 1; height: 5px; border-radius: 3px; background: var(--bg-tertiary); overflow: hidden; }
-.ad-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, ${GREEN}, ${ACCENT}); }
-.ad-val { min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: 12px; }
-.ad-btn { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
-.ad-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
-.ad-btn.pri { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
-.ad-in { flex: 1; min-width: 0; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
-.ad-in:focus { border-color: ${ACCENT}; }
-.ad-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-primary); font-size: 13px; color: var(--text-secondary); }
-.ad-row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.ad-pill { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: ${ACCENT}; background: color-mix(in srgb, ${ACCENT} 14%, transparent); flex-shrink: 0; }
-.ad-chip { padding: 5px 12px; border-radius: 999px; font-size: 12px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
-.ad-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
-@media (max-width: 760px) { .ad-two { grid-template-columns: minmax(0, 1fr); } .ad-num { font-size: 24px; } }
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.dash-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.dash-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+.dash-num { font-size: 28px; font-weight: 800; color: var(--text-primary); margin-top: 6px; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+.dash-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.dash-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.dash-h { font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px; }
+.dash-bar { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 12.5px; color: var(--text-secondary); }
+.dash-bar > span:first-child { min-width: 92px; }
+.dash-track { flex: 1; height: 5px; border-radius: 3px; background: var(--bg-tertiary); overflow: hidden; }
+.dash-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, ${GREEN}, ${ACCENT}); }
+.dash-val { min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: 12px; }
+.dash-btn { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.dash-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.dash-btn.pri { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
+.dash-in { flex: 1; min-width: 0; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
+.dash-in:focus { border-color: ${ACCENT}; }
+.dash-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-primary); font-size: 13px; color: var(--text-secondary); }
+.dash-row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.dash-pill { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: ${ACCENT}; background: color-mix(in srgb, ${ACCENT} 14%, transparent); flex-shrink: 0; }
+.dash-chip { padding: 5px 12px; border-radius: 999px; font-size: 12px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.dash-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
+@media (max-width: 760px) { .dash-two { grid-template-columns: minmax(0, 1fr); } .dash-num { font-size: 24px; } }
 @media print {
-  header, nav, footer, .ad-noprint { display: none !important; }
-  .ad-card { break-inside: avoid; }
+  header, nav, footer, .dash-noprint { display: none !important; }
+  .dash-card { break-inside: avoid; }
 }
 `
 
@@ -80,10 +81,10 @@ function Shell({ children }) {
 
 function Stat({ label, value, sub }) {
   return (
-    <div className="ad-card">
-      <div className="ad-lbl">{label}</div>
-      <div className="ad-num">{value}</div>
-      {sub != null && <div className="ad-sub">{sub}</div>}
+    <div className="dash-card">
+      <div className="dash-lbl">{label}</div>
+      <div className="dash-num">{value}</div>
+      {sub != null && <div className="dash-sub">{sub}</div>}
     </div>
   )
 }
@@ -92,10 +93,10 @@ function Bars({ rows, labelOf }) {
   const max = Math.max(1, ...rows.map((r) => r[1]))
   const total = rows.reduce((a, r) => a + r[1], 0) || 1
   return rows.map(([k, n]) => (
-    <div className="ad-bar" key={k}>
+    <div className="dash-bar" key={k}>
       <span>{labelOf(k)}</span>
-      <div className="ad-track"><div className="ad-fill" style={{ width: `${(n / max) * 100}%` }} /></div>
-      <span className="ad-val">{fmt(n)} · {Math.round((n / total) * 100)}%</span>
+      <div className="dash-track"><div className="dash-fill" style={{ width: `${(n / max) * 100}%` }} /></div>
+      <span className="dash-val">{fmt(n)} · {Math.round((n / total) * 100)}%</span>
     </div>
   ))
 }
@@ -203,16 +204,16 @@ export default function AdminPage({ lang, onOpenAuth }) {
   if (state === 'signin') {
     return (
       <Shell>
-        <div className="ad-card" style={{ maxWidth: 420, textAlign: 'center', margin: '60px auto' }}>
+        <div className="dash-card" style={{ maxWidth: 420, textAlign: 'center', margin: '60px auto' }}>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14, margin: '0 0 14px' }}>{t.signIn}</p>
-          <button className="ad-btn pri" onClick={onOpenAuth}>{t.signInBtn}</button>
+          <button className="dash-btn pri" onClick={onOpenAuth}>{t.signInBtn}</button>
         </div>
       </Shell>
     )
   }
-  if (state === 'denied') return <Shell><div className="ad-card" style={{ maxWidth: 420, margin: '60px auto', textAlign: 'center', color: 'var(--text-secondary)' }}>{t.denied}</div></Shell>
+  if (state === 'denied') return <Shell><div className="dash-card" style={{ maxWidth: 420, margin: '60px auto', textAlign: 'center', color: 'var(--text-secondary)' }}>{t.denied}</div></Shell>
   if (state === 'failed' || !data) {
-    return <Shell><div className="ad-card" style={{ maxWidth: 420, margin: '60px auto', textAlign: 'center' }}><p style={{ color: 'var(--text-secondary)', margin: '0 0 12px' }}>{t.failed}</p><button className="ad-btn" onClick={load}>{t.retry}</button></div></Shell>
+    return <Shell><div className="dash-card" style={{ maxWidth: 420, margin: '60px auto', textAlign: 'center' }}><p style={{ color: 'var(--text-secondary)', margin: '0 0 12px' }}>{t.failed}</p><button className="dash-btn" onClick={load}>{t.retry}</button></div></Shell>
   }
 
   const u = data.users, s = data.site
@@ -228,13 +229,13 @@ export default function AdminPage({ lang, onOpenAuth }) {
           <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 640, lineHeight: 1.6 }}>{t.sub}</p>
           <p style={{ margin: '6px 0 0', fontSize: 12, color: MUTED }}>{t.since(data.tracking_since || data.generated)}</p>
         </div>
-        <div className="ad-noprint" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button className="ad-btn" onClick={exportCsv}>{t.exportCsv}</button>
-          <button className="ad-btn" onClick={() => window.print()}>{t.print}</button>
+        <div className="dash-noprint" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button className="dash-btn" onClick={exportCsv}>{t.exportCsv}</button>
+          <button className="dash-btn" onClick={() => window.print()}>{t.print}</button>
         </div>
       </div>
 
-      <div className="ad-grid">
+      <div className="dash-grid">
         <Stat label={t.users} value={fmt(u.total)} sub={t.newToday(u.new_today)} />
         <Stat label={t.dau} value={fmt(u.dau)} />
         <Stat label={t.wau} value={fmt(u.wau)} />
@@ -242,26 +243,26 @@ export default function AdminPage({ lang, onOpenAuth }) {
         <Stat label={t.returning} value={`${u.returning_pct}%`} sub={t.returningSub(fmt(u.returning))} />
         <Stat label={t.logins} value={fmt(u.total_logins)} />
       </div>
-      <div className="ad-grid" style={{ marginTop: 12 }}>
+      <div className="dash-grid" style={{ marginTop: 12 }}>
         <Stat label={t.visits} value={fmt(s.total_visits)} sub={t.weekVisits(fmt(s.this_week_visits))} />
         <Stat label={t.devices} value={fmt(s.unique_devices)} />
         <Stat label={t.stocks} value={fmt(s.stocks_analyzed)} />
         <Stat label={t.paper} value={fmt(data.paper.trades)} sub={t.paperSub(fmt(data.paper.accounts), fmt(data.paper.traders))} />
       </div>
 
-      <div className="ad-card" style={{ marginTop: 12 }}>
+      <div className="dash-card" style={{ marginTop: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, gap: 8, flexWrap: 'wrap' }}>
-          <h2 className="ad-h" style={{ margin: 0 }}>{t.trend}</h2>
-          <div className="ad-noprint" style={{ display: 'flex', gap: 6 }}>
-            {[30, 90].map((n) => <button key={n} className={`ad-chip${days === n ? ' on' : ''}`} onClick={() => setDays(n)}>{n === 30 ? t.d30 : t.d90}</button>)}
+          <h2 className="dash-h" style={{ margin: 0 }}>{t.trend}</h2>
+          <div className="dash-noprint" style={{ display: 'flex', gap: 6 }}>
+            {[30, 90].map((n) => <button key={n} className={`dash-chip${days === n ? ' on' : ''}`} onClick={() => setDays(n)}>{n === 30 ? t.d30 : t.d90}</button>)}
           </div>
         </div>
         <ReactECharts option={option} style={{ height: 260 }} notMerge />
       </div>
 
-      <div className="ad-two">
-        <div className="ad-card">
-          <h2 className="ad-h">{t.sources}</h2>
+      <div className="dash-two">
+        <div className="dash-card">
+          <h2 className="dash-h">{t.sources}</h2>
           <Bars rows={(s.sources || []).slice(0, 6)} labelOf={(k) => t.src[k] || k} />
           {uiTotal > 0 && (
             <div style={{ fontSize: 12, color: MUTED, marginTop: 12 }}>
@@ -269,40 +270,40 @@ export default function AdminPage({ lang, onOpenAuth }) {
             </div>
           )}
         </div>
-        <div className="ad-card">
-          <h2 className="ad-h">{t.features}</h2>
+        <div className="dash-card">
+          <h2 className="dash-h">{t.features}</h2>
           <Bars rows={features} labelOf={(k) => t.feat[k] || k} />
         </div>
       </div>
 
-      <div className="ad-two">
-        <div className="ad-card">
-          <h2 className="ad-h">{t.topStocks}</h2>
+      <div className="dash-two">
+        <div className="dash-card">
+          <h2 className="dash-h">{t.topStocks}</h2>
           {(s.top_stocks || []).slice(0, 8).map((x) => (
-            <div className="ad-row" key={x.symbol}><span>{x.symbol} · {x.name}</span><span style={{ color: MUTED }}>{fmt(x.searches)} {t.searches}</span></div>
+            <div className="dash-row" key={x.symbol}><span>{x.symbol} · {x.name}</span><span style={{ color: MUTED }}>{fmt(x.searches)} {t.searches}</span></div>
           ))}
         </div>
-        <div className="ad-card">
-          <h2 className="ad-h">{t.summary}</h2>
+        <div className="dash-card">
+          <h2 className="dash-h">{t.summary}</h2>
           <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)' }}>{summaryText}</p>
-          <button className="ad-btn ad-noprint" style={{ marginTop: 12 }} onClick={copySummary}>{copied ? t.copied : t.copy}</button>
+          <button className="dash-btn dash-noprint" style={{ marginTop: 12 }} onClick={copySummary}>{copied ? t.copied : t.copy}</button>
         </div>
       </div>
 
-      <div className="ad-card ad-noprint" style={{ marginTop: 12 }}>
-        <h2 className="ad-h">{t.members}</h2>
+      <div className="dash-card dash-noprint" style={{ marginTop: 12 }}>
+        <h2 className="dash-h">{t.members}</h2>
         <p style={{ margin: '0 0 12px', fontSize: 12.5, color: MUTED }}>{t.membersSub}</p>
         <form onSubmit={(e) => { e.preventDefault(); if (email.trim()) addMember(true, email.trim()) }} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <input id="ad-email" className="ad-in" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.email} autoComplete="off" />
-          <button className="ad-btn pri" type="submit">{t.grant}</button>
+          <input id="dash-email" className="dash-in" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.email} autoComplete="off" />
+          <button className="dash-btn pri" type="submit">{t.grant}</button>
         </form>
         {memberErr && <div style={{ color: '#ef5350', fontSize: 12.5, marginTop: 8 }}>{memberErr}</div>}
         <div style={{ marginTop: 12 }}>
-          {(members?.admins || []).map((e) => <div className="ad-row" key={e}><span>{e}</span><span className="ad-pill">{t.roleAdmin}</span></div>)}
+          {(members?.admins || []).map((e) => <div className="dash-row" key={e}><span>{e}</span><span className="dash-pill">{t.roleAdmin}</span></div>)}
           {(members?.members || []).map((m) => (
-            <div className="ad-row" key={m.email}>
+            <div className="dash-row" key={m.email}>
               <span>{m.email} {m.since && <span style={{ color: MUTED }}>· {m.since}</span>}</span>
-              <button className="ad-btn" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => addMember(false, m.email)}>{t.revoke}</button>
+              <button className="dash-btn" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => addMember(false, m.email)}>{t.revoke}</button>
             </div>
           ))}
           {members && !members.members.length && <div style={{ fontSize: 12.5, color: MUTED, paddingTop: 8 }}>{t.noMembers}</div>}
