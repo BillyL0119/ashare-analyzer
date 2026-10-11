@@ -460,7 +460,7 @@ export const T = {
     stFooter: '数据每次访问实时更新 · 仅用于项目展示',
     stTagline: (n) => `Best Friend Stock 已帮助来自 ${n} 个国家的学生学习经济学和分析股票。`,
     // GlobalSentiment
-    gsHover: '悬停查看详情', gsTitle: '全球市场情绪',
+    gsHover: '悬停或点击查看详情', gsTitle: '全球市场情绪',
     gsUpdated: (t) => `更新于 ${t}`, gsSentIndex: '情绪指数 (0-100)',
     gsUSSent: '美股情绪', gsCNSent: 'A股情绪',
     // AITeacherFloat
@@ -956,7 +956,7 @@ export const T = {
     stFooter: 'Updated in real-time · For project showcase only',
     stTagline: (n) => `Best Friend Stock has helped students from ${n} countries learn economics and analyze stocks.`,
     // GlobalSentiment
-    gsHover: 'Hover for details', gsTitle: 'Global Market Sentiment',
+    gsHover: 'Hover or tap for details', gsTitle: 'Global Market Sentiment',
     gsUpdated: (t) => `Updated ${t}`, gsSentIndex: 'Sentiment Index (0-100)',
     gsUSSent: 'US Sentiment', gsCNSent: 'A-Share',
     // AITeacherFloat
@@ -1452,7 +1452,7 @@ export const T = {
     stFooter: 'リアルタイム更新 · プロジェクト展示用',
     stTagline: (n) => `Best Friend Stock は ${n} カ国の学生が経済学と株式分析を学ぶのを支援しています。`,
     // GlobalSentiment
-    gsHover: 'ホバーで詳細', gsTitle: 'グローバル市場センチメント',
+    gsHover: 'ホバー／タップで詳細', gsTitle: 'グローバル市場センチメント',
     gsUpdated: (t) => `更新 ${t}`, gsSentIndex: 'センチメント指数 (0-100)',
     gsUSSent: '米国株センチメント', gsCNSent: 'A株センチメント',
     // AITeacherFloat
@@ -1948,7 +1948,7 @@ export const T = {
     stFooter: '실시간 업데이트 · 프로젝트 전시용',
     stTagline: (n) => `Best Friend Stock은 ${n}개국 학생들이 경제학과 주식 분석을 배우는 데 도움을 주었습니다.`,
     // GlobalSentiment
-    gsHover: '호버로 세부 정보 확인', gsTitle: '글로벌 시장 심리',
+    gsHover: '마우스를 올리거나 탭하여 확인', gsTitle: '글로벌 시장 심리',
     gsUpdated: (t) => `업데이트 ${t}`, gsSentIndex: '심리 지수 (0-100)',
     gsUSSent: '미국 주식 심리', gsCNSent: 'A주식 심리',
     // AITeacherFloat
@@ -2444,7 +2444,7 @@ export const T = {
     stFooter: 'Mis à jour en temps réel · Pour présentation projet',
     stTagline: (n) => `Best Friend Stock a aidé des étudiants de ${n} pays à apprendre l'économie et analyser les actions.`,
     // GlobalSentiment
-    gsHover: 'Survolez pour détails', gsTitle: 'Sentiment marché mondial',
+    gsHover: 'Survolez ou touchez pour les détails', gsTitle: 'Sentiment marché mondial',
     gsUpdated: (t) => `Mis à jour ${t}`, gsSentIndex: 'Indice de sentiment (0-100)',
     gsUSSent: 'Sentiment US', gsCNSent: 'A-Share',
     // AITeacherFloat
