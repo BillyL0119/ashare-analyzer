@@ -11,7 +11,7 @@ export default function MacroEvents() {
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const [open, setOpen] = useState(null)
-  const { data } = useAPI(`/macro/calendar?country=us&days_back=0&days_ahead=14&min_importance=3&lang=${lang}`)
+  const { data } = useAPI(`/macro/calendar?country=us&days_back=0&days_ahead=21&min_importance=3&lang=${lang}`)
   const now = Date.now()
   // One row per release: CPI comes as headline/core x month/year; keep the headline monthly figure
   const rank = (e) => (/^core/i.test(e.name) ? 2 : 0) + (e.period === 'yoy' ? 1 : 0)

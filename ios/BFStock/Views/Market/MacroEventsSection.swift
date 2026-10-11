@@ -61,7 +61,7 @@ struct MacroEventsSection: View {
     }
 
     private func load() async {
-        let params = ["country": "us", "days_back": "0", "days_ahead": "14", "min_importance": "3", "lang": Lang.code]
+        let params = ["country": "us", "days_back": "0", "days_ahead": "21", "min_importance": "3", "lang": Lang.code]
         if let cached: MacroCalendarResponse = APIClient.shared.cached("/macro/calendar", params: params) {
             events = Self.pick(cached.events); loaded = true
         }
