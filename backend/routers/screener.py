@@ -3,9 +3,10 @@ US stock screener — /api/us/screener
 
 Universe: every US-listed common stock from Nasdaq's public screener feed (~7,000 rows: price,
 day change, volume, market cap, sector, industry, country, IPO year), refreshed every 15 min.
-Enrichment: P/E and 52-week high/low from Tencent batch quotes for companies above $300M market
-cap, rebuilt in a background thread every 30 min (the first build takes ~20s after a restart;
-until then those columns are empty and their filters are ignored).
+Live layer: Nasdaq's bulk feed lags a trading day, so price, day change, volume and market cap
+come from Tencent batch quotes (the same source as the stock pages), together with P/E and the
+52-week range. Rebuilt in a background thread every 10 min while the US market is open, 30 min
+otherwise (~20-40s per build; until the first one finishes the Nasdaq values are shown).
 
 Filters, sorting and paging run in memory, so a query costs a few ms.
 """
@@ -33,7 +34,12 @@ _NOT_COMMON = re.compile(r"\b(warrants?|rights?|units?|depositary shares? repres
 _NAME_TAIL = re.compile(r"\s+(Class [A-C] )?(Common Stock|Ordinary Shares|American Depositary Shares|Common Shares|Capital Stock|Shares of Beneficial Interest)\b.*$", re.I)
 
 _UNIVERSE_TTL = 900
-_ENRICH_TTL = 1800
+def _enrich_ttl() -> float:
+    try:
+        from routers.us_market import market_session
+        return 600 if market_session()["state"] in ("regular", "pre", "post") else 1800
+    except Exception:
+        return 1800
 _state = {"rows": [], "ts": 0.0, "enrich": {}, "enrich_ts": 0.0}
 _lock = threading.Lock()
 _enrich_running = threading.Event()
@@ -85,9 +91,9 @@ def _fetch_universe() -> list[dict]:
 
 
 def _enrich(rows: list[dict]) -> dict:
-    """{symbol: {pe, high52, low52}} for companies >= $300M via Tencent batch quotes."""
+    """{symbol: live quote fields} for the whole universe via Tencent batch quotes."""
     from routers.us_market import tencent_quotes
-    syms = [r["symbol"] for r in rows if (r["market_cap"] or 0) >= 300e6]
+    syms = [r["symbol"] for r in rows]
     out = {}
     for i in range(0, len(syms), 80):
         chunk = syms[i:i + 80]
@@ -96,7 +102,9 @@ def _enrich(rows: list[dict]) -> dict:
             q = got.get("us" + s)
             if q:
                 pe = q.get("pe")
-                out[s] = {"pe": pe if pe and 0 < pe < 2000 else None,
+                out[s] = {"price": q.get("price"), "change_pct": q.get("pct"), "volume": q.get("volume"),
+                          "market_cap": q.get("market_cap"),
+                          "pe": pe if pe and 0 < pe < 2000 else None,
                           "high52": q.get("high52"), "low52": q.get("low52")}
     return out
 
@@ -124,20 +132,25 @@ def _universe() -> list[dict]:
                     _state["rows"], _state["ts"] = rows, now
         except Exception as exc:
             logger.warning("screener universe fetch failed: %s", exc)
-    if _state["rows"] and now - _state["enrich_ts"] > _ENRICH_TTL and not _enrich_running.is_set():
+    if _state["rows"] and now - _state["enrich_ts"] > _enrich_ttl() and not _enrich_running.is_set():
         _enrich_running.set()
         threading.Thread(target=_run_enrich, args=(list(_state["rows"]),), daemon=True, name="screener-enrich").start()
     enrich = _state["enrich"]
     merged = []
     for r in _state["rows"]:
         e = enrich.get(r["symbol"]) or {}
+        price = e.get("price") or r["price"]
         hi = e.get("high52")
         merged.append({
             **r,
+            "price": price,
+            "change_pct": e["change_pct"] if e.get("change_pct") is not None else r["change_pct"],
+            "volume": e.get("volume") or r["volume"],
+            "market_cap": e.get("market_cap") or r["market_cap"],
             "pe": e.get("pe"),
             "high52": hi,
             "low52": e.get("low52"),
-            "off_high_pct": round((r["price"] - hi) / hi * 100, 2) if hi and r["price"] else None,
+            "off_high_pct": round((price - hi) / hi * 100, 2) if hi and price else None,
         })
     return merged
 
@@ -235,5 +248,5 @@ def screen(
         "universe": len(rows),
         "enriched": len(_state["enrich"]),
         "updated": datetime.utcfromtimestamp(_state["ts"]).strftime("%Y-%m-%dT%H:%M:%SZ") if _state["ts"] else None,
-        "source": "Nasdaq (list, prices) · Tencent (P/E, 52-week range)",
+        "source": "Nasdaq (company list, sectors) · Tencent (prices, P/E, 52-week range)",
     }

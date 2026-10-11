@@ -22,6 +22,7 @@ const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
 const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
 const BankViewsPage      = lazy(() => import('./components/BankViewsPage'))
 const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
+const ScreenerPage       = lazy(() => import('./components/ScreenerPage'))
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import useCompareStore from './store/compareStore'
@@ -51,6 +52,7 @@ function PageSkeleton() {
 
 const TAB_PATHS = {
   analysis:     '/',
+  screener:     '/screener',
   news:         '/news',
   paper:        '/paper',
   study:        '/study',
@@ -182,6 +184,7 @@ export default function App() {
       universities: 'BestFriendStock | 全球商学院指南 - 100+顶尖商学院数据库',
       bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究观点',
       career:       'BestFriendStock | 求职指南 - 金融行业职业规划与模拟面试',
+      screener:     'BestFriendStock | 美股选股器 - US Stock Screener',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
     document.title = titles[appTab] || titles.analysis
@@ -681,6 +684,7 @@ export default function App() {
       >
         {[
           { key: 'analysis',     label: t.tabAnalysis },
+          { key: 'screener',     label: t.tabScreener },
           { key: 'news',         label: t.tabNews },
           { key: 'bank_views',   label: t.tabBankViews },
           { key: 'paper',        label: t.tabPaper },
@@ -727,6 +731,8 @@ export default function App() {
             <BankViewsPage lang={lang} />
           ) : appTab === 'career' ? (
             <CareerGuidePage lang={lang} />
+          ) : appTab === 'screener' ? (
+            <ScreenerPage lang={lang} />
           ) : appTab === 'ai_teacher' ? (
             <AITeacherPage lang={lang} />
           ) : (
