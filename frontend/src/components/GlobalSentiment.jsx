@@ -8,8 +8,6 @@ import {
   ComposableMap, Geographies, Geography,
   Marker, Graticule, Sphere,
 } from 'react-simple-maps'
-import ReactECharts from '../lib/echarts'
-import { THEME } from '../utils/chartHelpers'
 import worldAtlas from 'world-atlas/countries-110m.json'
 
 // ── Geo data (self-hosted via npm world-atlas) ────────────────────────────────
@@ -58,71 +56,87 @@ function scoreColor(s) {
   return '#22c55e'
 }
 
-function buildGauge(score) {
-  return {
-    backgroundColor: 'transparent',
-    series: [{
-      type: 'gauge',
-      startAngle: 180, endAngle: 0,
-      min: 0, max: 100,
-      radius: '88%', center: ['50%', '70%'],
-      axisLine: {
-        lineStyle: {
-          width: 14,
-          color: [
-            [0.25, '#ef4444'], [0.45, '#f97316'],
-            [0.55, '#fbbf24'], [0.75, '#84cc16'], [1.0, '#22c55e'],
-          ],
-        },
-      },
-      pointer: { length: '62%', width: 4, itemStyle: { color: THEME.tooltipText } },
-      axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
-      title: { show: false },
-      detail: {
-        valueAnimation: true,
-        formatter: '{value}',
-        color: scoreColor(score),
-        fontSize: 24, fontWeight: 700,
-        offsetCenter: [0, '18%'], fontFamily: 'inherit',
-      },
-      data: [{ value: score }],
-    }],
-  }
+// Semicircle gauge in plain SVG: soft full-range track, a progress arc in the same five-colour
+// scale ending in a knob at the score, and the score itself set large in the middle.
+const GAUGE_STOPS = ['#ef4444', '#f97316', '#fbbf24', '#84cc16', '#22c55e']
+
+function SemiGauge({ score, id }) {
+  const [shown, setShown] = useState(0)
+  useEffect(() => { const r = requestAnimationFrame(() => setShown(score)); return () => cancelAnimationFrame(r) }, [score])
+  const W = 160, R = 66, CX = W / 2, CY = 78, SW = 11
+  const arc = `M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`
+  const len = Math.PI * R
+  const v = Math.max(0, Math.min(100, shown))
+  const a = Math.PI * (1 - v / 100)                       // 180° at 0, 0° at 100
+  const kx = CX + R * Math.cos(a), ky = CY - R * Math.sin(a)
+  const ease = 'cubic-bezier(.22,1,.36,1)'
+  return (
+    <svg viewBox={`0 0 ${W} ${CY + SW / 2 + 2}`} width="100%" style={{ display: 'block', maxWidth: 160, margin: '0 auto', overflow: 'visible' }} aria-hidden="true">
+      <defs>
+        <linearGradient id={`g-${id}`} x1={CX - R} y1="0" x2={CX + R} y2="0" gradientUnits="userSpaceOnUse">
+          {GAUGE_STOPS.map((c, i) => <stop key={c} offset={`${(i / (GAUGE_STOPS.length - 1)) * 100}%`} stopColor={c} />)}
+        </linearGradient>
+      </defs>
+      <path d={arc} fill="none" stroke={`url(#g-${id})`} strokeOpacity="0.16" strokeWidth={SW} strokeLinecap="round" />
+      <path d={arc} fill="none" stroke={`url(#g-${id})`} strokeWidth={SW} strokeLinecap="round"
+        strokeDasharray={len} strokeDashoffset={len * (1 - v / 100)}
+        style={{ transition: `stroke-dashoffset 1.1s ${ease}` }} />
+      <circle cx={kx} cy={ky} r={SW / 2 + 2.5} fill="#fff" stroke={scoreColor(score)} strokeWidth="3"
+        style={{ transition: `cx 1.1s ${ease}, cy 1.1s ${ease}`, filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.35))' }} />
+    </svg>
+  )
 }
 
 // What each part of the index measures (0 = fear, 100 = greed)
 const PART_LABEL = {
   rsi:      { zh: 'RSI', en: 'RSI', tipZh: '14日相对强弱指数', tipEn: '14-day relative strength index' },
-  range52w: { zh: '52周位置', en: '52-wk range', tipZh: '指数距一年高点的距离', tipEn: 'How close the index is to its 52-week high' },
+  range52w: { zh: '52周位置', en: '52-wk', tipZh: '指数距一年高点的距离', tipEn: 'How close the index is to its 52-week high' },
   vix:      { zh: 'VIX', en: 'VIX', tipZh: '波动率指数，越低越贪婪', tipEn: 'Volatility index: lower means greedier' },
   breadth:  { zh: '涨跌家数', en: 'Breadth', tipZh: '上涨股票占比', tipEn: 'Share of stocks that rose' },
 }
 
-function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts }) {
+function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
   const label = zh ? labelZh : labelEn
   const color = scoreColor(score)
   return (
     <div className="bfs-card" style={{
-      background: 'var(--bg-secondary)',
-      border: '1px solid var(--border-primary)',
-      borderRadius: 10, padding: '10px 8px 8px', textAlign: 'center',
+      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
+      borderRadius: 14, padding: '12px 10px 10px', textAlign: 'center', fontFamily: 'var(--sans)',
     }}>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, letterSpacing: '0.3px' }}>
+      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
         {title}
       </div>
-      <ReactECharts option={buildGauge(score)} style={{ height: 118 }} opts={{ renderer: 'svg' }} />
-      <div style={{ fontSize: 13, fontWeight: 700, color, marginTop: -4 }}>{label}</div>
-      {vix != null && (
-        <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>VIX {Number(vix).toFixed(1)}</div>
-      )}
+      <div style={{ position: 'relative', marginTop: 6 }}>
+        <SemiGauge score={score} id={id} />
+        <div style={{ position: 'absolute', left: 0, right: 0, bottom: -2, lineHeight: 1 }}>
+          <div style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
+            {Math.round(score)}
+          </div>
+        </div>
+      </div>
+      <div style={{ marginTop: 8 }}>
+        <span style={{
+          display: 'inline-block', padding: '3px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 600, letterSpacing: '.01em',
+          color, background: `color-mix(in srgb, ${color} 14%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 35%, transparent)`,
+        }}>{label}</span>
+      </div>
       {parts?.length > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '2px 8px', fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-          {parts.map((p) => {
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${parts.length}, minmax(0, 1fr))`, marginTop: 10,
+          borderTop: '1px solid var(--border-primary)', paddingTop: 8 }}>
+          {parts.map((p, i) => {
             const l = PART_LABEL[p.key] || { zh: p.key, en: p.key }
+            const raw = p.key === 'vix' && (p.value ?? vix) != null ? Number(p.value ?? vix).toFixed(1) : null
             return (
-              <span key={p.key} title={zh ? l.tipZh : l.tipEn} style={{ whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
-                {zh ? l.zh : l.en} <b style={{ color: scoreColor(p.score), fontWeight: 600 }}>{Math.round(p.score)}</b>
-              </span>
+              <div key={p.key} title={zh ? l.tipZh : l.tipEn}
+                style={{ borderLeft: i ? '1px solid var(--border-primary)' : 'none', padding: '0 4px', minWidth: 0 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '.04em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {zh ? l.zh : l.en}
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2, color: scoreColor(p.score), fontVariantNumeric: 'tabular-nums' }}>
+                  {Math.round(p.score)}
+                </div>
+                {raw && <div style={{ fontSize: 10, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>{raw}</div>}
+              </div>
             )
           })}
         </div>
@@ -509,6 +523,7 @@ export default function GlobalSentiment({ lang }) {
                       vix={data?.us_sentiment?.vix}
                       parts={data?.us_sentiment?.components}
                       zh={zh}
+                      id="us"
                     />
                   </div>
                   <div style={{ flex: isMobile ? '1 1 45%' : 'none' }}>
@@ -519,6 +534,7 @@ export default function GlobalSentiment({ lang }) {
                       labelEn={data?.cn_sentiment?.label_en}
                       parts={data?.cn_sentiment?.components}
                       zh={zh}
+                      id="cn"
                     />
                   </div>
                   {!isMobile && (
@@ -529,8 +545,8 @@ export default function GlobalSentiment({ lang }) {
                       borderRadius: 8, border: '1px solid var(--border-primary)',
                     }}>
                       {zh
-                        ? '综合RSI、52周高点及涨跌比计算，仅供参考，不构成投资建议。'
-                        : 'Composite of RSI, 52w-high & A/D ratio. Not investment advice.'}
+                        ? '0 = 极度恐慌，100 = 极度贪婪。由 RSI、距 52 周高点、VIX 和涨跌家数合成，仅供学习。'
+                        : '0 = extreme fear, 100 = extreme greed. Built from RSI, distance to the 52-week high, VIX and market breadth. For learning only.'}
                     </div>
                   )}
                 </div>
