@@ -126,6 +126,14 @@ def _ai_sentiment(title: str, content: str = "") -> dict:
 _SUMMARY_LANG = {"en": "English", "ja": "Japanese", "ko": "Korean", "fr": "French"}
 
 
+def _looks_chinese(text: str, lang: str) -> bool:
+    han = sum(1 for c in text if "\u4e00" <= c <= "\u9fff")
+    if lang == "ja":
+        kana = sum(1 for c in text if "\u3040" <= c <= "\u30ff")
+        return han > 6 and kana == 0
+    return han > max(4, len(text) // 5)
+
+
 def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh") -> str:
     """One-sentence overall sentiment summary via DeepSeek (same provider as the AI teacher). "" on any failure."""
     key = os.environ.get("DEEPSEEK_API_KEY", "")
@@ -143,12 +151,20 @@ def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh")
             system = (f"You are an equity analyst. In ONE sentence (max 30 words), written in "
                       f"{_SUMMARY_LANG.get(lang, 'English')}, summarise how the following headlines are likely "
                       "to affect sentiment around this stock. The headlines may be in another language. No preamble.")
-            user = f"Stock: {stock_name}\nHeadlines:\n{joined}"
+            lang_name = _SUMMARY_LANG.get(lang, "English")
+            user = (f"Stock: {stock_name}\nHeadlines:\n{joined}\n\n"
+                    f"Reply with one sentence in {lang_name} only. Do not reply in Chinese.")
         resp = client.chat.completions.create(
             model="deepseek-chat", max_tokens=120,
             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
         )
-        return (resp.choices[0].message.content or "").strip()
+        text = (resp.choices[0].message.content or "").strip()
+        # Chinese headlines sometimes pull the answer into Chinese; Japanese legitimately uses kanji,
+        # so only reject when there is no kana at all.
+        if lang != "zh" and _looks_chinese(text, lang):
+            logger.warning("AI summary came back in Chinese for lang=%s; dropped", lang)
+            return ""
+        return text
     except Exception as exc:
         logger.warning("AI summary failed (%s): %s", type(exc).__name__, str(exc)[:200])
         return ""

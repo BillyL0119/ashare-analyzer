@@ -515,6 +515,14 @@ def analyze_kline_segment(req: SegmentRequest):
         stats, tech, news, is_us, lang,
     )
     ai_text, ai_source = _call_ai(prompt, lang)
+    if lang != "zh" and ai_source != "none":
+        from routers.news import _looks_chinese
+        if _looks_chinese(ai_text, lang):      # Chinese headlines can pull the answer into Chinese
+            retry_text, retry_source = _call_ai(
+                prompt + f"\n\nIMPORTANT: write the entire answer in {_LANG_NAME.get(lang, 'English')}. "
+                         "Do not write in Chinese; keep quoted headlines as they are.", lang)
+            if retry_source != "none" and not _looks_chinese(retry_text, lang):
+                ai_text, ai_source = retry_text, retry_source
 
     out = {
         "symbol":      symbol,
