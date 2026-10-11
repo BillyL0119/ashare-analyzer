@@ -119,7 +119,7 @@ private struct GaugeTile: View {
                     )
                 VStack(spacing: 0) {
                     Text(String(format: "%.0f", score))
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: 30, weight: .medium, design: .serif))
                         .monospacedDigit()
                         .contentTransition(.numericText(value: score))
                 }

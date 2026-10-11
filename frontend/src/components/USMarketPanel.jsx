@@ -86,7 +86,7 @@ export default function USMarketPanel({ lang }) {
         {d.indices.map((i) => (
           <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 10, padding: '10px 12px' }}>
             <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{zh ? INDEX_ZH[i.name] || i.name : i.name}</div>
-            <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums', margin: '2px 0' }}>{num(i.price)}</div>
+            <div className="serif-num" style={{ fontSize: 27, margin: '2px 0' }}>{num(i.price)}</div>
             <div style={{ fontSize: 13, fontWeight: 600, color: col(i.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(i.pct)}{i.change != null && <span style={{ marginLeft: 8, opacity: 0.8 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}</div>
           </div>
         ))}

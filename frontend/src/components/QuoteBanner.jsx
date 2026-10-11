@@ -74,11 +74,11 @@ export default function QuoteBanner({ lang }) {
       {/* Quote text — full, no truncation, up to 3 lines via lineClamp */}
       <span style={{
         flex: 1,
-        fontSize: 12,
+        fontSize: 14,
         color: 'var(--text-secondary)',
-        lineHeight: 1.6,
+        lineHeight: 1.55,
         fontStyle: 'italic',
-        letterSpacing: '0.1px',
+        fontFamily: 'var(--heading)',
         display: '-webkit-box',
         WebkitLineClamp: 3,
         WebkitBoxOrient: 'vertical',

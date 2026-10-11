@@ -42,7 +42,7 @@ const CSS = `
 .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
 .dash-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px 18px; min-width: 0; }
 .dash-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
-.dash-num { font-size: 28px; font-weight: 800; color: var(--text-primary); margin-top: 6px; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+.dash-num { font-family: var(--heading); font-size: 32px; font-weight: 500; color: var(--text-primary); margin-top: 6px; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.01em; }
 .dash-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .dash-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .dash-h { font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px; }

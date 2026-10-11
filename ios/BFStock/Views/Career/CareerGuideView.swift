@@ -46,7 +46,7 @@ struct CareerGuideView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
-                Text(L("金融行业职业中心")).font(.title2.weight(.bold))
+                Text(L("金融行业职业中心")).font(.system(.title2, design: .serif).weight(.semibold))
                 Text(L("对比各条职业路径的薪酬、工时和招聘时间线，了解主要机构，练习面试。"))
                     .font(.subheadline).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -124,7 +124,7 @@ struct CareerRoleDetailView: View {
                             .font(.caption.weight(.bold)).tracking(0.8).textCase(.uppercase)
                             .foregroundStyle(role.tint)
                     }
-                    Text(role.displayTitle).font(.title2.weight(.bold))
+                    Text(role.displayTitle).font(.system(.title2, design: .serif).weight(.semibold))
                     Text(role.displayTagline).font(.subheadline).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }

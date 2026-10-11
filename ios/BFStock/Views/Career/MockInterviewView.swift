@@ -35,7 +35,7 @@ struct MockInterviewView: View {
         VStack(spacing: 18) {
             Spacer()
             Text(role.icon).font(.system(size: 44))
-            Text(role.displayTitle).font(.title3.weight(.bold)).multilineTextAlignment(.center)
+            Text(role.displayTitle).font(.system(.title3, design: .serif).weight(.semibold)).multilineTextAlignment(.center)
             Text(L("AI面试官会一次问一个问题，4-5轮后给出评分和改进建议"))
                 .font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center).padding(.horizontal, 32)
             Picker("", selection: $vm.interviewType) {

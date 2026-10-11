@@ -325,7 +325,7 @@ export default function StockDetail() {
       <div style={{ padding: '0 4px' }}>
         {price == null ? <Skeleton h={50} w={190} /> : (
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
-            <span className="m-num" style={{ fontSize: 42, fontWeight: 800, color: c, letterSpacing: -1 }}>{num(price)}</span>
+            <span className="m-num m-serif-num" style={{ fontSize: 44, color: c }}>{num(price)}</span>
             <span style={{ display: 'grid', gap: 3 }}><Pill value={p} market={market} width={86} /><span className="m-num" style={{ color: c, fontSize: 12.5, fontWeight: 650, paddingLeft: 4 }}>{d.change > 0 ? '+' : ''}{num(d.change)}</span></span>
           </div>
         )}

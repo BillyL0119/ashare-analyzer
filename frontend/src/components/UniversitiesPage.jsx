@@ -2070,8 +2070,8 @@ function Hero({ lang, stats }) {
             { val: stats.languages, label: tx('种语言', 'Languages') },
           ].map(({ val, label }) => (
             <div key={label} style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: 28, fontWeight: 800,
+              <div className="serif-num" style={{
+                fontSize: 32,
                 background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               }}>

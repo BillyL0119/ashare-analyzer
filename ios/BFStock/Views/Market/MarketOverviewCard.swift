@@ -110,7 +110,7 @@ private struct IndexTile: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(name).font(.footnote.weight(.medium)).foregroundStyle(.secondary)
                         Text(Formatters.price(quote.value))
-                            .font(.system(size: 34, weight: .bold, design: .rounded)).monospacedDigit()
+                            .font(.system(size: 36, weight: .medium, design: .serif)).monospacedDigit()
                             .minimumScaleFactor(0.7).lineLimit(1)
                     }
                     Spacer()

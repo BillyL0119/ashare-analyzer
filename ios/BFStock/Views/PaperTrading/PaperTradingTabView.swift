@@ -324,10 +324,10 @@ private struct AccountHeaderView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(currency)
-                        .font(.system(.title2, design: .rounded).weight(.semibold))
+                        .font(.system(.title2, design: .serif).weight(.medium))
                         .foregroundStyle(.secondary)
                     Text(totalValue, format: .number.precision(.fractionLength(2)))
-                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        .font(.system(size: 40, weight: .medium, design: .serif))
                         .monospacedDigit()
                         .contentTransition(.numericText(value: totalValue))
                         .animation(.snappy(duration: 0.5), value: totalValue)

@@ -782,7 +782,7 @@ export default function CareerGuidePage({ lang }) {
         <div style={{ display: 'flex', gap: 22 }}>
           {stats.map((st) => (
             <div key={st.en}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{st.n}</div>
+              <div className="serif-num" style={{ fontSize: 26, color: 'var(--text-primary)', lineHeight: 1 }}>{st.n}</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>{zh ? st.zh : st.en}</div>
             </div>
           ))}

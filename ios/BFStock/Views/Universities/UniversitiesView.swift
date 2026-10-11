@@ -259,7 +259,7 @@ struct UniversityDetailView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(uni.name).font(.title2.weight(.bold))
+            Text(uni.name).font(.system(.title2, design: .serif).weight(.semibold))
             Text(uni.university).font(.subheadline).foregroundStyle(.secondary)
             HStack(spacing: 8) {
                 Text("\(uni.city) · \(uni.country)").font(.caption).foregroundStyle(.secondary)

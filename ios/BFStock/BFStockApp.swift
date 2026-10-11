@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 enum AppearanceSetting: String, CaseIterable, Identifiable {
     case system, light, dark
@@ -94,6 +95,19 @@ func L(_ key: String, _ args: CVarArg...) -> String {
 struct BFStockApp: App {
     @AppStorage("appearance") private var appearance = AppearanceSetting.system.rawValue
     @AppStorage(Lang.storageKey) private var language = AppLanguage.system.rawValue
+
+    init() {
+        // Navigation titles in New York (Apple's serif), like an editorial publication; the rest of the
+        // interface stays in SF. Only the fonts are set, so bar backgrounds keep the system behaviour.
+        func serif(_ size: CGFloat, _ weight: UIFont.Weight) -> UIFont {
+            let base = UIFont.systemFont(ofSize: size, weight: weight)
+            guard let d = base.fontDescriptor.withDesign(.serif) else { return base }
+            return UIFont(descriptor: d, size: size)
+        }
+        let bar = UINavigationBar.appearance()
+        bar.titleTextAttributes = [.font: serif(18, .semibold)]
+        bar.largeTitleTextAttributes = [.font: serif(34, .semibold)]
+    }
 
     var body: some Scene {
         WindowGroup {

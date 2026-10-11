@@ -98,7 +98,7 @@ struct AboutSheet: View {
                 .background(DS.accentGradient, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .shadow(color: DS.accent.opacity(0.35), radius: 18, y: 8)
             Text("BFStock")
-                .font(.title2.weight(.bold))
+                .font(.system(.title2, design: .serif).weight(.semibold))
             Text("Best Friend Stock · 版本 1.0")
                 .font(.caption)
                 .foregroundStyle(.secondary)

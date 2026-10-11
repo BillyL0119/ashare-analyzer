@@ -363,7 +363,7 @@ export default function App() {
             style={{ height: isMobile ? 32 : 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />
           {!isMobile && (
-            <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.2px' }}>
+            <span style={{ fontFamily: 'var(--heading)', fontSize: 19, fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
               Best Friend Stock
             </span>
           )}

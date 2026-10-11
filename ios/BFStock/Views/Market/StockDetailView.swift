@@ -141,7 +141,7 @@ struct StockDetailView: View {
             } else if let q = vm.quote {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(Formatters.price(q.price))
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .font(.system(size: 44, weight: .medium, design: .serif))
                         .monospacedDigit()
                         .contentTransition(.numericText(value: q.price))
                         .animation(.snappy(duration: 0.5), value: q.price)

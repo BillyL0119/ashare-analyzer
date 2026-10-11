@@ -109,7 +109,7 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
       <div style={{ position: 'relative', marginTop: 6 }}>
         <SemiGauge score={score} id={id} />
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: -2, lineHeight: 1 }}>
-          <div style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
+          <div className="serif-num" style={{ fontSize: 36, color: 'var(--text-primary)' }}>
             {Math.round(score)}
           </div>
         </div>

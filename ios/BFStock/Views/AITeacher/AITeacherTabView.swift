@@ -92,7 +92,7 @@ struct AITeacherTabView: View {
 
             VStack(spacing: 6) {
                 Text("AI股票老师")
-                    .font(.title2.weight(.bold))
+                    .font(.system(.title2, design: .serif).weight(.semibold))
                 Text("股票、基金、经济学，有问必答")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

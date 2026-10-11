@@ -98,7 +98,7 @@ function IndexTile({ name, q, hero }) {
       <div className="m-tile" style={{ background: bg, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <div style={{ minWidth: 0 }}>
           <div className="m-label">{name}</div>
-          <div className="m-big m-num" style={{ marginTop: 4, fontSize: 32, lineHeight: 1.1 }}>{q ? num(q.value) : '--'}</div>
+          <div className="m-big m-num m-serif-num" style={{ marginTop: 4, fontSize: 34, lineHeight: 1.1 }}>{q ? num(q.value) : '--'}</div>
         </div>
         <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
           <Pill value={p} market="cn" width={84} />

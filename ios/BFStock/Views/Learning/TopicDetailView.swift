@@ -113,7 +113,7 @@ struct TopicDetailView: View {
     private func header(_ topic: TopicDetail) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(topic.title)
-                .font(.title.weight(.bold))
+                .font(.system(.title, design: .serif).weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
             chips(topic)
         }

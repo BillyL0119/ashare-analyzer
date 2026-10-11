@@ -110,7 +110,7 @@ private struct ScoreRing: View {
                 .stroke(tint, style: StrokeStyle(lineWidth: 9, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
-                Text("\(Int(value))").font(.system(size: 28, weight: .bold, design: .rounded)).monospacedDigit()
+                Text("\(Int(value))").font(.system(size: 30, weight: .medium, design: .serif)).monospacedDigit()
                 Text(grade).font(.caption.weight(.bold)).foregroundStyle(tint)
             }
         }

@@ -241,7 +241,7 @@ export default function Paper() {
             )}
           </div>
           <div>
-            <div className="m-num" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -.5 }}><span className="m-muted" style={{ fontSize: 22, fontWeight: 650 }}>{cur}</span> {Number(view.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div className="m-num m-serif-num" style={{ fontSize: 38 }}><span className="m-muted" style={{ fontSize: 22, fontWeight: 650 }}>{cur}</span> {Number(view.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}><Pill value={view.ret} market={market} /><span className="m-label">{t('总收益率')}</span></div>
           </div>
           <div className="m-tiles" style={{ background: 'var(--surface-hi)', borderRadius: 14, padding: '12px 0' }}>

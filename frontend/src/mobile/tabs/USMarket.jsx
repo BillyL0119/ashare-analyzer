@@ -63,7 +63,7 @@ function IndexCard({ i, hero }) {
       <div className="m-tile" style={{ background: bg, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <div style={{ minWidth: 0 }}>
           <div className="m-label">{title}</div>
-          <div className="m-big m-num" style={{ marginTop: 4, fontSize: 32, lineHeight: 1.1 }}>{num(i.price)}</div>
+          <div className="m-big m-num m-serif-num" style={{ marginTop: 4, fontSize: 34, lineHeight: 1.1 }}>{num(i.price)}</div>
         </div>
         <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
           <Pill value={i.pct} market="us" width={84} />

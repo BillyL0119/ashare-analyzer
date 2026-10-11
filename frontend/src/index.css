@@ -50,12 +50,17 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --heading: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Typography: an editorial serif for headings (Source Serif 4, CJK serifs as fallbacks) over a
+     quiet sans for the interface (Inter with optical sizes). Data stays in the sans with tabular figures. */
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans', 'Noto Sans SC', sans-serif;
+  --heading: 'Source Serif 4', 'Noto Serif SC', 'Songti SC', 'Hiragino Mincho ProN', 'Yu Mincho', 'AppleMyungjo', 'Nanum Myeongjo', Georgia, serif;
+  --serif: var(--heading);
   --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  font: 18px/150% var(--sans);
+  letter-spacing: 0;
+  font-optical-sizing: auto;
+  font-feature-settings: 'cv11' 0, 'ss03' 1;   /* Inter: rounder quotes and commas */
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
@@ -601,11 +606,28 @@ body {
 }
 
 h1,
-h2 {
+h2,
+h3,
+.serif {
   font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+  font-optical-sizing: auto;
+  text-wrap: balance;
 }
+h1, h2 { color: var(--text-primary, var(--text-h)); }
+/* Page titles: larger, so the serif has room to breathe */
+html:not([data-ui="mobile"]) h1 { font-size: clamp(26px, 2.4vw, 34px) !important; line-height: 1.15 !important; }
+/* Headline numbers (scores, account value, index levels) set in the serif with lining figures */
+.serif-num {
+  font-family: var(--heading) !important;
+  font-weight: 500 !important;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+/* Serif headings read best at a medium weight; components set heavier inline weights for the old sans */
+/* Desktop UI only: the phone UI (data-ui="mobile") sizes its own titles in mobile.css */
+html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
+html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 600 !important; letter-spacing: -0.005em !important; }
 
 h1 {
   font-size: 56px;

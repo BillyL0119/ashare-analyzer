@@ -37,7 +37,10 @@
 .m-tab[aria-current="page"] { color: var(--accent); }
 
 /* headings */
-.m-title { font-size: 34px; font-weight: 800; letter-spacing: -.5px; margin: 6px 2px 18px; }
+.m-title { font-family: var(--m-serif); font-size: 34px; font-weight: 600; letter-spacing: -.4px; margin: 6px 2px 18px; }
+/* Editorial serif for titles and headline numbers (same faces as the desktop site) */
+:where(.m-app) { --m-serif: 'Source Serif 4', 'Noto Serif SC', ui-serif, 'New York', 'Songti SC', 'Hiragino Mincho ProN', 'AppleMyungjo', Georgia, serif; }
+.m-serif-num { font-family: var(--m-serif) !important; font-weight: 500 !important; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.02em; }
 .m-sec { display: flex; align-items: center; justify-content: space-between; margin: 0 4px 10px; color: var(--text-2); font-size: 13px; font-weight: 600; letter-spacing: .4px; }
 .m-sec button { color: var(--accent); font-weight: 600; font-size: 13px; }
 
@@ -103,7 +106,7 @@
 .m-sheet { overflow-x: hidden; }
 
 /* ── Isolation from the desktop site's global element rules (index.css) ───────────────── */
-.m-app :is(h1, h2, h3, h4) { color: var(--text); font-family: inherit; font-weight: 800; text-wrap: balance; }
+.m-app :is(h1, h2, h3, h4) { color: var(--text); font-family: var(--m-serif); font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
 .m-app :is(button, a) { min-height: 0; }
 .m-app code { display: inline; font-family: ui-monospace, "SF Mono", Menlo, monospace; line-height: inherit; color: inherit; }
 .m-app p { margin: 0; }

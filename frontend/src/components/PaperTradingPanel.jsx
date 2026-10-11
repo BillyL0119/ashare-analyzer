@@ -482,7 +482,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
                 {rank === -1 ? '--' : `#${rank}`}
               </span>
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: retPct >= 0 ? PROFIT_CLR : SELL_CLR, fontFamily: '"JetBrains Mono", monospace' }}>
+            <div className="serif-num" style={{ fontSize: 34, color: retPct >= 0 ? PROFIT_CLR : SELL_CLR }}>
               {currSym}{fmt(totalValue, 0)}
             </div>
             <div style={{ marginTop: 4 }}>
