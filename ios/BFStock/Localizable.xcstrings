@@ -2138,6 +2138,35 @@
         }
       }
     },
+    "中盘 $2–10B": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mid $2–10B"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moyenne 2–10 Md$"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中型 $2–10B"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중형 $2–10B"
+          }
+        }
+      }
+    },
     "主要机构股东": {
       "extractionState": "manual",
       "localizations": {
@@ -2631,6 +2660,35 @@
         }
       }
     },
+    "今日涨幅榜": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top gainers"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus fortes hausses"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "値上がり率上位"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상승률 상위"
+          }
+        }
+      }
+    },
     "今日知识": {
       "extractionState": "manual",
       "localizations": {
@@ -2656,6 +2714,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "오늘의 지식"
+          }
+        }
+      }
+    },
+    "今日跌幅榜": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top losers"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus fortes baisses"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "値下がり率上位"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "하락률 상위"
+          }
+        }
+      }
+    },
+    "代码或公司名": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ticker or company name"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbole ou nom de société"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ティッカーまたは社名"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "티커 또는 회사명"
           }
         }
       }
@@ -2743,6 +2859,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "저"
+          }
+        }
+      }
+    },
+    "低估值大盘股": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Value large caps"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grandes valeurs décotées"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "割安大型株"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저평가 대형주"
           }
         }
       }
@@ -2950,6 +3095,35 @@
         }
       }
     },
+    "全部板块": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All sectors"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tous secteurs"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全セクター"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전체 섹터"
+          }
+        }
+      }
+    },
     "公司基本面": {
       "extractionState": "manual",
       "localizations": {
@@ -3004,6 +3178,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "유틸리티"
+          }
+        }
+      }
+    },
+    "共 %lld 家": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld companies"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sociétés"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 社"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 회사"
           }
         }
       }
@@ -4371,6 +4574,35 @@
         }
       }
     },
+    "大盘 $10–200B": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large $10–200B"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grande 10–200 Md$"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大型 $10–200B"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대형 $10–200B"
+          }
+        }
+      }
+    },
     "大行观点": {
       "extractionState": "manual",
       "localizations": {
@@ -4748,6 +4980,35 @@
         }
       }
     },
+    "小盘 $300M–2B": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Small $300M–2B"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Petite 300 M$–2 Md$"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "小型 $300M–2B"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소형 $300M–2B"
+          }
+        }
+      }
+    },
     "就业去向": {
       "extractionState": "manual",
       "localizations": {
@@ -4918,6 +5179,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "100주 단위로 조정됨: %lld주"
+          }
+        }
+      }
+    },
+    "市值": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Market cap"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capitalisation"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時価総額"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시가총액"
           }
         }
       }
@@ -5212,6 +5502,35 @@
         }
       }
     },
+    "微盘 <$300M": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Micro <$300M"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Micro <300 M$"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "超小型 <$300M"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "초소형 <$300M"
+          }
+        }
+      }
+    },
     "必需消费": {
       "extractionState": "manual",
       "localizations": {
@@ -5469,6 +5788,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "심리"
+          }
+        }
+      }
+    },
+    "成交最活跃": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Most active"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus actives"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出来高上位"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거래 활발"
           }
         }
       }
@@ -5995,6 +6343,64 @@
         }
       }
     },
+    "按行业、市值、估值、涨跌筛选全部美股": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter every US stock by sector, size, valuation and move"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtrez toutes les actions US par secteur, taille, valorisation et variation"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全米国株をセクター・時価総額・バリュエーション・値動きで絞り込み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 미국 주식을 섹터·시총·밸류에이션·등락으로 필터링"
+          }
+        }
+      }
+    },
+    "按行业、规模、估值和走势筛选 %lld 家美国上市公司": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter %lld US-listed companies by sector, size, valuation and momentum"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtrez %lld sociétés cotées aux États-Unis par secteur, taille, valorisation et tendance"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 社の米国上場企業をセクター・規模・バリュエーション・値動きで絞り込み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미국 상장사 %lld개를 섹터·규모·밸류에이션·추세로 필터링"
+          }
+        }
+      }
+    },
     "授课语言": {
       "extractionState": "manual",
       "localizations": {
@@ -6049,6 +6455,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "인정"
+          }
+        }
+      }
+    },
+    "接近 52 周高点": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Near 52-week high"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proches du plus haut 52 sem."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "52週高値圏"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "52주 신고가 근접"
           }
         }
       }
@@ -6745,6 +7180,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "최대 %lld"
+          }
+        }
+      }
+    },
+    "最大公司": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biggest companies"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus grandes sociétés"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時価総額トップ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시가총액 상위"
           }
         }
       }
@@ -7619,6 +8083,35 @@
         }
       }
     },
+    "没有符合条件的公司，试试放宽条件": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No companies match. Try loosening the filters."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune société ne correspond. Élargissez les filtres."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "該当する企業がありません。条件を緩めてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조건에 맞는 회사가 없습니다. 조건을 완화해 보세요."
+          }
+        }
+      }
+    },
     "法律": {
       "extractionState": "manual",
       "localizations": {
@@ -7760,6 +8253,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "상승률"
+          }
+        }
+      }
+    },
+    "涨跌幅": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change %"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Variation %"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "騰落率"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등락률"
           }
         }
       }
@@ -9388,6 +9910,35 @@
         }
       }
     },
+    "股价": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Price"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cours"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "株価"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "주가"
+          }
+        }
+      }
+    },
     "股息率": {
       "extractionState": "manual",
       "localizations": {
@@ -10229,6 +10780,35 @@
         }
       }
     },
+    "超大 >$200B": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mega >$200B"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Méga >200 Md$"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "超大型 >$200B"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "초대형 >$200B"
+          }
+        }
+      }
+    },
     "趋势按 25% 该股历史收益 + 75% 长期股市平均回报估算，波动率取自历史。只展示可能的范围，不构成预测或投资建议": {
       "extractionState": "manual",
       "localizations": {
@@ -10486,6 +11066,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "하는 일"
+          }
+        }
+      }
+    },
+    "选股器": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stock Screener"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtre d'actions"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スクリーナー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종목 스크리너"
           }
         }
       }

@@ -1909,6 +1909,132 @@ export const STR = {
   "예상",
   "Cons."
  ],
+ "选股器": [
+  "Stock Screener",
+  "スクリーナー",
+  "종목 스크리너",
+  "Filtre d'actions"
+ ],
+ "按行业、规模、估值和走势筛选 %lld 家美国上市公司": [
+  "Filter %lld US-listed companies by sector, size, valuation and momentum",
+  "%lld 社の米国上場企業をセクター・規模・バリュエーション・値動きで絞り込み",
+  "미국 상장사 %lld개를 섹터·규모·밸류에이션·추세로 필터링",
+  "Filtrez %lld sociétés cotées aux États-Unis par secteur, taille, valorisation et tendance"
+ ],
+ "最大公司": [
+  "Biggest companies",
+  "時価総額トップ",
+  "시가총액 상위",
+  "Plus grandes sociétés"
+ ],
+ "今日涨幅榜": [
+  "Top gainers",
+  "値上がり率上位",
+  "상승률 상위",
+  "Plus fortes hausses"
+ ],
+ "今日跌幅榜": [
+  "Top losers",
+  "値下がり率上位",
+  "하락률 상위",
+  "Plus fortes baisses"
+ ],
+ "成交最活跃": [
+  "Most active",
+  "出来高上位",
+  "거래 활발",
+  "Plus actives"
+ ],
+ "接近 52 周高点": [
+  "Near 52-week high",
+  "52週高値圏",
+  "52주 신고가 근접",
+  "Proches du plus haut 52 sem."
+ ],
+ "低估值大盘股": [
+  "Value large caps",
+  "割安大型株",
+  "저평가 대형주",
+  "Grandes valeurs décotées"
+ ],
+ "代码或公司名": [
+  "Ticker or company name",
+  "ティッカーまたは社名",
+  "티커 또는 회사명",
+  "Symbole ou nom de société"
+ ],
+ "全部板块": [
+  "All sectors",
+  "全セクター",
+  "전체 섹터",
+  "Tous secteurs"
+ ],
+ "市值": [
+  "Market cap",
+  "時価総額",
+  "시가총액",
+  "Capitalisation"
+ ],
+ "超大 >$200B": [
+  "Mega >$200B",
+  "超大型 >$200B",
+  "초대형 >$200B",
+  "Méga >200 Md$"
+ ],
+ "大盘 $10–200B": [
+  "Large $10–200B",
+  "大型 $10–200B",
+  "대형 $10–200B",
+  "Grande 10–200 Md$"
+ ],
+ "中盘 $2–10B": [
+  "Mid $2–10B",
+  "中型 $2–10B",
+  "중형 $2–10B",
+  "Moyenne 2–10 Md$"
+ ],
+ "小盘 $300M–2B": [
+  "Small $300M–2B",
+  "小型 $300M–2B",
+  "소형 $300M–2B",
+  "Petite 300 M$–2 Md$"
+ ],
+ "微盘 <$300M": [
+  "Micro <$300M",
+  "超小型 <$300M",
+  "초소형 <$300M",
+  "Micro <300 M$"
+ ],
+ "涨跌幅": [
+  "Change",
+  "騰落率",
+  "등락률",
+  "Variation"
+ ],
+ "股价": [
+  "Price",
+  "株価",
+  "주가",
+  "Cours"
+ ],
+ "没有符合条件的公司，试试放宽条件": [
+  "No companies match. Try loosening the filters.",
+  "該当する企業がありません。条件を緩めてください。",
+  "조건에 맞는 회사가 없습니다. 조건을 완화해 보세요.",
+  "Aucune société ne correspond. Élargissez les filtres."
+ ],
+ "共 %lld 家": [
+  "%lld companies",
+  "%lld 社",
+  "%lld개 회사",
+  "%lld sociétés"
+ ],
+ "按行业、市值、估值、涨跌筛选全部美股": [
+  "Filter every US stock by sector, size, valuation and move",
+  "全米国株をセクター・時価総額・バリュエーション・値動きで絞り込み",
+  "모든 미국 주식을 섹터·시총·밸류에이션·등락으로 필터링",
+  "Filtrez toutes les actions US par secteur, taille, valorisation et variation"
+ ],
  "刚刚": [
   "Just now",
   "たった今",
@@ -2352,12 +2478,6 @@ export const STR = {
   "現在値",
   "현재가",
   "Cours"
- ],
- "涨跌幅": [
-  "Change",
-  "騰落率",
-  "등락률",
-  "Variation"
  ],
  "没有持仓": [
   "No positions",

@@ -25,7 +25,7 @@ struct MarketTabView: View {
                         USMarketSection(
                             overview: vm.usOverview,
                             earnings: vm.earnings,
-                            afterOverview: AnyView(WatchlistSection()),
+                            afterOverview: AnyView(VStack(spacing: 26) { ScreenerEntryCard(); WatchlistSection() }),
                             isLoading: vm.isLoadingUS,
                             error: vm.usError,
                             onRetry: { Task { await vm.loadUSOverview() } }
