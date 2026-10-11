@@ -719,7 +719,8 @@ def _do_fetch_sentiment() -> dict:
             "indices":    indices,
             "updated_at": datetime.now().isoformat(),
         }
-        _sentiment_ts   = time.time()
+        # Right after a restart the A-share spot snapshot (breadth) is still loading: try again soon
+        _sentiment_ts   = time.time() if any(p["key"] == "breadth" for p in cn_parts) else time.time() - _SENTIMENT_TTL + 120
         _sentiment_data = result
         return result
     except Exception as e:
