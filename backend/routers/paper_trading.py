@@ -17,6 +17,17 @@ US rules:
   (settlement is T+1 since May 2024, but that does not stop a sale)
   Lot size: 1 share
   Initial cash: $100,000
+
+Hong Kong rules (fields hk_*):
+  Zero commission (online brokers); stamp duty 0.1% each side, rounded up to the dollar, plus
+  ~0.0085% exchange levies (trading fee 0.00565%, SFC 0.0027%, AFRC 0.00015%)
+  Board lots per stock (from HKEX); same-day selling allowed (T+2 settlement does not block it)
+  Initial cash: HK$1,000,000
+
+Japan rules (fields jp_*):
+  Zero commission (SBI / Rakuten since 2023); no transaction taxes
+  Trading unit 100 shares (ETFs 1); same-day selling allowed
+  Initial cash: ¥10,000,000
 """
 
 from fastapi import APIRouter, HTTPException
@@ -30,6 +41,7 @@ import random
 import time
 import hashlib
 import logging
+import math
 
 router = APIRouter()
 logger = logging.getLogger("paper_trading")
@@ -47,6 +59,26 @@ _LOT_SIZE       = 100
 # US settings
 _US_INITIAL_CASH = 100_000.0
 _US_SEC_FEE_PER_SHARE = 0.000008   # SEC fee on sell
+
+# Hong Kong / Japan settings (benchmarks: Tracker Fund 02800 for the Hang Seng, ETF 1321 for the Nikkei 225)
+_INTL = {
+    "hk": {"initial": 1_000_000.0, "cur": "HK$", "bench": ("02800", "Hang Seng")},
+    "jp": {"initial": 10_000_000.0, "cur": "¥", "bench": ("1321", "Nikkei 225")},
+}
+_HK_STAMP  = 0.001
+_HK_LEVIES = 0.0000565 + 0.000027 + 0.0000015
+MARKETS = ("us", "cn", "hk", "jp")
+_INITIAL = {"cn": _INITIAL_CASH, "us": _US_INITIAL_CASH, **{m: c["initial"] for m, c in _INTL.items()}}
+
+
+def _f(market: str, field: str) -> str:
+    """Account field for a market: A-shares use the bare names (cash, portfolio, transactions)."""
+    return field if market == "cn" else f"{market}_{field}"
+
+
+def _norm_market(m: Optional[str], default: str = "cn") -> str:
+    m = (m or default).lower()
+    return m if m in MARKETS else default
 
 _BEIJING_TZ = timezone(timedelta(hours=8))
 
@@ -101,6 +133,9 @@ def _new_account(device_id: str) -> dict:
         "us_transactions": [],
         "us_total_commission_paid": 0.0,
         "us_total_value_history": [{"date": today, "value": _US_INITIAL_CASH}],
+        # Hong Kong / Japan markets
+        **{f"{m}_{k}": v for m, c in _INTL.items()
+           for k, v in (("cash", c["initial"]), ("portfolio", {}), ("transactions", []), ("total_commission_paid", 0.0))},
     }
 
 
@@ -113,6 +148,12 @@ def _migrate_account(account: dict) -> dict:
         account["us_transactions"] = []
         account["us_total_commission_paid"] = 0.0
         account["us_total_value_history"] = [{"date": today, "value": _US_INITIAL_CASH}]
+    for m, c in _INTL.items():
+        if f"{m}_cash" not in account:
+            account[f"{m}_cash"] = c["initial"]
+            account[f"{m}_portfolio"] = {}
+            account[f"{m}_transactions"] = []
+            account[f"{m}_total_commission_paid"] = 0.0
     return account
 
 
@@ -241,6 +282,121 @@ def _compute_us_portfolio(account: dict) -> dict:
     return enriched
 
 
+# ── Hong Kong / Japan ─────────────────────────────────────────────────────────
+
+def _intl_code(market: str, symbol: str) -> str:
+    from routers.global_stocks import normalize_code
+    try:
+        return normalize_code(market, symbol)
+    except HTTPException:
+        raise HTTPException(status_code=400, detail=f"Unknown symbol {symbol}")
+
+
+def _intl_quote(market: str, code: str) -> dict:
+    """{price, name, lot} for a HK/JP code; two attempts (a network blip should not fail an order)."""
+    from routers.global_stocks import tencent_quotes as intl_quotes, _find, _display_name
+    for _ in range(2):
+        q = intl_quotes(market, [code], timeout=6).get(code)
+        if q and q.get("price"):
+            row = _find(market, code)
+            if market == "hk":
+                lot = q.get("lot") or row.get("lot") or 100
+            else:
+                lot = 1 if row.get("etf") else 100
+            return {"price": float(q["price"]), "name": _display_name(market, row, q) or code, "lot": int(lot)}
+    raise HTTPException(status_code=503, detail=f"Cannot fetch price for {code}. Try again later.")
+
+
+def _intl_fee(market: str, amount: float) -> float:
+    """HK: stamp duty 0.1% (whole dollars, rounded up) + exchange levies; Japan: none."""
+    if market != "hk" or amount <= 0:
+        return 0.0
+    return round(math.ceil(amount * _HK_STAMP) + amount * _HK_LEVIES, 2)
+
+
+def _compute_intl_portfolio(account: dict, market: str) -> dict:
+    from routers.global_stocks import tencent_quotes as intl_quotes
+    pf = account.get(f"{market}_portfolio", {})
+    quotes = intl_quotes(market, list(pf), timeout=5) if pf else {}
+    out = {}
+    for code, pos in pf.items():
+        price = (quotes.get(code) or {}).get("price") or pos["avg_cost"]
+        mv, cb = round(price * pos["shares"], 2), round(pos["avg_cost"] * pos["shares"], 2)
+        out[code] = {
+            "shares": pos["shares"], "avg_cost": pos["avg_cost"], "current_price": price,
+            "market_value": mv, "profit_loss": round(mv - cb, 2),
+            "profit_loss_pct": round((mv - cb) / cb * 100 if cb else 0, 2),
+            "available_shares": pos["shares"], "buy_date": pos.get("buy_date", ""),
+            "name": pos.get("name", ""), "lot": pos.get("lot", 100),
+        }
+    return out
+
+
+def _intl_buy(account: dict, body, market: str) -> dict:
+    code = _intl_code(market, body.symbol)
+    q = _intl_quote(market, code)
+    shares, lot, price = body.shares, q["lot"], q["price"]
+    if shares <= 0 or shares % lot:
+        raise HTTPException(status_code=400, detail=f"Shares must be a multiple of the board lot ({lot})")
+    amount = round(price * shares, 2)
+    fee = _intl_fee(market, amount)
+    total = round(amount + fee, 2)
+    cur = _INTL[market]["cur"]
+    if account[f"{market}_cash"] < total:
+        raise HTTPException(status_code=400,
+                            detail=f"Insufficient funds. Need {cur}{total:,.2f}, available {cur}{account[f'{market}_cash']:,.2f}")
+    today = _beijing_today()
+    account[f"{market}_cash"] = round(account[f"{market}_cash"] - total, 2)
+    account[f"{market}_total_commission_paid"] = round(account.get(f"{market}_total_commission_paid", 0) + fee, 2)
+    pf = account.setdefault(f"{market}_portfolio", {})
+    if code in pf:
+        old = pf[code]
+        n = old["shares"] + shares
+        pf[code] = {**old, "shares": n, "avg_cost": round((old["avg_cost"] * old["shares"] + amount) / n, 4)}
+    else:
+        pf[code] = {"shares": shares, "avg_cost": round(price, 4), "buy_date": today, "name": q["name"], "lot": lot}
+    account.setdefault(f"{market}_transactions", []).append({
+        "date": today, "type": "buy", "symbol": code, "name": q["name"], "shares": shares, "price": price,
+        "amount": amount, "commission": fee, "market": market,
+    })
+    _save_account(account)
+    return {"success": True, "message": _msg("buy", body.lang, market, name=q["name"], shares=shares),
+            "price": price, "commission": fee, "total_cost": total, "cash_remaining": account[f"{market}_cash"]}
+
+
+def _intl_sell(account: dict, body, market: str) -> dict:
+    code = _intl_code(market, body.symbol)
+    pf = account.get(f"{market}_portfolio", {})
+    if code not in pf:
+        raise HTTPException(status_code=400, detail=f"You don't hold any {code}")
+    pos = pf[code]
+    shares, lot = body.shares, pos.get("lot", 100)
+    if shares <= 0 or (shares % lot and shares != pos["shares"]):
+        raise HTTPException(status_code=400, detail=f"Shares must be a multiple of the board lot ({lot})")
+    if pos["shares"] < shares:
+        raise HTTPException(status_code=400, detail=f"Insufficient shares. Hold {pos['shares']}, tried to sell {shares}")
+    q = _intl_quote(market, code)
+    amount = round(q["price"] * shares, 2)
+    fee = _intl_fee(market, amount)
+    net = round(amount - fee, 2)
+    cost = round(pos["avg_cost"] * shares, 2)
+    pl = round(net - cost, 2)
+    if pos["shares"] == shares:
+        del pf[code]
+    else:
+        pf[code] = {**pos, "shares": pos["shares"] - shares}
+    account[f"{market}_cash"] = round(account.get(f"{market}_cash", 0) + net, 2)
+    account[f"{market}_total_commission_paid"] = round(account.get(f"{market}_total_commission_paid", 0) + fee, 2)
+    account.setdefault(f"{market}_transactions", []).append({
+        "date": _beijing_today(), "type": "sell", "symbol": code, "name": q["name"], "shares": shares,
+        "price": q["price"], "amount": amount, "commission": fee, "profit_loss": pl, "market": market,
+    })
+    _save_account(account)
+    return {"success": True, "message": _msg("sell", body.lang, market, name=q["name"], shares=shares),
+            "price": q["price"], "commission": fee, "net_proceeds": net, "profit_loss": pl,
+            "profit_loss_pct": round(pl / cost * 100 if cost else 0, 2)}
+
+
 def _total_value(account: dict, enriched_portfolio: dict) -> float:
     portfolio_value = sum(p["market_value"] for p in enriched_portfolio.values())
     return round(account["cash"] + portfolio_value, 2)
@@ -283,6 +439,9 @@ def _live_prices(market: str, symbols: set) -> dict:
             if market == "us":
                 from routers.us_market import us_quotes
                 got = {k: float(v.get("price") or 0) for k, v in us_quotes(missing).items()}
+            elif market in _INTL:
+                from routers.global_stocks import tencent_quotes as intl_quotes
+                got = {k: v["price"] for k, v in intl_quotes(market, missing, timeout=4).items()}
             else:
                 from services.stock_service import tencent_quotes
                 got = {k: v["price"] for k, v in tencent_quotes(missing, timeout=3).items()}
@@ -297,23 +456,19 @@ def _live_prices(market: str, symbols: set) -> dict:
 
 def _account_value(a: dict, market: str, prices: dict) -> float:
     """Cash + holdings at the latest price (cost basis when a quote is missing)."""
-    if market == "us":
-        cash, pf = a.get("us_cash", _US_INITIAL_CASH), a.get("us_portfolio", {})
-    else:
-        cash, pf = a.get("cash", _INITIAL_CASH), a.get("portfolio", {})
+    cash, pf = a.get(_f(market, "cash"), _INITIAL[market]), a.get(_f(market, "portfolio"), {})
     return cash + sum(p["shares"] * prices.get(sym, p["avg_cost"]) for sym, p in pf.items())
 
 
 def _has_traded(a: dict, market: str) -> bool:
-    return bool(a.get("us_transactions" if market == "us" else "transactions"))
+    return bool(a.get(_f(market, "transactions")))
 
 
 def _ranked_with_values(market: str) -> list[tuple[dict, float]]:
     """(account, value) for accounts that have traded in `market`, best first.
     Valued at market prices so open gains count; untouched accounts don't compete."""
     accs = [a for a in _all_accounts() if _has_traded(a, market)]
-    key = "us_portfolio" if market == "us" else "portfolio"
-    prices = _live_prices(market, {sym for a in accs for sym in a.get(key, {})})
+    prices = _live_prices(market, {sym for a in accs for sym in a.get(_f(market, "portfolio"), {})})
     valued = [(a, _account_value(a, market, prices)) for a in accs]
     return sorted(valued, key=lambda x: x[1], reverse=True)
 
@@ -338,7 +493,7 @@ class BuyBody(BaseModel):
     device_id: str
     symbol: str
     shares: int
-    market: Optional[str] = "cn"   # "cn" or "us"
+    market: Optional[str] = "cn"   # "cn" | "us" | "hk" | "jp"
     lang: Optional[str] = None     # language of the confirmation message (old clients: by market)
 
 class SellBody(BaseModel):
@@ -394,8 +549,29 @@ def create_or_get_account(body: DeviceBody):
     rank    = _rank_of(body.device_id, _ranked("cn"))
     us_rank = _rank_of(body.device_id, _ranked("us"))
 
+    # Every market in one shape, so clients read markets[m] instead of per-market field names
+    markets = {
+        "cn": {"cash": account["cash"], "portfolio": enriched, "total_value": total, "rank": rank,
+               "transactions": account.get("transactions", [])[-20:],
+               "commission_paid": account.get("total_commission_paid", 0)},
+        "us": {"cash": account["us_cash"], "portfolio": us_enriched, "total_value": us_total, "rank": us_rank,
+               "transactions": account.get("us_transactions", [])[-20:],
+               "commission_paid": account.get("us_total_commission_paid", 0)},
+    }
+    for m in _INTL:
+        pf = _compute_intl_portfolio(account, m)
+        tv = round(account[f"{m}_cash"] + sum(p["market_value"] for p in pf.values()), 2)
+        markets[m] = {"cash": account[f"{m}_cash"], "portfolio": pf, "total_value": tv,
+                      "rank": _rank_of(body.device_id, _ranked(m)),
+                      "transactions": account.get(f"{m}_transactions", [])[-20:],
+                      "commission_paid": account.get(f"{m}_total_commission_paid", 0)}
+    for m, v in markets.items():
+        v["initial"] = _INITIAL[m]
+        v["return_pct"] = round((v["total_value"] - _INITIAL[m]) / _INITIAL[m] * 100, 4)
+
     return {
         **account,
+        "markets":          markets,
         "portfolio":        enriched,
         "total_value":      total,
         "return_pct":       _return_pct(total),
@@ -439,7 +615,9 @@ def buy_stock(body: BuyBody):
     account = _new_account(body.device_id) if account is None else _migrate_account(account)
 
     today  = _beijing_today()
-    market = (body.market or "cn").lower()
+    market = _norm_market(body.market)
+    if market in _INTL:
+        return _intl_buy(account, body, market)
 
     if market == "us":
         # ── US buy ──────────────────────────────────────────────────────────
@@ -590,7 +768,9 @@ def sell_stock(body: SellBody):
     account = _migrate_account(account)
 
     today  = _beijing_today()
-    market = (body.market or "cn").lower()
+    market = _norm_market(body.market)
+    if market in _INTL:
+        return _intl_sell(account, body, market)
 
     if market == "us":
         # ── US sell ──────────────────────────────────────────────────────────
@@ -628,7 +808,8 @@ def sell_stock(body: SellBody):
                 "shares":         remaining,
                 "avg_cost":       pos["avg_cost"],
                 "buy_date":       pos["buy_date"],
-                "available_date": avail_date,
+                # was `avail_date`, undefined here: every partial US sell failed with a 500
+                "available_date": pos.get("available_date", pos["buy_date"]),
             }
 
         account["us_cash"] = round(account.get("us_cash", 0) + net_proceeds, 4)
@@ -736,8 +917,8 @@ def sell_stock(body: SellBody):
 def leaderboard(device_id: str = "", market: str = "cn"):
     """Top 20 for one market (holdings at market price), only accounts that have traded there.
     `market` defaults to cn so older app builds keep their previous behaviour."""
-    market = "us" if market.lower() == "us" else "cn"
-    initial = _US_INITIAL_CASH if market == "us" else _INITIAL_CASH
+    market = _norm_market(market)
+    initial = _INITIAL[market]
     result = []
     for i, (a, total) in enumerate(_ranked_with_values(market)[:20], 1):
         result.append({
@@ -783,6 +964,9 @@ def _daily_closes(symbol: str, market: str, days: int) -> dict:
         if market == "us":
             from routers.us_stocks import _tencent_history
             return {c["date"]: c["close"] for c in _tencent_history(symbol, days)}
+        if market in _INTL:
+            from routers.global_stocks import history
+            return {c["date"]: c["close"] for c in history(market, symbol)}
         code = symbol if symbol.startswith(("sh", "sz", "bj")) else (
             ("sh" if symbol.startswith(("6", "5", "9")) else "bj" if symbol.startswith(("4", "8")) else "sz") + symbol)
         n = max(min(int(days * 0.72) + 20, 1000), 30)
@@ -797,10 +981,9 @@ def _daily_closes(symbol: str, market: str, days: int) -> dict:
 
 
 def _performance(account: dict, market: str) -> dict:
-    us = market == "us"
-    txs = sorted(account.get("us_transactions" if us else "transactions") or [], key=lambda t: t.get("date", ""))
-    initial = _US_INITIAL_CASH if us else _INITIAL_CASH
-    bench_sym, bench_name = ("SPY", "S&P 500") if us else ("sh000300", "CSI 300")
+    txs = sorted(account.get(_f(market, "transactions")) or [], key=lambda t: t.get("date", ""))
+    initial = _INITIAL[market]
+    bench_sym, bench_name = _BENCH[market]
     if not txs:
         return {"points": [], "benchmark": bench_name, "initial": initial}
 
@@ -858,6 +1041,9 @@ def _performance(account: dict, market: str) -> dict:
     }
 
 
+_BENCH = {"us": ("SPY", "S&P 500"), "cn": ("sh000300", "CSI 300"), **{m: c["bench"] for m, c in _INTL.items()}}
+
+
 class PerformanceBody(BaseModel):
     device_id: str
     market: Optional[str] = "us"
@@ -865,12 +1051,11 @@ class PerformanceBody(BaseModel):
 
 @router.post("/performance")
 def performance(body: PerformanceBody):
-    market = "us" if (body.market or "us").lower() == "us" else "cn"
+    market = _norm_market(body.market, "us")
     account = _load_account(body.device_id)
     if account is None:
-        return {"points": [], "benchmark": "S&P 500" if market == "us" else "CSI 300",
-                "initial": _US_INITIAL_CASH if market == "us" else _INITIAL_CASH}
-    n = len(account.get("us_transactions" if market == "us" else "transactions") or [])
+        return {"points": [], "benchmark": _BENCH[market][1], "initial": _INITIAL[market]}
+    n = len(account.get(_f(market, "transactions")) or [])
     key = (body.device_id, market)
     hit = _perf_cache.get(key)
     if hit and hit[1] == n and time.time() - hit[0] < _PERF_TTL:

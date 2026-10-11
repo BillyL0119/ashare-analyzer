@@ -31,7 +31,7 @@ struct PaperTradingTabView: View {
         .task { await vm.loadAccount() }
         .sheet(isPresented: $showBuySheet) {
             TradeSheet(market: selectedMarket, mode: .buy,
-                       cash: selectedMarket == .us ? vm.account?.usCash : vm.account?.cash) { symbol, shares, market in
+                       cash: vm.account?.cash(selectedMarket)) { symbol, shares, market in
                 Task { await vm.buy(symbol: symbol, shares: shares, market: market) }
             }
         }
@@ -47,7 +47,7 @@ struct PaperTradingTabView: View {
             Button("重置", role: .destructive) { Task { await vm.resetAccount() } }
             Button("取消", role: .cancel) {}
         } message: {
-            Text("所有持仓和交易记录将清除，初始资金将恢复至 100万元（A股）/ $10万（美股）。")
+            Text("所有持仓和交易记录将清除，四个账户恢复初始资金：美股 $10万、A股 100万元、港股 HK$100万、日股 ¥1000万。")
         }
         .onChange(of: vm.tradeResult) { (_, result) in
             if result != nil {
@@ -100,7 +100,7 @@ struct PaperTradingTabView: View {
         }
         .refreshable { await vm.loadAccount() }
         // Reload the curve whenever the market or the account changes (e.g. after a trade)
-        .task(id: "\(selectedMarket.rawValue)|\(selectedMarket == .us ? account.usCash : account.cash)") {
+        .task(id: "\(selectedMarket.rawValue)|\(account.cash(selectedMarket))") {
             await vm.loadPerformance(market: selectedMarket)
         }
         .overlay(alignment: .bottomTrailing) {
@@ -133,16 +133,14 @@ struct PaperTradingTabView: View {
     // MARK: - Market Picker
 
     private var marketPicker: some View {
-        MarketSegmentControl(selection: $selectedMarket, order: [.us, .cn])
+        MarketSegmentControl(selection: $selectedMarket, order: [.us, .cn, .hk, .jp])
     }
 
     // MARK: - Positions List
 
     @ViewBuilder
     private func positionsList(_ account: PaperAccount) -> some View {
-        let positions: [(String, PaperPosition)] = selectedMarket == .cn
-            ? account.portfolio.sorted(by: { $0.key < $1.key })
-            : account.usPortfolio.sorted(by: { $0.key < $1.key })
+        let positions: [(String, PaperPosition)] = account.positions(selectedMarket).sorted(by: { $0.key < $1.key })
 
         VStack(alignment: .leading, spacing: 10) {
             SectionHeader(L("持仓")) {
@@ -206,9 +204,7 @@ struct PaperTradingTabView: View {
 
     @ViewBuilder
     private func transactionsList(_ account: PaperAccount) -> some View {
-        let txs: [PaperTransaction] = selectedMarket == .cn
-            ? account.transactions.reversed()
-            : account.usTransactions.reversed()
+        let txs: [PaperTransaction] = account.transactions(selectedMarket).reversed()
 
         if !txs.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
@@ -286,12 +282,12 @@ private struct AccountHeaderView: View {
     let account: PaperAccount
     let market: Market
 
-    private var totalValue: Double { market == .cn ? account.totalValue : account.usTotalValue }
-    private var returnPct: Double  { market == .cn ? account.returnPct  : account.usReturnPct  }
-    private var cash: Double       { market == .cn ? account.cash       : account.usCash       }
-    private var currency: String   { market == .cn ? "¥" : "$" }
+    private var totalValue: Double { account.totalValue(market) }
+    private var returnPct: Double  { account.returnPct(market) }
+    private var cash: Double       { account.cash(market) }
+    private var currency: String   { market.currencySymbol }
     private var isUp: Bool         { returnPct >= 0 }
-    /// Starting capital, recovered from value and return (US $100k, A-share ¥1M).
+    /// Starting capital, recovered from value and return ($100k, ¥1M, HK$1M, ¥10M).
     private var profit: Double {
         let base = returnPct > -100 ? totalValue / (1 + returnPct / 100) : 0
         return totalValue - base
@@ -305,12 +301,12 @@ private struct AccountHeaderView: View {
         let color = returnPct == 0 ? DS.accent : plColor(returnPct, market: market)
         VStack(alignment: .leading, spacing: 18) {
             HStack {
-                Text(market == .cn ? L("A股账户") : L("美股账户"))
+                Text(L([.us: "美股账户", .cn: "A股账户", .hk: "港股账户", .jp: "日股账户"][market] ?? "美股账户"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
                 // Per-market rank; hidden until the account has traded in this market
-                let rank = market == .us ? (account.usRank ?? -1) : account.rank
+                let rank = account.rank(market)
                 if rank > 0 {
                     Label("#\(rank)", systemImage: "trophy.fill")
                         .font(.system(.caption, design: .rounded).weight(.semibold))
@@ -391,13 +387,13 @@ private struct PositionRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(symbol)
                     .font(.subheadline.weight(.semibold))
-                Text(L("%lld股 · 均价%@", position.sharesInt, "\(market == .cn ? "¥" : "$")\(String(format: "%.2f", position.avgCost))"))
+                Text(L("%lld股 · 均价%@", position.sharesInt, "\(market.currencySymbol)\(String(format: "%.2f", position.avgCost))"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 3) {
-                Text("\(market == .cn ? "¥" : "$")\(String(format: "%.2f", position.marketValue))")
+                Text("\(market.currencySymbol)\(String(format: "%.2f", position.marketValue))")
                     .font(.subheadline.weight(.medium))
                 HStack(spacing: 2) {
                     Text(position.profitLoss >= 0 ? "+" : "")

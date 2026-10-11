@@ -4,7 +4,7 @@ import { Section } from './ui'
 import useLangStore from '../store/langStore'
 import { changeColor } from './helpers'
 
-// Account value vs the S&P 500 / CSI 300 since the first trade, drawn as plain SVG lines.
+// Account value vs the S&P 500 / CSI 300 / Hang Seng / Nikkei 225 since the first trade, drawn as plain SVG lines.
 const W = 340, H = 150, PAD = 4
 
 const fmtPct = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${v.toFixed(2)}%`)
@@ -34,7 +34,7 @@ export default function PaperPerformance({ deviceId, market, refreshKey }) {
   }, [pts, data])
 
   if (!paths) return null
-  const benchName = data.benchmark === 'S&P 500' ? t('标普500') : t('沪深300')
+  const benchName = { 'S&P 500': t('标普500'), 'CSI 300': t('沪深300'), 'Hang Seng': t('恒生指数'), 'Nikkei 225': t('日经225') }[data.benchmark] || data.benchmark
   const ahead = (data.excess_pct ?? 0) >= 0
   const locale = lang === 'zh' ? 'zh-CN' : lang
   const since = new Date(data.since + 'T00:00:00').toLocaleDateString(locale, { month: 'short', day: 'numeric' })

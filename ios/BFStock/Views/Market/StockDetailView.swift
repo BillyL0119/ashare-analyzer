@@ -113,7 +113,7 @@ struct StockDetailView: View {
         }
         .sheet(isPresented: $showPaperTrade) {
             TradeSheet(market: market, mode: .buy, initialSymbol: code,
-                       cash: market == .us ? paper.account?.usCash : paper.account?.cash) { symbol, shares, mkt in
+                       cash: paper.account?.cash(market)) { symbol, shares, mkt in
                 Task {
                     await paper.buy(symbol: symbol, shares: shares, market: mkt)
                     paperMessage = paper.tradeError ?? paper.tradeResult?.message
@@ -175,16 +175,14 @@ struct StockDetailView: View {
                         .background(DS.surfaceHi, in: Capsule())
                         .foregroundStyle(.secondary)
                     Spacer(minLength: 6)
-                    if !market.isHKJP {
-                        Button { showPaperTrade = true } label: {
-                            Text(L("模拟买入"))
-                                .font(.caption.weight(.bold))
-                                .padding(.horizontal, 12).padding(.vertical, 6)
-                                .foregroundStyle(.white)
-                                .background(DS.accent, in: Capsule())
-                        }
-                        .buttonStyle(.plain)
+                    Button { showPaperTrade = true } label: {
+                        Text(L("模拟买入"))
+                            .font(.caption.weight(.bold))
+                            .padding(.horizontal, 12).padding(.vertical, 6)
+                            .foregroundStyle(.white)
+                            .background(DS.accent, in: Capsule())
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }

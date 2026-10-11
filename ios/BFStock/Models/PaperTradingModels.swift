@@ -19,6 +19,29 @@ struct PaperAccount: Decodable {
     let usTotalValue: Double
     let usReturnPct: Double
     let usTransactions: [PaperTransaction]
+    /// Every market in one shape ("us", "cn", "hk", "jp"); absent on older backends.
+    let markets: [String: PaperMarketAccount]?
+}
+
+/// One market's side of the account, as /api/paper/account sends it under `markets`.
+struct PaperMarketAccount: Decodable {
+    let cash: Double
+    let portfolio: [String: PaperPosition]
+    let totalValue: Double
+    let returnPct: Double
+    let rank: Int
+    let transactions: [PaperTransaction]
+    let initial: Double?
+}
+
+extension PaperAccount {
+    private func m(_ market: Market) -> PaperMarketAccount? { markets?[market.rawValue] }
+    func cash(_ market: Market) -> Double { m(market)?.cash ?? (market == .cn ? cash : usCash) }
+    func totalValue(_ market: Market) -> Double { m(market)?.totalValue ?? (market == .cn ? totalValue : usTotalValue) }
+    func returnPct(_ market: Market) -> Double { m(market)?.returnPct ?? (market == .cn ? returnPct : usReturnPct) }
+    func rank(_ market: Market) -> Int { m(market)?.rank ?? (market == .cn ? rank : (usRank ?? -1)) }
+    func positions(_ market: Market) -> [String: PaperPosition] { m(market)?.portfolio ?? (market == .cn ? portfolio : usPortfolio) }
+    func transactions(_ market: Market) -> [PaperTransaction] { m(market)?.transactions ?? (market == .cn ? transactions : usTransactions) }
 }
 
 struct PaperPosition: Decodable {
@@ -31,6 +54,8 @@ struct PaperPosition: Decodable {
     let availableShares: Double
     let buyDate: String
     let availableDate: String?
+    /// Hong Kong board lot (sell in whole lots); nil elsewhere
+    let lot: Int?
 
     var sharesInt: Int { Int(shares) }
     var availableSharesInt: Int { Int(availableShares) }

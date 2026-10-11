@@ -28,8 +28,15 @@ struct TradeSheet: View {
         return false
     }
 
-    private var currency: String { market == .cn ? "¥" : "$" }
-    private var minStep: Int { market == .cn ? 100 : 1 }
+    private var currency: String { market.currencySymbol }
+    /// Order step: 1 share (US), 100 (A-shares, Japan), the stock's board lot (Hong Kong)
+    private var minStep: Int {
+        switch market {
+        case .us: return 1
+        case .hk: return (isBuy ? quote?.lotSize : sellTuple?.2.lot) ?? 100
+        default: return 100
+        }
+    }
     private var sellColor: Color { Color(r: 0xF2, g: 0x8B, b: 0x3C) }
     private var tint: Color { isBuy ? DS.accent : sellColor }
 
@@ -46,10 +53,20 @@ struct TradeSheet: View {
         return pos.currentPrice * Double(shares)
     }
 
-    /// Price x shares (+ the A-share 0.03% buy commission) for the quoted stock.
+    /// Price x shares plus fees: A-share 0.03% commission, HK stamp duty and levies (same rule as the server).
     private var buyCost: Double? {
         guard isBuy, let p = quote?.price else { return nil }
-        return p * Double(shares) * (market == .cn ? 1.0003 : 1)
+        let gross = p * Double(shares)
+        switch market {
+        case .cn: return gross * 1.0003
+        case .hk: return gross + Self.hkFee(gross)
+        default: return gross
+        }
+    }
+
+    /// HK stamp duty 0.1% (whole dollars, rounded up) + ~0.0085% exchange levies.
+    static func hkFee(_ amount: Double) -> Double {
+        amount > 0 ? (amount * 0.001).rounded(.up) + amount * 0.000085 : 0
     }
     private var shortOfCash: Bool {
         if let c = buyCost, let cash { return c > cash }
@@ -60,8 +77,7 @@ struct TradeSheet: View {
         if isBuy {
             let trimmed = buySymbol.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty, shares > 0, quote?.price != nil, !shortOfCash else { return false }
-            if market == .cn { return shares % 100 == 0 }
-            return true
+            return market == .us || shares % minStep == 0
         } else {
             return shares > 0 && shares <= maxSell
         }
@@ -112,9 +128,10 @@ struct TradeSheet: View {
 
     private var buyHeader: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(market == .cn ? L("A股 · 股票代码") : L("美股 · 股票代码"))
-            // Names work too ("google", "苹果"): people type the company, not the ticker
-            TextField(market == .cn ? L("代码或名称，如 600519、茅台") : L("代码或公司名，如 AAPL、苹果"), text: $buySymbol)
+            SectionHeader(L([.us: "美股 · 股票代码", .cn: "A股 · 股票代码", .hk: "港股 · 股票代码", .jp: "日股 · 股票代码"][market] ?? ""))
+            // Names work too ("google", "苹果", "腾讯"): people type the company, not the ticker
+            TextField(L([.us: "代码或公司名，如 AAPL、苹果", .cn: "代码或名称，如 600519、茅台",
+                         .hk: "代码或名称，如 00700、腾讯", .jp: "代码或名称，如 7203、丰田"][market] ?? ""), text: $buySymbol)
                 .font(buySymbol.isEmpty ? .body : .system(size: 28, weight: .bold, design: .monospaced))
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(market == .cn ? .never : .characters)
@@ -165,7 +182,7 @@ struct TradeSheet: View {
             if buySymbol.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        ForEach(market == .cn ? Self.quickCN : Self.quickUS, id: \.self) { code in
+                        ForEach(Self.quick[market] ?? Self.quickUS, id: \.self) { code in
                             Button { buySymbol = code } label: {
                                 Text(code)
                                     .font(.system(.subheadline, design: .monospaced).weight(.semibold))
@@ -199,15 +216,23 @@ struct TradeSheet: View {
         if sym.isEmpty { suggestions = []; return }
         try? await Task.sleep(nanoseconds: 300_000_000)          // wait for typing to settle
         guard !Task.isCancelled else { return }
-        let isCode = market == .cn ? (sym.count == 6 && sym.allSatisfy(\.isNumber))
-                                   : sym.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "." || $0 == "-") }
+        let isCode: Bool
+        switch market {
+        case .cn: isCode = sym.count == 6 && sym.allSatisfy(\.isNumber)
+        case .hk: isCode = (1...5).contains(sym.count) && sym.allSatisfy(\.isNumber)
+        case .jp: isCode = sym.count == 4 && sym.first?.isNumber == true && sym.allSatisfy { $0.isASCII && ($0.isNumber || $0.isUppercase) }
+        case .us: isCode = sym.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "." || $0 == "-") }
+        }
         // Search (names) and quote (tickers) in parallel; a complete A-share code needs no search
         async let found: [TradeSuggestion] = market == .cn && isCode ? [] : searchSuggestions(raw)
         if isCode {
-            let path = market == .us ? "/us/stock/\(sym)/realtime" : "/stocks/\(sym)/realtime"
+            let path = "\(market.stockPath)/\(sym)/realtime"
             let q: TradeQuote? = try? await APIClient.shared.get(path)
             if !Task.isCancelled {
-                if let q, q.price != nil { quote = q } else { quoteMissing = true }
+                if let q, q.price != nil {
+                    quote = q
+                    if market == .hk, let lot = q.lotSize, lot > 0 { setShares(max(lot, shares / lot * lot)) }
+                } else { quoteMissing = true }
             }
         }
         let r = await found
@@ -215,8 +240,8 @@ struct TradeSheet: View {
     }
 
     private func searchSuggestions(_ q: String) async -> [TradeSuggestion] {
-        if market == .us {
-            let rows: [TradeSearchUS] = (try? await APIClient.shared.get("/us/search", params: ["q": q])) ?? []
+        if market != .cn {
+            let rows: [TradeSearchUS] = (try? await APIClient.shared.get("/\(market.rawValue)/search", params: ["q": q])) ?? []
             return rows.prefix(6).map { TradeSuggestion(symbol: $0.symbol, name: $0.name, nameZh: $0.nameZh, price: $0.price) }
         }
         let rows: [StockSearchResult] = (try? await APIClient.shared.get("/stocks/search", params: ["q": q])) ?? []
@@ -245,7 +270,12 @@ struct TradeSheet: View {
     }
 
     private static let quickUS = ["AAPL", "NVDA", "MSFT", "TSLA", "SPY", "QQQ"]
-    private static let quickCN = ["600519", "300750", "000858", "601318", "000001"]
+    private static let quick: [Market: [String]] = [
+        .us: quickUS,
+        .cn: ["600519", "300750", "000858", "601318", "000001"],
+        .hk: ["00700", "09988", "03690", "01810", "00005", "02800"],
+        .jp: ["7203", "6758", "7974", "9984", "8306", "1321"],
+    ]
 
     @ViewBuilder
     private var sellHeader: some View {
@@ -269,7 +299,7 @@ struct TradeSheet: View {
                     infoTile(L("可卖/持有"), "\(pos.availableSharesInt)/\(pos.sharesInt)")
                 }
 
-                if pos.availableSharesInt < pos.sharesInt {
+                if pos.availableSharesInt < pos.sharesInt && (market == .cn || market == .us) {
                     Label(market == .cn ? L("T+1：今日买入部分明日可卖") : L("T+2：部分持仓尚未结算"),
                           systemImage: "clock.badge.exclamationmark")
                         .font(.caption)
@@ -299,7 +329,7 @@ struct TradeSheet: View {
     private var sharesCard: some View {
         VStack(spacing: 16) {
             HStack {
-                Text(market == .cn ? L("股数（100 的整数倍）") : L("股数"))
+                Text(market == .hk ? L("股数（每手 %lld 股）", minStep) : market == .us ? L("股数") : L("股数（100 的整数倍）"))
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.secondary)
                 Spacer()
@@ -364,9 +394,8 @@ struct TradeSheet: View {
 
     private var quickOptions: [(String, Int)] {
         if isBuy {
-            return market == .cn
-                ? [("100", 100), ("500", 500), ("1000", 1000), ("5000", 5000)]
-                : [("1", 1), ("10", 10), ("50", 50), ("100", 100)]
+            if market == .us { return [("1", 1), ("10", 10), ("50", 50), ("100", 100)] }
+            return [1, 5, 10, 50].map { ("\($0 * minStep)", $0 * minStep) }
         }
         let m = max(minStep, maxSell)
         func part(_ f: Double) -> Int { max(minStep, Int(Double(m) * f) / minStep * minStep) }
@@ -386,6 +415,8 @@ struct TradeSheet: View {
                 estimateRow(L("预计成交金额"), "\(currency)\(String(format: "%.2f", amt))", color: .primary, bold: true)
                 if market == .cn {
                     estimateRow(L("手续费约"), "¥\(String(format: "%.2f", max(5, amt * 0.0013)))", color: .secondary)
+                } else if market == .hk {
+                    estimateRow(L("印花税及交易所费用"), "HK$\(String(format: "%.2f", Self.hkFee(amt)))", color: .secondary)
                 }
                 RowDivider().padding(.leading, 0)
                 estimateRow(L("预计盈亏"), "\(pl >= 0 ? "+" : "")\(String(format: "%.2f", pl))",
@@ -435,7 +466,7 @@ struct TradeSheet: View {
 
     private func normalized(_ n: Int) -> Int {
         let c = min(max(n, minStep), upperBound)
-        if market == .cn && isBuy { return max(100, c / 100 * 100) }
+        if market != .us && isBuy { return max(minStep, c / minStep * minStep) }
         return c
     }
 
@@ -450,6 +481,8 @@ struct TradeSheet: View {
 struct TradeQuote: Decodable {
     let name: String?
     let price: Double?
+    /// Hong Kong board lot (from /api/hk/stock/{code}/realtime)
+    let lotSize: Int?
 }
 
 /// A ticker match for the order form's symbol box.

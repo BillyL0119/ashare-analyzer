@@ -205,8 +205,8 @@ export default function StockCard({ stock }) {
           {t.exportBtn}
         </button>
 
-        {/* Practise with this stock in paper trading (order form opens filled in); US and A-share accounts only */}
-        {(market === 'us' || market === 'cn') && <button
+        {/* Practise with this stock in paper trading (order form opens filled in) */}
+        <button
           onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
           title={t.paperTradeHint}
           style={{
@@ -218,7 +218,7 @@ export default function StockCard({ stock }) {
           onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(52,211,153,0.1)' }}
         >
           {t.paperTradeBtn}
-        </button>}
+        </button>
 
         {/* Watchlist star */}
         <button

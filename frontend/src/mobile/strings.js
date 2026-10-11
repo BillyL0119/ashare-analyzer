@@ -2203,6 +2203,60 @@ export const STR = {
   "코드 또는 종목명 (예: 600519, 茅台)",
   "Code ou nom, ex. 600519, 茅台"
  ],
+ "港股账户": [
+  "HK account",
+  "香港株口座",
+  "홍콩주식 계좌",
+  "Compte HK"
+ ],
+ "日股账户": [
+  "Japan account",
+  "日本株口座",
+  "일본주식 계좌",
+  "Compte Japon"
+ ],
+ "港股 · 股票代码": [
+  "HK · Symbol",
+  "香港株 · 銘柄コード",
+  "홍콩주식 · 종목 코드",
+  "HK · Symbole"
+ ],
+ "日股 · 股票代码": [
+  "Japan · Symbol",
+  "日本株 · 銘柄コード",
+  "일본주식 · 종목 코드",
+  "Japon · Symbole"
+ ],
+ "代码或名称，如 00700、腾讯": [
+  "Code or name, e.g. 00700, Tencent",
+  "コードまたは銘柄名（例: 00700、テンセント）",
+  "코드 또는 종목명 (예: 00700, 텐센트)",
+  "Code ou nom, ex. 00700, Tencent"
+ ],
+ "代码或名称，如 7203、丰田": [
+  "Code or name, e.g. 7203, Toyota",
+  "コードまたは銘柄名（例: 7203、トヨタ）",
+  "코드 또는 종목명 (예: 7203, 도요타)",
+  "Code ou nom, ex. 7203, Toyota"
+ ],
+ "股数（每手 %lld 股）": [
+  "Shares (board lot %lld)",
+  "株数（1単位 %lld 株）",
+  "수량 (1단위 %lld주)",
+  "Actions (lot de %lld)"
+ ],
+ "印花税及交易所费用": [
+  "Stamp duty and exchange fees",
+  "印紙税・取引所手数料",
+  "인지세 및 거래소 수수료",
+  "Timbre et frais de bourse"
+ ],
+ "所有持仓和交易记录将清除，四个账户恢复初始资金：美股 $10万、A股 100万元、港股 HK$100万、日股 ¥1000万。": [
+  "All positions and trades will be cleared. The four accounts restart with $100K (US), ¥1M (A-shares), HK$1M (Hong Kong) and ¥10M (Japan).",
+  "すべての保有と取引履歴が消去され、4つの口座が初期資金に戻ります：米国株 $10万、A株 100万元、香港株 HK$100万、日本株 1000万円。",
+  "모든 보유 종목과 거래 기록이 삭제되고 네 계좌가 초기 자금으로 돌아갑니다: 미국 $10만, A주 100만 위안, 홍콩 HK$100만, 일본 ¥1000만.",
+  "Toutes les positions et transactions seront effacées. Les quatre comptes repartent avec 100 k$ (US), 1 M¥ (A), 1 M HK$ (HK) et 10 M¥ (Japon)."
+ ],
  "刚刚": [
   "Just now",
   "たった今",
@@ -2382,6 +2436,18 @@ export const STR = {
   "S&P 500",
   "S&P 500",
   "S&P 500"
+ ],
+ "恒生指数": [
+  "Hang Seng",
+  "ハンセン指数",
+  "항셍지수",
+  "Hang Seng"
+ ],
+ "日经225": [
+  "Nikkei 225",
+  "日経平均",
+  "닛케이225",
+  "Nikkei 225"
  ],
  "纳斯达克": [
   "Nasdaq",

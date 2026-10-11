@@ -42,8 +42,10 @@ struct PerformanceSection: View {
     let perf: PaperPerformance
     let market: Market
 
-    private var benchName: String { perf.benchmark == "S&P 500" ? L("标普500") : L("沪深300") }
-    private var currency: String { market == .cn ? "¥" : "$" }
+    private var benchName: String {
+        [ "S&P 500": L("标普500"), "CSI 300": L("沪深300"), "Hang Seng": L("恒生指数"), "Nikkei 225": L("日经225") ][perf.benchmark] ?? perf.benchmark
+    }
+    private var currency: String { market.currencySymbol }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

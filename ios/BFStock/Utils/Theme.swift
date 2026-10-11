@@ -12,7 +12,7 @@ enum Market: String {
     var stockPath: String { self == .cn ? "/stocks" : "/\(rawValue)/stock" }
     var currencySymbol: String { [.us: "$", .cn: "¥", .hk: "HK$", .jp: "¥"][self] ?? "" }
     var label: String { L([.us: "美股", .cn: "A股", .hk: "港股", .jp: "日股"][self] ?? "美股") }
-    /// Hong Kong / Japan: price history and quotes only (no paper trading, news, scores or simulations yet)
+    /// Hong Kong / Japan: no news, scores, simulations or peers for these yet
     var isHKJP: Bool { self == .hk || self == .jp }
 
     init(code: String, market: String?) {
@@ -178,9 +178,9 @@ struct MarketSegmentControl: View {
                 Button {
                     withAnimation(.snappy(duration: 0.25)) { selection = m }
                 } label: {
-                    Text(m == .cn ? L("A股") : L("美股"))
+                    Text(m.label)
                         .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 14)
+                        .padding(.horizontal, order.count > 2 ? 10 : 14)
                         .padding(.vertical, 6)
                         .foregroundStyle(selection == m ? Color.white : Color.secondary)
                         .background {

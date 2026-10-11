@@ -335,10 +335,10 @@ export default function StockDetail() {
         )}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
           <span style={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span><span className="m-sub" style={{ flex: 'none' }}>{code}</span><span className="m-chip">{t(chipLabel(market))}</span>
-          {!hkjp && <button onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
+          <button onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
             style={{ marginLeft: 'auto', flex: 'none', padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>
             {t('模拟买入')}
-          </button>}
+          </button>
         </div>
       </div>
 

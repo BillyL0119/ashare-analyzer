@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import ReactECharts from '../lib/echarts'
 import { riseColor, fallColor } from '../utils/chartHelpers'
+import { CUR } from '../utils/markets'
 
 // Paper trading performance: the account's value day by day (rebuilt from its trades on the server)
-// against the S&P 500 (US) or CSI 300 (A-shares), both starting from the same money.
+// against the S&P 500 (US), CSI 300 (A-shares), Hang Seng (HK) or Nikkei 225 (Japan), both starting from the same money.
 
 const L = {
   zh: { title: '收益曲线', mine: '我的组合', beat: (x) => `跑赢大盘 ${x}`, lag: (x) => `跑输大盘 ${x}`, ret: '我的收益', bench: (n) => n, dd: '最大回撤', since: (d) => `自 ${d} 起`, empty: '完成第一笔交易后，这里会显示你每天的账户价值，并和大盘对比，看看你是跑赢还是跑输市场。', pending: '已记录你的交易。收益曲线会在下一个交易日收盘后出现。', note: '大盘按同样的本金换算。跑赢大盘比单纯赚钱更难：大多数专业基金长期都跑不赢指数。' },
@@ -12,7 +13,7 @@ const L = {
   ko: { title: '수익 곡선', mine: '내 포트폴리오', beat: (x) => `시장 대비 ${x} 앞섬`, lag: (x) => `시장 대비 ${x} 뒤처짐`, ret: '내 수익률', bench: (n) => n, dd: '최대 낙폭', since: (d) => `${d}부터`, empty: '첫 거래 후 이곳에 계좌 가치 추이가 시장과 함께 표시되어 시장을 이기고 있는지 확인할 수 있습니다.', pending: '거래가 기록되었습니다. 차트는 다음 거래일 장 마감 후 표시됩니다.', note: '시장 선은 같은 원금으로 환산합니다. 지수를 이기는 것은 돈을 버는 것보다 어렵습니다. 대부분의 전문 펀드도 장기적으로 지수를 이기지 못합니다.' },
   fr: { title: 'Performance', mine: 'Mon portefeuille', beat: (x) => `Bat le marché de ${x}`, lag: (x) => `En retard sur le marché de ${x}`, ret: 'Ma performance', bench: (n) => n, dd: 'Perte max.', since: (d) => `depuis le ${d}`, empty: 'Après votre premier ordre, ce graphique montre la valeur de votre compte jour après jour face au marché, pour voir si vous le battez.', pending: 'Votre ordre est enregistré. Le graphique apparaîtra après la prochaine clôture.', note: "La courbe du marché part du même capital. Battre l'indice est plus difficile que gagner de l'argent : la plupart des fonds professionnels n'y parviennent pas sur la durée." },
 }
-const BENCH_ZH = { 'S&P 500': '标普500', 'CSI 300': '沪深300' }
+const BENCH_ZH = { 'S&P 500': '标普500', 'CSI 300': '沪深300', 'Hang Seng': '恒生指数', 'Nikkei 225': '日经225' }
 
 const pct = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${v.toFixed(2)}%`)
 
@@ -32,7 +33,7 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey 
     return () => { alive = false }
   }, [accountKey, market, refreshKey])  // refreshKey changes after every trade
 
-  const cur = market === 'us' ? '$' : '¥'
+  const cur = CUR[market] || '$'
   const bench = lang === 'zh' ? (BENCH_ZH[data?.benchmark] || data?.benchmark) : data?.benchmark
   const points = data?.points || []
 

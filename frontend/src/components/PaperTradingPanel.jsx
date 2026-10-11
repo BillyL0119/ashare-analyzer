@@ -3,6 +3,28 @@ import useAuthStore from '../store/authStore'
 import { T } from '../i18n/translations'
 import PaperPerformance from './PaperPerformance'
 import useSymbolSuggest from '../hooks/useSymbolSuggest'
+import { CUR } from '../utils/markets'
+
+// Hong Kong / Japan accounts: wording the shared translation table has no keys for
+const PT_INTL = {
+  zh: { tabHK: '港股（HK$100万）', tabJP: '日股（¥1000万）', codeHK: '港股代码', codeJP: '日股代码', lot: (n) => `股数（每手 ${n} 股）`,
+        feeHK: '印花税 0.1% + 交易所费用', zeroJP: '零佣金，无交易税', footerHK: '港股模拟 · 初始资金 HK$100万 · 零佣金，买卖各收 0.1% 印花税 · 按每手股数交易 · 可当日卖出',
+        footerJP: '日股模拟 · 初始资金 ¥1000万 · 零佣金 · 100 股为一个交易单位 · 可当日卖出', sellQty: (n) => `卖出股数（每手 ${n} 股）` },
+  en: { tabHK: 'HK Stocks (HK$1M)', tabJP: 'Japan (¥10M)', codeHK: 'HK code', codeJP: 'Japan code', lot: (n) => `Shares (board lot ${n})`,
+        feeHK: 'Stamp duty 0.1% + exchange fees', zeroJP: 'Zero commission, no trading tax', footerHK: 'HK paper trading · HK$1M start · Zero commission, 0.1% stamp duty each way · Board lots · Sell any time',
+        footerJP: 'Japan paper trading · ¥10M start · Zero commission · Trading unit 100 shares · Sell any time', sellQty: (n) => `Shares to sell (lot ${n})` },
+  ja: { tabHK: '香港株（HK$100万）', tabJP: '日本株（1000万円）', codeHK: '香港株コード', codeJP: '銘柄コード', lot: (n) => `株数（1単位 ${n} 株）`,
+        feeHK: '印紙税 0.1% + 取引所手数料', zeroJP: '手数料無料・取引税なし', footerHK: '香港株の模擬取引 · 初期資金 HK$100万 · 手数料無料、売買ごとに印紙税 0.1% · 売買単位あり · いつでも売却可',
+        footerJP: '日本株の模擬取引 · 初期資金 1000万円 · 手数料無料 · 売買単位 100 株 · いつでも売却可', sellQty: (n) => `売却株数（1単位 ${n} 株）` },
+  ko: { tabHK: '홍콩주식 (HK$100만)', tabJP: '일본주식 (¥1000만)', codeHK: '홍콩 종목코드', codeJP: '일본 종목코드', lot: (n) => `주식 수 (1단위 ${n}주)`,
+        feeHK: '인지세 0.1% + 거래소 수수료', zeroJP: '수수료 무료, 거래세 없음', footerHK: '홍콩주식 모의투자 · 초기자금 HK$100만 · 수수료 무료, 매매 시 인지세 0.1% · 단위 거래 · 언제든 매도 가능',
+        footerJP: '일본주식 모의투자 · 초기자금 ¥1000만 · 수수료 무료 · 거래단위 100주 · 언제든 매도 가능', sellQty: (n) => `매도 수량 (1단위 ${n}주)` },
+  fr: { tabHK: 'Bourse HK (1 M HK$)', tabJP: 'Japon (10 M ¥)', codeHK: 'Code HK', codeJP: 'Code Japon', lot: (n) => `Actions (lot de ${n})`,
+        feeHK: 'Droit de timbre 0,1 % + frais de bourse', zeroJP: 'Sans commission ni taxe', footerHK: 'Simulation HK · 1 M HK$ au départ · Sans commission, timbre 0,1 % à chaque sens · Par lots · Vente à tout moment',
+        footerJP: 'Simulation Japon · 10 M ¥ au départ · Sans commission · Unité de 100 actions · Vente à tout moment', sellQty: (n) => `Actions à vendre (lot de ${n})` },
+}
+// HK stamp duty (0.1%, whole dollars, rounded up) + exchange levies; Japan has neither. Same as the server.
+const hkFee = (amount) => (amount > 0 ? Math.ceil(amount * 0.001) + amount * 0.000085 : 0)
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const BG        = 'var(--bg-primary)'
@@ -78,15 +100,20 @@ function PctBadge({ value }) {
 }
 
 // ── Sell Modal ───────────────────────────────────────────────────────────────
-function SellModal({ pos, symbol, t, market, onConfirm, onClose }) {
+function SellModal({ pos, symbol, t, market, lang, onConfirm, onClose }) {
   const isUS   = market === 'us'
-  const lotSize = isUS ? 1 : 100
-  const currSym = isUS ? '$' : '¥'
+  const hkjp   = market === 'hk' || market === 'jp'
+  const ti     = PT_INTL[lang] || PT_INTL.en
+  const lotSize = isUS ? 1 : hkjp ? (pos.lot || 100) : 100
+  const currSym = CUR[market]
   const [shares, setShares] = useState(pos.available_shares)
 
   const amount     = shares * pos.current_price
-  const commission = isUS ? 0 : Math.max(5, amount * 0.0013)
+  const commission = isUS || market === 'jp' ? 0 : market === 'hk' ? hkFee(amount) : Math.max(5, amount * 0.0013)
   const net        = amount - commission
+  const noFee      = commission === 0
+  // Whole lots, except that an odd lot left over can be sold in full
+  const validQty   = shares > 0 && shares <= pos.available_shares && (isUS || shares % lotSize === 0 || shares === pos.available_shares)
 
   return (
     <div style={{
@@ -106,7 +133,7 @@ function SellModal({ pos, symbol, t, market, onConfirm, onClose }) {
         </div>
         <div style={{ marginBottom: 14 }}>
           <label style={{ fontSize: 12, color: MUTED, display: 'block', marginBottom: 4 }}>
-            {isUS ? t.ptSellQtyUS : t.ptSellQtyCN}
+            {isUS ? t.ptSellQtyUS : hkjp ? ti.sellQty(lotSize) : t.ptSellQtyCN}
           </label>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <input
@@ -117,7 +144,7 @@ function SellModal({ pos, symbol, t, market, onConfirm, onClose }) {
               step={lotSize}
               onChange={(e) => {
                 const v = Number(e.target.value)
-                const clamped = Math.min(pos.available_shares, Math.max(lotSize, isUS ? Math.floor(v) : Math.round(v / 100) * 100))
+                const clamped = Math.min(pos.available_shares, Math.max(lotSize, isUS ? Math.floor(v) : Math.round(v / lotSize) * lotSize))
                 setShares(clamped)
               }}
               style={{
@@ -137,8 +164,8 @@ function SellModal({ pos, symbol, t, market, onConfirm, onClose }) {
             <span style={{ color: 'var(--text-primary)' }}>{currSym}{fmt(amount)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: MUTED }}>{isUS ? t.ptSellCommUS : t.ptSellCommCN}</span>
-            <span style={{ color: isUS ? BUY_CLR : SELL_CLR }}>{isUS ? '$0' : `-${currSym}${fmt(commission)}`}</span>
+            <span style={{ color: MUTED }}>{isUS ? t.ptSellCommUS : market === 'hk' ? ti.feeHK : market === 'jp' ? ti.zeroJP : t.ptSellCommCN}</span>
+            <span style={{ color: noFee ? BUY_CLR : SELL_CLR }}>{noFee ? `${currSym}0` : `-${currSym}${fmt(commission)}`}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
             <span style={{ color: MUTED }}>{t.ptNetProceeds}</span>
@@ -147,7 +174,7 @@ function SellModal({ pos, symbol, t, market, onConfirm, onClose }) {
         </div>
         <Btn
           color={SELL_CLR}
-          disabled={shares <= 0 || shares > pos.available_shares || (!isUS && shares % 100 !== 0)}
+          disabled={!validQty}
           onClick={() => onConfirm(shares)}
           style={{ width: '100%' }}
         >
@@ -199,6 +226,8 @@ function localNick(nick, lang) {
 const QUICK_LABEL = { zh: '试试：', en: 'Try:', ja: '例：', ko: '예:', fr: 'Essayez :' }
 const QUICK_US = [['AAPL', 'Apple'], ['NVDA', 'NVIDIA'], ['MSFT', 'Microsoft'], ['TSLA', 'Tesla'], ['SPY', 'S&P 500 ETF'], ['QQQ', 'Nasdaq-100 ETF']]
 const QUICK_CN = [['600519', '贵州茅台'], ['000858', '五粮液'], ['300750', '宁德时代'], ['601318', '中国平安'], ['000001', '平安银行']]
+const QUICK_HK = [['00700', '腾讯'], ['09988', '阿里巴巴'], ['03690', '美团'], ['01810', '小米'], ['00005', '汇丰'], ['02800', '盈富基金']]
+const QUICK_JP = [['7203', '丰田'], ['6758', '索尼'], ['7974', '任天堂'], ['9984', '软银'], ['8306', '三菱日联'], ['1321', '日经225 ETF']]
 
 export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const t = T[lang] || T.en
@@ -216,16 +245,20 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       const q = new URLSearchParams(window.location.search)
       const sym = (q.get('buy') || '').trim().toUpperCase()
       if (q.has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)   // a reload should not reopen the order
-      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { sym, market: q.get('market') === 'cn' ? 'cn' : 'us' } : null
+      const m = ['cn', 'hk', 'jp'].includes(q.get('market')) ? q.get('market') : 'us'
+      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { sym, market: m } : null
     } catch { return null }
   })())
-  const [ptMarket, setPtMarket] = useState(prefill.current?.market || 'us')   // 'us' | 'cn' (US first)
+  const [ptMarket, setPtMarket] = useState(prefill.current?.market || 'us')   // 'us' | 'cn' | 'hk' | 'jp' (US first)
   const isUS = ptMarket === 'us'
-  const currSym = isUS ? '$' : '¥'
+  const hkjp = ptMarket === 'hk' || ptMarket === 'jp'
+  const ti = PT_INTL[lang] || PT_INTL.en
+  const currSym = CUR[ptMarket]
 
   // Buy form
   const [buyCode,    setBuyCode]    = useState(prefill.current?.sym || '')
   const [buyShares,  setBuyShares]  = useState(ptMarket === 'us' ? 1 : 100)
+  const [lotSize,    setLotSize]    = useState(100)   // HK board lot of the quoted stock (A-shares and Japan: 100)
   const [quoteInfo,  setQuoteInfo]  = useState(null)   // {price, name}
   const [quoteLoading, setQuoteLoading] = useState(false)
   const [buyMsg,     setBuyMsg]     = useState(null)   // {type:'success'|'error', text}
@@ -287,21 +320,28 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   useEffect(() => {
     setQuoteInfo(null)
     // US: any ticker; A-shares: a full 6-digit code. Wait for typing to settle (was one request per key).
-    if (!buyCode || (isUS ? !/^[A-Z0-9.\-]{1,10}$/i.test(buyCode) : !/^\d{6}$/.test(buyCode))) return
+    const codeOk = { us: /^[A-Z0-9.\-]{1,10}$/i, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }[ptMarket]
+    if (!buyCode || !codeOk.test(buyCode)) return
     let alive = true
     const id = setTimeout(() => {
       setQuoteLoading(true)
-      const url = isUS
-        ? `/api/us/stock/${buyCode.toUpperCase()}/realtime`
-        : `/api/stocks/${buyCode}/realtime`
+      const url = ptMarket === 'cn' ? `/api/stocks/${buyCode}/realtime` : `/api/${ptMarket}/stock/${buyCode.toUpperCase()}/realtime`
       fetch(url)
         .then((r) => (r.ok ? r.json() : null))
-        .then((d) => { if (alive) setQuoteInfo(d?.price ? { price: d.price, name: d.name } : null) })
+        .then((d) => {
+          if (!alive) return
+          setQuoteInfo(d?.price ? { price: d.price, name: d.name } : null)
+          // HK board lots differ per stock (Tencent 100, Tracker Fund 500): snap the order to the lot
+          if (d?.price && ptMarket === 'hk' && d.lot_size) {
+            setLotSize(d.lot_size)
+            setBuyShares((n) => Math.max(d.lot_size, Math.round(n / d.lot_size) * d.lot_size))
+          }
+        })
         .catch(() => { if (alive) setQuoteInfo(null) })
         .finally(() => { if (alive) setQuoteLoading(false) })
     }, 350)
     return () => { alive = false; clearTimeout(id) }
-  }, [buyCode, isUS])
+  }, [buyCode, ptMarket])
 
   // Reset shares when switching market
   // Only an actual switch clears the form (not the first run, which would wipe a prefilled order)
@@ -311,6 +351,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
     formMarket.current = ptMarket
     setBuyCode('')
     setBuyShares(isUS ? 1 : 100)
+    setLotSize(100)
     setQuoteInfo(null)
     setBuyMsg(null)
   }, [ptMarket]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -374,19 +415,22 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   }
 
   // ── Pre-render calculations ───────────────────────────────────────────────
-  const portfolio  = isUS ? (account?.us_portfolio || {}) : (account?.portfolio || {})
-  const txns       = isUS ? (account?.us_transactions || []) : (account?.transactions || [])
-  const totalValue = isUS ? (account?.us_total_value ?? 100_000) : (account?.total_value ?? 1_000_000)
-  const cash       = isUS ? (account?.us_cash ?? 100_000) : (account?.cash ?? 1_000_000)
-  const retPct     = isUS ? (account?.us_return_pct ?? 0) : (account?.return_pct ?? 0)
-  const commission = isUS ? (account?.us_total_commission_paid ?? 0) : (account?.total_commission_paid ?? 0)
+  // The server sends every market in one shape (markets.us / cn / hk / jp)
+  const mk         = account?.markets?.[ptMarket] || {}
+  const portfolio  = mk.portfolio || {}
+  const txns       = mk.transactions || []
+  const totalValue = mk.total_value ?? mk.initial ?? 0
+  const cash       = mk.cash ?? mk.initial ?? 0
+  const retPct     = mk.return_pct ?? 0
+  const commission = mk.commission_paid ?? 0
   // Per-market rank; -1 until this account has traded in that market
-  const rank       = (isUS ? account?.us_rank : account?.rank) ?? -1
+  const rank       = mk.rank ?? -1
 
   const portfolioValue = Object.values(portfolio).reduce((s, p) => s + (p.market_value || 0), 0)
 
   const buyAmount     = quoteInfo ? quoteInfo.price * buyShares : 0
-  const buyCommission = isUS ? 0 : (buyAmount ? Math.max(5, buyAmount * 0.0003) : 0)
+  const buyCommission = isUS || ptMarket === 'jp' ? 0 : ptMarket === 'hk' ? hkFee(buyAmount) : (buyAmount ? Math.max(5, buyAmount * 0.0003) : 0)
+  const step = isUS ? 1 : ptMarket === 'hk' ? lotSize : 100
   const buyTotalCost  = buyAmount + buyCommission
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -412,6 +456,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           symbol={sellModal.symbol}
           t={t}
           market={ptMarket}
+          lang={lang}
           onConfirm={handleSell}
           onClose={() => setSellModal(null)}
         />
@@ -465,6 +510,8 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         {[
           { key: 'us', label: t.ptMktUS },
           { key: 'cn', label: t.ptMktCN },
+          { key: 'hk', label: ti.tabHK },
+          { key: 'jp', label: ti.tabJP },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -529,7 +576,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
 
       {/* ── 1b. Performance vs the market ── */}
       <PaperPerformance accountKey={accountKey} market={ptMarket} lang={lang}
-        refreshKey={`${(isUS ? account?.us_transactions : account?.transactions)?.length ?? 0}-${isUS ? account?.us_cash : account?.cash}`} />
+        refreshKey={`${txns.length}-${cash}`} />
 
       {/* ── 2. Buy Panel ── */}
       <Card>
@@ -541,7 +588,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           {/* Code input */}
           <div style={{ flex: '0 0 200px', position: 'relative' }}>
             <label htmlFor="pt-buy-code" style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
-              {isUS ? t.ptCodeLabelUS : t.ptCodeLabelCN}
+              {isUS ? t.ptCodeLabelUS : ptMarket === 'hk' ? ti.codeHK : ptMarket === 'jp' ? ti.codeJP : t.ptCodeLabelCN}
             </label>
             <input
               id="pt-buy-code"
@@ -556,7 +603,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
                 else if (e.key === 'Enter') { e.preventDefault(); pickSuggestion(suggestions[suggestIdx] || suggestions[0]) }
                 else if (e.key === 'Escape') setSuggestOpen(false)
               }}
-              placeholder={isUS ? 'AAPL / Apple' : '600519 / 茅台'}
+              placeholder={{ us: 'AAPL / Apple', cn: '600519 / 茅台', hk: '00700 / 腾讯', jp: '7203 / Toyota' }[ptMarket]}
               maxLength={24}
               autoComplete="off"
               role="combobox"
@@ -604,17 +651,17 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           {/* Shares input */}
           <div style={{ flex: '0 0 180px' }}>
             <label style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
-              {isUS ? t.ptSharesUS : t.ptSharesCN}
+              {isUS ? t.ptSharesUS : hkjp ? ti.lot(step) : t.ptSharesCN}
             </label>
             <input
               type="number"
-              aria-label={isUS ? t.ptSharesUS : t.ptSharesCN}
+              aria-label={isUS ? t.ptSharesUS : hkjp ? ti.lot(step) : t.ptSharesCN}
               value={buyShares}
-              min={isUS ? 1 : 100}
-              step={isUS ? 1 : 100}
+              min={step}
+              step={step}
               onChange={(e) => {
-                const v = Math.max(isUS ? 1 : 100, Number(e.target.value))
-                setBuyShares(isUS ? Math.floor(v) : Math.round(v / 100) * 100)
+                const v = Math.max(step, Number(e.target.value))
+                setBuyShares(isUS ? Math.floor(v) : Math.round(v / step) * step)
               }}
               style={{
                 width: '100%', boxSizing: 'border-box',
@@ -628,8 +675,8 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           {quoteInfo && (
             <div style={{ flex: 1, minWidth: 200, fontSize: 12, color: MUTED, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <div>{t.ptEstCost}: <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>{currSym}{fmt(buyTotalCost)}</span></div>
-              {!isUS && <div>{t.ptCommFee}: <span style={{ color: SELL_CLR, fontFamily: 'monospace' }}>{currSym}{fmt(buyCommission)}</span></div>}
-              {isUS && <div style={{ color: BUY_CLR }}>{t.ptZeroComm}</div>}
+              {buyCommission > 0 && <div>{ptMarket === 'hk' ? ti.feeHK : t.ptCommFee}: <span style={{ color: SELL_CLR, fontFamily: 'monospace' }}>{currSym}{fmt(buyCommission)}</span></div>}
+              {buyCommission === 0 && <div style={{ color: BUY_CLR }}>{ptMarket === 'jp' ? ti.zeroJP : t.ptZeroComm}</div>}
               <div>{t.ptCashAfter}: <span style={{
                 color: cash >= buyTotalCost ? BUY_CLR : SELL_CLR, fontFamily: 'monospace',
               }}>{currSym}{fmt(cash - buyTotalCost, 0)}</span></div>
@@ -649,7 +696,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         {!buyCode && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
             <span style={{ fontSize: 11, color: MUTED, marginRight: 2 }}>{QUICK_LABEL[lang] || QUICK_LABEL.en}</span>
-            {(isUS ? QUICK_US : QUICK_CN).map(([code, name]) => (
+            {({ us: QUICK_US, cn: QUICK_CN, hk: QUICK_HK, jp: QUICK_JP })[ptMarket].map(([code, name]) => (
               <button
                 key={code}
                 className="bfs-quick-pick"
@@ -662,7 +709,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
                   border: `1px solid ${BDR}`,
                 }}
               >
-                {isUS ? code : name}
+                {isUS ? code : hkjp ? (lang === 'zh' ? name : code) : name}
               </button>
             ))}
           </div>
@@ -873,7 +920,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       </Card>
 
       <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', paddingBottom: 8 }}>
-        {ptMarket === 'us' ? t.ptFooterUS : t.ptFooter}
+        {{ us: t.ptFooterUS, cn: t.ptFooter, hk: ti.footerHK, jp: ti.footerJP }[ptMarket]}
       </div>
     </div>
   )

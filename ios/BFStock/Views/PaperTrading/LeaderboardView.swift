@@ -44,7 +44,7 @@ struct LeaderboardView: View {
                 }
             }
             .background(DS.bg.ignoresSafeArea())
-            .navigationTitle(L("收益排行榜") + " · " + (market == .us ? L("美股") : L("A股")))
+            .navigationTitle(L("收益排行榜") + " · " + market.label)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -97,7 +97,7 @@ private struct PodiumCard: View {
                 .minimumScaleFactor(0.7)
             PctPill(pct: entry.returnPct, market: market, minWidth: 0)
                 .fixedSize()
-            Text((market == .us ? "$" : "¥") + entry.totalValue.formatted(.number.precision(.fractionLength(0))))
+            Text(market.currencySymbol + entry.totalValue.formatted(.number.precision(.fractionLength(0))))
                 .font(.system(.caption2, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
@@ -142,7 +142,7 @@ private struct LeaderboardRow: View {
                             .background(DS.accent, in: Capsule())
                     }
                 }
-                Text((market == .us ? "$" : "¥") + entry.totalValue.formatted(.number.precision(.fractionLength(0))))
+                Text(market.currencySymbol + entry.totalValue.formatted(.number.precision(.fractionLength(0))))
                     .font(.caption)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)

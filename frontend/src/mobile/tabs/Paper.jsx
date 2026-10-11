@@ -4,7 +4,8 @@ import PaperPerformance from '../PaperPerformance'
 import useSymbolSuggest from '../../hooks/useSymbolSuggest'
 import { useT } from '../i18n'
 import { num, pct } from '../data'
-import { changeColor } from '../helpers'
+import { changeColor, chipLabel } from '../helpers'
+import { CUR } from '../../utils/markets'
 import { Icon } from '../icons'
 import { ErrorBox, Pill, Section, Segment, Skeleton } from '../ui'
 
@@ -34,19 +35,27 @@ function Sheet({ onClose, children }) {
 const PICKS = {
   us: [['AAPL', 'Apple'], ['NVDA', 'NVIDIA'], ['MSFT', 'Microsoft'], ['TSLA', 'Tesla'], ['SPY', 'S&P 500 ETF'], ['QQQ', 'Nasdaq 100 ETF']],
   cn: [['600519', '贵州茅台'], ['300750', '宁德时代'], ['601318', '中国平安'], ['000858', '五粮液'], ['600036', '招商银行'], ['510300', '沪深300ETF']],
+  hk: [['00700', '腾讯'], ['09988', '阿里巴巴'], ['03690', '美团'], ['01810', '小米'], ['00005', '汇丰'], ['02800', '盈富基金']],
+  jp: [['7203', '丰田'], ['6758', '索尼'], ['7974', '任天堂'], ['9984', '软银'], ['8306', '三菱日联'], ['1321', '日经ETF']],
 }
+const CODE_LABEL = { us: '美股 · 股票代码', cn: 'A股 · 股票代码', hk: '港股 · 股票代码', jp: '日股 · 股票代码' }
+const PLACEHOLDER = { us: '代码或公司名，如 AAPL、苹果', cn: '代码或名称，如 600519、茅台', hk: '代码或名称，如 00700、腾讯', jp: '代码或名称，如 7203、丰田' }
+const ACCOUNT_LABEL = { us: '美股账户', cn: 'A股账户', hk: '港股账户', jp: '日股账户' }
+// HK stamp duty (0.1%, whole dollars, rounded up) + exchange levies; same rule as the server
+const hkFee = (amount) => (amount > 0 ? Math.ceil(amount * 0.001) + amount * 0.000085 : 0)
 
 /** Live quote for the code being typed, so the order shows what it buys and roughly what it costs. */
 function useQuote(symbol, market) {
   const [q, setQ] = useState(null)   // null = nothing to show, {name, price} or {missing: true}
   useEffect(() => {
     const sym = symbol.trim().toUpperCase()
-    if (!sym || (market === 'cn' && !/^\d{6}$/.test(sym))) { setQ(null); return }
+    const ok = { us: /^[A-Z0-9.\-]{1,10}$/, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }[market]
+    if (!sym || !ok.test(sym)) { setQ(null); return }
     let alive = true
     const id = setTimeout(() => {
-      fetch(market === 'us' ? `/api/us/stock/${encodeURIComponent(sym)}/realtime` : `/api/stocks/${sym}/realtime`)
+      fetch(market === 'cn' ? `/api/stocks/${sym}/realtime` : `/api/${market}/stock/${encodeURIComponent(sym)}/realtime`)
         .then((r) => (r.ok ? r.json() : null))
-        .then((d) => { if (alive) setQ(d?.price ? { name: d.name || sym, price: Number(d.price) } : { missing: true }) })
+        .then((d) => { if (alive) setQ(d?.price ? { name: d.name || sym, price: Number(d.price), lot: d.lot_size } : { missing: true }) })
         .catch(() => { if (alive) setQ({ missing: true }) })
     }, 350)
     return () => { alive = false; clearTimeout(id) }
@@ -58,23 +67,26 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
   const t = useT()
   const lang = useLangStore((st) => st.lang)
   const buy = mode === 'buy'
-  const step = market === 'cn' ? 100 : 1
-  const cur = market === 'cn' ? '¥' : '$'
   const [symbol, setSymbol] = useState(sym0 || '')
+  const quote = useQuote(buy ? symbol : '', market)
+  // Order size step: 1 share (US), 100 (A-shares, Japan), the stock's board lot (Hong Kong)
+  const step = market === 'us' ? 1 : market === 'hk' ? ((buy ? quote?.lot : pos?.lot) || 100) : 100
+  const cur = CUR[market]
   const [shares, setShares] = useState(step)
+  useEffect(() => { if (buy) setShares((n) => Math.max(step, Math.round(n / step) * step)) }, [step, buy])
   const [busy, setBusy] = useState(false); const [err, setErr] = useState('')
   const max = buy ? 1000000 : Math.max(step, pos?.available_shares ?? 0)
-  const norm = useCallback((n) => { const c = Math.min(Math.max(Number.isFinite(n) ? n : step, step), max); return market === 'cn' && buy ? Math.max(100, Math.floor(c / 100) * 100) : c }, [step, max, market, buy])
-  const quick = buy ? (market === 'cn' ? [100, 500, 1000, 5000] : [1, 10, 50, 100]) : [...new Set([0.25, 0.5, 0.75, 1].map((f) => Math.max(step, Math.floor((max * f) / step) * step)))]
+  const norm = useCallback((n) => { const c = Math.min(Math.max(Number.isFinite(n) ? n : step, step), max); return market !== 'us' && buy ? Math.max(step, Math.floor(c / step) * step) : c }, [step, max, market, buy])
+  const quick = buy ? (market === 'us' ? [1, 10, 50, 100] : [1, 5, 10, 50].map((k) => k * step)) : [...new Set([0.25, 0.5, 0.75, 1].map((f) => Math.max(step, Math.floor((max * f) / step) * step)))]
   const quickLabel = (v) => (buy ? String(v) : v === max ? t('全部') : `${Math.round((v / max) * 100)}%`)
-  const quote = useQuote(buy ? symbol : '', market)
   // Company names ("google", "苹果") find their ticker; hidden once the box holds a quoted ticker
   const suggestions = useSymbolSuggest(buy ? symbol : '', market)
   const exact = suggestions.some((x) => x.symbol === symbol.trim().toUpperCase())
   const showSuggest = suggestions.length > 0 && !(quote?.price && exact)
-  const cost = buy && quote?.price ? quote.price * shares * (market === 'cn' ? 1.0003 : 1) : null
+  const gross = buy && quote?.price ? quote.price * shares : null
+  const cost = gross == null ? null : market === 'cn' ? gross * 1.0003 : market === 'hk' ? gross + hkFee(gross) : gross
   const short = cost != null && cash != null && cost > cash
-  const valid = buy ? symbol.trim() && shares > 0 && (market !== 'cn' || shares % 100 === 0) && !!quote?.price && !short : shares > 0 && shares <= (pos?.available_shares ?? 0)
+  const valid = buy ? symbol.trim() && shares > 0 && (market === 'us' || shares % step === 0) && !!quote?.price && !short : shares > 0 && shares <= (pos?.available_shares ?? 0)
   const est = !buy && pos ? pos.current_price * shares : null
   const tint = buy ? 'var(--accent)' : '#F28B3C'
 
@@ -89,8 +101,8 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
         <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{buy ? t('买入') : t('卖出')}</div>
         {buy ? (
           <div className="m-card">
-            <div className="m-label" style={{ marginBottom: 8 }}>{market === 'cn' ? t('A股 · 股票代码') : t('美股 · 股票代码')}</div>
-            <input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder={market === 'cn' ? t('代码或名称，如 600519、茅台') : t('代码或公司名，如 AAPL、苹果')} autoCapitalize="characters" autoCorrect="off" autoComplete="off" enterKeyHint="search"
+            <div className="m-label" style={{ marginBottom: 8 }}>{t(CODE_LABEL[market])}</div>
+            <input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder={t(PLACEHOLDER[market])} autoCapitalize="characters" autoCorrect="off" autoComplete="off" enterKeyHint="search"
               style={{ width: '100%', minWidth: 0, background: 'none', border: 0, outline: 0, fontSize: symbol ? 28 : 17, fontWeight: symbol ? 800 : 500, fontFamily: symbol ? 'ui-monospace, Menlo, monospace' : 'inherit' }} />
             <div style={{ minHeight: 18, fontSize: 13, marginTop: 4 }}>
               {quote?.price ? <span><b>{quote.name}</b> <span className="m-muted m-num">· {money(quote.price, cur)}</span></span>
@@ -111,7 +123,7 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
                 {PICKS[market].map(([code, label]) => (
                   <button key={code} onClick={() => setSymbol(code)} style={{ padding: '6px 11px', borderRadius: 999, background: 'var(--surface-hi)', fontSize: 12.5, fontWeight: 600 }}>
-                    {market === 'cn' ? label : code}
+                    {market === 'us' || (market !== 'cn' && lang !== 'zh') ? code : label}
                   </button>
                 ))}
               </div>
@@ -124,11 +136,11 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
               {[[t('现价'), money(pos.current_price, cur)], [t('成本'), money(pos.avg_cost, cur)], [t('可卖/持有'), `${pos.available_shares}/${pos.shares}`]].map(([k, v]) => (
                 <div key={k} className="m-tile"><div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 700, fontSize: 13.5, marginTop: 3 }}>{v}</div></div>))}
             </div>
-            {pos.available_shares < pos.shares && <div style={{ fontSize: 12, color: '#F28B3C' }}>{market === 'cn' ? t('T+1：今日买入部分明日可卖') : t('T+2：部分持仓尚未结算')}</div>}
+            {pos.available_shares < pos.shares && (market === 'cn' || market === 'us') && <div style={{ fontSize: 12, color: '#F28B3C' }}>{market === 'cn' ? t('T+1：今日买入部分明日可卖') : t('T+2：部分持仓尚未结算')}</div>}
           </div>
         )}
         <div className="m-card" style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
-          <div className="m-label" style={{ fontWeight: 650 }}>{market === 'cn' ? t('股数（100 的整数倍）') : t('股数')}</div>
+          <div className="m-label" style={{ fontWeight: 650 }}>{market === 'hk' ? t('股数（每手 %lld 股）', step) : market === 'us' ? t('股数') : t('股数（100 的整数倍）')}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button className="m-iconbtn" style={{ width: 46, height: 46, flex: 'none' }} onClick={() => setShares(norm(shares - step))} disabled={shares <= step} aria-label={t('减少')}>−</button>
             <input className="m-num" inputMode="numeric" value={shares} onChange={(e) => setShares(parseInt(e.target.value.replace(/\D/g, ''), 10) || 0)} onBlur={() => setShares(norm(shares))}
@@ -142,6 +154,7 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
         {cost != null && (
           <div className="m-card" style={{ display: 'grid', gap: 10, fontSize: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}><span className="m-muted">{t('预计花费')}</span><b className="m-num">{money(cost, cur)}</b></div>
+            {market === 'hk' && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span className="m-muted">{t('印花税及交易所费用')}</span><span className="m-num">{money(hkFee(gross), cur)}</span></div>}
             {cash != null && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span className="m-muted">{t('可用现金')}</span><b className="m-num" style={{ color: short ? '#ef4444' : undefined }}>{money(cash, cur)}</b></div>}
           </div>
         )}
@@ -161,14 +174,14 @@ function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) 
 
 function Board({ market, onClose }) {
   const t = useT()
-  const cur = market === 'cn' ? '¥' : '$'
+  const cur = CUR[market]
   const [rows, setRows] = useState(null); const [err, setErr] = useState(false)
   useEffect(() => { fetch(`/api/paper/leaderboard?device_id=${deviceId()}&market=${market}`).then((r) => r.json()).then(setRows).catch(() => setErr(true)) }, [market])
   const medal = ['#F5C542', '#B8C2D0', '#D98A4E']
   return (
     <Sheet onClose={onClose}>
       <div className="m-stack" style={{ gap: 16 }}>
-        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('收益排行榜')} · {market === 'cn' ? t('A股') : t('美股')}</div>
+        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('收益排行榜')} · {t(chipLabel(market))}</div>
         {err ? <ErrorBox onRetry={() => { setErr(false); window.location.reload() }} /> : !rows ? <Skeleton h={180} r={20} /> : rows.length === 0 ? (
           <div className="m-muted" style={{ textAlign: 'center', fontSize: 14, padding: '24px 8px' }}>{t('还没有人在这个市场交易过，完成第一笔交易就能上榜')}</div>
         ) : (
@@ -211,7 +224,8 @@ export default function Paper() {
       const q = new URLSearchParams(window.location.search)
       const sym = (q.get('buy') || '').trim().toUpperCase()
       if (q.has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)   // a reload should not reopen the order
-      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { sym, market: q.get('market') === 'cn' ? 'cn' : 'us' } : null
+      const m = ['cn', 'hk', 'jp'].includes(q.get('market')) ? q.get('market') : 'us'
+      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { sym, market: m } : null
     } catch { return null }
   })
   const [market, setMarket] = useState(prefill?.market || 'us')
@@ -226,13 +240,16 @@ export default function Paper() {
   }, [])
   useEffect(() => { if (!toast) return undefined; const id = setTimeout(() => setToast(''), 3200); return () => clearTimeout(id) }, [toast])
 
-  const cn = market === 'cn'
-  const cur = cn ? '¥' : '$'
-  const view = useMemo(() => acc && ({
-    total: cn ? acc.total_value : acc.us_total_value, ret: cn ? acc.return_pct : acc.us_return_pct, cash: cn ? acc.cash : acc.us_cash,
-    positions: Object.entries(cn ? acc.portfolio : acc.us_portfolio).sort(([a], [b]) => a.localeCompare(b)),
-    txs: [...(cn ? acc.transactions : acc.us_transactions)].reverse().slice(0, 10),
-  }), [acc, cn])
+  const cur = CUR[market]
+  // The server sends every market in one shape: acc.markets.us / cn / hk / jp
+  const view = useMemo(() => {
+    const m = acc?.markets?.[market]
+    return m && {
+      total: m.total_value, ret: m.return_pct, cash: m.cash, rank: m.rank,
+      positions: Object.entries(m.portfolio || {}).sort(([a], [b]) => a.localeCompare(b)),
+      txs: [...(m.transactions || [])].reverse().slice(0, 10), count: (m.transactions || []).length,
+    }
+  }, [acc, market])
 
   if (err && !acc) return <ErrorBox onRetry={load} />
   const accent = view ? changeColor(view.ret, market) : 'var(--text-2)'
@@ -246,14 +263,14 @@ export default function Paper() {
         <button className="m-iconbtn" onClick={() => setSheet('board')} aria-label={t('收益排行榜')}>🏆</button>
       </div>
       {/* The switch drives the whole page (account card, positions, trades), so it sits on top */}
-      <div style={{ margin: '-8px 2px -6px' }}><Segment value={market} onChange={setMarket} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
+      <div style={{ margin: '-8px 2px -6px' }}><Segment value={market} onChange={setMarket} options={['us', 'cn', 'hk', 'jp'].map((m) => ({ value: m, label: t(chipLabel(m)) }))} /></div>
 
       {!view ? <Skeleton h={220} r={24} /> : (
         <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `linear-gradient(135deg, color-mix(in srgb, ${view.ret === 0 ? 'var(--accent)' : accent} 20%, var(--surface)), var(--surface) 60%)` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="m-muted" style={{ fontWeight: 650, fontSize: 14 }}>{cn ? t('A股账户') : t('美股账户')}</span>
-            {(cn ? acc.rank : acc.us_rank) > 0 && (
-              <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>🏆 #{cn ? acc.rank : acc.us_rank}</span>
+            <span className="m-muted" style={{ fontWeight: 650, fontSize: 14 }}>{t(ACCOUNT_LABEL[market])}</span>
+            {view.rank > 0 && (
+              <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>🏆 #{view.rank}</span>
             )}
           </div>
           <div>
@@ -281,7 +298,7 @@ export default function Paper() {
         </div>
       )}
 
-      {acc && <PaperPerformance deviceId={deviceId()} market={market} refreshKey={`${(cn ? acc.transactions : acc.us_transactions)?.length ?? 0}-${view?.cash}`} />}
+      {acc && <PaperPerformance deviceId={deviceId()} market={market} refreshKey={`${view?.count ?? 0}-${view?.cash}`} />}
 
       <Section title={t('持仓')} action={null}>
         {view && (view.positions.length === 0 ? (
@@ -330,7 +347,7 @@ export default function Paper() {
         <Sheet onClose={() => setSheet(null)}>
           <div className="m-stack" style={{ gap: 14, textAlign: 'center' }}>
             <b style={{ fontSize: 17 }}>{t('确认重置账户')}</b>
-            <p className="m-muted" style={{ margin: 0, fontSize: 14 }}>{t('所有持仓和交易记录将清除，初始资金将恢复至 100万元（A股）/ $10万（美股）。')}</p>
+            <p className="m-muted" style={{ margin: 0, fontSize: 14 }}>{t('所有持仓和交易记录将清除，四个账户恢复初始资金：美股 $10万、A股 100万元、港股 HK$100万、日股 ¥1000万。')}</p>
             <button className="m-btn" style={{ background: '#ef4444' }} onClick={async () => { try { await post('/reset', {}); done(t('重置')) } catch (e) { setToast(e.message) } }}>{t('重置')}</button>
             <button className="m-btn ghost" onClick={() => setSheet(null)}>{t('取消')}</button>
           </div>
