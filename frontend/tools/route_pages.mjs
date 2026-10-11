@@ -1,8 +1,9 @@
-// After `vite build`: write dist/<route>/index.html for each top-level page with its own title,
-// description, Open Graph tags and canonical URL. nginx serves /heatmap from dist/heatmap/index.html
-// (try_files $uri $uri/ /index.html, no-cache), so crawlers and link previews stop seeing every page
-// as a copy of the home page. The app itself is unchanged: same scripts, same SPA routing.
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+// After `vite build`: write dist/<route>.html for each top-level page with its own title,
+// description, Open Graph tags and canonical URL, so crawlers and link previews stop seeing every
+// page as a copy of the home page. The app itself is unchanged: same scripts, same SPA routing.
+// nginx picks these up with `try_files $uri $uri.html /index.html;` in `location /`. (Not
+// dist/<route>/index.html: a directory makes nginx redirect /heatmap to /heatmap/.)
+import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -39,8 +40,6 @@ for (const [route, [title, desc]] of Object.entries(PAGES)) {
   html = swap(html, /<meta name="twitter:title" content="[^"]*"/, `<meta name="twitter:title" content="${esc(title)}"`)
   html = swap(html, /<meta name="twitter:description" content="[^"]*"/, `<meta name="twitter:description" content="${esc(desc)}"`)
   html = swap(html, /<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${url}"`)
-  const out = join(dist, route, 'index.html')
-  mkdirSync(dirname(out), { recursive: true })
-  writeFileSync(out, html)
+  writeFileSync(join(dist, `${route}.html`), html)
 }
 console.log(`route pages: ${Object.keys(PAGES).length} written`)

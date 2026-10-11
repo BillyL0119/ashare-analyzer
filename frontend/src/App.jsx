@@ -105,7 +105,7 @@ export default function App() {
   const studyRouteMatch = location.pathname.match(/^\/study\/(\w+)$/)
   const appTab = stockRouteMatch ? 'analysis'
     : studyRouteMatch ? 'study'
-    : (PATH_TABS[location.pathname] || 'analysis')
+    : (PATH_TABS[location.pathname.replace(/(.)\/+$/, '$1')] || 'analysis')   // '/heatmap/' is '/heatmap'
   const [showStats,        setShowStats]        = useState(false)
   const [scrolled,         setScrolled]         = useState(false)
   const [showInsight,      setShowInsight]      = useState(false)
