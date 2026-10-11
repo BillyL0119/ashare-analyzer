@@ -182,17 +182,17 @@ def _fetch_news_cn(symbol: str, start_date: str, end_date: str) -> list:
         return []
 
 
-def _fetch_news_us(symbol: str, start_date: str, end_date: str) -> list:
+def _fetch_news_us(symbol: str, start_date: str, end_date: str) -> tuple[list, bool]:
     """Headlines about this ticker inside the range, from the news tab's Yahoo + Nasdaq feed
     (relevance filtered). Both feeds only reach back a few weeks, so older ranges get []
     and the AI falls back to a technical-only reading."""
     import email.utils
     try:
         from routers.news import _us_symbol_news
-        items, _ = _us_symbol_news(symbol, want=40)
+        items, complete = _us_symbol_news(symbol, want=40)
     except Exception as exc:
         logger.debug("US news failed for %s: %s", symbol, exc)
-        return []
+        return [], False
     result = []
     for it in items:
         try:
@@ -202,7 +202,7 @@ def _fetch_news_us(symbol: str, start_date: str, end_date: str) -> list:
         if start_date <= day <= end_date and it.get("title"):
             result.append({"title": it["title"], "source": it.get("source") or "News", "date": day})
     result.sort(key=lambda x: x["date"], reverse=True)
-    return result[:10]
+    return result[:10], complete
 
 
 # ── Prompt building ───────────────────────────────────────────────────────────
@@ -502,8 +502,9 @@ def analyze_kline_segment(req: SegmentRequest):
     }
 
     # ── News in selected range ────────────────────────────────────────────────
+    news_complete = True
     if is_us:
-        news = _fetch_news_us(symbol, req.start_date, req.end_date)
+        news, news_complete = _fetch_news_us(symbol, req.start_date, req.end_date)
     else:
         news = _fetch_news_cn(symbol, req.start_date, req.end_date)
 
@@ -528,7 +529,7 @@ def analyze_kline_segment(req: SegmentRequest):
         "ai_source":   ai_source,
         "lang":        lang,
     }
-    if ai_source != "none":
+    if ai_source != "none" and news_complete:     # a slow news feed gets another chance next time
         if len(_result_cache) > 500:
             _result_cache.clear()
         _result_cache[cache_key] = (time.time(), out)
