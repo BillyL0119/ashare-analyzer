@@ -2101,6 +2101,30 @@ export const STR = {
   "왜 중요한가",
   "Pourquoi c'est important"
  ],
+ "模拟买入": [
+  "Paper trade",
+  "模擬購入",
+  "모의 매수",
+  "Acheter (fictif)"
+ ],
+ "没有找到这只股票": [
+  "No stock found with this code",
+  "この銘柄は見つかりません",
+  "이 종목을 찾을 수 없습니다",
+  "Aucune action trouvée pour ce code"
+ ],
+ "预计花费": [
+  "Estimated cost",
+  "概算費用",
+  "예상 비용",
+  "Coût estimé"
+ ],
+ "好的": [
+  "OK",
+  "OK",
+  "확인",
+  "OK"
+ ],
  "刚刚": [
   "Just now",
   "たった今",

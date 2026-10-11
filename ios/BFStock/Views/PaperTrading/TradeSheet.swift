@@ -8,6 +8,7 @@ enum TradeMode {
 struct TradeSheet: View {
     let market: Market
     let mode: TradeMode
+    var initialSymbol: String? = nil          // opened from a stock page: the order starts filled in
     let onConfirm: (String, Int, Market) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -86,6 +87,7 @@ struct TradeSheet: View {
                 setShares(min(minStep, max(minStep, pos.availableSharesInt)))
             } else {
                 setShares(minStep)
+                if let s = initialSymbol, buySymbol.isEmpty { buySymbol = s }
             }
         }
     }

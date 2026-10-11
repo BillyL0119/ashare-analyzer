@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // Fixed bar heights to avoid Math.random() re-renders
 const SK_KLINE = [45,62,38,71,55,48,66,42,78,52,60,35,70,58,44,68,51,74,40,63]
@@ -29,6 +30,7 @@ export default function StockCard({ stock }) {
   const inWatchlist = wlHas(code)
   const t = T[lang]
   const isMobile = useMobile()
+  const nav = useNavigate()
 
   const { data, loading, error, quote, refetch } = useStockData(code, {
     period,
@@ -198,6 +200,21 @@ export default function StockCard({ stock }) {
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
           {t.exportBtn}
+        </button>
+
+        {/* Practise with this stock in paper trading (order form opens filled in) */}
+        <button
+          onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
+          title={t.paperTradeHint}
+          style={{
+            padding: '3px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 12, fontWeight: 600,
+            border: '1px solid rgba(52,211,153,0.4)', background: 'rgba(52,211,153,0.1)', color: '#34d399',
+            whiteSpace: 'nowrap', transition: 'background 0.15s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(52,211,153,0.2)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(52,211,153,0.1)' }}
+        >
+          {t.paperTradeBtn}
         </button>
 
         {/* Watchlist star */}

@@ -117,27 +117,45 @@ def _migrate_account(account: dict) -> dict:
 
 
 def _get_realtime_price(symbol: str) -> tuple[float, str]:
-    """Return (price, name) or raise HTTPException."""
+    """Return (price, name) or raise HTTPException. Two quick attempts, then Tencent's batch feed:
+    a single network blip used to fail the whole order."""
+    for _ in range(2):
+        try:
+            from services.stock_service import get_realtime_quote
+            q = get_realtime_quote(symbol)
+            if q and q.get("price"):
+                return float(q["price"]), q.get("name", symbol)
+        except Exception as e:
+            logger.warning("realtime price for %s: %s", symbol, e)
     try:
-        from services.stock_service import get_realtime_quote
-        q = get_realtime_quote(symbol)
-        if q and q.get("price"):
-            return float(q["price"]), q.get("name", symbol)
+        from services.stock_service import tencent_quotes
+        q = tencent_quotes([symbol], timeout=6).get(symbol) or {}
+        if q.get("price"):
+            return float(q["price"]), q.get("name") or symbol
     except Exception as e:
-        logger.warning("realtime price for %s: %s", symbol, e)
+        logger.warning("Tencent fallback price for %s: %s", symbol, e)
     raise HTTPException(status_code=503, detail=f"无法获取 {symbol} 实时价格，请稍后重试")
 
 
 def _get_us_realtime_price(symbol: str) -> tuple[float, str]:
-    """Return (price, name) for a US ticker from Tencent's quote feed (yfinance is rate limited from the server)."""
+    """Return (price, name) for a US ticker: Tencent's quote feed (two attempts), then the same
+    cached lookup the quote shown on the page comes from, so a price the user can see can be traded."""
     sym = symbol.upper().replace("-", ".")
+    for _ in range(2):
+        try:
+            from routers.us_market import us_quotes
+            q = us_quotes([sym]).get(sym)
+            if q and q.get("price"):
+                return float(q["price"]), q.get("name") or sym
+        except Exception as e:
+            logger.warning("US realtime price for %s: %s", symbol, e)
     try:
-        from routers.us_market import us_quotes
-        q = us_quotes([sym]).get(sym)
-        if q and q.get("price"):
+        from routers.us_stocks import get_us_realtime
+        q = get_us_realtime(sym) or {}
+        if q.get("price"):
             return float(q["price"]), q.get("name") or sym
     except Exception as e:
-        logger.warning("US realtime price for %s: %s", symbol, e)
+        logger.warning("US fallback price for %s: %s", symbol, e)
     raise HTTPException(status_code=503, detail=f"Cannot fetch price for {symbol}. Try again later.")
 
 
@@ -321,12 +339,27 @@ class BuyBody(BaseModel):
     symbol: str
     shares: int
     market: Optional[str] = "cn"   # "cn" or "us"
+    lang: Optional[str] = None     # language of the confirmation message (old clients: by market)
 
 class SellBody(BaseModel):
     device_id: str
     symbol: str
     shares: int
     market: Optional[str] = "cn"
+    lang: Optional[str] = None
+
+
+_MSG = {
+    "buy": {"zh": "成功买入 {name} {shares} 股", "en": "Bought {shares} shares of {name}", "ja": "{name} を {shares} 株購入しました",
+            "ko": "{name} {shares}주 매수 완료", "fr": "Achat de {shares} actions {name} effectué"},
+    "sell": {"zh": "成功卖出 {name} {shares} 股", "en": "Sold {shares} shares of {name}", "ja": "{name} を {shares} 株売却しました",
+             "ko": "{name} {shares}주 매도 완료", "fr": "Vente de {shares} actions {name} effectuée"},
+}
+
+
+def _msg(kind: str, lang: Optional[str], market: str, **kw) -> str:
+    lang = lang if lang in ("zh", "en", "ja", "ko", "fr") else ("en" if market == "us" else "zh")
+    return _MSG[kind][lang].format(**kw)
 
 
 # ── Endpoints ────────────────────────────────────────────────────────────────
@@ -469,7 +502,7 @@ def buy_stock(body: BuyBody):
 
         return {
             "success":        True,
-            "message":        f"Bought {shares} shares of {name}",
+            "message":        _msg("buy", body.lang, "us", name=name, shares=shares),
             "price":          price,
             "commission":     commission,
             "total_cost":     total_cost,
@@ -535,7 +568,7 @@ def buy_stock(body: BuyBody):
 
     return {
         "success":        True,
-        "message":        f"成功买入 {name} {shares} 股",
+        "message":        _msg("buy", body.lang, "cn", name=name, shares=shares),
         "price":          price,
         "commission":     commission,
         "total_cost":     total_cost,
@@ -620,7 +653,7 @@ def sell_stock(body: SellBody):
 
         return {
             "success":         True,
-            "message":         f"Sold {shares} shares of {name}",
+            "message":         _msg("sell", body.lang, "us", name=name, shares=shares),
             "price":           price,
             "commission":      commission,
             "net_proceeds":    net_proceeds,
@@ -690,7 +723,7 @@ def sell_stock(body: SellBody):
 
     return {
         "success":         True,
-        "message":         f"成功卖出 {name} {shares} 股",
+        "message":         _msg("sell", body.lang, "cn", name=name, shares=shares),
         "price":           price,
         "commission":      commission,
         "net_proceeds":    net_proceeds,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import useAuthStore from '../store/authStore'
 import { T } from '../i18n/translations'
 
@@ -208,13 +208,22 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const [err,      setErr]     = useState(null)
 
   // Market toggle for paper trading
-  const [ptMarket, setPtMarket] = useState('us')   // 'us' | 'cn' (US first)
+  // /paper?buy=AAPL&market=us (from a stock page's "Paper trade" button) opens with the order filled in
+  const prefill = useRef((() => {
+    try {
+      const q = new URLSearchParams(window.location.search)
+      const sym = (q.get('buy') || '').trim().toUpperCase()
+      if (q.has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)   // a reload should not reopen the order
+      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { sym, market: q.get('market') === 'cn' ? 'cn' : 'us' } : null
+    } catch { return null }
+  })())
+  const [ptMarket, setPtMarket] = useState(prefill.current?.market || 'us')   // 'us' | 'cn' (US first)
   const isUS = ptMarket === 'us'
   const currSym = isUS ? '$' : '¥'
 
   // Buy form
-  const [buyCode,    setBuyCode]    = useState('')
-  const [buyShares,  setBuyShares]  = useState(100)
+  const [buyCode,    setBuyCode]    = useState(prefill.current?.sym || '')
+  const [buyShares,  setBuyShares]  = useState(ptMarket === 'us' ? 1 : 100)
   const [quoteInfo,  setQuoteInfo]  = useState(null)   // {price, name}
   const [quoteLoading, setQuoteLoading] = useState(false)
   const [buyMsg,     setBuyMsg]     = useState(null)   // {type:'success'|'error', text}
@@ -284,7 +293,11 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   }, [buyCode, isUS])
 
   // Reset shares when switching market
+  // Only an actual switch clears the form (not the first run, which would wipe a prefilled order)
+  const formMarket = useRef(ptMarket)
   useEffect(() => {
+    if (formMarket.current === ptMarket) return
+    formMarket.current = ptMarket
     setBuyCode('')
     setBuyShares(isUS ? 1 : 100)
     setQuoteInfo(null)
@@ -298,7 +311,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       const res = await fetch('/api/paper/buy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: accountKey, symbol: buyCode, shares: buyShares, market: ptMarket }),
+        body: JSON.stringify({ device_id: accountKey, symbol: buyCode, shares: buyShares, market: ptMarket, lang }),
       })
       const data = await res.json()
       if (!res.ok) { setBuyMsg({ type: 'error', text: data.detail }); return }
@@ -317,7 +330,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       const res = await fetch('/api/paper/sell', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: accountKey, symbol: sellModal.symbol, shares, market: ptMarket }),
+        body: JSON.stringify({ device_id: accountKey, symbol: sellModal.symbol, shares, market: ptMarket, lang }),
       })
       const data = await res.json()
       if (!res.ok) { setActionMsg({ type: 'error', text: data.detail }); return }
@@ -805,7 +818,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       </Card>
 
       <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', paddingBottom: 8 }}>
-        {t.ptFooter}
+        {ptMarket === 'us' ? t.ptFooterUS : t.ptFooter}
       </div>
     </div>
   )

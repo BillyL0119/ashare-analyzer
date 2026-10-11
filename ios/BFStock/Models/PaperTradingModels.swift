@@ -83,6 +83,7 @@ struct BuyBody: Encodable {
     let symbol: String
     let shares: Int
     let market: String
+    var lang: String = Lang.code      // language of the confirmation message
 }
 
 struct SellBody: Encodable {
@@ -90,4 +91,5 @@ struct SellBody: Encodable {
     let symbol: String
     let shares: Int
     let market: String
+    var lang: String = Lang.code
 }

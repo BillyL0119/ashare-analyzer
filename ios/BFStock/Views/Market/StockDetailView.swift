@@ -8,6 +8,9 @@ struct StockDetailView: View {
 
     @StateObject private var vm: StockDetailViewModel
     @ObservedObject private var watchlist = WatchlistStore.shared
+    @StateObject private var paper = PaperTradingViewModel()
+    @State private var showPaperTrade = false
+    @State private var paperMessage: String?
 
     init(code: String, name: String, market: Market) {
         self.code = code
@@ -102,6 +105,17 @@ struct StockDetailView: View {
         }
         .task { await vm.loadAll() }
         .refreshable { await vm.loadAll() }
+        .sheet(isPresented: $showPaperTrade) {
+            TradeSheet(market: market, mode: .buy, initialSymbol: code) { symbol, shares, mkt in
+                Task {
+                    await paper.buy(symbol: symbol, shares: shares, market: mkt)
+                    paperMessage = paper.tradeError ?? paper.tradeResult?.message
+                }
+            }
+        }
+        .alert(paperMessage ?? "", isPresented: Binding(get: { paperMessage != nil }, set: { if !$0 { paperMessage = nil } })) {
+            Button(L("好的"), role: .cancel) {}
+        }
         .safeAreaInset(edge: .bottom) {
             Text("disclaimer")
                 .font(.caption2)
@@ -153,6 +167,15 @@ struct StockDetailView: View {
                         .padding(.vertical, 2)
                         .background(DS.surfaceHi, in: Capsule())
                         .foregroundStyle(.secondary)
+                    Spacer(minLength: 6)
+                    Button { showPaperTrade = true } label: {
+                        Text(L("模拟买入"))
+                            .font(.caption.weight(.bold))
+                            .padding(.horizontal, 12).padding(.vertical, 6)
+                            .foregroundStyle(.white)
+                            .background(DS.accent, in: Capsule())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

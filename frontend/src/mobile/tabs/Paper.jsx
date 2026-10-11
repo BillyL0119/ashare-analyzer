@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import useLangStore from '../../store/langStore'
 import { useT } from '../i18n'
 import { num, pct } from '../data'
 import { changeColor } from '../helpers'
@@ -28,8 +29,32 @@ function Sheet({ onClose, children }) {
   )
 }
 
-function TradeSheet({ market, mode, pos, symbol: sym0, onClose, onDone }) {
+const PICKS = {
+  us: [['AAPL', 'Apple'], ['NVDA', 'NVIDIA'], ['MSFT', 'Microsoft'], ['TSLA', 'Tesla'], ['SPY', 'S&P 500 ETF'], ['QQQ', 'Nasdaq 100 ETF']],
+  cn: [['600519', '贵州茅台'], ['300750', '宁德时代'], ['601318', '中国平安'], ['000858', '五粮液'], ['600036', '招商银行'], ['510300', '沪深300ETF']],
+}
+
+/** Live quote for the code being typed, so the order shows what it buys and roughly what it costs. */
+function useQuote(symbol, market) {
+  const [q, setQ] = useState(null)   // null = nothing to show, {name, price} or {missing: true}
+  useEffect(() => {
+    const sym = symbol.trim().toUpperCase()
+    if (!sym || (market === 'cn' && !/^\d{6}$/.test(sym))) { setQ(null); return }
+    let alive = true
+    const id = setTimeout(() => {
+      fetch(market === 'us' ? `/api/us/stock/${encodeURIComponent(sym)}/realtime` : `/api/stocks/${sym}/realtime`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (alive) setQ(d?.price ? { name: d.name || sym, price: Number(d.price) } : { missing: true }) })
+        .catch(() => { if (alive) setQ({ missing: true }) })
+    }, 350)
+    return () => { alive = false; clearTimeout(id) }
+  }, [symbol, market])
+  return q
+}
+
+function TradeSheet({ market, mode, pos, symbol: sym0, cash, onClose, onDone }) {
   const t = useT()
+  const lang = useLangStore((st) => st.lang)
   const buy = mode === 'buy'
   const step = market === 'cn' ? 100 : 1
   const cur = market === 'cn' ? '¥' : '$'
@@ -40,13 +65,16 @@ function TradeSheet({ market, mode, pos, symbol: sym0, onClose, onDone }) {
   const norm = useCallback((n) => { const c = Math.min(Math.max(Number.isFinite(n) ? n : step, step), max); return market === 'cn' && buy ? Math.max(100, Math.floor(c / 100) * 100) : c }, [step, max, market, buy])
   const quick = buy ? (market === 'cn' ? [100, 500, 1000, 5000] : [1, 10, 50, 100]) : [...new Set([0.25, 0.5, 0.75, 1].map((f) => Math.max(step, Math.floor((max * f) / step) * step)))]
   const quickLabel = (v) => (buy ? String(v) : v === max ? t('全部') : `${Math.round((v / max) * 100)}%`)
-  const valid = buy ? symbol.trim() && shares > 0 && (market !== 'cn' || shares % 100 === 0) : shares > 0 && shares <= (pos?.available_shares ?? 0)
+  const quote = useQuote(buy ? symbol : '', market)
+  const cost = buy && quote?.price ? quote.price * shares * (market === 'cn' ? 1.0003 : 1) : null
+  const short = cost != null && cash != null && cost > cash
+  const valid = buy ? symbol.trim() && shares > 0 && (market !== 'cn' || shares % 100 === 0) && !!quote?.price && !short : shares > 0 && shares <= (pos?.available_shares ?? 0)
   const est = !buy && pos ? pos.current_price * shares : null
   const tint = buy ? 'var(--accent)' : '#F28B3C'
 
   const go = async () => {
     setBusy(true); setErr('')
-    try { const r = await post(buy ? '/buy' : '/sell', { symbol: (buy ? symbol.trim() : sym0).toUpperCase(), shares, market }); onDone(r.message || t('买入成功')) }
+    try { const r = await post(buy ? '/buy' : '/sell', { symbol: (buy ? symbol.trim() : sym0).toUpperCase(), shares, market, lang }); onDone(r.message || t('买入成功')) }
     catch (e) { setErr(e.message); setBusy(false) }
   }
   return (
@@ -58,6 +86,19 @@ function TradeSheet({ market, mode, pos, symbol: sym0, onClose, onDone }) {
             <div className="m-label" style={{ marginBottom: 8 }}>{market === 'cn' ? t('A股 · 股票代码') : t('美股 · 股票代码')}</div>
             <input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder={market === 'cn' ? t('如 000001') : t('如 AAPL')} autoCapitalize="characters" autoCorrect="off" inputMode={market === 'cn' ? 'numeric' : 'text'}
               style={{ width: '100%', minWidth: 0, background: 'none', border: 0, outline: 0, fontSize: 28, fontWeight: 800, fontFamily: 'ui-monospace, Menlo, monospace' }} />
+            <div style={{ minHeight: 18, fontSize: 13, marginTop: 4 }}>
+              {quote?.price ? <span><b>{quote.name}</b> <span className="m-muted m-num">· {money(quote.price, cur)}</span></span>
+                : quote?.missing ? <span style={{ color: '#ef4444' }}>{t('没有找到这只股票')}</span> : null}
+            </div>
+            {!symbol.trim() && (
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
+                {PICKS[market].map(([code, label]) => (
+                  <button key={code} onClick={() => setSymbol(code)} style={{ padding: '6px 11px', borderRadius: 999, background: 'var(--surface-hi)', fontSize: 12.5, fontWeight: 600 }}>
+                    {market === 'cn' ? label : code}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="m-card" style={{ display: 'grid', gap: 12 }}>
@@ -81,6 +122,12 @@ function TradeSheet({ market, mode, pos, symbol: sym0, onClose, onDone }) {
             {quick.map((v) => <button key={v} onClick={() => setShares(norm(v))} className="m-num" style={{ flex: 1, padding: '8px 0', borderRadius: 999, fontWeight: 700, fontSize: 13, background: shares === v ? tint : 'var(--surface-hi)', color: shares === v ? '#fff' : 'var(--text)' }}>{quickLabel(v)}</button>)}
           </div>
         </div>
+        {cost != null && (
+          <div className="m-card" style={{ display: 'grid', gap: 10, fontSize: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span className="m-muted">{t('预计花费')}</span><b className="m-num">{money(cost, cur)}</b></div>
+            {cash != null && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span className="m-muted">{t('可用现金')}</span><b className="m-num" style={{ color: short ? '#ef4444' : undefined }}>{money(cash, cur)}</b></div>}
+          </div>
+        )}
         {est != null && (
           <div className="m-card" style={{ display: 'grid', gap: 10, fontSize: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}><span className="m-muted">{t('预计成交金额')}</span><b className="m-num">{money(est, cur)}</b></div>
@@ -141,8 +188,17 @@ function Board({ market, onClose }) {
 export default function Paper() {
   const t = useT()
   const [acc, setAcc] = useState(null); const [err, setErr] = useState(null)
-  const [market, setMarket] = useState('us')
-  const [sheet, setSheet] = useState(null) // {mode, symbol, pos} | 'board' | 'reset'
+  // /paper?buy=AAPL&market=us (a stock page's "Paper trade" button) opens the buy sheet filled in
+  const [prefill] = useState(() => {
+    try {
+      const q = new URLSearchParams(window.location.search)
+      const sym = (q.get('buy') || '').trim().toUpperCase()
+      if (q.has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)   // a reload should not reopen the order
+      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { sym, market: q.get('market') === 'cn' ? 'cn' : 'us' } : null
+    } catch { return null }
+  })
+  const [market, setMarket] = useState(prefill?.market || 'us')
+  const [sheet, setSheet] = useState(prefill ? { mode: 'buy', symbol: prefill.sym } : null) // {mode, symbol, pos} | 'board' | 'reset'
   const [toast, setToast] = useState('')
 
   const load = useCallback(async () => { try { setAcc(await post('/account', {})); setErr(null) } catch (e) { setErr(e) } }, [])
@@ -249,7 +305,7 @@ export default function Paper() {
       <button onClick={() => setSheet({ mode: 'buy' })} aria-label={t('买入')} style={{ position: 'fixed', right: 20, bottom: 'calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 16px)', width: 56, height: 56, borderRadius: 28, color: '#fff', fontSize: 30, lineHeight: 1,
         background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', boxShadow: '0 8px 22px color-mix(in srgb, var(--accent) 45%, transparent)', zIndex: 15 }}>+</button>
 
-      {sheet?.mode && <TradeSheet market={market} mode={sheet.mode} pos={sheet.pos} symbol={sheet.symbol} onClose={() => setSheet(null)} onDone={done} />}
+      {sheet?.mode && <TradeSheet market={market} mode={sheet.mode} pos={sheet.pos} symbol={sheet.symbol} cash={view?.cash} onClose={() => setSheet(null)} onDone={done} />}
       {sheet === 'board' && <Board market={market} onClose={() => setSheet(null)} />}
       {sheet === 'reset' && (
         <Sheet onClose={() => setSheet(null)}>
