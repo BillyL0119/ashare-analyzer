@@ -31,6 +31,7 @@ from routers.sectors import router as sectors_router
 from routers.quotes import router as quotes_router
 from routers.kline_analysis import router as kline_analysis_router
 from routers.career import router as career_router
+from routers.fundamentals import router as fundamentals_router
 
 app = FastAPI(
     title="Best Friend Ashare API",
@@ -380,3 +381,4 @@ app.include_router(sectors_router, prefix="/api/sectors", tags=["sectors"])
 app.include_router(quotes_router, prefix="/api/quotes", tags=["quotes"])
 app.include_router(kline_analysis_router, prefix="/api/analysis", tags=["kline_analysis"])
 app.include_router(career_router, prefix="/api/career", tags=["career"])
+app.include_router(fundamentals_router, prefix="/api/us/fundamentals", tags=["fundamentals"])
