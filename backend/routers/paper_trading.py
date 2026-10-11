@@ -810,7 +810,8 @@ def _performance(account: dict, market: str) -> dict:
     days = sorted(d for d in bench if d >= first)
     before = [d for d in sorted(bench) if d < first]
     if not days or not before:
-        return {"points": [], "benchmark": bench_name, "initial": initial}
+        # Traded after the last session (weekend, overnight): the first point comes with the next close
+        return {"points": [], "benchmark": bench_name, "initial": initial, "pending": True}
     base_day = before[-1]
     base_bench = bench[base_day]
 
