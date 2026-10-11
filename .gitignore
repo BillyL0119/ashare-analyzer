@@ -11,3 +11,9 @@ __pycache__/
 *.key
 *.pem
 secrets/
+
+# runtime account data (never commit)
+backend/data/users.json
+backend/data/roles.json
+backend/data/*.lock
+backend/data/*.tmp

@@ -398,3 +398,6 @@ app.include_router(kline_analysis_router, prefix="/api/analysis", tags=["kline_a
 app.include_router(career_router, prefix="/api/career", tags=["career"])
 app.include_router(fundamentals_router, prefix="/api/us/fundamentals", tags=["fundamentals"])
 app.include_router(screener_router, prefix="/api/us/screener", tags=["screener"])
+from routers.admin import auth_router, admin_router
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+app.include_router(admin_router, prefix="/api/admin", tags=["admin"])

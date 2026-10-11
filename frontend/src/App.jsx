@@ -23,6 +23,7 @@ const DailyNewsPage      = lazy(() => import('./components/DailyNewsPage'))
 const BankViewsPage      = lazy(() => import('./components/BankViewsPage'))
 const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
 const ScreenerPage       = lazy(() => import('./components/ScreenerPage'))
+const AdminPage          = lazy(() => import('./components/AdminPage'))
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import useCompareStore from './store/compareStore'
@@ -60,7 +61,13 @@ const TAB_PATHS = {
   bank_views:   '/bank_views',
   career:       '/career',
   ai_teacher:   '/ai-teacher',
+  admin:        '/admin',
 }
+const ROLE_LABELS = {
+  admin:  { en: 'Admin', zh: '管理员', ja: '管理者', ko: '관리자', fr: 'Admin' },
+  member: { en: 'Member', zh: '会员', ja: 'メンバー', ko: '멤버', fr: 'Membre' },
+}
+const ADMIN_LINK = { en: 'Admin dashboard', zh: '管理员看板', ja: '管理ダッシュボード', ko: '관리자 대시보드', fr: 'Tableau de bord admin' }
 const PATH_TABS = Object.fromEntries(Object.entries(TAB_PATHS).map(([k, v]) => [v, k]))
 
 const LANG_OPTIONS = [
@@ -75,7 +82,7 @@ export default function App() {
   const { market, setMarket, selectedSymbols, switchMarketAndAddSymbol } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme, setTheme } = useThemeStore()
-  const { user, loading: authLoading, init: initAuth, signOut,
+  const { user, role, loading: authLoading, init: initAuth, signOut,
           setLangPreference, setThemePreference, setKnowledgeDateSeen,
           setWatchlistPreference } = useAuthStore()
   const t = T[lang]
@@ -185,9 +192,12 @@ export default function App() {
       bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究观点',
       career:       'BestFriendStock | 求职指南 - 金融行业职业规划与模拟面试',
       screener:     'BestFriendStock | 美股选股器 - US Stock Screener',
+      admin:        'BestFriendStock | Admin',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
     document.title = titles[appTab] || titles.analysis
+    const robots = document.querySelector('meta[name="robots"]')
+    if (robots) robots.setAttribute('content', appTab === 'admin' ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large')
     let canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
       canonical.setAttribute('href', 'https://bestfriendstock.com' + location.pathname)
@@ -617,8 +627,25 @@ export default function App() {
                       <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {user.email}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{t.signedIn}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {t.signedIn}
+                        {role !== 'user' && (
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 999, color: role === 'admin' ? '#0ea5e9' : '#fbbf24', background: role === 'admin' ? 'rgba(14,165,233,0.14)' : 'rgba(251,191,36,0.14)' }}>
+                            {(ROLE_LABELS[role] || ROLE_LABELS.admin)[lang] || (ROLE_LABELS[role] || ROLE_LABELS.admin).en}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                    {role === 'admin' && (
+                      <button
+                        onClick={() => { setShowUserMenu(false); navigate('/admin') }}
+                        style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                      >
+                        {ADMIN_LINK[lang] || ADMIN_LINK.en}
+                      </button>
+                    )}
                     <button
                       onClick={async () => { setShowUserMenu(false); document.cookie = 'bfs_lang_hint=; path=/; max-age=0; SameSite=Lax'; await signOut() }}
                       style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#ef5350', transition: 'background 0.12s' }}
@@ -733,6 +760,8 @@ export default function App() {
             <CareerGuidePage lang={lang} />
           ) : appTab === 'screener' ? (
             <ScreenerPage lang={lang} />
+          ) : appTab === 'admin' ? (
+            <AdminPage lang={lang} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'ai_teacher' ? (
             <AITeacherPage lang={lang} />
           ) : (
