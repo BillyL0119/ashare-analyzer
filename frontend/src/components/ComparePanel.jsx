@@ -135,7 +135,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
         </div>
         <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} onOpenKnowledge={onOpenKnowledge} />
         {detailSymbol && (
-          <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang}
+          <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang} market={market}
             onClose={closeDetail} onLoadMain={handleLoadMain} />
         )}
       </>
@@ -312,7 +312,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
       )}
 
       {detailSymbol && (
-        <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang}
+        <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang} market={market}
           onClose={closeDetail} onLoadMain={handleLoadMain} />
       )}
     </div>

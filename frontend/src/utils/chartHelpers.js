@@ -207,7 +207,7 @@ export function buildVolumeOption(candles, lang = 'zh', upColor, downColor) {
   downColor = downColor ?? T.down
 
   const dates    = candles.map((c) => c.date.slice(0, 10))
-  const volLabel = lang === 'en' ? 'Volume' : '成交量'
+  const volLabel = lang === 'zh' ? '成交量' : 'Volume'
   const volumes  = candles.map((c) => ({
     value: c.volume,
     itemStyle: { color: c.close >= c.open ? upColor : downColor, opacity: 0.8 },

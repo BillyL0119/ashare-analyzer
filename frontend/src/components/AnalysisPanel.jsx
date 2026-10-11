@@ -93,7 +93,7 @@ export default function AnalysisPanel({ stocks }) {
       pairList.map(([a, b]) =>
         getPairAnalysis(a.code, b.code, { period, start_date: startDate, end_date: endDate, adjust, lang })
           .then((res) => ({ a, b, data: res.data }))
-          .catch((err) => ({ a, b, error: err?.response?.data?.detail || (lang === 'en' ? 'Analysis failed' : '分析失败') }))
+          .catch((err) => ({ a, b, error: err?.response?.data?.detail || (lang === 'zh' ? '分析失败' : 'Analysis failed') }))
       )
     ).then((results) => {
       setPairs(results)

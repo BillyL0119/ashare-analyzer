@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { getDailyMarketNews } from '../api/stockApi'
 import { T } from '../i18n/translations'
+import { sourceName } from '../utils/newsSources'
 import { relativeTime } from '../utils/time'
 
 const SOURCE_COLORS = {
@@ -58,8 +59,8 @@ function getCatLabel(cfg, lang) {
 
 const LANG_OPTS = [
   { key: 'all', zh: '全部', en: 'All',     ja: '全て',  ko: '전체',  fr: 'Tous' },
-  { key: 'cn',  zh: '中文', en: '中文',    ja: '中文',  ko: '中文',  fr: '中文' },
-  { key: 'en',  zh: 'English', en: 'English', ja: 'English', ko: 'English', fr: 'English' },
+  { key: 'cn',  zh: '中文', en: 'Chinese', ja: '中国語', ko: '중국어', fr: 'Chinois' },
+  { key: 'en',  zh: '英文', en: 'English', ja: '英語',   ko: '영어',   fr: 'Anglais' },
 ]
 
 function CategoryDot({ category, lang }) {
@@ -115,7 +116,7 @@ function NewsRow({ item, lang, first }) {
           {item.title}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{item.source}</span>
+          <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{sourceName(item.source, lang)}</span>
           <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
           <span style={{ fontSize: 11, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             {relativeTime(item.published_at, lang)}

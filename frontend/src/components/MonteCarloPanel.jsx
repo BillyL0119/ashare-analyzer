@@ -154,7 +154,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
-  const { data, loading } = useStockData(stock.code, { period, startDate, endDate, adjust })
+  const { data, loading } = useStockData(stock.code, { period, startDate, endDate, adjust, market })
   const [result, setResult] = useState(null)
 
   useEffect(() => {
@@ -193,7 +193,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
         {stock.name !== stock.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>}
         <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
           {t.mcCurrentPrice}: {result.lastPrice.toFixed(2)} &nbsp;|&nbsp;
-          {lang === 'en' ? 'Ann. Vol' : '年化波动率'}: {result.sigma}%
+          {lang === 'zh' ? '年化波动率' : 'Ann. Vol'}: {result.sigma}%
         </span>
       </div>
 

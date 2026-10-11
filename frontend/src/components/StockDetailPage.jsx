@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
-import { THEME } from '../utils/chartHelpers'
+import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 const BDR  = 'var(--border-primary)'
 const BG   = 'var(--bg-tertiary)'
 
@@ -81,7 +81,7 @@ function MiniNewsRow({ item, t }) {
   )
 }
 
-export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMain }) {
+export default function StockDetailPage({ symbol, name, lang, market = 'cn', onClose, onLoadMain }) {
   const t = T[lang] || T.en
   const [quote,   setQuote]   = useState(null)
   const [similar, setSimilar] = useState(null)
@@ -93,22 +93,27 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
     if (!symbol) return
     setLoading(true)
 
+    const us = market === 'us'
+    const ok = (r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status))))
+    setQuote(null); setSimilar(null); setNews(null); setAnalysis(null)
     Promise.allSettled([
-      fetch(`/api/stocks/${symbol}/realtime`).then((r) => r.json()),
-      fetch(`/api/similar/${symbol}`).then((r) => r.json()),
-      fetch(`/api/news/${symbol}`).then((r) => r.json()),
+      fetch(us ? `/api/us/stock/${symbol}/realtime` : `/api/stocks/${symbol}/realtime`).then(ok),
+      fetch(us ? `/api/us/similar/${symbol}` : `/api/similar/${symbol}`).then(ok),
+      fetch(`/api/news/${symbol}?market=${us ? 'us' : 'cn'}&lang=${lang}`).then(ok),
     ]).then(([quoteRes, simRes, newsRes]) => {
       if (quoteRes.status === 'fulfilled') setQuote(quoteRes.value)
       if (simRes.status === 'fulfilled')   setSimilar(simRes.value)
       if (newsRes.status === 'fulfilled')  setNews(newsRes.value)
     }).finally(() => setLoading(false))
 
-    // Analysis is slow — load separately
-    fetch(`/api/stocks/${symbol}/analyze`)
-      .then((r) => r.ok ? r.json() : null)
-      .then((d) => d && setAnalysis(d))
-      .catch(() => {})
-  }, [symbol])
+    // Analysis is slow — load separately (A-shares only; there is no US equivalent)
+    if (!us) {
+      fetch(`/api/stocks/${symbol}/analyze`)
+        .then((r) => r.ok ? r.json() : null)
+        .then((d) => d && setAnalysis(d))
+        .catch(() => {})
+    }
+  }, [symbol, market, lang])
 
   const q = quote
   const price  = q?.price ?? q?.close ?? null
@@ -118,11 +123,12 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
   const simResults = similar?.results ?? similar?.data?.results ?? []
   const newsItems  = (news?.news ?? news?.data?.news ?? []).slice(0, 3)
 
-  const pe  = q?.pe_ttm  ?? q?.pe  ?? null
+  const pe  = q?.pe_ttm  ?? q?.pe  ?? q?.pe_ratio ?? null
   const pb  = q?.pb      ?? null
   const cap = q?.total_mv ?? q?.market_cap ?? null
-  const high52 = q?.high52w ?? null
-  const low52  = q?.low52w  ?? null
+  const high52 = q?.high52w ?? q?.week52_high ?? null
+  const low52  = q?.low52w  ?? q?.week52_low  ?? null
+  const upColor = riseColor(market), downColor = fallColor(market)
 
   return (
     <div style={{
@@ -172,11 +178,11 @@ export default function StockDetailPage({ symbol, name, lang, onClose, onLoadMai
               </div>
               {price !== null && (
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 8 }}>
-                  <span style={{ fontSize: 28, fontWeight: 700, color: up ? THEME.up : THEME.down, fontFamily: 'monospace' }}>
+                  <span style={{ fontSize: 28, fontWeight: 700, color: up ? upColor : downColor, fontFamily: 'monospace' }}>
                     {Number(price).toFixed(2)}
                   </span>
                   {change !== null && (
-                    <span style={{ fontSize: 15, color: up ? THEME.up : THEME.down, fontWeight: 600 }}>
+                    <span style={{ fontSize: 15, color: up ? upColor : downColor, fontWeight: 600 }}>
                       {up ? '+' : ''}{Number(change).toFixed(2)}%
                     </span>
                   )}

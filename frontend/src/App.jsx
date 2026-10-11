@@ -63,6 +63,13 @@ const TAB_PATHS = {
   ai_teacher:   '/ai-teacher',
   admin:        '/admin',
 }
+const FOOTER_NOTE = {
+  zh: '仅供学习，不构成投资建议。数据来源可能存在延迟。',
+  en: 'For educational use only. Not investment advice. Data may be delayed.',
+  ja: '学習用です。投資助言ではありません。データに遅れが生じる場合があります。',
+  ko: '학습용이며 투자 조언이 아닙니다. 데이터가 지연될 수 있습니다.',
+  fr: "À but pédagogique uniquement, pas un conseil en investissement. Les données peuvent être retardées.",
+}
 const ROLE_LABELS = {
   admin:  { en: 'Admin', zh: '管理员', ja: '管理者', ko: '관리자', fr: 'Admin' },
   member: { en: 'Member', zh: '会员', ja: 'メンバー', ko: '멤버', fr: 'Membre' },
@@ -195,14 +202,28 @@ export default function App() {
       admin:        'BestFriendStock | Admin',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
-    document.title = titles[appTab] || titles.analysis
+    const titlesEn = {
+      analysis:     'Best Friend Stock | Free US & China Stock Analysis, Paper Trading and Economics',
+      news:         'Best Friend Stock | Daily Market News',
+      paper:        'Best Friend Stock | Paper Trading with $1M Virtual Cash',
+      study:        'Best Friend Stock | Economics Study Center: A-Level, IB, AP, IGCSE',
+      universities: 'Best Friend Stock | Business School Guide',
+      bank_views:   'Best Friend Stock | Bank Research Views',
+      career:       'Best Friend Stock | Finance Career Guide and Mock Interviews',
+      screener:     'Best Friend Stock | US Stock Screener',
+      admin:        'Best Friend Stock | Admin',
+      ai_teacher:   'Best Friend Stock | AI Economics Teacher',
+    }
+    // Crawlers always get Chinese (see langStore), so the indexed titles do not change
+    const set = lang === 'zh' ? titles : titlesEn
+    document.title = set[appTab] || set.analysis
     const robots = document.querySelector('meta[name="robots"]')
     if (robots) robots.setAttribute('content', appTab === 'admin' ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large')
     let canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
       canonical.setAttribute('href', 'https://bestfriendstock.com' + location.pathname)
     }
-  }, [appTab, selectedSymbols, location.pathname]) // eslint-disable-line
+  }, [appTab, selectedSymbols, location.pathname, lang]) // eslint-disable-line
 
   // On mount: if URL is /stock/:market/:code, auto-load that stock
   useEffect(() => {
@@ -810,9 +831,7 @@ export default function App() {
         flexShrink: 0,
       }}>
         <div style={{ marginBottom: 4, fontSize: 11, color: 'var(--text-muted)' }}>
-          仅供学习，不构成投资建议。数据来源可能存在延迟。
-          {' · '}
-          For educational use only. Not investment advice. Data may be delayed.
+          {FOOTER_NOTE[lang] || FOOTER_NOTE.en}
         </div>
         <a
           href="mailto:billyl090119@gmail.com"

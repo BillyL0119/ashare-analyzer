@@ -4,9 +4,9 @@
  * Displays quick stats computed on the frontend, then lets the user trigger
  * AI analysis (backend call) which returns news + technical + AI text.
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { analyzeKlineSegment } from '../api/stockApi'
-import { THEME } from '../utils/chartHelpers'
+import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import { T } from '../i18n/translations'
 
@@ -63,8 +63,10 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
   const [result,   setResult]   = useState(null)
   const [error,    setError]    = useState(null)
 
-  const zh = lang !== 'en'
   const t  = T[lang] || T.en
+
+  // A new range or a language switch makes an old answer stale
+  useEffect(() => { setResult(null); setError(null) }, [startDate, endDate, lang, symbol])
 
   const handleAnalyze = async () => {
     setLoading(true)
@@ -76,6 +78,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
         start_date: startDate,
         end_date:   endDate,
         market:     market || 'cn',
+        lang:       lang || 'en',
       })
       setResult(res.data)
     } catch (err) {
@@ -86,7 +89,8 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
     }
   }
 
-  const pctColor = previewStats.period_return >= 0 ? '#ef5350' : '#26a69a'
+  // Up = red / down = green for A-shares, the reverse for US stocks (same as the chart)
+  const pctColor = previewStats.period_return >= 0 ? riseColor(market) : fallColor(market)
 
   return (
     <div style={{

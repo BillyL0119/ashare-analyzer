@@ -39,7 +39,7 @@ final class StockDetailViewModel: ObservableObject {
         newsError = nil
         do {
             let mkt = market == .cn ? "cn" : "us"
-            let resp: StockNewsResponse = try await APIClient.shared.get("/news/\(code)", params: ["market": mkt])
+            let resp: StockNewsResponse = try await APIClient.shared.get("/news/\(code)", params: ["market": mkt, "lang": Lang.code])
             newsItems = resp.news
             newsOverall = resp.overall
         } catch {

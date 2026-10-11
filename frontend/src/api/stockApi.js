@@ -43,8 +43,8 @@ export const getSimilarStocks = (symbol) =>
 export const getSimilarCross = (symbol) =>
   api.get(`/similar/${symbol}/cross`)
 
-export const getNews = (symbol, market = 'cn') =>
-  api.get(`/news/${symbol}`, { params: { market } })
+export const getNews = (symbol, market = 'cn', lang) =>
+  api.get(`/news/${symbol}`, { params: { market, ...(lang ? { lang } : {}) } })
 
 export const getGlobalNews = (params = {}) =>
   api.get('/news/global', { params })

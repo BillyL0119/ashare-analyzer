@@ -62,6 +62,153 @@ def _pct_change_n(series: pd.Series, n: int) -> float:
     return round((new - old) / abs(old) * 100, 2)
 
 
+# English names for A-share industry boards (Tonghuashun + Eastmoney); unknown names stay Chinese.
+CN_SECTOR_EN = {
+    "影视院线": "Film & Cinemas",
+    "文化传媒": "Culture & Media",
+    "贵金属": "Precious Metals",
+    "种植业与林业": "Crops & Forestry",
+    "软件开发": "Software",
+    "游戏": "Gaming",
+    "零售": "Retail",
+    "IT服务": "IT Services",
+    "证券": "Brokerages",
+    "电池": "Batteries",
+    "饮料制造": "Beverages",
+    "中药": "Traditional Chinese Medicine",
+    "教育": "Education",
+    "农产品加工": "Agricultural Processing",
+    "互联网电商": "Internet & E-commerce",
+    "服装家纺": "Apparel & Home Textiles",
+    "多元金融": "Diversified Financials",
+    "美容护理": "Beauty & Personal Care",
+    "计算机设备": "Computer Hardware",
+    "化学制药": "Chemical Pharmaceuticals",
+    "医药商业": "Pharma Distribution",
+    "生物制品": "Biologics",
+    "贸易": "Trading",
+    "农化制品": "Agrochemicals",
+    "煤炭开采加工": "Coal Mining",
+    "化学原料": "Basic Chemicals",
+    "医疗器械": "Medical Devices",
+    "食品加工制造": "Food Processing",
+    "养殖业": "Livestock Farming",
+    "旅游及酒店": "Travel & Hotels",
+    "橡胶制品": "Rubber Products",
+    "化学纤维": "Chemical Fibers",
+    "工业金属": "Industrial Metals",
+    "小家电": "Small Appliances",
+    "家居用品": "Home Furnishings",
+    "厨卫电器": "Kitchen & Bath Appliances",
+    "公路铁路运输": "Road & Rail Transport",
+    "物流": "Logistics",
+    "机场航运": "Airports & Airlines",
+    "白酒": "Baijiu (Liquor)",
+    "化学制品": "Chemical Products",
+    "通信服务": "Telecom Services",
+    "其他社会服务": "Other Consumer Services",
+    "纺织制造": "Textile Manufacturing",
+    "包装印刷": "Packaging & Printing",
+    "钢铁": "Steel",
+    "汽车服务及其他": "Auto Services",
+    "综合": "Conglomerates",
+    "造纸": "Paper",
+    "保险": "Insurance",
+    "光伏设备": "Solar Equipment",
+    "环境治理": "Environmental Services",
+    "汽车零部件": "Auto Parts",
+    "能源金属": "Energy Metals",
+    "房地产": "Real Estate",
+    "电力": "Power Utilities",
+    "汽车整车": "Automakers",
+    "港口航运": "Ports & Shipping",
+    "建筑材料": "Building Materials",
+    "建筑装饰": "Construction & Decoration",
+    "黑色家电": "TVs & AV Appliances",
+    "轨交设备": "Rail Equipment",
+    "工程机械": "Construction Machinery",
+    "小金属": "Minor Metals",
+    "环保设备": "Environmental Equipment",
+    "电网设备": "Grid Equipment",
+    "石油加工贸易": "Oil Refining & Trading",
+    "专用设备": "Specialized Equipment",
+    "通用设备": "General Machinery",
+    "通信设备": "Telecom Equipment",
+    "金属新材料": "Advanced Metal Materials",
+    "自动化设备": "Automation Equipment",
+    "油气开采及服务": "Oil & Gas E&P and Services",
+    "塑料制品": "Plastics",
+    "消费电子": "Consumer Electronics",
+    "非金属材料": "Non-metallic Materials",
+    "光学光电子": "Optics & Optoelectronics",
+    "军工电子": "Defense Electronics",
+    "燃气": "Gas Utilities",
+    "军工装备": "Defense Equipment",
+    "其他电源设备": "Other Power Equipment",
+    "半导体": "Semiconductors",
+    "其他电子": "Other Electronics",
+    "电子化学品": "Electronic Chemicals",
+    "风电设备": "Wind Power Equipment",
+    "元件": "Electronic Components",
+    "银行": "Banks",
+    "酿酒行业": "Liquor",
+    "医疗服务": "Healthcare Services",
+    "电子元件": "Electronic Components",
+    "房地产开发": "Property Development",
+    "房地产服务": "Property Services",
+    "有色金属": "Non-ferrous Metals",
+    "煤炭行业": "Coal",
+    "石油行业": "Oil",
+    "航运港口": "Shipping & Ports",
+    "航空机场": "Airlines & Airports",
+    "物流行业": "Logistics",
+    "交运设备": "Transport Equipment",
+    "船舶制造": "Shipbuilding",
+    "航天航空": "Aerospace",
+    "电力行业": "Power Utilities",
+    "公用事业": "Utilities",
+    "水泥建材": "Cement & Building Materials",
+    "装修建材": "Decoration Materials",
+    "工程建设": "Engineering & Construction",
+    "工程咨询服务": "Engineering Consulting",
+    "家电行业": "Home Appliances",
+    "食品饮料": "Food & Beverage",
+    "纺织服装": "Textiles & Apparel",
+    "商业百货": "Department Stores",
+    "旅游酒店": "Travel & Hotels",
+    "互联网服务": "Internet Services",
+    "通信行业": "Telecom",
+    "钢铁行业": "Steel",
+    "农牧饲渔": "Agriculture & Fisheries",
+    "农药兽药": "Pesticides & Veterinary Drugs",
+    "化肥行业": "Fertilizers",
+    "化纤行业": "Chemical Fibers",
+    "玻璃玻纤": "Glass & Fiberglass",
+    "造纸印刷": "Paper & Printing",
+    "包装材料": "Packaging Materials",
+    "环保行业": "Environmental Protection",
+    "电机": "Electric Motors",
+    "电源设备": "Power Equipment",
+    "仪器仪表": "Instruments",
+    "汽车服务": "Auto Services",
+    "贸易行业": "Trading",
+    "家用轻工": "Household Light Industry",
+    "珠宝首饰": "Jewelry",
+    "综合行业": "Conglomerates",
+    "采掘行业": "Mining",
+    "专业服务": "Professional Services",
+    "铁路公路": "Rail & Road",
+    "航天军工": "Aerospace & Defense",
+    "船舶": "Shipbuilding"
+}
+
+
+def _with_english(data: dict) -> dict:
+    for sec in data.get("sectors") or []:
+        sec["name_en"] = CN_SECTOR_EN.get(sec.get("name_zh") or sec.get("name"), sec.get("name_en"))
+    return data
+
+
 # ── CN sector fetch ───────────────────────────────────────────────────────────
 
 def _fetch_cn_board_hist(row) -> dict | None:
@@ -163,10 +310,10 @@ def _build_cn_ths() -> dict:
 def _build_cn() -> dict:
     """Tonghuashun first (Eastmoney connections are dropped from the server), Eastmoney as the fallback."""
     try:
-        return _build_cn_ths()
+        return _with_english(_build_cn_ths())
     except Exception as e:
         logger.warning("THS sector build failed (%s); trying Eastmoney", e)
-    return _build_cn_em()
+    return _with_english(_build_cn_em())
 
 
 def _build_cn_em() -> dict:
@@ -244,7 +391,7 @@ def _build_us() -> dict:
 # ── endpoint ──────────────────────────────────────────────────────────────────
 
 @router.get("/rotation")
-def sector_rotation(market: str = Query("cn", regex="^(cn|us)$")):
+def sector_rotation(market: str = Query("cn", pattern="^(cn|us)$")):
     global _cn_ts, _cn_data, _us_ts, _us_data
 
     now = time.time()

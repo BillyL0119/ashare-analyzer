@@ -77,7 +77,6 @@ function pixelToIndex(chart, x, candleCount) {
 
 export default function KLineSelectionWrapper({ candles, ma, groupId, market, code, name, lang, isMobile }) {
   useThemeStore((s) => s.theme)
-  const zh = lang !== 'en'
   const t  = T[lang] || T.en
 
   const klineRef     = useRef(null)   // ReactECharts instance

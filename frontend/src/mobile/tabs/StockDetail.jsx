@@ -1,3 +1,4 @@
+import useLangStore from '../../store/langStore'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ReactECharts from '../../lib/echarts'
@@ -88,7 +89,8 @@ function KLine({ all, count, market, indicator }) {
 
 function News({ symbol, market }) {
   const t = useT()
-  const { data, error, reload } = useAPI(`/news/${symbol}?market=${market}`)
+  const lang = useLangStore((s) => s.lang)
+  const { data, error, reload } = useAPI(`/news/${symbol}?market=${market}&lang=${lang}`)
   const o = data?.overall
   // news tone colours follow green = good / red = bad everywhere
   const good = 'var(--cn-down)', bad = 'var(--cn-up)'

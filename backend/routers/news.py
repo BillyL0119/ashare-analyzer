@@ -123,6 +123,9 @@ def _ai_sentiment(title: str, content: str = "") -> dict:
     return result
 
 
+_SUMMARY_LANG = {"en": "English", "ja": "Japanese", "ko": "Korean", "fr": "French"}
+
+
 def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh") -> str:
     """One-sentence overall sentiment summary via DeepSeek (same provider as the AI teacher). "" on any failure."""
     key = os.environ.get("DEEPSEEK_API_KEY", "")
@@ -133,21 +136,73 @@ def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh")
         from openai import OpenAI
         client = OpenAI(api_key=key, base_url="https://api.deepseek.com", timeout=75, max_retries=0)
         joined = "\n".join(f"- {h}" for h in headlines[:10])
-        if lang == "en":
-            system = ("You are an equity analyst. In ONE sentence (max 30 words), summarise how the following "
-                      "headlines are likely to affect sentiment around this stock. No preamble.")
-            user = f"Stock: {stock_name}\nHeadlines:\n{joined}"
-        else:
+        if lang == "zh":
             system = "你是投资分析师，请用一句话总结以下新闻对该股票的整体舆情影响（30字以内）："
             user = f"股票：{stock_name}\n新闻标题：\n{joined}"
+        else:
+            system = (f"You are an equity analyst. In ONE sentence (max 30 words), written in "
+                      f"{_SUMMARY_LANG.get(lang, 'English')}, summarise how the following headlines are likely "
+                      "to affect sentiment around this stock. The headlines may be in another language. No preamble.")
+            user = f"Stock: {stock_name}\nHeadlines:\n{joined}"
         resp = client.chat.completions.create(
-            model="deepseek-chat", max_tokens=100,
+            model="deepseek-chat", max_tokens=120,
             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
         )
         return (resp.choices[0].message.content or "").strip()
     except Exception as exc:
         logger.warning("AI summary failed (%s): %s", type(exc).__name__, str(exc)[:200])
         return ""
+
+
+def _count_summary(overall: dict, lang: str) -> str:
+    """Instant wording from the sentiment counts, used until the AI sentence is ready."""
+    pos, neg = overall.get("positive_count", 0), overall.get("negative_count", 0)
+    total = pos + neg + overall.get("neutral_count", 0)
+    if not total:
+        return ""
+    tone = "pos" if pos > neg else "neg" if neg > pos else "neu"
+    words = {
+        "zh": {"pos": f"整体舆情偏正面，共{total}条新闻，正面{pos}条", "neg": f"整体舆情偏负面，共{total}条新闻，负面{neg}条", "neu": f"整体舆情中性，共{total}条新闻"},
+        "en": {"pos": f"Coverage leans positive: {pos} of {total} headlines are positive.", "neg": f"Coverage leans negative: {neg} of {total} headlines are negative.", "neu": f"Coverage is neutral across {total} headlines."},
+        "ja": {"pos": f"全体的にポジティブ寄り：{total}件中{pos}件がポジティブ。", "neg": f"全体的にネガティブ寄り：{total}件中{neg}件がネガティブ。", "neu": f"全体的に中立：ニュース{total}件。"},
+        "ko": {"pos": f"전반적으로 긍정적: 뉴스 {total}건 중 {pos}건이 긍정.", "neg": f"전반적으로 부정적: 뉴스 {total}건 중 {neg}건이 부정.", "neu": f"전반적으로 중립: 뉴스 {total}건."},
+        "fr": {"pos": f"Tonalité plutôt positive : {pos} titres positifs sur {total}.", "neg": f"Tonalité plutôt négative : {neg} titres négatifs sur {total}.", "neu": f"Tonalité neutre sur {total} titres."},
+    }
+    return words.get(lang, words["en"])[tone]
+
+
+_summary_inflight: set = set()
+
+
+def _localized_news(resp: dict, lang: str) -> dict:
+    """The cached response with the overall summary in the reader's language. A missing
+    translation is generated in the background; until then the count-based sentence is shown."""
+    sums = resp.setdefault("_sums", {})
+    text = sums.get(lang)
+    if text is None:
+        base = resp.get("_base_lang")
+        if base == lang and resp["overall"].get("ai_summary"):
+            text = resp["overall"]["ai_summary"]
+        else:
+            text = _count_summary(resp["overall"], lang)
+            key = (id(resp), lang)
+            titles = [n["title"] for n in resp.get("news", [])]
+            if titles and key not in _summary_inflight:
+                _summary_inflight.add(key)
+
+                def _fill(r=resp, lg=lang, name=resp.get("stock_name") or resp.get("symbol"), t=titles, k=key):
+                    try:
+                        out = _ai_overall_summary(name, t, lg)
+                        if out:
+                            r["_sums"][lg] = out
+                    finally:
+                        _summary_inflight.discard(k)
+
+                import threading as _th
+                _th.Thread(target=_fill, daemon=True, name="news-summary-l10n").start()
+    out = {k: v for k, v in resp.items() if not k.startswith("_")}
+    out["overall"] = {**resp["overall"], "ai_summary": text}
+    return out
 
 
 # ── News source fetchers ──────────────────────────────────────────────────────
@@ -1205,7 +1260,17 @@ def _us_symbol_news(symbol: str, want: int = 15) -> tuple[list[dict], bool]:
 
 
 @router.get("/{symbol}")
-def get_news(symbol: str, market: str = Query("cn")):
+def get_news(symbol: str, market: str = Query("cn"), lang: str = Query("")):
+    """News for one stock. `lang` (zh/en/ja/ko/fr) picks the language of the overall summary;
+    without it the summary keeps the market's own language (zh for A-shares, en for US)."""
+    resp = _get_news_base(symbol, market)
+    resp.setdefault("_base_lang", "en" if market == "us" else "zh")
+    if lang not in ("zh", "en", "ja", "ko", "fr"):
+        lang = resp.get("_base_lang") or ("en" if market == "us" else "zh")
+    return _localized_news(resp, lang)
+
+
+def _get_news_base(symbol: str, market: str):
     """
     Return up to 20 recent news items with keyword + AI sentiment for `symbol`.
     Pass market=us to fetch English-only Yahoo Finance news for US stocks.
@@ -1291,6 +1356,7 @@ def get_news(symbol: str, market: str = Query("cn")):
                     text = _ai_overall_summary(name, titles, "en")
                     if text:
                         resp["overall"]["ai_summary"] = text
+                        resp.setdefault("_sums", {})["en"] = text
                 except Exception as exc:
                     logger.debug("background AI summary failed for %s: %s", name, exc)
 

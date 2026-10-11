@@ -46,7 +46,7 @@ function RegimeBadge({ regime, duration, lang, t }) {
       </div>
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: THEME.text, fontSize: 22, fontWeight: 700 }}>{duration}</div>
-        <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{t.regimeDuration} ({lang === 'en' ? 'd' : '天'})</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{t.regimeDuration} ({lang === 'zh' ? '天' : 'd'})</div>
       </div>
     </div>
   )
@@ -64,7 +64,7 @@ function RegimeBreakdown({ stats, lang, t }) {
           <div key={key}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 3 }}>
               <span style={{ color }}>{regimeLabel(key, lang)}</span>
-              <span style={{ color: 'var(--text-muted)' }}>{s.days}{lang === 'en' ? 'd' : '天'} &nbsp;
+              <span style={{ color: 'var(--text-muted)' }}>{s.days}{lang === 'zh' ? '天' : 'd'} &nbsp;
                 <span style={{ color: THEME.text, fontWeight: 600 }}>{s.pct}%</span>
                 &nbsp;| avg {s.avg_daily_return > 0 ? '+' : ''}{s.avg_daily_return.toFixed(3)}%/d
               </span>
@@ -226,7 +226,7 @@ function TransitionTable({ transitions, lang, t }) {
                     {regimeLabel(tr.regime, lang)}
                   </span>
                 </td>
-                <td style={{ padding: '6px 10px', color: THEME.text }}>{tr.duration}{lang === 'en' ? 'd' : '天'}</td>
+                <td style={{ padding: '6px 10px', color: THEME.text }}>{tr.duration}{lang === 'zh' ? '天' : 'd'}</td>
                 <td style={{ padding: '6px 10px', color: tr.return_pct >= 0 ? '#ef5350' : '#26a69a', fontWeight: 600 }}>
                   {tr.return_pct > 0 ? '+' : ''}{tr.return_pct.toFixed(2)}%
                 </td>
@@ -285,7 +285,7 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
         {data && (
           <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
-            {t.regimeWindow}: {data.window}{lang === 'en' ? 'd' : '天'} &nbsp;|&nbsp; {data.series.length} {lang === 'en' ? 'bars' : '根K线'}
+            {t.regimeWindow}: {data.window}{lang === 'zh' ? '天' : 'd'} &nbsp;|&nbsp; {data.series.length} {lang === 'zh' ? '根K线' : 'bars'}
           </span>
         )}
       </div>
@@ -344,7 +344,7 @@ export default function RegimePanel({ stocks }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: '10px 16px' }}>
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.regimeWindow}:</span>
         {[10, 20, 40, 60].map(w => (
-          <button key={w} style={btnStyle(win === w)} onClick={() => setWin(w)}>{w}{lang === 'en' ? 'd' : '天'}</button>
+          <button key={w} style={btnStyle(win === w)} onClick={() => setWin(w)}>{w}{lang === 'zh' ? '天' : 'd'}</button>
         ))}
         {/* Legend */}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 12 }}>

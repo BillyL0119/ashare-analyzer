@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import useLangStore from '../store/langStore'
 import useCompareStore from '../store/compareStore'
 import { T } from '../i18n/translations'
+import { sourceName } from '../utils/newsSources'
 import { getNews } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
@@ -174,7 +175,7 @@ function NewsItem({ item, t }) {
             </div>
           )}
           <div style={{ display: 'flex', gap: 10, marginTop: 5, fontSize: 11, color: 'var(--text-muted)' }}>
-            <span>{item.source}</span>
+            <span>{sourceName(item.source, useLangStore.getState().lang)}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
               <span style={{ color: '#0ea5e9', fontSize: 10, background: 'rgba(14,165,233,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
@@ -224,7 +225,7 @@ function NewsItem({ item, t }) {
           <div style={{ marginTop: 6, display: 'flex', gap: 12, alignItems: 'center' }}>
             <span>
               <span style={{ color: 'var(--text-muted)' }}>{t.newsSource}：</span>
-              {item.source}
+              {sourceName(item.source, useLangStore.getState().lang)}
             </span>
             {item.url && item.url !== 'nan' && item.url.startsWith('http') && (
               <a
@@ -282,11 +283,25 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
     setLoading(true)
     setError(null)
     setData(null)
-    getNews(stock.code, market)
-      .then((res) => setData(res.data))
-      .catch((e) => setError(e?.response?.data?.detail || t.newsError))
-      .finally(() => setLoading(false))
-  }, [stock.code, market]) // eslint-disable-line react-hooks/exhaustive-deps
+    let alive = true
+    let timer
+    getNews(stock.code, market, lang)
+      .then((res) => {
+        if (!alive) return
+        setData(res.data)
+        // The summary in a language other than the feed's own is written in the background:
+        // pick it up with one quiet refetch.
+        const base = market === 'us' ? 'en' : 'zh'
+        if (lang !== base && res.data?.news?.length) {
+          timer = setTimeout(() => {
+            getNews(stock.code, market, lang).then((r) => { if (alive) setData(r.data) }).catch(() => {})
+          }, 9000)
+        }
+      })
+      .catch((e) => { if (alive) setError(e?.response?.data?.detail || t.newsError) })
+      .finally(() => { if (alive) setLoading(false) })
+    return () => { alive = false; clearTimeout(timer) }
+  }, [stock.code, market, lang]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = (data?.news || [])
     .filter((n) => langFilter === 'all' || n.lang === langFilter)

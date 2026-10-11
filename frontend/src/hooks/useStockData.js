@@ -3,8 +3,8 @@ import { getStockHistory, getRealtimeQuote, getUSStockHistory, getUSRealtime } f
 
 const cache = new Map()
 
-function cacheKey(symbol, period, startDate, endDate, adjust) {
-  return `${symbol}_${period}_${startDate}_${endDate}_${adjust}`
+function cacheKey(market, symbol, period, startDate, endDate, adjust) {
+  return `${market}_${symbol}_${period}_${startDate}_${endDate}_${adjust}`
 }
 
 export function useStockData(symbol, { period, startDate, endDate, adjust, market = 'cn' }) {
@@ -15,7 +15,7 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
   const [retryCount, setRetryCount] = useState(0)
   const intervalRef = useRef(null)
 
-  const key = cacheKey(symbol, period, startDate, endDate, adjust)
+  const key = cacheKey(market, symbol, period, startDate, endDate, adjust)
 
   const refetch = useCallback(() => {
     cache.delete(key)

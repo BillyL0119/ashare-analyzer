@@ -147,6 +147,12 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh }) {
 }
 
 // ── Scrolling ticker bar ──────────────────────────────────────────────────────
+// The backend names A-share indices in Chinese; other languages get the usual English names
+const CN_INDEX_EN = {
+  '上证指数': 'SSE Composite', '深证成指': 'SZSE Component', '创业板指': 'ChiNext',
+  '沪深300': 'CSI 300', '科创50': 'STAR 50', '恒生指数': 'Hang Seng', '上证50': 'SSE 50', '中证500': 'CSI 500',
+}
+
 function TickerBar({ indices, zh }) {
   const scrollRef = useRef(null)
   const pausedRef = useRef(false)
@@ -180,7 +186,7 @@ function TickerBar({ indices, zh }) {
             borderRadius: 8, padding: '4px 10px', textAlign: 'center',
           }}>
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2, whiteSpace: 'nowrap' }}>
-              {zh ? (idx.name_zh || idx.name) : idx.name}
+              {zh ? (idx.name_zh || idx.name) : (CN_INDEX_EN[idx.name] || idx.name)}
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: changePctColor(pct) }}>
               {pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'}

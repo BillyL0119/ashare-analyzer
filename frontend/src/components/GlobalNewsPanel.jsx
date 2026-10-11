@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { getGlobalNews } from '../api/stockApi'
 import { T } from '../i18n/translations'
+import { sourceName } from '../utils/newsSources'
+import useLangStore from '../store/langStore'
 
 const SOURCE_COLORS = {
   'Reuters Business': '#ff8c00',
@@ -82,7 +84,7 @@ function NewsCard({ item, t }) {
           <SourceBadge name={item.source} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{item.source}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{sourceName(item.source, useLangStore.getState().lang)}</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, t)}</span>
               <span style={{
@@ -219,7 +221,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               }}
             >
               <option value="all">{t.gnAllSources}</option>
-              {sources.map(s => <option key={s} value={s}>{s}</option>)}
+              {sources.map(s => <option key={s} value={s}>{sourceName(s, useLangStore.getState().lang)}</option>)}
             </select>
           </>
         )}

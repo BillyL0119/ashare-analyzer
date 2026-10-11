@@ -177,7 +177,7 @@ function StressTable({ tests, t, lang }) {
           const isDown = s.shock_pct < 0
           return (
             <tr key={i} style={{ borderBottom: `1px solid ${THEME.border}` }}>
-              <td style={{ padding: '6px 10px', color: THEME.text }}>{lang === 'en' ? s.name_en : s.name_zh}</td>
+              <td style={{ padding: '6px 10px', color: THEME.text }}>{lang === 'zh' ? s.name_zh : s.name_en}</td>
               <td style={{ padding: '6px 10px', textAlign: 'right', color: isDown ? '#26a69a' : '#ef5350', fontWeight: 600 }}>
                 {s.shock_pct > 0 ? '+' : ''}{s.shock_pct}%
               </td>
@@ -213,7 +213,7 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
-        {data && <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>{data.trading_days} {lang === 'en' ? 'days' : '个交易日'} | {lang === 'en' ? 'Price' : '当前价'}: {data.current_price}</span>}
+        {data && <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>{data.trading_days} {lang === 'zh' ? '个交易日' : 'days'} | {lang === 'zh' ? '当前价' : 'Price'}: {data.current_price}</span>}
       </div>
 
       {loading && <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>{t.riskLoading}</div>}

@@ -745,7 +745,7 @@ function MockInterview({ zh, lang }) {
 
 export default function CareerGuidePage({ lang }) {
   useThemeStore((s) => s.theme)
-  const zh = lang !== 'en'
+  const zh = lang === 'zh'
   const [subTab, setSubTab] = useState('careers')
   const [firmCat, setFirmCat] = useState('all')
   const showFirms = (cat) => { setFirmCat(cat); setSubTab('firms'); window.scrollTo({ top: 0, behavior: 'smooth' }) }

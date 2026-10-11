@@ -17,6 +17,7 @@ from typing import Optional
 import os
 import logging
 import math
+import time
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -25,6 +26,8 @@ logger = logging.getLogger("kline_analysis")
 router = APIRouter()
 
 GEMINI_KEY   = os.environ.get("GEMINI_API_KEY", "")
+_result_cache: dict = {}          # (symbol, market, start, end, lang) -> (ts, response)
+_RESULT_TTL = 6 * 3600
 DEEPSEEK_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 
 
@@ -36,6 +39,7 @@ class SegmentRequest(BaseModel):
     end_date:   str            # "YYYY-MM-DD"
     market:     str = "cn"
     stock_name: Optional[str] = ""
+    lang:       str = "zh"         # zh | en | ja | ko | fr — language of every text field returned
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -50,9 +54,32 @@ def _safe(val, decimals: int = 2) -> float:
         return 0.0
 
 
-def _macd_state(macd_data: list) -> str:
+_LANGS = ("zh", "en", "ja", "ko", "fr")
+
+# Indicator wording per language. Keys are the states the helpers below detect.
+_TXT = {
+    "nodata":    {"zh": "数据不足", "en": "Not enough data", "ja": "データ不足", "ko": "데이터 부족", "fr": "Données insuffisantes"},
+    "golden_up": {"zh": "金叉上扬，多头趋势增强", "en": "Golden cross, bullish momentum strengthening", "ja": "ゴールデンクロス、上昇の勢いが強まる", "ko": "골든크로스, 상승 모멘텀 강화", "fr": "Croisement haussier, dynamique haussière en hausse"},
+    "dif_above": {"zh": "DIF在DEA上方，多头偏强", "en": "DIF above DEA, mildly bullish", "ja": "DIFがDEAの上、やや強気", "ko": "DIF가 DEA 위, 다소 강세", "fr": "DIF au-dessus de DEA, légèrement haussier"},
+    "dead_down": {"zh": "死叉下行，空头趋势增强", "en": "Death cross, bearish momentum strengthening", "ja": "デッドクロス、下落の勢いが強まる", "ko": "데드크로스, 하락 모멘텀 강화", "fr": "Croisement baissier, dynamique baissière en hausse"},
+    "dif_below": {"zh": "DIF在DEA下方，空头偏弱", "en": "DIF below DEA, mildly bearish", "ja": "DIFがDEAの下、やや弱気", "ko": "DIF가 DEA 아래, 다소 약세", "fr": "DIF sous DEA, légèrement baissier"},
+    "rsi_ob2":   {"zh": "严重超买", "en": "strongly overbought", "ja": "強い買われ過ぎ", "ko": "강한 과매수", "fr": "fortement suracheté"},
+    "rsi_ob":    {"zh": "超买区间", "en": "overbought", "ja": "買われ過ぎ", "ko": "과매수", "fr": "suracheté"},
+    "rsi_os2":   {"zh": "严重超卖", "en": "strongly oversold", "ja": "強い売られ過ぎ", "ko": "강한 과매도", "fr": "fortement survendu"},
+    "rsi_os":    {"zh": "超卖区间", "en": "oversold", "ja": "売られ過ぎ", "ko": "과매도", "fr": "survendu"},
+    "rsi_mid":   {"zh": "中性区间", "en": "neutral", "ja": "中立", "ko": "중립", "fr": "neutre"},
+    "above":     {"zh": "上方", "en": "above", "ja": "上", "ko": "위", "fr": "au-dessus de"},
+    "below":     {"zh": "下方", "en": "below", "ja": "下", "ko": "아래", "fr": "sous"},
+}
+
+
+def _t(key: str, lang: str) -> str:
+    return _TXT[key].get(lang) or _TXT[key]["en"]
+
+
+def _macd_state(macd_data: list, lang: str = "zh") -> str:
     if len(macd_data) < 2:
-        return "数据不足"
+        return _t("nodata", lang)
     last = macd_data[-1]
     prev = macd_data[-2]
     dif    = last.get("dif")  or 0
@@ -61,37 +88,44 @@ def _macd_state(macd_data: list) -> str:
     prev_h = prev.get("macd") or 0
     if dif > dea:
         if hist > 0 and hist >= prev_h:
-            return "金叉上扬，多头趋势增强"
-        return "DIF在DEA上方，多头偏强"
-    else:
-        if hist < 0 and hist <= prev_h:
-            return "死叉下行，空头趋势增强"
-        return "DIF在DEA下方，空头偏弱"
+            return _t("golden_up", lang)
+        return _t("dif_above", lang)
+    if hist < 0 and hist <= prev_h:
+        return _t("dead_down", lang)
+    return _t("dif_below", lang)
 
 
-def _rsi_state(rsi_data: list) -> str:
+def _rsi_state(rsi_data: list, lang: str = "zh") -> str:
     if not rsi_data:
-        return "数据不足"
-    last = rsi_data[-1]
-    rsi6 = last.get("rsi6") or 50
-    if rsi6 >= 80:  return f"RSI6={rsi6:.1f}，严重超买"
-    if rsi6 >= 70:  return f"RSI6={rsi6:.1f}，超买区间"
-    if rsi6 <= 20:  return f"RSI6={rsi6:.1f}，严重超卖"
-    if rsi6 <= 30:  return f"RSI6={rsi6:.1f}，超卖区间"
-    return f"RSI6={rsi6:.1f}，中性区间"
+        return _t("nodata", lang)
+    rsi6 = rsi_data[-1].get("rsi6") or 50
+    key = ("rsi_ob2" if rsi6 >= 80 else "rsi_ob" if rsi6 >= 70 else
+           "rsi_os2" if rsi6 <= 20 else "rsi_os" if rsi6 <= 30 else "rsi_mid")
+    sep = "，" if lang == "zh" else ", "
+    return f"RSI6={rsi6:.1f}{sep}{_t(key, lang)}"
 
 
-def _ma_state(ma_data: list, last_close: float) -> str:
+def _ma_state(ma_data: list, last_close: float, lang: str = "zh") -> str:
     if not ma_data:
-        return "数据不足"
+        return _t("nodata", lang)
     last = ma_data[-1]
     parts = []
     for key, label in [("ma5", "MA5"), ("ma10", "MA10"), ("ma20", "MA20")]:
         val = last.get(key)
-        if val:
-            rel = "上方" if last_close > val else "下方"
+        if not val:
+            continue
+        rel = _t("above" if last_close > val else "below", lang)
+        if lang == "zh":
             parts.append(f"收盘{last_close:.2f}在{label}({val:.2f}){rel}")
-    return "；".join(parts[:2]) if parts else "均线状态不足"
+        elif lang == "ja":
+            parts.append(f"終値{last_close:.2f}は{label}({val:.2f})の{rel}")
+        elif lang == "ko":
+            parts.append(f"종가 {last_close:.2f}, {label}({val:.2f}) {rel}")
+        elif lang == "fr":
+            parts.append(f"Clôture {last_close:.2f} {rel} la {label} ({val:.2f})")
+        else:
+            parts.append(f"Close {last_close:.2f} {rel} {label} ({val:.2f})")
+    return ("；" if lang == "zh" else "; ").join(parts[:2]) if parts else _t("nodata", lang)
 
 
 # ── Data fetching ─────────────────────────────────────────────────────────────
@@ -149,52 +183,99 @@ def _fetch_news_cn(symbol: str, start_date: str, end_date: str) -> list:
 
 
 def _fetch_news_us(symbol: str, start_date: str, end_date: str) -> list:
-    """
-    Attempt Yahoo Finance RSS for US symbols, filtered to the date range.
-    Yahoo RSS only carries recent headlines, so historical ranges typically
-    return [] — that's fine; the AI falls back to technical-only analysis.
-    """
-    import requests
-    import xml.etree.ElementTree as ET
+    """Headlines about this ticker inside the range, from the news tab's Yahoo + Nasdaq feed
+    (relevance filtered). Both feeds only reach back a few weeks, so older ranges get []
+    and the AI falls back to a technical-only reading."""
     import email.utils
-    url = (
-        f"https://feeds.finance.yahoo.com/rss/2.0/headline"
-        f"?s={symbol}&region=US&lang=en-US"
-    )
     try:
-        r = requests.get(url, timeout=8, headers={"User-Agent": "Mozilla/5.0"})
-        if r.status_code != 200:
-            return []
-        root  = ET.fromstring(r.text)
-        start = datetime.strptime(start_date, "%Y-%m-%d")
-        end   = datetime.strptime(end_date,   "%Y-%m-%d")
-        result = []
-        for item in root.findall(".//item"):
-            title   = (item.findtext("title") or "").strip()
-            pub_raw = (item.findtext("pubDate") or "").strip()
-            if not title:
-                continue
-            try:
-                pub = email.utils.parsedate_to_datetime(pub_raw).replace(tzinfo=None)
-                if not (start <= pub <= end):
-                    continue
-            except Exception:
-                continue
-            result.append({
-                "title":  title,
-                "source": "Yahoo Finance",
-                "date":   pub.strftime("%Y-%m-%d"),
-            })
-        return result[:10]
+        from routers.news import _us_symbol_news
+        items, _ = _us_symbol_news(symbol, want=40)
     except Exception as exc:
-        logger.debug("US Yahoo RSS failed for %s: %s", symbol, exc)
+        logger.debug("US news failed for %s: %s", symbol, exc)
         return []
+    result = []
+    for it in items:
+        try:
+            day = email.utils.parsedate_to_datetime(it.get("time", "")).strftime("%Y-%m-%d")
+        except Exception:
+            continue
+        if start_date <= day <= end_date and it.get("title"):
+            result.append({"title": it["title"], "source": it.get("source") or "News", "date": day})
+    result.sort(key=lambda x: x["date"], reverse=True)
+    return result[:10]
 
 
 # ── Prompt building ───────────────────────────────────────────────────────────
 
+_LANG_NAME = {"en": "English", "ja": "Japanese", "ko": "Korean", "fr": "French"}
+_HEADINGS = {
+    "en": ("Price action", "Technical picture", "Key levels", "Risks",
+           "No specific news was found for this period. The following is a technical reading.",
+           "This analysis is generated from historical data for learning only and is not investment advice."),
+    "ja": ("値動きの背景", "テクニカル面", "重要な価格帯", "リスク",
+           "この期間の具体的なニュースは見つかりませんでした。以下はテクニカル面からの観察です。",
+           "本分析は過去データに基づく学習用の参考情報であり、投資助言ではありません。"),
+    "ko": ("가격 흐름 배경", "기술적 분석", "주요 가격대", "위험 요인",
+           "이 기간의 구체적인 뉴스는 찾지 못했습니다. 아래는 기술적 관찰입니다.",
+           "이 분석은 과거 데이터를 바탕으로 한 학습용 참고 자료이며 투자 조언이 아닙니다."),
+    "fr": ("Contexte du mouvement", "Lecture technique", "Niveaux clés", "Risques",
+           "Aucune actualité précise n'a été trouvée sur cette période. Voici une lecture technique.",
+           "Cette analyse est générée à partir de données historiques, à des fins d'apprentissage uniquement, et ne constitue pas un conseil en investissement."),
+}
+
+
+def _build_prompt_intl(symbol: str, stock_name: str, start_date: str, end_date: str,
+                       stats: dict, tech: dict, news: list, is_us: bool, lang: str) -> str:
+    lang_name = _LANG_NAME.get(lang, "English")
+    h_bg, h_tech, h_lv, h_risk, no_news, disclaimer = _HEADINGS.get(lang, _HEADINGS["en"])
+    if news:
+        news_block = "\nNews in the same period (quote titles exactly as given):\n" + "".join(
+            f"  - [{n['date']}] {n['title']} (source: {n['source']})\n" for n in news)
+        guide = ("Using only the headlines listed above, name the specific headline and source behind any "
+                 "event that may explain the move. Do not mention events that are not listed.")
+    else:
+        news_block = "\nNo news was found for this stock in this period.\n"
+        guide = (f'Start with exactly this sentence, translated if needed: "{no_news}" Then describe only '
+                 "price, volume and indicators. Never invent announcements, news or analyst views.")
+    market = "US stocks" if is_us else "China A-shares"
+    return f"""You are a professional technical analyst covering {market}. Interpret the selected candlestick range below.
+
+Stock: {symbol} ({stock_name})
+Range: {start_date} to {end_date} ({stats['bars']} bars)
+
+Price and volume:
+- Return: {stats['period_return']:+.2f}%
+- High: {stats['high']:.2f}, Low: {stats['low']:.2f}
+- Max amplitude: {stats['amplitude']:.2f}%
+- Volume vs prior period: {stats['vol_change']:+.1f}%
+- Annualized volatility: {stats['volatility']:.1f}%
+{news_block}
+Indicators at the end of the range:
+- MACD: {tech['macd']}
+- RSI: {tech['rsi']}
+- Moving averages: {tech['ma']}
+
+Write the whole answer in {lang_name}, 150-250 words, using exactly these bold headings:
+
+**{h_bg}**
+{guide}
+
+**{h_tech}**
+Describe MACD, RSI, moving averages and volume objectively.
+
+**{h_lv}**
+List support and resistance levels briefly.
+
+**{h_risk}**
+One or two main risks.
+
+End with this line: {disclaimer}"""
+
+
 def _build_prompt(symbol: str, stock_name: str, start_date: str, end_date: str,
-                  stats: dict, tech: dict, news: list, is_us: bool = False) -> str:
+                  stats: dict, tech: dict, news: list, is_us: bool = False, lang: str = "zh") -> str:
+    if lang != "zh":
+        return _build_prompt_intl(symbol, stock_name, start_date, end_date, stats, tech, news, is_us, lang)
     has_news  = bool(news)
     market_lbl = "美股" if is_us else "A股"
 
@@ -251,7 +332,16 @@ def _build_prompt(symbol: str, stock_name: str, start_date: str, end_date: str,
 
 # ── AI call ───────────────────────────────────────────────────────────────────
 
-def _call_ai(prompt: str) -> tuple:
+_NO_AI = {
+    "zh": "AI 服务暂时不可用，请稍后再试。",
+    "en": "The AI service is unavailable right now. Please try again later.",
+    "ja": "AIサービスは現在利用できません。しばらくしてから再度お試しください。",
+    "ko": "AI 서비스를 지금 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+    "fr": "Le service d'IA est indisponible pour le moment. Réessayez plus tard.",
+}
+
+
+def _call_ai(prompt: str, lang: str = "zh") -> tuple:
     """Try Gemini first, then DeepSeek. Returns (text, source_name)."""
     if GEMINI_KEY:
         try:
@@ -272,7 +362,8 @@ def _call_ai(prompt: str) -> tuple:
                 max_tokens=800,
                 temperature=0.3,
                 messages=[
-                    {"role": "system", "content": "你是专业的股票技术分析师，熟悉A股和美股市场。"},
+                    {"role": "system", "content": "你是专业的股票技术分析师，熟悉A股和美股市场。" if lang == "zh"
+                     else f"You are a professional stock technical analyst. Always answer in {_LANG_NAME.get(lang, 'English')}."},
                     {"role": "user",   "content": prompt},
                 ],
             )
@@ -280,7 +371,7 @@ def _call_ai(prompt: str) -> tuple:
         except Exception as exc:
             logger.error("DeepSeek fallback failed: %s", exc)
 
-    return "AI服务未配置，暂无AI解读。请联系管理员配置 GEMINI_API_KEY 或 DEEPSEEK_API_KEY。", "none"
+    return _NO_AI.get(lang, _NO_AI["en"]), "none"
 
 
 # ── Endpoint ──────────────────────────────────────────────────────────────────
@@ -296,6 +387,12 @@ def analyze_kline_segment(req: SegmentRequest):
 
     is_us  = req.market == "us"
     symbol = req.symbol.strip().upper() if is_us else req.symbol.strip()
+    lang   = req.lang if req.lang in _LANGS else "en"
+
+    cache_key = (symbol, req.market, req.start_date, req.end_date, lang)
+    hit = _result_cache.get(cache_key)
+    if hit and time.time() - hit[0] < _RESULT_TTL:
+        return hit[1]
 
     # ── Fetch OHLCV ───────────────────────────────────────────────────────────
     if is_us:
@@ -378,14 +475,30 @@ def analyze_kline_segment(req: SegmentRequest):
     }
 
     # ── Technical indicators ──────────────────────────────────────────────────
-    macd_data = calc_macd(df)
-    rsi_data  = calc_rsi(df, periods=[6, 12, 24])
-    ma_data   = calc_ma(df, windows=[5, 10, 20])
+    # Indicators need warm-up bars (MACD ~35, MA20 20), so compute them over the history leading
+    # up to the end of the range, not over the selected bars alone.
+    df_ind = df
+    try:
+        if is_us:
+            hist = [c for c in all_us if c["date"] <= req.end_date][-250:]
+            if len(hist) > bars:
+                df_ind = _candles_to_df(hist)
+        else:
+            from services.stock_service import get_stock_history
+            warm_start = (datetime.strptime(req.start_date, "%Y-%m-%d") - pd.Timedelta(days=200)).strftime("%Y%m%d")
+            df_long = get_stock_history(symbol, "daily", warm_start, req.end_date.replace("-", ""), "qfq")
+            if df_long is not None and len(df_long) > bars:
+                df_ind = df_long
+    except Exception:
+        df_ind = df
+    macd_data = calc_macd(df_ind)
+    rsi_data  = calc_rsi(df_ind, periods=[6, 12, 24])
+    ma_data   = calc_ma(df_ind, windows=[5, 10, 20])
 
     tech = {
-        "macd": _macd_state(macd_data),
-        "rsi":  _rsi_state(rsi_data),
-        "ma":   _ma_state(ma_data, close_arr[-1]),
+        "macd": _macd_state(macd_data, lang),
+        "rsi":  _rsi_state(rsi_data, lang),
+        "ma":   _ma_state(ma_data, close_arr[-1], lang),
     }
 
     # ── News in selected range ────────────────────────────────────────────────
@@ -398,11 +511,11 @@ def analyze_kline_segment(req: SegmentRequest):
     prompt             = _build_prompt(
         symbol, req.stock_name or symbol,
         req.start_date, req.end_date,
-        stats, tech, news, is_us,
+        stats, tech, news, is_us, lang,
     )
-    ai_text, ai_source = _call_ai(prompt)
+    ai_text, ai_source = _call_ai(prompt, lang)
 
-    return {
+    out = {
         "symbol":      symbol,
         "start_date":  req.start_date,
         "end_date":    req.end_date,
@@ -413,4 +526,10 @@ def analyze_kline_segment(req: SegmentRequest):
         "has_news":    bool(news),
         "ai_analysis": ai_text,
         "ai_source":   ai_source,
+        "lang":        lang,
     }
+    if ai_source != "none":
+        if len(_result_cache) > 500:
+            _result_cache.clear()
+        _result_cache[cache_key] = (time.time(), out)
+    return out
