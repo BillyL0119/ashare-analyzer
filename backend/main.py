@@ -32,6 +32,7 @@ from routers.quotes import router as quotes_router
 from routers.kline_analysis import router as kline_analysis_router
 from routers.career import router as career_router
 from routers.fundamentals import router as fundamentals_router
+from routers.screener import router as screener_router
 
 app = FastAPI(
     title="Best Friend Ashare API",
@@ -70,6 +71,8 @@ async def warmup_caches():
                 pass
             _t.sleep(1)
     loop.run_in_executor(None, _warm_fundamentals)
+    from routers.screener import warmup as _warm_screener
+    loop.run_in_executor(None, _warm_screener)   # stock list + P/E enrichment thread
 
 from security import SecurityMiddleware, allowed_origins
 
@@ -394,3 +397,4 @@ app.include_router(quotes_router, prefix="/api/quotes", tags=["quotes"])
 app.include_router(kline_analysis_router, prefix="/api/analysis", tags=["kline_analysis"])
 app.include_router(career_router, prefix="/api/career", tags=["career"])
 app.include_router(fundamentals_router, prefix="/api/us/fundamentals", tags=["fundamentals"])
+app.include_router(screener_router, prefix="/api/us/screener", tags=["screener"])
