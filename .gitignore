@@ -22,3 +22,6 @@ backend/data/analytics.json
 backend/data/paper_trading/
 backend/data/comments/
 backend/data/*.cache.json
+backend/data/daily_report.json
+backend/data/price_cache/
+backend/data/similar_cache/
