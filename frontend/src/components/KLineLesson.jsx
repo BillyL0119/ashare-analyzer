@@ -35,7 +35,9 @@ const PARTS = [
 ]
 
 // ─── Anatomy SVG (bullish candle with labeled parts) ─────────────────────────
-function AnatomySVG({ hovered, onHover }) {
+function AnatomySVG({ hovered, onHover, zh }) {
+  // One language per label (the part names in PARTS), not "最高价 High" for everyone
+  const lbl = (id) => { const p = PARTS.find((x) => x.id === id); return p ? (zh ? p.label_zh : p.label_en) : id }
   // Canvas: 320 × 220
   // Candle: cx=160, bw=36
   // y coords: high=20, close=65, open=150, low=195
@@ -69,10 +71,10 @@ function AnatomySVG({ hovered, onHover }) {
 
       {/* ── Right labels ── */}
       {[
-        { id: 'high',  y: HY,                  label: '最高价 High' },
-        { id: 'close', y: CY,                  label: '收盘价 Close' },
-        { id: 'open',  y: OY,                  label: '开盘价 Open' },
-        { id: 'low',   y: LY,                  label: '最低价 Low' },
+        { id: 'high',  y: HY,                  label: lbl('high') },
+        { id: 'close', y: CY,                  label: lbl('close') },
+        { id: 'open',  y: OY,                  label: lbl('open') },
+        { id: 'low',   y: LY,                  label: lbl('low') },
       ].map(({ id, y, label }) => (
         <g key={id} style={{ cursor: 'pointer' }}
           onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
@@ -87,9 +89,9 @@ function AnatomySVG({ hovered, onHover }) {
 
       {/* ── Left labels ── */}
       {[
-        { id: 'upper_shadow', y: (HY + CY) / 2,  label: '上影线 Upper Wick' },
-        { id: 'body',         y: (CY + OY) / 2,  label: '实体 Body' },
-        { id: 'lower_shadow', y: (OY + LY) / 2,  label: '下影线 Lower Wick' },
+        { id: 'upper_shadow', y: (HY + CY) / 2,  label: lbl('upper_shadow') },
+        { id: 'body',         y: (CY + OY) / 2,  label: lbl('body') },
+        { id: 'lower_shadow', y: (OY + LY) / 2,  label: lbl('lower_shadow') },
       ].map(({ id, y, label }) => (
         <g key={id} style={{ cursor: 'pointer' }}
           onMouseEnter={() => onHover(id)} onMouseLeave={() => onHover(null)}>
@@ -306,7 +308,7 @@ export default function KLineLesson({ zh }) {
                 <div style={{ fontSize: 11, color: MUTED, marginBottom: 12, textAlign: 'center' }}>
                   {zh ? '（阳线示例 — 当日上涨）' : '(Bullish candle example — price rose)'}
                 </div>
-                <AnatomySVG hovered={hovered} onHover={setHovered} />
+                <AnatomySVG hovered={hovered} onHover={setHovered} zh={zh} />
               </div>
 
               {/* Description panel */}

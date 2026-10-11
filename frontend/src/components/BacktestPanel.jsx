@@ -43,9 +43,10 @@ function MetricCard({ label, value, sub, color }) {
   )
 }
 
-// Axis label in the market's currency: $1.2M for US, ¥120万 for A-shares.
+// Axis label in the market's currency: $1.2M for US; A-shares ¥120万 in Chinese, ¥1.20M otherwise.
 function money(v, us) {
-  return us ? `$${(v / 1e6).toFixed(2)}M` : `¥${(v / 10000).toFixed(0)}万`
+  if (us) return `$${(v / 1e6).toFixed(2)}M`
+  return useLangStore.getState().lang === 'zh' ? `¥${(v / 10000).toFixed(0)}万` : `¥${(v / 1e6).toFixed(2)}M`
 }
 
 function EquityChart({ data, isCN, us }) {

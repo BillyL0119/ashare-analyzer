@@ -94,8 +94,11 @@ TYPE_EN = {
 }
 
 
+_LANG_NAME = {"ja": "Japanese", "ko": "Korean", "fr": "French"}
+
+
 def _build_system_prompt(role: str, interview_type: str, lang: str) -> str:
-    is_zh = lang != "en"
+    is_zh = lang == "zh"          # was `!= "en"`, which interviewed ja/ko/fr users in Chinese
     role_label = ROLE_ZH.get(role, role) if is_zh else ROLE_EN.get(role, role)
     type_label = TYPE_ZH.get(interview_type, interview_type) if is_zh else TYPE_EN.get(interview_type, interview_type)
 
@@ -133,6 +136,8 @@ def _build_system_prompt(role: str, interview_type: str, lang: str) -> str:
             "5. Tone: professional and direct, but constructive — like a senior who genuinely wants you to succeed.\n"
             "6. Don't volunteer the 'model answer'; use follow-up questions to draw out deeper understanding.\n\n"
             "Begin now: introduce yourself and the interview context in one sentence, then ask your first question."
+            + (f"\n\nConduct the whole interview and write the feedback (including the bold headers) in {_LANG_NAME[lang]}. "
+               "Keep the [FEEDBACK_START] marker exactly as written." if lang in _LANG_NAME else "")
         )
 
 

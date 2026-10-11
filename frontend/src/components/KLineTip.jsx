@@ -27,7 +27,7 @@ function TinyCandle({ cx, w, open, close, high, low }) {
 }
 
 // ─── Anatomy mini-SVG ────────────────────────────────────────────────────────
-function AnatomyMini() {
+function AnatomyMini({ zh }) {
   // Bullish candle: cx=32, width=200, height=110
   const cx = 32, bw = 22
   const HY = 8, CY = 28, OY = 75, LY = 100
@@ -48,13 +48,13 @@ function AnatomyMini() {
 
       {/* Labels */}
       {[
-        { y: HY,                   text: '最高价 High',         color: YELLOW  },
-        { y: (HY + CY) / 2,        text: '上影线 Upper Wick',   color: BLUE    },
-        { y: CY,                   text: '收盘价 Close',         color: GREEN   },
-        { y: (CY + OY) / 2,        text: '实体 Body',           color: GREEN   },
-        { y: OY,                   text: '开盘价 Open',          color: MUTED   },
-        { y: (OY + LY) / 2,        text: '下影线 Lower Wick',   color: BLUE    },
-        { y: LY,                   text: '最低价 Low',           color: YELLOW  },
+        { y: HY,                   text: zh ? '最高价' : 'High',         color: YELLOW  },
+        { y: (HY + CY) / 2,        text: zh ? '上影线' : 'Upper Wick',   color: BLUE    },
+        { y: CY,                   text: zh ? '收盘价' : 'Close',         color: GREEN   },
+        { y: (CY + OY) / 2,        text: zh ? '实体' : 'Body',           color: GREEN   },
+        { y: OY,                   text: zh ? '开盘价' : 'Open',          color: MUTED   },
+        { y: (OY + LY) / 2,        text: zh ? '下影线' : 'Lower Wick',   color: BLUE    },
+        { y: LY,                   text: zh ? '最低价' : 'Low',           color: YELLOW  },
       ].map(({ y, text, color }) => (
         <g key={text}>
           <line x1={cx + bw/2 + 1} y1={y} x2={cx + bw/2 + 16} y2={y}
@@ -164,7 +164,7 @@ export default function KLineTip({ zh, lang, onClose }) {
           <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             {t.ktAnatomy}
           </div>
-          <AnatomyMini />
+          <AnatomyMini zh={zh} />
         </div>
 
         {/* Patterns */}

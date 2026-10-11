@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { tx, txEn, txf } from './uniI18n'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -98,14 +99,14 @@ function BusinessRankLine({ uni, zh }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
       <span style={{ fontSize: 11, color: BLUE, fontWeight: 700 }}>
-        {zh ? 'QS 商科' : 'QS Business'} #{uni.qs_bm_rank.replace('=', '')}
+        {tx('QS 商科', 'QS Business')} #{uni.qs_bm_rank.replace('=', '')}
       </span>
       {gap >= 10 && (
         <span style={{
           fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 5,
           background: `${GREEN}1f`, color: GREEN, border: `1px solid ${GREEN}40`,
         }}>
-          {zh ? `比综合排名高 ${gap} 位` : `${gap} places above overall`}
+          {zh ? `比综合排名高 ${gap} 位` : (txf('gapAbove', gap) ?? `${gap} places above overall`)}
         </span>
       )}
     </div>
@@ -247,7 +248,7 @@ function UniModal({ uni, lang, onClose }) {
                 {uni.language && (
                   <span style={{ fontSize: 11, color: 'var(--text-muted)', padding: '1px 7px', borderRadius: 4,
                     border: '1px solid var(--border-primary)' }}>
-                    {uni.language === 'english' ? (zh ? '英语授课' : 'English') : (zh ? '双语授课' : 'Bilingual')}
+                    {uni.language === 'english' ? (tx('英语授课', 'English')) : (tx('双语授课', 'Bilingual'))}
                   </span>
                 )}
                 {uni.established && (
@@ -258,20 +259,20 @@ function UniModal({ uni, lang, onClose }) {
                 {uni.qs_rank && (
                   <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                     background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
-                    {zh ? 'QS 综合' : 'QS overall'} #{uni.qs_rank}
+                    {tx('QS 综合', 'QS overall')} #{uni.qs_rank}
                   </span>
                 )}
                 {uni.qs_bm_rank && (
                   <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                     background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}44` }}>
-                    {zh ? 'QS 商科' : 'QS Business'} #{uni.qs_bm_rank.replace('=', '')}
+                    {tx('QS 商科', 'QS Business')} #{uni.qs_bm_rank.replace('=', '')}
                   </span>
                 )}
                 <a href={uni.url} target="_blank" rel="noopener noreferrer"
                   style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 6,
                     background: `${GREEN}18`, color: GREEN, border: `1px solid ${GREEN}44`,
                     textDecoration: 'none', marginLeft: 2 }}>
-                  {zh ? '官网 →' : 'Website →'}
+                  {tx('官网 →', 'Website →')}
                 </a>
               </div>
             </div>
@@ -296,7 +297,7 @@ function UniModal({ uni, lang, onClose }) {
                 borderBottom: tab === key ? `2px solid ${BLUE}` : '2px solid transparent',
                 transition: 'all 0.15s', whiteSpace: 'nowrap',
               }}>
-                {zh ? zhLabel : en}
+                {zh ? zhLabel : txEn(en)}
               </button>
             ))}
           </div>
@@ -321,10 +322,10 @@ function UniModal({ uni, lang, onClose }) {
                   borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
-                    {zh ? '学费参考' : 'Tuition'}
+                    {tx('学费参考', 'Tuition')}
                   </div>
                   <div style={{ fontSize: (uni.tuition_usd || '').length > 40 ? 13 : 16, fontWeight: 700, color: AMBER, lineHeight: 1.5 }}>
-                    {uni.tuition_usd ? uni.tuition_usd.split(' · ').map(part => <div key={part}>{part}</div>) : (zh ? '详见官网' : 'See official site')}
+                    {uni.tuition_usd ? uni.tuition_usd.split(' · ').map(part => <div key={part}>{part}</div>) : (tx('详见官网', 'See official site'))}
                   </div>
                 </div>
 
@@ -333,10 +334,10 @@ function UniModal({ uni, lang, onClose }) {
                   borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
-                    {zh ? '录取率' : 'Acceptance Rate'}
+                    {tx('录取率', 'Acceptance Rate')}
                   </div>
                   <div style={{ fontSize: 16, fontWeight: 700, color: GREEN }}>
-                    {req.acceptance_rate || (zh ? '详见官网' : 'See website')}
+                    {req.acceptance_rate || (tx('详见官网', 'See website'))}
                   </div>
                 </div>
 
@@ -345,7 +346,7 @@ function UniModal({ uni, lang, onClose }) {
                   borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
-                    {zh ? '强势专业' : 'Specialties'}
+                    {tx('强势专业', 'Specialties')}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                     {(uni.specialties || []).map(s => <TagPill key={s} label={s} />)}
@@ -357,7 +358,7 @@ function UniModal({ uni, lang, onClose }) {
                   borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
-                    {zh ? '就业去向' : 'Top Employment'}
+                    {tx('就业去向', 'Top Employment')}
                   </div>
                   {uni.employment ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -425,12 +426,12 @@ function UniModal({ uni, lang, onClose }) {
                     borderRadius: 10, padding: '14px 16px' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                       textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
-                      {zh ? '学术成绩' : 'Academic'}
+                      {tx('学术成绩', 'Academic')}
                     </div>
-                    <InfoRow label={zh ? '本科 GPA' : 'Undergraduate GPA'} value={req.gpa} />
-                    <InfoRow label={zh ? 'GMAT 中位数' : 'GMAT Median'} value={req.gmat_median} valueColor={BLUE} />
-                    <InfoRow label={zh ? 'GRE 可接受' : 'GRE Accepted'} value={req.gre_accepted ? (zh ? '是' : 'Yes') : (zh ? '否' : 'No')} />
-                    <InfoRow label={zh ? '录取率' : 'Acceptance Rate'} value={req.acceptance_rate} valueColor={GREEN} />
+                    <InfoRow label={tx('本科 GPA', 'Undergraduate GPA')} value={req.gpa} />
+                    <InfoRow label={tx('GMAT 中位数', 'GMAT Median')} value={req.gmat_median} valueColor={BLUE} />
+                    <InfoRow label={tx('GRE 可接受', 'GRE Accepted')} value={req.gre_accepted ? (tx('是', 'Yes')) : (tx('否', 'No'))} />
+                    <InfoRow label={tx('录取率', 'Acceptance Rate')} value={req.acceptance_rate} valueColor={GREEN} />
                   </div>
 
                   {(req.toefl || req.ielts) && (
@@ -438,7 +439,7 @@ function UniModal({ uni, lang, onClose }) {
                     borderRadius: 10, padding: '14px 16px' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                       textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
-                      {zh ? '语言要求' : 'Language Requirements'}
+                      {tx('语言要求', 'Language Requirements')}
                     </div>
                     <InfoRow label="TOEFL" value={req.toefl ? `${req.toefl}+` : null} valueColor={PURPLE} />
                     <InfoRow label="IELTS" value={req.ielts ? `${req.ielts}+` : null} valueColor={PURPLE} />
@@ -450,7 +451,7 @@ function UniModal({ uni, lang, onClose }) {
                       borderRadius: 10, padding: '14px 16px' }}>
                       <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                         textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
-                        {zh ? '申请截止日期' : 'Application Deadlines'}
+                        {tx('申请截止日期', 'Application Deadlines')}
                       </div>
                       {['r1','r2','r3','r4','r5'].map(r => req.deadlines[r] && (
                         <InfoRow key={r} label={`Round ${r[1]}`} value={req.deadlines[r]} valueColor={AMBER} />
@@ -460,7 +461,7 @@ function UniModal({ uni, lang, onClose }) {
                 </>
               ) : (
                 <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '48px 0', fontSize: 14 }}>
-                  {zh ? '详细申请要求请访问官方网站' : 'Please visit the official website for detailed requirements'}
+                  {tx('详细申请要求请访问官方网站', 'Please visit the official website for detailed requirements')}
                   <br />
                   <a href={uni.url} target="_blank" rel="noopener noreferrer"
                     style={{ color: BLUE, fontSize: 13, marginTop: 8, display: 'inline-block' }}>
@@ -503,7 +504,7 @@ function UniModal({ uni, lang, onClose }) {
                           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{a.name}</div>
                           {a.year && (
                             <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>
-                              {zh ? `${a.year}届` : `Class of ${a.year}`}
+                              {zh ? `${a.year}届` : (txf('classOf', a.year) ?? `Class of ${a.year}`)}
                             </span>
                           )}
                         </div>
@@ -514,7 +515,7 @@ function UniModal({ uni, lang, onClose }) {
                 )
               ) : (
                 <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '48px 0', fontSize: 14 }}>
-                  {zh ? '暂无校友数据' : 'No alumni data available'}
+                  {tx('暂无校友数据', 'No alumni data available')}
                 </div>
               )}
             </div>
@@ -530,7 +531,7 @@ const COMPARE_ROWS = [
   { key: 'location',    label: 'Location',       label_cn: '地点',
     fmt: (u) => `${countryFlag(u.country)} ${u.city}` },
   { key: 'language',    label: 'Language',       label_cn: '授课语言',
-    fmt: (u) => u.language === 'english' ? 'English' : 'Bilingual' },
+    fmt: (u) => txEn(u.language === 'english' ? 'English' : 'Bilingual') },
   { key: 'tuition',     label: 'Tuition',        label_cn: '学费',
     fmt: (u) => u.tuition_usd || '—' },
   { key: 'acceptance',  label: 'Acceptance Rate', label_cn: '录取率',
@@ -584,7 +585,7 @@ function CompareModal({ schools, lang, onClose }) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>
-            {zh ? '学校横向对比' : 'School Comparison'}
+            {tx('学校横向对比', 'School Comparison')}
           </div>
           <button onClick={onClose} style={{
             background: 'none', border: '1px solid var(--border-primary)',
@@ -620,7 +621,7 @@ function CompareModal({ schools, lang, onClose }) {
                   {u.qs_rank && (
                     <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                       background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
-                      {zh ? '综合' : 'QS'} #{u.qs_rank}
+                      {tx('综合', 'QS')} #{u.qs_rank}
                     </span>
                   )}
                   {u.qs_bm_rank && (
@@ -628,7 +629,7 @@ function CompareModal({ schools, lang, onClose }) {
                       fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                       background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33`,
                     }}>
-                      {zh ? '商科' : 'Business'} #{u.qs_bm_rank.replace('=', '')}
+                      {tx('商科', 'Business')} #{u.qs_bm_rank.replace('=', '')}
                     </span>
                   )}
                 </div>
@@ -647,7 +648,7 @@ function CompareModal({ schools, lang, onClose }) {
                 }}
               >
                 <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'center' }}>
-                  {zh ? label_cn : label}
+                  {zh ? label_cn : txEn(label)}
                 </div>
                 {schools.map(u => (
                   <div key={u.id} style={{
@@ -675,7 +676,7 @@ function CompareModal({ schools, lang, onClose }) {
               alignItems: 'start',
             }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'flex-start', paddingTop: 8 }}>
-                {zh ? '就业去向' : 'Employment'}
+                {tx('就业去向', 'Employment')}
               </div>
               {schools.map(u => (
                 <div key={u.id} style={{
@@ -699,7 +700,7 @@ function CompareModal({ schools, lang, onClose }) {
                   borderRadius: 8, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
                   color: GREEN, fontSize: 13, fontWeight: 600, textDecoration: 'none',
                 }}>
-                  {zh ? '官网 →' : 'Website →'}
+                  {tx('官网 →', 'Website →')}
                 </a>
               ))}
             </div>
@@ -729,7 +730,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
       animation: 'bfsPageFadeIn 0.15s ease both',
     }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: BLUE, flexShrink: 0 }}>
-        {zh ? `对比 (${schools.length}/3)` : `Compare (${schools.length}/3)`}
+        {zh ? `对比 (${schools.length}/3)` : (txf('compareN3', schools.length) ?? `Compare (${schools.length}/3)`)}
       </div>
 
       <div style={{ display: 'flex', gap: 8, flex: 1, overflowX: 'auto' }}>
@@ -763,7 +764,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <span style={{ fontSize: 11, color: 'var(--border-primary)' }}>
-              {zh ? '+ 添加' : '+ Add'}
+              {tx('+ 添加', '+ Add')}
             </span>
           </div>
         ))}
@@ -781,7 +782,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
-          {zh ? '清除' : 'Clear'}
+          {tx('清除', 'Clear')}
         </button>
         <button
           onClick={onOpen}
@@ -796,7 +797,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
             cursor: schools.length >= 2 ? 'pointer' : 'not-allowed',
           }}
         >
-          {zh ? `对比 ${schools.length} 所` : `Compare ${schools.length}`}
+          {zh ? `对比 ${schools.length} 所` : (txf('compareN', schools.length) ?? `Compare ${schools.length}`)}
         </button>
       </div>
     </div>
@@ -804,11 +805,105 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
 }
 
 // ── Interview: constants ───────────────────────────────────────────────────────
-const IV_PROGRAMS = [
-  '本科申请 Undergraduate', '预MBA Pre-MBA', 'MBA', '理学硕士 Master\'s / MSc',
-  '金融硕士 MFin / MiF', '会计硕士 MAcc', '管理学硕士 MiM', '博士 PhD / DBA',
-]
-const IV_TESTS = ['SAT', 'ACT', 'A-Level', 'IB', 'GMAT', 'GRE', '高考', 'Other']
+// Values sent to the interviewer are English; labels follow the page language (IV_T below)
+const IV_PROGRAMS = ['Undergraduate', 'Pre-MBA', 'MBA', "Master's / MSc", 'MFin / MiF', 'MAcc', 'MiM', 'PhD / DBA']
+const IV_TESTS = ['SAT', 'ACT', 'A-Level', 'IB', 'GMAT', 'GRE', 'Gaokao', 'Other']
+
+// ── Interview: texts (5 languages) ───────────────────────────────────────────
+const IV_T = {
+  zh: {
+    title: '🎓 商学院模拟面试 & 录取评估', subtitle: 'AI严格模拟面试官 · 综合录取概率参考（粗略估算）',
+    steps: ['填写背景', '模拟面试', '评估报告'],
+    intro: '🎓 填写你的背景信息，AI面试官将结合这些内容进行有针对性的追问。成绩为必填项，课外活动选填但建议填写以获得更准确的评估。',
+    school: '目标学校 *', schoolPh: '输入学校名称（如 Harvard Business School）', programme: '申请项目',
+    gpa: 'GPA / 学业成绩 *', gpaPh: '如 3.8/4.0 · A*AA · 40/45', gpaHint: '支持不同评分体系',
+    test: '标化考试', scorePh: '分数',
+    subjects: '相关科目成绩（选填）', subjectsPh: '如 AP Calculus AB 5分 · IB Math AA HL 7分 · A-Level Economics A*', subjectsHint: '商学院重点关注数学、经济、商科类科目',
+    activities: '课外活动与经历（选填但强烈建议填写）', activitiesPh: '示例：\n• 商业计划大赛 全国季军，团队负责市场分析\n• 学生会财务官，管理年度预算$5000\n• 某机构3个月实习，协助整理财务报告', activitiesHint: 'AI面试官会针对这里的活动进行深度追问',
+    ivLang: '面试语言：', start: '开始模拟面试 →',
+    interviewer: (s) => `${s} 招生面试官`, persona: '严格但专业 · 会追问细节', round: (a, b) => `第 ${a}/${b} 轮`,
+    answerPh: '输入你的回答…（Enter 发送 · Shift+Enter 换行）', endBtn: '📊 面试结束，生成综合评估报告 →',
+    discTitle: '免责声明：', discStrong: '此评估基于公开录取数据的一般规律和AI分析，不代表官方立场，不构成录取保证，仅供申请策略参考。',
+    discRest: '实际录取受文书质量、推荐信、面试表现、申请年份竞争情况等AI无法评估的因素影响——这些因素可能比成绩本身影响更大。概率区间为粗略估算，请以区间范围理解，而非精确数值。',
+    generating: '生成中…', generatingReport: '正在生成综合评估报告…', reset: '↩ 重新评估', rangeNote: '粗略参考估算 · 非官方数据 · 仅供策略参考',
+    programs: { Undergraduate: '本科申请', 'Pre-MBA': '预MBA', MBA: 'MBA', "Master's / MSc": '理学硕士', 'MFin / MiF': '金融硕士', MAcc: '会计硕士', MiM: '管理学硕士', 'PhD / DBA': '博士' },
+    gaokao: '高考', other: '其他',
+  },
+  en: {
+    title: '🎓 Business School Mock Interview & Admission Assessment', subtitle: 'A strict AI interviewer · rough admission odds',
+    steps: ['Your background', 'Mock interview', 'Assessment'],
+    intro: '🎓 Tell us about your background and the AI interviewer will ask follow-up questions about it. Grades are required; activities are optional but give a more accurate assessment.',
+    school: 'Target school *', schoolPh: 'School name (e.g. Harvard Business School)', programme: 'Programme',
+    gpa: 'GPA / grades *', gpaPh: 'e.g. 3.8/4.0 · A*AA · 40/45', gpaHint: 'Any grading system works',
+    test: 'Standardised test', scorePh: 'Score',
+    subjects: 'Relevant subject grades (optional)', subjectsPh: 'e.g. AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: 'Business schools look closely at maths, economics and business subjects',
+    activities: 'Activities and experience (optional, strongly recommended)', activitiesPh: 'For example:\n• Business plan competition, national 3rd place, led market research\n• Student council treasurer, managed a $5,000 annual budget\n• 3-month internship, helped prepare financial reports', activitiesHint: 'The interviewer will dig into these',
+    ivLang: 'Interview language:', start: 'Start the mock interview →',
+    interviewer: (s) => `${s} admissions interviewer`, persona: 'Strict but professional · asks follow-ups', round: (a, b) => `Round ${a}/${b}`,
+    answerPh: 'Type your answer… (Enter to send · Shift+Enter for a new line)', endBtn: '📊 Finish and generate the assessment →',
+    discTitle: 'Disclaimer:', discStrong: 'This assessment is based on general patterns in public admissions data and AI analysis. It is not official, does not guarantee admission, and is only for planning your application.',
+    discRest: 'Real decisions depend on essays, recommendation letters, interview performance and that year’s competition, which AI cannot assess and which can matter more than grades. Read the probability as a rough range, not a precise number.',
+    generating: 'Writing…', generatingReport: 'Writing your assessment…', reset: '↩ New assessment', rangeNote: 'Rough estimate · not official data · for planning only',
+    programs: { Undergraduate: 'Undergraduate', 'Pre-MBA': 'Pre-MBA', MBA: 'MBA', "Master's / MSc": "Master's / MSc", 'MFin / MiF': 'MFin / MiF', MAcc: 'MAcc', MiM: 'MiM', 'PhD / DBA': 'PhD / DBA' },
+    gaokao: 'Gaokao', other: 'Other',
+  },
+  ja: {
+    title: '🎓 ビジネススクール模擬面接 & 合格評価', subtitle: '厳格なAI面接官 · 合格可能性の目安（概算）',
+    steps: ['経歴を入力', '模擬面接', '評価レポート'],
+    intro: '🎓 経歴を入力すると、AI面接官がそれに基づいて掘り下げた質問をします。成績は必須、課外活動は任意ですが、入力するとより正確に評価できます。',
+    school: '志望校 *', schoolPh: '学校名（例：Harvard Business School）', programme: '出願プログラム',
+    gpa: 'GPA / 成績 *', gpaPh: '例：3.8/4.0 · A*AA · 40/45', gpaHint: 'どの評価方式でも可',
+    test: '標準テスト', scorePh: 'スコア',
+    subjects: '関連科目の成績（任意）', subjectsPh: '例：AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: 'ビジネススクールは数学・経済・商学系の科目を重視します',
+    activities: '課外活動・経験（任意・入力を強く推奨）', activitiesPh: '例：\n• ビジネスプランコンテスト 全国3位、市場分析を担当\n• 生徒会会計、年間予算5000ドルを管理\n• 3か月のインターン、財務報告の作成を補助', activitiesHint: 'AI面接官はここを深く質問します',
+    ivLang: '面接の言語：', start: '模擬面接を始める →',
+    interviewer: (s) => `${s} 入試面接官`, persona: '厳格だが丁寧 · 詳しく掘り下げます', round: (a, b) => `${a}/${b} ラウンド`,
+    answerPh: '回答を入力…（Enterで送信 · Shift+Enterで改行）', endBtn: '📊 面接を終えて評価レポートを作成 →',
+    discTitle: '免責事項：', discStrong: 'この評価は公開された入試データの一般的な傾向とAI分析に基づくもので、公式見解ではなく、合格を保証するものでもありません。出願戦略の参考としてご利用ください。',
+    discRest: '実際の合否は、エッセイ、推薦状、面接の出来、その年の競争状況など、AIでは評価できない要素に左右され、成績以上に影響することもあります。確率は正確な数値ではなく、おおよその幅として捉えてください。',
+    generating: '作成中…', generatingReport: '評価レポートを作成しています…', reset: '↩ もう一度評価する', rangeNote: '概算 · 非公式データ · 参考用',
+    programs: { Undergraduate: '学部', 'Pre-MBA': 'プレMBA', MBA: 'MBA', "Master's / MSc": '修士（MSc）', 'MFin / MiF': '金融修士', MAcc: '会計修士', MiM: '経営学修士（MiM）', 'PhD / DBA': '博士' },
+    gaokao: '高考（中国）', other: 'その他',
+  },
+  ko: {
+    title: '🎓 경영대학 모의 면접 & 합격 평가', subtitle: '엄격한 AI 면접관 · 합격 가능성 참고(대략적 추정)',
+    steps: ['배경 입력', '모의 면접', '평가 보고서'],
+    intro: '🎓 배경 정보를 입력하면 AI 면접관이 이를 바탕으로 심층 질문을 합니다. 성적은 필수이며, 과외 활동은 선택이지만 입력하면 더 정확한 평가를 받을 수 있습니다.',
+    school: '목표 학교 *', schoolPh: '학교 이름 (예: Harvard Business School)', programme: '지원 프로그램',
+    gpa: 'GPA / 성적 *', gpaPh: '예: 3.8/4.0 · A*AA · 40/45', gpaHint: '어떤 평가 체계든 가능',
+    test: '표준화 시험', scorePh: '점수',
+    subjects: '관련 과목 성적 (선택)', subjectsPh: '예: AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: '경영대학은 수학·경제·경영 과목을 중시합니다',
+    activities: '과외 활동 및 경험 (선택, 입력 강력 권장)', activitiesPh: '예:\n• 비즈니스 플랜 대회 전국 3위, 시장 분석 담당\n• 학생회 재무, 연간 예산 5,000달러 관리\n• 3개월 인턴십, 재무 보고서 작성 지원', activitiesHint: 'AI 면접관이 이 내용을 깊이 질문합니다',
+    ivLang: '면접 언어:', start: '모의 면접 시작 →',
+    interviewer: (s) => `${s} 입학 면접관`, persona: '엄격하지만 전문적 · 세부 사항을 묻습니다', round: (a, b) => `${a}/${b} 라운드`,
+    answerPh: '답변 입력… (Enter 전송 · Shift+Enter 줄바꿈)', endBtn: '📊 면접 종료 후 평가 보고서 생성 →',
+    discTitle: '면책 조항:', discStrong: '이 평가는 공개된 입학 데이터의 일반적인 경향과 AI 분석에 기반하며, 공식 입장이 아니고 합격을 보장하지 않습니다. 지원 전략 참고용입니다.',
+    discRest: '실제 합격 여부는 에세이, 추천서, 면접 성과, 해당 연도 경쟁 등 AI가 평가할 수 없는 요소에 좌우되며 성적보다 더 큰 영향을 줄 수 있습니다. 확률은 정확한 수치가 아닌 대략적인 범위로 이해해 주세요.',
+    generating: '작성 중…', generatingReport: '평가 보고서를 작성하는 중…', reset: '↩ 다시 평가하기', rangeNote: '대략적 추정 · 비공식 데이터 · 참고용',
+    programs: { Undergraduate: '학부', 'Pre-MBA': '프리 MBA', MBA: 'MBA', "Master's / MSc": '석사 (MSc)', 'MFin / MiF': '금융 석사', MAcc: '회계 석사', MiM: '경영학 석사 (MiM)', 'PhD / DBA': '박사' },
+    gaokao: '가오카오(중국)', other: '기타',
+  },
+  fr: {
+    title: "🎓 Entretien blanc d'école de commerce & évaluation d'admission", subtitle: "Un examinateur IA exigeant · estimation approximative des chances d'admission",
+    steps: ['Votre profil', 'Entretien blanc', 'Évaluation'],
+    intro: "🎓 Renseignez votre profil : l'examinateur IA vous posera des questions de suivi précises. Les notes sont obligatoires ; les activités sont facultatives mais rendent l'évaluation plus précise.",
+    school: 'École visée *', schoolPh: "Nom de l'école (ex. Harvard Business School)", programme: 'Programme',
+    gpa: 'GPA / notes *', gpaPh: 'ex. 3.8/4.0 · A*AA · 40/45', gpaHint: 'Tous les systèmes de notation sont acceptés',
+    test: 'Test standardisé', scorePh: 'Score',
+    subjects: 'Notes dans les matières clés (facultatif)', subjectsPh: 'ex. AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: 'Les écoles de commerce regardent surtout les maths, l’économie et la gestion',
+    activities: 'Activités et expériences (facultatif, fortement conseillé)', activitiesPh: "Exemple :\n• Concours de business plan, 3e national, responsable de l'étude de marché\n• Trésorier du conseil des élèves, budget annuel de 5 000 $\n• Stage de 3 mois, aide à la préparation de rapports financiers", activitiesHint: "L'examinateur vous interrogera en détail sur ce point",
+    ivLang: "Langue de l'entretien :", start: "Commencer l'entretien →",
+    interviewer: (s) => `Jury d'admission, ${s}`, persona: 'Exigeant mais professionnel · pose des questions de suivi', round: (a, b) => `Tour ${a}/${b}`,
+    answerPh: 'Votre réponse… (Entrée pour envoyer · Maj+Entrée pour aller à la ligne)', endBtn: "📊 Terminer et générer l'évaluation →",
+    discTitle: 'Avertissement :', discStrong: "Cette évaluation repose sur les tendances générales des données d'admission publiques et sur une analyse par IA. Elle n'est pas officielle, ne garantit pas l'admission et sert uniquement à préparer votre candidature.",
+    discRest: "La décision réelle dépend des essais, des lettres de recommandation, de l'entretien et de la concurrence de l'année, que l'IA ne peut pas évaluer et qui peuvent peser plus que les notes. Lisez la probabilité comme une fourchette approximative, pas comme un chiffre précis.",
+    generating: 'Rédaction…', generatingReport: 'Rédaction de votre évaluation…', reset: '↩ Nouvelle évaluation', rangeNote: 'Estimation approximative · données non officielles · à titre indicatif',
+    programs: { Undergraduate: 'Licence / Bachelor', 'Pre-MBA': 'Pré-MBA', MBA: 'MBA', "Master's / MSc": 'Master / MSc', 'MFin / MiF': 'Master en finance', MAcc: 'Master en comptabilité', MiM: 'Master in Management', 'PhD / DBA': 'Doctorat' },
+    gaokao: 'Gaokao (Chine)', other: 'Autre',
+  },
+}
+const IV_LANG_NAMES = [['zh', '中文'], ['en', 'English'], ['ja', '日本語'], ['ko', '한국어'], ['fr', 'Français']]
+
 
 const DEVICE_ID = (() => {
   let id = localStorage.getItem('bfs_did')
@@ -865,7 +960,7 @@ function MdLine({ text }) {
   )}</>
 }
 
-function RenderReport({ text }) {
+function RenderReport({ text, t }) {
   if (!text) return null
   const lines = text.split('\n')
   return (
@@ -906,9 +1001,9 @@ function RenderReport({ text }) {
           )
         }
         if (line === '') return <div key={i} style={{ height: 4 }} />
-        if (line.startsWith('**区间')) {
+        if (/^\*\*[^*]*\d+\s*%\s*[–-]\s*\d+\s*%/.test(line)) {
           // probability range line — highlight it prominently
-          const match = line.match(/(\d+%–\d+%)/)
+          const match = line.match(/(\d+\s*%\s*[–-]\s*\d+\s*%)/)
           return (
             <div key={i} style={{
               background: `${AMBER}18`, border: `1px solid ${AMBER}44`,
@@ -918,7 +1013,7 @@ function RenderReport({ text }) {
               <MdLine text={line} />
               {match && (
                 <div style={{ fontSize: 11, fontWeight: 400, color: `${AMBER}99`, marginTop: 4 }}>
-                  粗略参考估算 · 非官方数据 · 仅供策略参考
+                  {t.rangeNote}
                 </div>
               )}
             </div>
@@ -972,7 +1067,7 @@ function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, 
   )
 }
 
-function IvSelect({ label, value, onChange, options }) {
+function IvSelect({ label, value, onChange, options, labelOf = (o) => o }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
@@ -987,14 +1082,14 @@ function IvSelect({ label, value, onChange, options }) {
         onFocus={e => { e.target.style.borderColor = BLUE }}
         onBlur={e => { e.target.style.borderColor = 'var(--border-primary)' }}
       >
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
+        {options.map(o => <option key={o} value={o}>{labelOf(o)}</option>)}
       </select>
     </div>
   )
 }
 
 // ── Interview: school autocomplete ────────────────────────────────────────────
-function SchoolInput({ value, onChange, unis }) {
+function SchoolInput({ value, onChange, unis, t }) {
   const [open, setOpen] = useState(false)
   const suggestions = value.length > 0
     ? unis.filter(u => u.name.toLowerCase().includes(value.toLowerCase())).slice(0, 6)
@@ -1003,14 +1098,14 @@ function SchoolInput({ value, onChange, unis }) {
   return (
     <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
-        目标学校 Target School *
+        {t.school}
       </label>
       <input
         value={value}
         onChange={e => { onChange(e.target.value); setOpen(true) }}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
-        placeholder="输入学校名称（如 Harvard Business School）"
+        placeholder={t.schoolPh}
         style={{
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
           borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
@@ -1049,7 +1144,7 @@ function SchoolInput({ value, onChange, unis }) {
 }
 
 // ── Interview: step 1 — profile form ─────────────────────────────────────────
-function ProfileForm({ unis, profile, setProfile, onStart }) {
+function ProfileForm({ unis, profile, setProfile, onStart, t }) {
   const set = (k) => (v) => setProfile(p => ({ ...p, [k]: v }))
   const canStart = profile.school.trim().length > 0
 
@@ -1060,30 +1155,30 @@ function ProfileForm({ unis, profile, setProfile, onStart }) {
         borderRadius: 10, padding: '12px 16px',
         fontSize: 12, color: `${BLUE}cc`, lineHeight: 1.65,
       }}>
-        🎓 填写你的背景信息，AI面试官将结合这些内容进行有针对性的追问。
-        成绩为必填项，课外活动选填但建议填写以获得更准确的评估。
+        {t.intro}
       </div>
 
-      <SchoolInput value={profile.school} onChange={set('school')} unis={unis} />
+      <SchoolInput value={profile.school} onChange={set('school')} unis={unis} t={t} />
 
       <IvSelect
-        label="申请项目 Programme"
+        label={t.programme}
         value={profile.program}
         onChange={set('program')}
         options={IV_PROGRAMS}
+        labelOf={(o) => t.programs[o] || o}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <IvInput
-          label="GPA / 学业成绩 *"
+          label={t.gpa}
           value={profile.gpa}
           onChange={set('gpa')}
-          placeholder="如 3.8/4.0 · A*AA · 40/45"
-          hint="支持不同评分体系"
+          placeholder={t.gpaPh}
+          hint={t.gpaHint}
         />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
-            标化考试 Standardised Test
+            {t.test}
           </label>
           <div style={{ display: 'flex', gap: 6 }}>
             <select
@@ -1095,12 +1190,12 @@ function ProfileForm({ unis, profile, setProfile, onStart }) {
                 fontSize: 13, outline: 'none', cursor: 'pointer', width: 90,
               }}
             >
-              {IV_TESTS.map(t => <option key={t} value={t}>{t}</option>)}
+              {IV_TESTS.map(x => <option key={x} value={x}>{x === 'Gaokao' ? t.gaokao : x === 'Other' ? t.other : x}</option>)}
             </select>
             <input
               value={profile.test_score}
               onChange={e => set('test_score')(e.target.value)}
-              placeholder="分数"
+              placeholder={t.scorePh}
               style={{
                 flex: 1, background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                 borderRadius: 8, color: 'var(--text-primary)', padding: '8px 10px', fontSize: 13, outline: 'none',
@@ -1111,26 +1206,26 @@ function ProfileForm({ unis, profile, setProfile, onStart }) {
       </div>
 
       <IvInput
-        label="相关科目成绩（选填）"
+        label={t.subjects}
         value={profile.subjects}
         onChange={set('subjects')}
-        placeholder="如 AP Calculus AB 5分 · IB Math AA HL 7分 · A-Level Economics A*"
-        hint="商学院重点关注数学、经济、商科类科目"
+        placeholder={t.subjectsPh}
+        hint={t.subjectsHint}
       />
 
       <IvInput
-        label="课外活动与经历（选填但强烈建议填写）"
+        label={t.activities}
         value={profile.activities}
         onChange={set('activities')}
-        placeholder={'示例：\n• 商业计划大赛 全国季军，团队负责市场分析\n• 学生会财务官，管理年度预算$5000\n• 某机构3个月实习，协助整理财务报告'}
+        placeholder={t.activitiesPh}
         as="textarea"
         rows={5}
-        hint="AI面试官会针对这里的活动进行深度追问"
+        hint={t.activitiesHint}
       />
 
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>面试语言：</span>
-        {[['zh', '🇨🇳 中文'], ['en', '🇺🇸 English']].map(([val, label]) => (
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.ivLang}</span>
+        {IV_LANG_NAMES.map(([val, label]) => (
           <button
             key={val}
             onClick={() => set('lang')(val)}
@@ -1162,14 +1257,14 @@ function ProfileForm({ unis, profile, setProfile, onStart }) {
           marginTop: 4,
         }}
       >
-        开始模拟面试 →
+        {t.start}
       </button>
     </div>
   )
 }
 
 // ── Interview: step 2 — chat ──────────────────────────────────────────────────
-function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
+function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t }) {
   const [userInput, setUserInput]   = useState('')
   const [streaming, setStreaming]   = useState('')   // AI response being streamed
   const [isBusy, setIsBusy]         = useState(false)
@@ -1245,14 +1340,14 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
         }}>🎓</div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
-            {profile.school} 招生面试官
+            {t.interviewer(profile.school)}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-            严格但专业 · 会追问细节 · {profile.lang === 'zh' ? '中文面试' : 'English interview'}
+            {t.persona} · {(IV_LANG_NAMES.find(([v]) => v === profile.lang) || IV_LANG_NAMES[1])[1]}
           </div>
         </div>
         <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>
-          第 {aiRounds}/{aiRounds < 4 ? '4-6' : aiRounds} 轮
+          {t.round(aiRounds, aiRounds < 4 ? '4-6' : aiRounds)}
         </div>
       </div>
 
@@ -1311,7 +1406,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
             value={userInput}
             onChange={e => setUserInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-            placeholder="输入你的回答… (Enter 发送 · Shift+Enter 换行)"
+            placeholder={t.answerPh}
             disabled={isBusy}
             rows={2}
             style={{
@@ -1343,7 +1438,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
               transition: 'opacity 0.15s',
             }}
           >
-            📊 面试结束，生成综合评估报告 →
+            {t.endBtn}
           </button>
         )}
       </div>
@@ -1352,7 +1447,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport }) {
 }
 
 // ── Interview: step 3 — report ────────────────────────────────────────────────
-function ReportView({ profile, chatHistory, onReset }) {
+function ReportView({ profile, chatHistory, onReset, t }) {
   const [report, setReport]   = useState('')
   const [isReady, setIsReady] = useState(false)
   const [error, setError]     = useState('')
@@ -1379,10 +1474,7 @@ function ReportView({ profile, chatHistory, onReset }) {
         borderRadius: 10, padding: '12px 16px',
         fontSize: 12, color: `${AMBER}cc`, lineHeight: 1.65,
       }}>
-        ⚠️ <strong>免责声明：</strong>
-        此评估基于公开录取数据的一般规律和AI分析，<strong>不代表官方立场，不构成录取保证，仅供申请策略参考。</strong>
-        实际录取受文书质量、推荐信、面试表现、申请年份竞争情况等AI无法评估的因素影响——这些因素可能比成绩本身影响更大。
-        概率区间为粗略估算，请以区间范围理解，而非精确数值。
+        ⚠️ <strong>{t.discTitle}</strong> <strong>{t.discStrong}</strong> {t.discRest}
       </div>
 
       {/* Report body */}
@@ -1391,13 +1483,13 @@ function ReportView({ profile, chatHistory, onReset }) {
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
           borderRadius: 12, padding: '16px 20px',
         }}>
-          <RenderReport text={report} />
+          <RenderReport text={report} t={t} />
           {!isReady && (
             <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8,
               fontSize: 12, color: 'var(--text-muted)' }}>
               <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
                 background: BLUE, animation: 'bfsCursorBlink 1s infinite' }} />
-              生成中…
+              {t.generating}
             </div>
           )}
         </div>
@@ -1406,7 +1498,7 @@ function ReportView({ profile, chatHistory, onReset }) {
           <div style={{ display: 'inline-block', width: 24, height: 24, border: `2px solid ${BLUE}`,
             borderTopColor: 'transparent', borderRadius: '50%',
             animation: 'spin 0.8s linear infinite', marginBottom: 12 }} />
-          <div>正在生成综合评估报告…</div>
+          <div>{t.generatingReport}</div>
         </div>
       ) : null}
 
@@ -1428,7 +1520,7 @@ function ReportView({ profile, chatHistory, onReset }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = BLUE; e.currentTarget.style.color = BLUE }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
-          ↩ 重新评估 / New Assessment
+          {t.reset}
         </button>
       )}
       <div ref={endRef} />
@@ -1438,11 +1530,12 @@ function ReportView({ profile, chatHistory, onReset }) {
 
 // ── Interview: main modal ─────────────────────────────────────────────────────
 function InterviewModal({ unis, lang, onClose }) {
+  const t = IV_T[lang] || IV_T.en
   const [step, setStep]               = useState(1)   // 1 | 2 | 3
   const [profile, setProfile]         = useState({
     school: '', program: IV_PROGRAMS[0],
     gpa: '', test_type: 'SAT', test_score: '',
-    subjects: '', activities: '', lang: lang === 'zh' ? 'zh' : 'en',
+    subjects: '', activities: '', lang: IV_T[lang] ? lang : 'en',
   })
   const [chatHistory, setChatHistory] = useState([])
 
@@ -1453,11 +1546,7 @@ function InterviewModal({ unis, lang, onClose }) {
     return () => { window.removeEventListener('keydown', h); document.body.style.overflow = '' }
   }, [onClose])
 
-  const STEPS = [
-    { n: 1, label: '填写背景' },
-    { n: 2, label: '模拟面试' },
-    { n: 3, label: '评估报告' },
-  ]
+  const STEPS = t.steps.map((label, i) => ({ n: i + 1, label }))
 
   return (
     <div
@@ -1487,10 +1576,10 @@ function InterviewModal({ unis, lang, onClose }) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <div>
               <div style={{ fontSize: 17, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>
-                🎓 商学院模拟面试 & 录取评估
+                {t.title}
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                AI严格模拟面试官 · 综合录取概率参考（粗略估算）
+                {t.subtitle}
               </div>
             </div>
             <button
@@ -1547,6 +1636,7 @@ function InterviewModal({ unis, lang, onClose }) {
               profile={profile}
               setProfile={setProfile}
               onStart={() => { setChatHistory([]); setStep(2) }}
+              t={t}
             />
           )}
           {step === 2 && (
@@ -1555,6 +1645,7 @@ function InterviewModal({ unis, lang, onClose }) {
               chatHistory={chatHistory}
               setChatHistory={setChatHistory}
               onGenerateReport={() => setStep(3)}
+              t={t}
             />
           )}
           {step === 3 && (
@@ -1562,6 +1653,7 @@ function InterviewModal({ unis, lang, onClose }) {
               profile={profile}
               chatHistory={chatHistory}
               onReset={() => { setStep(1); setProfile(p => ({ ...p, school: '' })); setChatHistory([]) }}
+              t={t}
             />
           )}
         </div>
@@ -1599,13 +1691,10 @@ function InterviewEntryCard({ lang, onOpen }) {
       }}>🎓</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {t ? '商学院模拟面试 & 录取概率评估' : 'Business School Mock Interview & Admission Assessment'}
+          {tx('商学院模拟面试 & 录取概率评估', 'Business School Mock Interview & Admission Assessment')}
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-          {t
-            ? 'AI扮演严格招生面试官，结合你的成绩与面试表现，给出录取概率区间参考（粗略估算）和详细改进建议'
-            : 'AI acts as a rigorous admissions interviewer. Combines your scores & interview to estimate admission probability (rough range) and provide actionable feedback'
-          }
+          {tx('AI扮演严格招生面试官，结合你的成绩与面试表现，给出录取概率区间参考（粗略估算）和详细改进建议', 'AI acts as a rigorous admissions interviewer. Combines your scores & interview to estimate admission probability (rough range) and provide actionable feedback')}
         </div>
       </div>
       <div style={{
@@ -1645,8 +1734,8 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
       }}
     >
       {rankBy === 'business'
-        ? <RankBadge rank={uni.qs_bm_rank?.replace('=', '')} label={t ? '商科' : 'Business'} />
-        : <RankBadge rank={uni.qs_rank} label={t ? 'QS 综合' : 'QS'} />}
+        ? <RankBadge rank={uni.qs_bm_rank?.replace('=', '')} label={tx('商科', 'Business')} />
+        : <RankBadge rank={uni.qs_rank} label={tx('QS 综合', 'QS')} />}
 
       {/* Compare toggle — visible on hover or when active */}
       {onToggleCompare && (
@@ -1663,7 +1752,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
             transition: 'all 0.15s',
             opacity: hovered || isCompared ? 1 : 0,
           }}
-          title={isCompared ? (t ? '移出对比' : 'Remove from compare') : (t ? '加入对比' : 'Add to compare')}
+          title={isCompared ? (tx('移出对比', 'Remove from compare')) : (tx('加入对比', 'Add to compare'))}
         >
           {isCompared ? '✓' : '+'}
         </div>
@@ -1694,7 +1783,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
 
       {/* Business rank (QS Business & Management Studies) */}
       {rankBy === 'business'
-        ? uni.qs_rank && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{t ? 'QS 综合' : 'QS overall'} #{uni.qs_rank}</div>
+        ? uni.qs_rank && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{tx('QS 综合', 'QS overall')} #{uni.qs_rank}</div>
         : <BusinessRankLine uni={uni} zh={t} />}
 
       {/* Specialties */}
@@ -1705,13 +1794,13 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
       {/* Footer: tuition + CTA */}
       <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid var(--border-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>
-          {uni.tuition_usd ? uni.tuition_usd.split(' · ')[0] : (t ? '学费见官网' : 'Tuition: see website')}
+          {uni.tuition_usd ? uni.tuition_usd.split(' · ')[0] : (tx('学费见官网', 'Tuition: see website'))}
         </span>
         <span style={{
           fontSize: 11, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
           transition: 'color 0.15s', whiteSpace: 'nowrap', flexShrink: 0,
         }}>
-          {t ? '查看详情 →' : 'Details →'}
+          {tx('查看详情 →', 'Details →')}
         </span>
       </div>
     </div>
@@ -1737,7 +1826,7 @@ function GapChip({ entry, zh }) {
   if (!entry.overall_num) {
     return (
       <span className="bm-gap" style={{ color: PURPLE, background: `${PURPLE}18`, borderColor: `${PURPLE}40` }}>
-        {zh ? '独立商学院' : 'Standalone school'}
+        {tx('独立商学院', 'Standalone school')}
       </span>
     )
   }
@@ -1752,7 +1841,7 @@ function GapChip({ entry, zh }) {
   if (gap <= -5) {
     return <span className="bm-gap" style={{ color: 'var(--text-secondary)', background: 'transparent', borderColor: 'var(--border-primary)' }}>↓ {-gap}</span>
   }
-  return <span className="bm-gap" style={{ color: 'var(--text-secondary)', background: 'transparent', borderColor: 'var(--border-primary)' }}>{zh ? '相近' : 'Similar'}</span>
+  return <span className="bm-gap" style={{ color: 'var(--text-secondary)', background: 'transparent', borderColor: 'var(--border-primary)' }}>{tx('相近', 'Similar')}</span>
 }
 
 function BusinessRanking({ lang, allUnis, onOpen }) {
@@ -1796,7 +1885,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
 
   if (error) {
     return <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '60px 0', fontSize: 14 }}>
-      {zh ? '排行榜加载失败，请稍后刷新重试' : 'Could not load the ranking. Refresh to try again.'}
+      {tx('排行榜加载失败，请稍后刷新重试', 'Could not load the ranking. Refresh to try again.')}
     </div>
   }
 
@@ -1810,12 +1899,10 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
       }}>
         <div style={{ flex: '1 1 420px', minWidth: 0 }}>
           <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>
-            {zh ? 'QS 商科排名 2026' : 'QS Business & Management Studies 2026'}
+            {tx('QS 商科排名 2026', 'QS Business & Management Studies 2026')}
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            {zh
-              ? '综合排名衡量整所大学；商科排名只看商学与管理学科本身的学术声誉、雇主声誉和研究影响力。LSE、Bocconi、INSEAD 这类学校的商科远比综合排名靠前。右侧对比列显示同一所大学在 QS 综合排名 2027 中的位置。'
-              : 'Overall rankings measure a whole university. This subject ranking looks only at business and management: academic reputation, employer reputation and research impact. Schools such as LSE, Bocconi and INSEAD rank far higher here than overall. The comparison column shows the same university in the QS World University Rankings 2027.'}
+            {tx('综合排名衡量整所大学；商科排名只看商学与管理学科本身的学术声誉、雇主声誉和研究影响力。LSE、Bocconi、INSEAD 这类学校的商科远比综合排名靠前。右侧对比列显示同一所大学在 QS 综合排名 2027 中的位置。', 'Overall rankings measure a whole university. This subject ranking looks only at business and management: academic reputation, employer reputation and research impact. Schools such as LSE, Bocconi and INSEAD rank far higher here than overall. The comparison column shows the same university in the QS World University Rankings 2027.')}
           </div>
         </div>
         {data && (
@@ -1823,7 +1910,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
             <div>
               <div style={{ fontSize: 24, fontWeight: 800, color: GREEN, fontVariantNumeric: 'tabular-nums' }}>{aboveOverall}</div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', maxWidth: 170, lineHeight: 1.5 }}>
-                {zh ? '商科前 50 中比综合排名高 10 位以上或独立商学院' : 'of the top 50 rank 10+ places higher than overall, or have no overall rank'}
+                {tx('商科前 50 中比综合排名高 10 位以上或独立商学院', 'of the top 50 rank 10+ places higher than overall, or have no overall rank')}
               </div>
             </div>
           </div>
@@ -1835,23 +1922,23 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {BM_REGIONS.map(r => (
             <button key={r.key || 'all'} onClick={() => { setRegion(r.key); setLimit(BM_PAGE) }} style={pill(region === r.key)}>
-              {zh ? r.label_cn : r.label}
+              {zh ? r.label_cn : txEn(r.label)}
             </button>
           ))}
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 5 }}>
-          <button onClick={() => setSortBy('rank')} style={pill(sortBy === 'rank')}>{zh ? '按商科排名' : 'By business rank'}</button>
-          <button onClick={() => setSortBy('gap')} style={pill(sortBy === 'gap')}>{zh ? '商科相对综合最强' : 'Strongest vs overall'}</button>
+          <button onClick={() => setSortBy('rank')} style={pill(sortBy === 'rank')}>{tx('按商科排名', 'By business rank')}</button>
+          <button onClick={() => setSortBy('gap')} style={pill(sortBy === 'gap')}>{tx('商科相对综合最强', 'Strongest vs overall')}</button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bm-table" role="table" aria-label={zh ? 'QS 商科排名' : 'QS business ranking'}>
+      <div className="bm-table" role="table" aria-label={tx('QS 商科排名', 'QS business ranking')}>
         <div className="bm-row bm-head" role="row">
-          <span role="columnheader">{zh ? '商科' : 'Rank'}</span>
-          <span role="columnheader">{zh ? '学校' : 'School'}</span>
-          <span role="columnheader" className="bm-col-overall">{zh ? 'QS 综合' : 'QS overall'}</span>
-          <span role="columnheader" className="bm-col-gap">{zh ? '对比综合' : 'vs overall'}</span>
+          <span role="columnheader">{tx('商科', 'Rank')}</span>
+          <span role="columnheader">{tx('学校', 'School')}</span>
+          <span role="columnheader" className="bm-col-overall">{tx('QS 综合', 'QS overall')}</span>
+          <span role="columnheader" className="bm-col-gap">{tx('对比综合', 'vs overall')}</span>
         </div>
         {!data ? (
           Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 52, margin: '6px 0', borderRadius: 8 }} />)
@@ -1874,7 +1961,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
                 <span className="bm-name">{main ? profile.map(p => p.name).join(' / ') : e.name}</span>
                 <span className="bm-sub">
                   {countryFlag(e.country)} {main ? `${e.name} · ${e.city}` : `${e.city}, ${e.country}`}
-                  {main && <span className="bm-more">{zh ? ' · 查看资料 →' : ' · View profile →'}</span>}
+                  {main && <span className="bm-more">{tx(' · 查看资料 →', ' · View profile →')}</span>}
                 </span>
               </span>
               <span className="bm-col-overall bm-overall">{e.overall ? `#${e.overall.replace('=', '')}` : '—'}</span>
@@ -1893,17 +1980,17 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
             color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
           }}
         >
-          {zh ? `显示更多（还有 ${rows.length - limit} 所）` : `Show more (${rows.length - limit} left)`}
+          {zh ? `显示更多（还有 ${rows.length - limit} 所）` : (txf('showMore', rows.length - limit) ?? `Show more (${rows.length - limit} left)`)}
         </button>
       )}
 
       {data && (
         <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 14, lineHeight: 1.7 }}>
-          {zh ? '来源：' : 'Sources: '}
+          {tx('来源：', 'Sources: ')}
           <a href={data.url} target="_blank" rel="noopener noreferrer" style={{ color: BLUE }}>{data.source}</a>
-          {zh ? `（${data.published} 发布）；` : ` (published ${data.published}); `}
+          {zh ? `（${data.published} 发布）；` : (txf('published', data.published) ?? ` (published ${data.published}); `)}
           <a href={data.overall_url} target="_blank" rel="noopener noreferrer" style={{ color: BLUE }}>{data.overall_source}</a>
-          {zh ? `（${data.overall_published} 发布）。「独立商学院」指未参加 QS 综合排名的学校。点击带资料的学校可查看详情。` : ` (published ${data.overall_published}). "Standalone school" means the institution is not in the overall ranking. Rows with a profile open its details.`}
+          {zh ? `（${data.overall_published} 发布）。「独立商学院」指未参加 QS 综合排名的学校。点击带资料的学校可查看详情。` : (txf('overallPublished', data.overall_published) ?? ` (published ${data.overall_published}). "Standalone school" means the institution is not in the overall ranking. Rows with a profile open its details.`)}
         </div>
       )}
 
@@ -1957,7 +2044,7 @@ function Hero({ lang, stats }) {
         background: `${BLUE}15`, border: `1px solid ${BLUE}30`,
         borderRadius: 20, padding: '4px 14px', marginBottom: 16,
       }}>
-        {t ? 'QS 综合排名 2027 · QS 商科排名 2026' : 'QS overall 2027 · QS business & management 2026'}
+        {tx('QS 综合排名 2027 · QS 商科排名 2026', 'QS overall 2027 · QS business & management 2026')}
       </div>
 
       <h1 style={{
@@ -1967,23 +2054,20 @@ function Hero({ lang, stats }) {
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
         lineHeight: 1.15,
       }}>
-        {t ? '全球顶尖商学院指南' : 'Global Business School Guide'}
+        {tx('全球顶尖商学院指南', 'Global Business School Guide')}
       </h1>
 
       <p style={{ fontSize: 15, color: 'var(--text-muted)', margin: '0 0 28px', lineHeight: 1.6 }}>
-        {t
-          ? '全球顶尖大学商学院 · 深度资料 · 专业筛选 · 一站式了解'
-          : 'In-depth profiles · specialty filters · everything you need to choose your school'
-        }
+        {tx('全球顶尖大学商学院 · 深度资料 · 专业筛选 · 一站式了解', 'In-depth profiles · specialty filters · everything you need to choose your school')}
       </p>
 
       {/* Stats row */}
       {stats && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 32, flexWrap: 'wrap' }}>
           {[
-            { val: stats.total,     label: t ? '所学校' : 'Schools' },
-            { val: stats.countries, label: t ? '个国家/地区' : 'Countries' },
-            { val: stats.languages, label: t ? '种语言' : 'Languages' },
+            { val: stats.total,     label: tx('所学校', 'Schools') },
+            { val: stats.countries, label: tx('个国家/地区', 'Countries') },
+            { val: stats.languages, label: tx('种语言', 'Languages') },
           ].map(({ val, label }) => (
             <div key={label} style={{ textAlign: 'center' }}>
               <div style={{
@@ -2035,7 +2119,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           <input
             value={filters.search}
             onChange={e => onChange({ ...filters, search: e.target.value })}
-            placeholder={t ? '搜索学校...' : 'Search schools...'}
+            placeholder={tx('搜索学校...', 'Search schools...')}
             style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
               color: 'var(--text-primary)', padding: '7px 12px 7px 32px', fontSize: 13,
@@ -2054,7 +2138,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
               onClick={() => onChange({ ...filters, region: r.key })}
               style={pill(filters.region === r.key)}
             >
-              {t ? r.label_cn : r.label}
+              {t ? r.label_cn : txEn(r.label)}
             </button>
           ))}
         </div>
@@ -2062,13 +2146,13 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
         {/* Language */}
         <div style={{ display: 'flex', gap: 5 }}>
           <button onClick={() => onChange({ ...filters, language: '' })} style={pill(!filters.language)}>
-            {t ? '全语言' : 'All Lang'}
+            {tx('全语言', 'All Lang')}
           </button>
           <button onClick={() => onChange({ ...filters, language: filters.language === 'english' ? '' : 'english' })} style={pill(filters.language === 'english')}>
-            {t ? '英语' : 'English'}
+            {tx('英语', 'English')}
           </button>
           <button onClick={() => onChange({ ...filters, language: filters.language === 'bilingual' ? '' : 'bilingual' })} style={pill(filters.language === 'bilingual')}>
-            {t ? '双语' : 'Bilingual'}
+            {tx('双语', 'Bilingual')}
           </button>
         </div>
 
@@ -2082,7 +2166,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
-          <option value="">{t ? '所有专业' : 'All Specialties'}</option>
+          <option value="">{tx('所有专业', 'All Specialties')}</option>
           {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
 
@@ -2096,9 +2180,9 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
-          <option value="rank">{t ? '按 QS 综合排名' : 'Sort: QS overall'}</option>
-          <option value="business">{t ? '按 QS 商科排名' : 'Sort: QS business'}</option>
-          <option value="name">{t ? '按名称 A→Z' : 'Sort: Name A→Z'}</option>
+          <option value="rank">{tx('按 QS 综合排名', 'Sort: QS overall')}</option>
+          <option value="business">{tx('按 QS 商科排名', 'Sort: QS business')}</option>
+          <option value="name">{tx('按名称 A→Z', 'Sort: Name A→Z')}</option>
         </select>
 
         {/* Count + clear */}
@@ -2119,7 +2203,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
               onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
             >
-              {t ? '清除筛选' : 'Clear'}
+              {tx('清除筛选', 'Clear')}
             </button>
           )}
         </div>
@@ -2226,8 +2310,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
           background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12,
         }}>
           {[
-            { key: 'schools',  label: t ? `院校库 · ${allUnis.length || ''}` : `School directory · ${allUnis.length || ''}` },
-            { key: 'business', label: t ? '商学院排行榜' : 'Business school ranking' },
+            { key: 'schools',  label: t ? `院校库 · ${allUnis.length || ''}` : (txf('directory', allUnis.length || '') ?? `School directory · ${allUnis.length || ''}`) },
+            { key: 'business', label: tx('商学院排行榜', 'Business school ranking') },
           ].map(v => (
             <button
               key={v.key}
@@ -2264,7 +2348,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
           </div>
         ) : displayed.length === 0 ? (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '80px 0', fontSize: 14 }}>
-            {t ? '没有找到匹配的学校，请调整筛选条件' : 'No schools found — try adjusting filters'}
+            {tx('没有找到匹配的学校，请调整筛选条件', 'No schools found — try adjusting filters')}
           </div>
         ) : (
           <div className="uni-grid">
@@ -2285,10 +2369,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
 
         {/* Footer note */}
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--border-primary)', marginTop: 40, lineHeight: 1.6 }}>
-          {t
-            ? '排名来源：QS World University Rankings 2027（综合）、QS World University Rankings by Subject 2026: Business & Management Studies（商科）。学费、GMAT、截止日期和就业数据于 2026 年 10 月对照各校报告核对；无法核实的项目留空，请以各院校官网为准。'
-            : 'Rankings: QS World University Rankings 2027 (overall) and QS World University Rankings by Subject 2026: Business & Management Studies. Tuition, GMAT, deadlines and employment figures were checked against school reports in October 2026; anything that could not be verified is left blank, so always confirm with the official school website.'
-          }
+          {tx('排名来源：QS World University Rankings 2027（综合）、QS World University Rankings by Subject 2026: Business & Management Studies（商科）。学费、GMAT、截止日期和就业数据于 2026 年 10 月对照各校报告核对；无法核实的项目留空，请以各院校官网为准。', 'Rankings: QS World University Rankings 2027 (overall) and QS World University Rankings by Subject 2026: Business & Management Studies. Tuition, GMAT, deadlines and employment figures were checked against school reports in October 2026; anything that could not be verified is left blank, so always confirm with the official school website.')}
         </div>
       </div>
 

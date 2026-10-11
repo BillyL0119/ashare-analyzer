@@ -109,9 +109,9 @@ function Treemap({ sectors, period, lang, cn }) {
         formatter: (p) => {
           const d = p.data
           return `<b>${p.name}</b><br/>
-今日 / Today: <b style="color:${pctTextColor(d.today, cn)}">${fmt(d.today)}</b><br/>
-近5日 / 5-day: ${fmt(d.pct5d)}<br/>
-量比 / Vol ratio: ${d.vol?.toFixed(2) ?? 'N/A'}`
+${zh ? '今日' : 'Today'}: <b style="color:${pctTextColor(d.today, cn)}">${fmt(d.today)}</b><br/>
+${zh ? '近5日' : '5-day'}: ${fmt(d.pct5d)}<br/>
+${zh ? '量比' : 'Volume ratio'}: ${d.vol?.toFixed(2) ?? 'N/A'}`
         },
       },
       series: [{

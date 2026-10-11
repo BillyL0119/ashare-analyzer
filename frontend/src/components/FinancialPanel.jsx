@@ -67,7 +67,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
         <span style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>
           {fmtVal(value)}
         </span>
-        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{unit}</span>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{unit === '亿' && lang !== 'zh' ? ' × CNY 100M' : unit}</span>
       </div>
 
       {hasYoY && (

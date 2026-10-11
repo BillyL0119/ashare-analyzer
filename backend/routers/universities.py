@@ -42,7 +42,7 @@ class IvProfile(BaseModel):
     test_score: str = ""
     subjects: str = ""
     activities: str = ""
-    lang: str = "zh"        # "zh" | "en"
+    lang: str = "zh"        # "zh" | "en" | "ja" | "ko" | "fr"
 
 class IvMsg(BaseModel):
     role: str               # "user" | "assistant"
@@ -60,8 +60,11 @@ class IvReportBody(BaseModel):
 
 
 # ── System prompts ─────────────────────────────────────────────────────────────
+_IV_LANG = {"zh": "中文", "en": "English", "ja": "日本語（Japanese）", "ko": "한국어（Korean）", "fr": "français（French）"}
+
+
 def _interviewer_system(p: IvProfile) -> str:
-    ln = "中文" if p.lang == "zh" else "English"
+    ln = _IV_LANG.get(p.lang, "English")
     return (
         f"你是{p.school}的招生面试官，请全程用{ln}进行面试。\n\n"
         "申请人资料（仅供参考——通过提问去了解和验证，不要直接报出）：\n"
@@ -82,9 +85,17 @@ def _interviewer_system(p: IvProfile) -> str:
     )
 
 def _report_system(p: IvProfile) -> str:
-    ln = "中文" if p.lang == "zh" else "English"
+    ln = _IV_LANG.get(p.lang, "English")
+    # The outline below is written in Chinese; other languages translate every heading and line,
+    # but keep the markers the page relies on: "## " headings, a bold line holding the "XX%–XX%"
+    # range, the line starting with ⚠️, "---" separators and "- " bullets.
+    translate = "" if p.lang == "zh" else (
+        f"\n重要：整份报告（包括所有标题、免责声明和要点）都必须用{ln}书写，把下面大纲里的中文全部翻译成{ln}；"
+        "保留 Markdown 结构：以「## 」开头的标题、以 ⚠️ 开头的免责声明行、--- 分隔线、以「- 」开头的列表，"
+        f"录取概率那一行写成加粗的「**<{ln}的“区间”一词>：XX%–XX%**」。\n"
+    )
     return (
-        f"你是一位资深商学院申请顾问，请用{ln}生成结构化评估报告。\n\n"
+        f"你是一位资深商学院申请顾问，请用{ln}生成结构化评估报告。{translate}\n\n"
         f"申请人：{p.school} — {p.program} | GPA: {p.gpa or 'N/A'} | "
         f"{p.test_type} {p.test_score} | 活动: {p.activities or 'N/A'}\n\n"
         "请严格按以下格式输出，不要省略任何一节：\n\n"

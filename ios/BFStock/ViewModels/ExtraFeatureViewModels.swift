@@ -163,7 +163,7 @@ final class MockInterviewViewModel: ObservableObject {
 
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
-        guard let data = try? encoder.encode(Body(role: roleID, interviewType: interviewType, history: history, deviceId: deviceID, lang: Lang.code == "zh" ? "zh" : "en")) else { return }
+        guard let data = try? encoder.encode(Body(role: roleID, interviewType: interviewType, history: history, deviceId: deviceID, lang: Lang.code)) else { return }
         let req = APIClient.shared.sseRequest(path: "/career/mock-interview", jsonBody: data)
 
         task = Task { [weak self] in
