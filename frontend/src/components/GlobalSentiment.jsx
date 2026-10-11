@@ -125,7 +125,15 @@ function buildGauge(score) {
   }
 }
 
-function GaugeCard({ title, score, labelZh, labelEn, vix, zh }) {
+// What each part of the index measures (0 = fear, 100 = greed)
+const PART_LABEL = {
+  rsi:      { zh: 'RSI', en: 'RSI', tipZh: '14日相对强弱指数', tipEn: '14-day relative strength index' },
+  range52w: { zh: '52周位置', en: '52-wk range', tipZh: '指数距一年高点的距离', tipEn: 'How close the index is to its 52-week high' },
+  vix:      { zh: 'VIX', en: 'VIX', tipZh: '波动率指数，越低越贪婪', tipEn: 'Volatility index: lower means greedier' },
+  breadth:  { zh: '涨跌家数', en: 'Breadth', tipZh: '上涨股票占比', tipEn: 'Share of stocks that rose' },
+}
+
+function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts }) {
   const label = zh ? labelZh : labelEn
   const color = scoreColor(score)
   return (
@@ -141,6 +149,18 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh }) {
       <div style={{ fontSize: 13, fontWeight: 700, color, marginTop: -4 }}>{label}</div>
       {vix != null && (
         <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>VIX {Number(vix).toFixed(1)}</div>
+      )}
+      {parts?.length > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '2px 8px', fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
+          {parts.map((p) => {
+            const l = PART_LABEL[p.key] || { zh: p.key, en: p.key }
+            return (
+              <span key={p.key} title={zh ? l.tipZh : l.tipEn} style={{ whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
+                {zh ? l.zh : l.en} <b style={{ color: scoreColor(p.score), fontWeight: 600 }}>{Math.round(p.score)}</b>
+              </span>
+            )
+          })}
+        </div>
       )}
     </div>
   )
@@ -529,6 +549,7 @@ export default function GlobalSentiment({ lang }) {
                       labelZh={data?.us_sentiment?.label_zh}
                       labelEn={data?.us_sentiment?.label_en}
                       vix={data?.us_sentiment?.vix}
+                      parts={data?.us_sentiment?.components}
                       zh={zh}
                     />
                   </div>
@@ -538,6 +559,7 @@ export default function GlobalSentiment({ lang }) {
                       score={cnScore}
                       labelZh={data?.cn_sentiment?.label_zh}
                       labelEn={data?.cn_sentiment?.label_en}
+                      parts={data?.cn_sentiment?.components}
                       zh={zh}
                     />
                   </div>

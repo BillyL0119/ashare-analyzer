@@ -8,6 +8,7 @@ import { ErrorBox, Gauge, Pill, Section, Segment, Skeleton, SkeletonRows, Sparkl
 import { changeColor, marketOf, marketOfRegion } from '../helpers'
 import USMarket from './USMarket'
 import MarketMap from '../MarketMap'
+import MacroEvents from '../MacroEvents'
 import { Icon } from '../icons'
 const open = (nav, market, code) => nav(`/stock/${market}/${code}`)
 
@@ -329,7 +330,7 @@ export default function Market({ onSettings }) {
       <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
       <div className="m-stack">
         {mode === 'us' ? (
-          <><USMarket afterOverview={<><Watchlist /><MarketMap market="us" /></>} /><Global /></>
+          <><USMarket afterOverview={<><Watchlist /><MarketMap market="us" /><MacroEvents /></>} /><Global /></>
         ) : (
           <><Overview /><Watchlist /><MarketMap market="cn" /><Global /><Sectors /><Hot /></>
         )}

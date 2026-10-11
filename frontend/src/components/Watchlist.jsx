@@ -9,7 +9,8 @@ const ACCENT_BLUE = '#8ab4f8'
 
 function WatchlistItem({ stock, t, onRemove, onClick }) {
   const [quote, setQuote] = useState(null)
-  const isUS = stock.market === 'us'
+  // Entries saved by older versions have no market: A-share codes are 6 digits, anything else is US
+  const isUS = stock.market ? stock.market === 'us' : !/^\d{6}$/.test(stock.code)
 
   useEffect(() => {
     const fetcher = isUS ? getUSRealtime : getRealtimeQuote

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE06E577153745D4A7AAE05A /* MacroEventsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */; };
 		E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */; };
 		0D3AF4CEA8E5439CA60ECDB1 /* ScreenerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9704F08681614156B46616B6 /* ScreenerView.swift */; };
 		D5D18AEE8D424FD5962E3254 /* FundamentalsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B10732844F43508B8825E1 /* FundamentalsSection.swift */; };
@@ -65,6 +66,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroEventsSection.swift; sourceTree = "<group>"; };
 		E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketHeatmapSection.swift; sourceTree = "<group>"; };
 		9704F08681614156B46616B6 /* ScreenerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenerView.swift; sourceTree = "<group>"; };
 		E6B10732844F43508B8825E1 /* FundamentalsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundamentalsSection.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 				E6B10732844F43508B8825E1 /* FundamentalsSection.swift */,
 				9704F08681614156B46616B6 /* ScreenerView.swift */,
 				E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */,
+				BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */,
 			);
 			path = Market;
 			sourceTree = "<group>";
@@ -386,6 +389,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE06E577153745D4A7AAE05A /* MacroEventsSection.swift in Sources */,
 				E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */,
 				0D3AF4CEA8E5439CA60ECDB1 /* ScreenerView.swift in Sources */,
 				D5D18AEE8D424FD5962E3254 /* FundamentalsSection.swift in Sources */,

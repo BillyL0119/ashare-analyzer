@@ -25,6 +25,7 @@ const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
 const ScreenerPage       = lazy(() => import('./components/ScreenerPage'))
 const AdminPage          = lazy(() => import('./components/AdminPage'))
 const HeatmapPage        = lazy(() => import('./components/HeatmapPage'))
+const MacroCalendarPage  = lazy(() => import('./components/MacroCalendarPage'))
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import useCompareStore from './store/compareStore'
@@ -57,6 +58,7 @@ const TAB_PATHS = {
   screener:     '/screener',
   heatmap:      '/heatmap',
   news:         '/news',
+  macro:        '/macro',
   paper:        '/paper',
   study:        '/study',
   universities: '/universities',
@@ -206,6 +208,7 @@ export default function App() {
       career:       'BestFriendStock | 求职指南 - 金融行业职业规划与模拟面试',
       screener:     'BestFriendStock | 美股选股器 - US Stock Screener',
       heatmap:      'BestFriendStock | 市场热力图 - 美股与A股板块涨跌全景',
+      macro:        'BestFriendStock | 经济日历 - CPI 非农 美联储议息 GDP 发布时间与解读',
       admin:        'BestFriendStock | Admin',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
@@ -219,6 +222,7 @@ export default function App() {
       career:       'Best Friend Stock | Finance Career Guide and Mock Interviews',
       screener:     'Best Friend Stock | US Stock Screener',
       heatmap:      'Best Friend Stock | Market Heatmap',
+      macro:        'Best Friend Stock | Economic Calendar',
       admin:        'Best Friend Stock | Admin',
       ai_teacher:   'Best Friend Stock | AI Economics Teacher',
     }
@@ -743,6 +747,7 @@ export default function App() {
           { key: 'screener',     label: t.tabScreener },
           { key: 'heatmap',      label: t.tabHeatmap },
           { key: 'news',         label: t.tabNews },
+          { key: 'macro',        label: t.tabMacro },
           { key: 'bank_views',   label: t.tabBankViews },
           { key: 'paper',        label: t.tabPaper },
           { key: 'study',        label: t.tabStudy },
@@ -792,6 +797,8 @@ export default function App() {
             <ScreenerPage lang={lang} />
           ) : appTab === 'heatmap' ? (
             <HeatmapPage lang={lang} />
+          ) : appTab === 'macro' ? (
+            <MacroCalendarPage lang={lang} />
           ) : appTab === 'admin' ? (
             <AdminPage lang={lang} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'ai_teacher' ? (

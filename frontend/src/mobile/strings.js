@@ -2065,6 +2065,42 @@ export const STR = {
   "섹터별 등락",
   "Performance par secteur"
  ],
+ "重要经济数据": [
+  "Key economic releases",
+  "主要経済指標",
+  "주요 경제 지표",
+  "Publications économiques clés"
+ ],
+ "实际": [
+  "Actual",
+  "結果",
+  "실제",
+  "Réel"
+ ],
+ "前值": [
+  "Previous",
+  "前回",
+  "이전",
+  "Précédent"
+ ],
+ "环比": [
+  "MoM",
+  "前月比",
+  "전월비",
+  "m/m"
+ ],
+ "同比": [
+  "YoY",
+  "前年比",
+  "전년비",
+  "a/a"
+ ],
+ "为什么重要": [
+  "Why it matters",
+  "なぜ重要か",
+  "왜 중요한가",
+  "Pourquoi c'est important"
+ ],
  "刚刚": [
   "Just now",
   "たった今",

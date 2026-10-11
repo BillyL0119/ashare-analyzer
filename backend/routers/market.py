@@ -110,7 +110,7 @@ def _fetch_indices_tencent() -> dict:
         out[_TENCENT_INDEX_KEYS[f[2]]] = {
             "value":      _safe_float(f[3]),
             "change":     _safe_float(f[31]),
-            "change_pct": round(_safe_float(f[32]) / 100, 4),
+            "change_pct": round(_safe_float(f[32]) / 100, 6),
         }
     return out
 
@@ -498,10 +498,20 @@ def _calc_rsi(hist: pd.DataFrame, period: int = 14) -> float:
         return 50.0
 
 
+def _cboe_vix() -> dict:
+    """VIX from CBOE's own delayed-quote feed (yfinance is rate limited from the server and
+    Tencent's .VIX quote stopped updating)."""
+    import requests
+    r = requests.get("https://cdn.cboe.com/api/global/delayed_quotes/quotes/_VIX.json",
+                     headers={"User-Agent": "Mozilla/5.0"}, timeout=8)
+    d = (r.json() or {}).get("data") or {}
+    price = d.get("current_price") or d.get("close")
+    return {"close": round(float(price), 2), "change_pct": d.get("price_change_percent")} if price else {}
+
+
 def _vix_score(vix_val: float) -> float:
-    """VIX < 12 → greed (100), VIX > 40 → fear (0)."""
-    vix_val = max(8.0, min(80.0, float(vix_val)))
-    return round((80.0 - vix_val) / (80.0 - 8.0) * 100, 1)
+    """VIX around 20 is its long-run middle: 10 or lower → 100 (greed), 20 → 50, 30 or higher → 0 (fear)."""
+    return round(max(0.0, min(100.0, 50.0 + (20.0 - float(vix_val)) * 5.0)), 1)
 
 
 def _dist_score(hist: pd.DataFrame) -> float:
@@ -555,8 +565,12 @@ def _do_fetch_sentiment() -> dict:
                 except Exception as e:
                     raw[yf_sym] = {}
                     logger.debug("fetch %s failed: %s", yf_sym, e)
-        # ── US score: RSI + 52w distance from S&P500 ────────────────────────
-        vix_d = {}  # no AkShare VIX source
+        # ── US score: S&P 500 RSI + distance from its 52-week range + VIX ───
+        try:
+            vix_d = _cboe_vix()
+        except Exception as e:
+            logger.warning("VIX (CBOE) failed: %s", e)
+            vix_d = {}
         us_hist = None
         for sym in ("^GSPC", "^DJI", "^IXIC"):
             h = raw.get(sym, {}).get("hist")
@@ -565,26 +579,35 @@ def _do_fetch_sentiment() -> dict:
                 logger.info("us sentiment using %s hist", sym)
                 break
 
+        us_parts = []          # each part scores 0 (fear) .. 100 (greed)
         if us_hist is not None:
-            rsi_s  = _calc_rsi(us_hist)
-            dist_s = _dist_score(us_hist)
-            us_score = round((rsi_s + dist_s) / 2, 1)
-            logger.info("us score: rsi=%.1f dist=%.1f → %.1f", rsi_s, dist_s, us_score)
+            us_parts.append({"key": "rsi", "score": _calc_rsi(us_hist)})
+            us_parts.append({"key": "range52w", "score": _dist_score(us_hist)})
+        if vix_d.get("close"):
+            us_parts.append({"key": "vix", "value": vix_d["close"], "score": _vix_score(vix_d["close"])})
+        if us_parts:
+            us_score = round(sum(p["score"] for p in us_parts) / len(us_parts), 1)
+            logger.info("us score: %s → %.1f", us_parts, us_score)
         else:
             us_score = 50.0
             logger.warning("us score: no data available, using 50.0")
 
         # ── CN score: breadth + Shanghai RSI, each optional ─────────────────
         cn_components = []
+        cn_parts = []
 
+        # Breadth from the cached A-share spot snapshot the market overview uses (Eastmoney's
+        # spot API is unreachable from the server, so calling it here always failed).
         try:
-            with ThreadPoolExecutor(max_workers=1) as _spot_ex:
-                spot_df = _spot_ex.submit(ak.stock_zh_a_spot_em).result(timeout=10)
+            spot_df = _get_spot_df()
+            if spot_df is None:
+                raise RuntimeError("spot snapshot not ready")
             pct_col = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
             adv = int((pct_col > 0).sum())
             dec = int((pct_col < 0).sum())
             b = _breadth_score(adv, dec)
             cn_components.append(b)
+            cn_parts.append({"key": "breadth", "score": b, "advance": adv, "decline": dec})
             logger.info("cn breadth: adv=%d dec=%d → %.1f", adv, dec, b)
         except Exception as e:
             logger.warning("cn breadth failed: %s", e)
@@ -609,6 +632,7 @@ def _do_fetch_sentiment() -> dict:
         if sh_hist is not None:
             sh_rsi = _calc_rsi(sh_hist)
             cn_components.append(sh_rsi)
+            cn_parts.append({"key": "rsi", "score": sh_rsi})
             logger.info("cn rsi=%.1f", sh_rsi)
 
         cn_score = round(sum(cn_components) / len(cn_components), 1) if cn_components else 50.0
@@ -684,11 +708,13 @@ def _do_fetch_sentiment() -> dict:
                 "label_zh": us_lbl[0],
                 "label_en": us_lbl[1],
                 "vix":      vix_d.get("close"),
+                "components": us_parts,
             },
             "cn_sentiment": {
                 "score":    cn_score,
                 "label_zh": cn_lbl[0],
                 "label_en": cn_lbl[1],
+                "components": cn_parts,
             },
             "indices":    indices,
             "updated_at": datetime.now().isoformat(),

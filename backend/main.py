@@ -77,6 +77,8 @@ async def warmup_caches():
     loop.run_in_executor(None, _warm_fundamentals)
     from routers.screener import warmup as _warm_screener
     loop.run_in_executor(None, _warm_screener)   # stock list + P/E enrichment thread
+    from routers.macro import warmup as _warm_macro
+    loop.run_in_executor(None, _warm_macro)      # economic calendar, 2 weeks of days
     from routers.calendar import warmup as _warm_calendar
     loop.run_in_executor(None, _warm_calendar)   # A-share events (cninfo + IPO table)
 
@@ -407,5 +409,7 @@ app.include_router(screener_router, prefix="/api/us/screener", tags=["screener"]
 from routers.admin import auth_router, admin_router
 from routers.heatmap import router as heatmap_router
 app.include_router(heatmap_router, prefix="/api/heatmap", tags=["heatmap"])
+from routers.macro import router as macro_router
+app.include_router(macro_router, prefix="/api/macro", tags=["macro"])
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
