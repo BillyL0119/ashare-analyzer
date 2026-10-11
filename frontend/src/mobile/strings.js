@@ -1741,6 +1741,174 @@ export const STR = {
   "커리어",
   "Filière"
  ],
+ "公司基本面": [
+  "Fundamentals",
+  "ファンダメンタルズ",
+  "펀더멘털",
+  "Fondamentaux"
+ ],
+ "%lld 位分析师": [
+  "%lld analysts",
+  "アナリスト%lld人",
+  "애널리스트 %lld명",
+  "%lld analystes"
+ ],
+ "/年": [
+  "/yr",
+  "/年",
+  "/년",
+  "/an"
+ ],
+ "52 周区间": [
+  "52-week range",
+  "52週レンジ",
+  "52주 범위",
+  "Plage 52 semaines"
+ ],
+ "下次财报": [
+  "Next earnings",
+  "次回決算",
+  "다음 실적 발표",
+  "Prochains résultats"
+ ],
+ "主要机构股东": [
+  "Top institutional holders",
+  "主な機関投資家",
+  "주요 기관 투자자",
+  "Principaux actionnaires institutionnels"
+ ],
+ "净利润": [
+  "Net income",
+  "純利益",
+  "순이익",
+  "Résultat net"
+ ],
+ "净利率": [
+  "Net margin",
+  "純利益率",
+  "순이익률",
+  "Marge nette"
+ ],
+ "分析师目标价": [
+  "Analyst target",
+  "アナリスト目標株価",
+  "애널리스트 목표가",
+  "Objectif des analystes"
+ ],
+ "分析师评级": [
+  "Analyst ratings",
+  "アナリスト評価",
+  "애널리스트 의견",
+  "Avis des analystes"
+ ],
+ "季度": [
+  "Quarterly",
+  "四半期",
+  "분기",
+  "Trimestriel"
+ ],
+ "年度": [
+  "Annual",
+  "年次",
+  "연간",
+  "Annuel"
+ ],
+ "展开": [
+  "More",
+  "続きを読む",
+  "더 보기",
+  "Plus"
+ ],
+ "收起": [
+  "Less",
+  "閉じる",
+  "접기",
+  "Moins"
+ ],
+ "平均": [
+  "Average",
+  "平均",
+  "평균",
+  "Moyenne"
+ ],
+ "持有": [
+  "Hold",
+  "中立",
+  "보유",
+  "Conserver"
+ ],
+ "数据来源：Nasdaq · 单位美元 · 财年按公司口径": [
+  "Source: Nasdaq · USD · fiscal periods as reported",
+  "出所: Nasdaq · 米ドル · 会計年度は各社基準",
+  "출처: Nasdaq · 미국 달러 · 회계연도는 기업 기준",
+  "Source : Nasdaq · USD · exercices tels que publiés"
+ ],
+ "无": [
+  "None",
+  "なし",
+  "없음",
+  "Aucun"
+ ],
+ "机构持股": [
+  "Institutional ownership",
+  "機関投資家保有比率",
+  "기관 보유 비중",
+  "Détention institutionnelle"
+ ],
+ "每股收益 (近4季)": [
+  "EPS (last 4 qtrs)",
+  "EPS (直近4四半期)",
+  "EPS (최근 4분기)",
+  "BPA (4 derniers trim.)"
+ ],
+ "毛利率": [
+  "Gross margin",
+  "売上総利益率",
+  "매출총이익률",
+  "Taux de marge brute"
+ ],
+ "盈利 vs 预期": [
+  "Earnings vs estimates",
+  "EPS 実績と予想",
+  "EPS 실적 vs 예상",
+  "BPA vs consensus"
+ ],
+ "空间": [
+  "upside",
+  "上昇余地",
+  "상승 여력",
+  "potentiel"
+ ],
+ "股息率": [
+  "Dividend yield",
+  "配当利回り",
+  "배당수익률",
+  "Rendement"
+ ],
+ "自由现金流": [
+  "Free cash flow",
+  "フリーCF",
+  "잉여현금흐름",
+  "Flux de trésorerie disponible"
+ ],
+ "营收": [
+  "Revenue",
+  "売上高",
+  "매출",
+  "Chiffre d'affaires"
+ ],
+ "财务表现": [
+  "Financials",
+  "業績",
+  "재무 실적",
+  "Résultats financiers"
+ ],
+ "预期": [
+  "Est.",
+  "予想",
+  "예상",
+  "Cons."
+ ],
  "刚刚": [
   "Just now",
   "たった今",

@@ -45,6 +45,10 @@ struct StockDetailView: View {
                     quoteGrid(q)
                 }
 
+                if market == .us {
+                    FundamentalsSection(symbol: code, price: vm.quote?.price)
+                }
+
                 MonteCarloSection(code: code, market: market)
 
                 StockScoreSection(symbol: code)
