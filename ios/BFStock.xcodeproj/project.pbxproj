@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */; };
 		0D3AF4CEA8E5439CA60ECDB1 /* ScreenerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9704F08681614156B46616B6 /* ScreenerView.swift */; };
 		D5D18AEE8D424FD5962E3254 /* FundamentalsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B10732844F43508B8825E1 /* FundamentalsSection.swift */; };
 		BEBD3756A0444D13B28641E1 /* MonteCarloSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949E78536868400F960E3944 /* MonteCarloSection.swift */; };
@@ -64,6 +65,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketHeatmapSection.swift; sourceTree = "<group>"; };
 		9704F08681614156B46616B6 /* ScreenerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenerView.swift; sourceTree = "<group>"; };
 		E6B10732844F43508B8825E1 /* FundamentalsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FundamentalsSection.swift; sourceTree = "<group>"; };
 		949E78536868400F960E3944 /* MonteCarloSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonteCarloSection.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 				949E78536868400F960E3944 /* MonteCarloSection.swift */,
 				E6B10732844F43508B8825E1 /* FundamentalsSection.swift */,
 				9704F08681614156B46616B6 /* ScreenerView.swift */,
+				E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */,
 			);
 			path = Market;
 			sourceTree = "<group>";
@@ -383,6 +386,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */,
 				0D3AF4CEA8E5439CA60ECDB1 /* ScreenerView.swift in Sources */,
 				D5D18AEE8D424FD5962E3254 /* FundamentalsSection.swift in Sources */,
 				BEBD3756A0444D13B28641E1 /* MonteCarloSection.swift in Sources */,

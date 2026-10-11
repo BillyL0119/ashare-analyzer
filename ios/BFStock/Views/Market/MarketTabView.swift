@@ -25,7 +25,7 @@ struct MarketTabView: View {
                         USMarketSection(
                             overview: vm.usOverview,
                             earnings: vm.earnings,
-                            afterOverview: AnyView(VStack(spacing: 26) { ScreenerEntryCard(); WatchlistSection() }),
+                            afterOverview: AnyView(VStack(spacing: 26) { ScreenerEntryCard(); WatchlistSection(); MarketHeatmapSection(market: .us) }),
                             isLoading: vm.isLoadingUS,
                             error: vm.usError,
                             onRetry: { Task { await vm.loadUSOverview() } }
@@ -39,6 +39,7 @@ struct MarketTabView: View {
                     } else {
                         overviewSection
                         WatchlistSection()
+                        MarketHeatmapSection(market: .cn)
                         GlobalMarketSection(
                             sentiment: vm.sentiment,
                             isLoading: vm.isLoadingSentiment,

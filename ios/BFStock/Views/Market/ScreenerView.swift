@@ -134,7 +134,7 @@ struct ScreenerView: View {
     private static let sortOptions: [(String, String)] = [
         ("market_cap", "市值"), ("change_pct", "涨跌幅"), ("volume", "成交量"), ("pe", "市盈率"), ("price", "股价"),
     ]
-    private static let sectorZh: [String: String] = [
+    static let sectorZh: [String: String] = [
         "Technology": "科技", "Health Care": "医疗保健", "Finance": "金融", "Consumer Discretionary": "非必需消费",
         "Industrials": "工业", "Real Estate": "房地产", "Energy": "能源", "Utilities": "公用事业",
         "Basic Materials": "基础材料", "Consumer Staples": "必需消费", "Telecommunications": "电信", "Miscellaneous": "其他",
