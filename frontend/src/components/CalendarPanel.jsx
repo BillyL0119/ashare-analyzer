@@ -129,11 +129,18 @@ export default function CalendarPanel({ lang, onStockSelect }) {
   const [filter,  setFilter]  = useState('all')
 
   useEffect(() => {
-    fetch('/api/calendar/events')
+    // Right after a server restart the calendar is still being built ({loading: true}): ask again
+    let alive = true, timer, tries = 0
+    const load = () => fetch('/api/calendar/events')
       .then((r) => r.json())
-      .then((d) => setData(d))
-      .catch((e) => console.error('calendar:', e))
-      .finally(() => setLoading(false))
+      .then((d) => {
+        if (!alive) return
+        if (d.loading && tries++ < 12) { timer = setTimeout(load, 8000); return }
+        setData(d); setLoading(false)
+      })
+      .catch(() => { if (alive) setLoading(false) })
+    load()
+    return () => { alive = false; clearTimeout(timer) }
   }, [])
 
   const types = ['all', 'earnings', 'dividend', 'ipo', 'holiday']

@@ -251,20 +251,26 @@ def _refresh():
         _refreshing = False
 
 
+def _start_refresh() -> None:
+    global _refreshing
+    if _refreshing:
+        return
+    _refreshing = True
+    import threading
+    threading.Thread(target=_refresh, daemon=True, name="calendar-refresh").start()
+
+
 def warmup():
-    _refresh()
+    _start_refresh()
 
 
 @router.get("/events")
 def calendar_events():
-    """Cached for 6 hours; a stale copy is served while a background refresh runs."""
-    global _refreshing
-    now = time.time()
+    """Cached for 6 hours and always built in the background (a cold build takes ~45s because
+    cninfo has to be queried one stock at a time); a cold cache answers {"loading": true}."""
     if _cache_data is None:
-        _refresh()
-        return _cache_data or {"events": []}
-    if now - _cache_ts > _CACHE_TTL and not _refreshing:
-        _refreshing = True
-        import threading
-        threading.Thread(target=_refresh, daemon=True, name="calendar-refresh").start()
+        _start_refresh()
+        return {"events": [], "loading": True}
+    if time.time() - _cache_ts > _CACHE_TTL:
+        _start_refresh()
     return _cache_data
