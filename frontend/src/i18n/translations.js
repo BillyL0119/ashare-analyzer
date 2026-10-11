@@ -191,6 +191,7 @@ export const T = {
     radarNoStocks: '请先添加股票',
     radarTab: '雷达对比',
     scoreTab: '股票打分',
+    fundamentalsTab: '公司基本面',
     backtestTab: '策略回测',
     // News Sentiment
     newsSentiment: '新闻舆情',
@@ -680,6 +681,7 @@ export const T = {
     radarNoStocks: 'Please add a stock first',
     radarTab: 'Radar',
     scoreTab: 'Score',
+    fundamentalsTab: 'Fundamentals',
     backtestTab: 'Backtest',
     // News Sentiment
     newsSentiment: 'News Sentiment',
@@ -1169,6 +1171,7 @@ export const T = {
     radarNoStocks: '銘柄を追加してください',
     radarTab: 'レーダー',
     scoreTab: 'スコア',
+    fundamentalsTab: 'ファンダメンタルズ',
     backtestTab: 'バックテスト',
     // News Sentiment
     newsSentiment: 'ニュース感情分析',
@@ -1658,6 +1661,7 @@ export const T = {
     radarNoStocks: '종목을 추가해 주세요',
     radarTab: '레이더',
     scoreTab: '점수',
+    fundamentalsTab: '펀더멘털',
     backtestTab: '백테스트',
     // News Sentiment
     newsSentiment: '뉴스 감성 분석',
@@ -2147,6 +2151,7 @@ export const T = {
     radarNoStocks: "Veuillez d'abord ajouter une action",
     radarTab: 'Radar',
     scoreTab: 'Score',
+    fundamentalsTab: 'Fondamentaux',
     backtestTab: 'Backtest',
     // News Sentiment
     newsSentiment: 'Sentiment des actualités',

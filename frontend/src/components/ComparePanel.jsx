@@ -20,6 +20,7 @@ import CalendarPanel from './CalendarPanel'
 import EarningsPanel from './EarningsPanel'
 import StockDetailPage from './StockDetailPage'
 import ScorePanel from './ScorePanel'
+import FundamentalsPanel from './FundamentalsPanel'
 import BacktestPanel from './BacktestPanel'
 import GlobalNewsPanel from './GlobalNewsPanel'
 import CommentsPanel from './CommentsPanel'
@@ -84,7 +85,7 @@ function OverlayView({ lang }) {
 }
 
 // View modes where the date range is irrelevant
-const _NO_DATE_MODES = new Set(['news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
+const _NO_DATE_MODES = new Set(['fundamentals', 'news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
 
 export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -171,6 +172,8 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             { key: 'backtest', label: t.backtestTab },
           ],
           [
+            // company fundamentals (statements, estimates, analysts) cover US-listed companies
+            ...(market === 'us' ? [{ key: 'fundamentals', label: t.fundamentalsTab }] : []),
             { key: 'score', label: t.scoreTab },
             { key: 'radar', label: t.radarTab },
             { key: 'similar', label: t.similarTrend },
@@ -284,6 +287,8 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
         <CalendarPanel lang={lang} onStockSelect={handleStockSelect} />
       ) : viewMode === 'earnings' ? (
         <EarningsPanel lang={lang} onStockSelect={handleStockSelect} />
+      ) : viewMode === 'fundamentals' ? (
+        <FundamentalsPanel stocks={selectedSymbols} market={market} />
       ) : viewMode === 'score' ? (
         <ScorePanel stocks={selectedSymbols} />
       ) : viewMode === 'backtest' ? (

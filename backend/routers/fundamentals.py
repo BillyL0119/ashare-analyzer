@@ -298,8 +298,7 @@ def get_fundamentals(symbol: str):
         "as_of": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     logger.info("fundamentals %s built in %.1fs", sym, time.time() - t0)
-    if out["profile"].get("name") or out["annual"]:
-        write_cache(key, out)
-    elif not out["stats"].get("market_cap"):
+    if not (out["profile"].get("name") or out["annual"] or out["stats"].get("market_cap")):
         raise HTTPException(status_code=404, detail=f"No fundamentals for {sym}")
+    write_cache(key, out)   # ETFs too (stats only), so they don't re-fetch every visit
     return out
