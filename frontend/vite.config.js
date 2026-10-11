@@ -23,12 +23,15 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules/echarts') || id.includes('node_modules/echarts-for-react')) return 'vendor-echarts'
-          if (id.includes('node_modules/recharts')) return 'vendor-recharts'
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor-react'
+        // Charts only load with a page that draws one; the entry chunk must not reference that group.
+        codeSplitting: {
+          groups: [
+            { name: 'vendor-react', test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/, priority: 20 },
+            { name: 'vendor-echarts', test: /node_modules[\\/](echarts|echarts-for-react|zrender|size-sensor)[\\/]/, priority: 10 },
+            { name: 'vendor-recharts', test: /node_modules[\\/]recharts[\\/]/, priority: 10 },
+          ],
         },
       },
     },

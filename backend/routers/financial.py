@@ -31,7 +31,7 @@ def _symbol_to_yf_ticker(symbol: str) -> str:
 
 
 def _get_yf_valuation(symbol: str) -> dict:
-    """Fetch PE/PB from yfinance, cached per-symbol for 1 hour."""
+    """PE/PB from Tencent quotes, cached per-symbol for 1 hour."""
     cache = _get_yf_valuation._yf_cache
     now = time.time()
     if symbol in cache:
@@ -39,15 +39,13 @@ def _get_yf_valuation(symbol: str) -> dict:
         if now - cached_ts < 3600:
             return cached_val
 
+    # Tencent's quote feed carries P/E (TTM) and P/B; yfinance is rate limited from the server
+    # and made this endpoint wait ~9s before giving up.
     try:
-        import yfinance as yf
-        ticker_str = _symbol_to_yf_ticker(symbol)
-        info = yf.Ticker(ticker_str).info
-        pe_ttm = _safe(info.get("trailingPE") or info.get("forwardPE"))
-        pb = _safe(info.get("priceToBook"))
-        result = {"pe_ttm": pe_ttm, "pb": pb}
-    except Exception as e:
-        print(f"[financial] yfinance valuation error for {symbol}: {e}")
+        from services.stock_service import tencent_quotes
+        q = tencent_quotes([symbol]).get(symbol) or {}
+        result = {"pe_ttm": _safe(q.get("pe")), "pb": _safe(q.get("pb"))}
+    except Exception:
         result = {"pe_ttm": None, "pb": None}
 
     cache[symbol] = (result, now)
@@ -57,12 +55,25 @@ def _get_yf_valuation(symbol: str) -> dict:
 _get_yf_valuation._yf_cache = {}
 
 
+_result_cache: dict = {}     # symbol -> (ts, result); quarterly figures, so 12h is plenty
+
+
 @router.get("/{symbol}")
 def financial_analysis(symbol: str):
     """
     Return key financial ratios for a stock.
-    PE/PB from yfinance; financial ratios from ak.stock_financial_analysis_indicator.
+    PE/PB from Tencent quotes; financial ratios from ak.stock_financial_analysis_indicator.
     """
+    hit = _result_cache.get(symbol)
+    if hit and time.time() - hit[0] < 12 * 3600:
+        return hit[1]
+    result = _build_financial(symbol)
+    if result.get("profitability") or result.get("valuation", {}).get("pe_ttm"):
+        _result_cache[symbol] = (time.time(), result)
+    return result
+
+
+def _build_financial(symbol: str) -> dict:
     result = {
         "symbol": symbol,
         "valuation": {},      # PE, PB

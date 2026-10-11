@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta
 router = APIRouter()
 logger = logging.getLogger("calendar")
 
-_CACHE_TTL = 1800  # 30 minutes
+_CACHE_TTL = 6 * 3600
 _cache_ts: float = 0
 _cache_data: dict | None = None
 
@@ -80,154 +80,120 @@ def _get_name(symbol: str) -> str:
     return _STOCK_NAMES.get(symbol, symbol)
 
 
+def _report_period(today: date) -> str:
+    """The report season whose disclosure dates fall in the next 30 days (cninfo naming, e.g. 2026三季)."""
+    y, m = today.year, today.month
+    if m <= 4:
+        return f"{y - 1}年报" if m <= 3 else f"{y}一季"
+    if m <= 8:
+        return f"{y}半年报"
+    return f"{y}三季"
+
+
+def _cell_date(v):
+    raw = str(v)[:10]
+    if not raw or raw in ("nan", "None", "NaT"):
+        return None
+    try:
+        return datetime.strptime(raw, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
 def _fetch_earnings() -> list:
-    """Fetch upcoming earnings disclosure dates via stock_report_disclosure."""
+    """Scheduled report disclosure dates (cninfo). The latest rescheduled date wins."""
     events = []
     try:
-        # market: 沪深A股
-        df = ak.stock_report_disclosure(market="沪深A股", period="一季报")
+        with _cninfo_lock:
+            df = ak.stock_report_disclosure(market="沪深京", period=_report_period(_today()))
         if df is None or df.empty:
             return events
-        # Columns vary by akshare version; find date column
-        date_col = None
-        for c in df.columns:
-            if "日期" in c or "披露" in c or "date" in c.lower():
-                date_col = c
-                break
-        code_col = None
-        for c in df.columns:
-            if "代码" in c or "code" in c.lower() or "股票代码" in c:
-                code_col = c
-                break
-        if date_col is None or code_col is None:
-            logger.warning("earnings: unexpected columns %s", list(df.columns))
-            return events
-
+        order = [c for c in ("实际披露", "三次变更", "二次变更", "初次变更", "首次预约") if c in df.columns]
+        notable = {c for codes in (_INDUSTRY_MAP.get("industries") or {}).values() for c in codes}
         for _, row in df.iterrows():
-            try:
-                d = datetime.strptime(str(row[date_col])[:10], "%Y-%m-%d").date()
-                if not _in_window(d):
-                    continue
-                code = str(row[code_col]).zfill(6)
-                events.append({
-                    "date": d.isoformat(),
-                    "type": "earnings",
-                    "symbol": code,
-                    "name": _get_name(code),
-                    "title": "财报披露",
-                    "title_en": "Earnings Disclosure",
-                })
-            except Exception:
+            d = next((x for x in (_cell_date(row[c]) for c in order) if x), None)
+            if not d or not _in_window(d):
                 continue
+            code = str(row.get("股票代码", "")).zfill(6)
+            if code not in notable:          # ~5,000 companies report each season; list the followed ones
+                continue
+            events.append({
+                "date": d.isoformat(), "type": "earnings", "symbol": code,
+                "name": str(row.get("股票简称") or _get_name(code)),
+                "title": "财报披露", "title_en": "Earnings Disclosure",
+            })
     except Exception as e:
         logger.warning("earnings fetch failed: %s", e)
     return events
 
 
-def _fetch_dividends() -> list:
-    """Fetch upcoming ex-dividend dates."""
-    events = []
-    try:
-        df = ak.stock_dividend_cninfo(symbol="A股")
-        if df is None or df.empty:
-            return events
-        # Find ex-date column
-        date_col = None
-        for c in df.columns:
-            if "除权" in c or "除息" in c or "ex" in c.lower():
-                date_col = c
-                break
-        if date_col is None:
-            # Try any date-like column
-            for c in df.columns:
-                if "日期" in c:
-                    date_col = c
-                    break
-        code_col = None
-        for c in df.columns:
-            if "代码" in c or "股票代码" in c:
-                code_col = c
-                break
-        if date_col is None or code_col is None:
-            logger.warning("dividends: unexpected columns %s", list(df.columns))
-            return events
+import threading as _threading
+_cninfo_lock = _threading.Lock()
 
-        seen = set()
-        for _, row in df.iterrows():
-            try:
-                raw = str(row[date_col])
-                if not raw or raw in ("nan", "None", ""):
-                    continue
-                d = datetime.strptime(raw[:10], "%Y-%m-%d").date()
-                if not _in_window(d):
-                    continue
-                code = str(row[code_col]).zfill(6)
-                key = (d, code)
-                if key in seen:
-                    continue
-                seen.add(key)
-                events.append({
-                    "date": d.isoformat(),
-                    "type": "dividend",
-                    "symbol": code,
-                    "name": _get_name(code),
-                    "title": "分红除权",
-                    "title_en": "Ex-Dividend Date",
-                })
-            except Exception:
-                continue
-    except Exception as e:
-        logger.warning("dividends fetch failed: %s", e)
+
+def _dividend_watchlist() -> list[str]:
+    """Large, widely followed names: the first few of every industry in industry_map."""
+    out = []
+    for codes in (_INDUSTRY_MAP.get("industries") or {}).values():
+        for c in codes[:4]:
+            if c not in out:
+                out.append(c)
+    return out[:60]
+
+
+def _dividends_for(code: str) -> list:
+    try:
+        df = ak.stock_dividend_cninfo(symbol=code)
+    except Exception:
+        return []
+    events = []
+    for _, row in (df if df is not None else []).iterrows():
+        d = _cell_date(row.get("除权日"))
+        if not d or not _in_window(d):
+            continue
+        ratio = row.get("派息比例")
+        detail = f"每10股派{ratio}元" if ratio not in (None, "") and str(ratio) != "nan" else ""
+        events.append({
+            "date": d.isoformat(), "type": "dividend", "symbol": code, "name": _get_name(code),
+            "title": "分红除权" + (f"（{detail}）" if detail else ""),
+            "title_en": "Ex-dividend" + (f" (CNY {ratio} per 10 shares)" if detail else ""),
+        })
+    return events
+
+
+def _fetch_dividends() -> list:
+    """Ex-dividend dates for widely held names. cninfo only answers per stock (there is no
+    working market-wide feed from the server), so a fixed list is queried one by one: its request
+    signing runs in an embedded V8 (mini_racer) that crashes the process when used from several
+    threads at once. Runs in the background refresh, ~0.7s per stock."""
+    events = []
+    with _cninfo_lock:
+        for code in _dividend_watchlist():
+            events.extend(_dividends_for(code))
     return events
 
 
 def _fetch_ipos() -> list:
-    """Fetch upcoming new stock listings."""
+    """New share subscriptions and listings (Eastmoney's IPO table, reachable from the server)."""
     events = []
     try:
-        df = ak.stock_zh_a_new_em()
+        df = ak.stock_xgsglb_em(symbol="全部股票")
         if df is None or df.empty:
             return events
-        # Find date column
-        date_col = None
-        for c in df.columns:
-            if "上市" in c or "申购" in c or "日期" in c:
-                date_col = c
-                break
-        code_col = None
-        for c in df.columns:
-            if "代码" in c or "股票代码" in c:
-                code_col = c
-                break
-        name_col = None
-        for c in df.columns:
-            if "名称" in c or "股票名称" in c:
-                name_col = c
-                break
-        if date_col is None or code_col is None:
-            logger.warning("IPO: unexpected columns %s", list(df.columns))
-            return events
-
         for _, row in df.iterrows():
-            try:
-                raw = str(row[date_col])
-                if not raw or raw in ("nan", "None", ""):
-                    continue
-                d = datetime.strptime(raw[:10], "%Y-%m-%d").date()
-                if not _in_window(d):
-                    continue
-                code = str(row[code_col]).zfill(6)
-                name = str(row[name_col]) if name_col else _get_name(code)
-                events.append({
-                    "date": d.isoformat(),
-                    "type": "ipo",
-                    "symbol": code,
-                    "name": name,
-                    "title": "新股上市",
-                    "title_en": "IPO Listing",
-                })
-            except Exception:
-                continue
+            code = str(row.get("股票代码", "")).zfill(6)
+            name = str(row.get("股票简称") or _get_name(code))
+            price = row.get("发行价格")
+            price_txt = f"，发行价 {price} 元" if price is not None and str(price) != "nan" else ""
+            price_en = f", offer price CNY {price}" if price_txt else ""
+            sub = _cell_date(row.get("申购日期"))
+            if sub and _in_window(sub):
+                events.append({"date": sub.isoformat(), "type": "ipo", "symbol": code, "name": name,
+                               "title": "新股申购" + price_txt, "title_en": "IPO subscription" + price_en})
+            lst = _cell_date(row.get("上市日期"))
+            if lst and _in_window(lst):
+                events.append({"date": lst.isoformat(), "type": "ipo", "symbol": code, "name": name,
+                               "title": "新股上市", "title_en": "IPO listing"})
     except Exception as e:
         logger.warning("IPO fetch failed: %s", e)
     return events
@@ -253,25 +219,52 @@ def _fetch_holidays() -> list:
     return events
 
 
-@router.get("/events")
-def calendar_events():
-    global _cache_ts, _cache_data
-
-    now = time.time()
-    if _cache_data is not None and now - _cache_ts < _CACHE_TTL:
-        return _cache_data
-
-    all_events: list = []
-    all_events.extend(_fetch_holidays())
-    all_events.extend(_fetch_earnings())
-    all_events.extend(_fetch_dividends())
-    all_events.extend(_fetch_ipos())
-
-    # Sort by date, then type priority
+def _build() -> dict:
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        parts = [ex.submit(f) for f in (_fetch_earnings, _fetch_dividends, _fetch_ipos)]
+        all_events = _fetch_holidays() + [e for p in parts for e in p.result()]
+    seen, unique = set(), []
+    for e in all_events:
+        k = (e["date"], e["type"], e["symbol"], e["title"])
+        if k not in seen:
+            seen.add(k)
+            unique.append(e)
+    all_events = unique
     _type_order = {"holiday": 0, "earnings": 1, "dividend": 2, "ipo": 3}
     all_events.sort(key=lambda e: (e["date"], _type_order.get(e["type"], 9)))
+    return {"events": all_events, "updated": datetime.now().strftime("%Y-%m-%d %H:%M")}
 
-    result = {"events": all_events}
-    _cache_ts = now
-    _cache_data = result
-    return result
+
+_refreshing = False
+
+
+def _refresh():
+    global _cache_ts, _cache_data, _refreshing
+    try:
+        data = _build()
+        if data["events"] or _cache_data is None:
+            _cache_data, _cache_ts = data, time.time()
+    except Exception as e:
+        logger.warning("calendar build failed: %s", e)
+    finally:
+        _refreshing = False
+
+
+def warmup():
+    _refresh()
+
+
+@router.get("/events")
+def calendar_events():
+    """Cached for 6 hours; a stale copy is served while a background refresh runs."""
+    global _refreshing
+    now = time.time()
+    if _cache_data is None:
+        _refresh()
+        return _cache_data or {"events": []}
+    if now - _cache_ts > _CACHE_TTL and not _refreshing:
+        _refreshing = True
+        import threading
+        threading.Thread(target=_refresh, daemon=True, name="calendar-refresh").start()
+    return _cache_data

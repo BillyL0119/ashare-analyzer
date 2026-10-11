@@ -10,7 +10,7 @@ _name_cache: dict = {}
 
 
 def tencent_quotes(codes: list, timeout: float = 4) -> dict:
-    """{bare_code: {"name", "price", "prev_close"}} for A-share codes via qt.gtimg.cn, in chunks.
+    """{bare_code: {"name", "price", "prev_close", "pe", "pb", "market_cap_yi"}} for A-share codes via qt.gtimg.cn, in chunks.
     Sina hq.sinajs.cn answers 403 after ~5s from our server, so nothing should call it."""
     out: dict = {}
     codes = [c for c in dict.fromkeys(c.strip() for c in codes) if c]
@@ -31,7 +31,14 @@ def tencent_quotes(codes: list, timeout: float = 4) -> dict:
                 price, prev = float(vals[3] or 0), float(vals[4] or 0)
             except ValueError:
                 price, prev = 0.0, 0.0
-            out[vals[2]] = {"name": vals[1].replace(" ", ""), "price": price, "prev_close": prev}
+            def _f(i):
+                try:
+                    return float(vals[i]) if len(vals) > i and vals[i] not in ("", "-") else None
+                except ValueError:
+                    return None
+            out[vals[2]] = {"name": vals[1].replace(" ", ""), "price": price, "prev_close": prev,
+                            # P/E (TTM), P/B and total market cap in 100M CNY, when Tencent has them
+                            "pe": _f(39), "pb": _f(46), "market_cap_yi": _f(45)}
     return out
 
 

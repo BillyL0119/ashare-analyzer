@@ -13,28 +13,34 @@ INDICES = {
     "sz399006": {"zh": "创业板",  "en": "ChiNext",  "tx": "sz399006"},
 }
 
-# In-process cache: {tx_symbol: (dates_list, log_returns_array)}
+# In-process cache: {tx_symbol: (timestamp, dates_list, log_returns_array)}
 _INDEX_CACHE: dict = {}
+_INDEX_TTL = 6 * 3600
 
 
 def _load_index(tx_symbol: str):
-    """Fetch full index history via Tencent Finance (no py_mini_racer).
-    Result is cached for the lifetime of the process."""
-    if tx_symbol in _INDEX_CACHE:
-        return _INDEX_CACHE[tx_symbol]
+    """Last ~1000 trading days of an index from Tencent's kline API in one request, cached for
+    6 hours. (akshare's stock_zh_index_daily_tx walks the whole history year by year: ~21s.)"""
+    import time
+    import requests
+    hit = _INDEX_CACHE.get(tx_symbol)
+    if hit and time.time() - hit[0] < _INDEX_TTL:
+        return hit[1], hit[2]
     try:
-        print(f"[factor] Loading index {tx_symbol} via Tencent Finance (first call)…")
-        df = ak.stock_zh_index_daily_tx(symbol=tx_symbol)
-        df["date"] = df["date"].astype(str)
-        df = df.sort_values("date")
-        closes = df["close"].values.astype(float)
-        dates = df["date"].tolist()
+        r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
+                         params={"param": f"{tx_symbol},day,,,1000,qfq"}, timeout=8)
+        rows = ((r.json().get("data") or {}).get(tx_symbol) or {}).get("day") or []
+        dates = [row[0] for row in rows]
+        closes = np.array([float(row[2]) for row in rows])
+        if len(closes) < 30:
+            raise ValueError(f"only {len(closes)} bars")
         log_rets = np.diff(np.log(np.where(closes > 0, closes, np.nan)))
-        result = (dates[1:], log_rets)
-        _INDEX_CACHE[tx_symbol] = result
-        return result
+        _INDEX_CACHE[tx_symbol] = (time.time(), dates[1:], log_rets)
+        return dates[1:], log_rets
     except Exception as e:
         print(f"[factor] Index load failed for {tx_symbol}: {e}")
+        if hit:
+            return hit[1], hit[2]        # stale beats nothing
         return None, None
 
 

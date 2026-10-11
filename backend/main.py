@@ -1,5 +1,9 @@
 from dotenv import load_dotenv
 load_dotenv()
+import os as _os
+# AkShare draws tqdm progress bars on stderr for many calls; under pm2 they filled the error log
+# (100+ MB) and buried real errors. Must be set before akshare/tqdm are imported.
+_os.environ.setdefault("TQDM_DISABLE", "1")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -73,6 +77,8 @@ async def warmup_caches():
     loop.run_in_executor(None, _warm_fundamentals)
     from routers.screener import warmup as _warm_screener
     loop.run_in_executor(None, _warm_screener)   # stock list + P/E enrichment thread
+    from routers.calendar import warmup as _warm_calendar
+    loop.run_in_executor(None, _warm_calendar)   # A-share events (cninfo + IPO table)
 
 from security import SecurityMiddleware, allowed_origins
 

@@ -54,15 +54,12 @@ def _to_yf(symbol: str) -> str:
 
 
 def _get_name(symbol: str) -> str:
-    """Try to get Chinese stock name via akshare individual info."""
+    """Chinese stock name from Tencent quotes (Eastmoney is unreachable from the server)."""
     try:
-        df = ak.stock_individual_info_em(symbol=symbol)
-        row = df[df["项目"] == "股票简称"]
-        if not row.empty:
-            return str(row.iloc[0]["数值"])
+        from services.stock_service import tencent_quotes
+        return (tencent_quotes([symbol]).get(symbol) or {}).get("name") or symbol
     except Exception:
-        pass
-    return symbol
+        return symbol
 
 
 # ── Score computation ─────────────────────────────────────────────────────────
@@ -149,16 +146,15 @@ def _compute(symbol: str) -> dict:
     except Exception as e:
         logger.warning("Price data failed for %s: %s", symbol, e)
 
-    # ── PE / PB from yfinance ────────────────────────────────────────────────
+    # ── PE / PB from Tencent quotes (yfinance is rate limited from the server) ──
     pe: float | None = None
     pb: float | None = None
     try:
-        import yfinance as yf
-        info = yf.Ticker(_to_yf(symbol)).info
-        pe = _safe(info.get("trailingPE") or info.get("forwardPE"))
-        pb = _safe(info.get("priceToBook"))
+        from services.stock_service import tencent_quotes
+        q = tencent_quotes([symbol]).get(symbol) or {}
+        pe, pb = _safe(q.get("pe")), _safe(q.get("pb"))
     except Exception as e:
-        logger.warning("yfinance failed for %s: %s", symbol, e)
+        logger.warning("Tencent PE/PB failed for %s: %s", symbol, e)
 
     # ── CSI 300 for market correlation ───────────────────────────────────────
     mkt_closes: list[float] = []
