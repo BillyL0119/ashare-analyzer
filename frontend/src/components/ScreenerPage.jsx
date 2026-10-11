@@ -99,8 +99,11 @@ const CSS = `
 .sc-table tr.row { cursor: pointer; transition: background .12s; }
 .sc-table tr.row:hover { background: var(--bg-hover); }
 .sc-table tr.row:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: -2px; }
-@media (max-width: 960px) { .sc-wrap { grid-template-columns: minmax(0, 1fr); } .sc-filters { position: static; } .sc-hide-md { display: none; } }
-@media (max-width: 600px) { .sc-hide-sm { display: none; } }
+@media (max-width: 1400px) { .sc-hide-lg { display: none; } }
+@media (max-width: 960px) { .sc-wrap { grid-template-columns: minmax(0, 1fr); } .sc-filters { position: static; } .sc-hide-md { display: none; }
+  .sc-filters:not(.open) { display: none; } .sc-ftoggle { display: inline-flex !important; } }
+@media (max-width: 600px) { .sc-hide-sm { display: none; } .sc-show-sm { display: block !important; max-width: 104px; } .sc-table { font-size: 12px; } .sc-table td, .sc-table th { padding: 9px 5px; } .sc-table th { font-size: 10px; letter-spacing: 0; } }
+.sc-ftoggle, .sc-show-sm { display: none; }
 `
 
 export default function ScreenerPage({ lang }) {
@@ -114,6 +117,7 @@ export default function ScreenerPage({ lang }) {
   const [data, setData] = useState(null)
   const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [filtersOpen, setFiltersOpen] = useState(false)   // phones/tablets: filters start collapsed
   const abortRef = useRef(null)
 
   const params = useMemo(() => {
@@ -172,8 +176,11 @@ export default function ScreenerPage({ lang }) {
         ))}
       </div>
 
+      <button className="sc-chip sc-ftoggle" style={{ marginBottom: 12 }} aria-expanded={filtersOpen} onClick={() => setFiltersOpen((v) => !v)}>
+        {t.filters} {filtersOpen ? '▴' : '▾'}
+      </button>
       <div className="sc-wrap">
-        <aside className="sc-panel sc-filters" aria-label={t.filters}>
+        <aside className={`sc-panel sc-filters${filtersOpen ? ' open' : ''}`} aria-label={t.filters}>
           <div>
             <div className="sc-lbl">{t.search}</div>
             <input id="sc-q" className="sc-in" value={f.q} onChange={(e) => set({ q: e.target.value })} placeholder="AAPL, Tesla…" />
@@ -245,8 +252,8 @@ export default function ScreenerPage({ lang }) {
               <thead>
                 <tr>
                   {head('symbol', t.colSymbol, 'l')}
-                  <th className="l">{t.colName}</th>
-                  <th className="l sc-hide-md">{t.colSector}</th>
+                  <th className="l sc-hide-sm">{t.colName}</th>
+                  <th className="l sc-hide-lg">{t.colSector}</th>
                   {head('market_cap', t.colCap)}
                   {head('price', t.colPrice)}
                   {head('change_pct', t.colChange)}
@@ -261,12 +268,15 @@ export default function ScreenerPage({ lang }) {
                 ))}
                 {rows.map((r) => (
                   <tr key={r.symbol} className="row" tabIndex={0} onClick={() => open(r)} onKeyDown={(e) => e.key === 'Enter' && open(r)}>
-                    <td className="l" style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontWeight: 700, color: ACCENT }}>{r.symbol}</td>
-                    <td className="l" style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <td className="l" style={{ maxWidth: 150 }}>
+                      <div style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontWeight: 700, color: ACCENT }}>{r.symbol}</div>
+                      <div className="sc-show-sm" style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
+                    </td>
+                    <td className="l sc-hide-sm" style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       <div style={{ color: 'var(--text-primary)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.name}>{r.name}</div>
                       {r.industry && <div style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.industry}>{r.industry}</div>}
                     </td>
-                    <td className="l sc-hide-md">{r.sector ? sectorName(r.sector) : '—'}</td>
+                    <td className="l sc-hide-lg">{r.sector ? sectorName(r.sector) : '—'}</td>
                     <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{money(r.market_cap)}</td>
                     <td>${r.price?.toFixed(2)}</td>
                     <td style={{ color: r.change_pct > 0 ? UP : r.change_pct < 0 ? DOWN : undefined, fontWeight: 600 }}>
