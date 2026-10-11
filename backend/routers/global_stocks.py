@@ -212,6 +212,12 @@ def _load_universe_locked(market: str):
             return
     except Exception as e:
         logger.warning("%s universe cache unreadable: %s", market, e)
+    if not _universe[market] and os.path.exists(path):
+        try:        # serve yesterday's list while today's is built (~1 min)
+            with open(path, encoding="utf-8") as f:
+                _universe[market] = json.load(f)
+        except Exception:
+            pass
     try:
         rows = _build_hk() if market == "hk" else _build_jp()
         if len(rows) > 500:
@@ -224,9 +230,6 @@ def _load_universe_locked(market: str):
             logger.info("%s universe: %d securities", market, len(rows))
     except Exception as e:
         logger.warning("%s universe build failed: %s", market, e)
-        if not _universe[market] and os.path.exists(path):       # stale beats nothing
-            with open(path, encoding="utf-8") as f:
-                _universe[market] = json.load(f)
 
 
 def _universe_loop():
