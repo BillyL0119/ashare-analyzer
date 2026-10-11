@@ -11,8 +11,8 @@ export default function VolumeChart({ candles, groupId, market = 'cn' }) {
   useThemeStore((s) => s.theme)
   if (!candles || candles.length === 0) return null
 
-  const upColor = market === 'us' ? US_UP : undefined
-  const downColor = market === 'us' ? US_DOWN : undefined
+  const upColor = market !== 'cn' ? US_UP : undefined
+  const downColor = market !== 'cn' ? US_DOWN : undefined
   const option = buildVolumeOption(candles, lang, upColor, downColor)
 
   return (

@@ -224,8 +224,12 @@ _HEADINGS = {
 }
 
 
+_MARKET_LABEL = {"us": ("US stocks", "美股"), "cn": ("China A-shares", "A股"),
+                 "hk": ("Hong Kong stocks", "港股"), "jp": ("Japanese stocks", "日股")}
+
+
 def _build_prompt_intl(symbol: str, stock_name: str, start_date: str, end_date: str,
-                       stats: dict, tech: dict, news: list, is_us: bool, lang: str) -> str:
+                       stats: dict, tech: dict, news: list, market: str, lang: str) -> str:
     lang_name = _LANG_NAME.get(lang, "English")
     h_bg, h_tech, h_lv, h_risk, no_news, disclaimer = _HEADINGS.get(lang, _HEADINGS["en"])
     if news:
@@ -237,7 +241,7 @@ def _build_prompt_intl(symbol: str, stock_name: str, start_date: str, end_date: 
         news_block = "\nNo news was found for this stock in this period.\n"
         guide = (f'Start with exactly this sentence, translated if needed: "{no_news}" Then describe only '
                  "price, volume and indicators. Never invent announcements, news or analyst views.")
-    market = "US stocks" if is_us else "China A-shares"
+    market = _MARKET_LABEL.get(market, _MARKET_LABEL["cn"])[0]
     return f"""You are a professional technical analyst covering {market}. Interpret the selected candlestick range below.
 
 Stock: {symbol} ({stock_name})
@@ -273,11 +277,11 @@ End with this line: {disclaimer}"""
 
 
 def _build_prompt(symbol: str, stock_name: str, start_date: str, end_date: str,
-                  stats: dict, tech: dict, news: list, is_us: bool = False, lang: str = "zh") -> str:
+                  stats: dict, tech: dict, news: list, market: str = "cn", lang: str = "zh") -> str:
     if lang != "zh":
-        return _build_prompt_intl(symbol, stock_name, start_date, end_date, stats, tech, news, is_us, lang)
+        return _build_prompt_intl(symbol, stock_name, start_date, end_date, stats, tech, news, market, lang)
     has_news  = bool(news)
-    market_lbl = "美股" if is_us else "A股"
+    market_lbl = _MARKET_LABEL.get(market, _MARKET_LABEL["cn"])[1]
 
     if has_news:
         news_block = "\n【同期相关新闻（请直接引用原标题）】\n"
@@ -386,7 +390,13 @@ def analyze_kline_segment(req: SegmentRequest):
     from services.indicator_service import calc_macd, calc_rsi, calc_ma
 
     is_us  = req.market == "us"
-    symbol = req.symbol.strip().upper() if is_us else req.symbol.strip()
+    # US, HK and JP all come as one list of daily candles; A-shares go through get_stock_history
+    is_intl = req.market in ("us", "hk", "jp")
+    if req.market in ("hk", "jp"):
+        from routers.global_stocks import normalize_code
+        symbol = normalize_code(req.market, req.symbol)
+    else:
+        symbol = req.symbol.strip().upper() if is_us else req.symbol.strip()
     lang   = req.lang if req.lang in _LANGS else "en"
 
     cache_key = (symbol, req.market, req.start_date, req.end_date, lang)
@@ -395,8 +405,12 @@ def analyze_kline_segment(req: SegmentRequest):
         return hit[1]
 
     # ── Fetch OHLCV ───────────────────────────────────────────────────────────
-    if is_us:
-        all_us = _get_us_all_candles(symbol)
+    if is_intl:
+        if is_us:
+            all_us = _get_us_all_candles(symbol)
+        else:
+            from routers.global_stocks import history as _global_history
+            all_us = _global_history(req.market, symbol)
         seg_candles = [c for c in all_us if req.start_date <= c["date"] <= req.end_date]
         df = _candles_to_df(seg_candles)
     else:
@@ -443,7 +457,7 @@ def analyze_kline_segment(req: SegmentRequest):
         prior_end_str   = prior_end_dt.strftime("%Y-%m-%d")
         prior_start_str = prior_start_dt.strftime("%Y-%m-%d")
 
-        if is_us:
+        if is_intl:
             prior_candles = [c for c in all_us if prior_start_str <= c["date"] <= prior_end_str]
             df_prior = _candles_to_df(prior_candles)
         else:
@@ -479,7 +493,7 @@ def analyze_kline_segment(req: SegmentRequest):
     # up to the end of the range, not over the selected bars alone.
     df_ind = df
     try:
-        if is_us:
+        if is_intl:
             hist = [c for c in all_us if c["date"] <= req.end_date][-250:]
             if len(hist) > bars:
                 df_ind = _candles_to_df(hist)
@@ -505,6 +519,8 @@ def analyze_kline_segment(req: SegmentRequest):
     news_complete = True
     if is_us:
         news, news_complete = _fetch_news_us(symbol, req.start_date, req.end_date)
+    elif is_intl:
+        news = []                              # no per-stock news feed for HK/JP yet
     else:
         news = _fetch_news_cn(symbol, req.start_date, req.end_date)
 
@@ -512,7 +528,7 @@ def analyze_kline_segment(req: SegmentRequest):
     prompt             = _build_prompt(
         symbol, req.stock_name or symbol,
         req.start_date, req.end_date,
-        stats, tech, news, is_us, lang,
+        stats, tech, news, req.market, lang,
     )
     ai_text, ai_source = _call_ai(prompt, lang)
     if lang != "zh" and ai_source != "none":

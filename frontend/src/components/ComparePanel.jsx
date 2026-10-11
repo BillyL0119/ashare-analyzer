@@ -94,6 +94,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
+  const hkjp = market === 'hk' || market === 'jp'
   const [detailSymbol, setDetailSymbol] = useState(null)
   const [detailName,   setDetailName]   = useState(null)
 
@@ -112,7 +113,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
     return (
       <>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 8 }}>
-          {market !== 'us' && (
+          {market === 'cn' && (
             <button
               onClick={() => setViewMode('calendar')}
               style={{
@@ -167,32 +168,34 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           [
             { key: 'sideBySide', label: t.sideBySide },
             { key: 'overlay', label: t.overlay },
-            { key: 'analysis', label: t.analysis },
+            // Hong Kong / Japan: charts, AI K-line reading and Monte Carlo run on price history alone;
+            // the research tabs below need US or A-share data sources
+            ...(!hkjp ? [{ key: 'analysis', label: t.analysis }] : []),
             { key: 'monteCarlo', label: t.monteCarlo },
-            { key: 'backtest', label: t.backtestTab },
+            ...(!hkjp ? [{ key: 'backtest', label: t.backtestTab }] : []),
           ],
-          [
+          hkjp ? [] : [
             // company fundamentals (statements, estimates, analysts) cover US-listed companies
             ...(market === 'us' ? [{ key: 'fundamentals', label: t.fundamentalsTab }] : []),
             { key: 'score', label: t.scoreTab },
             { key: 'radar', label: t.radarTab },
             { key: 'similar', label: t.similarTrend },
             // factor & financial rely on A-share specific data sources
-            ...(market !== 'us' ? [
+            ...(market === 'cn' ? [
               { key: 'factor', label: t.factorAnalysis },
               { key: 'financial', label: t.financialAnalysis },
             ] : []),
           ],
           [
-            { key: 'news', label: t.newsSentiment },
+            ...(!hkjp ? [{ key: 'news', label: t.newsSentiment }] : []),
             { key: 'global_news', label: t.globalNews },
             { key: 'earnings', label: t.earningsTab },
             // calendar is A-share only
-            ...(market !== 'us' ? [{ key: 'calendar', label: t.calendarTab }] : []),
+            ...(market === 'cn' ? [{ key: 'calendar', label: t.calendarTab }] : []),
             { key: 'sectors', label: t.sectorsTab },
           ],
           [{ key: 'comments', label: t.commentsTab }],
-        ].map((group, gi) => [
+        ].filter((group) => group.length).map((group, gi) => [
           gi > 0 && <span key={`sep-${gi}`} aria-hidden="true" style={{ width: 1, height: 16, background: 'var(--border-primary)', flexShrink: 0, margin: '0 2px' }} />,
           ...group.map(({ key, label }) => (
             <button

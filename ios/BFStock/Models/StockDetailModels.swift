@@ -36,10 +36,25 @@ struct USRealtimeQuote: Decodable {
     let marketCap: Double?
     let week52High: Double?
     let week52Low: Double?
+    // Hong Kong / Japan quotes also send every name variant (absent for US)
+    let nameEn: String?
+    let nameZh: String?
+    let nameLocal: String?
+
+    /// 腾讯控股 / 丰田汽车 for Chinese, the exchange's own name for Japanese, English otherwise.
+    var displayName: String {
+        func nonEmpty(_ s: String?) -> String? { (s?.isEmpty == false) ? s : nil }
+        guard nameEn != nil || nameZh != nil else { return name }
+        switch Lang.code {
+        case "zh": return nonEmpty(nameZh) ?? name
+        case "ja": return nonEmpty(nameLocal) ?? name
+        default:   return nonEmpty(nameEn) ?? name
+        }
+    }
 
     func toQuote() -> RealtimeQuote {
         RealtimeQuote(
-            code: symbol, name: name, price: price,
+            code: symbol, name: displayName, price: price,
             change: change, pctChange: changePct,
             volume: volume, amount: amount ?? 0, high: high ?? 0, low: low ?? 0,
             open: open ?? 0, prevClose: (prevClose ?? 0) > 0 ? prevClose! : price - change,

@@ -25,7 +25,7 @@ struct StockDetailView: View {
                 quoteHeader
                     .padding(.horizontal, 4)
 
-                if market == .us, let q = vm.quote {
+                if market != .cn, let q = vm.quote {
                     keyStats(q)
                 }
 
@@ -52,19 +52,22 @@ struct StockDetailView: View {
                     FundamentalsSection(symbol: code, price: vm.quote?.price)
                 }
 
-                MonteCarloSection(code: code, market: market)
+                // Hong Kong / Japan: the score, simulation, peer and news services cover US and A-shares
+                if !market.isHKJP {
+                    MonteCarloSection(code: code, market: market)
 
-                StockScoreSection(symbol: code)
+                    StockScoreSection(symbol: code)
 
-                SimilarStocksSection(code: code, market: market)
+                    SimilarStocksSection(code: code, market: market)
 
-                StockNewsSection(
-                    items: vm.newsItems,
-                    overall: vm.newsOverall,
-                    isLoading: vm.isLoadingNews,
-                    error: vm.newsError,
-                    onRetry: { Task { await vm.loadNews() } }
-                )
+                    StockNewsSection(
+                        items: vm.newsItems,
+                        overall: vm.newsOverall,
+                        isLoading: vm.isLoadingNews,
+                        error: vm.newsError,
+                        onRetry: { Task { await vm.loadNews() } }
+                    )
+                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
@@ -165,21 +168,23 @@ struct StockDetailView: View {
                     Text(q.code)
                         .font(.system(.caption, design: .monospaced))
                         .foregroundStyle(.secondary)
-                    Text(market == .us ? L("美股") : L("A股"))
+                    Text(market.label)
                         .font(.caption2.weight(.medium))
                         .padding(.horizontal, 7)
                         .padding(.vertical, 2)
                         .background(DS.surfaceHi, in: Capsule())
                         .foregroundStyle(.secondary)
                     Spacer(minLength: 6)
-                    Button { showPaperTrade = true } label: {
-                        Text(L("模拟买入"))
-                            .font(.caption.weight(.bold))
-                            .padding(.horizontal, 12).padding(.vertical, 6)
-                            .foregroundStyle(.white)
-                            .background(DS.accent, in: Capsule())
+                    if !market.isHKJP {
+                        Button { showPaperTrade = true } label: {
+                            Text(L("模拟买入"))
+                                .font(.caption.weight(.bold))
+                                .padding(.horizontal, 12).padding(.vertical, 6)
+                                .foregroundStyle(.white)
+                                .background(DS.accent, in: Capsule())
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -381,11 +386,13 @@ struct StockDetailView: View {
 
     // MARK: - Quote Grid
 
+    /// Large amounts in the market's currency: $2.13T, HK$7.71B, ¥34.46T
     private func usd(_ v: Double) -> String {
         guard v > 0 else { return "--" }
-        if v >= 1e12 { return String(format: "$%.2fT", v / 1e12) }
-        if v >= 1e9 { return String(format: "$%.2fB", v / 1e9) }
-        return String(format: "$%.1fM", v / 1e6)
+        let c = market.currencySymbol
+        if v >= 1e12 { return c + String(format: "%.2fT", v / 1e12) }
+        if v >= 1e9 { return c + String(format: "%.2fB", v / 1e9) }
+        return c + String(format: "%.1fM", v / 1e6)
     }
 
     private func keyStats(_ q: RealtimeQuote) -> some View {
@@ -425,8 +432,8 @@ struct StockDetailView: View {
             (L("昨收"), px(q.prevClose)),
             (L("最高"), px(high)),
             (L("最低"), px(low)),
-            (L("成交量"), volume > 0 ? (market == .us ? Formatters.shareVolume(volume) : Formatters.volume(volume)) : "--"),
-            market == .us
+            (L("成交量"), volume > 0 ? (market != .cn ? Formatters.shareVolume(volume) : Formatters.volume(volume)) : "--"),
+            market != .cn
                 ? (L("日内振幅"), (high > 0 && low > 0 && q.prevClose > 0) ? String(format: "%.2f%%", (high - low) / q.prevClose * 100) : "--")
                 : (L("成交额"), q.amount > 0 ? Formatters.cnyAmount(q.amount) : "--"),
         ]

@@ -35,6 +35,7 @@ final class StockDetailViewModel: ObservableObject {
     }
 
     func loadNews() async {
+        if market.isHKJP { return }            // no per-stock news feed for Hong Kong / Japan yet
         isLoadingNews = true
         newsError = nil
         do {
@@ -56,7 +57,7 @@ final class StockDetailViewModel: ObservableObject {
                 let q: RealtimeQuote = try await APIClient.shared.get("/stocks/\(code)/realtime")
                 quote = q
             } else {
-                let q: USRealtimeQuote = try await APIClient.shared.get("/us/stock/\(code)/realtime")
+                let q: USRealtimeQuote = try await APIClient.shared.get("\(market.stockPath)/\(code)/realtime")
                 quote = q.toQuote()
             }
         } catch {
@@ -76,7 +77,7 @@ final class StockDetailViewModel: ObservableObject {
                 history = hist.candles
             } else {
                 let hist: USStockHistory = try await APIClient.shared.get(
-                    "/us/stock/\(code)/history", params: ["count": "\(fetchCount)"]
+                    "\(market.stockPath)/\(code)/history", params: ["count": "\(fetchCount)"]
                 )
                 history = hist.data.map { $0.toCandle() }
             }

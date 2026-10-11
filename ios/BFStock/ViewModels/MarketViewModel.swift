@@ -131,14 +131,24 @@ final class MarketViewModel: ObservableObject {
                 async let usTask: Result<[USSearchItem], Error> = Self.fetch {
                     try await APIClient.shared.get("/us/search", params: ["q": query])
                 }
-                let (cnRes, usRes) = await (cnTask, usTask)
+                async let hkTask: Result<[IntlSearchItem], Error> = Self.fetch {
+                    try await APIClient.shared.get("/hk/search", params: ["q": query])
+                }
+                async let jpTask: Result<[IntlSearchItem], Error> = Self.fetch {
+                    try await APIClient.shared.get("/jp/search", params: ["q": query])
+                }
+                let (cnRes, usRes, hkRes, jpRes) = await (cnTask, usTask, hkTask, jpTask)
                 if Task.isCancelled { return }
                 var cn: [StockSearchResult] = []
                 var us: [StockSearchResult] = []
                 if case .success(let r) = cnRes { cn = r }
                 if case .success(let r) = usRes { us = r.map(\.asResult) }
                 if case .failure(let e) = cnRes, case .failure = usRes { throw e }
-                searchResults = lettersOnly ? us + cn : cn + us
+                // Hong Kong / Japan after the home markets, a few each
+                var intl: [StockSearchResult] = []
+                if case .success(let r) = hkRes { intl += r.prefix(5).map { $0.asResult(market: .hk) } }
+                if case .success(let r) = jpRes { intl += r.prefix(5).map { $0.asResult(market: .jp) } }
+                searchResults = (lettersOnly ? us + cn : cn + us) + intl
             } catch {
                 if !Task.isCancelled { searchError = errorMessage(error) }
             }

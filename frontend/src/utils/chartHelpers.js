@@ -15,10 +15,10 @@ if (typeof window !== 'undefined' && !window.__bfsWheelGuard) {
   }, { capture: true })
 }
 
-// US convention is green-up / red-down, A-shares are red-up / green-down.
+// A-shares are red-up / green-down; US, Hong Kong and Japan use green-up / red-down.
 const RISE_CN = '#ef5350', FALL_CN = '#26a69a'
-export const riseColor = (market) => (market === 'us' ? FALL_CN : RISE_CN)
-export const fallColor = (market) => (market === 'us' ? RISE_CN : FALL_CN)
+export const riseColor = (market) => (market !== 'cn' ? FALL_CN : RISE_CN)
+export const fallColor = (market) => (market !== 'cn' ? RISE_CN : FALL_CN)
 
 // ── Theme-reactive palette ────────────────────────────────────────────────────
 export function getChartTheme() {

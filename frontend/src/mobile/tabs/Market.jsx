@@ -5,7 +5,8 @@ import useLangStore from '../../store/langStore'
 import { useT } from '../i18n'
 import { getJSON, useAPI, pct, num } from '../data'
 import { ErrorBox, Gauge, Pill, Section, Segment, Skeleton, SkeletonRows, Sparkline } from '../ui'
-import { changeColor, marketOf, marketOfRegion } from '../helpers'
+import { changeColor, marketOf, marketOfRegion, quotePath, historyPath, chipLabel } from '../helpers'
+import { localName } from '../../utils/markets'
 import USMarket from './USMarket'
 import MarketMap from '../MarketMap'
 import MacroEvents from '../MacroEvents'
@@ -24,6 +25,7 @@ function useRecent() {
 
 function SearchBox() {
   const t = useT(); const nav = useNavigate()
+  const lang = useLangStore((s) => s.lang)
   const [q, setQ] = useState(''); const [results, setResults] = useState(null); const [busy, setBusy] = useState(false)
   const recent = useRecent()
   const seq = useRef(0)
@@ -36,17 +38,21 @@ function SearchBox() {
       setBusy(true)
       // US first: any ticker or company (English or Chinese name). A-share lookup only when it can be an A-share.
       const mayBeAShare = /^\d+$/.test(term) || /[\u2E80-\uFFFF]/.test(term)
-      const [cn, us] = await Promise.allSettled([
+      const [cn, us, hk, jp] = await Promise.allSettled([
         mayBeAShare ? getJSON('/stocks/search?q=' + encodeURIComponent(term)) : Promise.resolve([]),
         getJSON('/us/market/search?q=' + encodeURIComponent(term)),
+        getJSON('/hk/search?q=' + encodeURIComponent(term)),
+        getJSON('/jp/search?q=' + encodeURIComponent(term)),
       ])
       if (id !== seq.current) return
       const cnList = cn.status === 'fulfilled' ? cn.value.map((r) => ({ code: r.code, name: r.name, pct: r.change_pct, market: 'cn' })) : []
       const usList = us.status === 'fulfilled' ? us.value.results.map((r) => ({ code: r.symbol, name: r.name, pct: r.pct, market: 'us' })) : []
-      setResults([...usList, ...cnList]); setBusy(false)
+      // Hong Kong / Japan: names in the reader's language, at most 5 each so US and A-shares stay on top
+      const intl = (res, m) => (res.status === 'fulfilled' ? res.value.slice(0, 5).map((r) => ({ code: r.symbol, name: localName(r, lang, m), pct: r.change_pct, market: m })) : [])
+      setResults([...usList, ...cnList, ...intl(hk, 'hk'), ...intl(jp, 'jp')]); setBusy(false)
     }, 300)
     return () => clearTimeout(timer)
-  }, [q])
+  }, [q, lang])
 
   const pick = (r) => { recent.add({ code: r.code, name: r.name, market: r.market }); setQ(''); open(nav, r.market, r.code) }
 
@@ -65,7 +71,7 @@ function SearchBox() {
           {(results || []).map((r) => (
             <button className="m-row" key={r.market + r.code} onClick={() => pick(r)}>
               <div className="m-grow"><div className="m-name">{r.name}</div><div className="m-sub">{r.code}</div></div>
-              <span className="m-chip">{r.market === 'us' ? t('美股') : t('A股')}</span>
+              <span className="m-chip">{t(chipLabel(r.market))}</span>
               {r.pct != null && <Pill value={r.pct} market={r.market} width={72} />}
             </button>
           ))}
@@ -178,9 +184,9 @@ function Overview() {
 
 function WatchRow({ item }) {
   const nav = useNavigate()
-  const market = marketOf(item.code)
-  const q = useAPI(market === 'cn' ? `/stocks/${item.code}/realtime` : `/us/stock/${item.code}/realtime`)
-  const h = useAPI(market === 'cn' ? `/stocks/${item.code}/history?count=30` : `/us/stock/${item.code}/history?count=30`)
+  const market = marketOf(item.code, item.market)
+  const q = useAPI(quotePath(market, item.code))
+  const h = useAPI(historyPath(market, item.code, 30))
   const closes = useMemo(() => {
     const c = h.data ? (market === 'cn' ? h.data.candles : h.data.data) : null
     return c ? c.slice(-30).map((x) => x.close) : []

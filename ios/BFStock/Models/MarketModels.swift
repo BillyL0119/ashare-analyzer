@@ -45,7 +45,7 @@ struct HotStock: Codable, Identifiable {
     let rank: Int
     let market: String       // "cn" | "us"
 
-    var resolvedMarket: Market { market == "us" ? .us : .cn }
+    var resolvedMarket: Market { Market(code: code, market: market) }
 }
 
 struct USSearchItem: Codable {
@@ -83,7 +83,27 @@ struct StockSearchResult: Codable, Identifiable, Hashable {
     let changePct: Double?   // percent: 2.34 = +2.34%
     let market: String?      // "cn" | "us" | nil
 
-    var resolvedMarket: Market { market == "us" ? .us : .cn }
+    var resolvedMarket: Market { Market(code: code, market: market) }
+}
+
+/// /api/hk/search and /api/jp/search rows
+struct IntlSearchItem: Codable {
+    let symbol: String
+    let name: String
+    let nameEn: String?
+    let nameZh: String?
+    let changePct: Double?
+
+    func asResult(market: Market) -> StockSearchResult {
+        // Chinese readers get the Chinese name (腾讯控股, 丰田汽车), Japanese the local one, others English
+        let shown: String
+        switch Lang.code {
+        case "zh": shown = (nameZh?.isEmpty == false ? nameZh! : name)
+        case "ja": shown = market == .hk ? (nameZh?.isEmpty == false ? nameZh! : name) : name
+        default: shown = (nameEn?.isEmpty == false ? nameEn! : name)
+        }
+        return StockSearchResult(code: symbol, name: shown, changePct: changePct, market: market.rawValue)
+    }
 }
 
 // MARK: - Global sentiment & indices

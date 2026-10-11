@@ -217,7 +217,7 @@ struct MarketTabView: View {
                                         code: result.code, name: result.name,
                                         changePct: result.changePct, market: result.resolvedMarket
                                     )
-                                    Text(result.resolvedMarket == .us ? L("美股") : L("A股"))
+                                    Text(result.resolvedMarket.label)
                                         .font(.caption2.weight(.medium))
                                         .padding(.horizontal, 7)
                                         .padding(.vertical, 3)

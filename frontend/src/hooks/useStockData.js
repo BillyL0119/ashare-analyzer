@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { getStockHistory, getRealtimeQuote, getUSStockHistory, getUSRealtime } from '../api/stockApi'
+import { getStockHistory, getRealtimeQuote, getIntlStockHistory, getIntlRealtime } from '../api/stockApi'
 
 const cache = new Map()
 
@@ -34,8 +34,8 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
       setError(null)
       try {
         let res
-        if (market === 'us') {
-          res = await getUSStockHistory(symbol, {
+        if (market !== 'cn') {
+          res = await getIntlStockHistory(market, symbol, {
             period,
             start_date: startDate,
             end_date: endDate,
@@ -59,8 +59,8 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
 
     const fetchQuote = async () => {
       try {
-        if (market === 'us') {
-          const res = await getUSRealtime(symbol)
+        if (market !== 'cn') {
+          const res = await getIntlRealtime(market, symbol)
           const d = res.data
           setQuote({
             price: d.price,
@@ -68,6 +68,8 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
             change: d.change,
             volume: d.volume,
             name: d.name,
+            // HK / Japan send every name variant and the currency
+            name_en: d.name_en, name_zh: d.name_zh, name_local: d.name_local, currency: d.currency, lot_size: d.lot_size,
           })
         } else {
           const res = await getRealtimeQuote(symbol)
@@ -81,8 +83,8 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
     fetchHistory()
     fetchQuote()
 
-    // Poll A-shares every 5s; US every 60s (yfinance is slower)
-    const pollInterval = market === 'us' ? 60000 : 5000
+    // Poll A-shares every 5s; US / HK / Japan every 60s
+    const pollInterval = market !== 'cn' ? 60000 : 5000
     intervalRef.current = setInterval(fetchQuote, pollInterval)
     return () => clearInterval(intervalRef.current)
   }, [symbol, period, startDate, endDate, adjust, market, retryCount]) // eslint-disable-line react-hooks/exhaustive-deps

@@ -9,6 +9,7 @@ import Watchlist from './components/Watchlist'
 import KnowledgeCard from './components/KnowledgeCard'
 import GlobalSentiment from './components/GlobalSentiment'
 import USMarketPanel from './components/USMarketPanel'
+const IntlMarketPanel = lazy(() => import('./components/IntlMarketPanel'))
 import StatsDisplay from './components/StatsDisplay'
 import QuoteBanner from './components/QuoteBanner'
 import AuthModal from './components/AuthModal'
@@ -241,8 +242,9 @@ export default function App() {
   useEffect(() => {
     if (stockRouteMatch) {
       const [, urlMarket, urlCode] = stockRouteMatch
-      if ((urlMarket === 'cn' || urlMarket === 'us') && selectedSymbols.length === 0) {
-        switchMarketAndAddSymbol(urlMarket, { code: urlCode.toUpperCase(), name: urlCode.toUpperCase() })
+      if (['cn', 'us', 'hk', 'jp'].includes(urlMarket) && selectedSymbols.length === 0) {
+        const code = urlMarket === 'hk' && /^\d{1,5}$/.test(urlCode) ? urlCode.padStart(5, '0') : urlCode.toUpperCase()
+        switchMarketAndAddSymbol(urlMarket, { code, name: code })
       }
     }
   }, []) // eslint-disable-line
@@ -371,12 +373,14 @@ export default function App() {
 
         {/* Market toggle — pill style */}
         <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 24, padding: 3, gap: 2, flexShrink: 0 }}>
-          {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN }].map(({ key, label }) => (
+          {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN },
+            { key: 'hk', label: t.marketHK }, { key: 'jp', label: t.marketJP }].map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setMarket(key)}
+              aria-pressed={market === key}
               style={{
-                padding: isMobile ? '4px 9px' : '5px 16px',
+                padding: isMobile ? '4px 7px' : '5px 12px',
                 borderRadius: 20, border: 'none', cursor: 'pointer',
                 fontSize: isMobile ? 11 : 13, fontWeight: 600, letterSpacing: '0.2px',
                 background: market === key ? 'linear-gradient(135deg, var(--accent-blue), #38bdf8)' : 'transparent',
@@ -385,7 +389,7 @@ export default function App() {
                 boxShadow: market === key ? '0 2px 12px rgba(14,165,233,0.3)' : 'none',
               }}
             >
-              {isMobile && key === 'us' && lang === 'en' ? 'US' : label}
+              {isMobile && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
             </button>
           ))}
         </div>
@@ -809,7 +813,9 @@ export default function App() {
                 <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-2"><ErrorBoundary fallback={null}><USMarketPanel lang={lang} /></ErrorBoundary></div>
+                <div className="bfs-enter-2"><ErrorBoundary fallback={null}>
+                  {market === 'hk' || market === 'jp' ? <IntlMarketPanel lang={lang} market={market} /> : <USMarketPanel lang={lang} />}
+                </ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><ErrorBoundary><GlobalSentiment lang={lang} /></ErrorBoundary></div>

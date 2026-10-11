@@ -63,6 +63,8 @@ T = {
     # --- market tab
     "A股": ("A-Shares", "A株", "A주", "Actions A"),
     "美股": ("US Stocks", "米国株", "미국주식", "Actions US"),
+    "港股": ("HK Stocks", "香港株", "홍콩주식", "Actions HK"),
+    "日股": ("Japan Stocks", "日本株", "일본주식", "Actions Japon"),
     "A股大盘": ("A-Share Market", "A株市場", "A주 시장", "Marché A"),
     "暂无指数数据，开盘后自动更新": ("No index data yet. Updates automatically when the market opens.", "指数データがありません。取引開始後に自動更新されます。", "지수 데이터가 없습니다. 장이 열리면 자동으로 업데이트됩니다.", "Pas encore de données. Mise à jour automatique à l'ouverture."),
     "上证指数": ("Shanghai", "上海総合", "상하이종합", "Shanghai"),
@@ -459,6 +461,8 @@ EXISTING = {
     "error.decoding": ("Data parsing failed", "データの解析に失敗しました", "데이터 해석 실패", "Échec de l'analyse des données", "数据解析失败"),
     "market.cn": ("A-Shares", "A株", "A주", "Actions A", "A股"),
     "market.us": ("US Stocks", "米国株", "미국주식", "Actions US", "美股"),
+    "market.hk": ("HK Stocks", "香港株", "홍콩주식", "Actions HK", "港股"),
+    "market.jp": ("Japan Stocks", "日本株", "일본주식", "Actions Japon", "日股"),
     "search.placeholder": ("Search stocks", "銘柄を検索", "종목 검색", "Rechercher une action", "搜索股票"),
 }
 

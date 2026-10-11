@@ -7,7 +7,7 @@ struct WatchlistItem: Codable, Identifiable, Equatable {
     let name: String
     let market: String
 
-    var resolvedMarket: Market { market == "us" ? .us : .cn }
+    var resolvedMarket: Market { Market(code: code, market: market) }
 }
 
 @MainActor

@@ -25,6 +25,19 @@ export const getStockFactor = (symbol, params) =>
 export const getFinancial = (symbol) =>
   api.get(`/financial/${symbol}`)
 
+// Hong Kong / Japan: same shapes as the US endpoints
+export const getIntlStockHistory = (market, symbol, params) =>
+  api.get(`/${market}/stock/${symbol}`, { params })
+
+export const getIntlRealtime = (market, symbol) =>
+  api.get(`/${market}/stock/${symbol}/realtime`)
+
+export const searchIntlStocks = (market, query) =>
+  api.get(`/${market}/search`, { params: { q: query } })
+
+export const getIntlHot = (market) =>
+  api.get(`/${market}/hot`)
+
 export const getUSStockHistory = (symbol, params) =>
   api.get(`/us/stock/${symbol}`, { params })
 

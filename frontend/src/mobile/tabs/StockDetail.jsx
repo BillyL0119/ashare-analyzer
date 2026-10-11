@@ -8,7 +8,8 @@ import { useAPI, num, pct } from '../data'
 import { trackSearch } from '../../utils/analytics'
 import { boll, ma, macd, rsi } from '../indicators'
 import { ErrorBox, Pill, Section, Segment, Skeleton, SkeletonRows } from '../ui'
-import { changeColor } from '../helpers'
+import { changeColor, quotePath, historyPath, chipLabel } from '../helpers'
+import { CUR, localName } from '../../utils/markets'
 import { Icon } from '../icons'
 
 const PERIODS = [['10', '10日'], ['30', '30日'], ['60', '60日'], ['120', '120日'], ['250', '1年']]
@@ -281,19 +282,22 @@ export default function StockDetail() {
   const add = useWatchlistStore((s) => s.add), remove = useWatchlistStore((s) => s.remove)
   useEffect(() => { trackSearch(code) }, [code])
 
-  const q = useAPI(market === 'cn' ? `/stocks/${code}/realtime` : `/us/stock/${code}/realtime`, { refreshMs: 30000 })
-  const h = useAPI(market === 'cn' ? `/stocks/${code}/history?count=250` : `/us/stock/${code}/history?count=250`)
+  const lang = useLangStore((s) => s.lang)
+  const intl = market !== 'cn'             // US, Hong Kong, Japan: same quote/history shapes
+  const hkjp = market === 'hk' || market === 'jp'
+  const q = useAPI(quotePath(market, code), { refreshMs: 30000 })
+  const h = useAPI(historyPath(market, code, 250))
   const all = h.data ? (market === 'cn' ? h.data.candles : h.data.data) : null
   const candles = useMemo(() => (all ? all.slice(-Number(period)) : []), [all, period])
 
   const d = q.data
   const price = d?.price
   const p = d ? (market === 'cn' ? d.pct_change : d.change_pct) : null
-  const name = d?.name || code
+  const name = (hkjp && d ? localName(d, lang, market) : d?.name) || code
   const last = candles[candles.length - 1]
   const open = d?.open > 0 ? d.open : last?.open, high = d?.high > 0 ? d.high : last?.high, low = d?.low > 0 ? d.low : last?.low
   const vol = d?.volume > 0 ? d.volume : last?.volume
-  const has52 = market === 'us' && d?.week52_low > 0 && d?.week52_high > 0
+  const has52 = intl && d?.week52_low > 0 && d?.week52_high > 0
   const [lo, hi] = has52 ? [d.week52_low, d.week52_high] : all ? [Math.min(...all.map((c) => c.low)), Math.max(...all.map((c) => c.high))] : [null, null]
   const pos = price != null && hi > lo ? Math.min(1, Math.max(0, (price - lo) / (hi - lo))) : null
   const c = changeColor(p, market)
@@ -302,7 +306,7 @@ export default function StockDetail() {
   const grid = [[t('今开'), open], [t('昨收'), prevClose], [t('最高'), high], [t('最低'), low]]
   const money = (v) => {
     if (!(v > 0)) return '--'
-    if (market === 'us') return '$' + (v >= 1e12 ? (v / 1e12).toFixed(2) + 'T' : v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : (v / 1e6).toFixed(1) + 'M')
+    if (intl) return CUR[market] + (v >= 1e12 ? (v / 1e12).toFixed(2) + 'T' : v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : (v / 1e6).toFixed(1) + 'M')
     return v >= 1e8 ? (v / 1e8).toFixed(2) + t('亿') : (v / 1e4).toFixed(2) + t('万')
   }
   const fmtVol = (v) => {
@@ -319,7 +323,7 @@ export default function StockDetail() {
         <button className="m-iconbtn" onClick={() => (window.history.length > 1 ? nav(-1) : nav('/'))} aria-label={t('返回')}>{Icon.back}</button>
         <div className="m-nav-title"><div style={{ fontSize: 15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</div>
           {price != null && <small className="m-num" style={{ color: c }}>{num(price)} {pct(p)}</small>}</div>
-        <button className="m-iconbtn" onClick={() => (watched ? remove(code) : add({ code, name }))} aria-label={watched ? t('移出自选') : t('加入自选')}>{watched ? Icon.starFill : Icon.star}</button>
+        <button className="m-iconbtn" onClick={() => (watched ? remove(code) : add({ code, name, market }))} aria-label={watched ? t('移出自选') : t('加入自选')}>{watched ? Icon.starFill : Icon.star}</button>
       </div>
 
       <div style={{ padding: '0 4px' }}>
@@ -330,15 +334,15 @@ export default function StockDetail() {
           </div>
         )}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
-          <span style={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span><span className="m-sub" style={{ flex: 'none' }}>{code}</span><span className="m-chip">{market === 'us' ? t('美股') : t('A股')}</span>
-          <button onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
+          <span style={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span><span className="m-sub" style={{ flex: 'none' }}>{code}</span><span className="m-chip">{t(chipLabel(market))}</span>
+          {!hkjp && <button onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
             style={{ marginLeft: 'auto', flex: 'none', padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>
             {t('模拟买入')}
-          </button>
+          </button>}
         </div>
       </div>
 
-      {market === 'us' && d && (
+      {intl && d && (
         <div style={{ display: 'flex', alignItems: 'stretch', background: 'var(--surface-hi)', borderRadius: 14, padding: '12px 0' }}>
           {[[t('总市值'), money(d.market_cap)], [t('市盈率'), d.pe_ratio > 0 ? d.pe_ratio.toFixed(1) : '--'], [t('成交额'), money(d.amount)]].map(([k, v], i) => (
             <div key={k} style={{ flex: 1, textAlign: 'center', borderLeft: i ? '1px solid var(--line, rgba(128,128,128,.25))' : 'none' }}>
@@ -358,7 +362,7 @@ export default function StockDetail() {
 
       <div className="m-card" style={{ display: 'grid', gap: 16 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-          {[...grid, [t('成交量'), fmtVol(vol)], market === 'us'
+          {[...grid, [t('成交量'), fmtVol(vol)], intl
               ? [t('日内振幅'), high > 0 && low > 0 && prevClose > 0 ? ((high - low) / prevClose * 100).toFixed(2) + '%' : '--']
               : [t('成交额'), money(d?.amount)]].map(([k, v], i) => (
             <div key={i}><div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 700, fontSize: 15, marginTop: 3 }}>{typeof v === 'number' ? num(v) : (v ?? '--')}</div></div>
@@ -377,7 +381,7 @@ export default function StockDetail() {
       </div>
 
       {market === 'us' && <Fundamentals symbol={code} price={d?.price} />}
-      <News symbol={code} market={market} />
+      {!hkjp && <News symbol={code} market={market} />}
       <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>
     </div>
   )

@@ -5,6 +5,24 @@ import SwiftUI
 enum Market: String {
     case cn  // A股：红涨绿跌
     case us  // 美股：绿涨红跌
+    case hk  // 港股：绿涨红跌（同美股）
+    case jp  // 日股：绿涨红跌（同美股）
+
+    /// US, Hong Kong and Japan share the US-shaped API: /api/{market}/stock/{symbol}[/realtime|/history]
+    var stockPath: String { self == .cn ? "/stocks" : "/\(rawValue)/stock" }
+    var currencySymbol: String { [.us: "$", .cn: "¥", .hk: "HK$", .jp: "¥"][self] ?? "" }
+    var label: String { L([.us: "美股", .cn: "A股", .hk: "港股", .jp: "日股"][self] ?? "美股") }
+    /// Hong Kong / Japan: price history and quotes only (no paper trading, news, scores or simulations yet)
+    var isHKJP: Bool { self == .hk || self == .jp }
+
+    init(code: String, market: String?) {
+        if let m = market.flatMap(Market.init(rawValue:)) { self = m; return }
+        // Older saved items carry no market: 6 digits A-share, 5 Hong Kong, 4 Japan, otherwise US
+        if code.count == 6, code.allSatisfy(\.isNumber) { self = .cn }
+        else if code.count == 5, code.allSatisfy(\.isNumber) { self = .hk }
+        else if code.count == 4, code.allSatisfy(\.isNumber) { self = .jp }
+        else { self = .us }
+    }
 }
 
 // MARK: - Theme

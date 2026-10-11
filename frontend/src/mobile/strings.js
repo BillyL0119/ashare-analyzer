@@ -277,6 +277,18 @@ export const STR = {
   "미국주식",
   "Actions US"
  ],
+ "港股": [
+  "HK Stocks",
+  "香港株",
+  "홍콩주식",
+  "Actions HK"
+ ],
+ "日股": [
+  "Japan Stocks",
+  "日本株",
+  "일본주식",
+  "Actions Japon"
+ ],
  "A股大盘": [
   "A-Share Market",
   "A株市場",

@@ -1,27 +1,28 @@
 import { useState, useEffect, useRef } from 'react'
 import useWatchlistStore from '../store/watchlistStore'
 import useCompareStore from '../store/compareStore'
-import { getRealtimeQuote, getUSRealtime } from '../api/stockApi'
+import { getRealtimeQuote, getIntlRealtime } from '../api/stockApi'
 import { T } from '../i18n/translations'
 import { riseColor, fallColor } from '../utils/chartHelpers'
+import { CUR, MARKET_TINT, guessMarket } from '../utils/markets'
 
 const ACCENT_BLUE = '#8ab4f8'
 
 function WatchlistItem({ stock, t, onRemove, onClick }) {
   const [quote, setQuote] = useState(null)
-  // Entries saved by older versions have no market: A-share codes are 6 digits, anything else is US
-  const isUS = stock.market ? stock.market === 'us' : !/^\d{6}$/.test(stock.code)
+  // Entries saved by older versions have no market: guess it from the code's shape
+  const m = stock.market || guessMarket(stock.code)
 
   useEffect(() => {
-    const fetcher = isUS ? getUSRealtime : getRealtimeQuote
-    fetcher(stock.code)
-      .then((r) => setQuote(r.data))
-      .catch(() => {})
-  }, [stock.code, isUS])
+    const req = m === 'cn' ? getRealtimeQuote(stock.code) : getIntlRealtime(m, stock.code)
+    req.then((r) => setQuote(r.data)).catch(() => {})
+  }, [stock.code, m])
 
-  const pct = quote?.pct_change ?? null
-  const pctColor = pct == null ? 'var(--text-muted)' : pct >= 0 ? riseColor(stock.market) : fallColor(stock.market)
-  const currSym = isUS ? '$' : '¥'
+  // A-share quotes call it pct_change, the US / HK / Japan ones change_pct
+  const pct = quote?.pct_change ?? quote?.change_pct ?? null
+  const pctColor = pct == null ? 'var(--text-muted)' : pct >= 0 ? riseColor(m) : fallColor(m)
+  const currSym = CUR[m]
+  const tint = MARKET_TINT[m]
 
   return (
     <div
@@ -44,11 +45,9 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
           </span>
           <span style={{
             fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4, flexShrink: 0,
-            background: isUS ? 'rgba(99,102,241,0.15)' : 'rgba(14,165,233,0.12)',
-            color: isUS ? '#818cf8' : '#38bdf8',
-            border: `1px solid ${isUS ? 'rgba(99,102,241,0.25)' : 'rgba(14,165,233,0.2)'}`,
+            background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
           }}>
-            {isUS ? 'US' : t.marketCN}
+            {m === 'us' ? 'US' : m === 'cn' ? t.marketCN : m === 'hk' ? t.marketHK : t.marketJP}
           </span>
         </div>
         {quote && (
@@ -80,7 +79,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
 
 export default function Watchlist({ lang, open, onClose, anchorRef }) {
   const { list, remove } = useWatchlistStore()
-  const { addSymbol } = useCompareStore()
+  const { addSymbol, switchMarketAndAddSymbol, market } = useCompareStore()
   const t = T[lang] || T.en
   const panelRef = useRef(null)
 
@@ -97,7 +96,10 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
   }, [open, onClose, anchorRef])
 
   const handleClick = (stock) => {
-    addSymbol(stock)
+    // A stock from another market switches the page to that market first
+    const m = stock.market || guessMarket(stock.code)
+    if (m !== market) switchMarketAndAddSymbol(m, stock)
+    else addSymbol(stock)
     onClose?.()
   }
 

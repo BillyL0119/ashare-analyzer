@@ -19,6 +19,7 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 import KLineTip from './KLineTip'
+import { CUR, localName } from '../utils/markets'
 
 export default function StockCard({ stock }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -49,7 +50,9 @@ export default function StockCard({ stock }) {
   }, [groupId])
 
   // Opened from a URL the stock only knows its code; fall back to the name the data endpoint returns.
-  const displayName = [name, data?.name, quote?.name].find((n) => n && n !== code) || ''
+  // HK / Japan quotes carry every name variant: show the one for the reader's language
+  const intlName = (market === 'hk' || market === 'jp') && quote ? localName(quote, lang, market) : ''
+  const displayName = [intlName, name, data?.name, quote?.name].find((n) => n && n !== code) || ''
 
   const priceDelta = quote?.pct_change ?? 0
   const priceColor = priceDelta >= 0 ? THEME.up : THEME.down
@@ -109,7 +112,7 @@ export default function StockCard({ stock }) {
         {quote && (
           <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
             <span style={{ color: priceColor, fontSize: 18, fontWeight: 700 }}>
-              {market === 'us' ? '$' : ''}{quote.price.toFixed(2)}
+              {market !== 'cn' ? CUR[market] : ''}{quote.price.toFixed(2)}
             </span>
             <span style={{ color: priceColor, fontSize: 13 }}>
               {priceDelta >= 0 ? '+' : ''}{priceDelta.toFixed(2)}%
@@ -159,7 +162,7 @@ export default function StockCard({ stock }) {
           ))}
         </div>
 
-        {market !== 'us' && (
+        {market === 'cn' && (
           <div style={{ display: 'flex', gap: 4 }}>
             {Object.entries(adjustLabels).map(([key, label]) => (
               <button
@@ -202,8 +205,8 @@ export default function StockCard({ stock }) {
           {t.exportBtn}
         </button>
 
-        {/* Practise with this stock in paper trading (order form opens filled in) */}
-        <button
+        {/* Practise with this stock in paper trading (order form opens filled in); US and A-share accounts only */}
+        {(market === 'us' || market === 'cn') && <button
           onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
           title={t.paperTradeHint}
           style={{
@@ -215,7 +218,7 @@ export default function StockCard({ stock }) {
           onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(52,211,153,0.1)' }}
         >
           {t.paperTradeBtn}
-        </button>
+        </button>}
 
         {/* Watchlist star */}
         <button
@@ -313,13 +316,13 @@ export default function StockCard({ stock }) {
         {error && (
           <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
             <div style={{ color: '#f85149', fontSize: 13, textAlign: 'center', maxWidth: 280 }}>
-              {market === 'us'
+              {market !== 'cn'
                 ? (String(error).includes('API_LIMIT') || String(error).includes('limit')
                     ? t.apiLimitMsg
                     : t.apiErrorMsg)
                 : error}
             </div>
-            {market === 'us' && (
+            {market !== 'cn' && (
               <button
                 onClick={refetch}
                 style={{

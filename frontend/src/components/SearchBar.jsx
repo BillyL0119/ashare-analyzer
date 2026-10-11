@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
-import { searchStocks, searchUSStocks, getHotStocks } from '../api/stockApi'
+import { searchStocks, searchUSStocks, getHotStocks, searchIntlStocks, getIntlHot } from '../api/stockApi'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { trackSearch } from '../utils/analytics'
 import { riseColor, fallColor } from '../utils/chartHelpers'
+import { MARKET_TINT, marketLabel, localName } from '../utils/markets'
+
+// HK / Japan rows from /api/{hk,jp}/search and /hot, in the shape the rest of the bar uses
+const intlRow = (s, m, lang) => ({ ...s, code: s.symbol, name: localName(s, lang, m), _market: m })
 
 function PctBadge({ val, market }) {
   if (val == null) return null
@@ -32,6 +36,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   const [searching, setSearching] = useState(false)
   const [hotCN, setHotCN] = useState([])
   const [hotUS, setHotUS] = useState([])
+  const [hotIntl, setHotIntl] = useState({ hk: [], jp: [] })
   const [hotLoading, setHotLoading] = useState(false)
   const debounceRef = useRef(null)
   const wrapperRef = useRef(null)
@@ -40,18 +45,26 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   const { addSymbol, switchMarketAndAddSymbol, selectedSymbols, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang] || T.en
+  const langRef = useRef(lang); langRef.current = lang
+  const marketRef = useRef(market); marketRef.current = market
 
   const fetchHot = useCallback(async () => {
     if (hotFetchedRef.current) return
     hotFetchedRef.current = true
     setHotLoading(true)
     try {
-      const [cnRes, usRes] = await Promise.allSettled([
+      const [cnRes, usRes, hkRes, jpRes] = await Promise.allSettled([
         getHotStocks('cn'),
         getHotStocks('us'),
+        getIntlHot('hk'),
+        getIntlHot('jp'),
       ])
       if (cnRes.status === 'fulfilled') setHotCN(cnRes.value.data.slice(0, 8))
       if (usRes.status === 'fulfilled') setHotUS(usRes.value.data.slice(0, 8))
+      setHotIntl({
+        hk: hkRes.status === 'fulfilled' ? hkRes.value.data.slice(0, 8) : [],
+        jp: jpRes.status === 'fulfilled' ? jpRes.value.data.slice(0, 8) : [],
+      })
     } catch { /* ignore */ } finally {
       setHotLoading(false)
     }
@@ -61,17 +74,21 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
     if (!q.trim()) { setResults([]); return }
     setSearching(true)
     try {
-      const [cnRes, usRes] = await Promise.allSettled([
+      const [cnRes, usRes, hkRes, jpRes] = await Promise.allSettled([
         searchStocks(q),
         searchUSStocks(q),
+        searchIntlStocks('hk', q),
+        searchIntlStocks('jp', q),
       ])
-      const cnItems = cnRes.status === 'fulfilled'
-        ? cnRes.value.data.slice(0, 10).map((s) => ({ ...s, _market: 'cn' }))
-        : []
-      const usItems = usRes.status === 'fulfilled'
-        ? usRes.value.data.slice(0, 10).map((s) => ({ ...s, code: s.code || s.symbol, _market: 'us' }))
-        : []
-      setResults([...cnItems, ...usItems])
+      const lists = {
+        cn: cnRes.status === 'fulfilled' ? cnRes.value.data.slice(0, 10).map((s) => ({ ...s, _market: 'cn' })) : [],
+        us: usRes.status === 'fulfilled' ? usRes.value.data.slice(0, 10).map((s) => ({ ...s, code: s.code || s.symbol, _market: 'us' })) : [],
+        hk: hkRes.status === 'fulfilled' ? hkRes.value.data.slice(0, 6).map((s) => intlRow(s, 'hk', langRef.current)) : [],
+        jp: jpRes.status === 'fulfilled' ? jpRes.value.data.slice(0, 6).map((s) => intlRow(s, 'jp', langRef.current)) : [],
+      }
+      // The market being browsed comes first
+      const order = [marketRef.current, ...['cn', 'us', 'hk', 'jp'].filter((m) => m !== marketRef.current)]
+      setResults(order.flatMap((m) => lists[m]))
     } catch {
       setResults([])
     } finally {
@@ -204,12 +221,12 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)' }}>
-              {(market === 'us' ? ['us', 'cn'] : ['cn', 'us']).map((m, col) => (
+              {(market === 'us' ? ['us', 'cn'] : market === 'cn' ? ['cn', 'us'] : [market, 'us']).map((m, col) => (
                 <div key={m} style={{ minWidth: 0, borderLeft: col ? '1px solid var(--border-primary)' : 'none' }}>
                   <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
-                    {m === 'us' ? t.marketUS : t.marketCN}
+                    {m === 'us' ? t.marketUS : m === 'cn' ? t.marketCN : marketLabel(m, lang)}
                   </div>
-                  {(m === 'us' ? hotUS : hotCN).map((s, i) => {
+                  {(m === 'us' ? hotUS : m === 'cn' ? hotCN : hotIntl[m].map((x) => intlRow(x, m, lang))).map((s, i) => {
                     const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
                     return (
                       <div
@@ -220,7 +237,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                       >
                         <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
-                        {m === 'us' && (
+                        {m !== 'cn' && (
                           <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
                         )}
                         <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
@@ -240,7 +257,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
         <div style={{ ...dropdownStyle, maxHeight: 320, overflowY: 'auto' }}>
           {results.map((s) => {
             const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
-            const isUS = s._market === 'us'
+            const tint = MARKET_TINT[s._market] || MARKET_TINT.us
             return (
               <div
                 key={`${s._market}-${s.code}`}
@@ -253,11 +270,9 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                 <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                 <span style={{
                   fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
-                  background: isUS ? 'rgba(14,165,233,0.12)' : 'rgba(34,197,94,0.12)',
-                  color: isUS ? '#0ea5e9' : '#22c55e',
-                  border: `1px solid ${isUS ? 'rgba(14,165,233,0.25)' : 'rgba(34,197,94,0.25)'}`,
+                  background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
                 }}>
-                  {isUS ? 'US' : (lang === 'zh' ? 'A股' : 'CN')}
+                  {s._market === 'us' ? 'US' : s._market === 'cn' ? (lang === 'zh' ? 'A股' : 'CN') : marketLabel(s._market, lang)}
                 </span>
                 <PctBadge val={s.change_pct} market={s._market} />
                 {alreadyAdded && <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>{t.added}</span>}

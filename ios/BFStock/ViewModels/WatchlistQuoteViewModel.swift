@@ -38,7 +38,7 @@ final class WatchlistQuoteViewModel: ObservableObject {
                 price = q.price
                 changePct = q.pctChange
             } else {
-                let q: USRealtimeQuote = try await APIClient.shared.get("/us/stock/\(code)/realtime")
+                let q: USRealtimeQuote = try await APIClient.shared.get("\(market.stockPath)/\(code)/realtime")
                 price = q.price
                 changePct = q.changePct
             }
@@ -55,7 +55,7 @@ final class WatchlistQuoteViewModel: ObservableObject {
                 let h: StockHistory = try await APIClient.shared.get("/stocks/\(code)/history", params: ["count": "30"])
                 candles = h.candles
             } else {
-                let h: USStockHistory = try await APIClient.shared.get("/us/stock/\(code)/history", params: ["count": "30"])
+                let h: USStockHistory = try await APIClient.shared.get("\(market.stockPath)/\(code)/history", params: ["count": "30"])
                 candles = h.data.map { $0.toCandle() }
             }
             let tail = candles.suffix(30).map(\.close)

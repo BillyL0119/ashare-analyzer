@@ -12,8 +12,8 @@ const KLineChart = forwardRef(function KLineChart({ candles, ma, groupId, market
   useThemeStore((s) => s.theme) // subscribe so option rebuilds on toggle
   if (!candles || candles.length === 0) return null
 
-  const upColor = market === 'us' ? US_UP : undefined
-  const downColor = market === 'us' ? US_DOWN : undefined
+  const upColor = market !== 'cn' ? US_UP : undefined
+  const downColor = market !== 'cn' ? US_DOWN : undefined
   const option = buildKLineOption(candles, ma, lang, upColor, downColor)
 
   return (
