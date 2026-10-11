@@ -182,7 +182,11 @@ export default function App() {
     // When stocks are selected in the analysis tab, show a stock-specific title
     // A stock opened from a URL only knows its code at first: keep the server-rendered title (it carries the company name)
     if (location.pathname.startsWith('/stock/') && (selectedSymbols.length === 0 ||
-        (selectedSymbols.length === 1 && (!selectedSymbols[0].name || selectedSymbols[0].name === selectedSymbols[0].code)))) return
+        (selectedSymbols.length === 1 && (!selectedSymbols[0].name || selectedSymbols[0].name === selectedSymbols[0].code)))) {
+      // The server-rendered title is Chinese ("Apple Inc. (AAPL) 美股行情 · K线 · AI分析 | ..."): keep the name part for other languages
+      if (lang !== 'zh') document.title = document.title.replace(/\s*(美股|A股)行情[^|]*\|\s*BestFriendStock/, ' | Best Friend Stock')
+      return
+    }
     if (appTab === 'analysis' && selectedSymbols.length > 0) {
       const label = selectedSymbols.length === 1
         ? `${selectedSymbols[0].name} (${selectedSymbols[0].code})`
