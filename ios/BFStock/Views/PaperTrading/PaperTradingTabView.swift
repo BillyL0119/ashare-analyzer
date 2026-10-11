@@ -30,7 +30,8 @@ struct PaperTradingTabView: View {
         }
         .task { await vm.loadAccount() }
         .sheet(isPresented: $showBuySheet) {
-            TradeSheet(market: selectedMarket, mode: .buy) { symbol, shares, market in
+            TradeSheet(market: selectedMarket, mode: .buy,
+                       cash: selectedMarket == .us ? vm.account?.usCash : vm.account?.cash) { symbol, shares, market in
                 Task { await vm.buy(symbol: symbol, shares: shares, market: market) }
             }
         }
@@ -85,6 +86,10 @@ struct PaperTradingTabView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 AccountHeaderView(account: account, market: selectedMarket)
 
+                if let perf = vm.performance[selectedMarket.rawValue], perf.points.count > 1 {
+                    PerformanceSection(perf: perf, market: selectedMarket)
+                }
+
                 positionsList(account)
 
                 transactionsList(account)
@@ -94,6 +99,10 @@ struct PaperTradingTabView: View {
             .padding(.bottom, 96)
         }
         .refreshable { await vm.loadAccount() }
+        // Reload the curve whenever the market or the account changes (e.g. after a trade)
+        .task(id: "\(selectedMarket.rawValue)|\(selectedMarket == .us ? account.usCash : account.cash)") {
+            await vm.loadPerformance(market: selectedMarket)
+        }
         .overlay(alignment: .bottomTrailing) {
             buyFAB
                 .padding(.trailing, 20)

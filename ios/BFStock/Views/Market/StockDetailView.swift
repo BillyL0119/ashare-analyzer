@@ -105,8 +105,12 @@ struct StockDetailView: View {
         }
         .task { await vm.loadAll() }
         .refreshable { await vm.loadAll() }
+        .onChange(of: showPaperTrade) { _, open in
+            if open { Task { await paper.loadAccount() } }    // cash for the order form
+        }
         .sheet(isPresented: $showPaperTrade) {
-            TradeSheet(market: market, mode: .buy, initialSymbol: code) { symbol, shares, mkt in
+            TradeSheet(market: market, mode: .buy, initialSymbol: code,
+                       cash: market == .us ? paper.account?.usCash : paper.account?.cash) { symbol, shares, mkt in
                 Task {
                     await paper.buy(symbol: symbol, shares: shares, market: mkt)
                     paperMessage = paper.tradeError ?? paper.tradeResult?.message

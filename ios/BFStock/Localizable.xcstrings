@@ -5096,6 +5096,35 @@
         }
       }
     },
+    "实时报价": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live quote"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cours en direct"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リアルタイム株価"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실시간 시세"
+          }
+        }
+      }
+    },
     "实际": {
       "extractionState": "manual",
       "localizations": {
@@ -6169,6 +6198,64 @@
         }
       }
     },
+    "我的收益": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My return"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ma performance"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "私のリターン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 수익률"
+          }
+        }
+      }
+    },
+    "我的组合": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My portfolio"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mon portefeuille"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "私のポートフォリオ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 포트폴리오"
+          }
+        }
+      }
+    },
     "房地产板块": {
       "extractionState": "manual",
       "localizations": {
@@ -6865,6 +6952,35 @@
         }
       }
     },
+    "收益曲线": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パフォーマンス"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "수익 곡선"
+          }
+        }
+      }
+    },
     "收起": {
       "extractionState": "manual",
       "localizations": {
@@ -7441,6 +7557,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "시가총액 상위"
+          }
+        }
+      }
+    },
+    "最大回撤": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max drawdown"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perte max."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最大ドローダウン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최대 낙폭"
           }
         }
       }
@@ -8427,6 +8572,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "조건에 맞는 회사가 없습니다. 조건을 완화해 보세요."
+          }
+        }
+      }
+    },
+    "沪深300": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSI 300"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSI 300"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSI 300"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSI 300"
           }
         }
       }
@@ -10519,6 +10693,35 @@
         }
       }
     },
+    "自 %@ 起": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Since %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depuis le %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ から"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@부터"
+          }
+        }
+      }
+    },
     "自由现金流": {
       "extractionState": "manual",
       "localizations": {
@@ -11211,6 +11414,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "하락률"
+          }
+        }
+      }
+    },
+    "跑赢大盘 %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beating the market by %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bat le marché de %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市場を %@ 上回る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시장 대비 %@ 앞섬"
+          }
+        }
+      }
+    },
+    "跑输大盘 %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailing the market by %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En retard sur le marché de %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市場を %@ 下回る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시장 대비 %@ 뒤처짐"
           }
         }
       }

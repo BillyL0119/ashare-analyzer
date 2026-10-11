@@ -9,10 +9,13 @@ struct TradeSheet: View {
     let market: Market
     let mode: TradeMode
     var initialSymbol: String? = nil          // opened from a stock page: the order starts filled in
+    var cash: Double? = nil                   // available cash, to show what is left after the order
     let onConfirm: (String, Int, Market) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var buySymbol = ""
+    @State private var quote: TradeQuote?
+    @State private var quoteMissing = false
     @State private var sharesText = ""
     @State private var shares = 100
     @FocusState private var focus: Field?
@@ -42,10 +45,20 @@ struct TradeSheet: View {
         return pos.currentPrice * Double(shares)
     }
 
+    /// Price x shares (+ the A-share 0.03% buy commission) for the quoted stock.
+    private var buyCost: Double? {
+        guard isBuy, let p = quote?.price else { return nil }
+        return p * Double(shares) * (market == .cn ? 1.0003 : 1)
+    }
+    private var shortOfCash: Bool {
+        if let c = buyCost, let cash { return c > cash }
+        return false
+    }
+
     private var isValid: Bool {
         if isBuy {
             let trimmed = buySymbol.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty, shares > 0 else { return false }
+            guard !trimmed.isEmpty, shares > 0, quote?.price != nil, !shortOfCash else { return false }
             if market == .cn { return shares % 100 == 0 }
             return true
         } else {
@@ -60,6 +73,7 @@ struct TradeSheet: View {
                     if isBuy { buyHeader } else { sellHeader }
                     sharesCard
                     if !isBuy { estimateCard }
+                    if let cost = buyCost { buyCostCard(cost) }
                     Text("仅供学习，不构成投资建议。实际成交价以服务器返回为准。")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
@@ -78,8 +92,9 @@ struct TradeSheet: View {
                 }
             }
             .safeAreaInset(edge: .bottom) { confirmBar }
+            .task(id: buySymbol) { await lookUpQuote() }
         }
-        .presentationDetents([.fraction(0.62), .large])
+        .presentationDetents([.fraction(isBuy ? 0.8 : 0.62), .large])   // buy shows quote + cost
         .presentationDragIndicator(.visible)
         .presentationBackground(DS.bg)
         .onAppear {
@@ -110,6 +125,15 @@ struct TradeSheet: View {
                         .strokeBorder(focus == .symbol ? DS.accent : DS.stroke, lineWidth: focus == .symbol ? 1.5 : 1)
                 )
 
+            if let q = quote, let p = q.price {
+                HStack(spacing: 6) {
+                    Text(q.name ?? buySymbol.uppercased()).font(.subheadline.weight(.semibold)).lineLimit(1)
+                    Text("· \(currency)\(String(format: "%.2f", p))").font(.subheadline).foregroundStyle(.secondary).monospacedDigit()
+                }
+            } else if quoteMissing {
+                Text(L("没有找到这只股票")).font(.subheadline).foregroundStyle(.red)
+            }
+
             // Quick picks give first-time traders somewhere to start.
             if buySymbol.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -129,6 +153,43 @@ struct TradeSheet: View {
                 }
             }
         }
+    }
+
+    // MARK: - Live quote
+
+    private func lookUpQuote() async {
+        guard isBuy else { return }
+        let sym = buySymbol.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        quote = nil; quoteMissing = false
+        guard !sym.isEmpty, market == .us || sym.count == 6 else { return }
+        try? await Task.sleep(nanoseconds: 350_000_000)          // wait for typing to settle
+        guard !Task.isCancelled else { return }
+        let path = market == .us ? "/us/stock/\(sym)/realtime" : "/stocks/\(sym)/realtime"
+        if let q: TradeQuote = try? await APIClient.shared.get(path), q.price != nil {
+            if !Task.isCancelled { quote = q }
+        } else if !Task.isCancelled {
+            quoteMissing = true
+        }
+    }
+
+    private func buyCostCard(_ cost: Double) -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Text(L("预计花费")).foregroundStyle(.secondary)
+                Spacer()
+                Text("\(currency)\(Formatters.price(cost))").fontWeight(.bold).monospacedDigit()
+            }
+            if let cash {
+                HStack {
+                    Text(L("可用现金")).foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(currency)\(Formatters.price(cash))").fontWeight(.bold).monospacedDigit()
+                        .foregroundStyle(shortOfCash ? Color.red : Color.primary)
+                }
+            }
+        }
+        .font(.subheadline)
+        .card()
     }
 
     private static let quickUS = ["AAPL", "NVDA", "MSFT", "TSLA", "SPY", "QQQ"]
@@ -330,4 +391,11 @@ struct TradeSheet: View {
         shares = normalized(n)
         sharesText = String(shares)
     }
+}
+
+
+/// Minimal quote used by the order form (both /us/stock/{sym}/realtime and /stocks/{code}/realtime).
+struct TradeQuote: Decodable {
+    let name: String?
+    let price: Double?
 }

@@ -763,3 +763,119 @@ def reset_account(body: DeviceBody):
     _save_account(fresh)
 
     return {"success": True, "message": "账户已重置，初始资金 100万元"}
+
+
+# ── Performance curve vs the market ─────────────────────────────────────────────
+#
+# The account only snapshots its value on days someone opens it, so the curve is rebuilt from the
+# trade list instead: cash and holdings replayed day by day and valued at each day's close. The
+# benchmark (SPY for the S&P 500, the CSI 300 for A-shares) is scaled to the same starting money.
+
+_perf_cache: dict = {}        # (device_id, market) -> (ts, tx_count, result)
+_PERF_TTL = 600
+
+
+def _daily_closes(symbol: str, market: str, days: int) -> dict:
+    """{YYYY-MM-DD: close} from Tencent's kline feed. A-shares unadjusted (the account trades at
+    real prices), US forward-adjusted (the feed's only US series; recent closes match real prices)."""
+    import requests
+    try:
+        if market == "us":
+            from routers.us_stocks import _tencent_history
+            return {c["date"]: c["close"] for c in _tencent_history(symbol, days)}
+        code = symbol if symbol.startswith(("sh", "sz", "bj")) else (
+            ("sh" if symbol.startswith(("6", "5", "9")) else "bj" if symbol.startswith(("4", "8")) else "sz") + symbol)
+        n = max(min(int(days * 0.72) + 20, 1000), 30)
+        r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
+                         params={"param": f"{code},day,,,{n},"}, timeout=8)
+        node = (r.json().get("data") or {}).get(code) or {}
+        rows = node.get("day") or node.get("qfqday") or []
+        return {row[0]: float(row[2]) for row in rows}
+    except Exception as e:
+        logger.warning("daily closes %s/%s failed: %s", market, symbol, e)
+        return {}
+
+
+def _performance(account: dict, market: str) -> dict:
+    us = market == "us"
+    txs = sorted(account.get("us_transactions" if us else "transactions") or [], key=lambda t: t.get("date", ""))
+    initial = _US_INITIAL_CASH if us else _INITIAL_CASH
+    bench_sym, bench_name = ("SPY", "S&P 500") if us else ("sh000300", "CSI 300")
+    if not txs:
+        return {"points": [], "benchmark": bench_name, "initial": initial}
+
+    first = txs[0]["date"]
+    span = (datetime.now(_BEIJING_TZ).date() - datetime.strptime(first, "%Y-%m-%d").date()).days + 20
+    bench = _daily_closes(bench_sym, market, span)
+    days = sorted(d for d in bench if d >= first)
+    before = [d for d in sorted(bench) if d < first]
+    if not days or not before:
+        return {"points": [], "benchmark": bench_name, "initial": initial}
+    base_day = before[-1]
+    base_bench = bench[base_day]
+
+    symbols = sorted({t["symbol"] for t in txs})
+    closes = {s: _daily_closes(s, market, span) for s in symbols}
+
+    cash, holdings, i = initial, {}, 0
+    last_close: dict = {}
+    points = [{"date": base_day, "value": round(initial, 2), "bench": round(initial, 2)}]
+    for d in days:
+        # Trades are dated in Beijing time; a US trade dated after the last session lands on the next one
+        while i < len(txs) and txs[i]["date"] <= d:
+            t = txs[i]
+            amt, fee = float(t.get("amount") or 0), float(t.get("commission") or 0)
+            if t["type"] == "buy":
+                cash -= amt + fee
+                holdings[t["symbol"]] = holdings.get(t["symbol"], 0) + int(t["shares"])
+            else:
+                cash += amt - fee
+                holdings[t["symbol"]] = holdings.get(t["symbol"], 0) - int(t["shares"])
+            last_close.setdefault(t["symbol"], float(t["price"]))
+            i += 1
+        value = cash
+        for s, n in holdings.items():
+            if n <= 0:
+                continue
+            px = closes.get(s, {}).get(d)
+            if px:
+                last_close[s] = px
+            value += n * last_close.get(s, 0)
+        points.append({"date": d, "value": round(value, 2), "bench": round(initial * bench[d] / base_bench, 2)})
+
+    peak, mdd = points[0]["value"], 0.0
+    for p in points:
+        peak = max(peak, p["value"])
+        mdd = min(mdd, (p["value"] - peak) / peak * 100 if peak else 0)
+    ret = (points[-1]["value"] / initial - 1) * 100
+    bret = (points[-1]["bench"] / initial - 1) * 100
+    return {
+        "points": points, "benchmark": bench_name, "initial": initial,
+        "return_pct": round(ret, 2), "bench_return_pct": round(bret, 2),
+        "excess_pct": round(ret - bret, 2), "max_drawdown_pct": round(mdd, 2),
+        "since": base_day,
+    }
+
+
+class PerformanceBody(BaseModel):
+    device_id: str
+    market: Optional[str] = "us"
+
+
+@router.post("/performance")
+def performance(body: PerformanceBody):
+    market = "us" if (body.market or "us").lower() == "us" else "cn"
+    account = _load_account(body.device_id)
+    if account is None:
+        return {"points": [], "benchmark": "S&P 500" if market == "us" else "CSI 300",
+                "initial": _US_INITIAL_CASH if market == "us" else _INITIAL_CASH}
+    n = len(account.get("us_transactions" if market == "us" else "transactions") or [])
+    key = (body.device_id, market)
+    hit = _perf_cache.get(key)
+    if hit and hit[1] == n and time.time() - hit[0] < _PERF_TTL:
+        return hit[2]
+    result = _performance(account, market)
+    if len(_perf_cache) > 2000:
+        _perf_cache.clear()
+    _perf_cache[key] = (time.time(), n, result)
+    return result

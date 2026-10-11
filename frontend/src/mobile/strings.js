@@ -2125,6 +2125,60 @@ export const STR = {
   "확인",
   "OK"
  ],
+ "收益曲线": [
+  "Performance",
+  "パフォーマンス",
+  "수익 곡선",
+  "Performance"
+ ],
+ "跑赢大盘 %@": [
+  "Beating the market by %@",
+  "市場を %@ 上回る",
+  "시장 대비 %@ 앞섬",
+  "Bat le marché de %@"
+ ],
+ "跑输大盘 %@": [
+  "Trailing the market by %@",
+  "市場を %@ 下回る",
+  "시장 대비 %@ 뒤처짐",
+  "En retard sur le marché de %@"
+ ],
+ "自 %@ 起": [
+  "Since %@",
+  "%@ から",
+  "%@부터",
+  "Depuis le %@"
+ ],
+ "我的收益": [
+  "My return",
+  "私のリターン",
+  "내 수익률",
+  "Ma performance"
+ ],
+ "最大回撤": [
+  "Max drawdown",
+  "最大ドローダウン",
+  "최대 낙폭",
+  "Perte max."
+ ],
+ "我的组合": [
+  "My portfolio",
+  "私のポートフォリオ",
+  "내 포트폴리오",
+  "Mon portefeuille"
+ ],
+ "沪深300": [
+  "CSI 300",
+  "CSI 300",
+  "CSI 300",
+  "CSI 300"
+ ],
+ "实时报价": [
+  "Live quote",
+  "リアルタイム株価",
+  "실시간 시세",
+  "Cours en direct"
+ ],
  "刚刚": [
   "Just now",
   "たった今",

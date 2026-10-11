@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		25BC6D13451B486C89EED108 /* PerformanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A57D62CF7BE4F01B81FA63A /* PerformanceSection.swift */; };
 		BE06E577153745D4A7AAE05A /* MacroEventsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */; };
 		E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */; };
 		0D3AF4CEA8E5439CA60ECDB1 /* ScreenerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9704F08681614156B46616B6 /* ScreenerView.swift */; };
@@ -66,6 +67,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7A57D62CF7BE4F01B81FA63A /* PerformanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceSection.swift; sourceTree = "<group>"; };
 		BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroEventsSection.swift; sourceTree = "<group>"; };
 		E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketHeatmapSection.swift; sourceTree = "<group>"; };
 		9704F08681614156B46616B6 /* ScreenerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenerView.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				7A11D316A0BA01996AF8B074 /* LeaderboardView.swift */,
 				17FE29F201EF8432042744A3 /* PaperTradingTabView.swift */,
 				CA7C392D77FBE4971DB710B6 /* TradeSheet.swift */,
+				7A57D62CF7BE4F01B81FA63A /* PerformanceSection.swift */,
 			);
 			path = PaperTrading;
 			sourceTree = "<group>";
@@ -389,6 +392,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25BC6D13451B486C89EED108 /* PerformanceSection.swift in Sources */,
 				BE06E577153745D4A7AAE05A /* MacroEventsSection.swift in Sources */,
 				E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */,
 				0D3AF4CEA8E5439CA60ECDB1 /* ScreenerView.swift in Sources */,

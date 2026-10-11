@@ -10,6 +10,7 @@ final class PaperTradingViewModel: ObservableObject {
     @Published var isTradingBusy = false
     @Published var leaderboard: [LeaderboardEntry] = []
     @Published var leaderboardLoaded = false
+    @Published var performance: [String: PaperPerformance] = [:]   // by market raw value
 
     private let deviceID: String
 
@@ -71,6 +72,14 @@ final class PaperTradingViewModel: ObservableObject {
             tradeError = e.errorDescription
         } catch {
             tradeError = error.localizedDescription
+        }
+    }
+
+    /// Value curve vs the market, rebuilt by the server from the trades. Kept by market.
+    func loadPerformance(market: Market) async {
+        if let p: PaperPerformance = try? await postTrade(path: "/paper/performance",
+                                                          body: PerformanceBody(deviceId: deviceID, market: market.rawValue)) {
+            performance[market.rawValue] = p
         }
     }
 

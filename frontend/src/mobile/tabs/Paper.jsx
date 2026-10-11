@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useLangStore from '../../store/langStore'
+import PaperPerformance from '../PaperPerformance'
 import { useT } from '../i18n'
 import { num, pct } from '../data'
 import { changeColor } from '../helpers'
@@ -263,6 +264,8 @@ export default function Paper() {
           </div>
         </div>
       )}
+
+      {acc && <PaperPerformance deviceId={deviceId()} market={market} refreshKey={`${(cn ? acc.transactions : acc.us_transactions)?.length ?? 0}-${view?.cash}`} />}
 
       <Section title={t('持仓')} action={null}>
         {view && (view.positions.length === 0 ? (

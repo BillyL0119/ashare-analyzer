@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import useAuthStore from '../store/authStore'
 import { T } from '../i18n/translations'
+import PaperPerformance from './PaperPerformance'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const BG        = 'var(--bg-primary)'
@@ -515,6 +516,10 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           ))}
         </div>
       </Card>
+
+      {/* ── 1b. Performance vs the market ── */}
+      <PaperPerformance accountKey={accountKey} market={ptMarket} lang={lang}
+        refreshKey={`${(isUS ? account?.us_transactions : account?.transactions)?.length ?? 0}-${isUS ? account?.us_cash : account?.cash}`} />
 
       {/* ── 2. Buy Panel ── */}
       <Card>
