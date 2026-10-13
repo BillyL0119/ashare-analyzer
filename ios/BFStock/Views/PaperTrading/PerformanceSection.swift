@@ -32,6 +32,7 @@ struct PaperPerformance: Decodable {
 struct PerformanceBody: Encodable {
     let deviceId: String
     let market: String
+    var gameId: String? = nil
 }
 
 // MARK: - View

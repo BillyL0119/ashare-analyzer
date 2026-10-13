@@ -9,17 +9,17 @@ const W = 340, H = 150, PAD = 4
 
 const fmtPct = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${v.toFixed(2)}%`)
 
-export default function PaperPerformance({ deviceId, market, refreshKey }) {
+export default function PaperPerformance({ deviceId, market, refreshKey, gameId }) {
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const [data, setData] = useState(null)
 
   useEffect(() => {
     let alive = true
-    fetch('/api/paper/performance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: deviceId, market }) })
+    fetch('/api/paper/performance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: deviceId, market, game_id: gameId || null }) })
       .then((r) => (r.ok ? r.json() : null)).then((d) => { if (alive) setData(d) }).catch(() => {})
     return () => { alive = false }
-  }, [deviceId, market, refreshKey])
+  }, [deviceId, market, refreshKey, gameId])
 
   const pts = data?.points || []
   const paths = useMemo(() => {

@@ -10,7 +10,9 @@ final class PaperTradingViewModel: ObservableObject {
     @Published var isTradingBusy = false
     @Published var leaderboard: [LeaderboardEntry] = []
     @Published var leaderboardLoaded = false
-    @Published var performance: [String: PaperPerformance] = [:]   // by market raw value
+    @Published var performance: [String: PaperPerformance] = [:]   // by market raw value, or "g:<id>"
+    @Published var gameAccount: PaperGameAccount?
+    @Published var gameError: String?
 
     private let deviceID: String
 
@@ -75,11 +77,88 @@ final class PaperTradingViewModel: ObservableObject {
         }
     }
 
-    /// Value curve vs the market, rebuilt by the server from the trades. Kept by market.
-    func loadPerformance(market: Market) async {
+    /// Value curve vs the market, rebuilt by the server from the trades. Kept by market (or competition).
+    func loadPerformance(market: Market, gameId: String? = nil) async {
         if let p: PaperPerformance = try? await postTrade(path: "/paper/performance",
-                                                          body: PerformanceBody(deviceId: deviceID, market: market.rawValue)) {
-            performance[market.rawValue] = p
+                                                          body: PerformanceBody(deviceId: deviceID, market: market.rawValue, gameId: gameId)) {
+            performance[gameId.map { "g:\($0)" } ?? market.rawValue] = p
+        }
+    }
+
+    // MARK: - Order desk
+
+    /// Any order type; market orders fill now while the exchange is open, the rest wait for their price.
+    func placeOrder(_ body: (String) -> OrderBody) async {
+        isTradingBusy = true
+        tradeError = nil
+        tradeResult = nil
+        defer { isTradingBusy = false }
+        do {
+            let result: TradeResult = try await postTrade(path: "/paper/order", body: body(deviceID))
+            tradeResult = result
+            await refresh()
+        } catch let e as APIError {
+            tradeError = e.errorDescription
+        } catch {
+            tradeError = error.localizedDescription
+        }
+    }
+
+    func cancel(_ order: PaperOrder, gameId: String?) async {
+        tradeResult = nil
+        do {
+            let result: TradeResult = try await postTrade(path: "/paper/order/cancel",
+                                                          body: CancelOrderBody(deviceId: deviceID, orderId: order.id, gameId: gameId))
+            tradeResult = result
+            await refresh()
+        } catch let e as APIError {
+            tradeError = e.errorDescription
+        } catch {
+            tradeError = error.localizedDescription
+        }
+    }
+
+    /// Reload the account, and the open competition if one is showing.
+    func refresh() async {
+        await loadAccount()
+        if let gid = gameAccount?.game.id { await loadGame(gid) }
+    }
+
+    // MARK: - Competitions
+
+    func loadGame(_ id: String) async {
+        do {
+            gameAccount = try await postTrade(path: "/paper/games/account", body: GameIdBody(deviceId: deviceID, gameId: id))
+        } catch let e as APIError {
+            gameError = e.errorDescription
+        } catch {
+            gameError = error.localizedDescription
+        }
+    }
+
+    func joinGame(code: String, nickname: String?) async throws -> PaperGame {
+        let r: GameWrapper = try await postTrade(path: "/paper/games/join", body: GameJoinBody(deviceId: deviceID, code: code, nickname: nickname))
+        await loadAccount()
+        return r.game
+    }
+
+    func createGame(_ make: (String) -> GameCreateBody) async throws -> PaperGame {
+        let r: GameWrapper = try await postTrade(path: "/paper/games/create", body: make(deviceID))
+        await loadAccount()
+        return r.game
+    }
+
+    func leaveGame(_ game: PaperGame) async {
+        struct OK: Decodable { let success: Bool }
+        do {
+            let _: OK = try await postTrade(path: game.isOwner == true ? "/paper/games/delete" : "/paper/games/leave",
+                                            body: GameIdBody(deviceId: deviceID, gameId: game.id))
+            gameAccount = nil
+            await loadAccount()
+        } catch let e as APIError {
+            gameError = e.errorDescription
+        } catch {
+            gameError = error.localizedDescription
         }
     }
 

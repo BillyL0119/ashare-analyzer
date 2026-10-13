@@ -17,7 +17,7 @@ const BENCH_ZH = { 'S&P 500': '标普500', 'CSI 300': '沪深300', 'Hang Seng': 
 
 const pct = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${v.toFixed(2)}%`)
 
-export default function PaperPerformance({ accountKey, market, lang, refreshKey }) {
+export default function PaperPerformance({ accountKey, market, lang, refreshKey, gameId }) {
   const t = L[lang] || L.en
   const [data, setData] = useState(null)
 
@@ -25,13 +25,13 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey 
     let alive = true
     fetch('/api/paper/performance', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ device_id: accountKey, market }),
+      body: JSON.stringify({ device_id: accountKey, market, game_id: gameId || null }),
     })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (alive) setData(d) })
       .catch(() => {})
     return () => { alive = false }
-  }, [accountKey, market, refreshKey])  // refreshKey changes after every trade
+  }, [accountKey, market, refreshKey, gameId])  // refreshKey changes after every trade
 
   const cur = CUR[market] || '$'
   const bench = lang === 'zh' ? (BENCH_ZH[data?.benchmark] || data?.benchmark) : data?.benchmark

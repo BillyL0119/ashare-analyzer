@@ -2257,6 +2257,456 @@ export const STR = {
   "모든 보유 종목과 거래 기록이 삭제되고 네 계좌가 초기 자금으로 돌아갑니다: 미국 $10만, A주 100만 위안, 홍콩 HK$100만, 일본 ¥1000만.",
   "Toutes les positions et transactions seront effacées. Les quatre comptes repartent avec 100 k$ (US), 1 M¥ (A), 1 M HK$ (HK) et 10 M¥ (Japon)."
  ],
+ "中东及非洲": [
+  "Middle East & Africa",
+  "中東・アフリカ",
+  "중동·아프리카",
+  "Moyen-Orient et Afrique"
+ ],
+ "本科申请": [
+  "Undergraduate entry",
+  "学部入試",
+  "학부 입학",
+  "Admission en licence"
+ ],
+ "仅招研究生": [
+  "Graduate only",
+  "大学院のみ",
+  "대학원 전용",
+  "Master uniquement"
+ ],
+ "研究生 / MBA 申请": [
+  "Graduate / MBA",
+  "大学院 / MBA",
+  "대학원 / MBA",
+  "Master / MBA"
+ ],
+ "国际生学费": [
+  "International tuition",
+  "留学生の学費",
+  "유학생 학비",
+  "Frais pour étudiants internationaux"
+ ],
+ "申请方式": [
+  "How to apply",
+  "出願方法",
+  "지원 방법",
+  "Candidature"
+ ],
+ "截止日期": [
+  "Deadline",
+  "締切",
+  "마감일",
+  "Date limite"
+ ],
+ "笔试 / 标化": [
+  "Tests",
+  "試験",
+  "시험",
+  "Tests"
+ ],
+ "语言成绩": [
+  "English",
+  "英語",
+  "영어",
+  "Anglais"
+ ],
+ "已截止": [
+  "Closed",
+  "締切済み",
+  "마감",
+  "Clos"
+ ],
+ "还有 %lld 天": [
+  "%lld days left",
+  "あと %lld 日",
+  "%lld일 남음",
+  "%lld jours restants"
+ ],
+ "查看来源": [
+  "View source",
+  "出典を見る",
+  "출처 보기",
+  "Voir la source"
+ ],
+ "本科": [
+  "Undergrad",
+  "学部",
+  "학부",
+  "Licence"
+ ],
+ "以上信息于 %@ 对照学校官网核对；没有公布或无法确认的项目留空，申请前请再次确认。": [
+  "Checked against the school's official pages in %@. Anything not published or not confirmed is left out; confirm before applying.",
+  "%@ に各校の公式サイトと照合しました。公表されていない、または確認できない項目は載せていません。出願前に必ずご確認ください。",
+  "%@에 학교 공식 페이지와 대조했습니다. 공개되지 않았거나 확인되지 않은 항목은 넣지 않았습니다. 지원 전에 다시 확인하세요.",
+  "Vérifié sur les pages officielles de l'école en %@. Les éléments non publiés ou non confirmés sont omis ; vérifiez avant de candidater."
+ ],
+ "卖空": [
+  "Sell short",
+  "空売り",
+  "공매도",
+  "Vendre à découvert"
+ ],
+ "买入平仓": [
+  "Buy to cover",
+  "買い戻し",
+  "숏 커버",
+  "Racheter"
+ ],
+ "市价单": [
+  "Market",
+  "成行",
+  "시장가",
+  "Au marché"
+ ],
+ "限价单": [
+  "Limit",
+  "指値",
+  "지정가",
+  "À cours limité"
+ ],
+ "止损单": [
+  "Stop",
+  "逆指値",
+  "스톱",
+  "Stop"
+ ],
+ "止损限价单": [
+  "Stop limit",
+  "逆指値付き指値",
+  "스톱 지정가",
+  "Stop limite"
+ ],
+ "追踪止损": [
+  "Trailing stop",
+  "トレーリングストップ",
+  "트레일링 스톱",
+  "Stop suiveur"
+ ],
+ "订单类型": [
+  "Order type",
+  "注文の種類",
+  "주문 유형",
+  "Type d'ordre"
+ ],
+ "限价": [
+  "Limit price",
+  "指値",
+  "지정가",
+  "Cours limite"
+ ],
+ "触发价": [
+  "Stop price",
+  "トリガー価格",
+  "스톱 가격",
+  "Cours de déclenchement"
+ ],
+ "回撤幅度 %": [
+  "Trail %",
+  "下落幅 %",
+  "하락폭 %",
+  "Écart %"
+ ],
+ "当日有效": [
+  "Day",
+  "当日限り",
+  "당일",
+  "Jour"
+ ],
+ "撤单前有效": [
+  "Until cancelled",
+  "取消まで有効",
+  "취소 시까지",
+  "Jusqu'à annulation"
+ ],
+ "可用购买力": [
+  "Buying power",
+  "買付余力",
+  "매수 가능 금액",
+  "Pouvoir d'achat"
+ ],
+ "今日盈亏": [
+  "Today's change",
+  "本日の損益",
+  "오늘 손익",
+  "Variation du jour"
+ ],
+ "委托": [
+  "Orders",
+  "注文",
+  "주문",
+  "Ordres"
+ ],
+ "撤单": [
+  "Cancel",
+  "取消",
+  "취소",
+  "Annuler"
+ ],
+ "未成交": [
+  "Open",
+  "未約定",
+  "미체결",
+  "En cours"
+ ],
+ "已成交": [
+  "Filled",
+  "約定",
+  "체결",
+  "Exécuté"
+ ],
+ "已撤销": [
+  "Cancelled",
+  "取消済み",
+  "취소됨",
+  "Annulé"
+ ],
+ "已过期": [
+  "Expired",
+  "失効",
+  "만료",
+  "Expiré"
+ ],
+ "被拒": [
+  "Rejected",
+  "不成立",
+  "거부",
+  "Rejeté"
+ ],
+ "空头仓位": [
+  "Short positions",
+  "空売りポジション",
+  "공매도 포지션",
+  "Positions à découvert"
+ ],
+ "平仓": [
+  "Cover",
+  "買い戻し",
+  "커버",
+  "Racheter"
+ ],
+ "比赛": [
+  "Competitions",
+  "大会",
+  "대회",
+  "Compétitions"
+ ],
+ "创建比赛": [
+  "Create",
+  "作成",
+  "만들기",
+  "Créer"
+ ],
+ "加入比赛": [
+  "Join",
+  "参加",
+  "참가",
+  "Rejoindre"
+ ],
+ "邀请码": [
+  "Invite code",
+  "招待コード",
+  "초대 코드",
+  "Code d'invitation"
+ ],
+ "比赛名称": [
+  "Competition name",
+  "大会名",
+  "대회 이름",
+  "Nom"
+ ],
+ "结束日期": [
+  "End date",
+  "終了日",
+  "종료일",
+  "Date de fin"
+ ],
+ "每人本金": [
+  "Starting cash",
+  "元手",
+  "시작 자금",
+  "Capital de départ"
+ ],
+ "你的昵称": [
+  "Your nickname",
+  "ニックネーム",
+  "닉네임",
+  "Pseudo"
+ ],
+ "允许卖空（仅美股）": [
+  "Allow short selling (US only)",
+  "空売りを許可（米国株のみ）",
+  "공매도 허용 (미국만)",
+  "Autoriser la vente à découvert (US)"
+ ],
+ "复制邀请": [
+  "Copy invite",
+  "招待をコピー",
+  "초대 복사",
+  "Copier l'invitation"
+ ],
+ "已复制": [
+  "Copied",
+  "コピーしました",
+  "복사됨",
+  "Copié"
+ ],
+ "退出比赛": [
+  "Leave",
+  "退出",
+  "나가기",
+  "Quitter"
+ ],
+ "删除比赛": [
+  "Delete",
+  "削除",
+  "삭제",
+  "Supprimer"
+ ],
+ "需要保证金": [
+  "Margin required",
+  "必要証拠金",
+  "필요 증거금",
+  "Marge requise"
+ ],
+ "%lld 人参加": [
+  "%lld joined",
+  "%lld 人参加",
+  "%lld명 참가",
+  "%lld participants"
+ ],
+ "提交委托": [
+  "Place order",
+  "注文する",
+  "주문하기",
+  "Passer l'ordre"
+ ],
+ "预计到账": [
+  "Estimated proceeds",
+  "概算受取額",
+  "예상 수령액",
+  "Montant estimé"
+ ],
+ "确认": [
+  "Confirm",
+  "確認",
+  "확인",
+  "Confirmer"
+ ],
+ "休市中：市价单会在开盘后按开盘附近的价格成交。": [
+  "The market is closed: market orders fill near the opening price.",
+  "取引時間外です。成行注文は寄り付き付近で約定します。",
+  "장이 닫혀 있습니다. 시장가 주문은 개장 직후 가격에 체결됩니다.",
+  "Marché fermé : les ordres au marché seront exécutés près du cours d'ouverture."
+ ],
+ "创建一场比赛，把邀请码发给同学，大家用同样的本金在同一个市场比收益。": [
+  "Start a competition, share the invite code, and everyone trades the same market with the same starting cash.",
+  "大会を作って招待コードを共有すれば、同じ市場・同じ元手で収益を競えます。",
+  "대회를 만들고 초대 코드를 공유하면 같은 시장, 같은 원금으로 수익률을 겨룹니다.",
+  "Créez une compétition, partagez le code et tout le monde investit sur le même marché avec le même capital."
+ ],
+ "卖空是先借股票卖出，以后再买回来还。股价下跌就赚钱，上涨就亏钱，亏损没有上限。需要占用一半金额的保证金。": [
+  "Selling short means selling borrowed shares and buying them back later. You gain if the price falls and lose if it rises, with no upper limit on the loss. Uses margin equal to half the value.",
+  "空売りは株を借りて売り、後で買い戻す取引です。下がれば利益、上がれば損失で、損失に上限はありません。評価額の半分を証拠金として使います。",
+  "공매도는 주식을 빌려 판 뒤 나중에 사서 갚는 거래입니다. 가격이 내리면 이익, 오르면 손실이며 손실에 상한이 없습니다. 금액의 절반을 증거금으로 씁니다.",
+  "Vendre à découvert, c'est vendre des actions empruntées et les racheter plus tard. On gagne si le cours baisse, on perd s'il monte, sans limite de perte. Utilise une marge de la moitié du montant."
+ ],
+ "限价单只在达到你设定的价格或更好时成交。": [
+  "A limit order fills only at your price or better.",
+  "指値注文は指定価格かそれより有利な価格でのみ約定します。",
+  "지정가 주문은 정한 가격이나 더 유리한 가격에서만 체결됩니다.",
+  "Un ordre limite s'exécute seulement à votre prix ou mieux."
+ ],
+ "止损单在价格到达触发价后按市价成交，常用来止损。": [
+  "A stop order becomes a market order once the price reaches the stop; often used to cut losses.",
+  "逆指値注文は価格がトリガーに達すると成行になります。損切りによく使われます。",
+  "스톱 주문은 가격이 스톱에 닿으면 시장가가 됩니다. 손절에 자주 씁니다.",
+  "Un ordre stop devient un ordre au marché quand le cours atteint le stop ; utile pour limiter les pertes."
+ ],
+ "止损限价单在价格到达触发价后变成限价单，急跌时可能成交不了。": [
+  "A stop-limit order becomes a limit order at the stop; in a fast fall it may not fill.",
+  "逆指値付き指値は価格がトリガーに達すると指値になります。急落時は約定しないことがあります。",
+  "스톱 지정가 주문은 스톱에서 지정가 주문이 됩니다. 급락 시 체결되지 않을 수 있습니다.",
+  "Un ordre stop limite devient un ordre limite au stop ; en cas de chute rapide il peut ne pas s'exécuter."
+ ],
+ "追踪止损的触发价跟着最高价按百分比上移，价格回落这么多就卖出，用来锁住利润。": [
+  "A trailing stop follows the highest price by a set percentage and sells if the price falls back that far, locking in gains.",
+  "トレーリングストップは高値に合わせてトリガーが上がり、指定の割合下がると売ります。",
+  "트레일링 스톱은 최고가를 따라 일정 비율로 올라가고 그만큼 떨어지면 매도합니다.",
+  "Le stop suiveur suit le plus haut cours d'un pourcentage fixe et vend si le cours recule d'autant."
+ ],
+ "市价单按当前价格立即成交（休市时排队到开盘）。": [
+  "A market order fills right away at the current price (queued until the open when the market is closed).",
+  "成行注文は現在の価格ですぐ約定します（時間外は寄り付きまで待機）。",
+  "시장가 주문은 현재 가격으로 바로 체결됩니다(장 마감 중에는 개장까지 대기).",
+  "Un ordre au marché s'exécute tout de suite (en attente jusqu'à l'ouverture si le marché est fermé)."
+ ],
+ "空": [
+  "SS",
+  "空",
+  "공",
+  "VD"
+ ],
+ "平": [
+  "BC",
+  "返",
+  "커",
+  "RA"
+ ],
+ "已结束": [
+  "Ended",
+  "終了",
+  "종료",
+  "Terminé"
+ ],
+ "未开始": [
+  "Not started",
+  "開始前",
+  "시작 전",
+  "Pas commencé"
+ ],
+ "进行中": [
+  "Live",
+  "開催中",
+  "진행 중",
+  "En cours"
+ ],
+ "最多": [
+  "Max",
+  "最大",
+  "최대",
+  "Max"
+ ],
+ "选择持仓": [
+  "Choose a holding",
+  "保有銘柄を選択",
+  "보유 종목 선택",
+  "Choisir une position"
+ ],
+ "手续费": [
+  "Fees",
+  "手数料",
+  "수수료",
+  "Frais"
+ ],
+ "比赛排名": [
+  "Standings",
+  "順位",
+  "순위",
+  "Classement"
+ ],
+ "%lld 天后结束": [
+  "Ends in %lld days",
+  "あと %lld 日",
+  "%lld일 후 종료",
+  "Fin dans %lld jours"
+ ],
+ "市场": [
+  "Market",
+  "市場",
+  "시장",
+  "Marché"
+ ],
  "刚刚": [
   "Just now",
   "たった今",

@@ -112,10 +112,9 @@ struct StockDetailView: View {
             if open { Task { await paper.loadAccount() } }    // cash for the order form
         }
         .sheet(isPresented: $showPaperTrade) {
-            TradeSheet(market: market, mode: .buy, initialSymbol: code,
-                       cash: paper.account?.cash(market)) { symbol, shares, mkt in
+            TradeSheet(market: market, view: paper.account?.view(market), initialSymbol: code) { draft in
                 Task {
-                    await paper.buy(symbol: symbol, shares: shares, market: mkt)
+                    await paper.placeOrder { draft.body(deviceId: $0, market: market, gameId: nil) }
                     paperMessage = paper.tradeError ?? paper.tradeResult?.message
                 }
             }

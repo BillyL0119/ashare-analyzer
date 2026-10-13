@@ -1,39 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useAuthStore from '../store/authStore'
-import { T } from '../i18n/translations'
 import PaperPerformance from './PaperPerformance'
-import useSymbolSuggest from '../hooks/useSymbolSuggest'
-import { CUR } from '../utils/markets'
+import ptStrings from './paper/ptStrings'
+import OrderTicket from './paper/OrderTicket'
+import GamesModal from './paper/GamesModal'
+import { Positions, Orders, History, Leaderboard } from './paper/DeskTables'
+import { BDR, MUTED, UP, DOWN, Card, Seg, Stat, Modal, Button, inputStyle, money, signed, pct, plColor } from './paper/ui'
 
-// Hong Kong / Japan accounts: wording the shared translation table has no keys for
-const PT_INTL = {
-  zh: { tabHK: '港股（HK$100万）', tabJP: '日股（¥1000万）', codeHK: '港股代码', codeJP: '日股代码', lot: (n) => `股数（每手 ${n} 股）`,
-        feeHK: '印花税 0.1% + 交易所费用', zeroJP: '零佣金，无交易税', footerHK: '港股模拟 · 初始资金 HK$100万 · 零佣金，买卖各收 0.1% 印花税 · 按每手股数交易 · 可当日卖出',
-        footerJP: '日股模拟 · 初始资金 ¥1000万 · 零佣金 · 100 股为一个交易单位 · 可当日卖出', sellQty: (n) => `卖出股数（每手 ${n} 股）` },
-  en: { tabHK: 'HK Stocks (HK$1M)', tabJP: 'Japan (¥10M)', codeHK: 'HK code', codeJP: 'Japan code', lot: (n) => `Shares (board lot ${n})`,
-        feeHK: 'Stamp duty 0.1% + exchange fees', zeroJP: 'Zero commission, no trading tax', footerHK: 'HK paper trading · HK$1M start · Zero commission, 0.1% stamp duty each way · Board lots · Sell any time',
-        footerJP: 'Japan paper trading · ¥10M start · Zero commission · Trading unit 100 shares · Sell any time', sellQty: (n) => `Shares to sell (lot ${n})` },
-  ja: { tabHK: '香港株（HK$100万）', tabJP: '日本株（1000万円）', codeHK: '香港株コード', codeJP: '銘柄コード', lot: (n) => `株数（1単位 ${n} 株）`,
-        feeHK: '印紙税 0.1% + 取引所手数料', zeroJP: '手数料無料・取引税なし', footerHK: '香港株の模擬取引 · 初期資金 HK$100万 · 手数料無料、売買ごとに印紙税 0.1% · 売買単位あり · いつでも売却可',
-        footerJP: '日本株の模擬取引 · 初期資金 1000万円 · 手数料無料 · 売買単位 100 株 · いつでも売却可', sellQty: (n) => `売却株数（1単位 ${n} 株）` },
-  ko: { tabHK: '홍콩주식 (HK$100만)', tabJP: '일본주식 (¥1000만)', codeHK: '홍콩 종목코드', codeJP: '일본 종목코드', lot: (n) => `주식 수 (1단위 ${n}주)`,
-        feeHK: '인지세 0.1% + 거래소 수수료', zeroJP: '수수료 무료, 거래세 없음', footerHK: '홍콩주식 모의투자 · 초기자금 HK$100만 · 수수료 무료, 매매 시 인지세 0.1% · 단위 거래 · 언제든 매도 가능',
-        footerJP: '일본주식 모의투자 · 초기자금 ¥1000만 · 수수료 무료 · 거래단위 100주 · 언제든 매도 가능', sellQty: (n) => `매도 수량 (1단위 ${n}주)` },
-  fr: { tabHK: 'Bourse HK (1 M HK$)', tabJP: 'Japon (10 M ¥)', codeHK: 'Code HK', codeJP: 'Code Japon', lot: (n) => `Actions (lot de ${n})`,
-        feeHK: 'Droit de timbre 0,1 % + frais de bourse', zeroJP: 'Sans commission ni taxe', footerHK: 'Simulation HK · 1 M HK$ au départ · Sans commission, timbre 0,1 % à chaque sens · Par lots · Vente à tout moment',
-        footerJP: 'Simulation Japon · 10 M ¥ au départ · Sans commission · Unité de 100 actions · Vente à tout moment', sellQty: (n) => `Actions à vendre (lot de ${n})` },
-}
-// HK stamp duty (0.1%, whole dollars, rounded up) + exchange levies; Japan has neither. Same as the server.
-const hkFee = (amount) => (amount > 0 ? Math.ceil(amount * 0.001) + amount * 0.000085 : 0)
-
-// ── Constants ────────────────────────────────────────────────────────────────
-const BG        = 'var(--bg-primary)'
-const CARD_BG   = 'var(--bg-secondary)'
-const BDR       = 'var(--border-primary)'
-const BUY_CLR   = '#34d399'
-const SELL_CLR  = '#ef4444'
-const PROFIT_CLR = '#f59e0b'  /* gold for positive returns */
-const MUTED     = 'var(--text-secondary)'
+// Paper trading desk: four market accounts plus competitions, each traded through the same order
+// ticket (market / limit / stop / stop-limit / trailing stop, short selling in US accounts).
 
 function getDeviceId() {
   const key = 'bfs_device_id'
@@ -45,883 +20,212 @@ function getDeviceId() {
   return id
 }
 
-// ── Small UI helpers ─────────────────────────────────────────────────────────
-function Card({ children, style }) {
-  return (
-    <div style={{ background: CARD_BG, border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', transition: 'border-color 0.2s', ...style }}>
-      {children}
-    </div>
-  )
-}
-
-function Pill({ children, color, bg }) {
-  return (
-    <span style={{
-      fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10,
-      background: bg || `${color}20`, color, border: `1px solid ${color}40`,
-      letterSpacing: '0.2px', whiteSpace: 'nowrap',
-    }}>
-      {children}
-    </span>
-  )
-}
-
-function Btn({ children, onClick, color = BUY_CLR, disabled, style }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        background: disabled ? 'var(--bg-hover)' : color,
-        color: disabled ? MUTED : '#fff',
-        border: 'none', borderRadius: 8, padding: '8px 20px',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        fontSize: 13, fontWeight: 700, transition: 'opacity 0.15s',
-        ...style,
-      }}
-    >
-      {children}
-    </button>
-  )
-}
-
-function fmt(n, dec = 2) {
-  if (n == null) return '--'
-  return Number(n).toLocaleString('zh-CN', { minimumFractionDigits: dec, maximumFractionDigits: dec })
-}
-
-function PctBadge({ value }) {
-  const up = value >= 0
-  return (
-    <span style={{ color: up ? PROFIT_CLR : SELL_CLR, fontWeight: 700, fontFamily: '"JetBrains Mono", monospace' }}>
-      {up ? '+' : ''}{fmt(value)}%
-    </span>
-  )
-}
-
-// ── Sell Modal ───────────────────────────────────────────────────────────────
-function SellModal({ pos, symbol, t, market, lang, onConfirm, onClose }) {
-  const isUS   = market === 'us'
-  const hkjp   = market === 'hk' || market === 'jp'
-  const ti     = PT_INTL[lang] || PT_INTL.en
-  const lotSize = isUS ? 1 : hkjp ? (pos.lot || 100) : 100
-  const currSym = CUR[market]
-  const [shares, setShares] = useState(pos.available_shares)
-
-  const amount     = shares * pos.current_price
-  const commission = isUS || market === 'jp' ? 0 : market === 'hk' ? hkFee(amount) : Math.max(5, amount * 0.0013)
-  const net        = amount - commission
-  const noFee      = commission === 0
-  // Whole lots, except that an odd lot left over can be sold in full
-  const validQty   = shares > 0 && shares <= pos.available_shares && (isUS || shares % lotSize === 0 || shares === pos.available_shares)
-
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.75)',
-      backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}
-    onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-    >
-      <div style={{ background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 16, padding: '28px 32px', width: 360, position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 12, right: 16, background: 'none', border: 'none', cursor: 'pointer', color: MUTED, fontSize: 18 }}>✕</button>
-        <div style={{ fontSize: 16, fontWeight: 700, color: SELL_CLR, marginBottom: 18 }}>
-          {t.ptSellTitle} {symbol}
-        </div>
-        <div style={{ fontSize: 13, color: MUTED, marginBottom: 6 }}>
-          {t.ptSellAvailLabel}: {pos.available_shares} {t.ptSellShareUnit}
-          &nbsp;·&nbsp;{t.ptSellPriceLabel}: {currSym}{fmt(pos.current_price)}
-        </div>
-        <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 12, color: MUTED, display: 'block', marginBottom: 4 }}>
-            {isUS ? t.ptSellQtyUS : hkjp ? ti.sellQty(lotSize) : t.ptSellQtyCN}
-          </label>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <input
-              type="number"
-              value={shares}
-              min={lotSize}
-              max={pos.available_shares}
-              step={lotSize}
-              onChange={(e) => {
-                const v = Number(e.target.value)
-                const clamped = Math.min(pos.available_shares, Math.max(lotSize, isUS ? Math.floor(v) : Math.round(v / lotSize) * lotSize))
-                setShares(clamped)
-              }}
-              style={{
-                flex: 1, background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
-                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
-              }}
-            />
-            <button onClick={() => setShares(pos.available_shares)}
-              style={{ fontSize: 11, color: '#0ea5e9', background: 'rgba(14,165,233,0.1)', border: 'none', borderRadius: 6, padding: '6px 10px', cursor: 'pointer' }}>
-              {t.ptSellAll}
-            </button>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, marginBottom: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: MUTED }}>{t.ptTradeAmt}</span>
-            <span style={{ color: 'var(--text-primary)' }}>{currSym}{fmt(amount)}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: MUTED }}>{isUS ? t.ptSellCommUS : market === 'hk' ? ti.feeHK : market === 'jp' ? ti.zeroJP : t.ptSellCommCN}</span>
-            <span style={{ color: noFee ? BUY_CLR : SELL_CLR }}>{noFee ? `${currSym}0` : `-${currSym}${fmt(commission)}`}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
-            <span style={{ color: MUTED }}>{t.ptNetProceeds}</span>
-            <span style={{ color: BUY_CLR }}>{currSym}{fmt(net)}</span>
-          </div>
-        </div>
-        <Btn
-          color={SELL_CLR}
-          disabled={!validQty}
-          onClick={() => onConfirm(shares)}
-          style={{ width: '100%' }}
-        >
-          {t.ptConfirmSell} {shares} {t.ptSellShareUnit}
-        </Btn>
-      </div>
-    </div>
-  )
-}
-
-// ── Reset Confirm Modal ──────────────────────────────────────────────────────
-function ResetModal({ t, onConfirm, onClose }) {
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.75)',
-      backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}
-    onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-    >
-      <div style={{ background: 'var(--bg-secondary)', border: `1px solid rgba(248,113,113,0.3)`, borderRadius: 16, padding: '28px 32px', width: 340, textAlign: 'center' }}>
-        <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: SELL_CLR, marginBottom: 10 }}>
-          {t.ptResetTitle}
-        </div>
-        <div style={{ fontSize: 13, color: MUTED, marginBottom: 24, lineHeight: 1.6 }}>
-          {t.ptResetWarning}
-        </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onClose} style={{ flex: 1, background: 'var(--bg-tertiary)', border: 'none', borderRadius: 8, color: MUTED, padding: '10px 0', cursor: 'pointer', fontSize: 13 }}>
-            {t.ptCancel}
-          </button>
-          <Btn color={SELL_CLR} onClick={onConfirm} style={{ flex: 1 }}>
-            {t.ptConfirmReset}
-          </Btn>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ── Main Component ───────────────────────────────────────────────────────────
 // Server nicknames are stored as "用户#1234"; translate the prefix for other languages.
 const NICK_PREFIX = { zh: '用户', en: 'Trader', ja: 'ユーザー', ko: '사용자', fr: 'Joueur' }
-function localNick(nick, lang) {
-  if (!nick) return ''
-  return nick.replace(/^用户#/, `${NICK_PREFIX[lang] || NICK_PREFIX.en} #`).replace(/^用户 #/, '用户#')
+const localNick = (nick, lang) => (nick || '').replace(/^用户#/, `${NICK_PREFIX[lang] || NICK_PREFIX.en} #`).replace(/^用户 #/, '用户#')
+
+const MARKETS = ['us', 'cn', 'hk', 'jp']
+
+async function postJSON(path, body) {
+  const r = await fetch(`/api/paper/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  const d = await r.json().catch(() => ({}))
+  if (!r.ok) throw new Error(typeof d.detail === 'string' ? d.detail : 'Error')
+  return d
 }
 
-const QUICK_LABEL = { zh: '试试：', en: 'Try:', ja: '例：', ko: '예:', fr: 'Essayez :' }
-const QUICK_US = [['AAPL', 'Apple'], ['NVDA', 'NVIDIA'], ['MSFT', 'Microsoft'], ['TSLA', 'Tesla'], ['SPY', 'S&P 500 ETF'], ['QQQ', 'Nasdaq-100 ETF']]
-const QUICK_CN = [['600519', '贵州茅台'], ['000858', '五粮液'], ['300750', '宁德时代'], ['601318', '中国平安'], ['000001', '平安银行']]
-const QUICK_HK = [['00700', '腾讯'], ['09988', '阿里巴巴'], ['03690', '美团'], ['01810', '小米'], ['00005', '汇丰'], ['02800', '盈富基金']]
-const QUICK_JP = [['7203', '丰田'], ['6758', '索尼'], ['7974', '任天堂'], ['9984', '软银'], ['8306', '三菱日联'], ['1321', '日经225 ETF']]
-
 export default function PaperTradingPanel({ lang, onOpenAuth }) {
-  const t = T[lang] || T.en
-
+  const s = ptStrings(lang)
   const { user, loading: authLoading } = useAuthStore()
-  const accountKey            = user?.id ?? getDeviceId()
-  const [account,  setAccount] = useState(null)
-  const [loading,  setLoading] = useState(true)
-  const [err,      setErr]     = useState(null)
+  const accountKey = user?.id ?? getDeviceId()
 
-  // Market toggle for paper trading
-  // /paper?buy=AAPL&market=us (from a stock page's "Paper trade" button) opens with the order filled in
-  const prefill = useRef((() => {
+  // /paper?buy=AAPL&market=us (a stock page's "Paper trade" button) opens with the order filled in
+  const prefillUrl = useRef((() => {
     try {
       const q = new URLSearchParams(window.location.search)
       const sym = (q.get('buy') || '').trim().toUpperCase()
-      if (q.has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)   // a reload should not reopen the order
-      const m = ['cn', 'hk', 'jp'].includes(q.get('market')) ? q.get('market') : 'us'
-      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { sym, market: m } : null
+      if (q.has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)
+      const m = MARKETS.includes(q.get('market')) ? q.get('market') : 'us'
+      return /^[A-Z0-9.]{1,10}$/.test(sym) ? { symbol: sym, market: m, side: 'buy' } : null
     } catch { return null }
   })())
-  const [ptMarket, setPtMarket] = useState(prefill.current?.market || 'us')   // 'us' | 'cn' | 'hk' | 'jp' (US first)
-  const isUS = ptMarket === 'us'
-  const hkjp = ptMarket === 'hk' || ptMarket === 'jp'
-  const ti = PT_INTL[lang] || PT_INTL.en
-  const currSym = CUR[ptMarket]
 
-  // Buy form
-  const [buyCode,    setBuyCode]    = useState(prefill.current?.sym || '')
-  const [buyShares,  setBuyShares]  = useState(ptMarket === 'us' ? 1 : 100)
-  const [lotSize,    setLotSize]    = useState(100)   // HK board lot of the quoted stock (A-shares and Japan: 100)
-  const [quoteInfo,  setQuoteInfo]  = useState(null)   // {price, name}
-  const [quoteLoading, setQuoteLoading] = useState(false)
-  const [buyMsg,     setBuyMsg]     = useState(null)   // {type:'success'|'error', text}
-  const [suggestOpen, setSuggestOpen] = useState(false)
-  const [suggestIdx,  setSuggestIdx]  = useState(0)
-  const suggestions = useSymbolSuggest(suggestOpen ? buyCode : '', ptMarket)
-  // Hide the list once the box holds a ticker that has a live quote
-  const showSuggest = suggestOpen && suggestions.length > 0 && !(quoteInfo && suggestions.some((s) => s.symbol === buyCode))
-  const pickSuggestion = (s) => { setBuyCode(s.symbol); setSuggestOpen(false); setSuggestIdx(0) }
+  const [account, setAccount] = useState(null)
+  const [gameView, setGameView] = useState(null)
+  const [err, setErr] = useState(null)
+  const [active, setActive] = useState(prefillUrl.current?.market || 'us')     // 'us' | 'cn' | 'hk' | 'jp' | 'g:<id>'
+  const [tab, setTab] = useState('positions')
+  const [prefill, setPrefill] = useState(prefillUrl.current)
+  const [board, setBoard] = useState(null)
+  const [toast, setToast] = useState(null)
+  const [modal, setModal] = useState(null)         // 'games' | 'reset' | 'nick'
+  const [nickDraft, setNickDraft] = useState('')
+  const [copied, setCopied] = useState(false)
+  const tick = useRef(0)
 
-  // UI state
-  const [sellModal,   setSellModal]  = useState(null)  // {symbol, pos}
-  const [showTxn,     setShowTxn]    = useState(false)
-  const [showBoard,   setShowBoard]  = useState(false)
-  const [leaderboard, setLeaderboard]= useState(null)   // null = loading
-  const [resetModal,  setResetModal] = useState(false)
-  const [actionMsg,   setActionMsg]  = useState(null)
+  const gameId = active.startsWith('g:') ? active.slice(2) : null
+  const view = gameId ? gameView : account?.markets?.[active]
+  const market = gameId ? gameView?.market || gameView?.game?.market : active
+  const game = gameId ? (gameView?.game || account?.games?.find((g) => g.id === gameId)) : null
 
-  // ── API helpers ────────────────────────────────────────────────────────────
-
-  const fetchAccount = useCallback(async () => {
-    setLoading(true)
-    setErr(null)
+  const load = useCallback(async () => {
     try {
-      const res = await fetch('/api/paper/account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: accountKey }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || 'Failed')
-      setAccount(data)
-    } catch (e) {
-      setErr(e.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [accountKey])
+      const a = await postJSON('account', { device_id: accountKey })
+      setAccount(a); setErr(null)
+      if (gameId) setGameView(await postJSON('games/account', { device_id: accountKey, game_id: gameId }))
+    } catch (e) { setErr(e.message) }
+  }, [accountKey, gameId])
 
-  const fetchLeaderboard = useCallback(async () => {
-    setLeaderboard(null)
-    try {
-      const res = await fetch(`/api/paper/leaderboard?device_id=${accountKey}&market=${ptMarket}`)
-      const data = await res.json()
-      setLeaderboard(Array.isArray(data) ? data : [])
-    } catch (e) {
-      console.error('leaderboard:', e)
-      setLeaderboard([])
-    }
-  }, [accountKey, ptMarket])
-
+  useEffect(() => { if (!authLoading) load() }, [load, authLoading])
+  // Open orders fill in the background: refresh every 30 s while the page is visible
   useEffect(() => {
-    if (authLoading) return
-    fetchAccount()
-  }, [fetchAccount, authLoading])
-  useEffect(() => { if (showBoard) fetchLeaderboard() }, [showBoard, fetchLeaderboard])
-
-  // ── Quote lookup ──────────────────────────────────────────────────────────
+    const id = setInterval(() => { if (document.visibilityState === 'visible') { tick.current += 1; load() } }, 30000)
+    return () => clearInterval(id)
+  }, [load])
   useEffect(() => {
-    setQuoteInfo(null)
-    // US: any ticker; A-shares: a full 6-digit code. Wait for typing to settle (was one request per key).
-    const codeOk = { us: /^[A-Z0-9.\-]{1,10}$/i, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }[ptMarket]
-    if (!buyCode || !codeOk.test(buyCode)) return
-    let alive = true
-    const id = setTimeout(() => {
-      setQuoteLoading(true)
-      const url = ptMarket === 'cn' ? `/api/stocks/${buyCode}/realtime` : `/api/${ptMarket}/stock/${buyCode.toUpperCase()}/realtime`
-      fetch(url)
-        .then((r) => (r.ok ? r.json() : null))
-        .then((d) => {
-          if (!alive) return
-          setQuoteInfo(d?.price ? { price: d.price, name: d.name } : null)
-          // HK board lots differ per stock (Tencent 100, Tracker Fund 500): snap the order to the lot
-          if (d?.price && ptMarket === 'hk' && d.lot_size) {
-            setLotSize(d.lot_size)
-            setBuyShares((n) => Math.max(d.lot_size, Math.round(n / d.lot_size) * d.lot_size))
-          }
-        })
-        .catch(() => { if (alive) setQuoteInfo(null) })
-        .finally(() => { if (alive) setQuoteLoading(false) })
-    }, 350)
-    return () => { alive = false; clearTimeout(id) }
-  }, [buyCode, ptMarket])
+    if (tab !== 'leaderboard' || gameId) return
+    setBoard(null)
+    fetch(`/api/paper/leaderboard?device_id=${encodeURIComponent(accountKey)}&market=${active}`).then((r) => r.json()).then((d) => setBoard(Array.isArray(d) ? d : [])).catch(() => setBoard([]))
+  }, [tab, active, gameId, accountKey, account?.markets?.[active]?.transactions?.length])
+  useEffect(() => { if (!toast) return undefined; const id = setTimeout(() => setToast(null), 5000); return () => clearTimeout(id) }, [toast])
 
-  // Reset shares when switching market
-  // Only an actual switch clears the form (not the first run, which would wipe a prefilled order)
-  const formMarket = useRef(ptMarket)
-  useEffect(() => {
-    if (formMarket.current === ptMarket) return
-    formMarket.current = ptMarket
-    setBuyCode('')
-    setBuyShares(isUS ? 1 : 100)
-    setLotSize(100)
-    setQuoteInfo(null)
-    setBuyMsg(null)
-  }, [ptMarket]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ── Buy ───────────────────────────────────────────────────────────────────
-  const handleBuy = async () => {
-    setBuyMsg(null)
-    try {
-      const res = await fetch('/api/paper/buy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: accountKey, symbol: buyCode, shares: buyShares, market: ptMarket, lang }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setBuyMsg({ type: 'error', text: data.detail }); return }
-      setBuyMsg({ type: 'success', text: data.message })
-      setBuyCode(''); setBuyShares(isUS ? 1 : 100); setQuoteInfo(null)
-      fetchAccount()
-    } catch (e) {
-      setBuyMsg({ type: 'error', text: e.message })
-    }
+  const cancel = async (o) => {
+    try { const d = await postJSON('order/cancel', { device_id: accountKey, order_id: o.id, game_id: gameId, lang }); setToast({ ok: true, text: d.message }); load() }
+    catch (e) { setToast({ ok: false, text: e.message }) }
   }
+  const onOrderDone = (d) => { setToast({ ok: true, text: d.message }); setTab(d.pending ? 'orders' : 'positions'); load() }
 
-  // ── Sell ──────────────────────────────────────────────────────────────────
-  const handleSell = async (shares) => {
-    setSellModal(null)
-    try {
-      const res = await fetch('/api/paper/sell', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: accountKey, symbol: sellModal.symbol, shares, market: ptMarket, lang }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setActionMsg({ type: 'error', text: data.detail }); return }
-      const pl = data.profit_loss
-      const sign = pl >= 0 ? '+' : ''
-      setActionMsg({
-        type: pl >= 0 ? 'success' : 'error',
-        text: `${data.message} | ${t.ptPLLabel}: ${sign}${currSym}${fmt(pl)} (${sign}${fmt(data.profit_loss_pct)}%)`,
-      })
-      fetchAccount()
-    } catch (e) {
-      setActionMsg({ type: 'error', text: e.message })
-    }
-    setTimeout(() => setActionMsg(null), 5000)
-  }
+  const an = view?.analytics || {}
+  const openOrders = (view?.orders || []).filter((o) => o.status === 'open').length
+  const tabs = [
+    { value: 'positions', label: s.tabs.positions },
+    { value: 'orders', label: `${s.tabs.orders}${openOrders ? ` · ${openOrders}` : ''}` },
+    { value: 'history', label: s.tabs.history },
+    { value: 'leaderboard', label: s.tabs.leaderboard },
+  ]
+  const portfolioOptions = [
+    ...MARKETS.map((m) => ({ value: m, label: s.markets[m] })),
+    ...(account?.games || []).map((g) => ({ value: `g:${g.id}`, label: `🏆 ${g.name}` })),
+  ]
+  const inviteText = game ? `${s.game.inviteText(game.name, game.code)} ${window.location.origin}/paper` : ''
 
-  // ── Reset ─────────────────────────────────────────────────────────────────
-  const handleReset = async () => {
-    setResetModal(false)
-    try {
-      const res = await fetch('/api/paper/reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_id: accountKey }),
-      })
-      const data = await res.json()
-      if (res.ok) { setActionMsg({ type: 'success', text: data.message }); fetchAccount() }
-    } catch (e) { setActionMsg({ type: 'error', text: e.message }) }
-    setTimeout(() => setActionMsg(null), 4000)
-  }
-
-  // ── Pre-render calculations ───────────────────────────────────────────────
-  // The server sends every market in one shape (markets.us / cn / hk / jp)
-  const mk         = account?.markets?.[ptMarket] || {}
-  const portfolio  = mk.portfolio || {}
-  const txns       = mk.transactions || []
-  const totalValue = mk.total_value ?? mk.initial ?? 0
-  const cash       = mk.cash ?? mk.initial ?? 0
-  const retPct     = mk.return_pct ?? 0
-  const commission = mk.commission_paid ?? 0
-  // Per-market rank; -1 until this account has traded in that market
-  const rank       = mk.rank ?? -1
-
-  const portfolioValue = Object.values(portfolio).reduce((s, p) => s + (p.market_value || 0), 0)
-
-  const buyAmount     = quoteInfo ? quoteInfo.price * buyShares : 0
-  const buyCommission = isUS || ptMarket === 'jp' ? 0 : ptMarket === 'hk' ? hkFee(buyAmount) : (buyAmount ? Math.max(5, buyAmount * 0.0003) : 0)
-  const step = isUS ? 1 : ptMarket === 'hk' ? lotSize : 100
-  const buyTotalCost  = buyAmount + buyCommission
-
-  // ── Render ────────────────────────────────────────────────────────────────
-  if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: MUTED, fontSize: 14 }}>
-      {t.ptLoading}
-    </div>
-  )
-
-  if (err) return (
-    <div style={{ textAlign: 'center', padding: '60px 0', color: SELL_CLR }}>
-      {err}
-    </div>
-  )
+  if (err && !account) return <div style={{ textAlign: 'center', padding: '60px 0', color: DOWN }}>{err}</div>
+  if (!account) return <div style={{ textAlign: 'center', padding: '60px 0', color: MUTED }}>…</div>
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ maxWidth: 1180, margin: '0 auto', width: '100%', display: 'grid', gap: 14 }}>
+      <style>{`.pt-grid { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 14px; align-items: start; }
+        @media (max-width: 900px) { .pt-grid { grid-template-columns: minmax(0, 1fr); } }`}</style>
 
-      {/* ── Modals ── */}
-      {sellModal && (
-        <SellModal
-          pos={sellModal.pos}
-          symbol={sellModal.symbol}
-          t={t}
-          market={ptMarket}
-          lang={lang}
-          onConfirm={handleSell}
-          onClose={() => setSellModal(null)}
-        />
-      )}
-      {resetModal && <ResetModal t={t} onConfirm={handleReset} onClose={() => setResetModal(false)} />}
-
-      {/* ── Action message toast ── */}
-      {actionMsg && (
-        <div style={{
-          position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
-          background: actionMsg.type === 'success' ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.15)',
-          border: `1px solid ${actionMsg.type === 'success' ? BUY_CLR : SELL_CLR}40`,
-          borderRadius: 10, padding: '12px 24px', color: actionMsg.type === 'success' ? BUY_CLR : SELL_CLR,
-          fontSize: 13, fontWeight: 600, zIndex: 9998, backdropFilter: 'blur(8px)',
-          maxWidth: '90vw', textAlign: 'center',
-        }}>
-          {actionMsg.text}
+      {toast && (
+        <div role="status" style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9998, maxWidth: '90vw', textAlign: 'center',
+          background: 'var(--bg-secondary)', border: `1px solid ${toast.ok ? UP : DOWN}66`, color: toast.ok ? UP : DOWN, borderRadius: 12, padding: '11px 20px', fontSize: 13.5, fontWeight: 650, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
+          {toast.text}
         </div>
       )}
 
-      {/* ── Auth banner (anonymous mode) ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ minWidth: 0 }}>
+          <h1 style={{ margin: 0, fontSize: 26 }}>{s.title}</h1>
+          <p style={{ margin: '4px 0 0', fontSize: 13.5, color: MUTED, maxWidth: 640 }}>{s.subtitle}</p>
+        </div>
+        <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>🏆 {s.newGame}</Button>
+      </div>
+
       {!user && (
-        <div style={{
-          background: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.2)',
-          borderRadius: 10, padding: '10px 16px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap',
-        }}>
-          <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-            {t.ptGuestNote}
-          </div>
-          {onOpenAuth && (
-            <button
-              onClick={onOpenAuth}
-              style={{
-                padding: '6px 16px', borderRadius: 8, border: 'none', flexShrink: 0,
-                background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
-                color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              }}
-            >
-              {t.ptGuestSignIn}
-            </button>
-          )}
+        <div style={{ background: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.2)', borderRadius: 10, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.45 }}>{s.guest}</div>
+          {onOpenAuth && <Button onClick={onOpenAuth} style={{ padding: '6px 14px', fontSize: 12 }}>{s.signIn}</Button>}
         </div>
       )}
 
-      <style>{`.bfs-quick-pick:hover { color: var(--text-primary) !important; border-color: #0ea5e9 !important; }
-        .bfs-quick-pick:focus-visible { outline: 2px solid #0ea5e9; outline-offset: 1px; }`}</style>
+      <Seg value={active} onChange={(v) => { setActive(v); setGameView(null); setPrefill(null) }} options={portfolioOptions} />
 
-      {/* ── Market toggle ── */}
-      <div style={{ display: 'flex', gap: 6, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 24, padding: 4, width: 'fit-content' }}>
-        {[
-          { key: 'us', label: t.ptMktUS },
-          { key: 'cn', label: t.ptMktCN },
-          { key: 'hk', label: ti.tabHK },
-          { key: 'jp', label: ti.tabJP },
-        ].map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setPtMarket(key)}
-            style={{
-              padding: '5px 18px', borderRadius: 20, border: 'none', cursor: 'pointer',
-              fontSize: 12, fontWeight: 600,
-              background: ptMarket === key ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'transparent',
-              color: ptMarket === key ? '#fff' : MUTED,
-              transition: 'all 0.2s',
-            }}
-          >
-            {label}
-          </button>
-        ))}
+      {/* Account summary */}
+      <Card style={{ display: 'grid', gap: 14 }}>
+        {game && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13 }}>
+            <b style={{ fontSize: 15 }}>🏆 {game.name}</b>
+            <span style={{ color: game.status === 'ended' ? MUTED : UP, fontWeight: 700 }}>{s.game.status[game.status]}</span>
+            <span style={{ color: MUTED }}>{s.game.members(game.members)} · {game.status === 'ended' ? s.game.endedOn(game.end_date) : s.game.ends(game.end_date)} · {s.game.organiser} {game.owner_nickname}</span>
+            <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+              <code style={{ fontSize: 14, fontWeight: 800, letterSpacing: 2, padding: '3px 8px', borderRadius: 6, background: 'var(--bg-tertiary)' }}>{game.code}</code>
+              <Button ghost style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => { navigator.clipboard?.writeText(inviteText); setCopied(true); setTimeout(() => setCopied(false), 1500) }}>
+                {copied ? s.game.copied : s.game.copy}
+              </Button>
+              {game.is_owner
+                ? <Button ghost style={{ padding: '5px 10px', fontSize: 12, color: DOWN }} onClick={async () => { if (!window.confirm(s.game.removeConfirm)) return; await postJSON('games/delete', { device_id: accountKey, game_id: game.id }).catch(() => {}); setActive('us'); load() }}>{s.game.remove}</Button>
+                : <Button ghost style={{ padding: '5px 10px', fontSize: 12 }} onClick={async () => { await postJSON('games/leave', { device_id: accountKey, game_id: game.id }).catch(() => {}); setActive('us'); load() }}>{s.game.leave}</Button>}
+            </span>
+          </div>
+        )}
+        {!view ? <div style={{ height: 70 }} className="skeleton" /> : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16, alignItems: 'end' }}>
+            <Stat big label={s.totalValue} value={money(view.total_value, market, 0)}
+              sub={<span style={{ color: plColor(view.return_pct, market) }}>{s.totalReturn} {pct(view.return_pct)}</span>} />
+            <Stat label={s.todayChange} value={signed(an.day_change, market, 0)} color={plColor(an.day_change, market)} sub={pct(an.day_change_pct)} />
+            <Stat label={s.buyingPower} value={money(view.buying_power, market, 0)} sub={view.reserved ? `${s.reserved} ${money(view.reserved, market, 0)}` : `${s.cash} ${money(view.cash, market, 0)}`} />
+            <Stat label={s.rank} value={view.rank > 0 ? `#${view.rank}` : '—'}
+              sub={<span style={{ cursor: 'pointer', textDecoration: 'underline dotted' }} onClick={() => { setNickDraft(account.nickname?.startsWith('用户#') ? '' : account.nickname); setModal('nick') }}>{localNick(account.nickname, lang)} ✎</span>} />
+          </div>
+        )}
+        {view && (
+          <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', fontSize: 12.5, color: MUTED, borderTop: `1px solid ${BDR}`, paddingTop: 10 }}>
+            <span>{s.realized} <b style={{ color: plColor(an.realized_pl, market) }}>{signed(an.realized_pl, market, 0)}</b></span>
+            <span>{s.unrealized} <b style={{ color: plColor(an.unrealized_pl, market) }}>{signed(an.unrealized_pl, market, 0)}</b></span>
+            <span>{s.winRate} <b style={{ color: 'var(--text-primary)' }}>{an.win_rate != null ? `${an.win_rate}% (${an.closed_trades})` : '—'}</b></span>
+            <span>{s.fees} <b style={{ color: 'var(--text-primary)' }}>{money(an.fees_paid, market)}</b></span>
+            {an.best_trade && <span>{s.best} <b style={{ color: plColor(an.best_trade.profit_loss, market) }}>{an.best_trade.symbol} {signed(an.best_trade.profit_loss, market, 0)}</b></span>}
+            {an.worst_trade && an.closed_trades > 1 && <span>{s.worst} <b style={{ color: plColor(an.worst_trade.profit_loss, market) }}>{an.worst_trade.symbol} {signed(an.worst_trade.profit_loss, market, 0)}</b></span>}
+            {!gameId && <button onClick={() => setModal('reset')} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: DOWN, cursor: 'pointer', fontSize: 12 }}>{s.reset}</button>}
+          </div>
+        )}
+      </Card>
+
+      <div className="pt-grid">
+        {view && market && (
+          <OrderTicket s={s} lang={lang} market={market} view={view} accountKey={accountKey} gameId={gameId} prefill={prefill} onDone={onOrderDone} />
+        )}
+        <div style={{ display: 'grid', gap: 14, minWidth: 0 }}>
+          {market && <PaperPerformance accountKey={accountKey} market={market} lang={lang} gameId={gameId}
+            refreshKey={`${view?.transactions?.length ?? 0}-${view?.cash}`} />}
+          <Card style={{ display: 'grid', gap: 12 }}>
+            <Seg value={tab} onChange={setTab} options={tabs} size="sm" />
+            {tab === 'positions' && <Positions s={s} view={view} market={market} onAction={(p) => { setPrefill({ ...p, t: Date.now() }); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />}
+            {tab === 'orders' && <Orders s={s} view={view} market={market} lang={lang} onCancel={cancel} />}
+            {tab === 'history' && <History s={s} view={view} market={market} filename={`paper-${gameId ? game?.code : active}-${new Date().toISOString().slice(0, 10)}.csv`} />}
+            {tab === 'leaderboard' && <Leaderboard s={s} rows={gameId ? gameView?.leaderboard : board} market={market} />}
+          </Card>
+        </div>
       </div>
 
-      {/* ── 1. Account Overview ── */}
-      <Card>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-          <div>
-            <div style={{ fontSize: 12, color: MUTED, marginBottom: 4 }}>
-              {localNick(account?.nickname, lang)} · {t.ptGlobalRank}:
-              <span style={{ color: '#0ea5e9', fontWeight: 700, marginLeft: 4 }}>
-                {rank === -1 ? '--' : `#${rank}`}
-              </span>
-            </div>
-            <div className="serif-num" style={{ fontSize: 34, color: retPct >= 0 ? PROFIT_CLR : SELL_CLR }}>
-              {currSym}{fmt(totalValue, 0)}
-            </div>
-            <div style={{ marginTop: 4 }}>
-              <PctBadge value={retPct} />
-              <span style={{ fontSize: 12, color: MUTED, marginLeft: 8 }}>
-                {t.ptTotalReturn}
-              </span>
-            </div>
-          </div>
-          <button
-            onClick={() => setResetModal(true)}
-            style={{
-              background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.25)',
-              color: SELL_CLR, borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 12,
-            }}
-          >
-            {t.ptResetAccount}
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          {[
-            { label: t.ptCash, value: `${currSym}${fmt(cash, 0)}`, color: 'var(--text-primary)' },
-            { label: t.ptPortfolioValue, value: `${currSym}${fmt(portfolioValue, 0)}`, color: '#0ea5e9' },
-            { label: t.ptCommPaid, value: `${currSym}${fmt(commission)}`, color: MUTED },
-          ].map(({ label, value, color }) => (
-            <div key={label} style={{ background: 'var(--bg-tertiary)', borderRadius: 10, padding: '10px 16px', minWidth: 140, flex: 1 }}>
-              <div style={{ fontSize: 11, color: MUTED, marginBottom: 4 }}>{label}</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color, fontFamily: 'monospace' }}>{value}</div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* ── 1b. Performance vs the market ── */}
-      <PaperPerformance accountKey={accountKey} market={ptMarket} lang={lang}
-        refreshKey={`${txns.length}-${cash}`} />
-
-      {/* ── 2. Buy Panel ── */}
-      <Card>
-        <div style={{ fontSize: 14, fontWeight: 700, color: BUY_CLR, marginBottom: 14 }}>
-          {t.ptBuyStock}
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          {/* Code input */}
-          <div style={{ flex: '0 0 200px', position: 'relative' }}>
-            <label htmlFor="pt-buy-code" style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
-              {isUS ? t.ptCodeLabelUS : ptMarket === 'hk' ? ti.codeHK : ptMarket === 'jp' ? ti.codeJP : t.ptCodeLabelCN}
-            </label>
-            <input
-              id="pt-buy-code"
-              value={buyCode}
-              onChange={(e) => { setBuyCode(e.target.value.trim().toUpperCase()); setSuggestOpen(true); setSuggestIdx(0) }}
-              onFocus={() => setSuggestOpen(true)}
-              onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
-              onKeyDown={(e) => {
-                if (!showSuggest) return
-                if (e.key === 'ArrowDown') { e.preventDefault(); setSuggestIdx((i) => Math.min(i + 1, suggestions.length - 1)) }
-                else if (e.key === 'ArrowUp') { e.preventDefault(); setSuggestIdx((i) => Math.max(i - 1, 0)) }
-                else if (e.key === 'Enter') { e.preventDefault(); pickSuggestion(suggestions[suggestIdx] || suggestions[0]) }
-                else if (e.key === 'Escape') setSuggestOpen(false)
-              }}
-              placeholder={{ us: 'AAPL / Apple', cn: '600519 / 茅台', hk: '00700 / 腾讯', jp: '7203 / Toyota' }[ptMarket]}
-              maxLength={24}
-              autoComplete="off"
-              role="combobox"
-              aria-expanded={showSuggest}
-              aria-controls="pt-buy-suggest"
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
-                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
-              }}
-            />
-            {showSuggest && (
-              <div id="pt-buy-suggest" role="listbox" style={{
-                position: 'absolute', top: '100%', left: 0, width: 300, maxWidth: '86vw', marginTop: 4, zIndex: 30,
-                background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 10,
-                boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden',
-              }}>
-                {suggestions.map((s, i) => (
-                  <div key={s.symbol} role="option" aria-selected={i === suggestIdx}
-                    onMouseDown={(e) => { e.preventDefault(); pickSuggestion(s) }}
-                    onMouseEnter={() => setSuggestIdx(i)}
-                    style={{
-                      display: 'flex', alignItems: 'baseline', gap: 10, padding: '8px 12px', cursor: 'pointer',
-                      background: i === suggestIdx ? 'var(--bg-tertiary)' : 'transparent',
-                    }}>
-                    <span style={{ fontFamily: 'var(--mono, monospace)', fontWeight: 700, fontSize: 13, minWidth: 56, color: 'var(--text-primary)' }}>{s.symbol}</span>
-                    <span style={{ flex: 1, minWidth: 0, fontSize: 12, color: MUTED, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {lang === 'zh' && s.nameZh ? s.nameZh : s.name}
-                    </span>
-                    {s.price != null && (
-                      <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'var(--text-primary)' }}>{currSym}{fmt(s.price)}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-            {quoteInfo && (
-              <div style={{ fontSize: 11, color: BUY_CLR, marginTop: 4 }}>
-                {quoteInfo.name} · {currSym}{fmt(quoteInfo.price)}
-              </div>
-            )}
-            {quoteLoading && <div style={{ fontSize: 11, color: MUTED, marginTop: 4 }}>{t.ptLookingUp}</div>}
-          </div>
-
-          {/* Shares input */}
-          <div style={{ flex: '0 0 180px' }}>
-            <label style={{ fontSize: 11, color: MUTED, display: 'block', marginBottom: 4 }}>
-              {isUS ? t.ptSharesUS : hkjp ? ti.lot(step) : t.ptSharesCN}
-            </label>
-            <input
-              type="number"
-              aria-label={isUS ? t.ptSharesUS : hkjp ? ti.lot(step) : t.ptSharesCN}
-              value={buyShares}
-              min={step}
-              step={step}
-              onChange={(e) => {
-                const v = Math.max(step, Number(e.target.value))
-                setBuyShares(isUS ? Math.floor(v) : Math.round(v / step) * step)
-              }}
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
-                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px', fontSize: 14, outline: 'none',
-              }}
-            />
-          </div>
-
-          {/* Preview */}
-          {quoteInfo && (
-            <div style={{ flex: 1, minWidth: 200, fontSize: 12, color: MUTED, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div>{t.ptEstCost}: <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>{currSym}{fmt(buyTotalCost)}</span></div>
-              {buyCommission > 0 && <div>{ptMarket === 'hk' ? ti.feeHK : t.ptCommFee}: <span style={{ color: SELL_CLR, fontFamily: 'monospace' }}>{currSym}{fmt(buyCommission)}</span></div>}
-              {buyCommission === 0 && <div style={{ color: BUY_CLR }}>{ptMarket === 'jp' ? ti.zeroJP : t.ptZeroComm}</div>}
-              <div>{t.ptCashAfter}: <span style={{
-                color: cash >= buyTotalCost ? BUY_CLR : SELL_CLR, fontFamily: 'monospace',
-              }}>{currSym}{fmt(cash - buyTotalCost, 0)}</span></div>
-            </div>
-          )}
-
-          <Btn
-            onClick={handleBuy}
-            disabled={!quoteInfo || !buyCode || buyShares <= 0 || cash < buyTotalCost}
-            style={{ height: 38, paddingLeft: 28, paddingRight: 28 }}
-          >
-            {t.ptBuy}
-          </Btn>
-        </div>
-
-        {/* Quick picks: give first-time traders somewhere to start */}
-        {!buyCode && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
-            <span style={{ fontSize: 11, color: MUTED, marginRight: 2 }}>{QUICK_LABEL[lang] || QUICK_LABEL.en}</span>
-            {({ us: QUICK_US, cn: QUICK_CN, hk: QUICK_HK, jp: QUICK_JP })[ptMarket].map(([code, name]) => (
-              <button
-                key={code}
-                className="bfs-quick-pick"
-                onClick={() => setBuyCode(code)}
-                title={name}
-                style={{
-                  padding: '3px 10px', borderRadius: 14, cursor: 'pointer',
-                  fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
-                  background: 'var(--bg-tertiary)', color: 'var(--text-secondary)',
-                  border: `1px solid ${BDR}`,
-                }}
-              >
-                {isUS ? code : hkjp ? (lang === 'zh' ? name : code) : name}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {buyMsg && (
-          <div style={{
-            marginTop: 12, padding: '8px 14px', borderRadius: 8, fontSize: 13,
-            background: buyMsg.type === 'success' ? 'rgba(52,211,153,0.1)' : 'rgba(248,113,113,0.1)',
-            color: buyMsg.type === 'success' ? BUY_CLR : SELL_CLR,
-            border: `1px solid ${buyMsg.type === 'success' ? BUY_CLR : SELL_CLR}30`,
-          }}>
-            {buyMsg.text}
-          </div>
-        )}
-      </Card>
-
-      {/* ── 3. Portfolio ── */}
-      <Card>
-        <div style={{ fontSize: 14, fontWeight: 700, color: '#0ea5e9', marginBottom: 14 }}>
-          {t.ptPortfolio}
-          <span style={{ fontSize: 12, color: MUTED, fontWeight: 400, marginLeft: 8 }}>
-            ({t.ptStocks(Object.keys(portfolio).length)})
-          </span>
-        </div>
-
-        {Object.keys(portfolio).length === 0 ? (
-          <div style={{ color: MUTED, fontSize: 13, textAlign: 'center', padding: '24px 0' }}>
-            {t.ptNoPositions}
-          </div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ color: MUTED, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  {[t.ptColCode, t.ptColShares, t.ptColAvail, t.ptColCost, t.ptColPrice, t.ptColValue, t.ptColPL, t.ptColAction].map((h) => (
-                    <th key={h} style={{ padding: '6px 10px', textAlign: 'left', borderBottom: `1px solid ${BDR}`, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(portfolio).map(([sym, pos]) => {
-                  const isProfit = pos.profit_loss >= 0
-                  const canSell  = pos.available_shares > 0
-                  return (
-                    <tr
-                      key={sym}
-                      style={{
-                        background: isProfit ? 'rgba(52,211,153,0.04)' : 'rgba(248,113,113,0.04)',
-                        transition: 'background 0.1s',
-                      }}
-                    >
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: '#0ea5e9', fontWeight: 600 }}>{sym}</td>
-                      <td style={{ padding: '10px 10px', color: 'var(--text-primary)' }}>{pos.shares}</td>
-                      <td style={{ padding: '10px 10px' }}>
-                        {canSell ? (
-                          <span style={{ color: BUY_CLR }}>{pos.available_shares}</span>
-                        ) : (
-                          <span style={{ color: MUTED, fontSize: 11 }}>{isUS ? 'T+2 🔒' : t.ptLockCN}</span>
-                        )}
-                      </td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: MUTED }}>{currSym}{fmt(pos.avg_cost)}</td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>{currSym}{fmt(pos.current_price)}</td>
-                      <td style={{ padding: '10px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>{currSym}{fmt(pos.market_value, 0)}</td>
-                      <td style={{ padding: '10px 10px' }}>
-                        <div style={{ color: isProfit ? PROFIT_CLR : SELL_CLR, fontWeight: 700, fontFamily: '"JetBrains Mono", monospace', fontSize: 12 }}>
-                          {isProfit ? '+' : ''}{currSym}{fmt(pos.profit_loss, 0)}
-                        </div>
-                        <div style={{ color: isProfit ? PROFIT_CLR : SELL_CLR, fontSize: 11 }}>
-                          ({isProfit ? '+' : ''}{fmt(pos.profit_loss_pct)}%)
-                        </div>
-                      </td>
-                      <td style={{ padding: '10px 10px' }}>
-                        <Btn
-                          color={SELL_CLR}
-                          disabled={!canSell}
-                          onClick={() => setSellModal({ symbol: sym, pos })}
-                          style={{ padding: '5px 14px', fontSize: 12 }}
-                        >
-                          {t.ptSell}
-                        </Btn>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
-
-      {/* ── 4. Transaction History ── */}
-      <Card>
-        <div
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
-          onClick={() => setShowTxn((v) => !v)}
-        >
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#8b5cf6' }}>
-            {t.ptTransactions}
-            <span style={{ fontSize: 12, color: MUTED, fontWeight: 400, marginLeft: 8 }}>({txns.length})</span>
-          </div>
-          <span style={{ color: MUTED, fontSize: 12 }}>{showTxn ? '▲' : '▼'}</span>
-        </div>
-
-        {showTxn && (
-          txns.length === 0 ? (
-            <div style={{ color: MUTED, fontSize: 13, textAlign: 'center', padding: '20px 0', marginTop: 12 }}>
-              {t.ptNoTransactions}
-            </div>
-          ) : (
-            <div style={{ marginTop: 14, overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr style={{ color: MUTED, fontSize: 11, textTransform: 'uppercase' }}>
-                    {[t.ptTxDate, t.ptTxType, t.ptTxStock, t.ptTxShares, t.ptTxPrice, t.ptTxComm, t.ptTxPL].map((h) => (
-                      <th key={h} style={{ padding: '6px 10px', textAlign: 'left', borderBottom: `1px solid ${BDR}`, fontWeight: 600 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...txns].reverse().map((tx, i) => {
-                    const isBuy = tx.type === 'buy'
-                    const pl    = tx.profit_loss
-                    return (
-                      <tr key={i} style={{ borderBottom: `1px solid rgba(14,165,233,0.05)` }}>
-                        <td style={{ padding: '8px 10px', color: MUTED }}>{tx.date}</td>
-                        <td style={{ padding: '8px 10px' }}>
-                          <Pill color={isBuy ? BUY_CLR : SELL_CLR}>
-                            {isBuy ? t.ptTxBuy : t.ptTxSell}
-                          </Pill>
-                        </td>
-                        <td style={{ padding: '8px 10px', color: 'var(--text-primary)' }}>
-                          <span style={{ color: '#0ea5e9', fontFamily: 'monospace', marginRight: 6 }}>{tx.symbol}</span>
-                          {tx.name}
-                        </td>
-                        <td style={{ padding: '8px 10px', color: 'var(--text-primary)' }}>{tx.shares}</td>
-                        <td style={{ padding: '8px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>{currSym}{fmt(tx.price)}</td>
-                        <td style={{ padding: '8px 10px', fontFamily: 'monospace', color: SELL_CLR }}>{currSym}{fmt(tx.commission)}</td>
-                        <td style={{ padding: '8px 10px', fontFamily: 'monospace' }}>
-                          {pl != null ? (
-                            <span style={{ color: pl >= 0 ? BUY_CLR : SELL_CLR, fontWeight: 700 }}>
-                              {pl >= 0 ? '+' : ''}{currSym}{fmt(pl, 0)}
-                            </span>
-                          ) : <span style={{ color: MUTED }}>--</span>}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )
-        )}
-      </Card>
-
-      {/* ── 5. Leaderboard ── */}
-      <Card>
-        <div
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
-          onClick={() => setShowBoard((v) => !v)}
-        >
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#fbbf24' }}>
-            {t.ptLeaderboard}
-          </div>
-          <span style={{ color: MUTED, fontSize: 12 }}>{showBoard ? '▲' : '▼'}</span>
-        </div>
-
-        {showBoard && (
-          <div style={{ marginTop: 14, overflowX: 'auto' }}>
-            {leaderboard === null || leaderboard.length === 0 ? (
-              <div style={{ color: MUTED, fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
-                {leaderboard === null ? t.ptLoadingLb : (lang === 'zh' ? '还没有人在这个市场交易过，完成第一笔交易就能上榜' : 'No one has traded in this market yet. Make a trade to get on the board.')}
-              </div>
-            ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                <thead>
-                  <tr style={{ color: MUTED, fontSize: 11, textTransform: 'uppercase' }}>
-                    {[t.ptLbRank, t.ptLbNickname, t.ptLbTotal, t.ptLbReturn].map((h) => (
-                      <th key={h} style={{ padding: '6px 10px', textAlign: 'left', borderBottom: `1px solid ${BDR}`, fontWeight: 600 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaderboard.map((entry) => (
-                    <tr
-                      key={entry.rank}
-                      style={{
-                        background: entry.is_me ? 'rgba(14,165,233,0.08)' : 'transparent',
-                        borderBottom: `1px solid rgba(14,165,233,0.05)`,
-                      }}
-                    >
-                      <td style={{ padding: '9px 10px', fontWeight: 700, color: entry.rank <= 3 ? '#fbbf24' : MUTED }}>
-                        {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `#${entry.rank}`}
-                      </td>
-                      <td style={{ padding: '9px 10px', color: entry.is_me ? '#0ea5e9' : 'var(--text-primary)', fontWeight: entry.is_me ? 700 : 400 }}>
-                        {localNick(entry.nickname, lang)}
-                        {entry.is_me && <span style={{ fontSize: 10, color: '#0ea5e9', marginLeft: 6, background: 'rgba(14,165,233,0.15)', padding: '1px 5px', borderRadius: 4 }}>{t.ptLbMe}</span>}
-                      </td>
-                      <td style={{ padding: '9px 10px', fontFamily: 'monospace', color: 'var(--text-primary)' }}>{currSym}{fmt(entry.total_value, 0)}</td>
-                      <td style={{ padding: '9px 10px' }}><PctBadge value={entry.return_pct} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
-      </Card>
-
-      <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', paddingBottom: 8 }}>
-        {{ us: t.ptFooterUS, cn: t.ptFooter, hk: ti.footerHK, jp: ti.footerJP }[ptMarket]}
+      <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7, textAlign: 'center' }}>
+        {s.rules[market] || ''} {s.hoursNote}
       </div>
+
+      {modal === 'games' && (
+        <GamesModal s={s} lang={lang} accountKey={accountKey} nickname={account.nickname} marketLabels={{ us: 'US', cn: 'A', hk: 'HK', jp: 'JP' }}
+          onClose={() => setModal(null)} onJoined={(g) => { setModal(null); setActive(`g:${g.id}`); setGameView(null); load() }} />
+      )}
+      {modal === 'reset' && (
+        <Modal onClose={() => setModal(null)} width={400}>
+          <h2 style={{ margin: '0 0 8px', fontSize: 18 }}>{s.resetTitle}</h2>
+          <p style={{ margin: '0 0 18px', fontSize: 13.5, color: MUTED, lineHeight: 1.6 }}>{s.resetBody}</p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Button ghost style={{ flex: 1 }} onClick={() => setModal(null)}>{s.cancelBtn}</Button>
+            <Button color={DOWN} style={{ flex: 1 }} onClick={async () => { await postJSON('reset', { device_id: accountKey }).catch(() => {}); setModal(null); load() }}>{s.confirm}</Button>
+          </div>
+        </Modal>
+      )}
+      {modal === 'nick' && (
+        <Modal onClose={() => setModal(null)} width={380}>
+          <h2 style={{ margin: '0 0 12px', fontSize: 18 }}>{s.game.nickname}</h2>
+          <input value={nickDraft} onChange={(e) => setNickDraft(e.target.value.slice(0, 16))} placeholder={s.game.nicknamePh} style={inputStyle} autoFocus />
+          <Button style={{ width: '100%', marginTop: 14 }} disabled={nickDraft.trim().length < 2}
+            onClick={async () => { try { await postJSON('nickname', { device_id: accountKey, nickname: nickDraft }); setModal(null); load() } catch (e) { setToast({ ok: false, text: e.message }) } }}>
+            {s.confirm}
+          </Button>
+        </Modal>
+      )}
     </div>
   )
 }
