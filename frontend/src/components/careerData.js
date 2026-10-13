@@ -9,8 +9,8 @@ export const ROLES = [
     color: '#0ea5e9',
     tagline: '帮助企业完成融资与并购，赚顾问费，不直接持有资产风险',
     taglineEn: 'Advises companies on capital raises and M&A, earning advisory fees — no own-capital risk',
-    description: 'IBD的本质是"帮助企业以最优条件筹集资金或出售/并购资产"。分析师每天的核心任务是搭建财务模型（Excel）和制作路演材料（PowerPoint），让客户的董事会或潜在投资者相信交易定价合理。以高强度著称——新人常常80-100小时/周，换来的是极其密集的金融技能积累和顶级的出路资源。',
-    descriptionEn: 'IBD helps companies raise capital or buy/sell assets on the best possible terms. As an analyst, your daily core tasks are building financial models (Excel) and producing pitch materials (PowerPoint) that convince a board or investors that a deal\'s price is sound. Notorious for intensity — 80-100 hrs/week is common — but pays off with dense skill accumulation and premium exit opportunities.',
+    description: 'IBD的本质是"帮助企业以最优条件筹集资金或出售/并购资产"。分析师每天的核心任务是搭建财务模型（Excel）和制作路演材料（PowerPoint），让客户的董事会或潜在投资者相信交易定价合理。以高强度著称——新人通常每周工作70-90小时，项目冲刺期可能超过100小时，换来的是极其密集的金融技能积累和顶级的出路资源。',
+    descriptionEn: 'IBD helps companies raise capital or buy/sell assets on the best possible terms. As an analyst, your daily core tasks are building financial models (Excel) and producing pitch materials (PowerPoint) that convince a board or investors that a deal\'s price is sound. Notorious for intensity — 70-90 hrs/week is typical, and deal crunches can pass 100 — but pays off with dense skill accumulation and premium exit opportunities.',
     coreScenario: '典型场景：客户是一家消费品公司，考虑战略性出售。你需要在48小时内：①搭建目标公司三表联动财务模型（基于近5年财报+管理层指引）；②拉取同行业5-8家可比公司交易倍数（Trading Comps）；③查找近3年行业并购先例（Precedent Transactions）；④将上述内容整合进40页Pitch Book初稿。MD会在最后一刻要求修改，速度和质量同样重要。',
     coreScenarioEn: 'Typical scenario: client is a consumer goods company exploring a strategic sale. Within 48 hours you must: ① build a three-statement financial model (5 years of financials + management guidance); ② pull trading multiples for 5-8 comparable companies; ③ find precedent M&A transactions in the sector over 3 years; ④ compile all of this into a 40-page pitch book draft. The MD will request last-minute changes — speed AND quality both matter.',
     skills: [
@@ -462,12 +462,12 @@ export const ROLES = [
       'Capital project evaluation (NPV/IRR analysis: when business units submit project or capex requests, FP&A evaluates financial viability and recommends approve/reject)',
     ],
     differentiators: [
-      'vs. IBD：IBD是外部顾问，帮企业执行融资/并购，项目结束关系结束；Corp Finance是企业内部员工，与业务部门长期合作，对行业和公司的了解更深。IBD工作节奏以"项目"为单位，Corp Finance以"月度/季度财务周期"为节奏。工作强度：IBD峰值可达100小时/周，Corp Finance通常50-60小时/周，预算季可能短暂冲到70-80小时。',
+      'vs. IBD：IBD是外部顾问，帮企业执行融资/并购，项目结束关系结束；Corp Finance是企业内部员工，与业务部门长期合作，对行业和公司的了解更深。IBD工作节奏以"项目"为单位，Corp Finance以"月度/季度财务周期"为节奏。工作强度：IBD峰值可达100小时/周，Corp Finance通常45-55小时/周，预算季可能短暂冲到70-80小时。',
       'vs. 股票研究（ER）：ER是从外部分析上市公司价值，Corp Finance是从内部管理公司的财务表现。ER分析师的观点是公开发布的研报，Corp Finance的分析是供内部管理层使用的保密报告。两者都要做财务建模，但ER关注"公司是否被市场错误定价"，Corp Finance关注"公司实际运营效率是否达到预期"。',
       'Corp Dev vs. IBD：Corp Dev是公司内部的M&A部门，执行本公司主导的并购；IBD是外部顾问，可能同时服务多个买方或卖方。Corp Dev分析师通常比IBD分析师有更强的"我们要不要做这笔收购"的战略判断（因为决策结果由公司自己承担），IBD更多是分析和说服。',
     ],
     differentiatorsEn: [
-      'vs. IBD: IBD is an external advisor — the relationship ends when the deal closes. Corp Finance is an internal employee, working long-term with business units and developing deeper company/industry knowledge. IBD pace is deal-driven; Corp Finance is monthly/quarterly cycle-driven. Hours: IBD peak can hit 100+/week; Corp Finance typically 50-60, briefly 70-80 during budget season.',
+      'vs. IBD: IBD is an external advisor — the relationship ends when the deal closes. Corp Finance is an internal employee, working long-term with business units and developing deeper company/industry knowledge. IBD pace is deal-driven; Corp Finance is monthly/quarterly cycle-driven. Hours: IBD peak can hit 100+/week; Corp Finance typically 45-55, briefly 70-80 during budget season.',
       'vs. Equity Research (ER): ER analyzes listed companies\' value from the outside; Corp Finance manages a company\'s financial performance from the inside. ER analysis is published research; Corp Finance analysis is confidential management reporting. Both do financial modeling, but ER asks "is the company mispriced?"; Corp Finance asks "is operational performance meeting plan?"',
       'Corp Dev vs. IBD: Corp Dev is the company\'s internal M&A function executing acquisitions on its own behalf. IBD is the external advisor who may serve multiple buyers or sellers simultaneously. Corp Dev analysts have stronger "should we actually do this deal?" strategic judgment (they live with the consequences); IBD is more about analysis and persuasion.',
     ],

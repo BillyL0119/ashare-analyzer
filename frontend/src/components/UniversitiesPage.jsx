@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
-import { tx, txEn, txf } from './uniI18n'
+import { tx, txEn, txf, lang as curLang } from './uniI18n'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -16,7 +16,52 @@ const REGIONS = [
   { key: 'europe',        label: 'Europe',     label_cn: '欧洲' },
   { key: 'asia',          label: 'Asia',       label_cn: '亚洲' },
   { key: 'oceania',       label: 'Oceania',    label_cn: '大洋洲' },
+  { key: 'mea',           label: 'Middle East & Africa', label_cn: '中东及非洲' },
 ]
+const regionMatch = (u, key) => (key === 'mea' ? ['middle_east', 'africa'].includes(u.region) : u.region === key)
+
+// ── Deadlines ────────────────────────────────────────────────────────────────
+// Dates come as "Sep 29, 2026", "May 13, 2027 (rolling, international)" or ISO "2027-01-13".
+function parseDeadline(str) {
+  if (!str) return null
+  const m = String(str).match(/^(\d{4}-\d{2}-\d{2})|^([A-Z][a-z]{2,8} \d{1,2}, \d{4})/)
+  const d = m ? new Date(m[1] ? `${m[1]}T23:59:00` : `${m[2]} 23:59`) : null
+  return d && !isNaN(d) ? d : null
+}
+function deadlineStatus(str) {
+  const d = parseDeadline(str)
+  if (!d) return null
+  const days = Math.ceil((d - Date.now()) / 86400000)
+  return { date: d, days, passed: days < 0 }
+}
+function DeadlineTag({ str }) {
+  const st = deadlineStatus(str)
+  if (!st) return null
+  const style = { fontSize: 10.5, fontWeight: 700, padding: '1px 7px', borderRadius: 999, marginLeft: 6, whiteSpace: 'nowrap' }
+  if (st.passed) return <span style={{ ...style, color: 'var(--text-muted)', border: '1px solid var(--border-primary)' }}>{tx('已截止', 'Closed')}</span>
+  const soon = st.days <= 30
+  const c = soon ? '#ef4444' : GREEN
+  return <span style={{ ...style, color: c, background: `${c}18`, border: `1px solid ${c}44` }}>
+    {st.days === 0 ? tx('今天截止', 'Due today') : (txf('daysLeft', st.days) ?? (curLang() === 'zh' ? `还有 ${st.days} 天` : `${st.days} days left`))}
+  </span>
+}
+/** Next deadline that has not passed: undergraduate first, then MBA rounds. */
+function nextDeadline(uni) {
+  const cands = []
+  if (uni.undergrad?.deadline) cands.push({ str: uni.undergrad.deadline, kind: 'ug' })
+  for (const [r, v] of Object.entries(uni.requirements?.deadlines || {})) cands.push({ str: v, kind: r })
+  return cands.map(c => ({ ...c, st: deadlineStatus(c.str) })).filter(c => c.st && !c.st.passed)
+    .sort((a, b) => a.st.date - b.st.date)[0] || null
+}
+const fmtDate = (d) => d.toLocaleDateString({ zh: 'zh-CN', en: 'en-GB', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR' }[curLang()] || 'en-GB', { year: 'numeric', month: 'short', day: 'numeric' })
+
+/** Chinese readers see 麻省理工学院 · 斯隆管理学院; everyone else the official English name. */
+function displayName(uni) {
+  if (curLang() !== 'zh' || !uni.name_cn) return uni.name
+  return uni.university_cn && uni.university_cn !== uni.name_cn && !uni.name_cn.includes(uni.university_cn.slice(0, 2))
+    ? `${uni.university_cn} · ${uni.name_cn}` : uni.name_cn
+}
+const hasUG = (u) => u.undergrad && !u.undergrad.none
 
 const SPECIALTIES = ['Finance', 'Accounting', 'Economics', 'Consulting', 'Tech']
 
@@ -165,11 +210,68 @@ function countryFlag(country) {
 
 // ── Modal tabs ────────────────────────────────────────────────────────────────
 const MODAL_TABS = [
-  { key: 'overview',     en: 'Overview',     zh: '概览' },
-  { key: 'programs',     en: 'Programs',     zh: '项目' },
-  { key: 'requirements', en: 'Requirements', zh: '申请要求' },
-  { key: 'alumni',       en: 'Alumni',       zh: '知名校友' },
+  { key: 'overview',     en: 'Overview',      zh: '概览' },
+  { key: 'undergrad',    en: 'Undergraduate', zh: '本科申请' },
+  { key: 'programs',     en: 'Programs',      zh: '项目' },
+  { key: 'requirements', en: 'Graduate / MBA', zh: '研究生 / MBA 申请' },
+  { key: 'alumni',       en: 'Alumni',        zh: '知名校友' },
 ]
+
+// One labelled block of the undergraduate tab
+function UgRow({ label, value, hint }) {
+  if (!value) return null
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(96px, 30%) 1fr', gap: 12, padding: '9px 0', borderTop: '1px solid var(--border-primary)', fontSize: 13 }}>
+      <div style={{ color: 'var(--text-muted)', fontWeight: 600 }}>{label}</div>
+      <div style={{ color: 'var(--text-primary)', lineHeight: 1.55, minWidth: 0, overflowWrap: 'anywhere' }}>{value}{hint}</div>
+    </div>
+  )
+}
+
+function UndergradTab({ uni, zh }) {
+  const ug = uni.undergrad
+  if (!ug) {
+    return (
+      <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px 8px', fontSize: 14, lineHeight: 1.7 }}>
+        {tx('这所学校的本科申请要求我们还没有核实。请以官网为准：', "We haven't verified this school's undergraduate entry requirements yet. Check the official site:")}
+        <br /><a href={uni.url} target="_blank" rel="noopener noreferrer" style={{ color: BLUE, fontSize: 13 }}>{uni.url}</a>
+      </div>
+    )
+  }
+  if (ug.none) {
+    return (
+      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '16px 18px', fontSize: 14, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
+        {zh ? ug.note_cn : ug.note_en}
+      </div>
+    )
+  }
+  const dl = ug.deadline && deadlineStatus(ug.deadline)
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '14px 16px' }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>{ug.program}</div>
+        {ug.length && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{ug.length}</div>}
+        <div style={{ marginTop: 10 }}>
+          <UgRow label="A-level" value={ug.alevel} />
+          <UgRow label="IB" value={ug.ib} />
+          <UgRow label={tx('语言成绩', 'English')} value={ug.english} />
+          <UgRow label={tx('笔试 / 标化', 'Tests')} value={ug.test} />
+          <UgRow label={tx('国际生学费', 'International tuition')} value={ug.tuition} />
+          <UgRow label={tx('申请方式', 'How to apply')} value={ug.apply} />
+          <UgRow label={tx('截止日期', 'Deadline')} value={dl && fmtDate(dl.date)} hint={<DeadlineTag str={ug.deadline} />} />
+        </div>
+      </div>
+      {(zh ? ug.note_cn : ug.note_en) && (
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65, padding: '0 2px' }}>{zh ? ug.note_cn : ug.note_en}</div>
+      )}
+      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        {zh ? `以上信息于 ${ug.checked || '2026-10'} 对照学校官网核对；没有公布或无法确认的项目留空。申请前请再次确认：`
+            : (txf('ugChecked', ug.checked || '2026-10') ?? `Checked against the school's official pages in ${ug.checked || '2026-10'}; anything not published or not confirmed is left out. Confirm before applying: `)}
+        {ug.source && <a href={ug.source} target="_blank" rel="noopener noreferrer" style={{ color: BLUE, overflowWrap: 'anywhere' }}>{ug.source}</a>}
+      </div>
+    </div>
+  )
+}
 
 function InfoRow({ label, value, valueColor }) {
   if (!value) return null
@@ -199,6 +301,7 @@ function UniModal({ uni, lang, onClose }) {
   }, [])
 
   const req = uni.requirements || {}
+  const nextDl = nextDeadline(uni)
   const alumni = uni.alumni_detail || uni.notable_alumni || []
   const programs = uni.programs_detail || []
 
@@ -236,10 +339,10 @@ function UniModal({ uni, lang, onClose }) {
             <SchoolLogo name={uni.name} size={60} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 4 }}>
-                {uni.name}
+                {displayName(uni)}
               </div>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
-                {uni.university}
+                {zh && uni.name_cn ? `${uni.name} · ${uni.university}` : uni.university}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
                 <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -253,7 +356,7 @@ function UniModal({ uni, lang, onClose }) {
                 )}
                 {uni.established && (
                   <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                    Est. {uni.established}
+                    {zh ? `创办于 ${uni.established}` : (txf('est', uni.established) ?? `Est. ${uni.established}`)}
                   </span>
                 )}
                 {uni.qs_rank && (
@@ -288,7 +391,7 @@ function UniModal({ uni, lang, onClose }) {
           </div>
 
           {/* Tab bar */}
-          <div style={{ display: 'flex', gap: 0 }}>
+          <div style={{ display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none' }}>
             {MODAL_TABS.map(({ key, en, zh: zhLabel }) => (
               <button key={key} onClick={() => setTab(key)} style={{
                 padding: '10px 18px', background: 'none', border: 'none',
@@ -329,17 +432,31 @@ function UniModal({ uni, lang, onClose }) {
                   </div>
                 </div>
 
-                {/* Acceptance rate */}
+                {/* Acceptance rate when published, otherwise the next open deadline (never a blank "see website") */}
+                {req.acceptance_rate ? (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('录取率', 'Acceptance Rate')}
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: GREEN }}>
-                    {req.acceptance_rate || (tx('详见官网', 'See website'))}
+                  <div style={{ fontSize: 16, fontWeight: 700, color: GREEN }}>{req.acceptance_rate}</div>
+                </div>
+                ) : nextDl && (
+                <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+                    textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
+                    {tx('下一个申请截止', 'Next deadline')}
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: AMBER, display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}>
+                    {fmtDate(nextDl.st.date)} <DeadlineTag str={nextDl.str} />
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+                    {nextDl.kind === 'ug' ? tx('本科', 'Undergraduate') : `MBA · ${zh ? `第 ${nextDl.kind.slice(1)} 轮` : txEn(`Round ${nextDl.kind.slice(1)}`)}`}
                   </div>
                 </div>
+                )}
 
                 {/* Specialties */}
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
@@ -353,23 +470,21 @@ function UniModal({ uni, lang, onClose }) {
                   </div>
                 </div>
 
-                {/* Employment */}
+                {/* Employment (most schools publish no breakdown: an empty list used to leave a blank box) */}
+                {uni.employment?.length > 0 && (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
-                    {tx('就业去向', 'Top Employment')}
+                    {tx('就业去向（MBA）', 'Top Employment (MBA)')}
                   </div>
-                  {uni.employment ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                      {uni.employment.slice(0, 4).map(e => (
-                        <div key={e} style={{ fontSize: 12, color: 'var(--text-secondary)' }}>• {e}</div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>—</div>
-                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    {uni.employment.slice(0, 4).map(e => (
+                      <div key={e} style={{ fontSize: 12, color: 'var(--text-secondary)' }}>• {e}</div>
+                    ))}
+                  </div>
                 </div>
+                )}
               </div>
 
               {/* Tags */}
@@ -378,6 +493,9 @@ function UniModal({ uni, lang, onClose }) {
               </div>
             </>
           )}
+
+          {/* ── Undergraduate ── */}
+          {tab === 'undergrad' && <UndergradTab uni={uni} zh={zh} />}
 
           {/* ── Programs ── */}
           {tab === 'programs' && (
@@ -454,7 +572,8 @@ function UniModal({ uni, lang, onClose }) {
                         {tx('申请截止日期', 'Application Deadlines')}
                       </div>
                       {['r1','r2','r3','r4','r5'].map(r => req.deadlines[r] && (
-                        <InfoRow key={r} label={`Round ${r[1]}`} value={req.deadlines[r]} valueColor={AMBER} />
+                        <InfoRow key={r} label={zh ? `第 ${r[1]} 轮` : txEn(`Round ${r[1]}`)}
+                          value={<>{req.deadlines[r]}<DeadlineTag str={req.deadlines[r]} /></>} valueColor={AMBER} />
                       ))}
                     </div>
                   )}
@@ -534,6 +653,15 @@ const COMPARE_ROWS = [
     fmt: (u) => txEn(u.language === 'english' ? 'English' : 'Bilingual') },
   { key: 'tuition',     label: 'Tuition',        label_cn: '学费',
     fmt: (u) => u.tuition_usd || '—' },
+  // Undergraduate entry (from the verified `undergrad` block)
+  { key: 'ug_alevel',   label: 'Undergrad A-level', label_cn: '本科 A-level',
+    fmt: (u) => (u.undergrad?.none ? tx('仅招研究生', 'Graduate only') : u.undergrad?.alevel) || '—' },
+  { key: 'ug_ib',       label: 'Undergrad IB',   label_cn: '本科 IB',
+    fmt: (u) => u.undergrad?.ib || '—' },
+  { key: 'ug_english',  label: 'Undergrad English', label_cn: '本科语言要求',
+    fmt: (u) => u.undergrad?.english || '—' },
+  { key: 'ug_tuition',  label: 'Undergrad tuition', label_cn: '本科国际生学费',
+    fmt: (u) => u.undergrad?.tuition || '—' },
   { key: 'acceptance',  label: 'Acceptance Rate', label_cn: '录取率',
     fmt: (u) => u.requirements?.acceptance_rate || '—' },
   { key: 'gmat',        label: 'GMAT Median',    label_cn: 'GMAT 中位数',
@@ -638,7 +766,8 @@ function CompareModal({ schools, lang, onClose }) {
           </div>
 
           <div style={{ padding: '0 24px 24px' }}>
-            {COMPARE_ROWS.map(({ key, label, label_cn, fmt }) => (
+            {/* Rows where none of the compared schools has data are left out */}
+            {COMPARE_ROWS.filter(r => !r.fmt || schools.some(u => r.fmt(u) !== '—')).map(({ key, label, label_cn, fmt }) => (
               <div
                 key={key}
                 style={{
@@ -669,8 +798,8 @@ function CompareModal({ schools, lang, onClose }) {
               </div>
             ))}
 
-            {/* Employment row */}
-            <div style={{
+            {/* Employment row (only when at least one school publishes it) */}
+            {schools.some(u => u.employment?.length) && <div style={{
               display: 'grid', gridTemplateColumns: colTpl, gap: 12,
               padding: '12px 0', borderBottom: '1px solid var(--border-primary)',
               alignItems: 'start',
@@ -686,10 +815,10 @@ function CompareModal({ schools, lang, onClose }) {
                   {(u.employment || []).slice(0, 4).map((e, i) => (
                     <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>• {e}</div>
                   ))}
-                  {!u.employment && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>}
+                  {!u.employment?.length && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>}
                 </div>
               ))}
-            </div>
+            </div>}
 
             {/* Website links row */}
             <div style={{ display: 'grid', gridTemplateColumns: colTpl, gap: 12, paddingTop: 16 }}>
@@ -1706,6 +1835,29 @@ function InterviewEntryCard({ lang, onOpen }) {
 }
 
 // ── University card ───────────────────────────────────────────────────────────
+function UgLine({ uni }) {
+  const ug = uni.undergrad
+  const next = nextDeadline(uni)
+  if (!ug && !next) return null
+  // Shortest useful summary: A-level (or IB) offer + IELTS; US schools have neither, so their test policy
+  const grade = ug?.alevel?.match(/\b[A-E][A-E*]{2,4}\b|A\*[A-E*]{2,3}/)?.[0]       // "A*AA incl. Maths" -> "A*AA"
+  const ibPts = ug?.ib?.match(/\d{2}(?:–\d{2})?/)?.[0]                                // "Typically 35–38 points" -> "35–38"
+  const offer = ug && !ug.none ? [grade && `A-level ${grade}`,
+    !grade && ibPts && `IB ${ibPts}`,
+    ug.english && ug.english.match(/IELTS [\d.]+/)?.[0],
+    !grade && !ibPts && ug.test && ug.test.split('(')[0].trim()].filter(Boolean).join(' · ') : ''
+  return (
+    <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4, lineHeight: 1.5 }}>
+      {ug?.none ? <span style={{ color: 'var(--text-muted)' }}>{tx('仅招研究生', 'Graduate only')}</span>
+        : offer ? <><span style={{ fontWeight: 700, color: PURPLE }}>{tx('本科', 'Undergrad')}</span><span style={{ minWidth: 0 }}>{offer}</span></> : null}
+      {next && <span style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center' }}>
+        {ug && !ug.none && offer ? '·' : ''} {next.kind === 'ug' ? tx('本科截止', 'UG deadline') : `MBA ${next.kind.toUpperCase()}`} {fmtDate(next.st.date)}
+        <DeadlineTag str={next.str} />
+      </span>}
+    </div>
+  )
+}
+
 function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rankBy = 'rank' }) {
   const [hovered, setHovered] = useState(false)
   const t = lang === 'zh'
@@ -1768,10 +1920,10 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
             overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box',
             WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
           }}>
-            {uni.name}
+            {displayName(uni)}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {uni.university}
+            {t && uni.name_cn ? uni.name : uni.university}
           </div>
         </div>
       </div>
@@ -1790,6 +1942,9 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
         {(uni.specialties || []).slice(0, 3).map(s => <TagPill key={s} label={s} />)}
       </div>
+
+      {/* Undergraduate entry at a glance (most readers are applying from high school) */}
+      <UgLine uni={uni} />
 
       {/* Footer: tuition + CTA */}
       <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid var(--border-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1819,7 +1974,8 @@ const BM_REGION = {
   'Japan': 'asia', 'Taiwan': 'asia', 'Malaysia': 'asia',
   'Australia': 'oceania', 'New Zealand': 'oceania',
 }
-const BM_REGIONS = [...REGIONS, { key: 'other', label: 'Latin America & other', label_cn: '拉美及其他' }]
+// No Middle Eastern or African school is in the top 150, so that filter would always be empty here
+const BM_REGIONS = [...REGIONS.filter(r => r.key !== 'mea'), { key: 'other', label: 'Latin America & other', label_cn: '拉美及其他' }]
 const BM_PAGE = 50
 
 function GapChip({ entry, zh }) {
@@ -2067,7 +2223,7 @@ function Hero({ lang, stats }) {
           {[
             { val: stats.total,     label: tx('所学校', 'Schools') },
             { val: stats.countries, label: tx('个国家/地区', 'Countries') },
-            { val: stats.languages, label: tx('种语言', 'Languages') },
+            { val: stats.undergrad, label: tx('所学校含本科申请要求', 'with undergrad entry data') },
           ].map(({ val, label }) => (
             <div key={label} style={{ textAlign: 'center' }}>
               <div className="serif-num" style={{
@@ -2089,7 +2245,7 @@ function Hero({ lang, stats }) {
 // ── Sticky filters ────────────────────────────────────────────────────────────
 function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
   const t = lang === 'zh'
-  const hasFilters = filters.region || filters.language || filters.specialty || filters.search
+  const hasFilters = filters.region || filters.language || filters.specialty || filters.search || filters.ug
 
   const pill = (active) => ({
     padding: '5px 14px', borderRadius: 20, border: 'none',
@@ -2119,7 +2275,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           <input
             value={filters.search}
             onChange={e => onChange({ ...filters, search: e.target.value })}
-            placeholder={tx('搜索学校...', 'Search schools...')}
+            placeholder={tx('搜索学校（中英文）...', 'Search schools...')}
             style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
               color: 'var(--text-primary)', padding: '7px 12px 7px 32px', fontSize: 13,
@@ -2142,6 +2298,11 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
             </button>
           ))}
         </div>
+
+        {/* Schools with verified undergraduate entry data */}
+        <button onClick={() => onChange({ ...filters, ug: !filters.ug })} style={pill(filters.ug)} aria-pressed={!!filters.ug}>
+          🎓 {tx('有本科申请数据', 'Undergrad entry data')}
+        </button>
 
         {/* Language */}
         <div style={{ display: 'flex', gap: 5 }}>
@@ -2196,7 +2357,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           )}
           {hasFilters && (
             <button
-              onClick={() => onChange({ region: '', language: '', specialty: '', search: '', sort: filters.sort })}
+              onClick={() => onChange({ region: '', language: '', specialty: '', search: '', sort: filters.sort, ug: false })}
               style={{
                 padding: '4px 12px', borderRadius: 20, border: `1px solid var(--border-primary)`,
                 background: 'transparent', color: 'var(--text-muted)',
@@ -2221,7 +2382,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   const [stats,    setStats]    = useState(null)
   const [loading,  setLoading]  = useState(true)
   const [selected, setSelected] = useState(null)
-  const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '', sort: 'rank' })
+  const [filters,  setFilters]  = useState({ region: '', language: '', specialty: '', search: '', sort: 'rank', ug: false })
   const [compared,    setCompared]    = useState([])
   const [showCompare, setShowCompare] = useState(false)
   const [view, setView] = useState(() => new URLSearchParams(window.location.search).get('view') === 'business' ? 'business' : 'schools')
@@ -2245,7 +2406,8 @@ export default function UniversitiesPage({ lang = 'zh' }) {
   // Client-side filtering
   const displayed = useMemo(() => {
     let list = allUnis
-    if (filters.region) list = list.filter(u => u.region === filters.region)
+    if (filters.region) list = list.filter(u => regionMatch(u, filters.region))
+    if (filters.ug) list = list.filter(hasUG)
     if (filters.language !== '') list = list.filter(u => (u.language || 'english') === filters.language)
     if (filters.specialty) {
       const kw = filters.specialty.toLowerCase()
@@ -2256,11 +2418,14 @@ export default function UniversitiesPage({ lang = 'zh' }) {
     }
     if (filters.search) {
       const kw = filters.search.toLowerCase()
+      // Chinese names too: 清华, 哈佛, 沃顿 find their schools
       list = list.filter(u =>
         u.name.toLowerCase().includes(kw) ||
         u.university.toLowerCase().includes(kw) ||
         u.city.toLowerCase().includes(kw) ||
-        u.country.toLowerCase().includes(kw)
+        u.country.toLowerCase().includes(kw) ||
+        (u.name_cn || '').includes(filters.search.trim()) ||
+        (u.university_cn || '').includes(filters.search.trim())
       )
     }
     if (filters.sort === 'name') {
@@ -2302,7 +2467,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
       `}</style>
 
       <div style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: compared.length > 0 ? 100 : 60 }}>
-        <Hero lang={lang} stats={stats} />
+        <Hero lang={lang} stats={stats && { ...stats, undergrad: allUnis.filter(hasUG).length || '—' }} />
 
         <InterviewEntryCard lang={lang} onOpen={() => setShowInterview(true)} />
 

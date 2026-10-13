@@ -2150,6 +2150,35 @@
         }
       }
     },
+    "中东及非洲": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Middle East & Africa"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moyen-Orient et Afrique"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中東・アフリカ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중동·아프리카"
+          }
+        }
+      }
+    },
     "中位价格": {
       "extractionState": "manual",
       "localizations": {
@@ -2759,6 +2788,35 @@
         }
       }
     },
+    "仅招研究生": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graduate only"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Master uniquement"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大学院のみ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대학원 전용"
+          }
+        }
+      }
+    },
     "今开": {
       "extractionState": "manual",
       "localizations": {
@@ -3016,6 +3074,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "코드 또는 종목명 (예: 7203, 도요타)"
+          }
+        }
+      }
+    },
+    "以上信息于 %@ 对照学校官网核对；没有公布或无法确认的项目留空，申请前请再次确认。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checked against the school's official pages in %@. Anything not published or not confirmed is left out; confirm before applying."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifié sur les pages officielles de l'école en %@. Les éléments non publiés ou non confirmés sont omis ; vérifiez avant de candidater."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ に各校の公式サイトと照合しました。公表されていない、または確認できない項目は載せていません。出願前に必ずご確認ください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에 학교 공식 페이지와 대조했습니다. 공개되지 않았거나 확인되지 않은 항목은 넣지 않았습니다. 지원 전에 다시 확인하세요."
           }
         }
       }
@@ -4789,6 +4876,35 @@
         }
       }
     },
+    "国际生学费": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "International tuition"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frais pour étudiants internationaux"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "留学生の学費"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유학생 학비"
+          }
+        }
+      }
+    },
     "地产": {
       "extractionState": "manual",
       "localizations": {
@@ -5597,6 +5713,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "학습 완료"
+          }
+        }
+      }
+    },
+    "已截止": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "締切済み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마감"
           }
         }
       }
@@ -6496,6 +6641,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "내 포트폴리오"
+          }
+        }
+      }
+    },
+    "截止日期": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deadline"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date limite"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "締切"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마감일"
           }
         }
       }
@@ -8240,6 +8414,64 @@
         }
       }
     },
+    "本科": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undergrad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Licence"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "学部"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학부"
+          }
+        }
+      }
+    },
+    "本科申请": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undergraduate entry"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Admission en licence"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "学部入試"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학부 입학"
+          }
+        }
+      }
+    },
     "机构": {
       "extractionState": "manual",
       "localizations": {
@@ -8439,6 +8671,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "극단적 탐욕"
+          }
+        }
+      }
+    },
+    "查看来源": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View source"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir la source"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出典を見る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "출처 보기"
           }
         }
       }
@@ -9574,6 +9835,35 @@
         }
       }
     },
+    "申请方式": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to apply"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Candidature"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出願方法"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지원 방법"
+          }
+        }
+      }
+    },
     "申请要求": {
       "extractionState": "manual",
       "localizations": {
@@ -9980,6 +10270,35 @@
         }
       }
     },
+    "研究生 / MBA 申请": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graduate / MBA"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Master / MBA"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大学院 / MBA"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대학원 / MBA"
+          }
+        }
+      }
+    },
     "确定": {
       "extractionState": "manual",
       "localizations": {
@@ -10179,6 +10498,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "상승 여력"
+          }
+        }
+      }
+    },
+    "笔试 / 标化": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tests"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tests"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "試験"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시험"
           }
         }
       }
@@ -11662,6 +12010,35 @@
         }
       }
     },
+    "语言成绩": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anglais"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "英語"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영어"
+          }
+        }
+      }
+    },
     "财务表现": {
       "extractionState": "manual",
       "localizations": {
@@ -12093,6 +12470,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "질문을 입력하세요…"
+          }
+        }
+      }
+    },
+    "还有 %lld 天": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld days left"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld jours restants"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あと %lld 日"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld일 남음"
           }
         }
       }

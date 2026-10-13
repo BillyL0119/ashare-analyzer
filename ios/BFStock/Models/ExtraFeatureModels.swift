@@ -126,6 +126,58 @@ struct University: Decodable, Identifiable {
     let url: String?
     let requirements: UniRequirements?
     let employment: [String]?
+    let nameCn: String?
+    let universityCn: String?
+    /// Undergraduate entry, checked against official pages (absent when not verified yet)
+    let undergrad: UniUndergrad?
+
+    /// 麻省理工学院 · 斯隆管理学院 for Chinese readers, the official English name otherwise.
+    var displayName: String {
+        guard Lang.code == "zh", let n = nameCn, !n.isEmpty else { return name }
+        if let u = universityCn, u != n, !n.contains(String(u.prefix(2))) { return "\(u) · \(n)" }
+        return n
+    }
+}
+
+struct UniUndergrad: Decodable {
+    let none: Bool?
+    let program: String?
+    let length: String?
+    let alevel: String?
+    let ib: String?
+    let english: String?
+    let test: String?
+    let tuition: String?
+    let apply: String?
+    let deadline: String?       // "2027-01-13"
+    let noteEn: String?
+    let noteCn: String?
+    let source: String?
+    let checked: String?
+
+    var isGraduateOnly: Bool { none == true }
+    var note: String? { Lang.code == "zh" ? noteCn : noteEn }
+
+    /// "A-level A*AA · IELTS 7.0" (or the test policy for US schools), for list rows.
+    var summary: String? {
+        guard !isGraduateOnly else { return nil }
+        func first(_ s: String?, _ pattern: String) -> String? {
+            guard let s, let r = s.range(of: pattern, options: .regularExpression) else { return nil }
+            return String(s[r])
+        }
+        let grade = first(alevel, "A\\*[A-E*]{2,3}|\\b[A-E][A-E*]{2,4}\\b")
+        let ibPts = grade == nil ? first(ib, "\\d{2}(–\\d{2})?") : nil
+        let ielts = first(english, "IELTS [0-9.]+")
+        var parts = [grade.map { "A-level \($0)" }, ibPts.map { "IB \($0)" }, ielts].compactMap { $0 }
+        if parts.isEmpty, let t = test { parts.append(t.components(separatedBy: "(").first!.trimmingCharacters(in: .whitespaces)) }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    var deadlineDate: Date? {
+        guard let d = deadline else { return nil }
+        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.timeZone = .current
+        return f.date(from: String(d.prefix(10)))
+    }
 }
 
 /// QS Business & Management Studies ranking (/universities/business-rankings).
@@ -258,7 +310,7 @@ struct Firm: Decodable, Identifiable {
     let known: LocText
     var id: String { name }
 
-    /// (code, market) when the listing is one our stock pages cover (US or A-share).
+    /// (code, market) when the listing is one our stock pages cover (US, A-share, Hong Kong, Tokyo).
     var stock: (code: String, market: Market)? {
         guard let t = ticker else { return nil }
         let parts = t.split(separator: ":", maxSplits: 1).map(String.init)

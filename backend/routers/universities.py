@@ -63,6 +63,44 @@ class IvReportBody(BaseModel):
 _IV_LANG = {"zh": "中文", "en": "English", "ja": "日本語（Japanese）", "ko": "한국어（Korean）", "fr": "français（French）"}
 
 
+def _school_facts(p: IvProfile) -> str:
+    """Verified entry data for the school being applied to, so the interviewer and the report compare
+    against real offers instead of guessing. Empty when the school is not in the directory."""
+    key = (p.school or "").strip().lower()
+    if not key:
+        return ""
+    try:
+        unis = load_universities()
+    except Exception:
+        return ""
+    def names(u):
+        return [u.get(k, "") for k in ("name", "university", "name_cn", "university_cn")]
+    u = next((u for u in unis if any(n and n.lower() == key for n in names(u))), None) or \
+        next((u for u in unis if any(n and (key in n.lower() or n.lower() in key) for n in names(u) if len(n) >= 4)), None)
+    if not u:
+        return ""
+    undergrad = "undergrad" in (p.program or "").lower() or "本科" in (p.program or "")
+    ug = u.get("undergrad") or {}
+    if undergrad:
+        if ug.get("none"):
+            return f"该学院不招本科生：{ug.get('note_cn', '')}"
+        if ug:
+            parts = [ug.get("program"), ug.get("alevel") and f"A-level {ug['alevel']}", ug.get("ib") and f"IB {ug['ib']}",
+                     ug.get("english"), ug.get("test") and f"笔试/标化 {ug['test']}", ug.get("tuition") and f"学费 {ug['tuition']}"]
+            return "；".join(x for x in parts if x)
+        return ""
+    req = u.get("requirements") or {}
+    parts = [req.get("gmat_median") and f"GMAT {req['gmat_median']}", req.get("acceptance_rate") and f"录取率 {req['acceptance_rate']}",
+             u.get("tuition_usd") and f"学费 {u['tuition_usd']}"]
+    return "；".join(x for x in parts if x)
+
+
+def _facts_block(p: IvProfile) -> str:
+    f = _school_facts(p)
+    return (f"\n该项目经核实的入学要求（2026 年 10 月对照官网）：{f}\n"
+            "只把这些数字作为对比依据，不要编造其他录取数据；如果该学院不招本科，要直接指出。\n") if f else ""
+
+
 def _interviewer_system(p: IvProfile) -> str:
     ln = _IV_LANG.get(p.lang, "English")
     return (
@@ -72,7 +110,8 @@ def _interviewer_system(p: IvProfile) -> str:
         f"• GPA：{p.gpa or '未提供'}\n"
         f"• 标化考试：{p.test_type} {p.test_score}\n"
         f"• 科目成绩：{p.subjects or '未提供'}\n"
-        f"• 课外活动：{p.activities or '未提供'}\n\n"
+        f"• 课外活动：{p.activities or '未提供'}\n"
+        f"{_facts_block(p)}\n"
         "面试规则：\n"
         "1. 每次只问1-2个问题，等对方回答后再继续，保持对话流程自然\n"
         "2. 若候选人回答笼统（如「我参加了商赛」），必须追问：具体做了什么、"
@@ -97,7 +136,8 @@ def _report_system(p: IvProfile) -> str:
     return (
         f"你是一位资深商学院申请顾问，请用{ln}生成结构化评估报告。{translate}\n\n"
         f"申请人：{p.school} — {p.program} | GPA: {p.gpa or 'N/A'} | "
-        f"{p.test_type} {p.test_score} | 活动: {p.activities or 'N/A'}\n\n"
+        f"{p.test_type} {p.test_score} | 活动: {p.activities or 'N/A'}\n"
+        f"{_facts_block(p)}\n"
         "请严格按以下格式输出，不要省略任何一节：\n\n"
         "## 📊 录取概率粗略参考\n"
         "**区间：XX%–XX%**（必须用区间，绝不能精确到单个数字）\n"

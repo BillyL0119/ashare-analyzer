@@ -11,6 +11,8 @@ struct UniversitiesView: View {
         ("all", "全部"), ("north_america", "北美"), ("uk", "英国"), ("europe", "欧洲"),
         ("asia", "亚洲"), ("oceania", "大洋洲"),
     ]
+    /// Middle East & Africa (3 profiled schools); not in the business top 150, so overall mode only.
+    private static let mea = ("mea", "中东及非洲")
 
     /// Region for business-ranking rows, which only carry a country.
     private static let countryRegion: [String: String] = [
@@ -23,7 +25,7 @@ struct UniversitiesView: View {
     ]
 
     private var regionOptions: [(String, String)] {
-        mode == "business" ? Self.regions + [("other", "拉美及其他")] : Self.regions
+        mode == "business" ? Self.regions + [("other", "拉美及其他")] : Self.regions + [Self.mea]
     }
 
     private var byId: [String: University] { Dictionary(vm.all.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a }) }
@@ -41,9 +43,10 @@ struct UniversitiesView: View {
     private var filtered: [University] {
         let q = search.trimmingCharacters(in: .whitespaces).lowercased()
         return vm.all.filter { u in
-            (region == "all" || u.region == region) &&
+            (region == "all" || u.region == region || (region == "mea" && ["middle_east", "africa"].contains(u.region))) &&
             (q.isEmpty || u.name.lowercased().contains(q) || u.university.lowercased().contains(q)
-                || u.city.lowercased().contains(q) || u.country.lowercased().contains(q))
+                || u.city.lowercased().contains(q) || u.country.lowercased().contains(q)
+                || (u.nameCn ?? "").contains(q) || (u.universityCn ?? "").contains(q))
         }
         .sorted { ($0.qsRank ?? 999) < ($1.qsRank ?? 999) }
     }
@@ -210,8 +213,16 @@ private struct UniversityRow: View {
                 .foregroundStyle(DS.accent)
                 .frame(width: 40)
             VStack(alignment: .leading, spacing: 3) {
-                Text(uni.name).font(.subheadline.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
+                Text(uni.displayName).font(.subheadline.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
                 Text("\(uni.city) · \(uni.country)").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                if let ug = uni.undergrad {
+                    if ug.isGraduateOnly {
+                        Text(L("仅招研究生")).font(.caption2).foregroundStyle(.secondary)
+                    } else if let s = ug.summary {
+                        (Text(L("本科")).fontWeight(.bold).foregroundColor(.purple) + Text(" " + s))
+                            .font(.caption2).lineLimit(1)
+                    }
+                }
                 if let b = uni.qsBmRank {
                     Text(L("QS 商科 #%@", b.replacingOccurrences(of: "=", with: "")))
                         .font(.caption2.weight(.semibold)).foregroundStyle(DS.accent)
@@ -236,6 +247,7 @@ struct UniversityDetailView: View {
                 header
                 Text(about).font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 facts
+                if let ug = uni.undergrad { undergrad(ug) }
                 if !uni.programs.isEmpty { chips(L("项目"), uni.programs) }
                 if !uni.specialties.isEmpty { chips(L("专业方向"), uni.specialties) }
                 if let r = uni.requirements { requirements(r) }
@@ -259,8 +271,8 @@ struct UniversityDetailView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(uni.name).font(.system(.title2, design: .serif).weight(.semibold))
-            Text(uni.university).font(.subheadline).foregroundStyle(.secondary)
+            Text(uni.displayName).font(.system(.title2, design: .serif).weight(.semibold))
+            Text(uni.displayName == uni.name ? uni.university : "\(uni.name) · \(uni.university)").font(.subheadline).foregroundStyle(.secondary)
             HStack(spacing: 8) {
                 Text("\(uni.city) · \(uni.country)").font(.caption).foregroundStyle(.secondary)
             }
@@ -325,7 +337,7 @@ struct UniversityDetailView: View {
         return Group {
             if !rows.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(L("申请要求")).font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
+                    Text(L("研究生 / MBA 申请")).font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
                     VStack(spacing: 0) {
                         ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
                             HStack(alignment: .firstTextBaseline) {
@@ -338,6 +350,70 @@ struct UniversityDetailView: View {
                         }
                     }
                     .card(padding: 0)
+                }
+            }
+        }
+    }
+
+    private func undergrad(_ ug: UniUndergrad) -> some View {
+        var rows: [(String, String)] = []
+        if let v = ug.alevel { rows.append(("A-level", v)) }
+        if let v = ug.ib { rows.append(("IB", v)) }
+        if let v = ug.english { rows.append((L("语言成绩"), v)) }
+        if let v = ug.test { rows.append((L("笔试 / 标化"), v)) }
+        if let v = ug.tuition { rows.append((L("国际生学费"), v)) }
+        if let v = ug.apply { rows.append((L("申请方式"), v)) }
+        var status: (String, Color)? = nil
+        if let d = ug.deadlineDate {
+            let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: d).day ?? 0
+            rows.append((L("截止日期"), d.formatted(date: .abbreviated, time: .omitted)))
+            status = days < 0 ? (L("已截止"), .secondary) : (L("还有 %lld 天", days), days <= 30 ? .red : .green)
+        }
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(L("本科申请")).font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 0) {
+                if ug.isGraduateOnly {
+                    Text(ug.note ?? L("仅招研究生")).font(.subheadline).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true).padding(14)
+                } else {
+                    if let p = ug.program {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(p).font(.subheadline.weight(.bold))
+                            if let l = ug.length { Text(l).font(.caption).foregroundStyle(.secondary) }
+                        }
+                        .padding(.horizontal, 14).padding(.vertical, 10)
+                        RowDivider()
+                    }
+                    ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
+                        HStack(alignment: .firstTextBaseline, spacing: 12) {
+                            Text(row.0).font(.subheadline).foregroundStyle(.secondary).frame(width: 92, alignment: .leading)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(row.1).font(.subheadline.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+                                if row.0 == L("截止日期"), let s = status {
+                                    Text(s.0).font(.caption2.weight(.bold)).foregroundStyle(s.1)
+                                        .padding(.horizontal, 7).padding(.vertical, 2)
+                                        .background(s.1.opacity(0.14), in: Capsule())
+                                }
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 14).padding(.vertical, 10)
+                        if i < rows.count - 1 { RowDivider() }
+                    }
+                    if let n = ug.note {
+                        RowDivider()
+                        Text(n).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true).padding(14)
+                    }
+                }
+            }
+            .card(padding: 0)
+            if !ug.isGraduateOnly {
+                HStack(alignment: .top, spacing: 6) {
+                    Text(L("以上信息于 %@ 对照学校官网核对；没有公布或无法确认的项目留空，申请前请再次确认。", ug.checked ?? "2026-10"))
+                        .font(.caption2).foregroundStyle(.tertiary).fixedSize(horizontal: false, vertical: true)
+                    if let s = ug.source, SafeURL.web(s) != nil {
+                        Button(L("查看来源")) { SafeURL.open(s) }.font(.caption2.weight(.semibold))
+                    }
                 }
             }
         }

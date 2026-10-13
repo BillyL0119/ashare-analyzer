@@ -161,9 +161,9 @@ export const META = {
 
 // Which firm categories (see firms.js) hire for each track
 export const TRACK_FIRMS = {
-  IBD: ['bb', 'eb', 'mm', 'cn'],
-  EquityResearch: ['bb', 'mm', 'cn'],
-  ST: ['bb', 'quant'],
+  IBD: ['bb', 'eb', 'mm', 'cn', 'apac'],
+  EquityResearch: ['bb', 'mm', 'cn', 'apac'],
+  ST: ['bb', 'quant', 'apac'],
   AM: ['am'],
   PE: ['pe'],
   Quant: ['quant', 'hf'],

@@ -1,7 +1,8 @@
 // Firm directory for the Career Guide. Public facts only (HQ city, listing); "known" summarises each
 // firm's best-known franchises in our own words. `ticker` links to our stock page:
-// US listings as `us:SYM`, A-shares as `cn:CODE` (linked); other exchanges as `sto:SYM` etc. (shown, not
-// linked); null when the firm is not listed itself (private, partnership or subsidiary).
+// US listings as `us:SYM`, A-shares as `cn:CODE`, Hong Kong as `hk:CODE`, Tokyo as `jp:CODE` (linked);
+// other exchanges as `sto:SYM` etc. (shown, not linked); null when the firm is not listed itself
+// (private, partnership or subsidiary).
 
 export const CATEGORIES = [
   { key: 'bb',    zh: '大型投行',     en: 'Bulge Bracket' },
@@ -12,6 +13,7 @@ export const CATEGORIES = [
   { key: 'quant', zh: '量化 / 做市',  en: 'Trading & Quant' },
   { key: 'am',    zh: '资产管理',     en: 'Asset Management' },
   { key: 'cn',    zh: '中资券商',     en: 'China Securities' },
+  { key: 'apac',  zh: '亚太投行',     en: 'Asia-Pacific Banks' },
 ]
 
 const f = (name, cat, hq, ticker, zh, en) => ({ name, cat, hq, ticker, known: { zh, en } })
@@ -95,4 +97,13 @@ export const FIRMS = [
   f('中国银河 China Galaxy', 'cn', '北京 Beijing', 'cn:601881', '经纪、投行', 'Brokerage, investment banking'),
   f('招商证券 China Merchants Securities', 'cn', '深圳 Shenzhen', 'cn:600999', '经纪、投行', 'Brokerage, investment banking'),
   f('广发证券 GF Securities', 'cn', '广州 Guangzhou', 'cn:000776', '经纪、资管', 'Brokerage, asset management'),
+  // Asia-Pacific banks (Tokyo and Hong Kong listings open their stock pages)
+  f('野村 Nomura', 'apac', '东京 Tokyo', 'jp:8604', '日本最大券商，全球市场与投行', 'Japan\'s largest brokerage; global markets and investment banking'),
+  f('大和证券 Daiwa Securities', 'apac', '东京 Tokyo', 'jp:8601', '经纪、股票承销、日本中小企业并购', 'Brokerage, equity underwriting, Japanese mid-cap M&A'),
+  f('瑞穗 Mizuho Financial Group', 'apac', '东京 Tokyo', 'jp:8411', '企业银行、债务资本市场', 'Corporate banking, debt capital markets'),
+  f('三菱日联 MUFG', 'apac', '东京 Tokyo', 'jp:8306', '日本最大银行集团，摩根士丹利的主要股东之一', 'Japan\'s largest banking group; a major Morgan Stanley shareholder'),
+  f('三井住友 SMFG', 'apac', '东京 Tokyo', 'jp:8316', '企业银行、SMBC 日兴证券', 'Corporate banking, SMBC Nikko Securities'),
+  f('汇丰 HSBC', 'apac', '伦敦 London', 'hk:00005', '亚洲贸易融资、债券与外汇', 'Asian trade finance, bonds and FX'),
+  f('渣打 Standard Chartered', 'apac', '伦敦 London', 'hk:02888', '新兴市场银行业务、贸易融资', 'Emerging-market banking, trade finance'),
+  f('麦格理 Macquarie', 'apac', '悉尼 Sydney', 'asx:MQG', '基础设施投资、大宗商品', 'Infrastructure investing, commodities'),
 ]

@@ -325,7 +325,7 @@ export function FirmsView({ zh, initialCat = 'all' }) {
                 <td>
                   {!x.ticker
                     ? <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{zh ? '未上市' : 'Not listed'}</span>
-                    : /^(us|cn):/.test(x.ticker)
+                    : /^(us|cn|hk|jp):/.test(x.ticker)
                       ? <button className="cg-tick" onClick={() => open(x)} title={zh ? '查看股票分析' : 'Open stock analysis'}>{x.ticker.split(':')[1]} →</button>
                       : <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: '"JetBrains Mono", ui-monospace, monospace' }}>{x.ticker.split(':')[1]} · {x.hq}</span>}
                 </td>

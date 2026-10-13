@@ -863,16 +863,19 @@
    "bb",
    "eb",
    "mm",
-   "cn"
+   "cn",
+   "apac"
   ],
   "EquityResearch": [
    "bb",
    "mm",
-   "cn"
+   "cn",
+   "apac"
   ],
   "ST": [
    "bb",
-   "quant"
+   "quant",
+   "apac"
   ],
   "AM": [
    "am"
@@ -930,6 +933,11 @@
    "key": "cn",
    "zh": "中资券商",
    "en": "China Securities"
+  },
+  {
+   "key": "apac",
+   "zh": "亚太投行",
+   "en": "Asia-Pacific Banks"
   }
  ],
  "firms": [
@@ -1631,6 +1639,86 @@
    "known": {
     "zh": "经纪、资管",
     "en": "Brokerage, asset management"
+   }
+  },
+  {
+   "name": "野村 Nomura",
+   "cat": "apac",
+   "hq": "东京 Tokyo",
+   "ticker": "jp:8604",
+   "known": {
+    "zh": "日本最大券商，全球市场与投行",
+    "en": "Japan's largest brokerage; global markets and investment banking"
+   }
+  },
+  {
+   "name": "大和证券 Daiwa Securities",
+   "cat": "apac",
+   "hq": "东京 Tokyo",
+   "ticker": "jp:8601",
+   "known": {
+    "zh": "经纪、股票承销、日本中小企业并购",
+    "en": "Brokerage, equity underwriting, Japanese mid-cap M&A"
+   }
+  },
+  {
+   "name": "瑞穗 Mizuho Financial Group",
+   "cat": "apac",
+   "hq": "东京 Tokyo",
+   "ticker": "jp:8411",
+   "known": {
+    "zh": "企业银行、债务资本市场",
+    "en": "Corporate banking, debt capital markets"
+   }
+  },
+  {
+   "name": "三菱日联 MUFG",
+   "cat": "apac",
+   "hq": "东京 Tokyo",
+   "ticker": "jp:8306",
+   "known": {
+    "zh": "日本最大银行集团，摩根士丹利的主要股东之一",
+    "en": "Japan's largest banking group; a major Morgan Stanley shareholder"
+   }
+  },
+  {
+   "name": "三井住友 SMFG",
+   "cat": "apac",
+   "hq": "东京 Tokyo",
+   "ticker": "jp:8316",
+   "known": {
+    "zh": "企业银行、SMBC 日兴证券",
+    "en": "Corporate banking, SMBC Nikko Securities"
+   }
+  },
+  {
+   "name": "汇丰 HSBC",
+   "cat": "apac",
+   "hq": "伦敦 London",
+   "ticker": "hk:00005",
+   "known": {
+    "zh": "亚洲贸易融资、债券与外汇",
+    "en": "Asian trade finance, bonds and FX"
+   }
+  },
+  {
+   "name": "渣打 Standard Chartered",
+   "cat": "apac",
+   "hq": "伦敦 London",
+   "ticker": "hk:02888",
+   "known": {
+    "zh": "新兴市场银行业务、贸易融资",
+    "en": "Emerging-market banking, trade finance"
+   }
+  },
+  {
+   "name": "麦格理 Macquarie",
+   "cat": "apac",
+   "hq": "悉尼 Sydney",
+   "ticker": "asx:MQG",
+   "known": {
+    "zh": "基础设施投资、大宗商品",
+    "en": "Infrastructure investing, commodities"
    }
   }
  ]

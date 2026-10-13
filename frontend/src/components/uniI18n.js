@@ -97,28 +97,66 @@ const D = {
 }
 
 // Sentences with numbers in them
+// Undergraduate entry, deadlines and the Middle East & Africa filter (added October 2026)
+const D_UG = {
+  ja: {
+    Closed: '締切済み', 'Due today': '本日締切', 'UG deadline': '学部締切', 'Graduate only': '大学院のみ', Undergrad: '学部',
+    'Undergrad entry data': '学部入試データあり', 'with undergrad entry data': '校の学部入試要件', 'Middle East & Africa': '中東・アフリカ',
+    "We haven't verified this school's undergraduate entry requirements yet. Check the official site:": 'この学校の学部入試要件はまだ確認できていません。公式サイトをご確認ください：',
+    Tests: '試験', 'International tuition': '留学生の学費', 'How to apply': '出願方法', Deadline: '締切',
+    'Next deadline': '次の出願締切', Undergraduate: '学部', 'Graduate / MBA': '大学院 / MBA', 'Top Employment (MBA)': '主な就職先（MBA）',
+    'Round 1': '第1ラウンド', 'Round 2': '第2ラウンド', 'Round 3': '第3ラウンド', 'Round 4': '第4ラウンド', 'Round 5': '第5ラウンド',
+    'Undergrad A-level': '学部 A-level', 'Undergrad IB': '学部 IB', 'Undergrad English': '学部の英語要件', 'Undergrad tuition': '学部の留学生学費',
+  },
+  ko: {
+    Closed: '마감', 'Due today': '오늘 마감', 'UG deadline': '학부 마감', 'Graduate only': '대학원 전용', Undergrad: '학부',
+    'Undergrad entry data': '학부 입학 정보 있음', 'with undergrad entry data': '개 학교 학부 입학 요건', 'Middle East & Africa': '중동·아프리카',
+    "We haven't verified this school's undergraduate entry requirements yet. Check the official site:": '이 학교의 학부 입학 요건은 아직 확인하지 못했습니다. 공식 웹사이트를 확인하세요:',
+    Tests: '시험', 'International tuition': '유학생 학비', 'How to apply': '지원 방법', Deadline: '마감일',
+    'Next deadline': '다음 지원 마감', Undergraduate: '학부', 'Graduate / MBA': '대학원 / MBA', 'Top Employment (MBA)': '주요 취업처 (MBA)',
+    'Round 1': '1차', 'Round 2': '2차', 'Round 3': '3차', 'Round 4': '4차', 'Round 5': '5차',
+    'Undergrad A-level': '학부 A-level', 'Undergrad IB': '학부 IB', 'Undergrad English': '학부 영어 요건', 'Undergrad tuition': '학부 유학생 학비',
+  },
+  fr: {
+    Closed: 'Clos', 'Due today': "Clôture aujourd'hui", 'UG deadline': 'Date limite licence', 'Graduate only': 'Master uniquement', Undergrad: 'Licence',
+    'Undergrad entry data': 'Admission en licence', 'with undergrad entry data': 'avec conditions d’admission en licence', 'Middle East & Africa': 'Moyen-Orient et Afrique',
+    "We haven't verified this school's undergraduate entry requirements yet. Check the official site:": "Nous n'avons pas encore vérifié les conditions d'admission en licence de cette école. Consultez le site officiel :",
+    Tests: 'Tests', 'International tuition': 'Frais pour étudiants internationaux', 'How to apply': 'Candidature', Deadline: 'Date limite',
+    'Next deadline': 'Prochaine date limite', Undergraduate: 'Licence', 'Graduate / MBA': 'Master / MBA', 'Top Employment (MBA)': 'Principaux débouchés (MBA)',
+    'Round 1': 'Tour 1', 'Round 2': 'Tour 2', 'Round 3': 'Tour 3', 'Round 4': 'Tour 4', 'Round 5': 'Tour 5',
+    'Undergrad A-level': 'A-level (licence)', 'Undergrad IB': 'IB (licence)', 'Undergrad English': 'Anglais (licence)', 'Undergrad tuition': 'Frais de licence (international)',
+  },
+}
+for (const l of Object.keys(D_UG)) Object.assign(D[l], D_UG[l])
+
 const F = {
   ja: {
     gapAbove: (g) => `総合順位より ${g} 位上`, classOf: (y) => `${y}年卒`, compareN3: (n) => `比較 (${n}/3)`, compareN: (n) => `${n} 校を比較`,
     showMore: (n) => `さらに表示（残り ${n} 校）`, published: (d) => `（${d} 公表）；`,
     overallPublished: (d) => `（${d} 公表）。「独立系ビジネススクール」は総合ランキングに含まれない学校です。詳細のある学校はクリックで開けます。`,
     directory: (n) => `学校一覧 · ${n}`,
+    daysLeft: (n) => `あと ${n} 日`, est: (y) => `${y}年創立`,
+    ugChecked: (d) => `${d} に各校の公式サイトと照合しました。公表されていない、または確認できない項目は載せていません。出願前に必ずご確認ください：`,
   },
   ko: {
     gapAbove: (g) => `종합 순위보다 ${g}위 높음`, classOf: (y) => `${y}년 졸업`, compareN3: (n) => `비교 (${n}/3)`, compareN: (n) => `${n}개 학교 비교`,
     showMore: (n) => `더 보기 (${n}개 남음)`, published: (d) => ` (${d} 발표); `,
     overallPublished: (d) => ` (${d} 발표). '독립 경영대학'은 종합 순위에 포함되지 않은 학교입니다. 프로필이 있는 학교를 누르면 자세히 볼 수 있습니다.`,
     directory: (n) => `학교 목록 · ${n}`,
+    daysLeft: (n) => `${n}일 남음`, est: (y) => `${y}년 설립`,
+    ugChecked: (d) => `${d}에 학교 공식 페이지와 대조했습니다. 공개되지 않았거나 확인되지 않은 항목은 넣지 않았습니다. 지원 전에 다시 확인하세요: `,
   },
   fr: {
     gapAbove: (g) => `${g} places au-dessus du général`, classOf: (y) => `Promotion ${y}`, compareN3: (n) => `Comparer (${n}/3)`, compareN: (n) => `Comparer ${n} écoles`,
     showMore: (n) => `Afficher plus (${n} restantes)`, published: (d) => ` (publié le ${d}) ; `,
     overallPublished: (d) => ` (publié le ${d}). « École indépendante » désigne un établissement absent du classement général. Les lignes avec une fiche ouvrent son détail.`,
     directory: (n) => `Annuaire des écoles · ${n}`,
+    daysLeft: (n) => `${n} jours restants`, est: (y) => `Fondée en ${y}`,
+    ugChecked: (d) => `Vérifié sur les pages officielles de l'école en ${d} ; les éléments non publiés ou non confirmés sont omis. Vérifiez avant de candidater : `,
   },
 }
 
-const lang = () => useLangStore.getState().lang
+export const lang = () => useLangStore.getState().lang
 
 /** Inline pair → the reader's language (zh / en as written, ja / ko / fr from the table above). */
 export function tx(zhStr, enStr) {
