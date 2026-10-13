@@ -31,7 +31,10 @@ function parseDeadline(str) {
 function deadlineStatus(str) {
   const d = parseDeadline(str)
   if (!d) return null
-  const days = Math.ceil((d - Date.now()) / 86400000)
+  // Calendar days between today and the deadline day (same count as the iOS app)
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  const day = new Date(d); day.setHours(0, 0, 0, 0)
+  const days = Math.round((day - today) / 86400000)
   return { date: d, days, passed: days < 0 }
 }
 function DeadlineTag({ str }) {
