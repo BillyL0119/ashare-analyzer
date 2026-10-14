@@ -1001,8 +1001,8 @@ def _daily_closes(symbol: str, market: str, days: int) -> dict:
         if market in ("hk", "jp"):
             from routers.global_stocks import history
             return {c["date"]: c["close"] for c in history(market, symbol)}
-        code = symbol if symbol.startswith(("sh", "sz", "bj")) else (
-            ("sh" if symbol.startswith(("6", "5", "9")) else "bj" if symbol.startswith(("4", "8")) else "sz") + symbol)
+        from services.stock_service import _get_sina_symbol
+        code = _get_sina_symbol(symbol)
         n = max(min(int(days * 0.72) + 20, 1000), 30)
         r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get", params={"param": f"{code},day,,,{n},"}, timeout=8)
         node = (r.json().get("data") or {}).get(code) or {}

@@ -294,6 +294,12 @@ export default function StockDetail() {
   const price = d?.price
   const p = d ? (market === 'cn' ? d.pct_change : d.change_pct) : null
   const name = (hkjp && d ? localName(d, lang, market) : d?.name) || code
+  // US pages get a server-rendered title; the other markets name the tab once the quote arrives
+  useEffect(() => {
+    if (!d?.name || document.title.toUpperCase().includes(code.toUpperCase())) return
+    const label = { cn: 'A股', hk: '港股', jp: '日股', us: '美股' }[market] || ''
+    document.title = lang === 'zh' ? `${name} (${code}) ${label}行情 · K线 · AI分析 | BestFriendStock` : `${name} (${code}) | Best Friend Stock`
+  }, [d?.name, name, code, market, lang])
   const last = candles[candles.length - 1]
   const open = d?.open > 0 ? d.open : last?.open, high = d?.high > 0 ? d.high : last?.high, low = d?.low > 0 ? d.low : last?.low
   const vol = d?.volume > 0 ? d.volume : last?.volume

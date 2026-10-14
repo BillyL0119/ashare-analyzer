@@ -785,21 +785,20 @@ def _generate_daily_report(today: str) -> dict:
     """Generate a bilingual daily market report using AkShare data."""
     cn_data, us_data = {}, {}
 
-    # CN indices (yesterday's close via spot)
+    # CN indices from Tencent's quote feed (Eastmoney's spot list redirects our server to a bot check)
     try:
-        for param in ("上证系列指数", "深证系列指数"):
-            df = ak.stock_zh_index_spot_em(symbol=param)
-            for _, row in df.iterrows():
-                nm = str(row.get("名称", ""))
-                if "上证指数" in nm:
-                    cn_data["sh"] = {"name": "上证指数", "close": round(_safe_float(row.get("最新价", 0)), 2),
-                                     "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2)}
-                elif "深证成指" in nm:
-                    cn_data["sz"] = {"name": "深证成指", "close": round(_safe_float(row.get("最新价", 0)), 2),
-                                     "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2)}
-                elif "创业板指" in nm:
-                    cn_data["cyb"] = {"name": "创业板指", "close": round(_safe_float(row.get("最新价", 0)), 2),
-                                      "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2)}
+        names = {"sh000001": ("sh", "上证指数"), "sz399001": ("sz", "深证成指"), "sz399006": ("cyb", "创业板指")}
+        import requests as _rq
+        r = _rq.get("https://qt.gtimg.cn/q=" + ",".join(names), timeout=6)
+        r.encoding = "gbk"
+        for line in r.text.splitlines():
+            if '="' not in line:
+                continue
+            key = line.split("=")[0].replace("v_", "").strip()
+            vals = line.split('"')[1].split("~")
+            if key in names and len(vals) > 32 and vals[3]:
+                k, nm = names[key]
+                cn_data[k] = {"name": nm, "close": round(float(vals[3]), 2), "change_pct": round(float(vals[32] or 0), 2)}
     except Exception as e:
         logger.warning("daily_report cn indices: %s", e)
 
@@ -864,6 +863,9 @@ def _generate_daily_report(today: str) -> dict:
     }
 
 
+_partial_report: tuple | None = None
+
+
 @router.get("/daily-report")
 def daily_report():
     """Return today's market daily report (cached by date, Beijing time)."""
@@ -874,12 +876,18 @@ def daily_report():
         try:
             with open(_REPORT_PATH, encoding="utf-8") as f:
                 cached = json.load(f)
-            if cached.get("date") == today:
+            if cached.get("date") == today and cached.get("cn_indices") and cached.get("us_indices"):
                 return cached
         except Exception:
             pass
 
+    global _partial_report
+    if _partial_report and _partial_report[1].get("date") == today and time.time() - _partial_report[0] < 600:
+        return _partial_report[1]
     report = _generate_daily_report(today)
+    if not report["cn_indices"] or not report["us_indices"]:
+        _partial_report = (time.time(), report)   # a source was down: serve it, retry in 10 minutes
+        return report
     try:
         os.makedirs(os.path.dirname(_REPORT_PATH), exist_ok=True)
         with open(_REPORT_PATH, "w", encoding="utf-8") as f:

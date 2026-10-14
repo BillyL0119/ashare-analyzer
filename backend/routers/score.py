@@ -12,7 +12,7 @@ Cache: 1 hour per symbol.
 
 Data sources:
   US stocks  — NASDAQ public API (price history + financials, no API key needed)
-  A-shares   — AkShare (price history) + ak.stock_a_lg_indicator (PE/PB)
+  A-shares   — AkShare (price history) + Tencent quotes (PE/PB)
 """
 
 from fastapi import APIRouter, HTTPException
@@ -59,11 +59,13 @@ def _is_cn(symbol: str) -> bool:
 
 
 def _to_sina(symbol: str) -> str:
-    return ("sh" if symbol.startswith(("6", "5")) else "sz") + symbol
+    from services.stock_service import _get_sina_symbol
+    return _get_sina_symbol(symbol)
 
 
 def _to_yf_cn(symbol: str) -> str:
-    return f"{symbol}.SS" if symbol.startswith("6") else f"{symbol}.SZ"
+    from services.stock_service import yahoo_cn_symbol
+    return yahoo_cn_symbol(symbol)
 
 
 def _ema(data: list, span: int) -> list:
@@ -439,16 +441,14 @@ def _fundamental_cn(symbol: str) -> tuple:
     total   = 0
     pe, pb, roe, rev_growth = None, None, None, None
 
-    # AkShare PE/PB
+    # PE (TTM) / PB from Tencent's quote feed (AkShare dropped its PE/PB indicator table)
     try:
-        import akshare as ak
-        df = ak.stock_a_lg_indicator(symbol=symbol)
-        if not df.empty:
-            latest = df.iloc[-1]
-            pe = _safe(latest.get('pe', None))
-            pb = _safe(latest.get('pb', None))
+        from services.stock_service import tencent_quotes
+        q = tencent_quotes([symbol]).get(symbol) or {}
+        pe = _safe(q.get('pe'))
+        pb = _safe(q.get('pb'))
     except Exception as e:
-        logger.warning("AkShare stock_a_lg_indicator %s: %s", symbol, e)
+        logger.warning("Tencent PE/PB %s: %s", symbol, e)
 
     # yfinance supplement for ROE/growth (A-share via .SS/.SZ)
     try:

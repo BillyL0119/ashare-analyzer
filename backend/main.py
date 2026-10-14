@@ -17,7 +17,6 @@ from fastapi.responses import Response, JSONResponse
 from routers import stocks
 from routers.indicators import router as indicators_router
 from routers.simulation import router as simulation_router
-from routers.watchlist import router as watchlist_router
 from routers.financial import router as financial_router
 from routers.us_stocks import router as us_stocks_router
 from routers.global_stocks import hk_router, jp_router
@@ -426,7 +425,6 @@ async def bot_render():
 app.include_router(stocks.router, prefix="/api/stocks", tags=["stocks"])
 app.include_router(indicators_router, prefix="/api/indicators", tags=["indicators"])
 app.include_router(simulation_router, prefix="/api/simulation", tags=["simulation"])
-app.include_router(watchlist_router, prefix="/api/watchlist", tags=["watchlist"])
 app.include_router(financial_router, prefix="/api/financial", tags=["financial"])
 app.include_router(us_market_router, prefix="/api/us/market", tags=["us_market"])
 app.include_router(us_stocks_router, prefix="/api/us", tags=["us_stocks"])

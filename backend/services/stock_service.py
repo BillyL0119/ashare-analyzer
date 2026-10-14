@@ -4,6 +4,7 @@ import requests
 from typing import List, Optional
 import math
 import threading
+import time
 from services.js_runtime import v8_call
 
 SINA_HEADERS = {"Referer": "https://finance.sina.com.cn", "User-Agent": "Mozilla/5.0"}
@@ -73,11 +74,17 @@ def _get_sina_symbol(code: str) -> str:
     code = code.strip()
     if code.startswith(("sh", "sz", "bj")):
         return code
-    if code.startswith(("6", "9")):  # Shanghai A/B shares
-        return f"sh{code}"
-    if code.startswith(("4", "8")):  # Beijing exchange
+    if code.startswith(("4", "8", "92")):  # Beijing exchange (920xxx is its code range since 2024)
         return f"bj{code}"
-    return f"sz{code}"  # Shenzhen A/B shares
+    if code.startswith(("6", "9", "5", "11")):  # Shanghai A/B shares, funds/ETFs (5xxxxx), convertibles (11xxxx)
+        return f"sh{code}"
+    return f"sz{code}"  # Shenzhen A/B shares, funds (1xxxxx except 11), convertibles (12xxxx)
+
+
+def yahoo_cn_symbol(code: str) -> str:
+    """Bare A-share code -> Yahoo Finance ticker (600519.SS, 000001.SZ, 920002.BJ)."""
+    ex = _get_sina_symbol(code)[:2]
+    return f"{code[-6:]}.{ {'sh': 'SS', 'sz': 'SZ', 'bj': 'BJ'}[ex] }"
 
 
 def _is_b_share(code: str) -> bool:
@@ -254,6 +261,19 @@ def _fetch_b_share_daily(sina_symbol: str, start_date: str, end_date: str, adjus
         return None
 
 
+_hist_cache: dict = {}            # (symbol, period, start, end, adjust) -> (ts, DataFrame)
+_hist_lock = threading.Lock()
+
+
+def _hist_ttl() -> int:
+    """2 minutes while A-shares trade (the latest bar can still change), 30 minutes otherwise."""
+    try:
+        from services.paper_engine import in_trading_day
+        return 120 if in_trading_day("cn") else 1800
+    except Exception:
+        return 120
+
+
 def get_stock_history(
     symbol: str,
     period: str = "daily",
@@ -261,7 +281,23 @@ def get_stock_history(
     end_date: str = "20991231",
     adjust: str = "qfq",
 ) -> Optional[pd.DataFrame]:
-    """Fetch historical OHLCV data using Sina Finance."""
+    """Historical OHLCV from Sina Finance, cached briefly: the fetch runs under the shared V8 lock,
+    so uncached it serialises every stock page, indicator and risk call behind each other."""
+    key = (symbol, period, start_date, end_date, adjust)
+    hit = _hist_cache.get(key)
+    if hit and time.time() - hit[0] < _hist_ttl():
+        return hit[1].copy()
+    df = _fetch_stock_history(symbol, period, start_date, end_date, adjust)
+    if df is not None:
+        with _hist_lock:
+            if len(_hist_cache) > 400:
+                _hist_cache.clear()
+            _hist_cache[key] = (time.time(), df)
+        return df.copy()
+    return None
+
+
+def _fetch_stock_history(symbol: str, period: str, start_date: str, end_date: str, adjust: str) -> Optional[pd.DataFrame]:
     try:
         sina_symbol = _get_sina_symbol(symbol)
         adjust_map = {"qfq": "qfq", "hfq": "hfq", "": ""}
@@ -317,8 +353,36 @@ def get_stock_history(
         return None
 
 
+def _tencent_live_quote(symbol: str) -> Optional[dict]:
+    """Live A-share quote from qt.gtimg.cn (the daily candle feeds only gain today's bar after the close)."""
+    try:
+        r = requests.get("https://qt.gtimg.cn/q=" + _get_sina_symbol(symbol), timeout=4)
+        r.encoding = "gbk"
+        f = r.text.split('"')[1].split("~")
+        price, prev = float(f[3] or 0), float(f[4] or 0)
+        if price <= 0 or prev <= 0:          # suspended or not yet traded: let the candle feed answer
+            return None
+        try:
+            amount = float(f[35].split("/")[2])          # exact turnover in CNY
+        except (IndexError, ValueError):
+            amount = float(f[37] or 0) * 1e4             # turnover in 10k CNY
+        change = round(price - prev, 4)
+        return {
+            "code": symbol, "name": f[1].replace(" ", "") or get_stock_name(symbol),
+            "price": price, "change": change, "pct_change": round(change / prev * 100, 4),
+            "volume": float(f[6] or 0) * 100,              # lots of 100 shares -> shares
+            "amount": amount, "high": float(f[33] or price), "low": float(f[34] or price),
+            "open": float(f[5] or price), "prev_close": prev,
+        }
+    except Exception:
+        return None
+
+
 def get_realtime_quote(symbol: str) -> Optional[dict]:
-    """Get latest quote by fetching the most recent daily candle from Sina Finance."""
+    """Latest quote: Tencent's live feed, else the most recent daily candle."""
+    live = _tencent_live_quote(symbol)
+    if live:
+        return live
     try:
         from datetime import datetime, timedelta
         today = datetime.now().strftime("%Y%m%d")

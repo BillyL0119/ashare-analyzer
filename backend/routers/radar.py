@@ -45,13 +45,13 @@ def _clamp(val: float, lo: float = 0.0, hi: float = 100.0) -> float:
 
 def _to_sina(symbol: str) -> str:
     """Convert bare 6-digit code to Sina symbol."""
-    if symbol.startswith(("6", "5", "11")):
-        return "sh" + symbol
-    return "sz" + symbol
+    from services.stock_service import _get_sina_symbol
+    return _get_sina_symbol(symbol)
 
 
 def _to_yf(symbol: str) -> str:
-    return f"{symbol}.SS" if symbol.startswith("6") else f"{symbol}.SZ"
+    from services.stock_service import yahoo_cn_symbol
+    return yahoo_cn_symbol(symbol)
 
 
 def _get_name(symbol: str) -> str:

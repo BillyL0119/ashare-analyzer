@@ -495,45 +495,6 @@ def _classify_daily(text: str) -> str:
     return 'market'
 
 
-def _fetch_cls_market() -> list[dict]:
-    """财联社市场快讯（全市场，无需股票代码）."""
-    try:
-        r = requests.get(
-            'https://www.cls.cn/nodeapi/updateTelegraph',
-            params={'app': 'CLS', 'os': 'android', 'sv': '7.7.5',
-                    'last_time': 0, 'rn': 20, 'cls_tag_id': 0},
-            headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://www.cls.cn'},
-            timeout=8,
-        )
-        data = r.json()
-        items_raw = (data.get('data') or {}).get('telegraph_list') or []
-        result = []
-        for item in items_raw[:20]:
-            title = (item.get('title') or item.get('brief') or '').strip()
-            if not title:
-                continue
-            content = re.sub(r'<[^>]+>', '', item.get('content') or '').strip()[:300]
-            pub_ts = item.get('ctime', 0)
-            try:
-                pub_iso = _bj_iso(datetime.fromtimestamp(int(pub_ts), _BJ))
-            except Exception:
-                pub_iso = _bj_iso()
-            result.append({
-                'title': title,
-                'summary': content,
-                'source': '财联社',
-                'published_at': pub_iso,
-                'url': (item.get('share_url') or '').strip(),
-                'lang': 'cn',
-                'category': _classify_daily(title + ' ' + content),
-            })
-        logger.info("CLS market flash returned %d items", len(result))
-        return result
-    except Exception as exc:
-        logger.warning("CLS market fetch failed: %s", exc)
-        return []
-
-
 def _fetch_em_market_flash() -> list[dict]:
     """东方财富市场快讯（全市场要闻）."""
     try:
@@ -701,7 +662,6 @@ def get_daily_market_news(
             futures = [ex.submit(_fetch_rss_source, name, url, lg) for name, url, lg in _RSS_SOURCES]
             futures.append(ex.submit(_fetch_sina_global, 20))
             futures.append(ex.submit(_fetch_sina_cn_stock))
-            futures.append(ex.submit(_fetch_cls_market))
             futures.append(ex.submit(_fetch_em_market_flash))
             futures.append(ex.submit(_fetch_eastmoney_market))
             for f in as_completed(futures):

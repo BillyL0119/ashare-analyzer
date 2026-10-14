@@ -31,7 +31,8 @@ def _is_cn(symbol: str) -> bool:
 
 
 def _to_sina(symbol: str) -> str:
-    return ("sh" if symbol.startswith(("6", "5")) else "sz") + symbol
+    from services.stock_service import _get_sina_symbol
+    return _get_sina_symbol(symbol)
 
 
 def _ema(data: list, span: int) -> list:

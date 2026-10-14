@@ -94,8 +94,8 @@ export default function App() {
   const { market, setMarket, selectedSymbols, switchMarketAndAddSymbol } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme, setTheme } = useThemeStore()
-  const { user, role, loading: authLoading, init: initAuth, signOut,
-          setLangPreference, setThemePreference, setKnowledgeDateSeen,
+  const { user, role, init: initAuth, signOut,
+          setLangPreference, setThemePreference,
           setWatchlistPreference } = useAuthStore()
   const t = T[lang]
   const isMobile = useMobile()
@@ -132,7 +132,6 @@ export default function App() {
   const langDropdownRef   = useRef(null)
   const userMenuRef       = useRef(null)
   const mobileMenuRef     = useRef(null)
-  const insightCheckedRef = useRef(false)
   const watchlistSyncRef  = useRef(null) // tracks last saved serialized value
 
   // Splash screen — computed once at mount, stable for this session
@@ -189,7 +188,19 @@ export default function App() {
     if (location.pathname.startsWith('/stock/') && (selectedSymbols.length === 0 ||
         (selectedSymbols.length === 1 && (!selectedSymbols[0].name || selectedSymbols[0].name === selectedSymbols[0].code)))) {
       // The server-rendered title is Chinese ("Apple Inc. (AAPL) 美股行情 · K线 · AI分析 | ..."): keep the name part for other languages
-      if (lang !== 'zh') document.title = document.title.replace(/\s*(美股|A股)行情[^|]*\|\s*BestFriendStock/, ' | Best Friend Stock')
+      if (lang !== 'zh') document.title = document.title.replace(/\s*(美股|A股|港股|日股)行情[^|]*\|\s*BestFriendStock/, ' | Best Friend Stock')
+      // Only US pages get a server-rendered title; the others look the name up here
+      if (stockRouteMatch && !document.title.toUpperCase().includes(stockRouteMatch[2].toUpperCase())) {
+        const [, mk, code] = stockRouteMatch
+        const url = mk === 'cn' ? `/api/stocks/${code}/realtime` : `/api/${mk}/stock/${encodeURIComponent(code)}/realtime`
+        let alive = true
+        fetch(url).then((r) => (r.ok ? r.json() : null)).then((d) => {
+          if (!alive || !d?.name) return
+          const label = { cn: 'A股', hk: '港股', jp: '日股', us: '美股' }[mk] || ''
+          document.title = lang === 'zh' ? `${d.name} (${code}) ${label}行情 · K线 · AI分析 | BestFriendStock` : `${d.name} (${code}) | Best Friend Stock`
+        }).catch(() => {})
+        return () => { alive = false }
+      }
       return
     }
     if (appTab === 'analysis' && selectedSymbols.length > 0) {

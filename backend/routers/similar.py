@@ -14,6 +14,7 @@ Reliability improvements:
 from fastapi import APIRouter, HTTPException
 import akshare as ak
 import pandas as pd
+import re
 import requests
 import json
 import os
@@ -48,6 +49,13 @@ _SIMILAR_CACHE_DIR = os.path.join(os.path.dirname(__file__), "../data/similar_ca
 _PRICE_CACHE_DIR   = os.path.join(os.path.dirname(__file__), "../data/price_cache")
 os.makedirs(_SIMILAR_CACHE_DIR, exist_ok=True)
 os.makedirs(_PRICE_CACHE_DIR,   exist_ok=True)
+
+def _require_a_share(symbol: str) -> None:
+    """These scans walk A-share industry peers; anything else (US tickers use /api/us/similar) would
+    only burn ~20s of history fetches before failing."""
+    if not re.fullmatch(r"\d{6}", symbol or ""):
+        raise HTTPException(400, "A-share code required (6 digits); use /api/us/similar for US stocks")
+
 
 # ── Related-industry mapping for cross-sector scan ────────────────────────────
 _RELATED_INDUSTRY: dict[str, list[str]] = {
@@ -415,6 +423,7 @@ def similar_cross(symbol: str):
     ranked by Pearson correlation.  Each result carries 'industry' and
     'industry_type' ("same" | "related") fields.
     """
+    _require_a_share(symbol)
     stale_cached = None
 
     try:
@@ -557,6 +566,7 @@ def similar_stocks(symbol: str):
       symbol, industry, results, data_quality
     data_quality: "full" | "partial" | "stale"
     """
+    _require_a_share(symbol)
     stale_cached = None   # defined here so the except block can reach it
 
     try:

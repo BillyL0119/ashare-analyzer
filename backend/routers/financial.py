@@ -25,9 +25,8 @@ def _fmt_large(val):
 
 def _symbol_to_yf_ticker(symbol: str) -> str:
     """Convert 6-digit A-share code to Yahoo Finance ticker."""
-    if symbol.startswith("6"):
-        return f"{symbol}.SS"
-    return f"{symbol}.SZ"
+    from services.stock_service import yahoo_cn_symbol
+    return yahoo_cn_symbol(symbol)
 
 
 def _get_yf_valuation(symbol: str) -> dict:
