@@ -9,6 +9,8 @@ Cached 1 hour per market.
 """
 
 from fastapi import APIRouter, Query
+import json
+import os
 import time
 import logging
 import pandas as pd
@@ -408,17 +410,12 @@ def sector_rotation(market: str = Query("cn", pattern="^(cn|us)$")):
     now = time.time()
 
     if market == "cn":
-        if _cn_data is not None and now - _cn_ts < _CACHE_TTL:
+        # Built only by the warm-up thread (about a minute through V8_LOCK): a request that built it
+        # too would wait that long and stack up behind the others. Serve the latest copy, even stale.
+        if _cn_data is not None:
             return _cn_data
-        try:
-            _cn_data = _build_cn()
-            _cn_ts   = now
-        except Exception as e:
-            logger.error("CN sector rotation failed: %s", e)
-            if _cn_data:
-                return _cn_data
-            return {"market": "cn", "date": "", "sectors": [], "error": str(e)}
-        return _cn_data
+        return {"market": "cn", "date": "", "sectors": [], "pending": True,
+                "error": "Sector data is being prepared, try again in a minute"}
 
     else:  # us
         if _us_data is not None and now - _us_ts < _CACHE_TTL:
@@ -434,13 +431,35 @@ def sector_rotation(market: str = Query("cn", pattern="^(cn|us)$")):
         return _us_data
 
 
+_CN_DISK = os.path.join(os.path.dirname(__file__), "..", "data", "sector_rotation_cn.cache.json")
+
+
+def _load_cn_disk() -> None:
+    """After a restart, serve the last build at once instead of nothing for a minute."""
+    global _cn_ts, _cn_data
+    try:
+        with open(_CN_DISK, encoding="utf-8") as f:
+            _cn_data = json.load(f)
+        _cn_ts = os.path.getmtime(_CN_DISK)
+    except Exception:
+        pass
+
+
 def _warm_cn_loop():
     """The CN build takes about a minute (90 boards, one at a time through V8_LOCK); keep it hot so users never wait for it."""
     global _cn_ts, _cn_data
+    _load_cn_disk()
     while True:
         try:
             data = _build_cn()
             _cn_data, _cn_ts = data, time.time()
+            try:
+                tmp = _CN_DISK + ".tmp"
+                with open(tmp, "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False)
+                os.replace(tmp, _CN_DISK)
+            except Exception as e:
+                logger.warning("sector rotation cache write failed: %s", e)
         except Exception as e:
             logger.warning("CN sector warm-up failed: %s", e)
         time.sleep(_CACHE_TTL - 300)

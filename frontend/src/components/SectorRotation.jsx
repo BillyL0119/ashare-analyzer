@@ -249,7 +249,8 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
     fetch(`${API}/api/sectors/rotation?market=${market}`)
       .then(r => r.json())
       .then(d => {
-        if (d.error) setError(d.error)
+        if (d.pending) setError(t.srPending)
+        else if (d.error) setError(d.error)
         else setData(d)
       })
       .catch(() => setError(t.srLoadFail))

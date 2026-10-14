@@ -443,7 +443,7 @@ export const T = {
     gnLangAll: '全部', gnLangCN: '中文', gnLangEN: '英文',
     // SectorRotation
     srVolHigh: '📈量大', srVolUp: '量增', srVolLow: '📉量缩', srVolFlat: '量平',
-    srVolRatio: '量比', srLoadFail: '加载失败',
+    srVolRatio: '量比', srLoadFail: '加载失败', srPending: '板块数据正在生成，约一分钟后刷新即可',
     srMarket: '市场：', srUpdated: '更新：',
     srLoadingMsg: '正在加载板块数据（首次约30秒）...',
     srHeatmap: '🗺 热力图', srRanking: '📊 排行榜',
@@ -941,7 +941,7 @@ export const T = {
     gnLangAll: 'All', gnLangCN: 'Chinese', gnLangEN: 'English',
     // SectorRotation
     srVolHigh: '📈 High Vol', srVolUp: 'Vol↑', srVolLow: '📉 Low Vol', srVolFlat: 'Vol~',
-    srVolRatio: 'Vol', srLoadFail: 'Failed to load',
+    srVolRatio: 'Vol', srLoadFail: 'Failed to load', srPending: 'Sector data is being prepared. Refresh in about a minute.',
     srMarket: 'Market:', srUpdated: 'Updated:',
     srLoadingMsg: 'Loading sector data (first load ~30s)...',
     srHeatmap: '🗺 Heatmap', srRanking: '📊 Ranking',
@@ -1439,7 +1439,7 @@ export const T = {
     gnLangAll: '全て', gnLangCN: '中国語', gnLangEN: '英語',
     // SectorRotation
     srVolHigh: '📈 大量', srVolUp: '量増', srVolLow: '📉 少量', srVolFlat: '量平',
-    srVolRatio: '出来高比', srLoadFail: '読込失敗',
+    srVolRatio: '出来高比', srLoadFail: '読込失敗', srPending: 'セクターデータを準備中です。1分ほどで更新してください。',
     srMarket: '市場：', srUpdated: '更新：',
     srLoadingMsg: 'セクターデータ読込中（初回約30秒）...',
     srHeatmap: '🗺 ヒートマップ', srRanking: '📊 ランキング',
@@ -1937,7 +1937,7 @@ export const T = {
     gnLangAll: '전체', gnLangCN: '중국어', gnLangEN: '영어',
     // SectorRotation
     srVolHigh: '📈 대량', srVolUp: '거래량↑', srVolLow: '📉 소량', srVolFlat: '거래량~',
-    srVolRatio: '거래량비', srLoadFail: '로드 실패',
+    srVolRatio: '거래량비', srLoadFail: '로드 실패', srPending: '섹터 데이터를 준비 중입니다. 1분 후 새로고침하세요.',
     srMarket: '시장：', srUpdated: '업데이트：',
     srLoadingMsg: '섹터 데이터 로드 중（첫 로드 약 30초）...',
     srHeatmap: '🗺 히트맵', srRanking: '📊 순위',
@@ -2435,7 +2435,7 @@ export const T = {
     gnLangAll: 'Tout', gnLangCN: 'Chinois', gnLangEN: 'Anglais',
     // SectorRotation
     srVolHigh: '📈 Vol élevé', srVolUp: 'Vol↑', srVolLow: '📉 Vol faible', srVolFlat: 'Vol~',
-    srVolRatio: 'Vol', srLoadFail: 'Échec chargement',
+    srVolRatio: 'Vol', srLoadFail: 'Échec chargement', srPending: 'Données sectorielles en préparation. Actualisez dans une minute.',
     srMarket: 'Marché :', srUpdated: 'Mis à jour :',
     srLoadingMsg: 'Chargement secteurs (premier chargement ~30s)...',
     srHeatmap: '🗺 Heatmap', srRanking: '📊 Classement',

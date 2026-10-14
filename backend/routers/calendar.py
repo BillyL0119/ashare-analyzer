@@ -36,34 +36,21 @@ except Exception:
     _STOCK_NAMES = {}
 
 # Chinese public holidays (fixed + common lunar holidays for 2026)
+# Mainland public holidays (State Council notice 国办发明电〔2025〕7号). 2027 is published each
+# November; add it then.
+_HOLIDAY_RANGES = [
+    ("2026-01-01", "2026-01-03", "元旦", "New Year's Day"),
+    ("2026-02-15", "2026-02-23", "春节", "Spring Festival"),
+    ("2026-04-04", "2026-04-06", "清明节", "Qingming Festival"),
+    ("2026-05-01", "2026-05-05", "劳动节", "Labour Day"),
+    ("2026-06-19", "2026-06-21", "端午节", "Dragon Boat Festival"),
+    ("2026-09-25", "2026-09-27", "中秋节", "Mid-Autumn Festival"),
+    ("2026-10-01", "2026-10-07", "国庆节", "National Day"),
+]
 _HOLIDAYS_2026 = [
-    ("2026-01-01", "元旦", "New Year's Day"),
-    ("2026-01-28", "春节", "Spring Festival"),
-    ("2026-01-29", "春节", "Spring Festival"),
-    ("2026-01-30", "春节", "Spring Festival"),
-    ("2026-01-31", "春节", "Spring Festival"),
-    ("2026-02-01", "春节", "Spring Festival"),
-    ("2026-02-02", "春节", "Spring Festival"),
-    ("2026-02-03", "春节", "Spring Festival"),
-    ("2026-04-05", "清明节", "Qingming Festival"),
-    ("2026-04-06", "清明节", "Qingming Festival"),
-    ("2026-04-07", "清明节", "Qingming Festival"),
-    ("2026-05-01", "劳动节", "Labour Day"),
-    ("2026-05-02", "劳动节", "Labour Day"),
-    ("2026-05-03", "劳动节", "Labour Day"),
-    ("2026-05-04", "劳动节", "Labour Day"),
-    ("2026-05-05", "劳动节", "Labour Day"),
-    ("2026-06-19", "端午节", "Dragon Boat Festival"),
-    ("2026-06-20", "端午节", "Dragon Boat Festival"),
-    ("2026-06-21", "端午节", "Dragon Boat Festival"),
-    ("2026-10-01", "国庆节", "National Day"),
-    ("2026-10-02", "国庆节", "National Day"),
-    ("2026-10-03", "国庆节", "National Day"),
-    ("2026-10-04", "国庆节", "National Day"),
-    ("2026-10-05", "国庆节", "National Day"),
-    ("2026-10-06", "国庆节", "National Day"),
-    ("2026-10-07", "国庆节", "National Day"),
-    ("2026-10-08", "国庆节", "National Day"),
+    ((datetime.strptime(a, "%Y-%m-%d") + timedelta(days=i)).strftime("%Y-%m-%d"), zh, en)
+    for a, b, zh, en in _HOLIDAY_RANGES
+    for i in range((datetime.strptime(b, "%Y-%m-%d") - datetime.strptime(a, "%Y-%m-%d")).days + 1)
 ]
 
 
@@ -238,12 +225,37 @@ def _build() -> dict:
 _refreshing = False
 
 
+_DISK = os.path.join(os.path.dirname(__file__), "..", "data", "calendar_events.cache.json")
+
+
+def _load_disk() -> None:
+    """Serve the last build right after a restart (a cold build takes ~45s); it refreshes as usual."""
+    global _cache_ts, _cache_data
+    try:
+        with open(_DISK, encoding="utf-8") as f:
+            _cache_data = json.load(f)
+        _cache_ts = os.path.getmtime(_DISK)
+    except Exception:
+        pass
+
+
+_load_disk()
+
+
 def _refresh():
     global _cache_ts, _cache_data, _refreshing
     try:
         data = _build()
         if data["events"] or _cache_data is None:
             _cache_data, _cache_ts = data, time.time()
+        if data["events"]:
+            try:
+                tmp = _DISK + ".tmp"
+                with open(tmp, "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False)
+                os.replace(tmp, _DISK)
+            except Exception as e:
+                logger.warning("calendar cache write failed: %s", e)
     except Exception as e:
         logger.warning("calendar build failed: %s", e)
     finally:

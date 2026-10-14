@@ -52,26 +52,79 @@ _spot_refreshing = False
 _spot_lock = threading.Lock()
 
 
+_UNIVERSE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "cn_universe.cache.json")
+_UNIVERSE_MAX_AGE = 3 * 86400       # re-list every few days so new listings appear
+
+
 def _spot_from_sina() -> pd.DataFrame:
-    """Fallback source (~40s, so only ever called from the background refresher)."""
+    """Full market from Sina (~40-70s: ~70 pages). Only used to (re)build the list of codes."""
     df = ak.stock_zh_a_spot()
     df = df.copy()
     df["代码"] = df["代码"].astype(str).str.replace(r"^(sh|sz|bj)", "", regex=True)
     return df
 
 
+def _load_universe() -> list | None:
+    try:
+        with open(_UNIVERSE_PATH, encoding="utf-8") as f:
+            u = json.load(f)
+        if time.time() - u.get("ts", 0) < _UNIVERSE_MAX_AGE and len(u.get("codes") or []) > 3000:
+            return u["codes"]
+    except Exception:
+        pass
+    return None
+
+
+def _save_universe(codes: list) -> None:
+    try:
+        tmp = _UNIVERSE_PATH + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump({"ts": time.time(), "codes": codes}, f)
+        os.replace(tmp, _UNIVERSE_PATH)
+    except Exception as e:
+        logger.warning("cn universe save failed: %s", e)
+
+
+def _spot_from_tencent(codes: list) -> pd.DataFrame | None:
+    """Whole-market quotes from qt.gtimg.cn, 500 codes per request (~10 requests, ~1s in all)."""
+    from services.stock_service import _get_sina_symbol
+    rows = []
+    for i in range(0, len(codes), 500):
+        chunk = [_get_sina_symbol(c) for c in codes[i:i + 500]]
+        r = requests.get("https://qt.gtimg.cn/q=" + ",".join(chunk), timeout=10)
+        for line in r.content.decode("gbk", errors="ignore").split(";"):
+            _, _, val = line.partition("=")
+            f = val.strip().strip('"').split("~")
+            if len(f) < 38 or not f[2]:
+                continue
+            price, prev = _safe_float(f[3]), _safe_float(f[4])
+            try:
+                amount = float(f[35].split("/")[2])
+            except (IndexError, ValueError):
+                amount = _safe_float(f[37]) * 1e4
+            rows.append({"代码": f[2], "名称": f[1].replace(" ", ""), "最新价": price if price > 0 else prev,
+                         "涨跌额": _safe_float(f[31]), "涨跌幅": _safe_float(f[32]), "成交额": amount})
+    return pd.DataFrame(rows) if len(rows) > 3000 else None
+
+
 def _refresh_spot() -> None:
+    """Tencent quotes for the known list of codes; Sina (slow) only when that list is missing or old.
+    Eastmoney's spot list is no longer tried: it redirects our server to a bot check."""
     global _spot_df, _spot_ts, _spot_fail_ts, _spot_refreshing
     try:
         df = None
-        try:
-            df = ak.stock_zh_a_spot_em()
-        except Exception as e:
-            logger.warning("stock_zh_a_spot_em failed, falling back to sina: %s", e)
+        codes = _load_universe()
+        if codes:
+            try:
+                df = _spot_from_tencent(codes)
+            except Exception as e:
+                logger.warning("tencent spot failed: %s", e)
+        if df is None:
             try:
                 df = _spot_from_sina()
+                _save_universe(sorted(df["代码"].astype(str).tolist()))
             except Exception as e2:
-                logger.warning("sina spot fallback failed: %s", e2)
+                logger.warning("sina spot failed: %s", e2)
         if df is not None and not df.empty:
             _spot_df, _spot_ts = df, time.time()
         else:
@@ -664,25 +717,23 @@ def _do_fetch_sentiment() -> dict:
                 "change_pct": d.get("change_pct"),
             })
 
-        # CN indices: stock_zh_index_spot_em → stock_zh_index_spot_sina fallback
+        # CN indices: Tencent quotes (Eastmoney redirects our server), Sina below as the fallback
         cn_added = False
         try:
-            for param in ("上证系列指数", "深证系列指数"):
-                df = ak.stock_zh_index_spot_em(symbol=param)
-                for _, row in df.iterrows():
-                    nm = str(row.get("名称", ""))
-                    if any(k in nm for k in ("上证指数", "深证成指", "创业板指")):
-                        indices.append({
-                            "symbol":     _CN_INDEX_SYMBOLS.get(nm, "—"),
-                            "name":       nm,
-                            "name_zh":    nm,
-                            "region":     "cn",
-                            "close":      round(_safe_float(row.get("最新价", 0)), 2),
-                            "change_pct": round(_safe_float(row.get("涨跌幅", 0)), 2),
-                        })
-                        cn_added = True
+            names = {"shanghai_index": "上证指数", "shenzhen_index": "深证成指", "chinext_index": "创业板指"}
+            for key, q in _fetch_indices_tencent().items():
+                nm = names[key]
+                indices.append({
+                    "symbol":     _CN_INDEX_SYMBOLS.get(nm, "—"),
+                    "name":       nm,
+                    "name_zh":    nm,
+                    "region":     "cn",
+                    "close":      round(q["value"], 2),
+                    "change_pct": round(q["change_pct"] * 100, 2),
+                })
+                cn_added = True
         except Exception as e:
-            logger.warning("cn indices spot_em: %s", e)
+            logger.warning("cn indices tencent: %s", e)
 
         if not cn_added:
             try:

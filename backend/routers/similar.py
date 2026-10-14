@@ -78,9 +78,9 @@ _RELATED_INDUSTRY: dict[str, list[str]] = {
 def _load_name_map():
     """
     Populate _name_map with A-share code→name pairs.
-    Source 1: akshare stock_zh_a_spot_em (eastmoney, globally reachable)
-    Source 2: Sina batch HQ API using all codes from industry_map.json
-              (Sina CDN works from HK servers; no mainland-only endpoints)
+    Source 0: data/stock_names.json
+    Source 2: Tencent batch quotes for every code in industry_map.json
+    (Eastmoney's spot list is skipped: it redirects our server to a bot check.)
     """
     import requests as _requests
 
@@ -92,16 +92,6 @@ def _load_name_map():
         logger.info("Name map seeded from local stock_names.json: %d entries", len(_name_map))
     except Exception as _le:
         logger.warning("local stock_names.json load failed: %s", _le)
-
-    # ── Source 1: eastmoney spot data ─────────────────────────────────────────
-    try:
-        df = ak.stock_zh_a_spot_em()
-        mapping = dict(zip(df['代码'].astype(str), df['名称'].astype(str)))
-        _name_map.update(mapping)
-        logger.info("Name map loaded via stock_zh_a_spot_em: %d stocks", len(_name_map))
-        return
-    except Exception as exc:
-        logger.warning("stock_zh_a_spot_em failed: %s", exc)
 
     # ── Source 2: Tencent batch quotes ─────────────────────────────────────────
     try:
