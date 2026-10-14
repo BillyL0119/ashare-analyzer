@@ -107,12 +107,13 @@ def _generate(key: str, title: str, lead: str, lang: str, banks: list) -> None:
             if not api_key or _calls["n"] >= _DAILY_CAP:
                 return
             _calls["n"] += 1
-        focus = (f"Focus on what {', '.join(banks[:3])} said or did and why. " if banks else
-                 "Say what happened and why it matters for markets or investors. ")
+        focus = (f"Focus on what {', '.join(banks[:3])} said or did and the reason they gave. " if banks else
+                 "Say what happened, and why it matters only if the headline or lead says so. ")
         system = (
             f"You write one-sentence news summaries for students learning about markets. "
             f"Write in {_LANG_NAME[lang]} only, {_LIMIT[lang]}. {focus}"
-            "Use only facts in the headline and lead; do not add numbers, names or opinions that are not there, "
+            "Use only facts in the headline and lead; do not add numbers, names, opinions or guesses about "
+            "consequences that are not there, "
             "and never give investment advice. Use your own words, do not copy phrases from the source. "
             "Output the sentence only, with no prefix or quotation marks."
         )
