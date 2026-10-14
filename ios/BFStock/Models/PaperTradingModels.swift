@@ -84,6 +84,7 @@ struct PaperAnalytics: Decodable {
 
 struct PaperSession: Decodable {
     let open: Bool
+    let holiday: Bool?          // a weekday the exchange is closed for a holiday
 }
 
 struct PaperGame: Decodable, Identifiable, Equatable {

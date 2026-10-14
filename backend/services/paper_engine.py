@@ -15,14 +15,15 @@ Durations: "day" (expires at that trading day's close) or "gtc" (good until canc
 
 Short selling (US only): proceeds are credited to cash and 150% of the short value is set aside,
 so opening a short uses half of its value in buying power (a Reg T style initial margin).
-Holidays are not modelled: on an exchange holiday the last price simply does not move.
+Exchange holidays and half days follow each exchange's published calendar (HOLIDAYS / HALF_DAYS
+below); a year that is not listed yet trades every weekday.
 """
 from __future__ import annotations
 
 import math
 import secrets
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 from zoneinfo import ZoneInfo
 
@@ -46,6 +47,46 @@ SESSIONS = {
     "cn": ("Asia/Shanghai", [(570, 690), (780, 900)]),
     "hk": ("Asia/Hong_Kong", [(570, 720), (780, 960)]),
     "jp": ("Asia/Tokyo", [(540, 690), (750, 930)]),
+}
+
+# Weekday closures, from each exchange's own calendar. Refresh every year:
+#   us  NYSE holidays (nyse.com/markets/hours-calendars)
+#   cn  State Council holiday notice; matches the SSE/SZSE trading calendar (2027 not yet published)
+#   hk  Hong Kong general holidays (gov.hk/en/about/abouthk/holiday), which HKEX follows
+#   jp  JPX market holidays (jpx.co.jp/english/corporate/about-jpx/calendar)
+HOLIDAYS = {
+    "us": {
+        "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25", "2026-06-19", "2026-07-03",
+        "2026-09-07", "2026-11-26", "2026-12-25",
+        "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26", "2027-05-31", "2027-06-18", "2027-07-05",
+        "2027-09-06", "2027-11-25", "2027-12-24",
+    },
+    "cn": {
+        "2026-01-01", "2026-01-02", "2026-02-16", "2026-02-17", "2026-02-18", "2026-02-19", "2026-02-20",
+        "2026-02-23", "2026-04-06", "2026-05-01", "2026-05-04", "2026-05-05", "2026-06-19", "2026-09-25",
+        "2026-10-01", "2026-10-02", "2026-10-05", "2026-10-06", "2026-10-07",
+    },
+    "hk": {
+        "2026-01-01", "2026-02-17", "2026-02-18", "2026-02-19", "2026-04-03", "2026-04-06", "2026-04-07",
+        "2026-05-01", "2026-05-25", "2026-06-19", "2026-07-01", "2026-10-01", "2026-10-19", "2026-12-25",
+        "2027-01-01", "2027-02-08", "2027-02-09", "2027-03-26", "2027-03-29", "2027-04-05", "2027-05-13",
+        "2027-06-09", "2027-07-01", "2027-09-16", "2027-10-01", "2027-10-08", "2027-12-27",
+    },
+    "jp": {
+        "2026-01-01", "2026-01-02", "2026-01-12", "2026-02-11", "2026-02-23", "2026-03-20", "2026-04-29",
+        "2026-05-04", "2026-05-05", "2026-05-06", "2026-07-20", "2026-08-11", "2026-09-21", "2026-09-22",
+        "2026-09-23", "2026-10-12", "2026-11-03", "2026-11-23", "2026-12-31",
+        "2027-01-01", "2027-01-11", "2027-02-11", "2027-02-23", "2027-03-22", "2027-04-29", "2027-05-03",
+        "2027-05-04", "2027-05-05", "2027-07-19", "2027-08-11", "2027-09-20", "2027-09-23", "2027-10-11",
+        "2027-11-03", "2027-11-23", "2027-12-31",
+    },
+}
+# Early closes (local minutes): NYSE 1:00 p.m.; HKEX morning only on the eves of Christmas,
+# New Year and Lunar New Year
+HALF_DAYS = {
+    "us": {"2026-11-27": 780, "2026-12-24": 780, "2027-11-26": 780},
+    "hk": {"2026-02-16": 720, "2026-12-24": 720, "2026-12-31": 720,
+           "2027-02-05": 720, "2027-12-24": 720, "2027-12-31": 720},
 }
 
 
@@ -80,12 +121,47 @@ def _local(market: str, now: Optional[datetime] = None) -> datetime:
     return (now or datetime.now(timezone.utc)).astimezone(ZoneInfo(SESSIONS[market][0]))
 
 
+def sessions_on(market: str, day: date) -> list:
+    """That local day's trading sessions as (start, end) minutes; [] on weekends and holidays."""
+    key = day.isoformat()
+    if day.weekday() >= 5 or key in HOLIDAYS[market]:
+        return []
+    half = HALF_DAYS.get(market, {}).get(key)
+    if half is None:
+        return list(SESSIONS[market][1])
+    return [(a, min(b, half)) for a, b in SESSIONS[market][1] if a < half]
+
+
 def is_open(market: str, now: Optional[datetime] = None) -> bool:
     t = _local(market, now)
-    if t.weekday() >= 5:
-        return False
     m = t.hour * 60 + t.minute
-    return any(a <= m < b for a, b in SESSIONS[market][1])
+    return any(a <= m < b for a, b in sessions_on(market, t.date()))
+
+
+def is_holiday(market: str, now: Optional[datetime] = None) -> bool:
+    t = _local(market, now)
+    return t.weekday() < 5 and t.date().isoformat() in HOLIDAYS[market]
+
+
+def in_trading_day(market: str, now: Optional[datetime] = None) -> bool:
+    """Between today's open and close (lunch break included): today's quote describes today."""
+    t = _local(market, now)
+    ss = sessions_on(market, t.date())
+    m = t.hour * 60 + t.minute
+    return bool(ss) and ss[0][0] <= m < ss[-1][1]
+
+
+def check_price_band(market: str, q: dict, prices: list, now: Optional[datetime] = None) -> None:
+    """A-shares: order prices must sit inside the day's limit-up / limit-down band, as on the exchange.
+    Only checked during the trading day; outside it the feed still shows the previous day's band."""
+    if market != "cn" or not in_trading_day(market, now):
+        return
+    up, down = q.get("limit_up"), q.get("limit_down")
+    if not up or not down:
+        return
+    for p in prices:
+        if p and not (down - 1e-9 <= p <= up + 1e-9):
+            raise HTTPException(400, f"Price outside today's limit band ¥{down:,.2f}–¥{up:,.2f}")
 
 
 def _at(day: datetime, minutes: int) -> datetime:
@@ -94,11 +170,9 @@ def _at(day: datetime, minutes: int) -> datetime:
 
 def next_open(market: str, now: Optional[datetime] = None) -> datetime:
     t = _local(market, now)
-    for d in range(0, 9):
+    for d in range(0, 21):          # long enough for Golden Week and Lunar New Year
         day = t + timedelta(days=d)
-        if day.weekday() >= 5:
-            continue
-        for a, _ in SESSIONS[market][1]:
+        for a, _ in sessions_on(market, day.date()):
             start = _at(day, a)
             if start > t:
                 return start
@@ -109,10 +183,11 @@ def day_close(market: str, now: Optional[datetime] = None) -> datetime:
     """End of the trading day an order placed now belongs to (today if a session is still ahead
     or running, else the next trading day)."""
     t = _local(market, now)
-    last = SESSIONS[market][1][-1][1]
-    if t.weekday() < 5 and t.hour * 60 + t.minute < last:
-        return _at(t, last)
-    return _at(next_open(market, now), last)
+    today = sessions_on(market, t.date())
+    if today and t.hour * 60 + t.minute < today[-1][1]:
+        return _at(t, today[-1][1])
+    nxt = next_open(market, now)
+    return _at(nxt, sessions_on(market, nxt.date())[-1][1])
 
 
 def session(market: str) -> dict:
@@ -120,6 +195,7 @@ def session(market: str) -> dict:
     open_ = is_open(market)
     return {
         "market": market, "open": open_, "local_time": t.strftime("%H:%M"), "tz": SESSIONS[market][0],
+        "holiday": is_holiday(market),
         "next_open": None if open_ else next_open(market).isoformat(),
         "closes_at": day_close(market).isoformat() if open_ else None,
     }
@@ -168,7 +244,8 @@ def _fetch(market: str, symbols: list) -> dict:
             from services.stock_service import tencent_quotes
             for s, q in tencent_quotes(symbols, timeout=5).items():
                 if q.get("price"):
-                    out[s] = {"price": float(q["price"]), "prev_close": q.get("prev_close"), "name": q.get("name") or s, "lot": 100}
+                    out[s] = {"price": float(q["price"]), "prev_close": q.get("prev_close"), "name": q.get("name") or s, "lot": 100,
+                              "limit_up": q.get("limit_up"), "limit_down": q.get("limit_down")}
         else:
             from routers.global_stocks import tencent_quotes as intl_quotes, _find, _display_name
             for s, q in intl_quotes(market, symbols, timeout=5).items():

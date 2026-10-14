@@ -171,6 +171,7 @@ _ERR_ZH = [
     (r"^T\+1: shares bought today can be sold tomorrow$", "T+1 限制：今日买入的股票明日才可卖出"),
     (r"^Shares must be a multiple of the board lot \((\d+)\)$", r"股数必须是每手 \1 股的整数倍"),
     (r"^Shares must be a positive integer$", "股数必须是正整数"),
+    (r"^Price outside today's limit band (.+)–(.+)$", r"委托价格超出今日涨跌停范围（\1–\2）"),
     (r"^Cannot fetch a price for (.+)\. Try again later\.$", r"无法获取 \1 的实时价格，请稍后重试"),
     (r"^Short selling is not available for this portfolio$", "这个账户不支持卖空"),
     (r"^You are not short (\d+) shares of (.+)$", r"没有足够的 \2 空头仓位（\1 股）可平仓"),
@@ -377,7 +378,8 @@ def _game_public(g: dict, device_id: str = "") -> dict:
     }
 
 
-def _game_leaderboard(g: dict, device_id: str = "") -> list[dict]:
+def _game_standings(g: dict) -> tuple[list, dict]:
+    """Live standings: (rows with device ids, prices used)."""
     rows = []
     for d, meta in g.get("members", {}).items():
         a = _load_account(d)
@@ -389,13 +391,36 @@ def _game_leaderboard(g: dict, device_id: str = "") -> list[dict]:
     out = []
     for d, meta, b in rows:
         v = b.value(prices)
-        out.append({"nickname": meta.get("nickname") or "?", "total_value": round(v, 2),
-                    "return_pct": round((v - b.initial) / b.initial * 100, 2), "trades": len(b.transactions),
-                    "is_me": d == device_id})
+        out.append({"device": d, "nickname": meta.get("nickname") or "?", "total_value": round(v, 2),
+                    "return_pct": round((v - b.initial) / b.initial * 100, 2), "trades": len(b.transactions)})
     out.sort(key=lambda r: r["total_value"], reverse=True)
-    for i, r in enumerate(out, 1):
-        r["rank"] = i
+    return out, prices
+
+
+def _game_leaderboard(g: dict, device_id: str = "") -> list[dict]:
+    """Standings; once a competition is over they are the ones frozen when it ended."""
+    rows = (g.get("final") or {}).get("standings")
+    if rows is None:
+        rows, _ = _game_standings(g)
+    out = []
+    for i, r in enumerate(rows, 1):
+        out.append({k: v for k, v in r.items() if k != "device"} | {"rank": i, "is_me": r["device"] == device_id})
     return out
+
+
+def _finalize_games() -> None:
+    """Freeze the standings and prices of competitions that have just ended."""
+    for g in _all_games():
+        if g.get("final") or _game_status(g) != "ended":
+            continue
+        with _games_lock:
+            g = _load_game(g["id"])
+            if not g or g.get("final"):
+                continue
+            rows, prices = _game_standings(g)
+            g["final"] = {"at": datetime.now(timezone.utc).isoformat(), "standings": rows, "prices": prices}
+            _write_json(_game_path(g["id"]), g)
+            logger.info("competition %s ended; %d standings frozen", g["id"], len(rows))
 
 
 def _clean_nick(n: Optional[str]) -> Optional[str]:
@@ -625,6 +650,7 @@ def place_order(body: OrderBody):
             o["watermark"] = q["price"]
             pct = o["trail_pct"] / 100
             o["stop_price"] = round(q["price"] * (1 - pct if side == "sell" else 1 + pct), 4)
+        E.check_price_band(market, q, [o.get("limit_price"), o.get("stop_price") if otype != "trailing_stop" else None])
         expires = E.day_close(market) if tif == "day" else now + timedelta(days=E.GTC_DAYS)
         if game:
             expires = min(expires, datetime.fromisoformat(game["end_date"] + "T23:59:00+08:00"))
@@ -806,7 +832,10 @@ def game_account(body: GameIdBody):
         if not account:
             raise HTTPException(404, "Competition not found")
         book = _game_book(account, g)
-        v = E.book_view(book, E.quotes(g["market"], sorted(book.symbols())), E.beijing_today())
+        final = g.get("final")
+        # A finished competition is valued at the prices frozen when it ended
+        q = {s: {"price": p} for s, p in final["prices"].items()} if final else E.quotes(g["market"], sorted(book.symbols()))
+        v = E.book_view(book, q, E.beijing_today())
     board = _game_leaderboard(g, body.device_id)
     me = next((r for r in board if r["is_me"]), None)
     v["rank"] = me["rank"] if me else -1
@@ -941,6 +970,10 @@ def _matcher_loop():
             _match_once()
         except Exception as e:
             logger.warning("order matcher: %s", e)
+        try:
+            _finalize_games()
+        except Exception as e:
+            logger.warning("competition finalize: %s", e)
         time.sleep(20)
 
 

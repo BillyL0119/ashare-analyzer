@@ -231,7 +231,7 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
           )}
           {type !== 'market' && <Segment full value={tif} onChange={setTif} options={[{ value: 'day', label: t('当日有效') }, { value: 'gtc', label: t('撤单前有效') }]} />}
           <div className="m-muted" style={{ fontSize: 12.5, lineHeight: 1.5 }}>{t(TYPE_HELP[type])}{side === 'short' ? ' ' + t('卖空是先借股票卖出，以后再买回来还。股价下跌就赚钱，上涨就亏钱，亏损没有上限。需要占用一半金额的保证金。') : ''}</div>
-          {closed && type === 'market' && <div style={{ fontSize: 12.5, color: '#F28B3C' }}>{t('休市中：市价单会在开盘后按开盘附近的价格成交。')}</div>}
+          {closed && type === 'market' && <div style={{ fontSize: 12.5, color: '#F28B3C' }}>{view.session.holiday ? t('今天是交易所假日，休市。市价单会在下一个交易日开盘后成交。') : t('休市中：市价单会在开盘后按开盘附近的价格成交。')}</div>}
         </div>
 
         <div className="m-card" style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
@@ -582,7 +582,7 @@ export default function Paper() {
 
       {game && gameAcc?.leaderboard && (
         <div id="pt-standings">
-          <Section title={t('比赛排名')}>
+          <Section title={ended ? t('最终排名') : t('比赛排名')}>
             <div className="m-card flush">
               {gameAcc.leaderboard.map((r, i) => (
                 <div className="m-row" key={i} style={r.is_me ? { background: 'color-mix(in srgb, var(--accent) 12%, transparent)' } : undefined}>

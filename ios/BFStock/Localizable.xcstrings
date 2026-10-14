@@ -2904,6 +2904,35 @@
         }
       }
     },
+    "今天是交易所假日，休市。市价单会在下一个交易日开盘后成交。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today is an exchange holiday. Market orders fill after the next trading day's open."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La bourse est fermée aujourd'hui (jour férié). Les ordres au marché seront exécutés après l'ouverture du prochain jour de bourse."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本日は休場日です。成行注文は次の営業日の寄り付き後に約定します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오늘은 거래소 휴장일입니다. 시장가 주문은 다음 거래일 개장 후 체결됩니다."
+          }
+        }
+      }
+    },
     "今开": {
       "extractionState": "manual",
       "localizations": {
@@ -3393,6 +3422,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "닉네임"
+          }
+        }
+      }
+    },
+    "假日休市": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exchange holiday"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jour férié en bourse"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "休場日"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "휴장일"
           }
         }
       }
@@ -9135,6 +9193,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "주요 이직처"
+          }
+        }
+      }
+    },
+    "最终排名": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final standings"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classement final"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最終順位"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최종 순위"
           }
         }
       }

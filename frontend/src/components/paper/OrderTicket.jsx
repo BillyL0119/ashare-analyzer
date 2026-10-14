@@ -5,7 +5,7 @@ import { BDR, MUTED, UP, DOWN, ACCENT, Card, Seg, Field, inputStyle, Button, fmt
 
 const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#6366f1' }
 const PH = { us: 'AAPL / Apple', cn: '600519 / 茅台', hk: '00700 / 腾讯', jp: '7203 / Toyota' }
-const CODE_OK = { us: /^[A-Z0-9.\-]{1,10}$/i, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }
+const CODE_OK = { us: /^[A-Z0-9.-]{1,10}$/i, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }
 
 function useQuote(symbol, market) {
   const [q, setQ] = useState(null)
@@ -124,7 +124,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         {sess && (
           <span title={s.hoursNote} style={{ fontSize: 11.5, fontWeight: 650, color: sess.open ? UP : MUTED, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 7, height: 7, borderRadius: 4, background: sess.open ? UP : 'var(--text-muted)' }} />
-            {sess.open ? s.open : s.closed}
+            {sess.open ? s.open : sess.holiday ? s.holiday : s.closed}
             <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>· {sess.open ? s.closesAt(fmtTime(sess.closes_at, lang)) : s.opensAt(fmtTime(sess.next_open, lang))}</span>
           </span>
         )}

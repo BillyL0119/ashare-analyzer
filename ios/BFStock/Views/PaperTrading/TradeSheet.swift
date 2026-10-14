@@ -454,7 +454,8 @@ struct TradeSheet: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             if view?.session?.open == false && kind == .market {
-                Text(L("休市中：市价单会在开盘后按开盘附近的价格成交。"))
+                Text(view?.session?.holiday == true ? L("今天是交易所假日，休市。市价单会在下一个交易日开盘后成交。")
+                                                    : L("休市中：市价单会在开盘后按开盘附近的价格成交。"))
                     .font(.caption)
                     .foregroundStyle(OrderSide.sell.tint)
                     .fixedSize(horizontal: false, vertical: true)

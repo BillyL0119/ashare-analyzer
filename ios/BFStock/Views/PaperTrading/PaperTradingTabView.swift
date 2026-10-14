@@ -218,7 +218,7 @@ struct PaperTradingTabView: View {
 
     private func standings(_ board: [GameStanding]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader(L("比赛排名"))
+            SectionHeader(L(ended ? "最终排名" : "比赛排名"))
             VStack(spacing: 0) {
                 ForEach(Array(board.enumerated()), id: \.offset) { i, r in
                     HStack(spacing: 12) {

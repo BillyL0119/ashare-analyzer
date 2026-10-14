@@ -6,7 +6,7 @@ import { MUTED, DOWN, Modal, Field, inputStyle, Button, Seg } from './ui'
 const CASH = { us: [10_000, 100_000, 1_000_000], cn: [100_000, 1_000_000, 10_000_000], hk: [100_000, 1_000_000, 10_000_000], jp: [1_000_000, 10_000_000, 100_000_000] }
 const isoIn = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10) }
 
-export default function GamesModal({ s, lang, accountKey, nickname, marketLabels, onClose, onJoined }) {
+export default function GamesModal({ s, accountKey, nickname, marketLabels, onClose, onJoined }) {
   const g = s.game
   const [mode, setMode] = useState('join')
   const [code, setCode] = useState('')

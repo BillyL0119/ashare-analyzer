@@ -39,22 +39,25 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const accountKey = user?.id ?? getDeviceId()
 
   // /paper?buy=AAPL&market=us (a stock page's "Paper trade" button) opens with the order filled in
-  const prefillUrl = useRef((() => {
+  const [prefillUrl] = useState(() => {
     try {
       const q = new URLSearchParams(window.location.search)
       const sym = (q.get('buy') || '').trim().toUpperCase()
-      if (q.has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)
       const m = MARKETS.includes(q.get('market')) ? q.get('market') : 'us'
       return /^[A-Z0-9.]{1,10}$/.test(sym) ? { symbol: sym, market: m, side: 'buy' } : null
     } catch { return null }
-  })())
+  })
+  // A reload should not reopen the order
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has('buy')) window.history.replaceState(window.history.state, '', window.location.pathname)
+  }, [])
 
   const [account, setAccount] = useState(null)
   const [gameView, setGameView] = useState(null)
   const [err, setErr] = useState(null)
-  const [active, setActive] = useState(prefillUrl.current?.market || 'us')     // 'us' | 'cn' | 'hk' | 'jp' | 'g:<id>'
+  const [active, setActive] = useState(prefillUrl?.market || 'us')     // 'us' | 'cn' | 'hk' | 'jp' | 'g:<id>'
   const [tab, setTab] = useState('positions')
-  const [prefill, setPrefill] = useState(prefillUrl.current)
+  const [prefill, setPrefill] = useState(prefillUrl)
   const [board, setBoard] = useState(null)
   const [toast, setToast] = useState(null)
   const [modal, setModal] = useState(null)         // 'games' | 'reset' | 'nick'
@@ -100,7 +103,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
     { value: 'positions', label: s.tabs.positions },
     { value: 'orders', label: `${s.tabs.orders}${openOrders ? ` · ${openOrders}` : ''}` },
     { value: 'history', label: s.tabs.history },
-    { value: 'leaderboard', label: s.tabs.leaderboard },
+    { value: 'leaderboard', label: game?.status === 'ended' ? s.finalStandings : s.tabs.leaderboard },
   ]
   const portfolioOptions = [
     ...MARKETS.map((m) => ({ value: m, label: s.markets[m] })),
@@ -203,7 +206,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       </div>
 
       {modal === 'games' && (
-        <GamesModal s={s} lang={lang} accountKey={accountKey} nickname={account.nickname} marketLabels={{ us: 'US', cn: 'A', hk: 'HK', jp: 'JP' }}
+        <GamesModal s={s} accountKey={accountKey} nickname={account.nickname} marketLabels={{ us: 'US', cn: 'A', hk: 'HK', jp: 'JP' }}
           onClose={() => setModal(null)} onJoined={(g) => { setModal(null); setActive(`g:${g.id}`); setGameView(null); load() }} />
       )}
       {modal === 'reset' && (

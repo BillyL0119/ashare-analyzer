@@ -2707,6 +2707,24 @@ export const STR = {
   "시장",
   "Marché"
  ],
+ "最终排名": [
+  "Final standings",
+  "最終順位",
+  "최종 순위",
+  "Classement final"
+ ],
+ "假日休市": [
+  "Exchange holiday",
+  "休場日",
+  "휴장일",
+  "Jour férié en bourse"
+ ],
+ "今天是交易所假日，休市。市价单会在下一个交易日开盘后成交。": [
+  "Today is an exchange holiday. Market orders fill after the next trading day's open.",
+  "本日は休場日です。成行注文は次の営業日の寄り付き後に約定します。",
+  "오늘은 거래소 휴장일입니다. 시장가 주문은 다음 거래일 개장 후 체결됩니다.",
+  "La bourse est fermée aujourd'hui (jour férié). Les ordres au marché seront exécutés après l'ouverture du prochain jour de bourse."
+ ],
  "刚刚": [
   "Just now",
   "たった今",
