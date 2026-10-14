@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import AiGist from './AiGist'
+import { AI_NOTE } from '../utils/aiGist'
 import { getDailyMarketNews } from '../api/stockApi'
 import { T } from '../i18n/translations'
 import { sourceName } from '../utils/newsSources'
@@ -115,6 +117,7 @@ function NewsRow({ item, lang, first }) {
         }}>
           {item.title}
         </div>
+        <AiGist text={item.ai_summary} lang={lang} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{sourceName(item.source, lang)}</span>
           <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
@@ -158,28 +161,48 @@ export default function DailyNewsPage({ lang = 'zh' }) {
   const timerRef = useRef(null)
   const filtersRef = useRef({ cat: 'all', lang: langFilter })
 
-  const fetchNews = useCallback((cf = catFilter, lf = langFilter) => {
+  const uiRef = useRef(lang)
+  useEffect(() => { uiRef.current = lang }, [lang])   // before the effect that refetches on a new language
+  const pollRef = useRef({ timer: null, left: 0 })
+  const fetchRef = useRef(null)
+
+  // silent: a follow-up that only fills in AI 速读 still being written (keeps page and spinner)
+  const fetchNews = useCallback((cf = catFilter, lf = langFilter, silent = false) => {
     filtersRef.current = { cat: cf, lang: lf }
-    setLoading(true)
+    if (!silent) { setLoading(true); pollRef.current.left = 4 }
+    clearTimeout(pollRef.current.timer)
     getDailyMarketNews({
       lang:     lf !== 'all' ? lf : undefined,
       category: cf !== 'all' ? cf : undefined,
+      ui:       uiRef.current,
     })
       .then(res => {
         const data = res.data
         setItems(data.items || [])
         setUpdatedAt(data.updated_at)
-        setPage(1)
+        if (!silent) setPage(1)
+        if (data.ai_pending > 0 && pollRef.current.left-- > 0) {
+          pollRef.current.timer = setTimeout(() => fetchRef.current(cf, lf, true), 15000)
+        }
       })
       .catch(() => {})
-      .finally(() => setLoading(false))
+      .finally(() => { if (!silent) setLoading(false) })
   }, [])  // eslint-disable-line
+  useEffect(() => { fetchRef.current = fetchNews }, [fetchNews])
 
   useEffect(() => {
     fetchNews('all', langFilter)
     timerRef.current = setInterval(() => fetchNews(filtersRef.current.cat, filtersRef.current.lang), REFRESH_MS)
-    return () => clearInterval(timerRef.current)
+    const poll = pollRef.current
+    return () => { clearInterval(timerRef.current); clearTimeout(poll.timer) }
   }, [])  // eslint-disable-line
+
+  // A new site language needs AI 速读 in that language
+  const firstLang = useRef(true)
+  useEffect(() => {
+    if (firstLang.current) { firstLang.current = false; return }
+    fetchNews(filtersRef.current.cat, filtersRef.current.lang)
+  }, [lang])  // eslint-disable-line
 
   const setCategory = (cat) => {
     setCatFilter(cat)
@@ -206,7 +229,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             {t.dnSubtitle}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
-            {DISCLAIMER[lang] || DISCLAIMER.en}
+            {DISCLAIMER[lang] || DISCLAIMER.en} {AI_NOTE[lang] || AI_NOTE.en}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

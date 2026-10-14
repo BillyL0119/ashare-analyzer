@@ -18,6 +18,8 @@ import hashlib
 import os
 import threading
 import xml.etree.ElementTree as ET
+
+from services import news_gist
 from datetime import datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -646,10 +648,21 @@ def _deduplicate_news(items: list[dict]) -> list[dict]:
     return kept
 
 
+def _public(items: list, ui: Optional[str], bank: bool = False) -> tuple[list, int]:
+    """Copies for the client: AI 速读 in the reader's language attached, the source's own lead
+    removed (it is only the model's input; republishing it is what got summaries taken down)."""
+    out = [dict(i) for i in items]
+    pending = news_gist.attach(out, ui, bank=bank)
+    for i in out:
+        i.pop('summary', None)
+    return out, pending
+
+
 @router.get('/daily')
 def get_daily_market_news(
     lang:     Optional[str] = Query('all', description='all / cn / en'),
     category: Optional[str] = Query('all', description='all / market / macro / company / industry / breaking'),
+    ui:       Optional[str] = Query(None, description='reader language for AI 速读: zh / en / ja / ko / fr'),
 ):
     """
     Aggregate daily major market news from CLS flash, Sina Finance + RSS sources.
@@ -696,7 +709,8 @@ def get_daily_market_news(
     if category and category != 'all':
         items = [i for i in items if i.get('category') == category]
 
-    return {**payload, 'items': items, 'count': len(items)}
+    items, pending = _public(items, ui)
+    return {**payload, 'items': items, 'count': len(items), 'ai_pending': pending}
 
 
 # ── Bank views (investment bank opinion aggregator) ───────────────────────────
@@ -839,59 +853,6 @@ def _detect_bank_action(text: str) -> str:
 _bank_views_cache: dict = {}
 _BANK_VIEWS_TTL = 1200  # 20 min
 
-# ── DeepSeek AI one-liner summary for bank-view articles ──────────────────────
-_DEEPSEEK_KEY  = os.environ.get("DEEPSEEK_API_KEY", "")
-_bank_ai_cache: dict = {}        # md5(title) -> (ts, summary_str_or_None)
-_BANK_AI_TTL   = 86400 * 7      # 7 days — content doesn't change after scrape
-_bank_ai_sem   = threading.Semaphore(3)  # max 3 concurrent DeepSeek calls
-
-
-def _bank_ai_summary(title: str, summary: str, banks: list) -> str | None:
-    """
-    Generate a ≤25-char Chinese one-liner via DeepSeek.  Cached by title hash (7d).
-    Returns None on failure — callers must treat None gracefully.
-    """
-    if not _DEEPSEEK_KEY:
-        return None
-    key = hashlib.md5(title.encode("utf-8", errors="ignore")).hexdigest()
-    now = time.time()
-    cached = _bank_ai_cache.get(key)
-    if cached and now - cached[0] < _BANK_AI_TTL:
-        return cached[1]
-
-    bank_names = "、".join(banks[:3]) if banks else "投行"
-    text_input = f"标题：{title}\n摘要：{(summary or '')[:250]}"
-
-    with _bank_ai_sem:
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=_DEEPSEEK_KEY, base_url="https://api.deepseek.com")
-            resp = client.chat.completions.create(
-                model="deepseek-chat",
-                max_tokens=60,
-                temperature=0.3,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "你是金融速读助手。用一句话（15-25字，中文）概括以下投行观点报道，"
-                            f"重点说明{bank_names}的核心观点或动作及关键理由。"
-                            "不要照抄原文，用自己的话提炼。直接输出一句话，不加任何前缀或标点引号。"
-                        ),
-                    },
-                    {"role": "user", "content": text_input},
-                ],
-            )
-            result = resp.choices[0].message.content.strip().strip('"').strip("'")
-            _bank_ai_cache[key] = (now, result)
-            logger.info("Bank AI summary OK: %s", title[:50])
-            return result
-        except Exception as exc:
-            logger.warning("Bank AI summary failed for '%s': %s", title[:40], exc)
-            _bank_ai_cache[key] = (now, None)  # cache failure; won't retry until TTL
-            return None
-
-
 def _build_bank_views() -> None:
     """Fetch, filter and summarise bank-view articles into _bank_views_cache (slow: ~5s)."""
     now = time.time()
@@ -948,34 +909,6 @@ def _build_bank_views() -> None:
         len(ticker_items), len(pool_raw), len(pool_filtered), len(deduped),
     )
 
-    # ── Generate AI summaries for newly seen articles (max 8 per refresh) ──
-    if _DEEPSEEK_KEY:
-        uncached = [
-            it for it in deduped
-            if hashlib.md5(it['title'].encode('utf-8', errors='ignore')).hexdigest()
-            not in _bank_ai_cache
-        ][:8]
-        if uncached:
-            with ThreadPoolExecutor(max_workers=3) as ai_ex:
-                ai_futs = [
-                    ai_ex.submit(
-                        _bank_ai_summary,
-                        it['title'], it.get('summary', ''), it.get('banks', [])
-                    )
-                    for it in uncached
-                ]
-                for fa in as_completed(ai_futs):
-                    try:
-                        fa.result()
-                    except Exception:
-                        pass
-
-    # Attach cached AI summaries to all items
-    for it in deduped:
-        h = hashlib.md5(it['title'].encode('utf-8', errors='ignore')).hexdigest()
-        cached_ai = _bank_ai_cache.get(h)
-        it['ai_summary'] = cached_ai[1] if cached_ai else None
-
     payload = {
         'items':      deduped,
         'total':      len(deduped),
@@ -989,7 +922,7 @@ _bank_views_lock = threading.Lock()
 
 
 @router.get('/bank-views')
-def get_bank_views(bank: Optional[str] = Query('all')):
+def get_bank_views(bank: Optional[str] = Query('all'), ui: Optional[str] = Query(None)):
     """
     Aggregate investment bank view articles. Cached 20 min.
 
@@ -1020,7 +953,9 @@ def get_bank_views(bank: Optional[str] = Query('all')):
     if bank and bank != 'all':
         items = [i for i in items if bank in i.get('banks', [])]
 
-    return {**payload, 'items': items, 'count': len(items)}
+    # Older app builds send no language and showed the Chinese one-liner
+    items, pending = _public(items, ui or 'zh', bank=True)
+    return {**payload, 'items': items, 'count': len(items), 'ai_pending': pending}
 
 
 # ── Route ─────────────────────────────────────────────────────────────────────

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { getBankViews } from '../api/stockApi'
+import AiGist from './AiGist'
+import { AI_NOTE } from '../utils/aiGist'
 import { T } from '../i18n/translations'
 import { relativeTime } from '../utils/time'
 
@@ -82,13 +84,9 @@ function Pill({ active, color, onClick, children }) {
   )
 }
 
-const hasCJK = (text) => /[\u4e00-\u9fff]/.test(text || '')
-
 function ViewRow({ item, t, lang, first }) {
   const isLink = item.url && item.url.startsWith('http')
-  // ai_summary is a Chinese one-liner: useful to Chinese readers of English headlines only.
-  const gist = lang === 'zh' && item.ai_summary && item.ai_summary !== item.title && !hasCJK(item.title)
-    ? item.ai_summary : null
+
   return (
     <a
       href={isLink ? item.url : undefined}
@@ -112,12 +110,7 @@ function ViewRow({ item, t, lang, first }) {
         }}>
           {item.title}
         </div>
-        {gist && (
-          <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5, marginTop: 3 }}>
-            <span style={{ color: '#0ea5e9', fontWeight: 600, marginRight: 6 }}>AI 速读</span>
-            {gist}
-          </div>
-        )}
+        <AiGist text={item.ai_summary} lang={lang} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
           <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>
             {t.bvSource}{item.source}
@@ -162,10 +155,17 @@ export default function BankViewsPage({ lang = 'zh' }) {
   const timerRef = useRef(null)
   const bankRef = useRef('all')
 
-  const fetchData = useCallback((bf = bankFilter) => {
+  const uiRef = useRef(lang)
+  useEffect(() => { uiRef.current = lang }, [lang])   // before the effect that refetches on a new language
+  const pollRef = useRef({ timer: null, left: 0 })
+  const fetchRef = useRef(null)
+
+  // silent: a follow-up that only fills in AI 速读 still being written
+  const fetchData = useCallback((bf = bankFilter, silent = false) => {
     bankRef.current = bf
-    setLoading(true)
-    const params = {}
+    if (!silent) { setLoading(true); pollRef.current.left = 4 }
+    clearTimeout(pollRef.current.timer)
+    const params = { ui: uiRef.current }
     if (bf !== 'all') params.bank = bf
     getBankViews(params)
       .then(res => {
@@ -173,16 +173,27 @@ export default function BankViewsPage({ lang = 'zh' }) {
         setItems(data.items || [])
         setUpdatedAt(data.updated_at)
         setAllBanks(data.banks || [])
-        setPage(1)
+        if (!silent) setPage(1)
+        if (data.ai_pending > 0 && pollRef.current.left-- > 0) {
+          pollRef.current.timer = setTimeout(() => fetchRef.current(bf, true), 15000)
+        }
       })
       .catch(() => {})
-      .finally(() => setLoading(false))
+      .finally(() => { if (!silent) setLoading(false) })
   }, []) // eslint-disable-line
+  useEffect(() => { fetchRef.current = fetchData }, [fetchData])
+
+  const firstLang = useRef(true)
+  useEffect(() => {
+    if (firstLang.current) { firstLang.current = false; return }
+    fetchData(bankRef.current)
+  }, [lang]) // eslint-disable-line
 
   useEffect(() => {
     fetchData('all')
     timerRef.current = setInterval(() => fetchData(bankRef.current), REFRESH_MS)
-    return () => clearInterval(timerRef.current)
+    const poll = pollRef.current
+    return () => { clearInterval(timerRef.current); clearTimeout(poll.timer) }
   }, []) // eslint-disable-line
 
   const selectBank = (b) => {
@@ -217,7 +228,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
             {t.bvNote}
           </p>
           <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
-            {DISCLAIMER[lang] || DISCLAIMER.en}
+            {DISCLAIMER[lang] || DISCLAIMER.en} {AI_NOTE[lang] || AI_NOTE.en}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>

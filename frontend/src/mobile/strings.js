@@ -2725,6 +2725,18 @@ export const STR = {
   "오늘은 거래소 휴장일입니다. 시장가 주문은 다음 거래일 개장 후 체결됩니다.",
   "La bourse est fermée aujourd'hui (jour férié). Les ordres au marché seront exécutés après l'ouverture du prochain jour de bourse."
  ],
+ "AI 速读": [
+  "AI summary",
+  "AI要約",
+  "AI 요약",
+  "Résumé IA"
+ ],
+ "AI 速读由 AI 根据标题和导语生成，可能有误，请以原文为准。": [
+  "AI summaries are written by AI from the headline and lead and can be wrong. Check the original article.",
+  "AI要約は見出しとリード文からAIが作成したもので、誤りを含む場合があります。元記事をご確認ください。",
+  "AI 요약은 제목과 리드를 바탕으로 AI가 작성하며 틀릴 수 있습니다. 원문을 확인하세요.",
+  "Les résumés IA sont rédigés par une IA à partir du titre et du chapeau et peuvent contenir des erreurs. Vérifiez l'article d'origine."
+ ],
  "刚刚": [
   "Just now",
   "たった今",

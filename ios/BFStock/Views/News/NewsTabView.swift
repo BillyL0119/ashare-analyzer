@@ -52,7 +52,9 @@ struct NewsTabView: View {
                 }
                 .card(padding: 0)
                 .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                Text(L("AI 速读由 AI 根据标题和导语生成，可能有误，请以原文为准。"))
+                    .font(.caption2).foregroundStyle(.tertiary).multilineTextAlignment(.center)
+                    .padding(.horizontal, 24).padding(.top, 10).padding(.bottom, 24)
             }
         }
     }
@@ -98,12 +100,6 @@ private struct NewsFeedRow: View {
         return f.localizedString(for: d, relativeTo: Date())
     }
 
-    private var summary: String? {
-        let t = (item.summary ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !t.isEmpty, t != item.title, !t.hasPrefix(item.title) else { return nil }
-        return t
-    }
-
     private static let palette: [Color] = [
         Color(r: 0x3B, g: 0x82, b: 0xF6), Color(r: 0xF5, g: 0x9E, b: 0x0B), Color(r: 0x10, g: 0xB9, b: 0x81),
         Color(r: 0xEC, g: 0x48, b: 0x99), Color(r: 0x8B, g: 0x5C, b: 0xF6), Color(r: 0xEF, g: 0x44, b: 0x44),
@@ -129,10 +125,9 @@ private struct NewsFeedRow: View {
                 }
                 Text(item.title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
                     .multilineTextAlignment(.leading).lineLimit(3)
-                if isBank, Lang.code == "zh", let ai = item.aiSummary, !ai.isEmpty {
-                    Text(ai).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.leading).lineLimit(2)
-                } else if !isBank, let sum = summary {
-                    Text(sum).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.leading).lineLimit(2)
+                if let ai = item.aiSummary, !ai.isEmpty {
+                    (Text(L("AI 速读") + "  ").foregroundStyle(DS.accent).fontWeight(.semibold) + Text(ai).foregroundStyle(.secondary))
+                        .font(.caption).multilineTextAlignment(.leading).lineLimit(3)
                 }
                 HStack(spacing: 6) {
                     Text(item.source).font(.caption2.weight(.semibold))

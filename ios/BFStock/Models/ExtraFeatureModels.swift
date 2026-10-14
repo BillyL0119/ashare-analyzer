@@ -45,15 +45,17 @@ struct NewsFeedItem: Decodable, Identifiable {
     let url: String
     let lang: String?
     let category: String?
+    /// "AI 速读": one sentence written by AI in the reader's language
+    let aiSummary: String?
     // bank views only
     let banks: [String]?
     let banksZh: [String]?
     let actionType: String?
-    let aiSummary: String?
 }
 
 struct NewsFeedResponse: Decodable {
     let items: [NewsFeedItem]
+    let aiPending: Int?
 }
 
 // MARK: - Daily knowledge (/knowledge/today)

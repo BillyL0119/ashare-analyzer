@@ -32,12 +32,23 @@ final class NewsFeedViewModel: ObservableObject {
 
     func load(_ feed: Feed, force: Bool = false) async {
         if !force, items[feed] != nil { return }
-        if items[feed] == nil, let c: NewsFeedResponse = APIClient.shared.cached(feed.rawValue) { items[feed] = c.items }
+        let params = ["ui": Lang.code]            // AI 速读 in the reader's language
+        if items[feed] == nil, let c: NewsFeedResponse = APIClient.shared.cached(feed.rawValue, params: params) { items[feed] = c.items }
         loading.insert(feed.rawValue)
         error = nil
         do {
-            let r: NewsFeedResponse = try await APIClient.shared.get(feed.rawValue, persist: true)
+            let r: NewsFeedResponse = try await APIClient.shared.get(feed.rawValue, params: params, persist: true)
             items[feed] = r.items
+            // Summaries still being written arrive within a minute: look again a few times
+            var pending = r.aiPending ?? 0
+            var tries = 0
+            while pending > 0, tries < 4, !Task.isCancelled {
+                tries += 1
+                try? await Task.sleep(nanoseconds: 15_000_000_000)
+                guard let again: NewsFeedResponse = try? await APIClient.shared.get(feed.rawValue, params: params, persist: true) else { break }
+                items[feed] = again.items
+                pending = again.aiPending ?? 0
+            }
         } catch {
             if items[feed] == nil { self.error = error.localizedDescription }
         }
