@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { tx, txEn, txf, lang as curLang } from './uniI18n'
+import { newDeviceId } from '../utils/deviceId'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -1039,7 +1040,7 @@ const IV_LANG_NAMES = [['zh', '中文'], ['en', 'English'], ['ja', '日本語'],
 
 const DEVICE_ID = (() => {
   let id = localStorage.getItem('bfs_did')
-  if (!id) { id = Math.random().toString(36).slice(2); localStorage.setItem('bfs_did', id) }
+  if (!id) { id = newDeviceId(); localStorage.setItem('bfs_did', id) }
   return id
 })()
 

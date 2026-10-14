@@ -3,6 +3,7 @@ import useLangStore from '../../store/langStore'
 import { useT } from '../i18n'
 import { Icon } from '../icons'
 import Markdown from '../Markdown'
+import { newDeviceId } from '../../utils/deviceId'
 
 const SHORTCUTS = ['什么是标普500', 'ETF是什么', '如何看财报季', '什么是做空', 'PE比率怎么看', '什么是止损']
 // stroke icons (24px grid), one per shortcut
@@ -17,7 +18,7 @@ const SHORTCUT_ICONS = [
 
 function deviceId() {
   let id = localStorage.getItem('bfs_device_id')
-  if (!id) { id = Math.random().toString(36).slice(2, 11) + Date.now(); localStorage.setItem('bfs_device_id', id) }
+  if (!id) { id = newDeviceId(); localStorage.setItem('bfs_device_id', id) }
   return id
 }
 

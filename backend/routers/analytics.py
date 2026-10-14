@@ -7,7 +7,7 @@ Data persisted to backend/data/analytics.json with an advisory file lock
 """
 
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime, timezone, timedelta
 import os
 import json
@@ -121,10 +121,19 @@ def _locked_update(fn) -> None:
 # ── Pydantic models ──────────────────────────────────────────────────────────
 
 class VisitBody(BaseModel):
-    device_id: str
-    page: str = "home"
-    ui: str = ""          # "mobile" | "desktop" (optional, older clients omit it)
-    source: str = ""      # traffic source category, e.g. "instagram", "google", "direct"
+    device_id: str = Field(max_length=64)
+    page: str = Field("home", max_length=40)
+    ui: str = Field("", max_length=16)       # "mobile" | "desktop" (optional, older clients omit it)
+    source: str = Field("", max_length=64)   # traffic source category, e.g. "instagram", "google", "direct"
+
+
+# Anyone can post here, so every stored list or key set is bounded
+_DEVICE_RE = re.compile(r"[A-Za-z0-9_-]{6,64}")
+_MAX_DEVICES = 200_000
+_SYMBOL_RE = re.compile(r"[A-Za-z0-9.\-]{1,12}")
+_MAX_SYMBOLS = 5000
+_FEATURE_RE = re.compile(r"[a-z0-9_]{1,40}")
+_MAX_FEATURES = 200
 
 
 _SOURCE_RE = re.compile(r"^[a-z0-9][a-z0-9_.-]{0,23}$")
@@ -144,10 +153,10 @@ def _clean_source(raw: str, known: dict) -> str:
     return src
 
 class TrackBody(BaseModel):
-    device_id: str
-    event: str            # "search" | "feature"
-    symbol: str = ""
-    feature: str = ""
+    device_id: str = Field(max_length=64)
+    event: str = Field(max_length=16)          # "search" | "feature"
+    symbol: str = Field("", max_length=24)
+    feature: str = Field("", max_length=40)
 
 
 # ── Endpoints ────────────────────────────────────────────────────────────────
@@ -160,7 +169,7 @@ def record_visit(body: VisitBody):
         data["total_visits"] = data.get("total_visits", 0) + 1
 
         devices = data.setdefault("devices", [])
-        if body.device_id not in devices:
+        if _DEVICE_RE.fullmatch(body.device_id) and len(devices) < _MAX_DEVICES and body.device_id not in devices:
             devices.append(body.device_id)
             data["unique_devices"] = data.get("unique_devices", 0) + 1
 
@@ -198,12 +207,14 @@ def record_visit(body: VisitBody):
 @router.post("/track")
 def record_track(body: TrackBody):
     def mutate(data: dict):
-        if body.event == "search" and body.symbol:
+        if body.event == "search" and body.symbol and _SYMBOL_RE.fullmatch(body.symbol):
             searches = data.setdefault("stock_searches", {})
-            searches[body.symbol] = searches.get(body.symbol, 0) + 1
-        elif body.event == "feature" and body.feature:
+            if body.symbol in searches or len(searches) < _MAX_SYMBOLS:
+                searches[body.symbol] = searches.get(body.symbol, 0) + 1
+        elif body.event == "feature" and body.feature and _FEATURE_RE.fullmatch(body.feature):
             usage = data.setdefault("feature_usage", {})
-            usage[body.feature] = usage.get(body.feature, 0) + 1
+            if body.feature in usage or len(usage) < _MAX_FEATURES:
+                usage[body.feature] = usage.get(body.feature, 0) + 1
 
     try:
         _locked_update(mutate)

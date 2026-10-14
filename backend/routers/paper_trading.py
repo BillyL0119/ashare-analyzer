@@ -19,15 +19,17 @@ import os
 import random
 import re
 import secrets
+import shutil
 import threading
 import time
-from collections import defaultdict
+from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from security import clean_text
 from services import paper_engine as E
 from services.paper_engine import Book, CURRENCY, INITIAL, MARKETS, PREFIX, SHORT_MARKETS
 
@@ -49,8 +51,16 @@ _beijing_today = E.beijing_today
 _locks: dict = defaultdict(threading.RLock)
 
 
+_ID_RE = re.compile(r"[A-Za-z0-9_-]{6,64}")
+
+
 def _safe_id(device_id: str) -> str:
-    return "".join(c for c in (device_id or "") if c.isalnum() or c in "-_")[:64]
+    """The device id is the account's only key and its file name: accept the shapes clients make
+    (web: random hex/base36, iOS: UUID) and refuse anything else instead of rewriting it, which
+    used to map different ids (or an empty one) onto the same file."""
+    if not _ID_RE.fullmatch(device_id or ""):
+        raise HTTPException(400, "Invalid device id")
+    return device_id
 
 
 def _lock(device_id: str) -> threading.RLock:
@@ -78,8 +88,23 @@ def _load_account(device_id: str) -> dict | None:
         return None
 
 
+_NEW_PER_HOUR = 1500                 # new accounts site-wide; a few classes signing up at once fit easily
+_MIN_FREE_BYTES = 512 * 1024 * 1024
+_new_accounts: deque = deque()
+
+
 def _save_account(account: dict) -> None:
-    _write_json(_account_path(account["device_id"]), account)
+    path = _account_path(account["device_id"])
+    if not os.path.exists(path):
+        # A device id costs nothing to invent, so creation is capped: a script cannot fill the disk
+        now = time.time()
+        while _new_accounts and now - _new_accounts[0] > 3600:
+            _new_accounts.popleft()
+        if len(_new_accounts) >= _NEW_PER_HOUR or shutil.disk_usage(_DATA_DIR).free < _MIN_FREE_BYTES:
+            logger.warning("new paper account refused (hourly cap or low disk)")
+            raise HTTPException(503, "Too many new accounts right now. Please try again later.")
+        _new_accounts.append(now)
+    _write_json(path, account)
 
 
 def _market_book(account: dict, market: str) -> Book:
@@ -729,7 +754,7 @@ def cancel_order(body: CancelBody):
 @router.post("/games/create")
 def create_game(body: GameCreateBody):
     market = _norm_market(body.market, "us")
-    name = re.sub(r"\s+", " ", body.name or "").strip()
+    name = re.sub(r"\s+", " ", clean_text(body.name)).strip()
     if not (2 <= len(name) <= 40):
         raise HTTPException(400, "Name: 2–40 characters")
     lo, hi = _START_CASH[market]

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import useThemeStore from '../store/themeStore'
 import { T } from '../i18n/translations'
 import { relativeTime } from '../utils/time'
+import getDeviceId from '../utils/deviceId'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -22,14 +23,7 @@ function getSentLabel(cfg, lang) {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function getDeviceId() {
-  let id = localStorage.getItem('bfs_device_id')
-  if (!id) {
-    id = Math.random().toString(36).slice(2) + Date.now().toString(36)
-    localStorage.setItem('bfs_device_id', id)
-  }
-  return id
-}
+
 
 function avatarColor(nickname) {
   let h = 0

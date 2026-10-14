@@ -64,7 +64,13 @@ class SafeJSONResponse(JSONResponse):
             return _json.dumps(clean(content), ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode("utf-8")
 
 
+# The interactive API docs list every endpoint for anyone probing the site; only serve them when
+# ENABLE_API_DOCS=1 (local development).
+_DOCS = _os.getenv("ENABLE_API_DOCS") == "1"
 app = FastAPI(
+    docs_url="/docs" if _DOCS else None,
+    redoc_url="/redoc" if _DOCS else None,
+    openapi_url="/openapi.json" if _DOCS else None,
     title="Best Friend Ashare API",
     description="China A-share market data and technical analysis",
     version="1.0.0",

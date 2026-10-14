@@ -6,7 +6,7 @@ Data stored in backend/data/comments/{symbol}.json
 """
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, timezone, timedelta
 import os
@@ -15,6 +15,9 @@ import fcntl
 import uuid
 import logging
 import re
+import time
+
+from security import clean_text
 
 router = APIRouter()
 logger = logging.getLogger("comments")
@@ -104,10 +107,10 @@ def _sentiment_stats(comments: list) -> dict:
 # ── models ────────────────────────────────────────────────────────────────────
 
 class CommentBody(BaseModel):
-    nickname: str
-    content: str
-    sentiment: str
-    device_id: str
+    nickname: str = Field(max_length=60)
+    content: str = Field(max_length=2000)
+    sentiment: str = Field(max_length=16)
+    device_id: str = Field(min_length=1, max_length=64)
 
 
 # ── endpoints ─────────────────────────────────────────────────────────────────
@@ -155,11 +158,29 @@ def get_comments(
     }
 
 
+_SYMBOL_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9.\-]{0,11}")
+_NEW_THREADS_PER_HOUR = 200          # first comment on a symbol creates a file: cap how fast
+_new_threads: list = []
+
+
+def _check_new_thread(symbol: str) -> None:
+    if not _SYMBOL_RE.fullmatch(symbol or ""):
+        raise HTTPException(400, "Invalid symbol")
+    if os.path.exists(_file(symbol)):
+        return
+    now = time.time()
+    _new_threads[:] = [t for t in _new_threads if now - t < 3600]
+    if len(_new_threads) >= _NEW_THREADS_PER_HOUR:
+        raise HTTPException(503, "Please try again later")
+    _new_threads.append(now)
+
+
 @router.post("/{symbol}")
 def post_comment(symbol: str, body: CommentBody):
     # Validate
-    nickname = body.nickname.strip()[:30] or "匿名用户"
-    content  = body.content.strip()
+    _check_new_thread(symbol)
+    nickname = clean_text(body.nickname).strip()[:30] or "匿名用户"
+    content  = clean_text(body.content, keep_newlines=True).strip()
     sentiment = body.sentiment.lower()
 
     if sentiment not in VALID_SENTIMENTS:
@@ -200,9 +221,11 @@ def post_comment(symbol: str, body: CommentBody):
 
 @router.post("/{symbol}/{comment_id}/like")
 def like_comment(symbol: str, comment_id: str, body: dict):
-    device_id = body.get("device_id", "")
+    device_id = str(body.get("device_id", ""))[:64]
     if not device_id:
         raise HTTPException(400, "device_id required")
+    if not _SYMBOL_RE.fullmatch(symbol or "") or not os.path.exists(_file(symbol)):
+        raise HTTPException(404, "Not found")      # liking never creates a file
 
     result = {"ok": False, "likes": 0}
 

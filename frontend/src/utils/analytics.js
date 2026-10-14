@@ -1,5 +1,6 @@
 // Fire-and-forget analytics helpers. Never throws — silently swallows errors.
 import { currentUI, inAppName } from './device'
+import getDeviceId from './deviceId'
 
 const REFERRER_SOURCES = [
   [/(^|\.)instagram\.com$/, 'instagram'], [/(^|\.)(facebook|fb)\.com$|^l\.facebook\.com$/, 'facebook'],
@@ -29,15 +30,7 @@ export function detectSource() {
   } catch { return '' }
 }
 
-function getDeviceId() {
-  const key = 'bfs_device_id'
-  let id = localStorage.getItem(key)
-  if (!id) {
-    id = Math.random().toString(36).substr(2, 9) + Date.now()
-    localStorage.setItem(key, id)
-  }
-  return id
-}
+
 
 export function trackVisit(page = 'home') {
   fetch('/api/analytics/visit', {

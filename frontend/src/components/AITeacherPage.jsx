@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
+import { newDeviceId } from '../utils/deviceId'
 
 const ACCENT  = '#0ea5e9'
 const ACCENT2 = '#8b5cf6'
@@ -73,7 +74,7 @@ const CATEGORIES = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function getDeviceId() {
   let id = localStorage.getItem('bfs_device_id')
-  if (!id) { id = Math.random().toString(36).slice(2); localStorage.setItem('bfs_device_id', id) }
+  if (!id) { id = newDeviceId(); localStorage.setItem('bfs_device_id', id) }
   return id
 }
 

@@ -6,19 +6,12 @@ import OrderTicket from './paper/OrderTicket'
 import GamesModal from './paper/GamesModal'
 import { Positions, Orders, History, Leaderboard } from './paper/DeskTables'
 import { BDR, MUTED, UP, DOWN, Card, Seg, Stat, Modal, Button, inputStyle, money, signed, pct, plColor } from './paper/ui'
+import getDeviceId from '../utils/deviceId'
 
 // Paper trading desk: four market accounts plus competitions, each traded through the same order
 // ticket (market / limit / stop / stop-limit / trailing stop, short selling in US accounts).
 
-function getDeviceId() {
-  const key = 'bfs_device_id'
-  let id = localStorage.getItem(key)
-  if (!id) {
-    id = Math.random().toString(36).substr(2, 9) + Date.now()
-    localStorage.setItem(key, id)
-  }
-  return id
-}
+
 
 // Server nicknames are stored as "用户#1234"; translate the prefix for other languages.
 const NICK_PREFIX = { zh: '用户', en: 'Trader', ja: 'ユーザー', ko: '사용자', fr: 'Joueur' }

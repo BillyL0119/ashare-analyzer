@@ -4,6 +4,7 @@ request size cap and generic error responses. Pure ASGI, no extra dependencies."
 import json
 import logging
 import os
+import re
 import time
 from collections import defaultdict, deque
 
@@ -35,10 +36,11 @@ RATE_RULES = [
     ("/api/ai/chat",         "POST", 40, 60),    # each call spends LLM credits
     ("/api/career",          "POST", 30, 60),
     ("/api/universities",    "POST", 30, 60),
+    # Creating things that persist on disk: per hour, so a script cycling device ids cannot fill it
+    ("/api/paper/games/create", "POST", 10, 3600),
+    ("/api/paper/games/join", "POST", 120, 3600),
     ("/api/paper",           "POST", 120, 60),
-    ("/api/comments",        "POST", 20, 60),
-    ("/api/watchlist",       "POST", 40, 60),
-    ("/api/watchlist",       "DELETE", 40, 60),
+    ("/api/comments",        "POST", 60, 3600),
     ("/api/export",          "*",    20, 60),    # PDF/Excel generation is CPU heavy
     ("/api/backtest",        "*",    40, 60),
     ("/api/",                "*",   900, 60),    # everything else
@@ -173,10 +175,17 @@ class SecurityMiddleware:
             )
 
         started = False
+        too_large = False
         is_api = path.startswith("/api/")
 
         async def send_with_headers(message):
             nonlocal started
+            if too_large:
+                # FastAPI turned the oversized read into its own 400; answer 413 instead
+                if message["type"] == "http.response.start" and not started:
+                    started = True
+                    await _send_json(send, 413, {"detail": "Request too large"}, SECURITY_HEADERS)
+                return
             if message["type"] == "http.response.start":
                 started = True
                 existing = {k.lower() for k, _ in message.get("headers", [])}
@@ -187,13 +196,43 @@ class SecurityMiddleware:
                 message["headers"] = headers
             await send(message)
 
+        # The Content-Length check above does not cover chunked uploads: count what is actually read
+        received = 0
+
+        async def capped_receive():
+            nonlocal received, too_large
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > MAX_BODY_BYTES:
+                    too_large = True
+                    raise _BodyTooLarge()
+            return message
+
         try:
-            await self.app(scope, receive, send_with_headers)
+            await self.app(scope, capped_receive, send_with_headers)
+        except _BodyTooLarge:
+            if not started:
+                await _send_json(send, 413, {"detail": "Request too large"}, SECURITY_HEADERS)
         except Exception:
             logger.exception("unhandled error on %s %s", method, path[:80])
             if not started:
                 await _send_json(send, 500, {"detail": "Internal server error"},
                                  SECURITY_HEADERS)
+
+
+_INVISIBLE = re.compile("[\u0000-\u0008\u000b-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]")
+
+
+def clean_text(text: str | None, keep_newlines: bool = False) -> str:
+    """Strip control characters, zero-width characters and bidi overrides from user text, so a
+    nickname or comment cannot hide text or flip how the text around it is displayed."""
+    t = _INVISIBLE.sub("", text or "")
+    return t if keep_newlines else t.replace("\n", " ").replace("\t", " ")
+
+
+class _BodyTooLarge(Exception):
+    pass
 
 
 def internal_error():

@@ -9,10 +9,11 @@ import { CUR } from '../../utils/markets'
 import { Icon } from '../icons'
 import { ErrorBox, Pill, Section, Segment, Skeleton } from '../ui'
 import { estFee } from '../../components/paper/ui'
+import { newDeviceId } from '../../utils/deviceId'
 
 function deviceId() {
   let id = localStorage.getItem('bfs_device_id')
-  if (!id) { id = Math.random().toString(36).slice(2, 11) + Date.now(); localStorage.setItem('bfs_device_id', id) }
+  if (!id) { id = newDeviceId(); localStorage.setItem('bfs_device_id', id) }
   return id
 }
 
