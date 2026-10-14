@@ -26,7 +26,18 @@ export default function MarketMap({ market }) {
     return () => ro.disconnect()
   }, [])
 
-  const sectorName = (g) => (market === 'cn' ? (lang === 'zh' ? g.name : t(g.name)) : (lang === 'zh' ? SECTOR_ZH[g.name] || g.name : g.name))
+  const cjk = lang === 'zh' || lang === 'ja'
+  const sectorName = (g) => {
+    if (market === 'cn') return lang === 'zh' ? g.name : t(g.name)
+    if (market === 'hk' || market === 'jp') return cjk ? g.name_zh || g.name : g.name
+    return lang === 'zh' ? SECTOR_ZH[g.name] || g.name : g.name
+  }
+  const tileName = (x) => {
+    if (market === 'cn') return lang === 'zh' ? x.name : x.symbol
+    if (market === 'hk') return (cjk ? x.name_zh : x.name_en) || x.symbol
+    if (market === 'jp') return (lang === 'ja' ? x.name_ja : lang === 'zh' ? x.name_zh || x.name_ja : null) || x.symbol
+    return x.symbol
+  }
 
   const tiles = useMemo(() => {
     if (!data?.sectors || !width || data.market !== market) return []
@@ -67,7 +78,7 @@ export default function MarketMap({ market }) {
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', lineHeight: 1.15,
               }}
             >
-              {x.w > 30 && x.h > 18 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 13 : 10, fontWeight: 700, maxWidth: '96%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'clip' }}>{market === 'cn' && lang === 'zh' ? x.s.name : x.s.symbol}</span>}
+              {x.w > 30 && x.h > 18 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 13 : 10, fontWeight: 700, maxWidth: '96%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'clip' }}>{tileName(x.s)}</span>}
               {x.w > 40 && x.h > 34 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 11 : 9, opacity: 0.9 }}>{pct(x.s.change_pct)}</span>}
             </button>
           ))}

@@ -190,6 +190,7 @@ def _build_jp() -> list:
         rows.append({"code": code, "name_local": str(r["銘柄名"]).strip(),
                      "name_en": str(en_name.get(r["コード"]) or "").strip(),
                      "name_zh": JP_ZH.get(code, ""), "sector": None if etf else str(en_sector.get(r["コード"]) or "") or None,
+                     "sector_local": None if etf else (str(r.get("33業種区分") or "").strip() or None),
                      "lot": 100, "etf": etf})
     quotes = tencent_quotes("jp", [r["code"] for r in rows if not r["etf"]])
     for r in rows:

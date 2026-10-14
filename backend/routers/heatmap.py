@@ -1,21 +1,30 @@
 """
-Market heatmap — /api/heatmap?market=us|cn&limit=N
+Market heatmap — /api/heatmap?market=us|cn|hk|jp&limit=N
 
 Tiles sized by market cap and coloured by today's move, grouped by sector.
   us: the largest N US-listed companies from the screener universe (live Tencent quotes,
       refreshed by the screener's background enrichment), grouped by Nasdaq sector.
   cn: the ~210 followed A-shares in data/industry_map.json, grouped by those industries,
       quoted in one Tencent batch (cached 60s).
+  hk: the largest N Hong Kong equities (HKEX securities list), grouped by Hang Seng Industry
+      Classification industry as shown on HKEX's own quote pages (cached on disk, weekly).
+  jp: the largest N Tokyo equities (JPX list), grouped by the TSE 33 sectors from that list.
 Each sector also gets a cap-weighted change so the group header says how it did.
 """
 
 import json
+import logging
 import os
+import re
+import threading
 import time
+
+import requests
 
 from fastapi import APIRouter, Query
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 _MAP_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "industry_map.json")
 _CN_SECTOR_EN = {
@@ -85,6 +94,143 @@ def _cn() -> dict:
     return data
 
 
+# ── Hong Kong industries (HSICS, from HKEX's quote data) ──────────────────────
+
+_HSICS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "hk_hsics.cache.json")
+_HSICS_TOP = 300                     # classify the largest companies; the rest show as "Other"
+_HSICS_MAX_AGE = 30 * 86400          # a company's industry rarely changes
+_UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/130 Safari/537.36"}
+# HKEX's Chinese pages are in traditional characters; the site shows simplified
+_T2S = str.maketrans("業訊資療醫電產築綜費軟務銀險築類運輸設備車導體藥並環營發實樂廣傳飲團體與鋼鐵礦構書遊戲網絡紡織製個護農漁區線",
+                     "业讯资疗医电产筑综费软务银险筑类运输设备车导体药并环营发实乐广传饮团体与钢铁矿构书游戏网络纺织制个护农渔区线")
+_hsics: dict = {}
+
+
+def _load_hsics() -> dict:
+    global _hsics
+    if not _hsics:
+        try:
+            with open(_HSICS_PATH, encoding="utf-8") as f:
+                _hsics = json.load(f)
+        except Exception:
+            _hsics = {}
+    return _hsics
+
+
+def _hkex_token(session: requests.Session) -> str | None:
+    """The quote widget's public token, embedded in HKEX's own equity quote page."""
+    r = session.get("https://www.hkex.com.hk/Market-Data/Securities-Prices/Equities/Equities-Quote",
+                    params={"sym": "700", "sc_lang": "en"}, timeout=20)
+    m = re.search(r'return "([A-Za-z0-9%+/=]{40,})"', r.text)
+    return m.group(1) if m else None
+
+
+def _hkex_industry(session: requests.Session, token: str, code: str, lang: str) -> str | None:
+    url = (f"https://www1.hkex.com.hk/hkexwidget/data/getequityquote?sym={int(code)}&token={token}"
+           f"&lang={lang}&qid={int(time.time() * 1000)}&callback=jQuery_1")
+    r = session.get(url, headers={"Referer": "https://www.hkex.com.hk/"}, timeout=15)
+    m = re.search(r'"hsic_ind_classification":"([^"]*)"', r.text)
+    return m.group(1).strip() if m and m.group(1).strip() else None
+
+
+def _refresh_hsics() -> None:
+    """Fill in missing or month-old industries for the largest HK companies, gently (~2 requests/s)."""
+    from routers.global_stocks import _universe
+    rows = [r for r in (_universe.get("hk") or []) if not r.get("etf") and r.get("cap")]
+    rows.sort(key=lambda r: -r["cap"])
+    data = dict(_load_hsics())
+    now = time.time()
+    todo = [r["code"] for r in rows[:_HSICS_TOP] if now - (data.get(r["code"]) or {}).get("ts", 0) > _HSICS_MAX_AGE]
+    if not todo:
+        return
+    s = requests.Session()
+    s.headers.update(_UA)
+    token = _hkex_token(s)
+    if not token:
+        logger.warning("HSICS: no HKEX token")
+        return
+    done = 0
+    for code in todo:
+        try:
+            en = _hkex_industry(s, token, code, "eng")
+            time.sleep(0.5)
+            zh = _hkex_industry(s, token, code, "chi")
+            time.sleep(0.5)
+        except Exception as e:
+            logger.warning("HSICS %s: %s", code, e)
+            continue
+        if en:
+            data[code] = {"en": en, "zh": (zh or "").translate(_T2S), "ts": now}
+            done += 1
+    tmp = _HSICS_PATH + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
+    os.replace(tmp, _HSICS_PATH)
+    _hsics.clear()
+    _hsics.update(data)
+    logger.info("HSICS: classified %d of %d", done, len(todo))
+
+
+def _hsics_loop():
+    time.sleep(120)                  # let the HK securities list load first
+    while True:
+        try:
+            _refresh_hsics()
+        except Exception as e:
+            logger.warning("HSICS refresh failed: %s", e)
+        time.sleep(7 * 86400)
+
+
+threading.Thread(target=_hsics_loop, daemon=True, name="hk-hsics").start()
+
+
+# ── Hong Kong / Japan ─────────────────────────────────────────────────────────
+
+_intl_cache: dict = {}
+
+
+def _intl(market: str, limit: int) -> dict:
+    hit = _intl_cache.get((market, limit))
+    if hit and time.time() - hit[0] < 60:
+        return hit[1]
+    from routers.global_stocks import _universe, tencent_quotes as intl_quotes
+    rows = [r for r in (_universe.get(market) or []) if not r.get("etf") and r.get("cap")]
+    rows.sort(key=lambda r: -r["cap"])
+    rows = rows[:limit]
+    quotes = intl_quotes(market, [r["code"] for r in rows])
+    hsics = _load_hsics() if market == "hk" else {}
+    tiles, zh_of = [], {}
+    for r in rows:
+        q = quotes.get(r["code"]) or {}
+        if not q.get("price"):
+            continue
+        if market == "hk":
+            ind = hsics.get(r["code"]) or {}
+            sector = (ind.get("en") or "Other").split(" - ")[0]
+            zh_of[sector] = (ind.get("zh") or "其他").split(" - ")[0]
+            name_en, name_zh, name_ja = q.get("name_en") or r.get("name_en"), r.get("name_zh") or r.get("name_local"), r.get("name_local")
+        else:
+            sector = r.get("sector") or "Other"
+            zh_of[sector] = r.get("sector_local") or sector
+            name_en, name_zh, name_ja = r.get("name_en"), r.get("name_zh") or r.get("name_local"), r.get("name_local")
+        tiles.append({
+            "symbol": r["code"], "name": name_en or r["code"], "name_en": name_en, "name_zh": name_zh, "name_ja": name_ja,
+            "market_cap": q.get("market_cap") or r["cap"], "price": q["price"],
+            "change_pct": round(q["change_pct"], 2) if q.get("change_pct") is not None else None,
+            "sector": sector,
+        })
+    data = {"market": market, "count": len(tiles), "sectors": _group(tiles, "sector"), "updated": time.time()}
+    for g in data["sectors"]:
+        g["name_zh"] = zh_of.get(g["name"], g["name"])
+    if tiles:
+        _intl_cache[(market, limit)] = (time.time(), data)
+    return data
+
+
 @router.get("")
-def heatmap(market: str = Query("us", pattern="^(us|cn)$"), limit: int = Query(300, ge=20, le=500)):
-    return _us(limit) if market == "us" else _cn()
+def heatmap(market: str = Query("us", pattern="^(us|cn|hk|jp)$"), limit: int = Query(300, ge=20, le=500)):
+    if market == "us":
+        return _us(limit)
+    if market == "cn":
+        return _cn()
+    return _intl(market, min(limit, 300))

@@ -8,11 +8,11 @@ import { SECTOR_ZH, tileColor, money, pct } from '../utils/heatmap'
 // US colours are green up / red down; A-shares follow the local red up / green down convention.
 
 const L = {
-  zh: { eyebrow: '市场热力图', title: '今日市场全景', subUs: (n) => `市值最大的 ${n} 家美国上市公司，面积代表市值，颜色代表今日涨跌。点击任意方块查看个股。`, subCn: (n) => `${n} 家重点 A 股，按行业分组。面积代表市值，颜色代表今日涨跌。点击任意方块查看个股。`, top: (n) => `前 ${n}`, sectors: '板块表现', updated: '更新于', loading: '加载中…', failed: '加载失败，请稍后重试。', retry: '重试', cap: '市值', price: '价格', change: '今日', weighted: '按市值加权', legendUp: '涨', legendDown: '跌', breadth: (u, d) => `${u} 涨 · ${d} 跌` },
-  en: { eyebrow: 'Market map', title: "Today's market at a glance", subUs: (n) => `The ${n} largest US-listed companies. Tile size is market cap, colour is today's move. Click any tile to open the stock.`, subCn: (n) => `${n} followed A-shares grouped by industry. Tile size is market cap, colour is today's move. Click any tile to open the stock.`, top: (n) => `Top ${n}`, sectors: 'Sector performance', updated: 'Updated', loading: 'Loading…', failed: 'Could not load the map. Try again.', retry: 'Retry', cap: 'Market cap', price: 'Price', change: 'Today', weighted: 'cap-weighted', legendUp: 'Up', legendDown: 'Down', breadth: (u, d) => `${u} up · ${d} down` },
-  ja: { eyebrow: 'マーケットマップ', title: '今日の市場を一目で', subUs: (n) => `時価総額上位 ${n} 社の米国上場企業。面積は時価総額、色は本日の騰落率。タイルをクリックすると個別銘柄を表示します。`, subCn: (n) => `業種別の主要A株 ${n} 銘柄。面積は時価総額、色は本日の騰落率。タイルをクリックすると個別銘柄を表示します。`, top: (n) => `上位 ${n}`, sectors: 'セクター別騰落', updated: '更新', loading: '読み込み中…', failed: '読み込めませんでした。もう一度お試しください。', retry: '再試行', cap: '時価総額', price: '株価', change: '本日', weighted: '時価総額加重', legendUp: '上昇', legendDown: '下落', breadth: (u, d) => `上昇 ${u} · 下落 ${d}` },
-  ko: { eyebrow: '마켓 맵', title: '오늘의 시장 한눈에', subUs: (n) => `시가총액 상위 ${n}개 미국 상장사. 면적은 시가총액, 색상은 오늘 등락률입니다. 타일을 누르면 종목으로 이동합니다.`, subCn: (n) => `업종별 주요 A주 ${n}개. 면적은 시가총액, 색상은 오늘 등락률입니다. 타일을 누르면 종목으로 이동합니다.`, top: (n) => `상위 ${n}`, sectors: '섹터별 등락', updated: '업데이트', loading: '불러오는 중…', failed: '불러오지 못했습니다. 다시 시도해 주세요.', retry: '다시 시도', cap: '시가총액', price: '가격', change: '오늘', weighted: '시총 가중', legendUp: '상승', legendDown: '하락', breadth: (u, d) => `상승 ${u} · 하락 ${d}` },
-  fr: { eyebrow: 'Carte du marché', title: "Le marché du jour d'un coup d'œil", subUs: (n) => `Les ${n} plus grandes sociétés cotées aux États-Unis. La taille d'une case est la capitalisation, sa couleur la variation du jour. Cliquez sur une case pour ouvrir l'action.`, subCn: (n) => `${n} actions A suivies, groupées par secteur. La taille est la capitalisation, la couleur la variation du jour. Cliquez sur une case pour ouvrir l'action.`, top: (n) => `Top ${n}`, sectors: 'Performance par secteur', updated: 'Mis à jour', loading: 'Chargement…', failed: 'Impossible de charger la carte. Réessayez.', retry: 'Réessayer', cap: 'Capitalisation', price: 'Cours', change: 'Jour', weighted: 'pondéré par la capitalisation', legendUp: 'Hausse', legendDown: 'Baisse', breadth: (u, d) => `${u} en hausse · ${d} en baisse` },
+  zh: { eyebrow: '市场热力图', title: '今日市场全景', subUs: (n) => `市值最大的 ${n} 家美国上市公司，面积代表市值，颜色代表今日涨跌。点击任意方块查看个股。`, subHk: (n) => `市值最大的 ${n} 家香港上市公司，按恒生行业分类分组。面积代表市值，颜色代表今日涨跌。点击任意方块查看个股。`, subJp: (n) => `市值最大的 ${n} 家东京上市公司，按东证 33 行业分组。面积代表市值，颜色代表今日涨跌。点击任意方块查看个股。`, subCn: (n) => `${n} 家重点 A 股，按行业分组。面积代表市值，颜色代表今日涨跌。点击任意方块查看个股。`, top: (n) => `前 ${n}`, sectors: '板块表现', updated: '更新于', loading: '加载中…', failed: '加载失败，请稍后重试。', retry: '重试', cap: '市值', price: '价格', change: '今日', weighted: '按市值加权', legendUp: '涨', legendDown: '跌', breadth: (u, d) => `${u} 涨 · ${d} 跌` },
+  en: { eyebrow: 'Market map', title: "Today's market at a glance", subUs: (n) => `The ${n} largest US-listed companies. Tile size is market cap, colour is today's move. Click any tile to open the stock.`, subHk: (n) => `The ${n} largest Hong Kong-listed companies, grouped by Hang Seng industry. Tile size is market cap, colour is today's move. Click any tile to open the stock.`, subJp: (n) => `The ${n} largest Tokyo-listed companies, grouped by TSE sector. Tile size is market cap, colour is today's move. Click any tile to open the stock.`, subCn: (n) => `${n} followed A-shares grouped by industry. Tile size is market cap, colour is today's move. Click any tile to open the stock.`, top: (n) => `Top ${n}`, sectors: 'Sector performance', updated: 'Updated', loading: 'Loading…', failed: 'Could not load the map. Try again.', retry: 'Retry', cap: 'Market cap', price: 'Price', change: 'Today', weighted: 'cap-weighted', legendUp: 'Up', legendDown: 'Down', breadth: (u, d) => `${u} up · ${d} down` },
+  ja: { eyebrow: 'マーケットマップ', title: '今日の市場を一目で', subUs: (n) => `時価総額上位 ${n} 社の米国上場企業。面積は時価総額、色は本日の騰落率。タイルをクリックすると個別銘柄を表示します。`, subHk: (n) => `時価総額上位 ${n} 社の香港上場企業（ハンセン業種分類別）。面積は時価総額、色は本日の騰落率。タイルをクリックすると個別銘柄を表示します。`, subJp: (n) => `時価総額上位 ${n} 社の東証上場企業（東証33業種別）。面積は時価総額、色は本日の騰落率。タイルをクリックすると個別銘柄を表示します。`, subCn: (n) => `業種別の主要A株 ${n} 銘柄。面積は時価総額、色は本日の騰落率。タイルをクリックすると個別銘柄を表示します。`, top: (n) => `上位 ${n}`, sectors: 'セクター別騰落', updated: '更新', loading: '読み込み中…', failed: '読み込めませんでした。もう一度お試しください。', retry: '再試行', cap: '時価総額', price: '株価', change: '本日', weighted: '時価総額加重', legendUp: '上昇', legendDown: '下落', breadth: (u, d) => `上昇 ${u} · 下落 ${d}` },
+  ko: { eyebrow: '마켓 맵', title: '오늘의 시장 한눈에', subUs: (n) => `시가총액 상위 ${n}개 미국 상장사. 면적은 시가총액, 색상은 오늘 등락률입니다. 타일을 누르면 종목으로 이동합니다.`, subHk: (n) => `시가총액 상위 ${n}개 홍콩 상장사(항셍 업종 분류별). 면적은 시가총액, 색상은 오늘 등락률입니다. 타일을 누르면 종목으로 이동합니다.`, subJp: (n) => `시가총액 상위 ${n}개 도쿄 상장사(도쿄증권거래소 33업종별). 면적은 시가총액, 색상은 오늘 등락률입니다. 타일을 누르면 종목으로 이동합니다.`, subCn: (n) => `업종별 주요 A주 ${n}개. 면적은 시가총액, 색상은 오늘 등락률입니다. 타일을 누르면 종목으로 이동합니다.`, top: (n) => `상위 ${n}`, sectors: '섹터별 등락', updated: '업데이트', loading: '불러오는 중…', failed: '불러오지 못했습니다. 다시 시도해 주세요.', retry: '다시 시도', cap: '시가총액', price: '가격', change: '오늘', weighted: '시총 가중', legendUp: '상승', legendDown: '하락', breadth: (u, d) => `상승 ${u} · 하락 ${d}` },
+  fr: { eyebrow: 'Carte du marché', title: "Le marché du jour d'un coup d'œil", subUs: (n) => `Les ${n} plus grandes sociétés cotées aux États-Unis. La taille d'une case est la capitalisation, sa couleur la variation du jour. Cliquez sur une case pour ouvrir l'action.`, subHk: (n) => `Les ${n} plus grandes sociétés cotées à Hong Kong, par secteur Hang Seng. La taille est la capitalisation, la couleur la variation du jour. Cliquez sur une case pour ouvrir l'action.`, subJp: (n) => `Les ${n} plus grandes sociétés cotées à Tokyo, par secteur de la Bourse de Tokyo. La taille est la capitalisation, la couleur la variation du jour. Cliquez sur une case pour ouvrir l'action.`, subCn: (n) => `${n} actions A suivies, groupées par secteur. La taille est la capitalisation, la couleur la variation du jour. Cliquez sur une case pour ouvrir l'action.`, top: (n) => `Top ${n}`, sectors: 'Performance par secteur', updated: 'Mis à jour', loading: 'Chargement…', failed: 'Impossible de charger la carte. Réessayez.', retry: 'Réessayer', cap: 'Capitalisation', price: 'Cours', change: 'Jour', weighted: 'pondéré par la capitalisation', legendUp: 'Hausse', legendDown: 'Baisse', breadth: (u, d) => `${u} en hausse · ${d} en baisse` },
 }
 
 const CSS = `
@@ -49,8 +49,18 @@ export default function HeatmapPage({ lang }) {
     return () => { alive = false; clearInterval(id) }
   }, [market, limit, nonce]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sectorLabel = (g) => (market === 'cn' ? (zh ? g.name : g.name_en || g.name) : (zh ? SECTOR_ZH[g.name] || g.name : g.name))
-  const tileLabel = (s) => (market === 'cn' ? (zh ? s.name : s.symbol) : s.symbol)
+  const cjk = zh || lang === 'ja'
+  const sectorLabel = (g) => {
+    if (market === 'cn') return zh ? g.name : g.name_en || g.name
+    if (market === 'hk' || market === 'jp') return cjk ? g.name_zh || g.name : g.name
+    return zh ? SECTOR_ZH[g.name] || g.name : g.name
+  }
+  const tileLabel = (s) => {
+    if (market === 'cn') return zh ? s.name : s.symbol
+    if (market === 'hk') return (cjk ? s.name_zh : s.name_en) || s.symbol
+    if (market === 'jp') return (lang === 'ja' ? s.name_ja : zh ? s.name_zh || s.name_ja : null) || s.symbol
+    return s.symbol
+  }
 
   const option = useMemo(() => {
     if (!data || data.market !== market) return null
@@ -128,12 +138,13 @@ export default function HeatmapPage({ lang }) {
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#0ea5e9' }}>{t.eyebrow}</div>
           <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
           <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 720, lineHeight: 1.6 }}>
-            {market === 'us' ? t.subUs(data?.count || limit) : t.subCn(data?.count || 200)}
+            {market === 'us' ? t.subUs(data?.count || limit) : market === 'hk' ? t.subHk(data?.count || Math.min(limit, 300))
+              : market === 'jp' ? t.subJp(data?.count || Math.min(limit, 300)) : t.subCn(data?.count || 200)}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           {all.length > 0 && <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>{t.breadth(ups, downs)}</span>}
-          {market === 'us' && [100, 300, 500].map((n) => (
+          {market !== 'cn' && (market === 'us' ? [100, 300, 500] : [100, 300]).map((n) => (
             <button key={n} className={`hm-chip${limit === n ? ' on' : ''}`} onClick={() => setLimit(n)}>{t.top(n)}</button>
           ))}
         </div>
