@@ -21,7 +21,7 @@ export default function QuoteBanner({ lang }) {
 
   return (
     <figure data-reveal style={{ margin: '0 auto', maxWidth: 880, padding: '120px 0 0' }}>
-      <blockquote style={{ margin: 0, fontSize: 'clamp(22px, 2.3vw, 34px)', lineHeight: 1.3, letterSpacing: '-0.025em', color: 'var(--text-primary)' }}>
+      <blockquote style={{ margin: 0, fontSize: 'clamp(24px, 2.35vw, 34px)', lineHeight: 1.3, letterSpacing: '-0.025em', color: 'var(--text-primary)' }}>
         <p style={{ margin: 0 }}>“{text}”</p>
       </blockquote>
       {author && (

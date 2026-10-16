@@ -169,7 +169,7 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
           transition: background-color .25s ease; }
         .bfs-band + .bfs-band { margin-top: 4px; }
         .bfs-band:hover, .bfs-band:focus-visible { background: var(--bg-secondary); }
-        .bfs-band-title { font-size: clamp(24px, 2.4vw, 36px); letter-spacing: -0.03em; line-height: 1.1; }
+        .bfs-band-title { font-size: clamp(24px, 2.35vw, 34px); letter-spacing: -0.03em; line-height: 1.1; }
         .bfs-band-desc { font-size: var(--step-body); line-height: 1.5; color: var(--text-secondary); }
         .bfs-band:hover .bfs-band-desc { color: var(--text-primary); }
         .bfs-band-go { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: var(--text-secondary); }
@@ -181,7 +181,7 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
         .bfs-letter-mark { display: block; width: 44px; height: 44px; border-radius: 50%; background: #f2f2f2; padding: 8px; object-fit: contain; margin-bottom: 28px; }
         .bfs-letter p { font-size: 17px; line-height: 1.6; margin: 0 0 1.1em; color: var(--text-primary); }
         .bfs-letter a { color: var(--text-primary); text-underline-offset: 4px; text-decoration-color: var(--accent); }
-        .bfs-letter-sign { font-size: 22px; font-style: italic; letter-spacing: -0.02em; margin-top: 28px; }
+        .bfs-letter-sign { font-size: 24px; font-style: italic; letter-spacing: -0.02em; margin-top: 28px; }
         .bfs-letter-role { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
 
         @media (max-width: 800px) {

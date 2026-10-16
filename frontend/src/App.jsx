@@ -112,6 +112,8 @@ export default function App() {
           setWatchlistPreference } = useAuthStore()
   const t = T[lang]
   const isMobile = useMobile()
+  // Phones and tablets: the bar keeps to one row (search behind an icon, extras in the menu)
+  const compactBar = useMobile(1000)
   const location = useLocation()
   const navigate  = useNavigate()
   // Derive active tab from URL — no state needed
@@ -133,9 +135,9 @@ export default function App() {
   const [showMobileSearch, setShowMobileSearch] = useState(false)
   useEffect(() => { setShowMobileSearch(false) }, [location.pathname])
   useEffect(() => {
-    if (!isMobile) return
+    if (!compactBar) return
     document.querySelector('.bfs-nav-tab.is-active')?.scrollIntoView({ inline: 'center', block: 'nearest' })
-  }, [isMobile, location.pathname])
+  }, [compactBar, location.pathname])
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200) }
   const watchlist      = useWatchlistStore((s) => s.list)
   const watchlistCount = watchlist.length
@@ -373,12 +375,12 @@ export default function App() {
       <header
         style={{
           background: 'var(--nav-bg)',
-          padding: isMobile ? '8px 12px' : '12px 28px',
+          padding: compactBar ? '8px 12px' : '12px 28px',
           display: 'flex',
           alignItems: 'center',
           rowGap: 8,
-          columnGap: isMobile ? 8 : 20,
-          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          columnGap: compactBar ? 8 : 20,
+          flexWrap: compactBar ? 'wrap' : 'nowrap',
           position: 'relative',
           zIndex: 10,
         }}
@@ -393,10 +395,10 @@ export default function App() {
           <img
             src="/logo-dark.png"
             alt="Best Friend Stock"
-            style={{ height: isMobile ? 28 : 32, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
+            style={{ height: compactBar ? 28 : 32, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />
-          {!isMobile && (
-            <span style={{ fontSize: 17, fontWeight: 500, letterSpacing: '-0.02em' }}>
+          {!compactBar && (
+            <span className="bfs-wordmark-text" style={{ fontSize: 17, fontWeight: 500, letterSpacing: '-0.02em' }}>
               Best Friend Stock
             </span>
           )}
@@ -412,24 +414,24 @@ export default function App() {
               aria-pressed={market === key}
               className="bfs-seg"
               style={{
-                padding: isMobile ? '5px 8px' : '6px 12px',
+                padding: compactBar ? '5px 8px' : '6px 12px',
                 borderRadius: 4, border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: 500,
                 background: market === key ? 'var(--bg-secondary)' : 'transparent',
                 color: market === key ? 'var(--text-primary)' : 'var(--text-secondary)',
               }}
             >
-              {isMobile && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
+              {compactBar && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
             </button>
           ))}
         </div>
 
-        {isMobile ? (showMobileSearch && <div style={{ order: 10, flexBasis: '100%' }}><SearchBar fullWidth autoFocus /></div>) : <SearchBar />}
+        {compactBar ? (showMobileSearch && <div style={{ order: 10, flexBasis: '100%' }}><SearchBar fullWidth autoFocus /></div>) : <SearchBar />}
 
         {/* Right-side controls */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: isMobile ? 2 : 4, flexShrink: 0 }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: compactBar ? 2 : 4, flexShrink: 0 }}>
 
-          {!isMobile && (
+          {!compactBar && (
             <div ref={langDropdownRef} style={{ position: 'relative' }}>
               <button
                 onClick={() => setShowLangDropdown(v => !v)}
@@ -453,20 +455,20 @@ export default function App() {
             </div>
           )}
 
-          {!isMobile && (
+          {!compactBar && (
             <button onClick={flipTheme} title={theme === 'dark' ? t.lightMode : t.darkMode} aria-label={theme === 'dark' ? t.lightMode : t.darkMode} className="bfs-ghost" style={iconBtn(false)}>
               <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
             </button>
           )}
 
-          {isMobile && (
+          {compactBar && (
             <button onClick={() => setShowMobileSearch(v => !v)} aria-label={t.searchPlaceholder} aria-expanded={showMobileSearch} className="bfs-ghost" style={iconBtn(showMobileSearch)}>
               <Icon name="search" size={18} />
             </button>
           )}
 
           {[
-            ...(isMobile ? [] : [
+            ...(compactBar ? [] : [
               { key: 'insight', icon: 'bulb', active: showInsight, onClick: () => setShowInsight(v => !v), title: t.navInsight, badge: null },
               { key: 'ai',      icon: 'cap',  active: showAIFloat, onClick: () => setShowAIFloat(v => !v), title: t.navAITutor, badge: null },
             ]),
@@ -493,7 +495,7 @@ export default function App() {
             </div>
           ))}
 
-          {isMobile && (
+          {compactBar && (
             <div ref={mobileMenuRef} style={{ position: 'relative', flexShrink: 0 }}>
               <button onClick={() => setShowMobileMenu(v => !v)} aria-label="Menu" aria-expanded={showMobileMenu} className="bfs-ghost" style={iconBtn(showMobileMenu)}>
                 <Icon name="more" size={20} />
@@ -531,7 +533,7 @@ export default function App() {
           )}
 
           {/* Account: the one action in the bar */}
-          <div ref={userMenuRef} style={{ position: 'relative', flexShrink: 0, marginLeft: isMobile ? 2 : 8 }}>
+          <div ref={userMenuRef} style={{ position: 'relative', flexShrink: 0, marginLeft: compactBar ? 2 : 8 }}>
             {user ? (
               <>
                 <button
@@ -573,7 +575,7 @@ export default function App() {
                   </div>
                 )}
               </>
-            ) : isMobile ? (
+            ) : compactBar ? (
               <button onClick={() => setShowAuth(true)} aria-label={t.signIn} title={t.signIn} className="bfs-ghost" style={iconBtn(false)}>
                 <Icon name="user" size={18} />
               </button>
@@ -592,7 +594,7 @@ export default function App() {
         aria-label="Sections"
         className="tab-bar"
         style={{
-          padding: isMobile ? '0 8px' : '0 16px',
+          padding: compactBar ? '0 8px' : '0 16px',
           display: 'flex',
           alignItems: 'center',
           overflowX: 'auto',
@@ -627,7 +629,7 @@ export default function App() {
             {label}
           </a>
         ))}
-        {!isMobile && (
+        {!compactBar && (
           <div style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 13, flexShrink: 0, padding: '0 12px 0 16px' }}>
             {t.dataSource}
           </div>

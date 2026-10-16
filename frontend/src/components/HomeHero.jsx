@@ -160,12 +160,12 @@ export default function HomeHero({ lang, market, onTabChange }) {
         .bfs-note-tabs button { border: 0; background: transparent; color: var(--text-secondary); font-size: 13px; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
         .bfs-note-tabs button:hover { color: var(--text-primary); }
         .bfs-note-tabs button[aria-pressed="true"] { background: var(--bg-hover); color: var(--text-primary); }
-        .bfs-note-sentence { font-size: clamp(22px, 1.9vw, 30px); line-height: 1.28; letter-spacing: -0.02em; margin: 0 0 28px; min-height: 2.56em;
+        .bfs-note-sentence { font-size: 24px; line-height: 1.28; letter-spacing: -0.02em; margin: 0 0 28px; min-height: 2.56em;
           animation: bfsSlideUp .5s cubic-bezier(.22,1,.36,1) both; }
         .bfs-note-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; padding: 20px 0 0;
           animation: bfsSlideUp .5s cubic-bezier(.22,1,.36,1) .06s both; }
         .bfs-note-name { font-size: 13px; color: var(--text-secondary); }
-        .bfs-note-value { font-size: 26px; letter-spacing: -0.03em; margin: 2px 0; }
+        .bfs-note-value { font-size: 24px; letter-spacing: -0.03em; margin: 2px 0; }
         .bfs-note-pct { font-size: 14px; font-weight: 500; }
         .bfs-note-meter { margin-top: 28px; }
         .bfs-note-meter-head { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); margin-bottom: 10px; }
@@ -182,8 +182,8 @@ export default function HomeHero({ lang, market, onTabChange }) {
           .bfs-hero-copy, .bfs-note { grid-column: 1 / -1; }
           html .bfs-hero .bfs-hero-title { font-size: clamp(40px, 11vw, 64px) !important; margin-bottom: 18px !important; }
           .bfs-note { padding: 20px 18px; }
-          .bfs-hero-actions .bfs-primary { width: 100%; }
         }
+        @media (max-width: 600px) { .bfs-hero-actions .bfs-primary { width: 100%; } }
         @media (prefers-reduced-motion: reduce) {
           .bfs-hero-sub, .bfs-hero-actions, .bfs-note, .bfs-note-sentence, .bfs-note-figures { animation: none; }
           .bfs-note-mark { transition: none; }

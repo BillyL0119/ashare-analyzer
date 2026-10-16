@@ -85,6 +85,7 @@ export default function USMarketPanel({ lang }) {
         <span style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>{d.session.et_time.slice(11)} ET · {t.delayed}</span>
       </div>
 
+      <div data-ui style={{ display: 'grid', gap: 24, minWidth: 0 }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
         {d.indices.map((i) => (
           <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
@@ -152,6 +153,7 @@ export default function USMarketPanel({ lang }) {
             )
           })}
         </div>
+      </div>
       </div>
     </section>
   )

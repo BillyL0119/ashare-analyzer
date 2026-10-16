@@ -177,7 +177,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   })
 
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', width: fullWidth ? '100%' : 300 }}>
+    <div ref={wrapperRef} style={{ position: 'relative', width: fullWidth ? '100%' : 'clamp(150px, 22vw, 300px)', minWidth: 0, flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
         <input
           type="text"

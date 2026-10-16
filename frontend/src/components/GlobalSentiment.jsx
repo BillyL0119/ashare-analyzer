@@ -30,8 +30,8 @@ const MARKER_META = {
 // ── Ticker helpers ────────────────────────────────────────────────────────────
 function changePctColor(pct) {
   if (pct === null || pct === undefined) return 'var(--text-secondary)'
-  if (pct > 0)  return '#10b981'
-  if (pct < 0)  return '#ef4444'
+  if (pct > 0)  return 'var(--green-bright)'
+  if (pct < 0)  return 'var(--red-bright)'
   return 'var(--text-secondary)'
 }
 
@@ -456,7 +456,7 @@ export default function GlobalSentiment({ lang }) {
 
       {/* ── Body ── */}
       {!collapsed && (
-        <div style={{ padding: '0 16px 16px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
+        <div data-ui style={{ padding: '0 16px 16px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
           {loading ? (
             <LoadingSkeleton />
           ) : (

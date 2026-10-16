@@ -40,7 +40,7 @@
   --accent-cyan:   #84a79c;
   --accent-gold:   #c9a768;
   --green-bright:  #2fb37a;
-  --red-bright:    #e5534b;
+  --red-bright:    #f0605a;
 
   --radius: 6px;
 }
@@ -235,6 +235,7 @@ button { font-family: inherit; }
 .bfs-seg:hover { color: var(--text-primary) !important; }
 .bfs-menu-item { transition: background-color .12s ease; }
 .bfs-menu-item:hover { background: var(--bg-hover) !important; }
+@media (max-width: 1100px) { .bfs-wordmark-text { display: none; } }
 .bfs-wordmark img { transition: transform .3s cubic-bezier(.22,1,.36,1); }
 .bfs-wordmark:hover img { transform: rotate(-6deg); }
 
@@ -311,7 +312,7 @@ h3,
 }
 h1, h2 { color: var(--text-primary); }
 /* Page titles: one confident size, tight tracking */
-html:not([data-ui="mobile"]) h1 { font-size: clamp(30px, 2.8vw, 44px) !important; line-height: 1.08 !important; }
+html:not([data-shell="mobile"]) h1 { font-size: clamp(30px, 2.8vw, 44px) !important; line-height: 1.08 !important; }
 /* Headline numbers (scores, account value, index levels): the same face, tabular lining figures */
 .serif-num {
   font-family: var(--sans) !important;
@@ -319,9 +320,9 @@ html:not([data-ui="mobile"]) h1 { font-size: clamp(30px, 2.8vw, 44px) !important
   font-variant-numeric: lining-nums tabular-nums;
   letter-spacing: -0.03em;
 }
-/* Desktop UI only: the phone UI (data-ui="mobile") sizes its own titles in mobile.css */
-html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.03em !important; }
-html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
+/* Desktop UI only: the phone UI (data-shell="mobile") sizes its own titles in mobile.css */
+html:not([data-shell="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.03em !important; }
+html:not([data-shell="mobile"]) :is(h2, h3) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
 
 h1 {
   font-size: 56px;

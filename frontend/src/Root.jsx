@@ -7,7 +7,7 @@ import { currentUI } from './utils/device'
 const MobileApp = lazy(() => import('./mobile/MobileApp.jsx'))
 const App = lazy(() => import('./App.jsx'))
 const ui = currentUI()
-document.documentElement.dataset.ui = ui
+document.documentElement.dataset.shell = ui
 
 export default function Root() {
   return ui === 'mobile'
