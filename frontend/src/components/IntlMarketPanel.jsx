@@ -68,15 +68,15 @@ export default function IntlMarketPanel({ lang, market }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <span style={{ width: 7, height: 7, borderRadius: 4, background: s.state === 'open' ? UP : s.state === 'lunch' ? 'var(--accent-gold)' : 'var(--text-muted)' }} />
         <strong style={{ fontSize: 14 }}>{t[market]}</strong>
-        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 'var(--radius)', background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{t[s.state]}</span>
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)' }}>{s.time} {t.local[market]} · {t.delayed}</span>
+        <span style={{ fontSize: 13, padding: '2px 8px', borderRadius: 'var(--radius)', background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{t[s.state]}</span>
+        <span style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>{s.time} {t.local[market]} · {t.delayed}</span>
       </div>
 
       {d.indices.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
           {d.indices.map((i) => (
             <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: '10px 12px' }}>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{lang === 'zh' || lang === 'ja' ? i.name_zh : i.name_en}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{lang === 'zh' || lang === 'ja' ? i.name_zh : i.name_en}</div>
               <div className="serif-num" style={{ fontSize: 27, margin: '2px 0' }}>{num(i.price)}</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: col(i.change_pct), fontVariantNumeric: 'tabular-nums' }}>
                 {pct(i.change_pct)}{i.change != null && <span style={{ marginLeft: 8, opacity: 0.8 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}
@@ -87,7 +87,7 @@ export default function IntlMarketPanel({ lang, market }) {
       )}
 
       <div>
-        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.popular}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.popular}</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 }}>
           {d.hot.map((q) => (
             <button key={q.symbol} className="imp-tile" onClick={() => open(q)}
@@ -95,9 +95,9 @@ export default function IntlMarketPanel({ lang, market }) {
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, minWidth: 0 }}>
                 <span style={{ fontWeight: 600, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{localName(q, lang, market)}</span>
               </div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--sans)' }}>{q.symbol}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', fontFamily: 'var(--sans)' }}>{q.symbol}</div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 4, gap: 6 }}>
-                <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{CUR[market]}{num(q.price, priceDigits)}</span>
+                <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{CUR[market]}{num(q.price, priceDigits)}</span>
                 <span style={{ fontSize: 13, fontWeight: 600, color: col(q.change_pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.change_pct)}</span>
               </div>
             </button>

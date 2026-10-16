@@ -61,7 +61,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
         minWidth: 150,
       }}
     >
-      <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>{label}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>{label}</div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
         <span style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -76,7 +76,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
             display: 'flex',
             alignItems: 'center',
             gap: 4,
-            fontSize: 12,
+            fontSize: 13,
           }}
         >
           <span style={{ color: 'var(--text-muted)' }}>{t.financialYoY}:</span>
@@ -92,7 +92,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
       )}
 
       {date && (
-        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           {t.financialReportDate}: {date}
         </div>
       )}
@@ -213,7 +213,7 @@ export default function FinancialPanel({ stocks }) {
                   border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
                   borderRadius: 4,
                   padding: '2px 8px',
-                  fontSize: 12,
+                  fontSize: 13,
                   color: 'var(--accent)',
                   fontFamily: 'var(--sans)',
                 }}
@@ -221,7 +221,7 @@ export default function FinancialPanel({ stocks }) {
                 {stock.code}
               </span>
               <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{stock.name}</span>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 'auto' }}>
                 {t.financialAnalysis}
               </span>
             </div>

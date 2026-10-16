@@ -146,7 +146,7 @@ export default function KLineTip({ zh, lang, onClose }) {
             <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
               {t.ktTitle}
             </div>
-            <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>
+            <div style={{ fontSize: 13, color: MUTED, marginTop: 2 }}>
               {t.ktHint}
             </div>
           </div>
@@ -161,14 +161,14 @@ export default function KLineTip({ zh, lang, onClose }) {
           background: 'rgba(255,255,255,0.025)', border: `1px solid ${BDR}`,
           borderRadius: 'var(--radius)', padding: '12px 14px', marginBottom: 14,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: MUTED, marginBottom: 10, letterSpacing: '0.5px' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: MUTED, marginBottom: 10, letterSpacing: '0.5px' }}>
             {t.ktAnatomy}
           </div>
           <AnatomyMini zh={zh} />
         </div>
 
         {/* Patterns */}
-        <div style={{ fontSize: 11, fontWeight: 600, color: MUTED, marginBottom: 8, letterSpacing: '0.5px' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: MUTED, marginBottom: 8, letterSpacing: '0.5px' }}>
           {t.ktPatterns}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -185,17 +185,17 @@ export default function KLineTip({ zh, lang, onClose }) {
                 </svg>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                       {zh ? pat.name_zh : pat.name_en}
                     </span>
                     <span style={{
-                      fontSize: 9, fontWeight: 600, padding: '1px 6px', borderRadius: 'var(--radius)',
+                      fontSize: 13, fontWeight: 600, padding: '1px 6px', borderRadius: 'var(--radius)',
                       background: `${SIG_COLOR[pat.signal]}1a`, color: SIG_COLOR[pat.signal],
                     }}>
                       {pat.signal.toUpperCase()}
                     </span>
                   </div>
-                  <div style={{ fontSize: 11, color: MUTED }}>
+                  <div style={{ fontSize: 13, color: MUTED }}>
                     {zh ? pat.tip_zh : pat.tip_en}
                   </div>
                 </div>
@@ -204,7 +204,7 @@ export default function KLineTip({ zh, lang, onClose }) {
           })}
         </div>
 
-        <div style={{ marginTop: 14, fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        <div style={{ marginTop: 14, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
           {t.ktNote}
         </div>
       </div>

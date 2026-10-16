@@ -94,7 +94,7 @@ export default function HomeHero({ lang, market, onTabChange }) {
         <p className="bfs-hero-sub">{SUB[lang] || SUB.en}</p>
         <div className="bfs-hero-actions">
           <button className="bfs-primary" onClick={() => onTabChange?.('paper')}>{CTA[lang] || CTA.en}</button>
-          <button className="bfs-quiet" onClick={() => onTabChange?.('study')}>{(t.moStudy || '').replace(/^\S+\s/, '')}</button>
+          <button className="bfs-quiet" onClick={() => onTabChange?.('study')}>{t.moStudy}</button>
         </div>
       </div>
 

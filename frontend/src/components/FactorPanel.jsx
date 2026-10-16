@@ -27,7 +27,7 @@ function MetricRow({ label, value, sub, color }) {
       <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{label}</span>
       <span style={{ color: color || THEME.text, fontWeight: 600, fontSize: 14 }}>
         {value}
-        {sub && <span style={{ color: 'var(--text-muted)', fontSize: 12, marginLeft: 4 }}>{sub}</span>}
+        {sub && <span style={{ color: 'var(--text-muted)', fontSize: 13, marginLeft: 4 }}>{sub}</span>}
       </span>
     </div>
   )
@@ -101,8 +101,8 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
   return (
     <div style={{ marginBottom: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.factorSysRisk}: {pctSys}%</span>
-        <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.factorIdioRisk}: {pctIdio}%</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.factorSysRisk}: {pctSys}%</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.factorIdioRisk}: {pctIdio}%</span>
       </div>
       <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden',
         background: THEME.border }}>
@@ -110,8 +110,8 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
         <div style={{ width: `${pctIdio}%`, background: '#3fb950', transition: 'width 0.5s' }} />
       </div>
       <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
-        <span style={{ color: '#a08672', fontSize: 11 }}>■ Systematic</span>
-        <span style={{ color: '#3fb950', fontSize: 11 }}>■ Idiosyncratic</span>
+        <span style={{ color: '#a08672', fontSize: 13 }}>■ Systematic</span>
+        <span style={{ color: '#3fb950', fontSize: 13 }}>■ Idiosyncratic</span>
       </div>
     </div>
   )
@@ -134,7 +134,7 @@ function CorrelationBars({ correlations, t }) {
           const pct = Math.abs(v.correlation) * 100
           const isPos = v.correlation >= 0
           return [
-            <span key={`n-${sym}`} style={{ color: 'var(--text-muted)', fontSize: 12, whiteSpace: 'nowrap' }}>
+            <span key={`n-${sym}`} style={{ color: 'var(--text-muted)', fontSize: 13, whiteSpace: 'nowrap' }}>
               {t === T.zh ? v.zh : v.en}
             </span>,
             <div key={`b-${sym}`} style={{ position: 'relative', height: 8, borderRadius: 4,
@@ -144,10 +144,10 @@ function CorrelationBars({ correlations, t }) {
                 borderRadius: 4, transition: 'width 0.5s' }} />
             </div>,
             <span key={`c-${sym}`} style={{ color: isPos ? '#a08672' : '#f85149',
-              fontSize: 12, fontWeight: 600 }}>
+              fontSize: 13, fontWeight: 600 }}>
               {v.correlation.toFixed(3)}
             </span>,
-            <span key={`bt-${sym}`} style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+            <span key={`bt-${sym}`} style={{ color: 'var(--text-muted)', fontSize: 13 }}>
               β={v.beta.toFixed(2)}
             </span>,
           ]
@@ -205,7 +205,7 @@ function StockFactor({ stock, color, t, lang, params }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         marginBottom: 14 }}>
         <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name} ({stock.code})</span>
-        <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.factorSummary} · {data.sample_days}d</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.factorSummary} · {data.sample_days}d</span>
       </div>
 
       {/* Key metrics strip */}
@@ -218,7 +218,7 @@ function StockFactor({ stock, color, t, lang, params }) {
         ].map(({ label, val, color: c }) => (
           <div key={label} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
             borderRadius: 6, padding: '8px 10px', textAlign: 'center' }}>
-            <div style={{ color: 'var(--text-muted)', fontSize: 11, marginBottom: 3 }}>{label}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 3 }}>{label}</div>
             <div style={{ color: c, fontWeight: 600, fontSize: 16 }}>{val}</div>
           </div>
         ))}

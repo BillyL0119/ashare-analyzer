@@ -83,15 +83,15 @@ const CSS = `
 .sc-wrap { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }
 .sc-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); }
 .sc-filters { padding: 14px; display: grid; gap: 14px; position: sticky; top: 112px; }
-.sc-lbl { font-size: 11px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); margin-bottom: 6px; }
+.sc-lbl { font-size: 13px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); margin-bottom: 6px; }
 .sc-in { width: 100%; box-sizing: border-box; padding: 7px 10px; border-radius: 8px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
 .sc-in:focus { border-color: ${ACCENT}; }
 .sc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.sc-chip { padding: 6px 12px; border-radius: var(--radius); font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); white-space: nowrap; }
+.sc-chip { padding: 6px 12px; border-radius: var(--radius); font-size: 13px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); white-space: nowrap; }
 .sc-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
 .sc-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer; padding: 3px 0; }
 .sc-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.sc-table th { text-align: right; font-size: 11px; font-weight: 600; letter-spacing: .04em;  color: var(--text-muted); padding: 10px 10px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; user-select: none; }
+.sc-table th { text-align: right; font-size: 13px; font-weight: 600; letter-spacing: .04em;  color: var(--text-muted); padding: 10px 10px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; user-select: none; }
 .sc-table th.l, .sc-table td.l { text-align: left; }
 .sc-table th.sortable { cursor: pointer; }
 .sc-table th.sortable:hover { color: var(--text-primary); }
@@ -102,7 +102,7 @@ const CSS = `
 @media (max-width: 1400px) { .sc-hide-lg { display: none; } }
 @media (max-width: 960px) { .sc-wrap { grid-template-columns: minmax(0, 1fr); } .sc-filters { position: static; } .sc-hide-md { display: none; }
   .sc-filters:not(.open) { display: none; } .sc-ftoggle { display: inline-flex !important; } }
-@media (max-width: 600px) { .sc-hide-sm { display: none; } .sc-show-sm { display: block !important; max-width: 104px; } .sc-table { font-size: 12px; } .sc-table td, .sc-table th { padding: 9px 5px; } .sc-table th { font-size: 10px; letter-spacing: 0; } }
+@media (max-width: 600px) { .sc-hide-sm { display: none; } .sc-show-sm { display: block !important; max-width: 104px; } .sc-table { font-size: 13px; } .sc-table td, .sc-table th { padding: 9px 5px; } .sc-table th { font-size: 13px; letter-spacing: 0; } }
 .sc-ftoggle, .sc-show-sm { display: none; }
 `
 
@@ -165,7 +165,6 @@ export default function ScreenerPage({ lang }) {
     <div style={{ maxWidth: 1280, margin: '0 auto', paddingTop: 22, paddingBottom: 48 }}>
       <style>{CSS}</style>
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.1em', color: ACCENT }}>{t.eyebrow}</div>
         <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
         <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 680, lineHeight: 1.6 }}>{t.sub(data?.universe || 5000)}</p>
       </div>
@@ -234,7 +233,7 @@ export default function ScreenerPage({ lang }) {
             <input type="checkbox" checked={f.us_only} onChange={(e) => set({ us_only: e.target.checked })} /> {t.usOnly}
           </label>
           <button className="sc-chip" style={{ justifySelf: 'start' }} onClick={() => applyPreset(PRESETS[0])}>{t.reset}</button>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>{t.peNote}</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{t.peNote}</div>
         </aside>
 
         <section className="sc-panel" style={{ overflow: 'hidden', minWidth: 0 }}>
@@ -270,11 +269,11 @@ export default function ScreenerPage({ lang }) {
                   <tr key={r.symbol} className="row" tabIndex={0} onClick={() => open(r)} onKeyDown={(e) => e.key === 'Enter' && open(r)}>
                     <td className="l" style={{ maxWidth: 150 }}>
                       <div style={{ fontFamily: 'var(--sans)', fontWeight: 600, color: ACCENT }}>{r.symbol}</div>
-                      <div className="sc-show-sm" style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
+                      <div className="sc-show-sm" style={{ fontSize: 13, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
                     </td>
                     <td className="l sc-hide-sm" style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       <div style={{ color: 'var(--text-primary)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.name}>{r.name}</div>
-                      {r.industry && <div style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.industry}>{r.industry}</div>}
+                      {r.industry && <div style={{ fontSize: 13, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.industry}>{r.industry}</div>}
                     </td>
                     <td className="l sc-hide-lg">{r.sector ? sectorName(r.sector) : '—'}</td>
                     <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{money(r.market_cap)}</td>
@@ -292,7 +291,7 @@ export default function ScreenerPage({ lang }) {
           </div>
         </section>
       </div>
-      <p style={{ marginTop: 14, fontSize: 11, color: 'var(--text-muted)' }}>{t.note}</p>
+      <p style={{ marginTop: 14, fontSize: 13, color: 'var(--text-muted)' }}>{t.note}</p>
     </div>
   )
 }

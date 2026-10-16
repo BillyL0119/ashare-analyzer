@@ -191,7 +191,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name}</span>
         {stock.name !== stock.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>}
-        <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
+        <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 13 }}>
           {t.mcCurrentPrice}: {result.lastPrice.toFixed(2)} &nbsp;|&nbsp;
           {lang === 'zh' ? '年化波动率' : 'Ann. Vol'}: {result.sigma}%
         </span>
@@ -229,7 +229,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
         style={{ height: 340, width: '100%' }}
         opts={{ renderer: 'canvas' }}
       />
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 8 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 8 }}>
         {lang === 'zh'
           ? `趋势假设：25% 取自该股历史收益，75% 取长期股市平均回报（约 ${market === 'cn' ? 6 : 8}%/年）；波动率取自历史。模拟只展示可能的范围，不是预测。`
           : `Drift: 25% from this stock's past returns, 75% from a long-run market average (about ${market === 'cn' ? 6 : 8}%/yr); volatility from history. The fan shows a range of outcomes, not a forecast.`}
@@ -302,7 +302,7 @@ export default function MonteCarloPanel({ stocks }) {
             fontSize: 13,
             fontWeight: 600,
             background: running ? 'var(--bg-hover)' : '#a08672',
-            color: running ? 'var(--text-muted)' : '#fff',
+            color: running ? 'var(--text-muted)' : 'var(--accent-ink)',
             transition: 'all 0.15s',
           }}
         >

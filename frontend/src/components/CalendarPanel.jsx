@@ -16,7 +16,7 @@ function TypeTag({ type, lang }) {
   const cfg = TYPE_CONFIG[type] || TYPE_CONFIG.holiday
   return (
     <span style={{
-      fontSize: 10,
+      fontSize: 13,
       fontWeight: 600,
       padding: '2px 7px',
       borderRadius: 'var(--radius)',
@@ -57,7 +57,7 @@ function EventRow({ event, lang, t, onStockClick }) {
             cursor: 'pointer',
             color: 'var(--accent)',
             fontFamily: 'var(--sans)',
-            fontSize: 12,
+            fontSize: 13,
             padding: 0,
             textDecoration: 'underline dotted',
           }}
@@ -100,7 +100,7 @@ function DateGroup({ dateStr, events, lang, t, onStockClick }) {
           {dateStr}
         </span>
         <span style={{
-          fontSize: 11,
+          fontSize: 13,
           color: diff <= 1 ? '#ffa726' : 'var(--text-muted)',
           background: diff <= 1 ? 'rgba(255,167,38,0.12)' : 'transparent',
           borderRadius: 6,
@@ -109,7 +109,7 @@ function DateGroup({ dateStr, events, lang, t, onStockClick }) {
         }}>
           {dayLabel}
         </span>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 'auto' }}>
           {events.length} {t.calEventsUnit}
         </span>
       </div>
@@ -180,7 +180,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
                 borderRadius: 'var(--radius)',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: active ? 700 : 400,
                 background: active
                   ? (cfg ? cfg.bg : 'color-mix(in srgb, var(--accent) 15%, transparent)')
@@ -221,7 +221,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
         </div>
       )}
 
-      <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
+      <div style={{ marginTop: 12, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
         {t.calFooter}
       </div>
     </div>

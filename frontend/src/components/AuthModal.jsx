@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { T } from '../i18n/translations'
+import Icon from './Icon'
 
 const SIGNIN = 'signin'
 const SIGNUP = 'signup'
@@ -20,7 +21,7 @@ function GoogleIcon() {
 function Field({ label, type, value, onChange, placeholder }) {
   return (
     <div style={{ marginBottom: 12 }}>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 5 }}>
+      <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 5 }}>
         {label}
       </label>
       <input
@@ -125,7 +126,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
           onClick={onClose}
           style={{ position: 'absolute', top: 14, right: 16, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 18 }}
         >
-          ✕
+          <Icon name="close" size={16} />
         </button>
 
         <div style={{ padding: '28px 32px' }}>
@@ -154,7 +155,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                     fontSize: 13, fontWeight: 600,
                     background: mode === k ? 'var(--bg-secondary)' : 'transparent',
                     color: mode === k ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    boxShadow: mode === k ? '0 1px 4px rgba(0,0,0,0.25)' : 'none',
+                    
                     transition: 'all 0.15s',
                   }}
                 >
@@ -185,7 +186,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                 <div style={{ flex: 1, height: 1, background: 'var(--border-primary)' }} />
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.authOrEmail}</span>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t.authOrEmail}</span>
                 <div style={{ flex: 1, height: 1, background: 'var(--border-primary)' }} />
               </div>
             </>
@@ -217,7 +218,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                 <button
                   type="button"
                   onClick={() => switchMode(RESET)}
-                  style={{ fontSize: 12, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  style={{ fontSize: 13, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
                   {t.authForgotPw}
                 </button>
@@ -226,12 +227,12 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
 
             {/* Feedback messages */}
             {error && (
-              <div style={{ fontSize: 12, color: '#ef5350', marginBottom: 12, padding: '8px 12px', background: 'rgba(239,83,80,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 13, color: '#ef5350', marginBottom: 12, padding: '8px 12px', background: 'rgba(239,83,80,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {error}
               </div>
             )}
             {message && (
-              <div style={{ fontSize: 12, color: '#26a69a', marginBottom: 12, padding: '8px 12px', background: 'rgba(38,166,154,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 13, color: '#26a69a', marginBottom: 12, padding: '8px 12px', background: 'rgba(38,166,154,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {message}
               </div>
             )}
@@ -243,7 +244,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
               style={{
                 width: '100%', padding: '11px 0', borderRadius: 8, border: 'none',
                 background: loading ? 'color-mix(in srgb, var(--accent) 40%, transparent)' : 'var(--accent)',
-                color: '#fff', fontSize: 14, fontWeight: 600,
+                color: 'var(--accent-ink)', fontSize: 14, fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 transition: 'opacity 0.15s',
               }}
@@ -262,7 +263,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
               <button
                 type="button"
                 onClick={() => switchMode(SIGNIN)}
-                style={{ display: 'block', margin: '14px auto 0', fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                style={{ display: 'block', margin: '14px auto 0', fontSize: 13, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
                 ← {t.authBackToSignIn}
               </button>

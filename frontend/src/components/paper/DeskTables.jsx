@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BDR, MUTED, UP, DOWN, ACCENT, fmt, money, signed, pct, plColor } from './ui'
 
-const th = { textAlign: 'left', padding: '8px 10px', fontSize: 11.5, color: MUTED, fontWeight: 600, whiteSpace: 'nowrap', borderBottom: `1px solid ${BDR}` }
+const th = { textAlign: 'left', padding: '8px 10px', fontSize: 13, color: MUTED, fontWeight: 600, whiteSpace: 'nowrap', borderBottom: `1px solid ${BDR}` }
 const td = { padding: '9px 10px', fontSize: 13, borderBottom: `1px solid ${BDR}`, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }
 const num = { ...td, textAlign: 'right' }
 const thr = { ...th, textAlign: 'right' }
@@ -19,7 +19,7 @@ function Table({ head, children, empty, emptyText }) {
   )
 }
 
-const small = (color) => ({ border: `1px solid ${color}55`, background: `${color}14`, color, borderRadius: 7, padding: '3px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer' })
+const small = (color) => ({ background: `${color}14`, color, borderRadius: 7, padding: '3px 10px', fontSize: 13, fontWeight: 600, cursor: 'pointer' })
 
 export function Positions({ s, view, market, onAction }) {
   const longs = Object.entries(view?.portfolio || {}).sort(([, a], [, b]) => b.market_value - a.market_value)
@@ -33,12 +33,12 @@ export function Positions({ s, view, market, onAction }) {
       </>}>
         {longs.map(([sym, p]) => (
           <tr key={sym}>
-            <td style={td}><b style={{ color: ACCENT }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fmt(p.market_value / total * 100, 1)}%{p.available_shares < p.shares ? ` · ${s.available(p.available_shares)}` : ''}</div></td>
+            <td style={td}><b style={{ color: ACCENT }}>{sym}</b> <span style={{ color: MUTED, fontSize: 13 }}>{p.name}</span>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{fmt(p.market_value / total * 100, 1)}%{p.available_shares < p.shares ? ` · ${s.available(p.available_shares)}` : ''}</div></td>
             <td style={num}>{p.shares}</td><td style={num}>{money(p.avg_cost, market)}</td><td style={num}>{money(p.current_price, market)}</td>
             <td style={num}>{money(p.market_value, market, 0)}</td>
             <td style={{ ...num, color: plColor(p.day_change, market) }}>{signed(p.day_change, market, 0)}</td>
-            <td style={{ ...num, color: plColor(p.profit_loss, market) }}>{signed(p.profit_loss, market, 0)}<div style={{ fontSize: 11 }}>{pct(p.profit_loss_pct)}</div></td>
+            <td style={{ ...num, color: plColor(p.profit_loss, market) }}>{signed(p.profit_loss, market, 0)}<div style={{ fontSize: 13 }}>{pct(p.profit_loss_pct)}</div></td>
             <td style={{ ...td, textAlign: 'right' }}>
               <button style={small(DOWN)} disabled={!p.available_shares} onClick={() => onAction({ side: 'sell', symbol: sym, shares: p.available_shares })}>{s.sellAction}</button>
             </td>
@@ -47,17 +47,17 @@ export function Positions({ s, view, market, onAction }) {
       </Table>
       {shorts.length > 0 && (
         <div>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: MUTED, margin: '0 0 6px' }}>{s.shortsTitle}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: MUTED, margin: '0 0 6px' }}>{s.shortsTitle}</div>
           <Table head={<>
             <th style={th}>{s.cols.symbol}</th><th style={thr}>{s.cols.shares}</th><th style={thr}>{s.cols.avgCost}</th><th style={thr}>{s.cols.price}</th>
             <th style={thr}>{s.cols.value}</th><th style={thr}>{s.cols.pl}</th><th style={th} />
           </>}>
             {shorts.map(([sym, p]) => (
               <tr key={sym}>
-                <td style={td}><b style={{ color: '#f59e0b' }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span></td>
+                <td style={td}><b style={{ color: '#f59e0b' }}>{sym}</b> <span style={{ color: MUTED, fontSize: 13 }}>{p.name}</span></td>
                 <td style={num}>-{p.shares}</td><td style={num}>{money(p.avg_price, market)}</td><td style={num}>{money(p.current_price, market)}</td>
                 <td style={num}>{money(-p.market_value, market, 0)}</td>
-                <td style={{ ...num, color: plColor(p.profit_loss, market) }}>{signed(p.profit_loss, market, 0)}<div style={{ fontSize: 11 }}>{pct(p.profit_loss_pct)}</div></td>
+                <td style={{ ...num, color: plColor(p.profit_loss, market) }}>{signed(p.profit_loss, market, 0)}<div style={{ fontSize: 13 }}>{pct(p.profit_loss_pct)}</div></td>
                 <td style={{ ...td, textAlign: 'right' }}><button style={small('#7c9cb4')} onClick={() => onAction({ side: 'cover', symbol: sym, shares: p.shares })}>{s.coverAction}</button></td>
               </tr>
             ))}
@@ -92,7 +92,7 @@ export function Orders({ s, view, market, lang, onCancel }) {
           <td style={td}><b>{o.symbol}</b></td>
           <td style={num}>{o.shares}</td>
           <td style={td}>{s.type[o.type]}{o.type !== 'market' ? ` · ${o.tif === 'gtc' ? 'GTC' : s.tif.day}` : ''}</td>
-          <td style={{ ...td, whiteSpace: 'normal', minWidth: 160, color: MUTED, fontSize: 12 }}>{terms(o, s, market)}</td>
+          <td style={{ ...td, whiteSpace: 'normal', minWidth: 160, color: MUTED, fontSize: 13 }}>{terms(o, s, market)}</td>
           <td style={{ ...td, color: color[o.status], fontWeight: 600 }}>{s.status[o.status] || o.status}</td>
           <td style={{ ...td, textAlign: 'right' }}>{o.status === 'open' && <button style={small(DOWN)} onClick={() => onCancel(o)}>{s.cancel}</button>}</td>
         </tr>
@@ -131,7 +131,7 @@ export function History({ s, view, market, filename }) {
           <tr key={i}>
             <td style={td}>{t.date}{t.time ? ` ${t.time}` : ''}</td>
             <td style={{ ...td, fontWeight: 600, color: t.type === 'buy' || t.type === 'cover' ? UP : DOWN }}>{s.side[t.type] || t.type}</td>
-            <td style={td}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 12 }}>{t.name}</span></td>
+            <td style={td}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 13 }}>{t.name}</span></td>
             <td style={num}>{t.shares}</td><td style={num}>{money(t.price, market)}</td><td style={num}>{money(t.amount, market, 0)}</td>
             <td style={num}>{money(t.commission, market)}</td>
             <td style={{ ...num, color: plColor(t.profit_loss, market) }}>{t.profit_loss != null ? signed(t.profit_loss, market, 0) : '—'}</td>

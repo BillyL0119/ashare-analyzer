@@ -13,7 +13,7 @@ function GaugeBar({ value, label, color }) {
   const pct = Math.round(((value + 1) / 2) * 100)
   return (
     <div style={{ marginBottom: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>
         <span>{label}</span>
         <span style={{ color, fontWeight: 600 }}>{value.toFixed(2)}</span>
       </div>
@@ -30,15 +30,15 @@ function StatRow({ label, v1, v2, highlight = false }) {
   const up = riseColor(market), down = fallColor(market)
   return (
     <tr style={{ borderBottom: `1px solid ${THEME.border}` }}>
-      <td style={{ padding: '7px 10px', color: 'var(--text-muted)', fontSize: 12, whiteSpace: 'nowrap' }}>{label}</td>
+      <td style={{ padding: '7px 10px', color: 'var(--text-muted)', fontSize: 13, whiteSpace: 'nowrap' }}>{label}</td>
       <td style={{
-        padding: '7px 10px', textAlign: 'right', fontSize: 12, fontWeight: highlight ? 600 : 400,
+        padding: '7px 10px', textAlign: 'right', fontSize: 13, fontWeight: highlight ? 600 : 400,
         color: highlight ? (parseFloat(v1) > parseFloat(v2) ? up : parseFloat(v1) < parseFloat(v2) ? down : THEME.text) : THEME.text,
       }}>
         {v1}
       </td>
       <td style={{
-        padding: '7px 10px', textAlign: 'right', fontSize: 12, fontWeight: highlight ? 600 : 400,
+        padding: '7px 10px', textAlign: 'right', fontSize: 13, fontWeight: highlight ? 600 : 400,
         color: highlight ? (parseFloat(v2) > parseFloat(v1) ? up : parseFloat(v2) < parseFloat(v1) ? down : THEME.text) : THEME.text,
       }}>
         {v2}
@@ -128,7 +128,7 @@ export default function AnalysisPanel({ stocks }) {
               <span style={{ color: colorB, fontWeight: 600, fontSize: 15 }}>{b.name}</span>
               {b.name !== b.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{b.code}</span>}
               {data && (
-                <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
+                <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 13 }}>
                   {t.tradingDays(data.trading_days)}
                 </span>
               )}
@@ -144,7 +144,7 @@ export default function AnalysisPanel({ stocks }) {
                 </div>
 
                 <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead>
                       <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
                         <th style={{ padding: '8px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{t.metric}</th>
@@ -161,11 +161,11 @@ export default function AnalysisPanel({ stocks }) {
                       <StatRow label={t.support} v1={data.stock1.support_resistance.support} v2={data.stock2.support_resistance.support} />
                       <StatRow label={t.resistance} v1={data.stock1.support_resistance.resistance} v2={data.stock2.support_resistance.resistance} />
                       <tr style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                        <td style={{ padding: '7px 10px', color: 'var(--text-muted)', fontSize: 12 }}>{t.patterns}</td>
-                        <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 12, color: THEME.text }}>
+                        <td style={{ padding: '7px 10px', color: 'var(--text-muted)', fontSize: 13 }}>{t.patterns}</td>
+                        <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 13, color: THEME.text }}>
                           {data.stock1.patterns.length ? data.stock1.patterns.join('、') : t.none}
                         </td>
-                        <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 12, color: THEME.text }}>
+                        <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 13, color: THEME.text }}>
                           {data.stock2.patterns.length ? data.stock2.patterns.join('、') : t.none}
                         </td>
                       </tr>

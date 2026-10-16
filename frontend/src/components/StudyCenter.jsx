@@ -6,6 +6,7 @@ import { useMobile } from '../hooks/useMobile'
 import { T } from '../i18n/translations'
 import useAuthStore from '../store/authStore'
 import { THEME } from '../utils/chartHelpers'
+import Icon from './Icon'
 const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
@@ -16,15 +17,15 @@ const GREEN       = '#34d399'
 const PROGRESS_BG = 'var(--bg-hover)'
 
 const EXAMS = [
-  { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '美股与股票入门', title_en: 'US Stocks & Investing Basics', color: '#7c9cb4', board: 'US market · Fundamentals · Investing' },
-  { key: 'kline',  label: 'K线教学', label_en: 'Reading Charts', title: 'K线图入门', title_en: 'Reading Candlestick Charts', color: '#f472b6', board: 'Candlesticks' },
-  { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#7c9cb4', board: 'Cambridge 9708' },
-  { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#10b981', board: 'Cambridge 0455' },
-  { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: '#f59e0b', board: 'College Board' },
-  { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#ef4444', board: 'College Board' },
-  { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#7c9cb4', board: 'IB SL/HL'       },
-  { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#06b6d4', board: 'Timeline' },
-  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#a08672', board: 'DeepSeek' },
+  { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '美股与股票入门', title_en: 'US Stocks & Investing Basics', color: 'var(--accent)', board: 'US market · Fundamentals · Investing' },
+  { key: 'kline',  label: 'K线教学', label_en: 'Reading Charts', title: 'K线图入门', title_en: 'Reading Candlestick Charts', color: 'var(--accent)', board: 'Candlesticks' },
+  { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: 'var(--accent)', board: 'Cambridge 9708' },
+  { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: 'var(--accent)', board: 'Cambridge 0455' },
+  { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: 'var(--accent)', board: 'College Board' },
+  { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: 'var(--accent)', board: 'College Board' },
+  { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: 'var(--accent)', board: 'IB SL/HL'       },
+  { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: 'var(--accent)', board: 'Timeline' },
+  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: 'var(--accent)', board: 'DeepSeek' },
 ]
 
 // Stock lessons store bilingual titles as "中文 / English"; show only the half for the reader.
@@ -68,18 +69,18 @@ function TopicRow({ topic, active, read, accentColor, lang, onClick }) {
         fontSize: 14, flexShrink: 0,
         color: read ? GREEN : active ? accentColor : 'var(--text-muted)',
       }}>
-        {read ? '✓' : '●'}
+        {read ? '' : '●'}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          fontSize: 12, lineHeight: 1.35,
+          fontSize: 13, lineHeight: 1.35,
           color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
           fontWeight: active ? 600 : 400,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>
           {displayTitle}
         </div>
-        <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 1 }}>
           {topic.estimated_time}
         </div>
       </div>
@@ -108,12 +109,12 @@ function PaperGroup({ paper, activeId, progress, accentColor, lang, onSelect }) 
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '6px 12px', cursor: 'pointer',
-          fontSize: 11, fontWeight: 600, letterSpacing: '0.05em',
+          fontSize: 13, fontWeight: 600, letterSpacing: '0.05em',
           color: `rgba(${hexToRgb(accentColor)},0.7)`,
         }}
       >
         <span>{paperTitle}</span>
-        <span style={{ fontSize: 10, color: MUTED }}>
+        <span style={{ fontSize: 13, color: MUTED }}>
           {readCount}/{paper.topics.length} {open ? '▲' : '▼'}
         </span>
       </div>
@@ -136,7 +137,7 @@ function PaperGroup({ paper, activeId, progress, accentColor, lang, onSelect }) 
 function KeyTermPill({ term }) {
   return (
     <span style={{
-      fontSize: 11, padding: '3px 9px', borderRadius: 'var(--radius)',
+      fontSize: 13, padding: '3px 9px', borderRadius: 'var(--radius)',
       background: 'rgba(124,156,180,0.15)',
       color: '#7c9cb4',
       border: '1px solid rgba(124,156,180,0.2)',
@@ -150,7 +151,7 @@ function KeyTermPill({ term }) {
 // ── Economic Diagrams (AP Macro) ───────────────────────────────────────────────
 const DA = 'rgba(160,134,114,0.45)'   // axis
 const DL = 'rgba(154,160,166,0.8)'    // axis label
-const DT = 'rgba(232,234,240,0.88)'   // text on diagram
+const DT = 'var(--text-primary)'   // text on diagram
 
 function DiagramWrap({ title, caption, children }) {
   return (
@@ -160,14 +161,14 @@ function DiagramWrap({ title, caption, children }) {
       borderRadius: 'var(--radius)', padding: '12px 14px 10px',
       marginLeft: 15, marginBottom: 14,
     }}>
-      <div style={{ fontSize: 10, fontWeight: 600, color: '#f59e0b', letterSpacing: '0.08em', marginBottom: 8 }}>
-        📊 {title}
+      <div style={{ fontSize: 13, fontWeight: 600, color: '#f59e0b', letterSpacing: '0.08em', marginBottom: 8 }}>
+        <Icon name="chart" size={15} style={{ marginRight: 6 }} />{title}
       </div>
       <svg viewBox="0 0 500 295" overflow="visible" style={{ width: '100%', display: 'block', maxWidth: 520 }}>
         {children}
       </svg>
       {caption && (
-        <div style={{ fontSize: 11, color: 'rgba(154,160,166,0.72)', marginTop: 6, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 13, color: 'rgba(154,160,166,0.72)', marginTop: 6, lineHeight: 1.5 }}>
           {caption}
         </div>
       )}
@@ -207,10 +208,10 @@ function PPCDiagram() {
       {/* A: Efficient — on PPC at t=45°: (55+290·cos45°, 235−180·sin45°)=(260,108) */}
       <circle cx="260" cy="108" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="252" y="100" textAnchor="end" fill={DT} fontSize="10.5">A: Efficient</text>
-      {/* B: Inefficient — inside PPC; (155/290)²+(70/180)²=0.44<1 ✓ */}
+      {/* B: Inefficient — inside PPC; (155/290)²+(70/180)²=0.44<1, ok */}
       <circle cx="210" cy="165" r="5.5" fill="#a08672" stroke="#0f1117" strokeWidth="2"/>
       <text x="220" y="160" fill={DT} fontSize="10.5">B: Inefficient</text>
-      {/* C: outside PPC, inside PPC'; (250/290)²+(135/180)²=1.31>1, (250/362.5)²+(135/225)²=0.84<1 ✓ */}
+      {/* C: outside PPC, inside PPC'; (250/290)²+(135/180)²=1.31>1, (250/362.5)²+(135/225)²=0.84<1, ok */}
       <circle cx="305" cy="100" r="5.5" fill="#f87171" stroke="#0f1117" strokeWidth="2"/>
       <text x="315" y="95" fill={DT} fontSize="10.5">C: Unattainable</text>
       {/* Growth arrow: from PPC outward to PPC' at t≈30° */}
@@ -242,7 +243,7 @@ function ASModelDiagram() {
       <text x="190" y="110" textAnchor="end" fill="#f87171" fontSize="10">E₂ (stagflation)</text>
       <path d="M 224,136 L 198,122" stroke="rgba(248,113,113,0.55)" strokeWidth="1.3" strokeDasharray="3,3"/>
       <line x1="52" y1="139" x2="228" y2="139" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="36" y="143" fill="rgba(232,234,240,0.5)" fontSize="10">P₁</text>
+      <text x="36" y="143" fill="var(--text-secondary)" fontSize="10">P₁</text>
       <line x1="52" y1="121" x2="195" y2="121" stroke="rgba(248,113,113,0.14)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="36" y="125" fill="rgba(248,113,113,0.55)" fontSize="10">P₂↑</text>
     </DiagramWrap>
@@ -272,10 +273,10 @@ function ADASDiagram() {
       <line x1="224" y1="235" x2="224" y2="240" stroke={DA} strokeWidth="1.5"/>
       <line x1="224" y1="242" x2="285" y2="242" stroke="rgba(248,113,113,0.58)" strokeWidth="1.5"/>
       <polygon points="283,238 290,242 283,246" fill="rgba(248,113,113,0.58)"/>
-      <text x="218" y="250" fill="rgba(232,234,240,0.52)" fontSize="10">Y₁</text>
+      <text x="218" y="250" fill="var(--text-secondary)" fontSize="10">Y₁</text>
       <text x="254" y="250" fill="rgba(248,113,113,0.72)" textAnchor="middle" fontSize="9.5">gap</text>
       <line x1="55" y1="141" x2="224" y2="141" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="38" y="145" fill="rgba(232,234,240,0.52)" fontSize="10">P*</text>
+      <text x="38" y="145" fill="var(--text-secondary)" fontSize="10">P*</text>
     </DiagramWrap>
   )
 }
@@ -289,14 +290,14 @@ function MoneyMarketDiagram() {
       <ChartAxes xlabel="Quantity of Money →" ylabel="Nominal Interest Rate (i) →"/>
       <line x1="225" y1="235" x2="225" y2="22" stroke="#34d399" strokeWidth="2.2"/>
       <text x="228" y="18" fill="#34d399" fontSize="10.5" fontWeight="700">Ms₁</text>
-      <text x="219" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">M*</text>
+      <text x="219" y="254" fill="var(--text-secondary)" fontSize="10">M*</text>
       <line x1="290" y1="235" x2="290" y2="22" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.48"/>
       <text x="293" y="18" fill="#34d399" fontSize="10" opacity="0.52">Ms₂</text>
       <line x1="72" y1="52" x2="398" y2="228" stroke="#a08672" strokeWidth="2.2"/>
       <text x="70" y="48" fill="#a08672" fontSize="11" fontWeight="700">Md</text>
       <circle cx="225" cy="135" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="135" x2="225" y2="135" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="32" y="139" fill="rgba(232,234,240,0.62)" fontSize="10">i*</text>
+      <text x="32" y="139" fill="var(--text-secondary)" fontSize="10">i*</text>
       <circle cx="290" cy="170" r="4.5" fill="#34d399" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
       <line x1="55" y1="170" x2="290" y2="170" stroke="rgba(52,211,153,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="174" fill="rgba(52,211,153,0.62)" fontSize="10">i₂↓</text>
@@ -324,7 +325,7 @@ function LoanableFundsDiagram() {
       <text x="422" y="214" fill="#a08672" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="230" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="230" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="32" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">r*</text>
+      <text x="32" y="144" fill="var(--text-secondary)" fontSize="10">r*</text>
       <circle cx="260" cy="124" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
       <line x1="55" y1="124" x2="260" y2="124" stroke="rgba(248,113,113,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="128" fill="rgba(248,113,113,0.65)" fontSize="10">r₂↑</text>
@@ -360,8 +361,8 @@ function PhillipsDiagram() {
       <text x="156" y="84" fill={DT} fontSize="10.5">A (low u, high π)</text>
       <circle cx="320" cy="186" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="432" y="182" textAnchor="end" fill={DT} fontSize="10.5">B (high u, low π)</text>
-      <path d="M 314,183 L 159,91" stroke="rgba(232,234,240,0.18)" strokeWidth="1.2" strokeDasharray="3,3"/>
-      <text x="222" y="148" fill="rgba(232,234,240,0.38)" fontSize="9.5" transform="rotate(-33,222,148)">trade-off</text>
+      <path d="M 314,183 L 159,91" stroke="var(--text-muted)" strokeWidth="1.2" strokeDasharray="3,3"/>
+      <text x="222" y="148" fill="var(--text-muted)" fontSize="9.5" transform="rotate(-33,222,148)">trade-off</text>
     </DiagramWrap>
   )
 }
@@ -381,8 +382,8 @@ function ForexDiagram() {
       <text x="420" y="214" fill="#a08672" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="232" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="232" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="31" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">e*</text>
-      <text x="226" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">Q*</text>
+      <text x="31" y="144" fill="var(--text-secondary)" fontSize="10">e*</text>
+      <text x="226" y="254" fill="var(--text-secondary)" fontSize="10">Q*</text>
       <circle cx="263" cy="123" r="4.5" fill="#a08672" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
       <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(160,134,114,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="28" y="127" fill="rgba(160,134,114,0.65)" fontSize="10">e₂↑</text>
@@ -414,7 +415,7 @@ const REAL_WORLD_LABEL = { zh: '现实案例', en: 'REAL WORLD CONNECTION', ja: 
 const KEY_POINT_LABEL  = { zh: '要点', en: 'KEY POINT', ja: 'ポイント', ko: '핵심', fr: 'À RETENIR' }
 const EXAM_TIP_LABEL   = { zh: '考试要点', en: 'EXAM TIP', ja: '試験のポイント', ko: '시험 팁', fr: "CONSEIL D'EXAMEN" }
 
-function SectionBlock({ section, index, total, accentColor, lang, exam }) {
+function SectionBlock({ section, index, total, lang, exam }) {
   const pick = (key) => {
     if (lang === 'zh') return section[key]
     if (lang === 'en') return section[`${key}_en`] || section[key]
@@ -428,7 +429,6 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
   return (
     <div style={{ marginBottom: index < total - 1 ? 32 : 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-        <div style={{ width: 3, height: 22, background: accentColor, borderRadius: 2, flexShrink: 0 }} />
         <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}>
           {heading}
         </h3>
@@ -453,16 +453,15 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
 
       {realWorld && (
         <div style={{
-          borderLeft: '3px solid #f59e0b',
-          background: 'rgba(245,158,11,0.08)',
-          borderRadius: '0 8px 8px 0',
+          background: 'color-mix(in srgb, var(--accent-gold) 10%, transparent)',
+          borderRadius: 'var(--radius)',
           padding: '12px 16px',
           marginLeft: 15, marginBottom: 12,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#f59e0b', marginBottom: 6, letterSpacing: '0.05em' }}>
-            🌍 {REAL_WORLD_LABEL[lang] || REAL_WORLD_LABEL.en}
+          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--accent-gold)', marginBottom: 6 }}>
+            <Icon name="globe" size={15} style={{ marginRight: 6 }} />{REAL_WORLD_LABEL[lang] || REAL_WORLD_LABEL.en}
           </div>
-          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
+          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-primary)' }}>
             {realWorld}
           </div>
         </div>
@@ -470,16 +469,15 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
 
       {examTip && (
         <div style={{
-          borderLeft: '3px solid #fbbf24',
-          background: 'rgba(251,191,36,0.08)',
-          borderRadius: '0 8px 8px 0',
+          background: 'var(--bg-tertiary)',
+          borderRadius: 'var(--radius)',
           padding: '12px 16px',
           marginLeft: 15, marginBottom: 12,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#fbbf24', marginBottom: 6, letterSpacing: '0.05em' }}>
-            📝 {(exam === 'stocks' ? KEY_POINT_LABEL : EXAM_TIP_LABEL)[lang] || EXAM_TIP_LABEL.en}
+          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 6 }}>
+            <Icon name="doc" size={15} style={{ marginRight: 6 }} />{(exam === 'stocks' ? KEY_POINT_LABEL : EXAM_TIP_LABEL)[lang] || EXAM_TIP_LABEL.en}
           </div>
-          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
+          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-primary)' }}>
             {examTip}
           </div>
         </div>
@@ -561,12 +559,12 @@ function AITutor({ topicId, exam, lang, accentColor }) {
     <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(160,134,114,0.10)' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-        <span style={{ fontSize: 20 }}>🤖</span>
+        <span style={{ fontSize: 20 }}><Icon name="spark" size={16} /></span>
         <div>
           <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
             {zh ? 'AI 导师' : 'Ask AI Tutor'}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 1 }}>
             {zh ? '对这个课题有任何问题，都可以问我' : 'Ask anything about this topic'}
           </div>
         </div>
@@ -592,12 +590,10 @@ function AITutor({ topicId, exam, lang, accentColor }) {
           </div>
           {/* Answer */}
           <div style={{
-            borderLeft: '3px solid',
-            borderImage: '#a08672 1',
-            background: 'rgba(160,134,114,0.05)',
-            borderRadius: '0 10px 10px 0',
+            background: 'var(--bg-tertiary)',
+            borderRadius: 'var(--radius)',
             padding: '12px 16px',
-            fontSize: 13, color: 'rgba(232,234,240,0.9)', lineHeight: 1.8,
+            fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.8,
             whiteSpace: 'pre-wrap',
           }}>
             {item.displayed}
@@ -611,9 +607,8 @@ function AITutor({ topicId, exam, lang, accentColor }) {
       {/* Loading */}
       {loading && (
         <div style={{
-          borderLeft: '3px solid rgba(160,134,114,0.4)',
-          background: 'rgba(160,134,114,0.04)',
-          borderRadius: '0 10px 10px 0',
+          background: 'var(--bg-tertiary)',
+          borderRadius: 'var(--radius)',
           padding: '12px 16px',
           marginBottom: 16,
           fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic',
@@ -656,7 +651,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
             border: 'none',
             borderRadius: 'var(--radius)',
             padding: '0 18px',
-            color: input.trim() && !loading ? '#fff' : 'var(--text-muted)',
+            color: input.trim() && !loading ? 'var(--accent-ink)' : 'var(--text-muted)',
             fontSize: 18,
             cursor: input.trim() && !loading ? 'pointer' : 'default',
             transition: 'all 0.2s',
@@ -667,7 +662,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
         </button>
       </div>
       {history.length > 0 && (
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
           {zh ? `显示最近 ${history.length} 条问答` : `Showing last ${history.length} Q&A`}
         </div>
       )}
@@ -714,7 +709,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
         borderColor: 'rgba(160,134,114,0.2)',
         textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (params) => {
-          let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
+          let s = `<div style="margin-bottom:4px;font-size: 13px;color:#9aa0a6">${params[0]?.axisValue}</div>`
           params.forEach((p) => {
             s += `<div style="display:flex;align-items:center;gap:6px;margin:2px 0">
               <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color}"></span>
@@ -803,12 +798,12 @@ function EventTimeline({ zh }) {
         overflowY: 'auto',
         padding: '20px 0',
       }}>
-        <div style={{ padding: '0 16px 12px', fontSize: 11, fontWeight: 600, color: `rgba(6,182,212,0.7)`, letterSpacing: '0.06em' }}>
+        <div style={{ padding: '0 16px 12px', fontSize: 13, fontWeight: 600, color: `rgba(6,182,212,0.7)`, letterSpacing: '0.06em' }}>
           {zh ? '历史大事件' : 'Major Events'}
         </div>
 
         {loading && (
-          <div style={{ padding: '16px', color: MUTED, fontSize: 12 }}>
+          <div style={{ padding: '16px', color: MUTED, fontSize: 13 }}>
             {zh ? '加载中...' : 'Loading...'}
           </div>
         )}
@@ -843,17 +838,17 @@ function EventTimeline({ zh }) {
                   marginTop: 3, zIndex: 1,
                   background: isActive ? ACCENT : 'rgba(6,182,212,0.3)',
                   border: isActive ? `2px solid ${ACCENT}` : '2px solid rgba(6,182,212,0.2)',
-                  boxShadow: isActive ? `0 0 8px ${ACCENT}60` : 'none',
+                  
                   transition: 'all 0.15s',
                 }} />
                 <div>
-                  <div style={{ fontSize: 11, color: isActive ? ACCENT : 'rgba(6,182,212,0.5)', fontWeight: 600, marginBottom: 2 }}>
+                  <div style={{ fontSize: 13, color: isActive ? ACCENT : 'rgba(6,182,212,0.5)', fontWeight: 600, marginBottom: 2 }}>
                     {ev.year}
                   </div>
-                  <div style={{ fontSize: 12, color: isActive ? 'var(--text-primary)' : MUTED, lineHeight: 1.4, fontWeight: isActive ? 600 : 400 }}>
+                  <div style={{ fontSize: 13, color: isActive ? 'var(--text-primary)' : MUTED, lineHeight: 1.4, fontWeight: isActive ? 600 : 400 }}>
                     {zh ? ev.title : ev.title_en}
                   </div>
-                  <div style={{ fontSize: 10, color: 'rgba(154,160,166,0.45)', marginTop: 2 }}>
+                  <div style={{ fontSize: 13, color: 'rgba(154,160,166,0.45)', marginTop: 2 }}>
                     {ev.date_range}
                   </div>
                 </div>
@@ -876,7 +871,7 @@ function EventTimeline({ zh }) {
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 6 }}>
                 <span style={{
-                  fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 'var(--radius)',
+                  fontSize: 13, fontWeight: 600, padding: '3px 10px', borderRadius: 'var(--radius)',
                   background: 'rgba(6,182,212,0.12)', color: ACCENT,
                   border: '1px solid rgba(6,182,212,0.2)',
                 }}>
@@ -899,7 +894,7 @@ function EventTimeline({ zh }) {
               padding: '16px 20px',
               marginBottom: 24,
             }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: ACCENT, marginBottom: 12, letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: ACCENT, marginBottom: 12, letterSpacing: '0.05em' }}>
                 {zh ? '市场走势（以事件起点=100标准化）' : 'Market Performance (normalised to 100 at start)'}
               </div>
               <EventPriceChart eventId={active.id} tickers={active.tickers} zh={zh} />
@@ -912,8 +907,8 @@ function EventTimeline({ zh }) {
               borderRadius: 'var(--radius)',
               padding: '16px 20px',
             }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#fbbf24', marginBottom: 14, letterSpacing: '0.05em' }}>
-                📝 {zh ? '考试考点' : 'Exam Connection Points'}
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#fbbf24', marginBottom: 14, letterSpacing: '0.05em' }}>
+                <Icon name="doc" size={15} style={{ marginRight: 6 }} />{zh ? '考试考点' : 'Exam Connection Points'}
               </div>
               {(zh ? active.exam_points_zh : active.exam_points).map((ep, i) => (
                 <div key={i} style={{
@@ -922,7 +917,7 @@ function EventTimeline({ zh }) {
                   borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(160,134,114,0.07)' : 'none',
                 }}>
                   <span style={{
-                    flexShrink: 0, fontSize: 11, fontWeight: 600,
+                    flexShrink: 0, fontSize: 13, fontWeight: 600,
                     padding: '3px 10px', borderRadius: 'var(--radius)', height: 'fit-content',
                     background: 'rgba(251,191,36,0.1)', color: '#fbbf24',
                     border: '1px solid rgba(251,191,36,0.2)',
@@ -930,7 +925,7 @@ function EventTimeline({ zh }) {
                   }}>
                     {ep.exam}
                   </span>
-                  <span style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.85)' }}>
+                  <span style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-primary)' }}>
                     {ep.point}
                   </span>
                 </div>
@@ -1114,11 +1109,11 @@ export default function StudyCenter({ lang }) {
             }}>
               {lang === 'zh' ? examMeta.title : examMeta.title_en}
             </div>
-            <div style={{ fontSize: 11, color: MUTED }}>{examMeta.board}</div>
+            <div style={{ fontSize: 13, color: MUTED }}>{examMeta.board}</div>
 
             {/* Progress bar */}
             <div style={{ marginTop: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: MUTED, marginBottom: 5 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: MUTED, marginBottom: 5 }}>
                 <span>{t.progress || 'Progress'}</span>
                 <span style={{ color: readCount > 0 ? GREEN : MUTED }}>
                   {readCount} / {totalCount} {t.read || 'read'}
@@ -1197,7 +1192,6 @@ export default function StudyCenter({ lang }) {
               {[0, 1, 2].map(i => (
                 <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(160,134,114,0.07)` : 'none' }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <div className="skeleton" style={{ width: 3, height: 20, borderRadius: 2, flexShrink: 0 }} />
                     <div className="skeleton" style={{ height: 18, width: `${[55, 45, 60][i]}%` }} />
                   </div>
                   <div className="skeleton" style={{ height: 12, width: '100%' }} />
@@ -1216,15 +1210,15 @@ export default function StudyCenter({ lang }) {
                   </h1>
                   {isRead && (
                     <span style={{
-                      fontSize: 12, fontWeight: 600, padding: '3px 10px', borderRadius: 'var(--radius)',
+                      fontSize: 13, fontWeight: 600, padding: '3px 10px', borderRadius: 'var(--radius)',
                       background: 'rgba(52,211,153,0.15)', color: GREEN,
                       border: '1px solid rgba(52,211,153,0.25)',
                     }}>
-                      ✓ {t.read || 'Read'}
+                      <Icon name="check" size={15} style={{ marginRight: 6 }} />{t.read || 'Read'}
                     </span>
                   )}
                 </div>
-                <div style={{ marginTop: 6, fontSize: 12, color: MUTED }}>
+                <div style={{ marginTop: 6, fontSize: 13, color: MUTED }}>
                   ⏱ {topicData.estimated_time} &nbsp;·&nbsp; {topicData.sections?.length} {t.sections || 'sections'}
                   &nbsp;·&nbsp; <span style={{ color: accentColor }}>{lang === 'zh' ? examMeta.label : examMeta.label_en}</span>
                 </div>
@@ -1255,11 +1249,11 @@ export default function StudyCenter({ lang }) {
                   style={{
                     background: 'rgba(160,134,114,0.08)',
                     border: '1px solid rgba(160,134,114,0.20)',
-                    borderRadius: 8, padding: '5px 14px', fontSize: 12,
+                    borderRadius: 8, padding: '5px 14px', fontSize: 13,
                     color: '#a08672', cursor: 'pointer',
                   }}
                 >
-                  🎓 {t.discussWithAI || 'Discuss with AI Tutor →'}
+                  <Icon name="cap" size={15} style={{ marginRight: 6 }} />{t.discussWithAI || 'Discuss with AI Tutor →'}
                 </button>
               </div>
 
@@ -1289,8 +1283,8 @@ export default function StudyCenter({ lang }) {
                   }}
                 >
                   {isRead
-                    ? `✓ ${t.markedAsRead || 'Marked as Read'}`
-                    : `${t.markAsRead || 'Mark as Read'} ✓`
+                    ? `${t.markedAsRead || 'Marked as Read'}`
+                    : `${t.markAsRead || 'Mark as Read'}`
                   }
                 </button>
 

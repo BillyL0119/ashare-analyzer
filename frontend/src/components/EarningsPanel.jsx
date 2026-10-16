@@ -42,7 +42,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
     >
       {/* Symbol */}
       <span style={{
-        fontFamily: 'var(--sans)', fontSize: 12, fontWeight: 600,
+        fontFamily: 'var(--sans)', fontSize: 13, fontWeight: 600,
         color: mkt.color, minWidth: 60, flexShrink: 0,
       }}>
         {item.symbol}
@@ -59,7 +59,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
       {/* Report type badge (A-share) */}
       {item.timing && (
         <span style={{
-          fontSize: 10, padding: '2px 7px', borderRadius: 'var(--radius)', flexShrink: 0,
+          fontSize: 13, padding: '2px 7px', borderRadius: 'var(--radius)', flexShrink: 0,
           background: mkt.bg, color: mkt.color,
           border: `1px solid ${mkt.color}40`,
           fontWeight: 600,
@@ -71,10 +71,10 @@ function EarningsRow({ item, lang, t, onStockClick }) {
       {/* EPS block */}
       {(hasEps || hasActualEps) && (
         <div style={{ textAlign: 'right', flexShrink: 0, minWidth: 80 }}>
-          <div style={{ fontSize: 10, color: MUTED, marginBottom: 1 }}>EPS</div>
+          <div style={{ fontSize: 13, color: MUTED, marginBottom: 1 }}>EPS</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
             {hasEps && (
-              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                 {t.earEst} {item.eps_estimate}
               </span>
             )}
@@ -88,7 +88,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
             )}
             {hasActualEps && (
               <span style={{
-                fontSize: 12, fontWeight: 600,
+                fontSize: 13, fontWeight: 600,
                 color: epsBeat === 'beat' ? '#34d399' : epsBeat === 'miss' ? '#f87171' : 'var(--text-primary)',
               }}>
                 {item.eps_actual}
@@ -101,17 +101,17 @@ function EarningsRow({ item, lang, t, onStockClick }) {
       {/* Revenue block */}
       {(hasRevest || hasActualRev) && (
         <div style={{ textAlign: 'right', flexShrink: 0, minWidth: 90 }}>
-          <div style={{ fontSize: 10, color: MUTED, marginBottom: 1 }}>
+          <div style={{ fontSize: 13, color: MUTED, marginBottom: 1 }}>
             {t.earRevenue}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
             {hasRevest && (
-              <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                 {t.earEst}{item.revenue_estimate}
               </span>
             )}
             {hasActualRev && (
-              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                 {item.revenue_actual}
               </span>
             )}
@@ -141,7 +141,7 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
           {dateStr}
         </span>
         <span style={{
-          fontSize: 11, borderRadius: 6,
+          fontSize: 13, borderRadius: 6,
           color: diff <= 1 ? '#ffa726' : 'var(--text-muted)',
           background: diff <= 1 ? 'rgba(255,167,38,0.12)' : 'transparent',
           padding: diff <= 1 ? '1px 6px' : 0,
@@ -149,7 +149,7 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
         }}>
           {dayLabel}
         </span>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 'auto' }}>
           {items.length} {t.earCompanies}
         </span>
       </div>
@@ -206,7 +206,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
           {t.earTitle}
         </div>
         {data?.updated_at && (
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {t.earUpdated} {data.updated_at.slice(0, 16).replace('T', ' ')}
           </div>
         )}
@@ -232,7 +232,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
             >
               {getLang(cfg, lang)}
               {data && (
-                <span style={{ marginLeft: 6, fontSize: 11, opacity: 0.7 }}>
+                <span style={{ marginLeft: 6, fontSize: 13, opacity: 0.7 }}>
                   ({m === 'us' ? (data.us?.length || 0) : (data.cn?.length || 0)})
                 </span>
               )}
@@ -245,7 +245,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
       {loading ? (
         <div style={{ color: MUTED, fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
           {t.earLoading}
-          <div style={{ fontSize: 12, marginTop: 8, color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: 13, marginTop: 8, color: 'var(--text-muted)' }}>
             {t.earLongLoad}
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
         </div>
       )}
 
-      <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
+      <div style={{ marginTop: 12, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
         {t.earFooter}
       </div>
     </div>

@@ -110,7 +110,7 @@ export default function USMarketPanel({ lang }) {
           {d.mega_caps.map((q) => (
             <button key={q.symbol} className="usp-hit usp-tile" onClick={() => openUS(q)} style={{ minWidth: 0, textAlign: 'left', background: 'var(--bg-tertiary)', border: 'none', borderRadius: 'var(--radius)', padding: '10px 12px', color: 'inherit', cursor: 'pointer' }}>
               <div style={{ fontWeight: 600, fontSize: 14 }}>{q.symbol}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</div>
             </button>
           ))}
@@ -127,9 +127,9 @@ export default function USMarketPanel({ lang }) {
           {rows.map((q) => (
             <button key={q.symbol} className="usp-hit" onClick={() => openUS(q)} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '8px 6px', borderRadius: 6, background: 'none', border: 'none', borderBottom: '1px solid var(--border-primary)', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}>
               <span style={{ width: 56, fontWeight: 600, fontSize: 14 }}>{q.symbol}</span>
-              <span style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.name}</span>
+              <span style={{ flex: 1, fontSize: 13, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.name}</span>
               <span style={{ fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</span>
-              <span style={{ width: 66, textAlign: 'right', fontSize: 12, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</span>
+              <span style={{ width: 66, textAlign: 'right', fontSize: 13, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</span>
             </button>
           ))}
         </div>
@@ -147,7 +147,7 @@ export default function USMarketPanel({ lang }) {
                 <span style={{ position: 'relative', height: 8, borderRadius: 4, background: 'var(--bg-tertiary)' }}>
                                     <span style={{ position: 'absolute', top: 0, bottom: 0, borderRadius: 4, background: c, width: `${Math.max(w, 1.5)}%`, ...(x.pct >= 0 ? { left: '50%' } : { right: '50%' }) }} />
                 </span>
-                <span style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: c, fontVariantNumeric: 'tabular-nums' }}>{pct(x.pct)}</span>
+                <span style={{ textAlign: 'right', fontSize: 13, fontWeight: 600, color: c, fontVariantNumeric: 'tabular-nums' }}>{pct(x.pct)}</span>
               </button>
             )
           })}

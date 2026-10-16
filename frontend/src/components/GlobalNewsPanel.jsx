@@ -50,7 +50,7 @@ function Pill({ active, onClick, children }) {
       onClick={onClick}
       style={{
         padding: '4px 12px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
-        fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
+        fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? 'color-mix(in srgb, var(--accent) 18%, transparent)' : 'var(--bg-tertiary)',
         color: active ? 'var(--accent)' : 'var(--text-secondary)',
         transition: 'all 0.18s',
@@ -84,11 +84,11 @@ function NewsCard({ item, t }) {
           <SourceBadge name={item.source} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{sourceName(item.source, useLangStore.getState().lang)}</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, t)}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{sourceName(item.source, useLangStore.getState().lang)}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>·</span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, t)}</span>
               <span style={{
-                fontSize: 10, padding: '1px 6px', borderRadius: 8,
+                fontSize: 13, padding: '1px 6px', borderRadius: 8,
                 background: item.lang === 'cn' ? 'rgba(232,50,30,0.12)' : 'rgba(14,100,233,0.12)',
                 color: item.lang === 'cn' ? '#e8321e' : '#5b9cf6',
                 fontWeight: 500,
@@ -163,18 +163,18 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
           {t.gnTitle}
           {items.length > 0 && (
-            <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--text-muted)', marginLeft: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 400, color: 'var(--text-muted)', marginLeft: 8 }}>
               {items.length} {t.gnArticles}
             </span>
           )}
         </div>
         {updatedAt && (
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {t.gnUpdated} {relativeTime(updatedAt, t)}
             <button
               onClick={() => fetchNews(filters)}
               style={{
-                marginLeft: 8, fontSize: 11, background: 'none', border: 'none',
+                marginLeft: 8, fontSize: 13, background: 'none', border: 'none',
                 color: 'var(--accent)', cursor: 'pointer', padding: 0,
               }}
             >
@@ -185,7 +185,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
       </div>
 
       {/* Disclaimer */}
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 10 }}>
         {lang === 'zh' ? '仅供学习，不构成投资建议。数据来源可能存在延迟。' : 'For learning only. Not investment advice. Data may be delayed.'}
       </div>
 
@@ -217,7 +217,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onChange={e => applyFilter({ ...filters, source: e.target.value })}
               style={{
                 background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
-                borderRadius: 'var(--radius)', padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
+                borderRadius: 'var(--radius)', padding: '3px 10px', fontSize: 13, color: 'var(--text-secondary)', cursor: 'pointer',
               }}
             >
               <option value="all">{t.gnAllSources}</option>

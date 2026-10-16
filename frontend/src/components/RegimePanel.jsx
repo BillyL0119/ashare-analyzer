@@ -42,11 +42,11 @@ function RegimeBadge({ regime, duration, lang, t }) {
         textAlign: 'center',
       }}>
         <div style={{ color, fontSize: 20, fontWeight: 600 }}>{regimeLabel(regime, lang)}</div>
-        <div style={{ color: 'var(--text-muted)', fontSize: 11, marginTop: 2 }}>{t.regimeCurrent}</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 2 }}>{t.regimeCurrent}</div>
       </div>
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: THEME.text, fontSize: 22, fontWeight: 600 }}>{duration}</div>
-        <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{t.regimeDuration} ({lang === 'zh' ? '天' : 'd'})</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.regimeDuration} ({lang === 'zh' ? '天' : 'd'})</div>
       </div>
     </div>
   )
@@ -62,7 +62,7 @@ function RegimeBreakdown({ stats, lang, t }) {
         const color = REGIME_COLORS[key]
         return (
           <div key={key}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 3 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 3 }}>
               <span style={{ color }}>{regimeLabel(key, lang)}</span>
               <span style={{ color: 'var(--text-muted)' }}>{s.days}{lang === 'zh' ? '天' : 'd'} &nbsp;
                 <span style={{ color: THEME.text, fontWeight: 600 }}>{s.pct}%</span>
@@ -206,7 +206,7 @@ function RegimePriceChart({ series, lang, t }) {
 function TransitionTable({ transitions, lang, t }) {
   return (
     <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead>
           <tr style={{ background: 'var(--bg-hover)' }}>
             {[t.regimeStart, t.regimeEnd, t.regimeCurrent, t.regimeDuration, t.regimeReturn].map(h => (
@@ -222,7 +222,7 @@ function TransitionTable({ transitions, lang, t }) {
                 <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{tr.start_date.slice(0, 10)}</td>
                 <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{tr.end_date.slice(0, 10)}</td>
                 <td style={{ padding: '6px 10px' }}>
-                  <span style={{ color, background: color + '22', padding: '2px 8px', borderRadius: 4, fontWeight: 600, fontSize: 11 }}>
+                  <span style={{ color, background: color + '22', padding: '2px 8px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>
                     {regimeLabel(tr.regime, lang)}
                   </span>
                 </td>
@@ -284,7 +284,7 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
         <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name}</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
         {data && (
-          <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
+          <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 13 }}>
             {t.regimeWindow}: {data.window}{lang === 'zh' ? '天' : 'd'} &nbsp;|&nbsp; {data.series.length} {lang === 'zh' ? '根K线' : 'bars'}
           </span>
         )}
@@ -349,7 +349,7 @@ export default function RegimePanel({ stocks }) {
         {/* Legend */}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 12 }}>
           {REGIME_KEYS.map(k => (
-            <span key={k} style={{ fontSize: 12, color: REGIME_COLORS[k], display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span key={k} style={{ fontSize: 13, color: REGIME_COLORS[k], display: 'flex', alignItems: 'center', gap: 4 }}>
               <span style={{ width: 10, height: 10, borderRadius: 2, background: REGIME_COLORS[k], display: 'inline-block' }} />
               {regimeLabel(k, lang)}
             </span>

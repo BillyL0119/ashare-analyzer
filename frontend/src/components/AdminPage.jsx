@@ -41,16 +41,16 @@ const TXT = {
 const CSS = `
 .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
 .dash-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); padding: 16px 18px; min-width: 0; }
-.dash-lbl { font-size: 11px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); }
+.dash-lbl { font-size: 13px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); }
 .dash-num { font-family: var(--sans); font-size: 32px; font-weight: 500; color: var(--text-primary); margin-top: 6px; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.01em; }
-.dash-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.dash-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
 .dash-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .dash-h { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 0 0 12px; }
-.dash-bar { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 12.5px; color: var(--text-secondary); }
+.dash-bar { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 13px; color: var(--text-secondary); }
 .dash-bar > span:first-child { min-width: 92px; }
 .dash-track { flex: 1; height: 5px; border-radius: 3px; background: var(--bg-tertiary); overflow: hidden; }
 .dash-fill { height: 100%; border-radius: 3px; background: ${GREEN}; }
-.dash-val { min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: 12px; }
+.dash-val { min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: 13px; }
 .dash-btn { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
 .dash-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
 .dash-btn.pri { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
@@ -58,8 +58,8 @@ const CSS = `
 .dash-in:focus { border-color: ${ACCENT}; }
 .dash-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-primary); font-size: 13px; color: var(--text-secondary); }
 .dash-row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.dash-pill { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: var(--radius); color: ${ACCENT}; background: color-mix(in srgb, ${ACCENT} 14%, transparent); flex-shrink: 0; }
-.dash-chip { padding: 5px 12px; border-radius: var(--radius); font-size: 12px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.dash-pill { font-size: 13px; font-weight: 600; padding: 2px 9px; border-radius: var(--radius); color: ${ACCENT}; background: color-mix(in srgb, ${ACCENT} 14%, transparent); flex-shrink: 0; }
+.dash-chip { padding: 5px 12px; border-radius: var(--radius); font-size: 13px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
 .dash-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
 @media (max-width: 760px) { .dash-two { grid-template-columns: minmax(0, 1fr); } .dash-num { font-size: 24px; } }
 @media print {
@@ -224,10 +224,9 @@ export default function AdminPage({ lang, onOpenAuth }) {
     <Shell>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.1em', color: ACCENT }}>{t.eyebrow}</div>
           <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
           <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 640, lineHeight: 1.6 }}>{t.sub}</p>
-          <p style={{ margin: '6px 0 0', fontSize: 12, color: MUTED }}>{t.since(data.tracking_since || data.generated)}</p>
+          <p style={{ margin: '6px 0 0', fontSize: 13, color: MUTED }}>{t.since(data.tracking_since || data.generated)}</p>
         </div>
         <div className="dash-noprint" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button className="dash-btn" onClick={exportCsv}>{t.exportCsv}</button>
@@ -265,7 +264,7 @@ export default function AdminPage({ lang, onOpenAuth }) {
           <h2 className="dash-h">{t.sources}</h2>
           <Bars rows={(s.sources || []).slice(0, 6)} labelOf={(k) => t.src[k] || k} />
           {uiTotal > 0 && (
-            <div style={{ fontSize: 12, color: MUTED, marginTop: 12 }}>
+            <div style={{ fontSize: 13, color: MUTED, marginTop: 12 }}>
               {t.ui}: {t.mobile} {Math.round(((s.ui_split.mobile || 0) / uiTotal) * 100)}% · {t.desktop} {Math.round(((s.ui_split.desktop || 0) / uiTotal) * 100)}%
             </div>
           )}
@@ -292,21 +291,21 @@ export default function AdminPage({ lang, onOpenAuth }) {
 
       <div className="dash-card dash-noprint" style={{ marginTop: 12 }}>
         <h2 className="dash-h">{t.members}</h2>
-        <p style={{ margin: '0 0 12px', fontSize: 12.5, color: MUTED }}>{t.membersSub}</p>
+        <p style={{ margin: '0 0 12px', fontSize: 13, color: MUTED }}>{t.membersSub}</p>
         <form onSubmit={(e) => { e.preventDefault(); if (email.trim()) addMember(true, email.trim()) }} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <input id="dash-email" className="dash-in" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.email} autoComplete="off" />
           <button className="dash-btn pri" type="submit">{t.grant}</button>
         </form>
-        {memberErr && <div style={{ color: '#ef5350', fontSize: 12.5, marginTop: 8 }}>{memberErr}</div>}
+        {memberErr && <div style={{ color: '#ef5350', fontSize: 13, marginTop: 8 }}>{memberErr}</div>}
         <div style={{ marginTop: 12 }}>
           {(members?.admins || []).map((e) => <div className="dash-row" key={e}><span>{e}</span><span className="dash-pill">{t.roleAdmin}</span></div>)}
           {(members?.members || []).map((m) => (
             <div className="dash-row" key={m.email}>
               <span>{m.email} {m.since && <span style={{ color: MUTED }}>· {m.since}</span>}</span>
-              <button className="dash-btn" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => addMember(false, m.email)}>{t.revoke}</button>
+              <button className="dash-btn" style={{ padding: '3px 10px', fontSize: 13 }} onClick={() => addMember(false, m.email)}>{t.revoke}</button>
             </div>
           ))}
-          {members && !members.members.length && <div style={{ fontSize: 12.5, color: MUTED, paddingTop: 8 }}>{t.noMembers}</div>}
+          {members && !members.members.length && <div style={{ fontSize: 13, color: MUTED, paddingTop: 8 }}>{t.noMembers}</div>}
         </div>
       </div>
     </Shell>

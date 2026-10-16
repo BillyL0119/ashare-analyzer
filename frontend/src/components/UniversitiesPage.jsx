@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { tx, txEn, txf, lang as curLang } from './uniI18n'
 import { newDeviceId } from '../utils/deviceId'
+import Icon from './Icon'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -45,7 +46,7 @@ function DeadlineTag({ str }) {
   if (st.passed) return <span style={{ ...style, color: 'var(--text-muted)', border: '1px solid var(--border-primary)' }}>{tx('已截止', 'Closed')}</span>
   const soon = st.days <= 30
   const c = soon ? '#ef4444' : GREEN
-  return <span style={{ ...style, color: c, background: `${c}18`, border: `1px solid ${c}44` }}>
+  return <span style={{ ...style, color: c, background: `${c}18` }}>
     {st.days === 0 ? tx('今天截止', 'Due today') : (txf('daysLeft', st.days) ?? (curLang() === 'zh' ? `还有 ${st.days} 天` : `${st.days} days left`))}
   </span>
 }
@@ -129,7 +130,7 @@ function RankBadge({ rank, label = 'QS' }) {
       border: `1px solid ${color}66`,
       borderRadius: 6,
       padding: '2px 8px',
-      fontSize: 11, fontWeight: 600, color,
+      fontSize: 13, fontWeight: 600, color,
     }}>
       {label} #{rank}
     </div>
@@ -147,13 +148,13 @@ function BusinessRankLine({ uni, zh }) {
   const gap = bmGap(uni)
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-      <span style={{ fontSize: 11, color: BLUE, fontWeight: 600 }}>
+      <span style={{ fontSize: 13, color: BLUE, fontWeight: 600 }}>
         {tx('QS 商科', 'QS Business')} #{uni.qs_bm_rank.replace('=', '')}
       </span>
       {gap >= 10 && (
         <span style={{
-          fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 5,
-          background: `${GREEN}1f`, color: GREEN, border: `1px solid ${GREEN}40`,
+          fontSize: 13, fontWeight: 600, padding: '1px 6px', borderRadius: 5,
+          background: `${GREEN}1f`, color: GREEN,
         }}>
           {zh ? `比综合排名高 ${gap} 位` : (txf('gapAbove', gap) ?? `${gap} places above overall`)}
         </span>
@@ -182,7 +183,7 @@ function TagPill({ label }) {
   const color = tagColor(label)
   return (
     <span style={{
-      fontSize: 11, fontWeight: 600,
+      fontSize: 13, fontWeight: 600,
       padding: '2px 8px', borderRadius: 'var(--radius)',
       background: `${color}20`, color,
       border: `1px solid ${color}40`,
@@ -209,7 +210,7 @@ function countryFlag(country) {
     'Mexico': '🇲🇽', 'Chile': '🇨🇱', 'Colombia': '🇨🇴', 'Brazil': '🇧🇷', 'Argentina': '🇦🇷',
     'Costa Rica': '🇨🇷', 'Lebanon': '🇱🇧', 'Egypt': '🇪🇬', 'South Africa': '🇿🇦', 'Thailand': '🇹🇭',
   }
-  return map[country] || '🌐'
+  return map[country] || ''
 }
 
 // ── Modal tabs ────────────────────────────────────────────────────────────────
@@ -254,7 +255,7 @@ function UndergradTab({ uni, zh }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
         <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{ug.program}</div>
-        {ug.length && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{ug.length}</div>}
+        {ug.length && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{ug.length}</div>}
         <div style={{ marginTop: 10 }}>
           <UgRow label="A-level" value={ug.alevel} />
           <UgRow label="IB" value={ug.ib} />
@@ -268,7 +269,7 @@ function UndergradTab({ uni, zh }) {
       {(zh ? ug.note_cn : ug.note_en) && (
         <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65, padding: '0 2px' }}>{zh ? ug.note_cn : ug.note_en}</div>
       )}
-      <div style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
         {zh ? `以上信息于 ${ug.checked || '2026-10'} 对照学校官网核对；没有公布或无法确认的项目留空。申请前请再次确认：`
             : (txf('ugChecked', ug.checked || '2026-10') ?? `Checked against the school's official pages in ${ug.checked || '2026-10'}; anything not published or not confirmed is left out. Confirm before applying: `)}
         {ug.source && <a href={ug.source} target="_blank" rel="noopener noreferrer" style={{ color: BLUE, overflowWrap: 'anywhere' }}>{ug.source}</a>}
@@ -327,7 +328,7 @@ function UniModal({ uni, lang, onClose }) {
         width: '100%', maxWidth: 800,
         maxHeight: '90vh',
         display: 'flex', flexDirection: 'column',
-        boxShadow: '0 24px 80px rgba(0,0,0,0.7), 0 0 40px color-mix(in srgb, var(--accent) 10%, transparent)',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         animation: 'bfsPageFadeIn 0.18s ease both',
       }}>
 
@@ -349,35 +350,35 @@ function UniModal({ uni, lang, onClose }) {
                 {zh && uni.name_cn ? `${uni.name} · ${uni.university}` : uni.university}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
                   {countryFlag(uni.country)} {uni.city}
                 </span>
                 {uni.language && (
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', padding: '1px 7px', borderRadius: 4,
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)', padding: '1px 7px', borderRadius: 4,
                     border: '1px solid var(--border-primary)' }}>
                     {uni.language === 'english' ? (tx('英语授课', 'English')) : (tx('双语授课', 'Bilingual'))}
                   </span>
                 )}
                 {uni.established && (
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
                     {zh ? `创办于 ${uni.established}` : (txf('est', uni.established) ?? `Est. ${uni.established}`)}
                   </span>
                 )}
                 {uni.qs_rank && (
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 6,
-                    background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, padding: '2px 8px', borderRadius: 6,
+                    background: `${AMBER}22`, color: AMBER }}>
                     {tx('QS 综合', 'QS overall')} #{uni.qs_rank}
                   </span>
                 )}
                 {uni.qs_bm_rank && (
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 6,
-                    background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}44` }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, padding: '2px 8px', borderRadius: 6,
+                    background: `${BLUE}18`, color: BLUE }}>
                     {tx('QS 商科', 'QS Business')} #{uni.qs_bm_rank.replace('=', '')}
                   </span>
                 )}
                 <a href={uni.url} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 6,
-                    background: `${GREEN}18`, color: GREEN, border: `1px solid ${GREEN}44`,
+                  style={{ fontSize: 13, fontWeight: 600, padding: '2px 10px', borderRadius: 6,
+                    background: `${GREEN}18`, color: GREEN,
                     textDecoration: 'none', marginLeft: 2 }}>
                   {tx('官网 →', 'Website →')}
                 </a>
@@ -427,7 +428,7 @@ function UniModal({ uni, lang, onClose }) {
                 {/* Tuition */}
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('学费参考', 'Tuition')}
                   </div>
                   <div style={{ fontSize: (uni.tuition_usd || '').length > 40 ? 13 : 16, fontWeight: 600, color: AMBER, lineHeight: 1.5 }}>
@@ -439,7 +440,7 @@ function UniModal({ uni, lang, onClose }) {
                 {req.acceptance_rate ? (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('录取率', 'Acceptance Rate')}
                   </div>
                   <div style={{ fontSize: 16, fontWeight: 600, color: GREEN }}>{req.acceptance_rate}</div>
@@ -447,13 +448,13 @@ function UniModal({ uni, lang, onClose }) {
                 ) : nextDl && (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('下一个申请截止', 'Next deadline')}
                   </div>
                   <div style={{ fontSize: 16, fontWeight: 600, color: AMBER, display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}>
                     {fmtDate(nextDl.st.date)} <DeadlineTag str={nextDl.str} />
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
                     {nextDl.kind === 'ug' ? tx('本科', 'Undergraduate') : `MBA · ${zh ? `第 ${nextDl.kind.slice(1)} 轮` : txEn(`Round ${nextDl.kind.slice(1)}`)}`}
                   </div>
                 </div>
@@ -462,7 +463,7 @@ function UniModal({ uni, lang, onClose }) {
                 {/* Specialties */}
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('强势专业', 'Specialties')}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
@@ -474,12 +475,12 @@ function UniModal({ uni, lang, onClose }) {
                 {uni.employment?.length > 0 && (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('就业去向（MBA）', 'Top Employment (MBA)')}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {uni.employment.slice(0, 4).map(e => (
-                      <div key={e} style={{ fontSize: 12, color: 'var(--text-secondary)' }}>• {e}</div>
+                      <div key={e} style={{ fontSize: 13, color: 'var(--text-secondary)' }}>• {e}</div>
                     ))}
                   </div>
                 </div>
@@ -505,13 +506,13 @@ function UniModal({ uni, lang, onClose }) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 8 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{p.name}</div>
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
-                        background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33` }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
+                        background: `${BLUE}18`, color: BLUE }}>
                         {p.duration}
                       </span>
                       {p.language && p.language !== 'English' && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
-                          background: `${PURPLE}18`, color: PURPLE, border: `1px solid ${PURPLE}33` }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
+                          background: `${PURPLE}18`, color: PURPLE }}>
                           {p.language}
                         </span>
                       )}
@@ -541,7 +542,7 @@ function UniModal({ uni, lang, onClose }) {
                 <>
                   <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                     borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 4 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 4 }}>
                       {tx('学术成绩', 'Academic')}
                     </div>
                     <InfoRow label={tx('本科 GPA', 'Undergraduate GPA')} value={req.gpa} />
@@ -553,7 +554,7 @@ function UniModal({ uni, lang, onClose }) {
                   {(req.toefl || req.ielts) && (
                   <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                     borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 4 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 4 }}>
                       {tx('语言要求', 'Language Requirements')}
                     </div>
                     <InfoRow label="TOEFL" value={req.toefl ? `${req.toefl}+` : null} valueColor={PURPLE} />
@@ -564,7 +565,7 @@ function UniModal({ uni, lang, onClose }) {
                   {req.deadlines && (
                     <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                       borderRadius: 'var(--radius)', padding: '14px 16px' }}>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 4 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.8px', marginBottom: 4 }}>
                         {tx('申请截止日期', 'Application Deadlines')}
                       </div>
                       {['r1','r2','r3','r4','r5'].map(r => req.deadlines[r] && (
@@ -618,7 +619,7 @@ function UniModal({ uni, lang, onClose }) {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                           <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{a.name}</div>
                           {a.year && (
-                            <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>
+                            <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0 }}>
                               {zh ? `${a.year}届` : (txf('classOf', a.year) ?? `Class of ${a.year}`)}
                             </span>
                           )}
@@ -743,15 +744,15 @@ function CompareModal({ schools, lang, onClose }) {
                 </div>
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
                   {u.qs_rank && (
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 5,
-                      background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, padding: '2px 7px', borderRadius: 5,
+                      background: `${AMBER}22`, color: AMBER }}>
                       {tx('综合', 'QS')} #{u.qs_rank}
                     </span>
                   )}
                   {u.qs_bm_rank && (
                     <span style={{
-                      fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 5,
-                      background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33`,
+                      fontSize: 13, fontWeight: 600, padding: '2px 7px', borderRadius: 5,
+                      background: `${BLUE}18`, color: BLUE,
                     }}>
                       {tx('商科', 'Business')} #{u.qs_bm_rank.replace('=', '')}
                     </span>
@@ -772,7 +773,7 @@ function CompareModal({ schools, lang, onClose }) {
                   alignItems: 'start',
                 }}
               >
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'center' }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'center' }}>
                   {zh ? label_cn : txEn(label)}
                 </div>
                 {schools.map(u => (
@@ -800,7 +801,7 @@ function CompareModal({ schools, lang, onClose }) {
               padding: '12px 0', borderBottom: '1px solid var(--border-primary)',
               alignItems: 'start',
             }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'flex-start', paddingTop: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', alignSelf: 'flex-start', paddingTop: 8 }}>
                 {tx('就业去向', 'Employment')}
               </div>
               {schools.map(u => (
@@ -809,9 +810,9 @@ function CompareModal({ schools, lang, onClose }) {
                   borderRadius: 8, padding: '8px 12px',
                 }}>
                   {(u.employment || []).slice(0, 4).map((e, i) => (
-                    <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>• {e}</div>
+                    <div key={i} style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 3 }}>• {e}</div>
                   ))}
-                  {!u.employment?.length && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>}
+                  {!u.employment?.length && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>—</span>}
                 </div>
               ))}
             </div>}
@@ -822,7 +823,7 @@ function CompareModal({ schools, lang, onClose }) {
               {schools.map(u => (
                 <a key={u.id} href={u.url} target="_blank" rel="noopener noreferrer" style={{
                   display: 'block', textAlign: 'center', padding: '8px 0',
-                  borderRadius: 8, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
+                  borderRadius: 8, background: `${GREEN}18`,
                   color: GREEN, fontSize: 13, fontWeight: 600, textDecoration: 'none',
                 }}>
                   {tx('官网 →', 'Website →')}
@@ -851,10 +852,10 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
       borderTop: `1px solid ${BLUE}44`,
       padding: '12px 24px',
       display: 'flex', alignItems: 'center', gap: 14,
-      boxShadow: `0 -8px 40px color-mix(in srgb, var(--accent) 12%, transparent)`,
+      boxShadow: '0 -8px 32px rgba(0,0,0,0.3)',
       animation: 'bfsPageFadeIn 0.15s ease both',
     }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: BLUE, flexShrink: 0 }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color: BLUE, flexShrink: 0 }}>
         {zh ? `对比 (${schools.length}/3)` : (txf('compareN3', schools.length) ?? `Compare (${schools.length}/3)`)}
       </div>
 
@@ -862,12 +863,12 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
         {schools.map(u => (
           <div key={u.id} style={{
             display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0,
-            background: `${BLUE}15`, border: `1px solid ${BLUE}33`,
+            background: `${BLUE}15`,
             borderRadius: 8, padding: '5px 8px',
           }}>
             <SchoolLogo name={u.name} size={22} />
             <span style={{
-              fontSize: 12, color: 'var(--text-primary)', fontWeight: 600,
+              fontSize: 13, color: 'var(--text-primary)', fontWeight: 600,
               maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
               {u.name}
@@ -888,7 +889,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <span style={{ fontSize: 11, color: 'var(--border-primary)' }}>
+            <span style={{ fontSize: 13, color: 'var(--border-primary)' }}>
               {tx('+ 添加', '+ Add')}
             </span>
           </div>
@@ -902,7 +903,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
             padding: '7px 14px', borderRadius: 8,
             border: '1px solid var(--border-primary)',
             background: 'transparent', color: 'var(--text-muted)',
-            fontSize: 12, cursor: 'pointer', transition: 'all 0.15s',
+            fontSize: 13, cursor: 'pointer', transition: 'all 0.15s',
           }}
           onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
@@ -917,7 +918,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
             background: schools.length >= 2
               ? `${BLUE}`
               : 'var(--border-primary)',
-            color: schools.length >= 2 ? '#fff' : 'var(--text-muted)',
+            color: schools.length >= 2 ? 'var(--accent-ink)' : 'var(--text-muted)',
             fontSize: 13, fontWeight: 600,
             cursor: schools.length >= 2 ? 'pointer' : 'not-allowed',
           }}
@@ -937,9 +938,9 @@ const IV_TESTS = ['SAT', 'ACT', 'A-Level', 'IB', 'GMAT', 'GRE', 'Gaokao', 'Other
 // ── Interview: texts (5 languages) ───────────────────────────────────────────
 const IV_T = {
   zh: {
-    title: '🎓 商学院模拟面试 & 录取评估', subtitle: 'AI严格模拟面试官 · 综合录取概率参考（粗略估算）',
+    title: '商学院模拟面试 & 录取评估', subtitle: 'AI严格模拟面试官 · 综合录取概率参考（粗略估算）',
     steps: ['填写背景', '模拟面试', '评估报告'],
-    intro: '🎓 填写你的背景信息，AI面试官将结合这些内容进行有针对性的追问。成绩为必填项，课外活动选填但建议填写以获得更准确的评估。',
+    intro: '填写你的背景信息，AI面试官将结合这些内容进行有针对性的追问。成绩为必填项，课外活动选填但建议填写以获得更准确的评估。',
     school: '目标学校 *', schoolPh: '输入学校名称（如 Harvard Business School）', programme: '申请项目',
     gpa: 'GPA / 学业成绩 *', gpaPh: '如 3.8/4.0 · A*AA · 40/45', gpaHint: '支持不同评分体系',
     test: '标化考试', scorePh: '分数',
@@ -947,7 +948,7 @@ const IV_T = {
     activities: '课外活动与经历（选填但强烈建议填写）', activitiesPh: '示例：\n• 商业计划大赛 全国季军，团队负责市场分析\n• 学生会财务官，管理年度预算$5000\n• 某机构3个月实习，协助整理财务报告', activitiesHint: 'AI面试官会针对这里的活动进行深度追问',
     ivLang: '面试语言：', start: '开始模拟面试 →',
     interviewer: (s) => `${s} 招生面试官`, persona: '严格但专业 · 会追问细节', round: (a, b) => `第 ${a}/${b} 轮`,
-    answerPh: '输入你的回答…（Enter 发送 · Shift+Enter 换行）', endBtn: '📊 面试结束，生成综合评估报告 →',
+    answerPh: '输入你的回答…（Enter 发送 · Shift+Enter 换行）', endBtn: '面试结束，生成综合评估报告 →',
     discTitle: '免责声明：', discStrong: '此评估基于公开录取数据的一般规律和AI分析，不代表官方立场，不构成录取保证，仅供申请策略参考。',
     discRest: '实际录取受文书质量、推荐信、面试表现、申请年份竞争情况等AI无法评估的因素影响——这些因素可能比成绩本身影响更大。概率区间为粗略估算，请以区间范围理解，而非精确数值。',
     generating: '生成中…', generatingReport: '正在生成综合评估报告…', reset: '↩ 重新评估', rangeNote: '粗略参考估算 · 非官方数据 · 仅供策略参考',
@@ -955,9 +956,9 @@ const IV_T = {
     gaokao: '高考', other: '其他',
   },
   en: {
-    title: '🎓 Business School Mock Interview & Admission Assessment', subtitle: 'A strict AI interviewer · rough admission odds',
+    title: 'Business School Mock Interview & Admission Assessment', subtitle: 'A strict AI interviewer · rough admission odds',
     steps: ['Your background', 'Mock interview', 'Assessment'],
-    intro: '🎓 Tell us about your background and the AI interviewer will ask follow-up questions about it. Grades are required; activities are optional but give a more accurate assessment.',
+    intro: 'Tell us about your background and the AI interviewer will ask follow-up questions about it. Grades are required; activities are optional but give a more accurate assessment.',
     school: 'Target school *', schoolPh: 'School name (e.g. Harvard Business School)', programme: 'Programme',
     gpa: 'GPA / grades *', gpaPh: 'e.g. 3.8/4.0 · A*AA · 40/45', gpaHint: 'Any grading system works',
     test: 'Standardised test', scorePh: 'Score',
@@ -965,7 +966,7 @@ const IV_T = {
     activities: 'Activities and experience (optional, strongly recommended)', activitiesPh: 'For example:\n• Business plan competition, national 3rd place, led market research\n• Student council treasurer, managed a $5,000 annual budget\n• 3-month internship, helped prepare financial reports', activitiesHint: 'The interviewer will dig into these',
     ivLang: 'Interview language:', start: 'Start the mock interview →',
     interviewer: (s) => `${s} admissions interviewer`, persona: 'Strict but professional · asks follow-ups', round: (a, b) => `Round ${a}/${b}`,
-    answerPh: 'Type your answer… (Enter to send · Shift+Enter for a new line)', endBtn: '📊 Finish and generate the assessment →',
+    answerPh: 'Type your answer… (Enter to send · Shift+Enter for a new line)', endBtn: 'Finish and generate the assessment →',
     discTitle: 'Disclaimer:', discStrong: 'This assessment is based on general patterns in public admissions data and AI analysis. It is not official, does not guarantee admission, and is only for planning your application.',
     discRest: 'Real decisions depend on essays, recommendation letters, interview performance and that year’s competition, which AI cannot assess and which can matter more than grades. Read the probability as a rough range, not a precise number.',
     generating: 'Writing…', generatingReport: 'Writing your assessment…', reset: '↩ New assessment', rangeNote: 'Rough estimate · not official data · for planning only',
@@ -973,9 +974,9 @@ const IV_T = {
     gaokao: 'Gaokao', other: 'Other',
   },
   ja: {
-    title: '🎓 ビジネススクール模擬面接 & 合格評価', subtitle: '厳格なAI面接官 · 合格可能性の目安（概算）',
+    title: 'ビジネススクール模擬面接 & 合格評価', subtitle: '厳格なAI面接官 · 合格可能性の目安（概算）',
     steps: ['経歴を入力', '模擬面接', '評価レポート'],
-    intro: '🎓 経歴を入力すると、AI面接官がそれに基づいて掘り下げた質問をします。成績は必須、課外活動は任意ですが、入力するとより正確に評価できます。',
+    intro: '経歴を入力すると、AI面接官がそれに基づいて掘り下げた質問をします。成績は必須、課外活動は任意ですが、入力するとより正確に評価できます。',
     school: '志望校 *', schoolPh: '学校名（例：Harvard Business School）', programme: '出願プログラム',
     gpa: 'GPA / 成績 *', gpaPh: '例：3.8/4.0 · A*AA · 40/45', gpaHint: 'どの評価方式でも可',
     test: '標準テスト', scorePh: 'スコア',
@@ -983,7 +984,7 @@ const IV_T = {
     activities: '課外活動・経験（任意・入力を強く推奨）', activitiesPh: '例：\n• ビジネスプランコンテスト 全国3位、市場分析を担当\n• 生徒会会計、年間予算5000ドルを管理\n• 3か月のインターン、財務報告の作成を補助', activitiesHint: 'AI面接官はここを深く質問します',
     ivLang: '面接の言語：', start: '模擬面接を始める →',
     interviewer: (s) => `${s} 入試面接官`, persona: '厳格だが丁寧 · 詳しく掘り下げます', round: (a, b) => `${a}/${b} ラウンド`,
-    answerPh: '回答を入力…（Enterで送信 · Shift+Enterで改行）', endBtn: '📊 面接を終えて評価レポートを作成 →',
+    answerPh: '回答を入力…（Enterで送信 · Shift+Enterで改行）', endBtn: '面接を終えて評価レポートを作成 →',
     discTitle: '免責事項：', discStrong: 'この評価は公開された入試データの一般的な傾向とAI分析に基づくもので、公式見解ではなく、合格を保証するものでもありません。出願戦略の参考としてご利用ください。',
     discRest: '実際の合否は、エッセイ、推薦状、面接の出来、その年の競争状況など、AIでは評価できない要素に左右され、成績以上に影響することもあります。確率は正確な数値ではなく、おおよその幅として捉えてください。',
     generating: '作成中…', generatingReport: '評価レポートを作成しています…', reset: '↩ もう一度評価する', rangeNote: '概算 · 非公式データ · 参考用',
@@ -991,9 +992,9 @@ const IV_T = {
     gaokao: '高考（中国）', other: 'その他',
   },
   ko: {
-    title: '🎓 경영대학 모의 면접 & 합격 평가', subtitle: '엄격한 AI 면접관 · 합격 가능성 참고(대략적 추정)',
+    title: '경영대학 모의 면접 & 합격 평가', subtitle: '엄격한 AI 면접관 · 합격 가능성 참고(대략적 추정)',
     steps: ['배경 입력', '모의 면접', '평가 보고서'],
-    intro: '🎓 배경 정보를 입력하면 AI 면접관이 이를 바탕으로 심층 질문을 합니다. 성적은 필수이며, 과외 활동은 선택이지만 입력하면 더 정확한 평가를 받을 수 있습니다.',
+    intro: '배경 정보를 입력하면 AI 면접관이 이를 바탕으로 심층 질문을 합니다. 성적은 필수이며, 과외 활동은 선택이지만 입력하면 더 정확한 평가를 받을 수 있습니다.',
     school: '목표 학교 *', schoolPh: '학교 이름 (예: Harvard Business School)', programme: '지원 프로그램',
     gpa: 'GPA / 성적 *', gpaPh: '예: 3.8/4.0 · A*AA · 40/45', gpaHint: '어떤 평가 체계든 가능',
     test: '표준화 시험', scorePh: '점수',
@@ -1001,7 +1002,7 @@ const IV_T = {
     activities: '과외 활동 및 경험 (선택, 입력 강력 권장)', activitiesPh: '예:\n• 비즈니스 플랜 대회 전국 3위, 시장 분석 담당\n• 학생회 재무, 연간 예산 5,000달러 관리\n• 3개월 인턴십, 재무 보고서 작성 지원', activitiesHint: 'AI 면접관이 이 내용을 깊이 질문합니다',
     ivLang: '면접 언어:', start: '모의 면접 시작 →',
     interviewer: (s) => `${s} 입학 면접관`, persona: '엄격하지만 전문적 · 세부 사항을 묻습니다', round: (a, b) => `${a}/${b} 라운드`,
-    answerPh: '답변 입력… (Enter 전송 · Shift+Enter 줄바꿈)', endBtn: '📊 면접 종료 후 평가 보고서 생성 →',
+    answerPh: '답변 입력… (Enter 전송 · Shift+Enter 줄바꿈)', endBtn: '면접 종료 후 평가 보고서 생성 →',
     discTitle: '면책 조항:', discStrong: '이 평가는 공개된 입학 데이터의 일반적인 경향과 AI 분석에 기반하며, 공식 입장이 아니고 합격을 보장하지 않습니다. 지원 전략 참고용입니다.',
     discRest: '실제 합격 여부는 에세이, 추천서, 면접 성과, 해당 연도 경쟁 등 AI가 평가할 수 없는 요소에 좌우되며 성적보다 더 큰 영향을 줄 수 있습니다. 확률은 정확한 수치가 아닌 대략적인 범위로 이해해 주세요.',
     generating: '작성 중…', generatingReport: '평가 보고서를 작성하는 중…', reset: '↩ 다시 평가하기', rangeNote: '대략적 추정 · 비공식 데이터 · 참고용',
@@ -1009,9 +1010,9 @@ const IV_T = {
     gaokao: '가오카오(중국)', other: '기타',
   },
   fr: {
-    title: "🎓 Entretien blanc d'école de commerce & évaluation d'admission", subtitle: "Un examinateur IA exigeant · estimation approximative des chances d'admission",
+    title: "Entretien blanc d'école de commerce & évaluation d'admission", subtitle: "Un examinateur IA exigeant · estimation approximative des chances d'admission",
     steps: ['Votre profil', 'Entretien blanc', 'Évaluation'],
-    intro: "🎓 Renseignez votre profil : l'examinateur IA vous posera des questions de suivi précises. Les notes sont obligatoires ; les activités sont facultatives mais rendent l'évaluation plus précise.",
+    intro: "Renseignez votre profil : l'examinateur IA vous posera des questions de suivi précises. Les notes sont obligatoires ; les activités sont facultatives mais rendent l'évaluation plus précise.",
     school: 'École visée *', schoolPh: "Nom de l'école (ex. Harvard Business School)", programme: 'Programme',
     gpa: 'GPA / notes *', gpaPh: 'ex. 3.8/4.0 · A*AA · 40/45', gpaHint: 'Tous les systèmes de notation sont acceptés',
     test: 'Test standardisé', scorePh: 'Score',
@@ -1019,7 +1020,7 @@ const IV_T = {
     activities: 'Activités et expériences (facultatif, fortement conseillé)', activitiesPh: "Exemple :\n• Concours de business plan, 3e national, responsable de l'étude de marché\n• Trésorier du conseil des élèves, budget annuel de 5 000 $\n• Stage de 3 mois, aide à la préparation de rapports financiers", activitiesHint: "L'examinateur vous interrogera en détail sur ce point",
     ivLang: "Langue de l'entretien :", start: "Commencer l'entretien →",
     interviewer: (s) => `Jury d'admission, ${s}`, persona: 'Exigeant mais professionnel · pose des questions de suivi', round: (a, b) => `Tour ${a}/${b}`,
-    answerPh: 'Votre réponse… (Entrée pour envoyer · Maj+Entrée pour aller à la ligne)', endBtn: "📊 Terminer et générer l'évaluation →",
+    answerPh: 'Votre réponse… (Entrée pour envoyer · Maj+Entrée pour aller à la ligne)', endBtn: "Terminer et générer l'évaluation →",
     discTitle: 'Avertissement :', discStrong: "Cette évaluation repose sur les tendances générales des données d'admission publiques et sur une analyse par IA. Elle n'est pas officielle, ne garantit pas l'admission et sert uniquement à préparer votre candidature.",
     discRest: "La décision réelle dépend des essais, des lettres de recommandation, de l'entretien et de la concurrence de l'année, que l'IA ne peut pas évaluer et qui peuvent peser plus que les notes. Lisez la probabilité comme une fourchette approximative, pas comme un chiffre précis.",
     generating: 'Rédaction…', generatingReport: 'Rédaction de votre évaluation…', reset: '↩ Nouvelle évaluation', rangeNote: 'Estimation approximative · données non officielles · à titre indicatif',
@@ -1104,12 +1105,12 @@ function RenderReport({ text, t }) {
         if (line === '---') {
           return <div key={i} style={{ borderTop: '1px solid var(--border-primary)', margin: '10px 0' }} />
         }
-        if (line.startsWith('⚠️')) {
+        if (line.startsWith('')) {
           return (
             <div key={i} style={{
-              background: `${AMBER}12`, border: `1px solid ${AMBER}35`,
+              background: `${AMBER}12`,
               borderRadius: 8, padding: '10px 14px',
-              fontSize: 12, color: `${AMBER}dd`, lineHeight: 1.65, margin: '6px 0',
+              fontSize: 13, color: `${AMBER}dd`, lineHeight: 1.65, margin: '6px 0',
             }}>
               <MdLine text={line} />
             </div>
@@ -1131,13 +1132,13 @@ function RenderReport({ text, t }) {
           const match = line.match(/(\d+\s*%\s*[–-]\s*\d+\s*%)/)
           return (
             <div key={i} style={{
-              background: `${AMBER}18`, border: `1px solid ${AMBER}44`,
+              background: `${AMBER}18`,
               borderRadius: 'var(--radius)', padding: '14px 18px', margin: '8px 0',
               fontSize: 18, fontWeight: 600, color: AMBER, letterSpacing: '0.5px',
             }}>
               <MdLine text={line} />
               {match && (
-                <div style={{ fontSize: 11, fontWeight: 400, color: `${AMBER}99`, marginTop: 4 }}>
+                <div style={{ fontSize: 13, fontWeight: 400, color: `${AMBER}99`, marginTop: 4 }}>
                   {t.rangeNote}
                 </div>
               )}
@@ -1158,7 +1159,7 @@ function RenderReport({ text, t }) {
 function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, hint }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
+      <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
       {as === 'textarea' ? (
         <textarea
           value={value}
@@ -1187,7 +1188,7 @@ function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, 
           onBlur={e => { e.target.style.borderColor = 'var(--border-primary)' }}
         />
       )}
-      {hint && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{hint}</span>}
+      {hint && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{hint}</span>}
     </div>
   )
 }
@@ -1195,7 +1196,7 @@ function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, 
 function IvSelect({ label, value, onChange, options, labelOf = (o) => o }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
+      <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
@@ -1222,7 +1223,7 @@ function SchoolInput({ value, onChange, unis, t }) {
 
   return (
     <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
+      <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
         {t.school}
       </label>
       <input
@@ -1276,9 +1277,9 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{
-        background: `${BLUE}10`, border: `1px solid ${BLUE}30`,
+        background: `${BLUE}10`,
         borderRadius: 'var(--radius)', padding: '12px 16px',
-        fontSize: 12, color: `${BLUE}cc`, lineHeight: 1.65,
+        fontSize: 13, color: `${BLUE}cc`, lineHeight: 1.65,
       }}>
         {t.intro}
       </div>
@@ -1302,7 +1303,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
           hint={t.gpaHint}
         />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
+          <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
             {t.test}
           </label>
           <div style={{ display: 'flex', gap: 6 }}>
@@ -1349,7 +1350,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
       />
 
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.ivLang}</span>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t.ivLang}</span>
         {IV_LANG_NAMES.map(([val, label]) => (
           <button
             key={val}
@@ -1359,7 +1360,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
               border: `1px solid ${profile.lang === val ? BLUE : 'var(--border-primary)'}`,
               background: profile.lang === val ? `${BLUE}22` : 'transparent',
               color: profile.lang === val ? BLUE : 'var(--text-muted)',
-              cursor: 'pointer', fontSize: 12, fontWeight: profile.lang === val ? 600 : 400,
+              cursor: 'pointer', fontSize: 13, fontWeight: profile.lang === val ? 600 : 400,
               transition: 'all 0.15s',
             }}
           >
@@ -1376,7 +1377,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
           background: canStart
             ? `${BLUE}`
             : 'var(--border-primary)',
-          color: canStart ? '#fff' : 'var(--text-muted)',
+          color: canStart ? 'var(--accent-ink)' : 'var(--text-muted)',
           fontSize: 14, fontWeight: 600, cursor: canStart ? 'pointer' : 'not-allowed',
           transition: 'opacity 0.15s',
           marginTop: 4,
@@ -1434,13 +1435,13 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
 
   const bubbleAI = {
     maxWidth: '80%',
-    background: `${BLUE}14`, border: `1px solid ${BLUE}30`,
+    background: `${BLUE}14`,
     borderRadius: '4px 14px 14px 14px', padding: '10px 14px',
     fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
   }
   const bubbleUser = {
     maxWidth: '80%',
-    background: 'rgba(124,156,180,0.1)', border: '1px solid rgba(124,156,180,0.27)',
+    background: 'rgba(124,156,180,0.1)',
     borderRadius: '14px 4px 14px 14px', padding: '10px 14px',
     fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
   }
@@ -1462,16 +1463,16 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
           background: `${BLUE}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 16,
-        }}>🎓</div>
+        }}><Icon name="cap" size={16} /></div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
             {t.interviewer(profile.school)}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {t.persona} · {(IV_LANG_NAMES.find(([v]) => v === profile.lang) || IV_LANG_NAMES[1])[1]}
           </div>
         </div>
-        <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>
+        <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)', textAlign: 'right' }}>
           {t.round(aiRounds, aiRounds < 4 ? '4-6' : aiRounds)}
         </div>
       </div>
@@ -1492,7 +1493,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
               background: m.role === 'user' ? 'rgba(124,156,180,0.2)' : `${BLUE}22`,
               border: `1px solid ${m.role === 'user' ? 'rgba(124,156,180,0.4)' : `${BLUE}44`}`,
             }}>
-              {m.role === 'user' ? '👤' : '🎓'}
+              {m.role === 'user' ? '' : ''}
             </div>
             <div style={m.role === 'assistant' ? bubbleAI : bubbleUser}>
               {m.content}
@@ -1501,7 +1502,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
         ))}
         {streaming && (
           <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}>🎓</div>
+            <div style={{ ...avatarBase, background: `${BLUE}22` }}><Icon name="cap" size={16} /></div>
             <div style={{ ...bubbleAI }}>
               {streaming}
               <span style={{ display: 'inline-block', width: 8, height: 14, background: BLUE,
@@ -1511,14 +1512,14 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
         )}
         {isBusy && !streaming && (
           <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}>🎓</div>
+            <div style={{ ...avatarBase, background: `${BLUE}22` }}><Icon name="cap" size={16} /></div>
             <div style={{ ...bubbleAI, opacity: 0.5 }}>…</div>
           </div>
         )}
         {error && (
-          <div style={{ fontSize: 12, color: '#f87171', padding: '8px 12px',
+          <div style={{ fontSize: 13, color: '#f87171', padding: '8px 12px',
             background: 'rgba(248,113,113,0.1)', borderRadius: 8 }}>
-            ⚠️ {error}
+            <Icon name="warn" size={15} style={{ marginRight: 6 }} />{error}
           </div>
         )}
         <div ref={chatEndRef} />
@@ -1535,7 +1536,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
             disabled={isBusy}
             rows={2}
             style={{
-              flex: 1, background: 'var(--bg-tertiary)', border: `1px solid ${BLUE}55`,
+              flex: 1, background: 'var(--bg-tertiary)',
               borderRadius: 'var(--radius)', color: 'var(--text-primary)', padding: '10px 14px',
               fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit',
               opacity: isBusy ? 0.5 : 1,
@@ -1547,7 +1548,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
             style={{
               width: 44, borderRadius: 'var(--radius)', border: 'none', flexShrink: 0,
               background: (isBusy || !userInput.trim()) ? 'var(--border-primary)' : BLUE,
-              color: '#fff', cursor: (isBusy || !userInput.trim()) ? 'not-allowed' : 'pointer',
+              color: 'var(--accent-ink)', cursor: (isBusy || !userInput.trim()) ? 'not-allowed' : 'pointer',
               fontSize: 18, transition: 'background 0.15s',
             }}
           >↑</button>
@@ -1595,11 +1596,11 @@ function ReportView({ profile, chatHistory, onReset, t }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {/* Disclaimer banner */}
       <div style={{
-        background: `${AMBER}12`, border: `1px solid ${AMBER}40`,
+        background: `${AMBER}12`,
         borderRadius: 'var(--radius)', padding: '12px 16px',
-        fontSize: 12, color: `${AMBER}cc`, lineHeight: 1.65,
+        fontSize: 13, color: `${AMBER}cc`, lineHeight: 1.65,
       }}>
-        ⚠️ <strong>{t.discTitle}</strong> <strong>{t.discStrong}</strong> {t.discRest}
+        <Icon name="warn" size={16} /> <strong>{t.discTitle}</strong> <strong>{t.discStrong}</strong> {t.discRest}
       </div>
 
       {/* Report body */}
@@ -1611,7 +1612,7 @@ function ReportView({ profile, chatHistory, onReset, t }) {
           <RenderReport text={report} t={t} />
           {!isReady && (
             <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8,
-              fontSize: 12, color: 'var(--text-muted)' }}>
+              fontSize: 13, color: 'var(--text-muted)' }}>
               <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
                 background: BLUE, animation: 'bfsCursorBlink 1s infinite' }} />
               {t.generating}
@@ -1630,7 +1631,7 @@ function ReportView({ profile, chatHistory, onReset, t }) {
       {error && (
         <div style={{ color: '#f87171', fontSize: 13, padding: '12px 16px',
           background: 'rgba(248,113,113,0.1)', borderRadius: 8 }}>
-          ⚠️ {error}
+          <Icon name="warn" size={15} style={{ marginRight: 6 }} />{error}
         </div>
       )}
 
@@ -1689,7 +1690,7 @@ function InterviewModal({ unis, lang, onClose }) {
         borderRadius: 'var(--radius)', width: '100%', maxWidth: 680,
         maxHeight: '92vh',
         display: 'flex', flexDirection: 'column',
-        boxShadow: `0 24px 80px rgba(0,0,0,0.7), 0 0 40px ${PURPLE}18`,
+        boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         animation: 'bfsPageFadeIn 0.18s ease both',
       }}>
 
@@ -1703,7 +1704,7 @@ function InterviewModal({ unis, lang, onClose }) {
               <div style={{ fontSize: 17, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>
                 {t.title}
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
                 {t.subtitle}
               </div>
             </div>
@@ -1734,12 +1735,12 @@ function InterviewModal({ unis, lang, onClose }) {
                   width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
                   background: step > n ? GREEN : step === n ? BLUE : 'var(--border-primary)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 600, color: '#fff',
+                  fontSize: 13, fontWeight: 600, color: 'var(--accent-ink)',
                 }}>
-                  {step > n ? '✓' : n}
+                  {step > n ? '' : n}
                 </div>
                 <span style={{
-                  fontSize: 12, fontWeight: step === n ? 700 : 400,
+                  fontSize: 13, fontWeight: step === n ? 700 : 400,
                   color: step === n ? BLUE : 'var(--text-muted)',
                 }}>
                   {label}
@@ -1804,7 +1805,7 @@ function InterviewEntryCard({ lang, onOpen }) {
         border: `1px solid ${hov ? PURPLE + '66' : PURPLE + '33'}`,
         borderRadius: 'var(--radius)', padding: '18px 24px',
         cursor: 'pointer', transition: 'all 0.18s',
-        boxShadow: hov ? `0 4px 24px ${PURPLE}25` : 'none',
+        
         display: 'flex', alignItems: 'center', gap: 18,
       }}
     >
@@ -1813,12 +1814,12 @@ function InterviewEntryCard({ lang, onOpen }) {
         background: `${PURPLE}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 22,
-      }}>🎓</div>
+      }}><Icon name="cap" size={16} /></div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
           {tx('商学院模拟面试 & 录取概率评估', 'Business School Mock Interview & Admission Assessment')}
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
           {tx('AI扮演严格招生面试官，结合你的成绩与面试表现，给出录取概率区间参考（粗略估算）和详细改进建议', 'AI acts as a rigorous admissions interviewer. Combines your scores & interview to estimate admission probability (rough range) and provide actionable feedback')}
         </div>
       </div>
@@ -1843,7 +1844,7 @@ function UgLine({ uni }) {
     ug.english && ug.english.match(/IELTS [\d.]+/)?.[0],
     !grade && !ibPts && ug.test && ug.test.split('(')[0].trim()].filter(Boolean).join(' · ') : ''
   return (
-    <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4, lineHeight: 1.5 }}>
+    <div style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4, lineHeight: 1.5 }}>
       {ug?.none ? <span style={{ color: 'var(--text-muted)' }}>{tx('仅招研究生', 'Graduate only')}</span>
         : offer ? <><span style={{ fontWeight: 600, color: PURPLE }}>{tx('本科', 'Undergrad')}</span><span style={{ minWidth: 0 }}>{offer}</span></> : null}
       {next && <span style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center' }}>
@@ -1871,10 +1872,6 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
         padding: '44px 16px 16px',
         cursor: 'pointer',
         transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.15s',
-        boxShadow: isCompared
-          ? `0 0 28px color-mix(in srgb, var(--accent) 20%, transparent), 0 4px 20px rgba(0,0,0,0.3)`
-          : hovered ? `0 0 28px color-mix(in srgb, var(--accent) 12%, transparent), 0 4px 20px rgba(0,0,0,0.3)` : '0 2px 8px rgba(0,0,0,0.2)',
-        transform: hovered ? 'translateY(-2px)' : 'none',
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
@@ -1895,14 +1892,14 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
             border: `1px solid ${isCompared ? BLUE + '99' : 'var(--border-primary)'}`,
             background: isCompared ? `${BLUE}25` : 'transparent',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', fontSize: 12, fontWeight: 600,
+            cursor: 'pointer', fontSize: 13, fontWeight: 600,
             color: isCompared ? BLUE : 'var(--text-muted)',
             transition: 'all 0.15s',
             opacity: hovered || isCompared ? 1 : 0,
           }}
           title={isCompared ? (tx('移出对比', 'Remove from compare')) : (tx('加入对比', 'Add to compare'))}
         >
-          {isCompared ? '✓' : '+'}
+          {isCompared ? '' : '+'}
         </div>
       )}
 
@@ -1918,20 +1915,20 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
           }}>
             {displayName(uni)}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {t && uni.name_cn ? uni.name : uni.university}
           </div>
         </div>
       </div>
 
       {/* Location */}
-      <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
         {countryFlag(uni.country)} {uni.city}
       </div>
 
       {/* Business rank (QS Business & Management Studies) */}
       {rankBy === 'business'
-        ? uni.qs_rank && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{tx('QS 综合', 'QS overall')} #{uni.qs_rank}</div>
+        ? uni.qs_rank && <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{tx('QS 综合', 'QS overall')} #{uni.qs_rank}</div>
         : <BusinessRankLine uni={uni} zh={t} />}
 
       {/* Specialties */}
@@ -1944,11 +1941,11 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
 
       {/* Footer: tuition + CTA */}
       <div style={{ marginTop: 'auto', paddingTop: 6, borderTop: '1px solid var(--border-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>
           {uni.tuition_usd ? uni.tuition_usd.split(' · ')[0] : (tx('学费见官网', 'Tuition: see website'))}
         </span>
         <span style={{
-          fontSize: 11, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
+          fontSize: 13, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
           transition: 'color 0.15s', whiteSpace: 'nowrap', flexShrink: 0,
         }}>
           {tx('查看详情 →', 'Details →')}
@@ -2061,7 +2058,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
           <div style={{ display: 'flex', gap: 20 }}>
             <div>
               <div style={{ fontSize: 24, fontWeight: 600, color: GREEN, fontVariantNumeric: 'tabular-nums' }}>{aboveOverall}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', maxWidth: 170, lineHeight: 1.5 }}>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', maxWidth: 170, lineHeight: 1.5 }}>
                 {tx('商科前 50 中比综合排名高 10 位以上或独立商学院', 'of the top 50 rank 10+ places higher than overall, or have no overall rank')}
               </div>
             </div>
@@ -2137,7 +2134,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
       )}
 
       {data && (
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 14, lineHeight: 1.7 }}>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 14, lineHeight: 1.7 }}>
           {tx('来源：', 'Sources: ')}
           <a href={data.url} target="_blank" rel="noopener noreferrer" style={{ color: BLUE }}>{data.source}</a>
           {zh ? `（${data.published} 发布）；` : (txf('published', data.published) ?? ` (published ${data.published}); `)}
@@ -2149,19 +2146,19 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
       <style>{`
         .bm-table { border: 1px solid var(--border-primary); border-radius: var(--radius); overflow: hidden; background: var(--bg-secondary); }
         .bm-row { display: grid; grid-template-columns: 64px minmax(0,1fr) 110px 130px; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid var(--border-primary); }
-        .bm-head { border-top: none; font-size: 11px; color: var(--text-muted);  letter-spacing: 0.05em; padding-top: 12px; padding-bottom: 8px; }
+        .bm-head { border-top: none; font-size: 13px; color: var(--text-muted);  letter-spacing: 0.05em; padding-top: 12px; padding-bottom: 8px; }
         .bm-link { cursor: pointer; transition: background 0.15s; }
         .bm-link:hover { background: var(--bg-hover); }
         .bm-link:focus-visible { outline: 2px solid ${BLUE}; outline-offset: -2px; }
         .bm-rank { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
         .bm-name { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .bm-sub { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bm-sub { display: block; font-size: 13px; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .bm-more { color: ${BLUE}; display: none; }
         @media (hover: hover) {
           .bm-link:hover .bm-more, .bm-link:focus-visible .bm-more { display: inline; }
         }
         .bm-overall { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-        .bm-gap { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .bm-gap { display: inline-block; font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid; white-space: nowrap; font-variant-numeric: tabular-nums; }
         @media (max-width: 640px) {
           .bm-row { grid-template-columns: 44px minmax(0,1fr) auto; padding: 10px 12px; }
           .bm-col-overall { display: none; }
@@ -2176,58 +2173,29 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
 function Hero({ lang, stats }) {
   const t = lang === 'zh'
   return (
-    <div style={{
-      textAlign: 'center',
-      padding: '40px 0 32px',
-      position: 'relative',
-    }}>
-      {/* Background glow */}
-      <div style={{
-        position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-        width: 500, height: 200,
-        background: `radial-gradient(ellipse, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 70%)`,
-        pointerEvents: 'none',
-      }} />
-
-      <div style={{
-        display: 'inline-block',
-        fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
-        color: BLUE,
-        background: `${BLUE}15`, border: `1px solid ${BLUE}30`,
-        borderRadius: 'var(--radius)', padding: '4px 14px', marginBottom: 16,
-      }}>
-        {tx('QS 综合排名 2027 · QS 商科排名 2026', 'QS overall 2027 · QS business & management 2026')}
-      </div>
-
-      <h1 style={{
-        fontSize: 'clamp(24px,4vw,38px)', fontWeight: 600,
-        margin: '0 0 12px',
-        color: `var(--accent)`,
-        lineHeight: 1.15,
-      }}>
+    <div style={{ padding: '40px 0 40px', display: 'grid', gap: 16 }}>
+      <h1 style={{ margin: 0 }}>
         {tx('全球顶尖商学院指南', 'Global Business School Guide')}
       </h1>
 
-      <p style={{ fontSize: 15, color: 'var(--text-muted)', margin: '0 0 28px', lineHeight: 1.6 }}>
-        {tx('全球顶尖大学商学院 · 深度资料 · 专业筛选 · 一站式了解', 'In-depth profiles · specialty filters · everything you need to choose your school')}
+      <p style={{ fontSize: 17, color: 'var(--text-primary)', margin: 0, lineHeight: 1.55, maxWidth: '40em' }}>
+        {tx('全球顶尖大学商学院的深度资料和专业筛选，一站式了解。排名依据 QS 综合排名 2027 与 QS 商科排名 2026。',
+            'In-depth profiles and specialty filters for the world’s top business schools. Rankings from QS overall 2027 and QS business & management 2026.')}
       </p>
 
       {/* Stats row */}
       {stats && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 32, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 48, flexWrap: 'wrap', marginTop: 16 }}>
           {[
             { val: stats.total,     label: tx('所学校', 'Schools') },
             { val: stats.countries, label: tx('个国家/地区', 'Countries') },
             { val: stats.undergrad, label: tx('所学校含本科申请要求', 'with undergrad entry data') },
           ].map(({ val, label }) => (
-            <div key={label} style={{ textAlign: 'center' }}>
-              <div className="serif-num" style={{
-                fontSize: 32,
-                color: `${BLUE}`,
-              }}>
+            <div key={label}>
+              <div className="serif-num" style={{ fontSize: 'clamp(40px, 4vw, 64px)', lineHeight: 1 }}>
                 {val}
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{label}</div>
+              <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 6 }}>{label}</div>
             </div>
           ))}
         </div>
@@ -2264,7 +2232,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
         {/* Search */}
         <div style={{ position: 'relative', flexShrink: 0 }}>
           <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 13, pointerEvents: 'none' }}>
-            🔍
+            <Icon name="search" size={16} />
           </span>
           <input
             value={filters.search}
@@ -2295,7 +2263,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
 
         {/* Schools with verified undergraduate entry data */}
         <button onClick={() => onChange({ ...filters, ug: !filters.ug })} style={pill(filters.ug)} aria-pressed={!!filters.ug}>
-          🎓 {tx('有本科申请数据', 'Undergrad entry data')}
+          <Icon name="cap" size={15} style={{ marginRight: 6 }} />{tx('有本科申请数据', 'Undergrad entry data')}
         </button>
 
         {/* Language */}
@@ -2319,7 +2287,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
             borderRadius: 8, color: filters.specialty ? 'var(--text-primary)' : 'var(--text-muted)',
-            padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
+            padding: '7px 12px', fontSize: 13, outline: 'none', cursor: 'pointer',
           }}
         >
           <option value="">{tx('所有专业', 'All Specialties')}</option>
@@ -2334,7 +2302,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
             borderRadius: 8, color: 'var(--text-muted)',
-            padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
+            padding: '7px 12px', fontSize: 13, outline: 'none', cursor: 'pointer',
           }}
         >
           <option value="rank">{tx('按 QS 综合排名', 'Sort: QS overall')}</option>
@@ -2345,7 +2313,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
         {/* Count + clear */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           {typeof shownCount === 'number' && (
-            <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
               {t ? `${shownCount} / ${totalCount} 所` : `${shownCount} / ${totalCount}`}
             </span>
           )}
@@ -2355,7 +2323,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
               style={{
                 padding: '4px 12px', borderRadius: 'var(--radius)', border: `1px solid var(--border-primary)`,
                 background: 'transparent', color: 'var(--text-muted)',
-                fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s',
+                fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s',
               }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
@@ -2483,7 +2451,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
                 padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: 600, flex: '1 1 auto', minWidth: 0, lineHeight: 1.3,
                 background: view === v.key ? `${BLUE}` : 'transparent',
-                color: view === v.key ? '#fff' : 'var(--text-secondary)',
+                color: view === v.key ? 'var(--accent-ink)' : 'var(--text-secondary)',
               }}
             >
               {v.label.replace(/ · $/, '')}
@@ -2529,7 +2497,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         </>)}
 
         {/* Footer note */}
-        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--border-primary)', marginTop: 40, lineHeight: 1.6 }}>
+        <div style={{ textAlign: 'center', fontSize: 13, color: 'var(--border-primary)', marginTop: 40, lineHeight: 1.6 }}>
           {tx('排名来源：QS World University Rankings 2027（综合）、QS World University Rankings by Subject 2026: Business & Management Studies（商科）。学费、GMAT、截止日期和就业数据于 2026 年 10 月对照各校报告核对；无法核实的项目留空，请以各院校官网为准。', 'Rankings: QS World University Rankings 2027 (overall) and QS World University Rankings by Subject 2026: Business & Management Studies. Tuition, GMAT, deadlines and employment figures were checked against school reports in October 2026; anything that could not be verified is left blank, so always confirm with the official school website.')}
         </div>
       </div>

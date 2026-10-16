@@ -9,6 +9,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import useThemeStore from '../store/themeStore'
 import { CareersView, FirmsView } from './career/CareerViews'
 import { FIRMS } from './career/firms'
+import Icon from './Icon'
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
@@ -270,7 +271,7 @@ function QuestionCard({ q, zh }) {
         style={{
           alignSelf: 'flex-start',
           padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer',
-          fontSize: 11, fontWeight: 600,
+          fontSize: 13, fontWeight: 600,
           background: showFramework ? 'color-mix(in srgb, var(--accent) 15%, transparent)' : 'var(--bg-tertiary)',
           color: showFramework ? ACCENT : 'var(--text-muted)',
           transition: 'all 0.15s',
@@ -286,7 +287,7 @@ function QuestionCard({ q, zh }) {
           background: 'color-mix(in srgb, var(--accent) 4%, transparent)',
           border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)',
           borderRadius: 6, padding: '10px 12px',
-          fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.75,
+          fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.75,
         }}>
           {(zh ? q.framework : q.frameworkEn).split('；').map((part, i, arr) => (
             <span key={i}>{part}{i < arr.length - 1 ? '；' : ''}</span>
@@ -311,7 +312,7 @@ function QuestionBank({ zh }) {
     padding: '4px 12px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
     fontSize: 11, fontWeight: active ? 600 : 400,
     background: active ? 'var(--accent)' : 'var(--bg-tertiary)',
-    color: active ? '#fff' : 'var(--text-muted)',
+    color: active ? 'var(--accent-ink)' : 'var(--text-muted)',
     transition: 'all 0.15s',
   })
 
@@ -319,7 +320,7 @@ function QuestionBank({ zh }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {/* Type filter */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)', marginRight: 4 }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', marginRight: 4 }}>
           {zh ? '类型：' : 'Type:'}
         </span>
         {[['all', zh ? '全部' : 'All'], ['technical', zh ? '技术' : 'Technical'], ['behavioral', zh ? '行为' : 'Behavioral'], ['case', zh ? '案例' : 'Case']].map(([key, label]) => (
@@ -331,7 +332,7 @@ function QuestionBank({ zh }) {
 
       {/* Role filter */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)', marginRight: 4 }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', marginRight: 4 }}>
           {zh ? '岗位：' : 'Role:'}
         </span>
         {['all', 'IBD', 'PE', 'EquityResearch', 'AM', 'ST', 'Quant', 'CorpFinance', 'Risk'].map(key => (
@@ -341,7 +342,7 @@ function QuestionBank({ zh }) {
         ))}
       </div>
 
-      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
         {zh ? `共 ${filtered.length} 题` : `${filtered.length} questions`}
       </div>
 
@@ -407,7 +408,7 @@ function ChatBubble({ role: msgRole, content, streaming }) {
         background: isUser ? 'rgba(124,156,180,0.2)' : 'color-mix(in srgb, var(--accent) 20%, transparent)',
         border: `1px solid ${isUser ? '#7c9cb4' : ACCENT}44`,
       }}>
-        {isUser ? '👤' : '🎯'}
+        {isUser ? '' : ''}
       </div>
       <div style={{
         maxWidth: '80%',
@@ -424,7 +425,7 @@ function ChatBubble({ role: msgRole, content, streaming }) {
             border: `1px solid ${ACCENT}55`,
             borderRadius: 6, padding: '10px 12px',
           }}>
-            <div style={{ fontSize: 11, color: ACCENT, fontWeight: 600, marginBottom: 6 }}>
+            <div style={{ fontSize: 13, color: ACCENT, fontWeight: 600, marginBottom: 6 }}>
               面试反馈
             </div>
             {renderText(feedbackText)}
@@ -551,7 +552,7 @@ function MockInterview({ zh, lang }) {
           </div>
 
           <div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 8 }}>
               {zh ? '选择目标岗位' : 'Select Target Role'}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -561,11 +562,11 @@ function MockInterview({ zh, lang }) {
                   onClick={() => setSelectedRole(opt.value)}
                   style={{
                     padding: '5px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                    fontSize: 12, fontWeight: selectedRole === opt.value ? 600 : 400,
+                    fontSize: 13, fontWeight: selectedRole === opt.value ? 600 : 400,
                     background: selectedRole === opt.value
                       ? 'var(--accent)'
                       : 'var(--bg-hover)',
-                    color: selectedRole === opt.value ? '#fff' : 'var(--text-secondary)',
+                    color: selectedRole === opt.value ? 'var(--accent-ink)' : 'var(--text-secondary)',
                     transition: 'all 0.15s',
                   }}
                 >
@@ -576,7 +577,7 @@ function MockInterview({ zh, lang }) {
           </div>
 
           <div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 8 }}>
               {zh ? '选择面试类型' : 'Select Interview Type'}
             </div>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -586,11 +587,11 @@ function MockInterview({ zh, lang }) {
                   onClick={() => setSelectedType(opt.value)}
                   style={{
                     padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                    fontSize: 12, fontWeight: selectedType === opt.value ? 600 : 400,
+                    fontSize: 13, fontWeight: selectedType === opt.value ? 600 : 400,
                     background: selectedType === opt.value
                       ? 'var(--accent)'
                       : 'var(--bg-hover)',
-                    color: selectedType === opt.value ? '#fff' : 'var(--text-secondary)',
+                    color: selectedType === opt.value ? 'var(--accent-ink)' : 'var(--text-secondary)',
                     transition: 'all 0.15s',
                   }}
                 >
@@ -608,7 +609,7 @@ function MockInterview({ zh, lang }) {
               background: selectedRole && selectedType
                 ? 'var(--accent)'
                 : 'var(--bg-hover)',
-              color: selectedRole && selectedType ? '#fff' : 'var(--text-muted)',
+              color: selectedRole && selectedType ? 'var(--accent-ink)' : 'var(--text-muted)',
               border: 'none', borderRadius: 8, cursor: selectedRole && selectedType ? 'pointer' : 'not-allowed',
               fontSize: 14, fontWeight: 600,
               transition: 'opacity 0.15s',
@@ -618,7 +619,7 @@ function MockInterview({ zh, lang }) {
           </button>
         </div>
 
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.7, textAlign: 'center' }}>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.7, textAlign: 'center' }}>
           {zh
             ? 'AI面试官将进行4-5轮问答后给出全面反馈。问答过程中请认真作答，就像真实面试一样。'
             : 'The AI interviewer will conduct 4-5 rounds of Q&A then provide comprehensive feedback. Answer seriously — treat it like a real interview.'}
@@ -636,15 +637,15 @@ function MockInterview({ zh, lang }) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{ flex: 1 }}>
-          <span style={{ fontSize: 12, color: ACCENT, fontWeight: 600 }}>{roleLabel}</span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 6 }}>· {typeLabel}</span>
+          <span style={{ fontSize: 13, color: ACCENT, fontWeight: 600 }}>{roleLabel}</span>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 6 }}>· {typeLabel}</span>
         </div>
         <button
           onClick={handleReset}
           style={{
             padding: '4px 10px', borderRadius: 6, border: '1px solid var(--border-primary)',
             background: 'transparent', cursor: 'pointer',
-            fontSize: 11, color: 'var(--text-muted)',
+            fontSize: 13, color: 'var(--text-muted)',
           }}
         >
           {zh ? '重新开始' : 'Restart'}
@@ -670,8 +671,8 @@ function MockInterview({ zh, lang }) {
           <ChatBubble role="assistant" content="" streaming={true} />
         )}
         {error && (
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', padding: '6px 10px', border: '1px solid var(--border-primary)', borderRadius: 5 }}>
-            ⚠ {error}
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '6px 10px', border: '1px solid var(--border-primary)', borderRadius: 5 }}>
+            <Icon name="warn" size={15} style={{ marginRight: 6 }} />{error}
           </div>
         )}
         <div ref={bottomRef} />
@@ -713,7 +714,7 @@ function MockInterview({ zh, lang }) {
               background: !streaming && input.trim()
                 ? 'var(--accent)'
                 : 'var(--bg-tertiary)',
-              color: !streaming && input.trim() ? '#fff' : 'var(--text-muted)',
+              color: !streaming && input.trim() ? 'var(--accent-ink)' : 'var(--text-muted)',
               border: 'none', borderRadius: 8,
               cursor: !streaming && input.trim() ? 'pointer' : 'not-allowed',
               fontSize: 13, fontWeight: 600, flexShrink: 0,
@@ -730,7 +731,7 @@ function MockInterview({ zh, lang }) {
           style={{
             padding: '10px',
             background: 'var(--accent)',
-            color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer',
+            color: 'var(--accent-ink)', border: 'none', borderRadius: 8, cursor: 'pointer',
             fontSize: 13, fontWeight: 600,
           }}
         >
@@ -767,9 +768,6 @@ export default function CareerGuidePage({ lang }) {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 18 }}>
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.1em', color: 'var(--accent)' }}>
-            {zh ? '求职指南' : 'Career Guide'}
-          </div>
           <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
             {zh ? '金融行业职业中心' : 'Finance Careers'}
           </h1>
@@ -783,7 +781,7 @@ export default function CareerGuidePage({ lang }) {
           {stats.map((st) => (
             <div key={st.en}>
               <div className="serif-num" style={{ fontSize: 26, color: 'var(--text-primary)', lineHeight: 1 }}>{st.n}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>{zh ? st.zh : st.en}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{zh ? st.zh : st.en}</div>
             </div>
           ))}
         </div>
@@ -826,7 +824,7 @@ export default function CareerGuidePage({ lang }) {
         background: 'var(--bg-primary)',
         border: '1px solid var(--border-primary)',
         borderRadius: 6,
-        fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.7,
+        fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.7,
       }}>
         {zh
           ? '免责声明：本页所有内容（含岗位描述、薪资范围、面试题目）均为原创编写，仅供学习参考，不代表任何机构的招聘标准或薪资承诺。AI模拟面试仅用于练习目的，与实际面试流程无关。不构成职业建议或投资建议。'

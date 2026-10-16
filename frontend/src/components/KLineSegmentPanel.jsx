@@ -9,6 +9,7 @@ import { analyzeKlineSegment } from '../api/stockApi'
 import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import { T } from '../i18n/translations'
+import Icon from './Icon'
 
 function StatCard({ label, value, color }) {
   useThemeStore((s) => s.theme)
@@ -19,7 +20,7 @@ function StatCard({ label, value, color }) {
       border: `1px solid ${THEME.border}`,
       borderRadius: 6, padding: '7px 10px', textAlign: 'center',
     }}>
-      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 3 }}>{label}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 3 }}>{label}</div>
       <div style={{ fontSize: 13, fontWeight: 600, fontFamily: 'var(--sans)', color: color || 'var(--text-primary)' }}>
         {value}
       </div>
@@ -44,7 +45,7 @@ function AIText({ text }) {
         // Inline bold **word**
         const parts = line.split(/(\*\*[^*]+\*\*)/)
         return (
-          <div key={i} style={{ color: 'var(--text-primary)', fontSize: 12, lineHeight: 1.75 }}>
+          <div key={i} style={{ color: 'var(--text-primary)', fontSize: 13, lineHeight: 1.75 }}>
             {parts.map((p, j) =>
               /^\*\*[^*]+\*\*$/.test(p)
                 ? <strong key={j}>{p.slice(2, -2)}</strong>
@@ -101,10 +102,10 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
     }}>
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600 }}>
+        <span style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 600 }}>
           {t.ksTitle}
         </span>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           {startDate} ~ {endDate}
           &nbsp;·&nbsp;
           {previewStats.bars}{t.ksBars}
@@ -141,12 +142,12 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
       {/* Error — muted info style, not alarming red */}
       {error && (
         <div style={{
-          fontSize: 12, padding: '6px 10px', marginBottom: 6,
+          fontSize: 13, padding: '6px 10px', marginBottom: 6,
           background: 'rgba(255,255,255,0.04)',
           border: `1px solid ${THEME.border}`,
           borderRadius: 5, color: 'var(--text-muted)',
         }}>
-          ⚠ {error}
+          <Icon name="warn" size={15} style={{ marginRight: 6 }} />{error}
         </div>
       )}
 
@@ -157,7 +158,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           <div style={{
             background: 'rgba(255,255,255,0.03)',
             border: `1px solid ${THEME.border}`,
-            borderRadius: 6, padding: '8px 12px', fontSize: 12,
+            borderRadius: 6, padding: '8px 12px', fontSize: 13,
           }}>
             <div style={{ color: 'var(--text-muted)', marginBottom: 2 }}>
               MACD:&nbsp;<span style={{ color: 'var(--text-primary)' }}>{result.tech?.macd}</span>
@@ -173,12 +174,12 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           {/* News in range */}
           {result.has_news && result.news?.length > 0 && (
             <div>
-              <div style={{ fontSize: 11, color: '#26a69a', fontWeight: 600, marginBottom: 4 }}>
+              <div style={{ fontSize: 13, color: '#26a69a', fontWeight: 600, marginBottom: 4 }}>
                 {t.ksNewsInRange(result.news.length)}
               </div>
               {result.news.map((n, i) => (
                 <div key={i} style={{
-                  fontSize: 11, padding: '3px 0 3px 8px',
+                  fontSize: 13, padding: '3px 0 3px 8px',
                   borderLeft: '2px solid #26a69a',
                   marginBottom: 3,
                 }}>
@@ -193,7 +194,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           {/* No-news notice — neutral info style */}
           {!result.has_news && (
             <div style={{
-              fontSize: 11, color: 'var(--text-muted)',
+              fontSize: 13, color: 'var(--text-muted)',
               padding: '4px 10px',
               border: `1px solid ${THEME.border}`, borderRadius: 4,
               background: 'rgba(255,255,255,0.03)',
@@ -212,7 +213,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           </div>
 
           {result.ai_source && result.ai_source !== 'none' && result.ai_source !== 'error' && (
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'right' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'right' }}>
               {t.ksGenBy(result.ai_source)}
             </div>
           )}
@@ -223,7 +224,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
             style={{
               padding: '5px', background: 'transparent',
               color: 'var(--text-muted)', border: `1px solid ${THEME.border}`,
-              borderRadius: 5, cursor: 'pointer', fontSize: 11,
+              borderRadius: 5, cursor: 'pointer', fontSize: 13,
             }}
           >
             {t.ksReanalyze}
@@ -241,7 +242,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
             background: loading
               ? 'color-mix(in srgb, var(--accent) 15%, transparent)'
               : 'var(--accent)',
-            color: '#fff', border: 'none', borderRadius: 6,
+            color: 'var(--accent-ink)', border: 'none', borderRadius: 6,
             cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 14, fontWeight: 600, letterSpacing: '0.3px',
             transition: 'opacity 0.15s',

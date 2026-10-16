@@ -146,7 +146,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           padding: '6px 10px',
         }}
       >
-        <span style={{ color: 'var(--text-muted)', fontSize: 12, letterSpacing: '0.3px', marginRight: 2 }}>{t.viewMode}</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: 13, letterSpacing: '0.3px', marginRight: 2 }}>{t.viewMode}</span>
         {[
           // Grouped: charts · research · news & market · community (a divider sits between groups)
           [
@@ -218,7 +218,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
       {!isMobile && !_NO_DATE_MODES.has(viewMode) && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          fontSize: 12, color: 'var(--text-muted)',
+          fontSize: 13, color: 'var(--text-muted)',
           padding: '4px 2px',
         }}>
           <span>{t.from}</span>
@@ -229,7 +229,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
               borderRadius: 8, color: 'var(--text-primary)', padding: '4px 8px',
-              fontSize: 12, outline: 'none', cursor: 'pointer',
+              fontSize: 13, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
             onFocus={(e) => { e.target.style.borderColor = '#a08672' }}
@@ -243,7 +243,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
               borderRadius: 8, color: 'var(--text-primary)', padding: '4px 8px',
-              fontSize: 12, outline: 'none', cursor: 'pointer',
+              fontSize: 13, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
             onFocus={(e) => { e.target.style.borderColor = '#a08672' }}

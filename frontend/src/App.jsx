@@ -478,9 +478,9 @@ export default function App() {
               </button>
               {badge != null && (
                 <div style={{
-                  position: 'absolute', top: 2, right: 0,
+                  position: 'absolute', top: -2, right: -4,
                   background: 'var(--accent)', color: 'var(--accent-ink)',
-                  fontSize: 10, fontWeight: 600, minWidth: 16, height: 16, padding: '0 4px', borderRadius: 8,
+                  fontSize: 13, fontWeight: 600, minWidth: 18, height: 18, padding: '0 5px', borderRadius: 9,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   pointerEvents: 'none',
                 }}>

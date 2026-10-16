@@ -166,7 +166,7 @@ export default function RadarPanel({ stocks }) {
                 overflowX: 'auto',
               }}
             >
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr>
                     <th style={{ textAlign: 'left', color: 'var(--text-muted)', fontWeight: 600, padding: '4px 8px', whiteSpace: 'nowrap' }}>

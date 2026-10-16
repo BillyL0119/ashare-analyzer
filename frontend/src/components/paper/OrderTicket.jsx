@@ -122,7 +122,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <Seg value={side} onChange={setSide} options={sides} size="sm" />
         {sess && (
-          <span title={s.hoursNote} style={{ fontSize: 11.5, fontWeight: 650, color: sess.open ? UP : MUTED, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+          <span title={s.hoursNote} style={{ fontSize: 13, fontWeight: 650, color: sess.open ? UP : MUTED, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 7, height: 7, borderRadius: 4, background: sess.open ? UP : 'var(--text-muted)' }} />
             {sess.open ? s.open : sess.holiday ? s.holiday : s.closed}
             <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>· {sess.open ? s.closesAt(fmtTime(sess.closes_at, lang)) : s.opensAt(fmtTime(sess.next_open, lang))}</span>
@@ -139,7 +139,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
             <div role="listbox" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 30, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden' }}>
               {suggestions.map((x) => (
                 <div key={x.symbol} role="option" onMouseDown={(e) => { e.preventDefault(); setSymbol(x.symbol); setSuggestOpen(false) }}
-                  style={{ display: 'flex', gap: 10, padding: '8px 12px', cursor: 'pointer', fontSize: 12.5 }}
+                  style={{ display: 'flex', gap: 10, padding: '8px 12px', cursor: 'pointer', fontSize: 13 }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}>
                   <b style={{ minWidth: 56, fontFamily: 'var(--sans)' }}>{x.symbol}</b>
                   <span style={{ flex: 1, minWidth: 0, color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lang === 'zh' && x.nameZh ? x.nameZh : x.name}</span>
@@ -149,7 +149,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
             </div>
           )}
         </div>
-        <div style={{ minHeight: 18, fontSize: 12.5 }}>
+        <div style={{ minHeight: 18, fontSize: 13 }}>
           {q?.price ? <span><b>{q.name}</b> <span style={{ color: MUTED }}>· {money(q.price, market)}</span>
             {q.chg != null && <span style={{ color: (q.chg >= 0) === (market !== 'cn') ? UP : DOWN, marginLeft: 6 }}>{q.chg > 0 ? '+' : ''}{Number(q.chg).toFixed(2)}%</span>}</span>
             : q?.missing ? <span style={{ color: DOWN }}>—</span> : null}
@@ -162,7 +162,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
             <input type="number" min={market === 'us' ? 1 : lot} step={market === 'us' ? 1 : lot} value={shares}
               onChange={(e) => setShares(Math.max(0, Math.floor(Number(e.target.value) || 0)))} style={inputStyle} aria-label={s.shares} />
             <button type="button" onClick={() => maxShares > 0 && setShares(maxShares)} disabled={!(maxShares > 0)}
-              style={{ ...inputStyle, width: 'auto', padding: '0 10px', cursor: 'pointer', fontSize: 12, color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap', flex: 'none' }}>
+              style={{ ...inputStyle, width: 'auto', padding: '0 10px', cursor: 'pointer', fontSize: 13, color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap', flex: 'none' }}>
               {side === 'sell' || side === 'cover' ? s.all : s.max}
             </button>
           </div>
@@ -199,7 +199,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         )}
       </div>
 
-      <p style={{ margin: 0, fontSize: 12, lineHeight: 1.6, color: MUTED, background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: '9px 12px' }}>
+      <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: MUTED, background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: '9px 12px' }}>
         {side === 'short' ? s.help.short : s.help[type]}
       </p>
 
@@ -217,12 +217,12 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         </div>
       )}
 
-      {sess && !sess.open && <div style={{ fontSize: 12, color: '#f59e0b', lineHeight: 1.55 }}>{s.closedHint}</div>}
+      {sess && !sess.open && <div style={{ fontSize: 13, color: '#f59e0b', lineHeight: 1.55 }}>{s.closedHint}</div>}
 
       <Button onClick={submit} disabled={!valid || busy} color={SIDE_COLOR[side]} style={{ width: '100%', padding: '11px 0', fontSize: 14.5 }}>
         {busy ? s.submitting : s.submit(s.side[side], s.type[type])}
       </Button>
-      {msg && <div role="status" style={{ fontSize: 12.5, color: msg.ok ? UP : DOWN, lineHeight: 1.5 }}>{msg.text}</div>}
+      {msg && <div role="status" style={{ fontSize: 13, color: msg.ok ? UP : DOWN, lineHeight: 1.5 }}>{msg.text}</div>}
     </Card>
   )
 }

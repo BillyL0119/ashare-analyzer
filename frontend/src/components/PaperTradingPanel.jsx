@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Icon from './Icon'
 import useAuthStore from '../store/authStore'
 import PaperPerformance from './PaperPerformance'
 import ptStrings from './paper/ptStrings'
@@ -100,7 +101,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   ]
   const portfolioOptions = [
     ...MARKETS.map((m) => ({ value: m, label: s.markets[m] })),
-    ...(account?.games || []).map((g) => ({ value: `g:${g.id}`, label: `🏆 ${g.name}` })),
+    ...(account?.games || []).map((g) => ({ value: `g:${g.id}`, label: `${g.name}` })),
   ]
   const inviteText = game ? `${s.game.inviteText(game.name, game.code)} ${window.location.origin}/paper` : ''
 
@@ -114,7 +115,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
 
       {toast && (
         <div role="status" style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9998, maxWidth: '90vw', textAlign: 'center',
-          background: 'var(--bg-secondary)', border: `1px solid ${toast.ok ? UP : DOWN}66`, color: toast.ok ? UP : DOWN, borderRadius: 'var(--radius)', padding: '11px 20px', fontSize: 13.5, fontWeight: 650, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
+          background: 'var(--bg-secondary)', color: toast.ok ? UP : DOWN, borderRadius: 'var(--radius)', padding: '11px 20px', fontSize: 13.5, fontWeight: 650, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
           {toast.text}
         </div>
       )}
@@ -124,13 +125,13 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           <h1 style={{ margin: 0, fontSize: 26 }}>{s.title}</h1>
           <p style={{ margin: '4px 0 0', fontSize: 13.5, color: MUTED, maxWidth: 640 }}>{s.subtitle}</p>
         </div>
-        <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>🏆 {s.newGame}</Button>
+        <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>{s.newGame}</Button>
       </div>
 
       {!user && (
         <div style={{ background: 'color-mix(in srgb, var(--accent) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)', borderRadius: 'var(--radius)', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.45 }}>{s.guest}</div>
-          {onOpenAuth && <Button onClick={onOpenAuth} style={{ padding: '6px 14px', fontSize: 12 }}>{s.signIn}</Button>}
+          {onOpenAuth && <Button onClick={onOpenAuth} style={{ padding: '6px 14px', fontSize: 13 }}>{s.signIn}</Button>}
         </div>
       )}
 
@@ -140,17 +141,17 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       <Card style={{ display: 'grid', gap: 14 }}>
         {game && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13 }}>
-            <b style={{ fontSize: 15 }}>🏆 {game.name}</b>
+            <b style={{ fontSize: 15 }}>{game.name}</b>
             <span style={{ color: game.status === 'ended' ? MUTED : UP, fontWeight: 600 }}>{s.game.status[game.status]}</span>
             <span style={{ color: MUTED }}>{s.game.members(game.members)} · {game.status === 'ended' ? s.game.endedOn(game.end_date) : s.game.ends(game.end_date)} · {s.game.organiser} {game.owner_nickname}</span>
             <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
               <code style={{ fontSize: 14, fontWeight: 600, letterSpacing: 2, padding: '3px 8px', borderRadius: 6, background: 'var(--bg-tertiary)' }}>{game.code}</code>
-              <Button ghost style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => { navigator.clipboard?.writeText(inviteText); setCopied(true); setTimeout(() => setCopied(false), 1500) }}>
+              <Button ghost style={{ padding: '5px 10px', fontSize: 13 }} onClick={() => { navigator.clipboard?.writeText(inviteText); setCopied(true); setTimeout(() => setCopied(false), 1500) }}>
                 {copied ? s.game.copied : s.game.copy}
               </Button>
               {game.is_owner
-                ? <Button ghost style={{ padding: '5px 10px', fontSize: 12, color: DOWN }} onClick={async () => { if (!window.confirm(s.game.removeConfirm)) return; await postJSON('games/delete', { device_id: accountKey, game_id: game.id }).catch(() => {}); setActive('us'); load() }}>{s.game.remove}</Button>
-                : <Button ghost style={{ padding: '5px 10px', fontSize: 12 }} onClick={async () => { await postJSON('games/leave', { device_id: accountKey, game_id: game.id }).catch(() => {}); setActive('us'); load() }}>{s.game.leave}</Button>}
+                ? <Button ghost style={{ padding: '5px 10px', fontSize: 13, color: DOWN }} onClick={async () => { if (!window.confirm(s.game.removeConfirm)) return; await postJSON('games/delete', { device_id: accountKey, game_id: game.id }).catch(() => {}); setActive('us'); load() }}>{s.game.remove}</Button>
+                : <Button ghost style={{ padding: '5px 10px', fontSize: 13 }} onClick={async () => { await postJSON('games/leave', { device_id: accountKey, game_id: game.id }).catch(() => {}); setActive('us'); load() }}>{s.game.leave}</Button>}
             </span>
           </div>
         )}
@@ -161,18 +162,18 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
             <Stat label={s.todayChange} value={signed(an.day_change, market, 0)} color={plColor(an.day_change, market)} sub={pct(an.day_change_pct)} />
             <Stat label={s.buyingPower} value={money(view.buying_power, market, 0)} sub={view.reserved ? `${s.reserved} ${money(view.reserved, market, 0)}` : `${s.cash} ${money(view.cash, market, 0)}`} />
             <Stat label={s.rank} value={view.rank > 0 ? `#${view.rank}` : '—'}
-              sub={<span style={{ cursor: 'pointer', textDecoration: 'underline dotted' }} onClick={() => { setNickDraft(account.nickname?.startsWith('用户#') ? '' : account.nickname); setModal('nick') }}>{localNick(account.nickname, lang)} ✎</span>} />
+              sub={<span style={{ cursor: 'pointer', textDecoration: 'underline dotted' }} onClick={() => { setNickDraft(account.nickname?.startsWith('用户#') ? '' : account.nickname); setModal('nick') }}>{localNick(account.nickname, lang)} <Icon name="edit" size={13} /></span>} />
           </div>
         )}
         {view && (
-          <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', fontSize: 12.5, color: MUTED, borderTop: `1px solid ${BDR}`, paddingTop: 10 }}>
+          <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', fontSize: 13, color: MUTED, borderTop: `1px solid ${BDR}`, paddingTop: 10 }}>
             <span>{s.realized} <b style={{ color: plColor(an.realized_pl, market) }}>{signed(an.realized_pl, market, 0)}</b></span>
             <span>{s.unrealized} <b style={{ color: plColor(an.unrealized_pl, market) }}>{signed(an.unrealized_pl, market, 0)}</b></span>
             <span>{s.winRate} <b style={{ color: 'var(--text-primary)' }}>{an.win_rate != null ? `${an.win_rate}% (${an.closed_trades})` : '—'}</b></span>
             <span>{s.fees} <b style={{ color: 'var(--text-primary)' }}>{money(an.fees_paid, market)}</b></span>
             {an.best_trade && <span>{s.best} <b style={{ color: plColor(an.best_trade.profit_loss, market) }}>{an.best_trade.symbol} {signed(an.best_trade.profit_loss, market, 0)}</b></span>}
             {an.worst_trade && an.closed_trades > 1 && <span>{s.worst} <b style={{ color: plColor(an.worst_trade.profit_loss, market) }}>{an.worst_trade.symbol} {signed(an.worst_trade.profit_loss, market, 0)}</b></span>}
-            {!gameId && <button onClick={() => setModal('reset')} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: DOWN, cursor: 'pointer', fontSize: 12 }}>{s.reset}</button>}
+            {!gameId && <button onClick={() => setModal('reset')} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: DOWN, cursor: 'pointer', fontSize: 13 }}>{s.reset}</button>}
           </div>
         )}
       </Card>
@@ -194,7 +195,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         </div>
       </div>
 
-      <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7, textAlign: 'center' }}>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.7, textAlign: 'center' }}>
         {s.rules[market] || ''} {s.hoursNote}
       </div>
 

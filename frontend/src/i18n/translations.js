@@ -216,7 +216,7 @@ export const T = {
     newsReadMore: '查看原文 →',
     newsSource: '来源',
     // Knowledge Card
-    knowledgeBtn: '💡 今日知识',
+    knowledgeBtn: '今日知识',
     knowledgeClose: '×',
     knowledgeDifficulty: '难度',
     knowledgeFormula: '核心公式',
@@ -315,7 +315,7 @@ export const T = {
     ptColValue: '市值',
     ptColPL: '盈亏',
     ptColAction: '操作',
-    ptLockCN: '明日可卖 🔒',
+    ptLockCN: '明日可卖',
     ptSell: '卖出',
     ptTransactions: '交易记录',
     ptNoTransactions: '暂无交易记录',
@@ -442,13 +442,13 @@ export const T = {
     gnCatAll: '全部', gnCatMarket: '市场', gnCatEconomy: '宏观', gnCatCompany: '公司', gnCatCrypto: '加密',
     gnLangAll: '全部', gnLangCN: '中文', gnLangEN: '英文',
     // SectorRotation
-    srVolHigh: '📈量大', srVolUp: '量增', srVolLow: '📉量缩', srVolFlat: '量平',
+    srVolHigh: '量大', srVolUp: '量增', srVolLow: '量缩', srVolFlat: '量平',
     srVolRatio: '量比', srLoadFail: '加载失败', srPending: '板块数据正在生成，约一分钟后刷新即可',
     srMarket: '市场：', srUpdated: '更新：',
     srLoadingMsg: '正在加载板块数据（首次约30秒）...',
-    srHeatmap: '🗺 热力图', srRanking: '📊 排行榜',
+    srHeatmap: '热力图', srRanking: '排行榜',
     sr5Day: '5日', sr20Day: '20日', sr5DayLong: '近5日', sr20DayLong: '近20日',
-    srSector: '行业', srRotSummary: '📡 轮动小结',
+    srSector: '行业', srRotSummary: '轮动小结',
     // StatsDisplay
     stVisits: '访问', stTitle: 'BestFriendStock 访问统计', stLive: '实时数据',
     stExport: '导出模式', stExitExport: '退出导出',
@@ -471,11 +471,11 @@ export const T = {
     // AITeacherPage
     atTopics: '话题分类', atClearMsg: '对话已清空，有什么问题尽管问！',
     atSubtitle: '专为学生设计的股市 + 经济学 AI 老师 · 完全免费 · Powered by DeepSeek',
-    atWelcome: '你好！我是 BestFriendStock 的 AI 老师 🎓\n\n我可以帮你：\n• 解读K线、MACD、RSI等技术指标\n• 分析PE、财务报表等基本面\n• 讲解 A-Level / AP / IB 经济学考点\n• 用真实市场案例说明经济学概念\n\n左侧选择话题，或直接输入你的问题！',
+    atWelcome: '你好！我是 BestFriendStock 的 AI 老师\n\n我可以帮你：\n• 解读K线、MACD、RSI等技术指标\n• 分析PE、财务报表等基本面\n• 讲解 A-Level / AP / IB 经济学考点\n• 用真实市场案例说明经济学概念\n\n左侧选择话题，或直接输入你的问题！',
     atPlaceholderFull: '输入你的问题（Enter 发送，Shift+Enter 换行）...',
     atDisclaimer: '仅供学习参考，不构成投资建议 · 10次/分钟限流',
     // KLineTip
-    ktTitle: '📐 K线图速查', ktHint: '悬停或点击学习中心查看完整教程',
+    ktTitle: 'K线图速查', ktHint: '悬停或点击学习中心查看完整教程',
     ktAnatomy: 'K线结构（阳线）', ktPatterns: '常见形态速查',
     ktNote: '* K线形态须结合趋势和成交量综合判断，不可单独作为买卖依据。',
     // KLineSegmentPanel
@@ -492,8 +492,8 @@ export const T = {
     drTitle: '今日日报', drCNIndices: 'A股指数', drUSIndices: '美股指数',
     drMood: '市场情绪', drUSMarket: '美股', drCNMarket: 'A股',
     // MarketOverview
-    moSlogan: '股市里，有我陪你', moStart: '🔍 开始分析',
-    moStudy: '📚 学习中心', moContact: '网站有问题？请联系：billyl090119@gmail.com',
+    moSlogan: '股市里，有我陪你', moStart: '开始分析',
+    moStudy: '学习中心', moContact: '网站有问题？请联系：billyl090119@gmail.com',
     // SearchBar
     sbHot: '热门股票',
   },
@@ -714,7 +714,7 @@ export const T = {
     newsReadMore: 'Read more →',
     newsSource: 'Source',
     // Knowledge Card
-    knowledgeBtn: '💡 Daily Insight',
+    knowledgeBtn: 'Daily Insight',
     knowledgeClose: '×',
     knowledgeDifficulty: 'Difficulty',
     knowledgeFormula: 'Key Formula',
@@ -813,7 +813,7 @@ export const T = {
     ptColValue: 'Value',
     ptColPL: 'P&L',
     ptColAction: 'Action',
-    ptLockCN: 'T+1 🔒',
+    ptLockCN: 'T+1',
     ptSell: 'Sell',
     ptTransactions: 'Transaction History',
     ptNoTransactions: 'No transactions yet',
@@ -940,13 +940,13 @@ export const T = {
     gnCatAll: 'All', gnCatMarket: 'Market', gnCatEconomy: 'Economy', gnCatCompany: 'Company', gnCatCrypto: 'Crypto',
     gnLangAll: 'All', gnLangCN: 'Chinese', gnLangEN: 'English',
     // SectorRotation
-    srVolHigh: '📈 High Vol', srVolUp: 'Vol↑', srVolLow: '📉 Low Vol', srVolFlat: 'Vol~',
+    srVolHigh: 'High Vol', srVolUp: 'Vol↑', srVolLow: 'Low Vol', srVolFlat: 'Vol~',
     srVolRatio: 'Vol', srLoadFail: 'Failed to load', srPending: 'Sector data is being prepared. Refresh in about a minute.',
     srMarket: 'Market:', srUpdated: 'Updated:',
     srLoadingMsg: 'Loading sector data (first load ~30s)...',
-    srHeatmap: '🗺 Heatmap', srRanking: '📊 Ranking',
+    srHeatmap: 'Heatmap', srRanking: 'Ranking',
     sr5Day: '5-Day', sr20Day: '20-Day', sr5DayLong: '5-Day', sr20DayLong: '20-Day',
-    srSector: 'Sector', srRotSummary: '📡 Rotation Summary',
+    srSector: 'Sector', srRotSummary: 'Rotation Summary',
     // StatsDisplay
     stVisits: 'Visits', stTitle: 'BestFriendStock Analytics', stLive: 'Live data',
     stExport: 'Export', stExitExport: 'Exit Export',
@@ -969,11 +969,11 @@ export const T = {
     // AITeacherPage
     atTopics: 'Topics', atClearMsg: 'Chat cleared! Ask me anything.',
     atSubtitle: 'AI tutor for stock analysis & economics · Completely free · Powered by DeepSeek',
-    atWelcome: 'Hello! I\'m the BestFriendStock AI Tutor 🎓\n\nI can help you:\n• Explain technical indicators (K-line, MACD, RSI)\n• Analyse fundamentals (P/E, financial statements)\n• Cover A-Level / AP / IB Economics exam points\n• Connect real market cases to economic theory\n\nPick a topic from the left, or type your question!',
+    atWelcome: 'Hello! I\'m the BestFriendStock AI Tutor\n\nI can help you:\n• Explain technical indicators (K-line, MACD, RSI)\n• Analyse fundamentals (P/E, financial statements)\n• Cover A-Level / AP / IB Economics exam points\n• Connect real market cases to economic theory\n\nPick a topic from the left, or type your question!',
     atPlaceholderFull: 'Ask your question (Enter to send, Shift+Enter for new line)...',
     atDisclaimer: 'For educational purposes only, not investment advice · 10 req/min limit',
     // KLineTip
-    ktTitle: '📐 Candlestick Quick Ref', ktHint: 'Visit Study Center for the full interactive lesson',
+    ktTitle: 'Candlestick Quick Ref', ktHint: 'Visit Study Center for the full interactive lesson',
     ktAnatomy: 'Candlestick Anatomy (Bullish)', ktPatterns: 'Common Patterns',
     ktNote: '* Always confirm patterns with trend direction and volume. Never use alone as a trading signal.',
     // KLineSegmentPanel
@@ -990,8 +990,8 @@ export const T = {
     drTitle: 'Daily Brief', drCNIndices: 'A-Share Indices', drUSIndices: 'US Indices',
     drMood: 'Market Mood', drUSMarket: 'US Market', drCNMarket: 'CN Market',
     // MarketOverview
-    moSlogan: 'Your Best Friend in the Market', moStart: '🔍 Start Analyzing',
-    moStudy: '📚 Study Center', moContact: 'Issues? Contact: billyl090119@gmail.com',
+    moSlogan: 'Your Best Friend in the Market', moStart: 'Start Analyzing',
+    moStudy: 'Study Center', moContact: 'Issues? Contact: billyl090119@gmail.com',
     // SearchBar
     sbHot: 'Hot Stocks',
   },
@@ -1212,7 +1212,7 @@ export const T = {
     newsReadMore: '続きを読む →',
     newsSource: 'ソース',
     // Knowledge Card
-    knowledgeBtn: '💡 本日の知識',
+    knowledgeBtn: '本日の知識',
     knowledgeClose: '×',
     knowledgeDifficulty: '難易度',
     knowledgeFormula: '主要公式',
@@ -1311,7 +1311,7 @@ export const T = {
     ptColValue: '評価額',
     ptColPL: '損益',
     ptColAction: '操作',
-    ptLockCN: 'T+1 🔒',
+    ptLockCN: 'T+1',
     ptSell: '売り',
     ptTransactions: '取引履歴',
     ptNoTransactions: '取引履歴はありません',
@@ -1438,13 +1438,13 @@ export const T = {
     gnCatAll: '全て', gnCatMarket: '市場', gnCatEconomy: 'マクロ', gnCatCompany: '企業', gnCatCrypto: '暗号',
     gnLangAll: '全て', gnLangCN: '中国語', gnLangEN: '英語',
     // SectorRotation
-    srVolHigh: '📈 大量', srVolUp: '量増', srVolLow: '📉 少量', srVolFlat: '量平',
+    srVolHigh: '大量', srVolUp: '量増', srVolLow: '少量', srVolFlat: '量平',
     srVolRatio: '出来高比', srLoadFail: '読込失敗', srPending: 'セクターデータを準備中です。1分ほどで更新してください。',
     srMarket: '市場：', srUpdated: '更新：',
     srLoadingMsg: 'セクターデータ読込中（初回約30秒）...',
-    srHeatmap: '🗺 ヒートマップ', srRanking: '📊 ランキング',
+    srHeatmap: 'ヒートマップ', srRanking: 'ランキング',
     sr5Day: '5日', sr20Day: '20日', sr5DayLong: '過去5日', sr20DayLong: '過去20日',
-    srSector: 'セクター', srRotSummary: '📡 ローテーション概要',
+    srSector: 'セクター', srRotSummary: 'ローテーション概要',
     // StatsDisplay
     stVisits: '訪問', stTitle: 'BestFriendStock アクセス統計', stLive: 'リアルタイム',
     stExport: 'エクスポート', stExitExport: '終了',
@@ -1467,11 +1467,11 @@ export const T = {
     // AITeacherPage
     atTopics: 'トピック', atClearMsg: '会話をクリアしました。何でもどうぞ！',
     atSubtitle: '株式分析・経済学のAI先生 · 完全無料 · Powered by DeepSeek',
-    atWelcome: 'こんにちは！BestFriendStockのAI先生です 🎓\n\nお手伝いできること：\n• テクニカル指標（K線、MACD、RSI）の解説\n• ファンダメンタルズ（PER、財務諸表）の分析\n• A-Level / AP / IB 経済学の試験ポイント\n• 実際の市場事例と経済理論の関連付け\n\n左からトピックを選ぶか、質問を入力してください！',
+    atWelcome: 'こんにちは！BestFriendStockのAI先生です\n\nお手伝いできること：\n• テクニカル指標（K線、MACD、RSI）の解説\n• ファンダメンタルズ（PER、財務諸表）の分析\n• A-Level / AP / IB 経済学の試験ポイント\n• 実際の市場事例と経済理論の関連付け\n\n左からトピックを選ぶか、質問を入力してください！',
     atPlaceholderFull: '質問を入力（Enterで送信、Shift+Enterで改行）...',
     atDisclaimer: '学習参考のみ・投資助言ではありません · 毎分10回制限',
     // KLineTip
-    ktTitle: '📐 ローソク足クイックリファレンス', ktHint: '完全なチュートリアルは学習センターへ',
+    ktTitle: 'ローソク足クイックリファレンス', ktHint: '完全なチュートリアルは学習センターへ',
     ktAnatomy: 'ローソク足の構造（陽線）', ktPatterns: 'よく見るパターン',
     ktNote: '* パターンはトレンドと出来高と合わせて判断してください。単独で売買シグナルとして使用しないでください。',
     // KLineSegmentPanel
@@ -1488,8 +1488,8 @@ export const T = {
     drTitle: '本日のレポート', drCNIndices: 'A株指数', drUSIndices: '米国株指数',
     drMood: '市場ムード', drUSMarket: '米国市場', drCNMarket: '中国市場',
     // MarketOverview
-    moSlogan: '株式市場のベストフレンド', moStart: '🔍 分析開始',
-    moStudy: '📚 学習センター', moContact: 'お問い合わせ: billyl090119@gmail.com',
+    moSlogan: '株式市場のベストフレンド', moStart: '分析開始',
+    moStudy: '学習センター', moContact: 'お問い合わせ: billyl090119@gmail.com',
     // SearchBar
     sbHot: '人気銘柄',
   },
@@ -1710,7 +1710,7 @@ export const T = {
     newsReadMore: '더 보기 →',
     newsSource: '출처',
     // Knowledge Card
-    knowledgeBtn: '💡 오늘의 지식',
+    knowledgeBtn: '오늘의 지식',
     knowledgeClose: '×',
     knowledgeDifficulty: '난이도',
     knowledgeFormula: '핵심 공식',
@@ -1809,7 +1809,7 @@ export const T = {
     ptColValue: '평가액',
     ptColPL: '손익',
     ptColAction: '작업',
-    ptLockCN: 'T+1 🔒',
+    ptLockCN: 'T+1',
     ptSell: '매도',
     ptTransactions: '거래 내역',
     ptNoTransactions: '거래 내역 없음',
@@ -1936,13 +1936,13 @@ export const T = {
     gnCatAll: '전체', gnCatMarket: '시장', gnCatEconomy: '경기', gnCatCompany: '기업', gnCatCrypto: '암호화폐',
     gnLangAll: '전체', gnLangCN: '중국어', gnLangEN: '영어',
     // SectorRotation
-    srVolHigh: '📈 대량', srVolUp: '거래량↑', srVolLow: '📉 소량', srVolFlat: '거래량~',
+    srVolHigh: '대량', srVolUp: '거래량↑', srVolLow: '소량', srVolFlat: '거래량~',
     srVolRatio: '거래량비', srLoadFail: '로드 실패', srPending: '섹터 데이터를 준비 중입니다. 1분 후 새로고침하세요.',
     srMarket: '시장：', srUpdated: '업데이트：',
     srLoadingMsg: '섹터 데이터 로드 중（첫 로드 약 30초）...',
-    srHeatmap: '🗺 히트맵', srRanking: '📊 순위',
+    srHeatmap: '히트맵', srRanking: '순위',
     sr5Day: '5일', sr20Day: '20일', sr5DayLong: '최근 5일', sr20DayLong: '최근 20일',
-    srSector: '섹터', srRotSummary: '📡 로테이션 요약',
+    srSector: '섹터', srRotSummary: '로테이션 요약',
     // StatsDisplay
     stVisits: '방문', stTitle: 'BestFriendStock 방문 통계', stLive: '실시간',
     stExport: '내보내기', stExitExport: '종료',
@@ -1965,11 +1965,11 @@ export const T = {
     // AITeacherPage
     atTopics: '주제', atClearMsg: '대화가 삭제되었습니다. 무엇이든 물어보세요!',
     atSubtitle: '주식 분석 & 경제학 AI 선생님 · 완전 무료 · Powered by DeepSeek',
-    atWelcome: '안녕하세요! BestFriendStock AI 선생님입니다 🎓\n\n도움드릴 수 있는 것:\n• 기술적 지표(K선, MACD, RSI) 설명\n• 기본 분석(PER, 재무제표)\n• A-Level / AP / IB 경제학 시험 포인트\n• 실제 시장 사례와 경제 이론 연결\n\n왼쪽에서 주제를 선택하거나 질문을 입력하세요!',
+    atWelcome: '안녕하세요! BestFriendStock AI 선생님입니다\n\n도움드릴 수 있는 것:\n• 기술적 지표(K선, MACD, RSI) 설명\n• 기본 분석(PER, 재무제표)\n• A-Level / AP / IB 경제학 시험 포인트\n• 실제 시장 사례와 경제 이론 연결\n\n왼쪽에서 주제를 선택하거나 질문을 입력하세요!',
     atPlaceholderFull: '질문 입력 (Enter로 전송, Shift+Enter로 줄바꿈)...',
     atDisclaimer: '학습 참고용만 · 투자 조언이 아님 · 분당 10회 제한',
     // KLineTip
-    ktTitle: '📐 캔들스틱 빠른 참고', ktHint: '전체 튜토리얼은 학습 센터를 방문하세요',
+    ktTitle: '캔들스틱 빠른 참고', ktHint: '전체 튜토리얼은 학습 센터를 방문하세요',
     ktAnatomy: '캔들스틱 구조 (양봉)', ktPatterns: '주요 패턴',
     ktNote: '* 패턴은 추세와 거래량으로 확인하세요. 단독 매매 신호로 사용하지 마세요.',
     // KLineSegmentPanel
@@ -1986,8 +1986,8 @@ export const T = {
     drTitle: '오늘의 리포트', drCNIndices: 'A주식 지수', drUSIndices: '미국 주식 지수',
     drMood: '시장 분위기', drUSMarket: '미국 시장', drCNMarket: '중국 시장',
     // MarketOverview
-    moSlogan: '주식 시장의 베스트 프렌드', moStart: '🔍 분석 시작',
-    moStudy: '📚 학습 센터', moContact: '문의: billyl090119@gmail.com',
+    moSlogan: '주식 시장의 베스트 프렌드', moStart: '분석 시작',
+    moStudy: '학습 센터', moContact: '문의: billyl090119@gmail.com',
     // SearchBar
     sbHot: '인기 종목',
   },
@@ -2208,7 +2208,7 @@ export const T = {
     newsReadMore: 'Lire plus →',
     newsSource: 'Source',
     // Knowledge Card
-    knowledgeBtn: '💡 Savoir du jour',
+    knowledgeBtn: 'Savoir du jour',
     knowledgeClose: '×',
     knowledgeDifficulty: 'Difficulté',
     knowledgeFormula: 'Formule clé',
@@ -2307,7 +2307,7 @@ export const T = {
     ptColValue: 'Valeur',
     ptColPL: 'P&L',
     ptColAction: 'Action',
-    ptLockCN: 'T+1 🔒',
+    ptLockCN: 'T+1',
     ptSell: 'Vendre',
     ptTransactions: 'Historique des transactions',
     ptNoTransactions: 'Aucune transaction',
@@ -2434,13 +2434,13 @@ export const T = {
     gnCatAll: 'Tout', gnCatMarket: 'Marché', gnCatEconomy: 'Économie', gnCatCompany: 'Entreprise', gnCatCrypto: 'Crypto',
     gnLangAll: 'Tout', gnLangCN: 'Chinois', gnLangEN: 'Anglais',
     // SectorRotation
-    srVolHigh: '📈 Vol élevé', srVolUp: 'Vol↑', srVolLow: '📉 Vol faible', srVolFlat: 'Vol~',
+    srVolHigh: 'Vol élevé', srVolUp: 'Vol↑', srVolLow: 'Vol faible', srVolFlat: 'Vol~',
     srVolRatio: 'Vol', srLoadFail: 'Échec chargement', srPending: 'Données sectorielles en préparation. Actualisez dans une minute.',
     srMarket: 'Marché :', srUpdated: 'Mis à jour :',
     srLoadingMsg: 'Chargement secteurs (premier chargement ~30s)...',
-    srHeatmap: '🗺 Heatmap', srRanking: '📊 Classement',
+    srHeatmap: 'Heatmap', srRanking: 'Classement',
     sr5Day: '5j', sr20Day: '20j', sr5DayLong: '5 derniers j.', sr20DayLong: '20 derniers j.',
-    srSector: 'Secteur', srRotSummary: '📡 Résumé rotation',
+    srSector: 'Secteur', srRotSummary: 'Résumé rotation',
     // StatsDisplay
     stVisits: 'Visites', stTitle: 'Statistiques BestFriendStock', stLive: 'Données live',
     stExport: 'Exporter', stExitExport: 'Quitter',
@@ -2463,11 +2463,11 @@ export const T = {
     // AITeacherPage
     atTopics: 'Sujets', atClearMsg: 'Conversation effacée ! Posez vos questions.',
     atSubtitle: "Tuteur IA pour l'analyse boursière & l'économie · Entièrement gratuit · Powered by DeepSeek",
-    atWelcome: "Bonjour ! Je suis le tuteur IA de BestFriendStock 🎓\n\nJe peux vous aider à :\n• Expliquer les indicateurs techniques (chandeliers, MACD, RSI)\n• Analyser les fondamentaux (PER, états financiers)\n• Couvrir les points d'examen A-Level / AP / IB\n• Relier les cas de marché réels à la théorie économique\n\nChoisissez un sujet à gauche ou posez votre question !",
+    atWelcome: "Bonjour ! Je suis le tuteur IA de BestFriendStock\n\nJe peux vous aider à :\n• Expliquer les indicateurs techniques (chandeliers, MACD, RSI)\n• Analyser les fondamentaux (PER, états financiers)\n• Couvrir les points d'examen A-Level / AP / IB\n• Relier les cas de marché réels à la théorie économique\n\nChoisissez un sujet à gauche ou posez votre question !",
     atPlaceholderFull: 'Posez votre question (Entrée pour envoyer, Maj+Entrée pour retour à la ligne)...',
     atDisclaimer: "À des fins éducatives uniquement, non un conseil en investissement · Limite 10 req/min",
     // KLineTip
-    ktTitle: '📐 Référence rapide chandeliers', ktHint: "Visitez le Centre d'apprentissage pour la leçon complète",
+    ktTitle: 'Référence rapide chandeliers', ktHint: "Visitez le Centre d'apprentissage pour la leçon complète",
     ktAnatomy: 'Anatomie du chandelier (haussier)', ktPatterns: 'Modèles courants',
     ktNote: '* Confirmez toujours les modèles avec la direction de tendance et le volume. Ne jamais utiliser seul comme signal de trading.',
     // KLineSegmentPanel
@@ -2484,8 +2484,8 @@ export const T = {
     drTitle: 'Bilan du jour', drCNIndices: 'Indices A-Share', drUSIndices: 'Indices US',
     drMood: 'Humeur du marché', drUSMarket: 'Marché US', drCNMarket: 'Marché CN',
     // MarketOverview
-    moSlogan: 'Votre meilleur ami en bourse', moStart: "🔍 Commencer l'analyse",
-    moStudy: "📚 Centre d'étude", moContact: 'Contact : billyl090119@gmail.com',
+    moSlogan: 'Votre meilleur ami en bourse', moStart: "Commencer l'analyse",
+    moStudy: "Centre d'étude", moContact: 'Contact : billyl090119@gmail.com',
     // SearchBar
     sbHot: 'Actions populaires',
   },

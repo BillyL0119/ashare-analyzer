@@ -59,7 +59,7 @@ function SentimentBar({ positive, neutral, negative, t }) {
           />
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 16, fontSize: 12 }}>
+      <div style={{ display: 'flex', gap: 16, fontSize: 13 }}>
         {segments.map(({ key, value, color, label }) => (
           <span key={key} style={{ color, fontWeight: 600 }}>
             {label} <span style={{ color: 'var(--text-primary)' }}>{value}</span>
@@ -81,7 +81,7 @@ function SentimentGauge({ score, t }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 80 }}>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>{t.newsSentimentScore}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 2 }}>{t.newsSentimentScore}</div>
       <svg width="80" height="46" viewBox="0 0 80 46">
         {/* Track */}
         <path
@@ -143,7 +143,7 @@ function NewsItem({ item, t }) {
         {/* Sentiment pill */}
         <span style={{
           flexShrink: 0,
-          fontSize: 10,
+          fontSize: 13,
           fontWeight: 600,
           padding: '2px 8px',
           borderRadius: 'var(--radius)',
@@ -170,15 +170,15 @@ function NewsItem({ item, t }) {
             {item.title}
           </div>
           {ai.summary && (
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.4 }}>
               {ai.summary}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 10, marginTop: 5, fontSize: 11, color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 5, fontSize: 13, color: 'var(--text-muted)' }}>
             <span>{sourceName(item.source, useLangStore.getState().lang)}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
-              <span style={{ color: 'var(--accent)', fontSize: 10, background: 'color-mix(in srgb, var(--accent) 10%, transparent)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
+              <span style={{ color: 'var(--accent)', fontSize: 13, background: 'color-mix(in srgb, var(--accent) 10%, transparent)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
             )}
           </div>
         </div>
@@ -187,7 +187,7 @@ function NewsItem({ item, t }) {
         {impactLabel && (
           <span style={{
             flexShrink: 0,
-            fontSize: 10,
+            fontSize: 13,
             padding: '2px 7px',
             borderRadius: 4,
             background: impactStyle.bg,
@@ -199,7 +199,7 @@ function NewsItem({ item, t }) {
         )}
 
         {/* Expand arrow */}
-        <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 2, flexShrink: 0, marginTop: 2 }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 2, flexShrink: 0, marginTop: 2 }}>
           {expanded ? '▲' : '▼'}
         </span>
       </div>
@@ -212,7 +212,7 @@ function NewsItem({ item, t }) {
           background: 'color-mix(in srgb, var(--accent) 4%, transparent)',
           border: '1px solid color-mix(in srgb, var(--accent) 10%, transparent)',
           borderRadius: 6,
-          fontSize: 12,
+          fontSize: 13,
           color: 'var(--text-muted)',
           lineHeight: 1.6,
         }}>
@@ -233,7 +233,7 @@ function NewsItem({ item, t }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 11 }}
+                style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 13 }}
               >
                 {t.newsReadMore}
               </a>
@@ -255,7 +255,7 @@ function FilterPill({ active, color, onClick, children }) {
         borderRadius: 'var(--radius)',
         border: 'none',
         cursor: 'pointer',
-        fontSize: 11,
+        fontSize: 13,
         fontWeight: active ? 600 : 400,
         background: active
           ? `${color || 'color-mix(in srgb, var(--accent) 25%, transparent)'}30`
@@ -332,7 +332,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
           borderRadius: 4,
           padding: '2px 8px',
-          fontSize: 12,
+          fontSize: 13,
           color: 'var(--accent)',
           fontFamily: 'var(--sans)',
         }}>
@@ -346,7 +346,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
         </span>
         <span style={{
           marginLeft: 'auto',
-          fontSize: 11,
+          fontSize: 13,
           color: 'var(--text-muted)',
           background: 'var(--bg-hover)',
           borderRadius: 4,
@@ -389,7 +389,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
               gap: 20,
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10 }}>
                   {t.newsOverview}
                 </div>
                 <SentimentBar

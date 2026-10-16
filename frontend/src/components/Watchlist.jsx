@@ -37,25 +37,25 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
     >
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2, flexWrap: 'nowrap' }}>
-          <span style={{ fontSize: 11, color: ACCENT_BLUE, fontFamily: 'var(--sans)', flexShrink: 0 }}>
+          <span style={{ fontSize: 13, color: ACCENT_BLUE, fontFamily: 'var(--sans)', flexShrink: 0 }}>
             {stock.code}
           </span>
-          <span style={{ fontSize: 12, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>
+          <span style={{ fontSize: 13, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>
             {stock.name}
           </span>
           <span style={{
-            fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 4, flexShrink: 0,
-            background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
+            fontSize: 13, fontWeight: 600, padding: '1px 5px', borderRadius: 4, flexShrink: 0,
+            background: `${tint}1f`, color: tint,
           }}>
             {m === 'us' ? 'US' : m === 'cn' ? t.marketCN : m === 'hk' ? t.marketHK : t.marketJP}
           </span>
         </div>
         {quote && (
           <div style={{ display: 'flex', gap: 6 }}>
-            <span style={{ fontSize: 12, color: pctColor, fontWeight: 600 }}>
+            <span style={{ fontSize: 13, color: pctColor, fontWeight: 600 }}>
               {currSym}{quote.price?.toFixed(2) ?? '—'}
             </span>
-            <span style={{ fontSize: 11, color: pctColor }}>
+            <span style={{ fontSize: 13, color: pctColor }}>
               {pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : ''}
             </span>
           </div>
@@ -127,7 +127,7 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
 
       <div style={{ flex: 1, overflowY: 'auto' }}>
         {list.length === 0 ? (
-          <div style={{ padding: '24px 14px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', lineHeight: 1.7 }}>
+          <div style={{ padding: '24px 14px', color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', lineHeight: 1.7 }}>
             <div>{t.watchlistEmpty}</div>
             <div style={{ marginTop: 4, opacity: 0.7 }}>{t.watchlistEmptyHint}</div>
           </div>
@@ -147,7 +147,7 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
       {list.length > 0 && (
         <div style={{
           padding: '7px 14px', borderTop: '1px solid var(--border-primary)',
-          fontSize: 11, color: 'var(--text-muted)', textAlign: 'center',
+          fontSize: 13, color: 'var(--text-muted)', textAlign: 'center',
         }}>
           {t.watchlistCount(list.length)}
         </div>

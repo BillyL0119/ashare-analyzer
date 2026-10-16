@@ -7,7 +7,7 @@ import { CATEGORIES, FIRMS } from './firms'
 
 const CSS = `
 .cg-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.cg-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .04em; 
+.cg-table th { text-align: left; font-size: 13px; font-weight: 600; letter-spacing: .04em; 
   color: var(--text-muted); padding: 10px 12px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; }
 .cg-table td { padding: 11px 12px; border-bottom: 1px solid var(--border-primary); color: var(--text-secondary); vertical-align: top; }
 .cg-table tr:last-child td { border-bottom: none; }
@@ -16,12 +16,12 @@ const CSS = `
 .cg-row:focus-visible { outline: 2px solid var(--accent-blue, var(--accent)); outline-offset: -2px; }
 .cg-row.is-active { background: color-mix(in srgb, var(--accent) 9%, transparent); }
 .cg-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); }
-.cg-h { font-size: 12px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); margin: 0 0 10px; }
-.cg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--radius); font-size: 12px;
+.cg-h { font-size: 13px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); margin: 0 0 10px; }
+.cg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--radius); font-size: 13px;
   border: 1px solid var(--border-primary); background: transparent; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
 .cg-chip.is-on { background: color-mix(in srgb, var(--accent) 14%, transparent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); color: var(--accent); font-weight: 600; }
-.cg-chip .n { font-size: 11px; opacity: .7; }
-.cg-tick { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--accent);
+.cg-chip .n { font-size: 13px; opacity: .7; }
+.cg-tick { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--accent);
   background: none; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
 .cg-tick:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .cg-profile { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; }
@@ -52,7 +52,7 @@ export function CareersView({ zh, onShowFirms }) {
       <div className="cg-panel" style={{ overflowX: 'auto' }}>
         <div style={{ padding: '14px 16px 4px', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
           <h2 className="cg-h" style={{ margin: 0 }}>{zh ? '职业路径对比' : 'Compare career tracks'}</h2>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{zh ? '美国市场 · 薪资为估算区间' : 'US market · pay figures are estimates'}</span>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{zh ? '美国市场 · 薪资为估算区间' : 'US market · pay figures are estimates'}</span>
         </div>
         <table className="cg-table cg-fit" style={{ minWidth: 640 }}>
           <thead>
@@ -95,9 +95,9 @@ export function CareersView({ zh, onShowFirms }) {
 function Tile({ label, value, sub }) {
   return (
     <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 'var(--radius)', padding: '12px 14px', minWidth: 0 }}>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>{label}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 6 }}>{label}</div>
       <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.25 }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{sub}</div>}
     </div>
   )
 }
@@ -115,7 +115,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
       {/* Header */}
       <div className="cg-panel" style={{ padding: '18px 18px 16px', display: 'grid', gap: 14 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.08em', color: role.color }}>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '.08em', color: role.color }}>
             {zh ? '职业路径' : 'Career track'} · {L(m.short, zh)}
           </div>
           <h2 style={{ margin: '4px 0 6px', fontSize: 22, color: 'var(--text-primary)', letterSpacing: '-.2px' }}>{zh ? role.title : role.titleEn}</h2>
@@ -159,7 +159,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
                 ))}
               </tbody>
             </table>
-            <p style={{ margin: 0, padding: '8px 16px 14px', fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+            <p style={{ margin: 0, padding: '8px 16px 14px', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
               {zh
                 ? '根据银行公开的薪酬调整、行业薪酬调查和媒体报道整理的大致区间，因机构、部门、城市、年份和个人表现差异很大。中国市场：'
                 : 'Rough ranges compiled from public bank pay announcements, compensation surveys and press coverage; they vary widely by firm, group, city, year and performance. China market: '}
@@ -173,7 +173,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
               {m.timeline.map((s, i) => (
                 <li key={i} style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', gap: 12 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ width: 22, height: 22, borderRadius: 'var(--radius)', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: role.color, background: `${role.color}1f`, border: `1px solid ${role.color}55` }}>{i + 1}</span>
+                    <span style={{ width: 22, height: 22, borderRadius: 'var(--radius)', display: 'grid', placeItems: 'center', fontSize: 13, fontWeight: 600, color: role.color, background: `${role.color}1f` }}>{i + 1}</span>
                     {i < m.timeline.length - 1 && <span style={{ flex: 1, width: 1, background: 'var(--border-primary)', minHeight: 14 }} />}
                   </div>
                   <div style={{ paddingBottom: i < m.timeline.length - 1 ? 14 : 0 }}>
@@ -194,7 +194,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
                   const hasTime = rest.length > 0
                   return (
                     <div key={i} style={{ display: 'grid', gridTemplateColumns: hasTime ? '92px minmax(0, 1fr)' : 'minmax(0, 1fr)', gap: 10, fontSize: 13, lineHeight: 1.6 }}>
-                      {hasTime && <span style={{ fontFamily: 'var(--sans)', fontSize: 12, color: role.color, fontWeight: 600, paddingTop: 1 }}>{time}</span>}
+                      {hasTime && <span style={{ fontFamily: 'var(--sans)', fontSize: 13, color: role.color, fontWeight: 600, paddingTop: 1 }}>{time}</span>}
                       <span style={{ color: 'var(--text-secondary)' }}>{hasTime ? rest.join(' — ') : line}</span>
                     </div>
                   )
@@ -210,7 +210,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
             <h3 className="cg-h">{zh ? '常见去向' : 'Exit opportunities'}</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {(zh ? m.exits.zh : m.exits.en).map((x) => (
-                <span key={x} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 'var(--radius)', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>{x}</span>
+                <span key={x} style={{ fontSize: 13, padding: '4px 10px', borderRadius: 'var(--radius)', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>{x}</span>
               ))}
             </div>
           </section>
@@ -226,7 +226,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
                     <button key={c} onClick={() => onShowFirms(c)} className="cg-row"
                       style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border-primary)', background: 'transparent', color: 'var(--text-primary)', fontSize: 13, textAlign: 'left' }}>
                       <span>{L(cat, zh)}</span>
-                      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{n} {zh ? '家' : 'firms'} →</span>
+                      <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{n} {zh ? '家' : 'firms'} →</span>
                     </button>
                   )
                 })}
@@ -324,10 +324,10 @@ export function FirmsView({ zh, initialCat = 'all' }) {
                 <td className="cg-hide-sm">{L(x.known, zh)}</td>
                 <td>
                   {!x.ticker
-                    ? <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{zh ? '未上市' : 'Not listed'}</span>
+                    ? <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{zh ? '未上市' : 'Not listed'}</span>
                     : /^(us|cn|hk|jp):/.test(x.ticker)
                       ? <button className="cg-tick" onClick={() => open(x)} title={zh ? '查看股票分析' : 'Open stock analysis'}>{x.ticker.split(':')[1]} →</button>
-                      : <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--sans)' }}>{x.ticker.split(':')[1]} · {x.hq}</span>}
+                      : <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontFamily: 'var(--sans)' }}>{x.ticker.split(':')[1]} · {x.hq}</span>}
                 </td>
               </tr>
             ))}
@@ -337,7 +337,7 @@ export function FirmsView({ zh, initialCat = 'all' }) {
           </tbody>
         </table>
       </div>
-      <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>
+      <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
         {zh
           ? '点击股票代码可查看该机构的股票分析。“未上市”指机构本身未上市（私人合伙或子公司）。分类按行业通行说法，部分机构跨多个类别。'
           : 'Click a ticker to open the firm\'s stock analysis. "Not listed" means the firm itself is not public (a partnership or a subsidiary). Categories follow common industry usage; some firms span several.'}

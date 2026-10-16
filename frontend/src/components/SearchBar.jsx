@@ -18,7 +18,7 @@ function PctBadge({ val, market }) {
   const sign = pos ? '+' : ''
   return (
     <span style={{
-      color, fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+      color, fontSize: 13, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
       background: `${color}1a`,
       border: `1px solid ${color}33`,
       borderRadius: 4, padding: '1px 5px', flexShrink: 0,
@@ -200,30 +200,30 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
             outline: 'none',
             cursor: isFull ? 'not-allowed' : 'text',
             transition: 'border-color 0.2s, box-shadow 0.2s',
-            boxShadow: focused ? '0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent)' : 'none',
+            
             letterSpacing: '0.15px',
           }}
         />
         {searching && (
-          <span style={{ color: 'var(--text-muted)', fontSize: 11, position: 'absolute', right: 14 }}>{t.searching}</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 13, position: 'absolute', right: 14 }}>{t.searching}</span>
         )}
       </div>
 
       {/* Hot stocks panel */}
       {showHot && (
         <div style={{ ...dropdownStyle, right: 'auto', width: fullWidth ? '100%' : 'min(520px, calc(100vw - 32px))' }}>
-          <div style={{ padding: '8px 12px 6px', fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.4px', borderBottom: '1px solid var(--border-primary)' }}>
+          <div style={{ padding: '8px 12px 6px', fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.4px', borderBottom: '1px solid var(--border-primary)' }}>
             {t.sbHot}
           </div>
           {hotLoading ? (
-            <div style={{ padding: '12px 16px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
+            <div style={{ padding: '12px 16px', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
               {t.loading}
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)' }}>
               {(market === 'us' ? ['us', 'cn'] : market === 'cn' ? ['cn', 'us'] : [market, 'us']).map((m, col) => (
                 <div key={m} style={{ minWidth: 0, borderLeft: col ? '1px solid var(--border-primary)' : 'none' }}>
-                  <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
+                  <div style={{ padding: '5px 12px', fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
                     {m === 'us' ? t.marketUS : m === 'cn' ? t.marketCN : marketLabel(m, lang)}
                   </div>
                   {(m === 'us' ? hotUS : m === 'cn' ? hotCN : hotIntl[m].map((x) => intlRow(x, m, lang))).map((s, i) => {
@@ -236,9 +236,9 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                         onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                       >
-                        <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
+                        <span style={{ color: 'var(--text-muted)', fontSize: 13, width: 14, flexShrink: 0 }}>{i + 1}</span>
                         {m !== 'cn' && (
-                          <span style={{ color: 'var(--accent)', fontFamily: 'var(--sans)', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
+                          <span style={{ color: 'var(--accent)', fontFamily: 'var(--sans)', fontSize: 13, flexShrink: 0 }}>{s.code}</span>
                         )}
                         <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                         <PctBadge val={s.change_pct} market={m} />
@@ -266,16 +266,16 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                 onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
               >
-                <span style={{ color: 'var(--accent)', fontFamily: 'var(--sans)', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
+                <span style={{ color: 'var(--accent)', fontFamily: 'var(--sans)', fontSize: 13, flexShrink: 0 }}>{s.code}</span>
                 <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                 <span style={{
-                  fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
-                  background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
+                  fontSize: 13, fontWeight: 600, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
+                  background: `${tint}1f`, color: tint,
                 }}>
                   {s._market === 'us' ? 'US' : s._market === 'cn' ? (lang === 'zh' ? 'A股' : 'CN') : marketLabel(s._market, lang)}
                 </span>
                 <PctBadge val={s.change_pct} market={s._market} />
-                {alreadyAdded && <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>{t.added}</span>}
+                {alreadyAdded && <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0 }}>{t.added}</span>}
               </div>
             )
           })}
@@ -285,7 +285,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
       {/* No results panel */}
       {showNoResults && (
         <div style={dropdownStyle}>
-          <div style={{ padding: '14px 16px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
+          <div style={{ padding: '14px 16px', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
             {t.searchNoResults}
           </div>
         </div>

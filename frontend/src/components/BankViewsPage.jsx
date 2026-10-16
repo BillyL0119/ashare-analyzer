@@ -44,7 +44,7 @@ function BankTag({ name }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 5,
-      fontSize: 11, padding: '1px 8px 1px 6px', borderRadius: 6, fontWeight: 600,
+      fontSize: 13, padding: '1px 8px 1px 6px', borderRadius: 6, fontWeight: 600,
       background: 'var(--bg-tertiary)', color: 'var(--text-primary)',
       border: '1px solid var(--border-primary)', flexShrink: 0,
     }}>
@@ -58,7 +58,7 @@ function ActionBadge({ type, lang }) {
   const cfg = ACTION_CONFIG[type] || ACTION_CONFIG.outlook
   return (
     <span style={{
-      fontSize: 10, padding: '1px 6px', borderRadius: 5, fontWeight: 500,
+      fontSize: 13, padding: '1px 6px', borderRadius: 5, fontWeight: 500,
       background: cfg.color + '22', color: cfg.color, flexShrink: 0,
     }}>
       {getActionLabel(cfg, lang)}
@@ -72,7 +72,7 @@ function Pill({ active, color, onClick, children }) {
       onClick={onClick}
       style={{
         padding: '5px 14px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
-        fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
+        fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
         outline: active ? `1px solid ${color}44` : 'none',
@@ -112,11 +112,11 @@ function ViewRow({ item, t, lang, first }) {
         </div>
         <AiGist text={item.ai_summary} lang={lang} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
-          <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
             {t.bvSource}{item.source}
           </span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>·</span>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             {relativeTime(item.published_at, lang)}
           </span>
         </div>
@@ -224,16 +224,16 @@ export default function BankViewsPage({ lang = 'zh' }) {
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {t.bvSubtitle}
           </p>
-          <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {t.bvNote}
           </p>
-          <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {DISCLAIMER[lang] || DISCLAIMER.en} {AI_NOTE[lang] || AI_NOTE.en}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           {updatedAt && (
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
               {t.bvUpdated} {relativeTime(updatedAt, lang)}
             </span>
           )}
@@ -243,7 +243,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
             style={{
               padding: '6px 16px', borderRadius: 'var(--radius)', border: '1px solid color-mix(in srgb, var(--accent) 40%, transparent)',
               background: loading ? 'color-mix(in srgb, var(--accent) 5%, transparent)' : 'color-mix(in srgb, var(--accent) 10%, transparent)',
-              color: 'var(--accent)', fontSize: 12, fontWeight: 600,
+              color: 'var(--accent)', fontSize: 13, fontWeight: 600,
               cursor: loading ? 'default' : 'pointer', transition: 'all 0.2s',
             }}
           >
@@ -274,7 +274,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
 
         {/* Item count */}
         {visibleItems.length > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)' }}>
+          <span style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>
             {t.bvCount(visibleItems.length)}
           </span>
         )}

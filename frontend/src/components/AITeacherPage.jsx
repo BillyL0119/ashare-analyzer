@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
+import Icon from './Icon'
 
 const ACCENT  = '#a08672'
 const ACCENT2 = '#7c9cb4'
@@ -10,7 +11,7 @@ const MUTED   = 'var(--text-muted)'
 // ── Topic categories ──────────────────────────────────────────────────────────
 const CATEGORIES = [
   {
-    icon: '📈', name_zh: '技术分析', name_en: 'Technical Analysis',
+    icon: '', name_zh: '技术分析', name_en: 'Technical Analysis',
     topics: [
       { zh: 'MACD金叉死叉是什么信号？', en: 'What does MACD golden/death cross signal?' },
       { zh: 'RSI超买超卖怎么操作？', en: 'How to trade RSI overbought/oversold?' },
@@ -20,7 +21,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '🏦', name_zh: '基本面分析', name_en: 'Fundamental Analysis',
+    icon: '', name_zh: '基本面分析', name_en: 'Fundamental Analysis',
     topics: [
       { zh: 'PE估值多少算合理？', en: 'What P/E ratio is considered reasonable?' },
       { zh: 'PB市净率如何分析银行股？', en: 'How to use P/B for bank stocks?' },
@@ -30,7 +31,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '📚', name_zh: 'A-Level 经济学', name_en: 'A-Level Economics',
+    icon: '', name_zh: 'A-Level 经济学', name_en: 'A-Level Economics',
     topics: [
       { zh: 'AD-AS模型如何分析通货膨胀？', en: 'Analyse inflation using AD-AS model' },
       { zh: '货币政策如何影响股票市场？', en: 'How monetary policy affects stock markets?' },
@@ -40,7 +41,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '🎯', name_zh: 'AP 经济学', name_en: 'AP Economics',
+    icon: '', name_zh: 'AP 经济学', name_en: 'AP Economics',
     topics: [
       { zh: 'AP Macro: 财政政策乘数效应', en: 'AP Macro: fiscal multiplier effect' },
       { zh: 'AP Micro: 完全竞争 vs 垄断', en: 'AP Micro: perfect competition vs monopoly' },
@@ -50,7 +51,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '✏️', name_zh: '考试技巧', name_en: 'Exam Tips',
+    icon: '', name_zh: '考试技巧', name_en: 'Exam Tips',
     topics: [
       { zh: 'A-Level 9708大题答题框架', en: 'A-Level 9708 essay answer structure' },
       { zh: 'AP考试图表题技巧', en: 'AP exam diagram question techniques' },
@@ -60,7 +61,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '🌏', name_zh: '市场热点', name_en: 'Market Themes',
+    icon: '', name_zh: '市场热点', name_en: 'Market Themes',
     topics: [
       { zh: '美联储加息为什么影响A股？', en: 'Why do Fed rate hikes affect A-shares?' },
       { zh: '人工智能板块怎么分析？', en: 'How to analyse the AI sector?' },
@@ -92,7 +93,7 @@ function Bubble({ msg }) {
           width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
           background: `${ACCENT}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-        }}>🎓</div>
+        }}><Icon name="cap" size={16} /></div>
       )}
       <div style={{
         maxWidth: '76%',
@@ -115,7 +116,7 @@ function Bubble({ msg }) {
           width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
           background: 'color-mix(in srgb, var(--accent) 12%, transparent)', border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
-        }}>👤</div>
+        }}><Icon name="user" size={16} /></div>
       )}
     </div>
   )
@@ -200,7 +201,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 const u = [...prev]
                 u[u.length - 1] = {
                   role: 'assistant',
-                  content: d.error ? `⚠️ ${d.error}` : full,
+                  content: d.error ? `${d.error}` : full,
                   streaming: false,
                 }
                 return u
@@ -214,7 +215,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
         const u = [...prev]
         u[u.length - 1] = {
           role: 'assistant',
-          content: `⚠️ ${t.atError(e.message)}`,
+          content: `${t.atError(e.message)}`,
           streaming: false,
         }
         return u
@@ -250,7 +251,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           width: 38, height: 38, borderRadius: 'var(--radius)', flexShrink: 0,
           background: `${ACCENT}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
-        }}>🎓</div>
+        }}><Icon name="cap" size={16} /></div>
         <div>
           <div style={{
             fontSize: 16, fontWeight: 600,
@@ -258,7 +259,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           }}>
             {t.atTitle}
           </div>
-          <div style={{ fontSize: 12, color: MUTED }}>
+          <div style={{ fontSize: 13, color: MUTED }}>
             {t.atSubtitle}
           </div>
         </div>
@@ -269,7 +270,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           style={{
             marginLeft: 'auto', background: 'var(--bg-tertiary)',
             border: `1px solid ${BDR}`, borderRadius: 8,
-            padding: '5px 12px', color: MUTED, fontSize: 12, cursor: 'pointer',
+            padding: '5px 12px', color: MUTED, fontSize: 13, cursor: 'pointer',
           }}
         >
           {t.atClear}
@@ -287,7 +288,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           display: 'flex', flexDirection: 'column',
           overflowY: 'auto',
         }}>
-          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 600, color: 'color-mix(in srgb, var(--accent) 50%, transparent)', letterSpacing: '0.08em' }}>
+          <div style={{ padding: '12px 12px 6px', fontSize: 13, fontWeight: 600, color: 'color-mix(in srgb, var(--accent) 50%, transparent)', letterSpacing: '0.08em' }}>
             {t.atTopics}
           </div>
 
@@ -304,9 +305,8 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                   transition: 'all 0.12s',
                 }}
               >
-                <span style={{ fontSize: 15 }}>{c.icon}</span>
                 <span style={{
-                  fontSize: 12, fontWeight: activeCat === i ? 700 : 400,
+                  fontSize: 13, fontWeight: activeCat === i ? 700 : 400,
                   color: activeCat === i ? 'var(--text-primary)' : MUTED,
                 }}>
                   {zh ? c.name_zh : c.name_en}
@@ -322,7 +322,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                       onClick={() => send(zh ? t.zh : t.en)}
                       style={{
                         padding: '6px 10px 6px 28px', cursor: 'pointer',
-                        fontSize: 11, color: 'color-mix(in srgb, var(--accent) 65%, transparent)',
+                        fontSize: 13, color: 'color-mix(in srgb, var(--accent) 65%, transparent)',
                         borderRadius: 6, lineHeight: 1.4,
                         transition: 'all 0.12s',
                       }}
@@ -355,7 +355,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                   width: 32, height: 32, borderRadius: '50%',
                   background: `${ACCENT}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-                }}>🎓</div>
+                }}><Icon name="cap" size={16} /></div>
                 <div style={{ display: 'flex', gap: 4 }}>
                   {[0, 1, 2].map(i => (
                     <div key={i} style={{
@@ -408,7 +408,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                     : 'var(--bg-tertiary)',
                   border: 'none', borderRadius: 'var(--radius)',
                   padding: '0 22px', fontSize: 20,
-                  color: input.trim() && !busy ? '#fff' : '#4a5568',
+                  color: input.trim() && !busy ? 'var(--accent-ink)' : 'var(--text-muted)',
                   cursor: input.trim() && !busy ? 'pointer' : 'default',
                   transition: 'all 0.2s', flexShrink: 0,
                 }}
@@ -416,7 +416,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 {busy ? '⟳' : '↑'}
               </button>
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
               {t.atDisclaimer}
             </div>
           </div>

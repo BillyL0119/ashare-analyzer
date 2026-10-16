@@ -20,6 +20,7 @@ import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 import KLineTip from './KLineTip'
 import { CUR, localName } from '../utils/markets'
+import Icon from './Icon'
 
 export default function StockCard({ stock }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -80,12 +81,10 @@ export default function StockCard({ stock }) {
         transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = '#2a4a7f'
-        e.currentTarget.style.boxShadow = '0 0 20px rgba(160,134,114,0.10)'
+        e.currentTarget.style.borderColor = 'var(--border-glow)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = THEME.border
-        e.currentTarget.style.boxShadow = 'none'
       }}
     >
       <div
@@ -130,7 +129,7 @@ export default function StockCard({ stock }) {
               borderRadius: 4,
               border: '1px solid rgba(160,134,114,0.35)',
               cursor: 'pointer',
-              fontSize: 11,
+              fontSize: 13,
               background: 'rgba(160,134,114,0.08)',
               color: '#a08672',
               transition: 'all 0.15s',
@@ -139,7 +138,7 @@ export default function StockCard({ stock }) {
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(160,134,114,0.2)'; e.currentTarget.style.borderColor = '#a08672' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(160,134,114,0.08)'; e.currentTarget.style.borderColor = 'rgba(160,134,114,0.35)' }}
           >
-            📖 {t.klineBtn}
+            <Icon name="book" size={15} style={{ marginRight: 6 }} />{t.klineBtn}
           </button>
 
           {Object.entries(periodLabels).map(([key, label]) => (
@@ -151,9 +150,9 @@ export default function StockCard({ stock }) {
                 borderRadius: 4,
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: 12,
+                fontSize: 13,
                 background: period === key ? '#a08672' : 'var(--bg-hover)',
-                color: period === key ? '#fff' : THEME.text,
+                color: period === key ? 'var(--accent-ink)' : THEME.text,
                 transition: 'background 0.15s',
               }}
             >
@@ -173,9 +172,9 @@ export default function StockCard({ stock }) {
                   borderRadius: 4,
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: 11,
+                  fontSize: 13,
                   background: adjust === key ? '#a08672' : 'var(--bg-hover)',
-                  color: adjust === key ? '#fff' : THEME.text,
+                  color: adjust === key ? 'var(--accent-ink)' : THEME.text,
                   transition: 'background 0.15s',
                 }}
               >
@@ -194,7 +193,7 @@ export default function StockCard({ stock }) {
             borderRadius: 4,
             border: '1px solid rgba(160,134,114,0.18)',
             cursor: 'pointer',
-            fontSize: 11,
+            fontSize: 13,
             background: 'transparent',
             color: 'var(--text-muted)',
             transition: 'all 0.15s',
@@ -210,8 +209,8 @@ export default function StockCard({ stock }) {
           onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
           title={t.paperTradeHint}
           style={{
-            padding: '3px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 12, fontWeight: 600,
-            border: '1px solid rgba(52,211,153,0.4)', background: 'rgba(52,211,153,0.1)', color: '#34d399',
+            padding: '3px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 13, fontWeight: 600,
+            background: 'rgba(52,211,153,0.1)', color: '#34d399',
             whiteSpace: 'nowrap', transition: 'background 0.15s',
           }}
           onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(52,211,153,0.2)' }}
@@ -237,7 +236,7 @@ export default function StockCard({ stock }) {
           onMouseEnter={(e) => { e.currentTarget.style.color = '#f6c90e' }}
           onMouseLeave={(e) => { e.currentTarget.style.color = inWatchlist ? '#f6c90e' : 'var(--text-muted)' }}
         >
-          {inWatchlist ? '★' : '☆'}
+          {inWatchlist ? '' : ''}
         </button>
 
         {/* Copy share link */}
@@ -252,7 +251,7 @@ export default function StockCard({ stock }) {
           style={{
             padding: '3px 8px', borderRadius: 4,
             border: '1px solid rgba(160,134,114,0.25)',
-            cursor: 'pointer', fontSize: 12,
+            cursor: 'pointer', fontSize: 13,
             background: copied ? 'rgba(52,211,153,0.12)' : 'transparent',
             color: copied ? '#34d399' : 'var(--text-muted)',
             transition: 'all 0.15s', whiteSpace: 'nowrap',
@@ -260,7 +259,7 @@ export default function StockCard({ stock }) {
           onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(160,134,114,0.1)'; e.currentTarget.style.color = '#a08672' } }}
           onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' } }}
         >
-          {copied ? '✓' : '🔗'}
+          {copied ? '' : ''}
         </button>
 
         <button
@@ -270,7 +269,7 @@ export default function StockCard({ stock }) {
             borderRadius: 4,
             border: `1px solid ${THEME.border}`,
             cursor: 'pointer',
-            fontSize: 12,
+            fontSize: 13,
             background: 'transparent',
             color: 'var(--text-muted)',
             transition: 'all 0.15s',
@@ -327,9 +326,9 @@ export default function StockCard({ stock }) {
                 onClick={refetch}
                 style={{
                   padding: '5px 18px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
-                  fontSize: 12, fontWeight: 600,
+                  fontSize: 13, fontWeight: 600,
                   background: '#a08672',
-                  color: '#fff',
+                  color: 'var(--accent-ink)',
                 }}
               >
                 {t.retry}

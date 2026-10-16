@@ -17,9 +17,9 @@ const L = {
 
 const CSS = `
 .hm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); }
-.hm-chip { padding: 6px 12px; border-radius: var(--radius); font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.hm-chip { padding: 6px 12px; border-radius: var(--radius); font-size: 13px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
 .hm-chip.on { background: color-mix(in srgb, #a08672 14%, transparent); border-color: color-mix(in srgb, #a08672 55%, transparent); color: #a08672; font-weight: 600; }
-.hm-sec { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 12.5px; padding: 5px 0; color: var(--text-secondary); }
+.hm-sec { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 13px; padding: 5px 0; color: var(--text-secondary); }
 .hm-sec span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hm-axis { position: relative; height: 6px; background: var(--bg-tertiary); border-radius: 3px; }
 .hm-axis::after { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--border-primary); }
@@ -135,7 +135,6 @@ export default function HeatmapPage({ lang }) {
       <style>{CSS}</style>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.1em', color: '#a08672' }}>{t.eyebrow}</div>
           <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
           <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 720, lineHeight: 1.6 }}>
             {market === 'us' ? t.subUs(data?.count || limit) : market === 'hk' ? t.subHk(data?.count || Math.min(limit, 300))
@@ -143,7 +142,7 @@ export default function HeatmapPage({ lang }) {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          {all.length > 0 && <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>{t.breadth(ups, downs)}</span>}
+          {all.length > 0 && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t.breadth(ups, downs)}</span>}
           {market !== 'cn' && (market === 'us' ? [100, 300, 500] : [100, 300]).map((n) => (
             <button key={n} className={`hm-chip${limit === n ? ' on' : ''}`} onClick={() => setLimit(n)}>{t.top(n)}</button>
           ))}
@@ -165,7 +164,7 @@ export default function HeatmapPage({ lang }) {
         )}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '8px 2px 0', fontSize: 11.5, color: 'var(--text-muted)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '8px 2px 0', fontSize: 13, color: 'var(--text-muted)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span>-3%</span>
           {[-3, -2, -1, 0, 1, 2, 3].map((v) => <span key={v} style={{ width: 22, height: 10, borderRadius: 2, background: tileColor(v, market) }} />)}
@@ -176,7 +175,7 @@ export default function HeatmapPage({ lang }) {
 
       {sectors.length > 0 && (
         <div className="hm-card" style={{ padding: '14px 18px', marginTop: 14 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px' }}>{t.sectors} <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>· {t.weighted}</span></h2>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px' }}>{t.sectors} <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 13 }}>· {t.weighted}</span></h2>
           {sectors.map((g) => {
             const v = g.change_pct ?? 0
             const w = (Math.abs(v) / maxAbs) * 50

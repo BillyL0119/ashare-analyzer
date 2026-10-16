@@ -29,9 +29,9 @@ function SourceBadge({ name }) {
   return (
     <div style={{
       width: 28, height: 28, borderRadius: 8, flexShrink: 0, marginTop: 1,
-      background: color + '22', color, border: `1px solid ${color}44`,
+      background: color + '22', color,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 12, fontWeight: 600,
+      fontSize: 13, fontWeight: 600,
     }}>
       {letter.toUpperCase()}
       <style>{`
@@ -69,7 +69,7 @@ function CategoryDot({ category, lang }) {
   const cfg = CAT_CONFIG[category] || CAT_CONFIG.market
   return (
     <span style={{
-      fontSize: 10, padding: '1px 7px', borderRadius: 8, fontWeight: 500,
+      fontSize: 13, padding: '1px 7px', borderRadius: 8, fontWeight: 500,
       background: cfg.color + '22', color: cfg.color, flexShrink: 0,
     }}>
       {getCatLabel(cfg, lang)}
@@ -83,7 +83,7 @@ function Pill({ active, color, onClick, children }) {
       onClick={onClick}
       style={{
         padding: '5px 14px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
-        fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
+        fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
         outline: active ? `1px solid ${color}44` : 'none',
@@ -119,9 +119,9 @@ function NewsRow({ item, lang, first }) {
         </div>
         <AiGist text={item.ai_summary} lang={lang} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{sourceName(item.source, lang)}</span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>{sourceName(item.source, lang)}</span>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>·</span>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             {relativeTime(item.published_at, lang)}
           </span>
           <CategoryDot category={item.category} lang={lang} />
@@ -228,13 +228,13 @@ export default function DailyNewsPage({ lang = 'zh' }) {
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {t.dnSubtitle}
           </p>
-          <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {DISCLAIMER[lang] || DISCLAIMER.en} {AI_NOTE[lang] || AI_NOTE.en}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {updatedAt && (
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
               {t.dnUpdated} {relativeTime(updatedAt, lang)}
             </span>
           )}
@@ -244,7 +244,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             style={{
               padding: '6px 16px', borderRadius: 'var(--radius)', border: '1px solid color-mix(in srgb, var(--accent) 40%, transparent)',
               background: loading ? 'color-mix(in srgb, var(--accent) 5%, transparent)' : 'color-mix(in srgb, var(--accent) 10%, transparent)',
-              color: 'var(--accent)', fontSize: 12, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
+              color: 'var(--accent)', fontSize: 13, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
               transition: 'all 0.2s',
             }}
           >
@@ -294,7 +294,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
 
         {/* Item count */}
         {items.length > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)' }}>
+          <span style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>
             {t.dnCount(items.length)}
           </span>
         )}

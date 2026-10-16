@@ -63,7 +63,7 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
     <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 'var(--radius)', padding: '16px 18px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
         <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{t.title}</span>
-        {data?.since && <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{t.since(data.since)}</span>}
+        {data?.since && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t.since(data.since)}</span>}
       </div>
       {!option ? (
         <p style={{ margin: '6px 0 2px', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{data?.pending ? t.pending : t.empty}</p>
@@ -73,13 +73,13 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
             <Stat label={t.ret} value={pct(data.return_pct)} color={data.return_pct >= 0 ? riseColor(market) : fallColor(market)} />
             <Stat label={bench} value={pct(data.bench_return_pct)} />
             <Stat label={t.dd} value={pct(data.max_drawdown_pct)} />
-            <span style={{ alignSelf: 'center', fontSize: 12.5, fontWeight: 600, padding: '4px 10px', borderRadius: 'var(--radius)',
+            <span style={{ alignSelf: 'center', fontSize: 13, fontWeight: 600, padding: '4px 10px', borderRadius: 'var(--radius)',
               color: ahead ? '#a08672' : '#f59e0b', background: ahead ? 'rgba(160,134,114,0.12)' : 'rgba(245,158,11,0.12)' }}>
               {ahead ? t.beat(pct(data.excess_pct).replace('+', '')) : t.lag(pct(data.excess_pct).replace('-', ''))}
             </span>
           </div>
           <ReactECharts option={option} notMerge style={{ height: 230 }} />
-          <p style={{ margin: '4px 0 0', fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>{t.note}</p>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{t.note}</p>
         </>
       )}
     </div>
@@ -89,7 +89,7 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
 function Stat({ label, value, color }) {
   return (
     <div>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{label}</div>
       <div style={{ fontSize: 17, fontWeight: 600, color: color || 'var(--text-primary)' }}>{value}</div>
     </div>
   )

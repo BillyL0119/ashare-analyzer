@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
+import Icon from './Icon'
 
 const ACCENT = '#a08672'
 const ACCENT2 = '#7c9cb4'
@@ -40,7 +41,7 @@ function Bubble({ msg, accent }) {
           width: 26, height: 26, borderRadius: '50%', flexShrink: 0, marginRight: 7, marginTop: 2,
           background: `${ACCENT}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
-        }}>🎓</div>
+        }}><Icon name="cap" size={16} /></div>
       )}
       <div style={{
         maxWidth: '82%',
@@ -84,8 +85,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
       setMessages([{
         role: 'assistant',
         content: zh
-          ? '你好！我是 BestFriendStock 的 AI 老师 🎓\n我可以帮你解答股票分析和经济学问题，点击下方快捷问题或直接输入！'
-          : 'Hi! I\'m the BestFriendStock AI Tutor 🎓\nI can help with stock analysis and economics. Try the quick prompts below or type your question!',
+          ? '你好！我是 BestFriendStock 的 AI 老师\n我可以帮你解答股票分析和经济学问题，点击下方快捷问题或直接输入！'
+          : 'Hi! I\'m the BestFriendStock AI Tutor\nI can help with stock analysis and economics. Try the quick prompts below or type your question!',
       }])
     }
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -186,7 +187,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           background: '#0b0f1a',
           border: `1px solid ${BDR}`,
           borderRadius: 'var(--radius)',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent)',
+          boxShadow: '0 16px 48px rgba(0,0,0,0.35)',
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
         }}>
@@ -199,7 +200,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
             flexShrink: 0,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 18 }}>🎓</span>
+              <span style={{ fontSize: 18 }}><Icon name="cap" size={16} /></span>
               <div>
                 <div style={{
                   fontSize: 13, fontWeight: 600,
@@ -207,7 +208,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                 }}>
                   {t.atTitle}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>DeepSeek · {t.atFree}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>DeepSeek · {t.atFree}</div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
@@ -218,14 +219,14 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontSize: 14, color: 'var(--text-muted)', padding: '2px 4px', borderRadius: 4,
                 }}
-              >🗑</button>
+              ><Icon name="trash" size={16} /></button>
               <button
                 onClick={onClose}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontSize: 16, color: 'var(--text-muted)', padding: '2px 4px', borderRadius: 4,
                 }}
-              >✕</button>
+              ><Icon name="close" size={16} /></button>
             </div>
           </div>
 
@@ -248,7 +249,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   onClick={() => send(p)}
                   disabled={busy}
                   style={{
-                    fontSize: 11, padding: '4px 9px', borderRadius: 'var(--radius)',
+                    fontSize: 13, padding: '4px 9px', borderRadius: 'var(--radius)',
                     background: 'color-mix(in srgb, var(--accent) 8%, transparent)',
                     border: '1px solid color-mix(in srgb, var(--accent) 18%, transparent)',
                     color: ACCENT, cursor: 'pointer',
@@ -291,7 +292,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   ? `${ACCENT}`
                   : 'var(--bg-hover)',
                 border: 'none', borderRadius: 'var(--radius)', padding: '0 14px',
-                color: input.trim() && !busy ? '#fff' : 'var(--text-muted)',
+                color: input.trim() && !busy ? 'var(--accent-ink)' : 'var(--text-muted)',
                 fontSize: 18, cursor: input.trim() && !busy ? 'pointer' : 'default',
                 transition: 'all 0.2s', flexShrink: 0,
               }}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import ReactECharts from '../lib/echarts'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
+import Icon from './Icon'
 
 const BDR   = 'rgba(160,134,114,0.12)'
 const MUTED = 'var(--text-muted)'
@@ -42,7 +43,7 @@ function SourceBlock({ stats, lang }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12, flexWrap: 'wrap', gap: 6 }}>
         <span style={{ fontSize: 13, fontWeight: 600, color: '#34d399' }}>{L === 'zh' ? '访问来源' : 'Traffic sources'}</span>
         {uiTotal > 0 && (
-          <span style={{ fontSize: 11, color: MUTED }}>
+          <span style={{ fontSize: 13, color: MUTED }}>
             {L === 'zh' ? '手机' : 'Mobile'} {Math.round(((ui.mobile || 0) / uiTotal) * 100)}% · {L === 'zh' ? '电脑' : 'Desktop'} {Math.round(((ui.desktop || 0) / uiTotal) * 100)}%
           </span>
         )}
@@ -50,11 +51,11 @@ function SourceBlock({ stats, lang }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
         {sources.slice(0, 6).map(([key, n]) => (
           <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-primary)', minWidth: 96 }}>{SOURCE_LABELS[key]?.[L] ?? key}</span>
+            <span style={{ fontSize: 13, color: 'var(--text-primary)', minWidth: 96 }}>{SOURCE_LABELS[key]?.[L] ?? key}</span>
             <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
               <div style={{ width: `${(n / sources[0][1]) * 100}%`, height: '100%', background: '#34d399', borderRadius: 2 }} />
             </div>
-            <span style={{ fontSize: 11, color: MUTED, fontFamily: 'var(--sans)', minWidth: 40, textAlign: 'right' }}>{n} · {Math.round((n / total) * 100)}%</span>
+            <span style={{ fontSize: 13, color: MUTED, fontFamily: 'var(--sans)', minWidth: 40, textAlign: 'right' }}>{n} · {Math.round((n / total) * 100)}%</span>
           </div>
         ))}
       </div>
@@ -62,7 +63,7 @@ function SourceBlock({ stats, lang }) {
   )
 }
 
-function BigStatCard({ icon, label, value, sub, gradient, exportMode }) {
+function BigStatCard({ label, value, sub, gradient, exportMode }) {
   return (
     <div style={{
       background: 'var(--bg-tertiary)',
@@ -79,8 +80,7 @@ function BigStatCard({ icon, label, value, sub, gradient, exportMode }) {
         background: gradient || '#a08672',
         borderRadius: '16px 16px 0 0',
       }} />
-      <div style={{ fontSize: 18, marginBottom: 4 }}>{icon}</div>
-      <div style={{ fontSize: 11, color: MUTED, marginBottom: 6, letterSpacing: '0.3px' }}>
+      <div style={{ fontSize: 13, color: MUTED, marginBottom: 6, letterSpacing: '0.3px' }}>
         {label}
       </div>
       <div style={{
@@ -90,7 +90,7 @@ function BigStatCard({ icon, label, value, sub, gradient, exportMode }) {
       }}>
         {value}
       </div>
-      {sub && <div style={{ fontSize: 11, color: MUTED, marginTop: 4 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 13, color: MUTED, marginTop: 4 }}>{sub}</div>}
     </div>
   )
 }
@@ -235,7 +235,7 @@ export default function StatsDisplay({ lang, onClose }) {
             }}>
               {t.stTitle}
             </div>
-            <div style={{ fontSize: 12, color: MUTED }}>
+            <div style={{ fontSize: 13, color: MUTED }}>
               bestfriendstock.com &nbsp;·&nbsp; {t.stLive}
             </div>
           </div>
@@ -247,18 +247,18 @@ export default function StatsDisplay({ lang, onClose }) {
                 background: 'rgba(251,191,36,0.1)',
                 border: '1px solid rgba(251,191,36,0.25)',
                 borderRadius: 8, padding: '6px 14px',
-                color: '#fbbf24', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                color: '#fbbf24', fontSize: 13, fontWeight: 600, cursor: 'pointer',
               }}>
-                📸 {t.stExport}
+                <Icon name="camera" size={15} style={{ marginRight: 6 }} />{t.stExport}
               </button>
             ) : (
               <button onClick={() => setExportMode(false)} style={{
                 background: 'rgba(52,211,153,0.1)',
                 border: '1px solid rgba(52,211,153,0.25)',
                 borderRadius: 8, padding: '6px 14px',
-                color: '#34d399', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                color: '#34d399', fontSize: 13, fontWeight: 600, cursor: 'pointer',
               }}>
-                ✓ {t.stExitExport}
+                <Icon name="check" size={15} style={{ marginRight: 6 }} />{t.stExitExport}
               </button>
             )}
             {/* Close — hidden in export mode */}
@@ -266,7 +266,7 @@ export default function StatsDisplay({ lang, onClose }) {
               <button onClick={onClose} style={{
                 background: 'none', border: 'none', cursor: 'pointer',
                 color: 'var(--text-muted)', fontSize: 20, padding: '2px 8px',
-              }}>✕</button>
+              }}><Icon name="close" size={16} /></button>
             )}
           </div>
         </div>
@@ -284,7 +284,6 @@ export default function StatsDisplay({ lang, onClose }) {
             {/* ── Four stat cards ── */}
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
               <BigStatCard
-                icon="🌍"
                 label={t.stTotalVisits}
                 value={stats.total_visits.toLocaleString()}
                 sub={t.stThisWeek(stats.this_week_visits)}
@@ -292,7 +291,6 @@ export default function StatsDisplay({ lang, onClose }) {
                 exportMode={exportMode}
               />
               <BigStatCard
-                icon="👥"
                 label={t.stUniqueUsers}
                 value={stats.unique_devices.toLocaleString()}
                 sub={t.stUniqueToday(stats.today_unique)}
@@ -300,7 +298,6 @@ export default function StatsDisplay({ lang, onClose }) {
                 exportMode={exportMode}
               />
               <BigStatCard
-                icon="📈"
                 label={t.stStocksAnalyzed}
                 value={(stats.stocks_analyzed || 0).toLocaleString()}
                 sub={t.stTopStock(stats.top_stocks[0]?.symbol ?? '--')}
@@ -308,7 +305,6 @@ export default function StatsDisplay({ lang, onClose }) {
                 exportMode={exportMode}
               />
               <BigStatCard
-                icon="🎓"
                 label={t.stStudySessions}
                 value={(stats.study_sessions || 0).toLocaleString()}
                 sub={t.stStudyCenter}
@@ -327,7 +323,7 @@ export default function StatsDisplay({ lang, onClose }) {
               </div>
               {lineOption
                 ? <ReactECharts option={lineOption} style={{ height: 180 }} opts={{ renderer: 'canvas' }} />
-                : <div style={{ color: MUTED, fontSize: 12, padding: '50px 0', textAlign: 'center' }}>{t.stNoData}</div>
+                : <div style={{ color: MUTED, fontSize: 13, padding: '50px 0', textAlign: 'center' }}>{t.stNoData}</div>
               }
             </div>
 
@@ -341,26 +337,26 @@ export default function StatsDisplay({ lang, onClose }) {
                   {t.stTop5}
                 </div>
                 {stats.top_stocks.length === 0 ? (
-                  <div style={{ color: MUTED, fontSize: 12 }}>{t.stNoData}</div>
+                  <div style={{ color: MUTED, fontSize: 13 }}>{t.stNoData}</div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {stats.top_stocks.slice(0, 5).map((s, i) => {
                       const maxS = stats.top_stocks[0]?.searches || 1
                       return (
                         <div key={s.symbol} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <span style={{ fontSize: 12, color: i < 3 ? '#fbbf24' : MUTED, fontWeight: 600, minWidth: 18, textAlign: 'right' }}>
+                          <span style={{ fontSize: 13, color: i < 3 ? '#fbbf24' : MUTED, fontWeight: 600, minWidth: 18, textAlign: 'right' }}>
                             {i + 1}
                           </span>
-                          <span style={{ fontSize: 12, color: 'var(--accent-blue)', fontFamily: 'var(--sans)', minWidth: 52 }}>{s.symbol}</span>
+                          <span style={{ fontSize: 13, color: 'var(--accent-blue)', fontFamily: 'var(--sans)', minWidth: 52 }}>{s.symbol}</span>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 12, color: 'var(--text-primary)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontSize: 13, color: 'var(--text-primary)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {s.name}
                             </div>
                             <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
                               <div style={{ width: `${(s.searches / maxS) * 100}%`, height: '100%', background: '#a08672', borderRadius: 2 }} />
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: MUTED, fontFamily: 'var(--sans)', minWidth: 28, textAlign: 'right' }}>
+                          <span style={{ fontSize: 13, color: MUTED, fontFamily: 'var(--sans)', minWidth: 28, textAlign: 'right' }}>
                             {s.searches}
                           </span>
                         </div>
@@ -396,7 +392,7 @@ export default function StatsDisplay({ lang, onClose }) {
               }}>
                 {t.stTagline(countryEst)}
               </div>
-              <div style={{ fontSize: 11, color: MUTED, marginTop: 6 }}>
+              <div style={{ fontSize: 13, color: MUTED, marginTop: 6 }}>
                 {t.stFooter}
               </div>
             </div>

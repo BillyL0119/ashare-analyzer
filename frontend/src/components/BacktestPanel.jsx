@@ -33,12 +33,12 @@ const STRATEGY_DESC = {
 function MetricCard({ label, value, sub, color }) {
   return (
     <div style={{
-      background: 'var(--bg-tertiary)', border: '1px solid rgba(160,134,114,0.1)',
+      background: 'var(--bg-tertiary)',
       borderRadius: 'var(--radius)', padding: '12px 16px', textAlign: 'center',
     }}>
-      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: 22, fontWeight: 600, color: color || 'var(--text-primary)', lineHeight: 1.2 }}>{value}</div>
-      {sub && <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{sub}</div>}
     </div>
   )
 }
@@ -133,7 +133,7 @@ function TradeTable({ trades, isCN }) {
   const total = Math.ceil(trades.length / PAGE)
 
   if (!trades.length) return (
-    <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-muted)', fontSize: 12 }}>
+    <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-muted)', fontSize: 13 }}>
       {isCN ? '该策略在此期间无交易信号' : 'No trades generated in this period'}
     </div>
   )
@@ -141,7 +141,7 @@ function TradeTable({ trades, isCN }) {
   return (
     <div>
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
             <tr style={{ color: 'var(--text-muted)' }}>
               {[
@@ -183,9 +183,9 @@ function TradeTable({ trades, isCN }) {
         <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 10 }}>
           {Array.from({ length: total }, (_, i) => (
             <button key={i} onClick={() => setPage(i)} style={{
-              padding: '3px 9px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 11,
+              padding: '3px 9px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 13,
               background: page === i ? `${ACCENT}` : 'var(--bg-hover)',
-              color: page === i ? '#fff' : 'var(--text-muted)',
+              color: page === i ? 'var(--accent-ink)' : 'var(--text-muted)',
             }}>{i + 1}</button>
           ))}
         </div>
@@ -235,7 +235,7 @@ export default function BacktestPanel({ stocks }) {
     padding: '5px 14px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
     fontSize: 12, fontWeight: active ? 600 : 400,
     background: active ? `${ACCENT}` : 'var(--bg-hover)',
-    color: active ? '#fff' : 'var(--text-secondary)', transition: 'all 0.2s',
+    color: active ? 'var(--accent-ink)' : 'var(--text-secondary)', transition: 'all 0.2s',
     whiteSpace: 'nowrap',
   })
 
@@ -259,7 +259,7 @@ export default function BacktestPanel({ stocks }) {
         )}
         {stocks.length > 1 && (
           <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 12, color: 'var(--text-muted)', alignSelf: 'center' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)', alignSelf: 'center' }}>
               {isCN ? '股票：' : 'Stock:'}
             </span>
             {stocks.map((s) => (
@@ -273,7 +273,7 @@ export default function BacktestPanel({ stocks }) {
 
         {/* Strategy selector */}
         <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0 }}>
             {isCN ? '策略：' : 'Strategy:'}
           </span>
           {STRATEGIES.map((s) => (
@@ -286,7 +286,7 @@ export default function BacktestPanel({ stocks }) {
 
         {/* Strategy description */}
         <div style={{
-          fontSize: 11, color: 'var(--text-muted)', marginBottom: 10,
+          fontSize: 13, color: 'var(--text-muted)', marginBottom: 10,
           padding: '6px 10px', background: 'var(--bg-primary)',
           borderRadius: 6, border: '1px solid rgba(160,134,114,0.07)',
         }}>
@@ -295,7 +295,7 @@ export default function BacktestPanel({ stocks }) {
 
         {/* Period selector */}
         <div style={{ display: 'flex', gap: 6, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0 }}>
             {isCN ? '时间范围：' : 'Period:'}
           </span>
           {PERIODS.map((p) => (
@@ -314,8 +314,8 @@ export default function BacktestPanel({ stocks }) {
             padding: '8px 28px', borderRadius: 'var(--radius)', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 13, fontWeight: 600,
             background: loading ? 'rgba(160,134,114,0.15)' : `${ACCENT}`,
-            color: loading ? 'var(--text-muted)' : '#fff',
-            boxShadow: loading ? 'none' : '0 2px 12px rgba(160,134,114,0.3)',
+            color: loading ? 'var(--text-muted)' : 'var(--accent-ink)',
+            
             transition: 'all 0.2s',
           }}
         >
@@ -329,7 +329,7 @@ export default function BacktestPanel({ stocks }) {
       {/* Error */}
       {error && (
         <div style={{ color: '#ef4444', fontSize: 13, padding: '10px 16px',
-          background: 'rgba(239,68,68,0.08)', borderRadius: 8, border: '1px solid rgba(239,68,68,0.2)' }}>
+          background: 'rgba(239,68,68,0.08)', borderRadius: 8 }}>
           {error}
         </div>
       )}
@@ -390,7 +390,7 @@ export default function BacktestPanel({ stocks }) {
             <TradeTable trades={result.trades || []} isCN={isCN} />
           </div>
 
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'right' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'right' }}>
             {isCN
               ? `* 回测仅为历史模拟，不代表未来收益。${result.is_cn ? 'A股已按T+1规则处理。' : ''}`
               : `* Backtest is historical simulation only, not a guarantee of future returns.`

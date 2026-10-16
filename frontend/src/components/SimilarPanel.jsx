@@ -42,7 +42,7 @@ function CorrBar({ value }) {
       <div style={{ width: 60, height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
         <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 3 }} />
       </div>
-      <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: 'var(--sans)', minWidth: 36 }}>
+      <span style={{ fontSize: 13, fontWeight: 600, color, fontFamily: 'var(--sans)', minWidth: 36 }}>
         {value.toFixed(3)}
       </span>
     </div>
@@ -54,7 +54,7 @@ function IndustryPill({ label, type }) {
   return (
     <span
       style={{
-        fontSize: 10,
+        fontSize: 13,
         fontWeight: 600,
         padding: '2px 6px',
         borderRadius: 'var(--radius)',
@@ -99,12 +99,12 @@ function ModeToggle({ mode, setMode, t }) {
             borderRadius: 'var(--radius)',
             border: 'none',
             cursor: 'pointer',
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: mode === key ? 600 : 400,
             background: mode === key
               ? 'var(--accent)'
               : 'transparent',
-            color: mode === key ? '#fff' : 'var(--text-muted)',
+            color: mode === key ? 'var(--accent-ink)' : 'var(--text-muted)',
             transition: 'all 0.2s ease',
             whiteSpace: 'nowrap',
           }}
@@ -181,7 +181,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
             border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
             borderRadius: 4,
             padding: '2px 8px',
-            fontSize: 12,
+            fontSize: 13,
             color: 'var(--accent)',
             fontFamily: 'var(--sans)',
           }}
@@ -195,7 +195,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
           <span
             style={{
               marginLeft: 'auto',
-              fontSize: 12,
+              fontSize: 13,
               color: 'var(--text-muted)',
               background: 'rgba(255,255,255,0.06)',
               borderRadius: 4,
@@ -211,7 +211,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
           <span
             style={{
               marginLeft: 'auto',
-              fontSize: 11,
+              fontSize: 13,
               color: 'var(--text-muted)',
             }}
           >
@@ -259,14 +259,14 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     borderRadius: 8,
                   }}
                 >
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, minWidth: 18 }}>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, minWidth: 18 }}>
                     {idx + 1}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
                       <span
                         onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                        style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--sans)', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                        style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--sans)', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                       >
                         {item.code}
                       </span>
@@ -293,7 +293,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                   gap: '0 12px',
                   padding: '4px 8px',
                   marginBottom: 4,
-                  fontSize: 11,
+                  fontSize: 13,
                   color: 'var(--text-muted)',
                   fontWeight: 600,
                   letterSpacing: '0.04em',
@@ -323,12 +323,12 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                   onMouseEnter={(e) => { e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 6%, transparent)' }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                 >
-                  <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}>
                     {idx + 1}
                   </span>
                   <span
                     onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                    style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--sans)', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                    style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--sans)', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                   >
                     {item.code}
                   </span>
@@ -382,7 +382,7 @@ export default function SimilarPanel({ stocks, onOpenDetail }) {
       {market !== 'us' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <ModeToggle mode={mode} setMode={setMode} t={t} />
-          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {mode === 'same' ? t.similarSame : t.similarCross}
           </span>
         </div>

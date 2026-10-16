@@ -249,7 +249,7 @@ export default function KLineSelectionWrapper({ candles, ma, groupId, market, co
           style={{
             position: 'absolute', top: 5, right: 8, zIndex: 20,
             padding: '3px 9px', borderRadius: 4, border: 'none',
-            cursor: 'pointer', fontSize: 11, fontWeight: 600,
+            cursor: 'pointer', fontSize: 13, fontWeight: 600,
             background: selectMode
               ? 'rgba(239,83,80,0.18)'
               : 'rgba(160,134,114,0.12)',

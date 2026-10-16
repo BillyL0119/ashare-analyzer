@@ -269,7 +269,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
     padding: '4px 14px', borderRadius: 'var(--radius)', border: 'none',
     cursor: 'pointer', fontSize: 12, fontWeight: active ? 700 : 400,
     background: active ? `${ACCENT}` : 'var(--bg-tertiary)',
-    color: active ? '#fff' : 'var(--text-muted)',
+    color: active ? 'var(--accent-ink)' : 'var(--text-muted)',
     transition: 'all 0.15s',
   })
 
@@ -291,7 +291,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
         ))}
 
         {data?.date && (
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 'auto' }}>
             {t.srUpdated} {data.date}
           </span>
         )}
@@ -305,7 +305,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             borderTopColor: ACCENT,
             animation: 'spin 0.8s linear infinite',
           }} />
-          <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 12 }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 12 }}>
             {t.srLoadingMsg}
           </div>
         </div>
@@ -344,7 +344,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setPeriod(key)} style={{
                   padding: '4px 12px', borderRadius: 'var(--radius)', border: 'none',
-                  cursor: 'pointer', fontSize: 11, fontWeight: period === key ? 700 : 400,
+                  cursor: 'pointer', fontSize: 13, fontWeight: period === key ? 700 : 400,
                   background: period === key ? 'rgba(124,156,180,0.15)' : 'var(--bg-tertiary)',
                   color: period === key ? ACCENT2 : 'var(--text-muted)',
                   border: `1px solid ${period === key ? ACCENT2 + '55' : 'var(--border-primary)'}`,
@@ -382,7 +382,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
               ].map(([color, label]) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <div style={{ width: 14, height: 10, borderRadius: 2, background: color }} />
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{label}</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{label}</span>
                 </div>
               ))}
             </div>
@@ -397,7 +397,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
               display: 'grid',
               gridTemplateColumns: '1fr 80px 80px 80px 72px',
               gap: 0,
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: 600,
               color: 'var(--text-muted)',
               padding: '8px 14px',
@@ -436,20 +436,20 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                         background: pctColor(s[pctKey], market === 'cn'),
                         flexShrink: 0,
                       }} />
-                      <span style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: i < 3 ? 700 : 400 }}>
+                      <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: i < 3 ? 700 : 400 }}>
                         {zh ? s.name_zh : (s[`name_${lang}`] || s.name_en)}
                       </span>
                     </div>
-                    <span style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: pctTextColor(s.today_pct, market === 'cn') }}>
+                    <span style={{ textAlign: 'right', fontSize: 13, fontWeight: 600, color: pctTextColor(s.today_pct, market === 'cn') }}>
                       {fmt(s.today_pct)}
                     </span>
-                    <span style={{ textAlign: 'right', fontSize: 12, color: pctTextColor(s.pct_5d, market === 'cn') }}>
+                    <span style={{ textAlign: 'right', fontSize: 13, color: pctTextColor(s.pct_5d, market === 'cn') }}>
                       {fmt(s.pct_5d)}
                     </span>
-                    <span style={{ textAlign: 'right', fontSize: 12, color: pctTextColor(s.pct_20d, market === 'cn') }}>
+                    <span style={{ textAlign: 'right', fontSize: 13, color: pctTextColor(s.pct_20d, market === 'cn') }}>
                       {fmt(s.pct_20d)}
                     </span>
-                    <span style={{ textAlign: 'right', fontSize: 11, color: s.vol_ratio > 1.2 ? GREEN_MID : s.vol_ratio < 0.8 ? RED_MID : 'var(--text-muted)' }}>
+                    <span style={{ textAlign: 'right', fontSize: 13, color: s.vol_ratio > 1.2 ? GREEN_MID : s.vol_ratio < 0.8 ? RED_MID : 'var(--text-muted)' }}>
                       {volLabel(s.vol_ratio, t)}
                     </span>
                   </div>

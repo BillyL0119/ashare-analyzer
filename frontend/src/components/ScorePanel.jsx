@@ -53,7 +53,7 @@ function ScoreRing({ score, grade }) {
       }}>
         <div style={{ fontSize: 32, fontWeight: 600, color, lineHeight: 1 }}>{grade}</div>
         <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginTop: 4 }}>{score}</div>
-        <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>/ 100</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>/ 100</div>
       </div>
     </div>
   )
@@ -126,14 +126,14 @@ function DimCard({ dimKey, dim, isCN }) {
           padding: '6px 0', borderTop: i > 0 ? '1px solid var(--border-primary)' : 'none',
           gap: 8,
         }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
             {factorLabel(d, isCN)}
           </span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.45 }}>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.45 }}>
             {isCN ? d.note_zh : d.note_en}
           </span>
           <span style={{
-            fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+            fontSize: 13, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
             color: d.score >= d.max * 0.7 ? '#22c55e' : d.score >= d.max * 0.4 ? '#fbbf24' : '#ef4444',
           }}>
             {d.score}/{d.max}
@@ -202,7 +202,7 @@ export default function ScorePanel({ stocks }) {
           </div>
         </div>
       ))}
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 4 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 4 }}>
         {isCN ? '首次计算约需 10–20 秒' : 'First load may take 10–20s'}
       </div>
     </div>
@@ -230,10 +230,10 @@ export default function ScorePanel({ stocks }) {
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
               <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{s.name || s.code}</span>
-              {s.name && s.name !== s.code && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.code}</span>}
+              {s.name && s.name !== s.code && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{s.code}</span>}
               <div style={{
                 marginLeft: 'auto', padding: '2px 12px',
-                background: `${gradeColor}22`, border: `1px solid ${gradeColor}55`,
+                background: `${gradeColor}22`,
                 borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 600, color: gradeColor,
               }}>
                 {d.grade}
@@ -253,7 +253,7 @@ export default function ScorePanel({ stocks }) {
                 background: 'var(--bg-tertiary)', borderRadius: 8,
                 border: '1px solid var(--border-primary)', padding: '10px 14px', alignSelf: 'center',
               }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>
                   {isCN ? '综合评语' : 'Summary'}
                 </div>
                 {isCN ? d.summary_zh : d.summary_en}
@@ -267,7 +267,7 @@ export default function ScorePanel({ stocks }) {
               ))}
             </div>
 
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 10, textAlign: 'right' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 10, textAlign: 'right' }}>
               {isCN ? '* 评分仅供参考，不构成投资建议' : '* Scores for reference only, not investment advice'}
             </div>
           </div>

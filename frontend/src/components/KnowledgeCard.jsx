@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { getKnowledgeToday } from '../api/stockApi'
+import Icon from './Icon'
 
 const LS_KEY = 'bfs_knowledge_date'
 const CATEGORY_COLOR = {
@@ -28,12 +29,12 @@ function CardPanel({ item, lang }) {
       {/* Category + difficulty */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         <span style={{
-          fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 'var(--radius)',
-          background: `${color}20`, color, border: `1px solid ${color}40`,
+          fontSize: 13, fontWeight: 600, padding: '2px 8px', borderRadius: 'var(--radius)',
+          background: `${color}20`, color,
         }}>
           {item.category}
         </span>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           {'⭐'.repeat(Number(item.difficulty) || 1)}
         </span>
       </div>
@@ -44,7 +45,7 @@ function CardPanel({ item, lang }) {
       </div>
 
       {/* Content */}
-      <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 8 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 8 }}>
         {content}
       </div>
 
@@ -55,10 +56,10 @@ function CardPanel({ item, lang }) {
           border: '1px solid color-mix(in srgb, var(--accent) 18%, transparent)',
           borderRadius: 6, padding: '6px 10px', marginBottom: 8,
         }}>
-          <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 600, marginBottom: 3, letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 600, marginBottom: 3, letterSpacing: '0.05em' }}>
             Formula
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'var(--sans)', lineHeight: 1.5 }}>
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontFamily: 'var(--sans)', lineHeight: 1.5 }}>
             {item.key_formula}
           </div>
         </div>
@@ -67,10 +68,10 @@ function CardPanel({ item, lang }) {
       {/* Example */}
       {item.example && (
         <div style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 10, color: '#26a69a', fontWeight: 600, marginBottom: 3, letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 13, color: '#26a69a', fontWeight: 600, marginBottom: 3, letterSpacing: '0.05em' }}>
             Example
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.55 }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.55 }}>
             {item.example}
           </div>
         </div>
@@ -81,7 +82,7 @@ function CardPanel({ item, lang }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
           {item.tags.map((tag) => (
             <span key={tag} style={{
-              fontSize: 10, color: 'var(--text-muted)',
+              fontSize: 13, color: 'var(--text-muted)',
               background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: 5, padding: '2px 6px',
@@ -126,7 +127,7 @@ export default function KnowledgeCard({ lang, open, onClose }) {
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
       borderRadius: 'var(--radius)',
-      boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px #2a4a7f',
+      boxShadow: '0 16px 48px rgba(0,0,0,0.35)',
       overflow: 'hidden',
     }}>
       {/* Header */}
@@ -137,7 +138,7 @@ export default function KnowledgeCard({ lang, open, onClose }) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
-          💡 {t.knowledgeBtn}
+          <Icon name="bulb" size={15} style={{ marginRight: 6 }} />{t.knowledgeBtn}
         </span>
         <button onClick={onClose} style={{
           background: 'none', border: 'none', color: 'var(--text-muted)',
@@ -154,7 +155,7 @@ export default function KnowledgeCard({ lang, open, onClose }) {
             key={key}
             onClick={() => setTab(key)}
             style={{
-              flex: 1, padding: '7px 0', fontSize: 12, fontWeight: tab === key ? 700 : 400,
+              flex: 1, padding: '7px 0', fontSize: 13, fontWeight: tab === key ? 700 : 400,
               border: 'none', cursor: 'pointer',
               background: tab === key ? 'color-mix(in srgb, var(--accent) 8%, transparent)' : 'transparent',
               color: tab === key ? 'var(--accent)' : 'var(--text-muted)',

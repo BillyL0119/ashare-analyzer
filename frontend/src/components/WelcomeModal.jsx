@@ -149,59 +149,41 @@ export default function WelcomeModal({ onLangSelect }) {
   }
 
   return (
-    <div style={{
+    <div role="dialog" aria-modal="true" aria-labelledby="bfs-welcome-title" style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'var(--bg-primary)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+      animation: 'bfsPageFadeIn .3s ease both',
     }}>
-      <div style={{
-        background: '#161b2e', borderRadius: 'var(--radius)',
-        border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
-        padding: '40px 32px', width: 480, maxWidth: '94vw',
-        textAlign: 'center',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-          <IconChart size={40} />
-        </div>
-        <p style={{ color: 'rgba(232,234,240,0.7)', fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
-          请选择您的语言 · Please select your language
+      <div style={{ width: 560, maxWidth: '100%', fontFamily: 'var(--sans)' }}>
+        <img src="/logo-dark.png" alt="" style={{ height: 40, width: 'auto', display: 'block', marginBottom: 28,
+          filter: (document.documentElement.dataset.theme || 'dark') !== 'light' ? 'brightness(0) invert(1)' : 'none' }} />
+        <h1 id="bfs-welcome-title" style={{ margin: '0 0 12px', fontSize: 'clamp(34px, 5vw, 52px)', fontWeight: 500, letterSpacing: '-0.04em', lineHeight: 1.02 }}>
+          Best Friend Stock
+        </h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 17, margin: '0 0 32px', lineHeight: 1.5 }}>
+          请选择语言 · Choose your language
         </p>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-          gap: 12,
-        }}>
+        <div style={{ display: 'grid', gap: 4 }}>
           {LANG_OPTIONS.map(({ code, nativeLabel, subLabel, Flag }) => (
             <button
               key={code}
               onClick={() => handleLangSelect(code)}
+              className="bfs-menu-item"
               style={{
-                padding: '16px 10px', borderRadius: 'var(--radius)',
-                background: 'color-mix(in srgb, var(--accent) 6%, transparent)',
-                border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)',
-                cursor: 'pointer', color: '#e8eaf0',
-                transition: 'all 0.2s',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', gap: 8,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(124,156,180,0.2)'
-                e.currentTarget.style.borderColor = 'rgba(124,156,180,0.5)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 6%, transparent)'
-                e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--accent) 20%, transparent)'
+                display: 'flex', alignItems: 'center', gap: 16, width: '100%', textAlign: 'left',
+                padding: '14px 16px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
+                background: 'var(--bg-secondary)', color: 'var(--text-primary)',
               }}
             >
-              <Flag height={22} />
-              <div style={{ fontSize: 14, fontWeight: 600 }}>{nativeLabel}</div>
-              <div style={{ fontSize: 11, color: 'rgba(232,234,240,0.4)' }}>{subLabel}</div>
+              <Flag height={18} />
+              <span style={{ fontSize: 20, letterSpacing: '-0.02em' }}>{nativeLabel}</span>
+              <span style={{ marginLeft: 'auto', fontSize: 14, color: 'var(--text-muted)' }}>{subLabel}</span>
             </button>
           ))}
         </div>
-        <p style={{ fontSize: 11, color: 'rgba(232,234,240,0.3)', marginTop: 20, lineHeight: 1.6 }}>
-          此网站仅供股票学习用途 · For stock learning purposes only
+        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 24, lineHeight: 1.5 }}>
+          仅供学习，不构成投资建议 · For learning only, not investment advice
         </p>
       </div>
     </div>

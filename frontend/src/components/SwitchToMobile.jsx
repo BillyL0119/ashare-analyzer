@@ -11,8 +11,8 @@ export default function SwitchToMobile() {
     <button
       onClick={() => { setUIOverride('mobile'); window.location.reload() }}
       style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)', zIndex: 9999,
-        padding: '10px 18px', borderRadius: 'var(--radius)', border: '1px solid rgba(255,255,255,.18)', background: 'rgba(20,24,34,.92)', color: '#fff', fontSize: 14, fontWeight: 600,
-        boxShadow: '0 6px 20px rgba(0,0,0,.4)', backdropFilter: 'blur(10px)' }}
+        padding: '10px 18px', borderRadius: 'var(--radius)', border: 'none', background: 'var(--text-primary)', color: 'var(--bg-primary)', fontSize: 15, fontWeight: 500,
+        boxShadow: '0 8px 24px rgba(0,0,0,.3)' }}
     >
       {LABEL[lang] || LABEL.en}
     </button>

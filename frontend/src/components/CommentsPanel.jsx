@@ -3,6 +3,7 @@ import useThemeStore from '../store/themeStore'
 import { T } from '../i18n/translations'
 import { relativeTime } from '../utils/time'
 import getDeviceId from '../utils/deviceId'
+import Icon from './Icon'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -12,9 +13,9 @@ const RED      = '#ef4444'
 const AMBER    = '#f59e0b'
 
 const SENT_CFG = {
-  bullish: { zh: '看多', en: 'Bullish', ja: '強気', ko: '강세', fr: 'Haussier', icon: '🐂', color: GREEN,  bg: 'rgba(34,197,94,0.12)'  },
-  neutral: { zh: '中性', en: 'Neutral', ja: '中立', ko: '중립', fr: 'Neutre',   icon: '😐', color: AMBER,  bg: 'rgba(245,158,11,0.12)' },
-  bearish: { zh: '看空', en: 'Bearish', ja: '弱気', ko: '약세', fr: 'Baissier', icon: '🐻', color: RED,    bg: 'rgba(239,68,68,0.12)'  },
+  bullish: { zh: '看多', en: 'Bullish', ja: '強気', ko: '강세', fr: 'Haussier', icon: '', color: GREEN,  bg: 'rgba(34,197,94,0.12)'  },
+  neutral: { zh: '中性', en: 'Neutral', ja: '中立', ko: '중립', fr: 'Neutre',   icon: '', color: AMBER,  bg: 'rgba(245,158,11,0.12)' },
+  bearish: { zh: '看空', en: 'Bearish', ja: '弱気', ko: '약세', fr: 'Baissier', icon: '', color: RED,    bg: 'rgba(239,68,68,0.12)'  },
 }
 
 function getSentLabel(cfg, lang) {
@@ -35,7 +36,7 @@ function avatarColor(nickname) {
 
 function SentimentBar({ stats, t }) {
   if (!stats || stats.total === 0) return (
-    <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: '10px 0' }}>
+    <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', padding: '10px 0' }}>
       {t.cmtNone}
     </div>
   )
@@ -51,11 +52,11 @@ function SentimentBar({ stats, t }) {
       {/* Labels */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 14 }}>
-          <span style={{ fontSize: 12, color: GREEN, fontWeight: 600 }}>🐂 {bullish_pct}%</span>
-          <span style={{ fontSize: 12, color: AMBER, fontWeight: 600 }}>😐 {neutral_pct}%</span>
-          <span style={{ fontSize: 12, color: RED,   fontWeight: 600 }}>🐻 {bearish_pct}%</span>
+          <span style={{ fontSize: 13, color: GREEN, fontWeight: 600 }}>{bullish_pct}%</span>
+          <span style={{ fontSize: 13, color: AMBER, fontWeight: 600 }}>{neutral_pct}%</span>
+          <span style={{ fontSize: 13, color: RED,   fontWeight: 600 }}>{bearish_pct}%</span>
         </div>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           {t.cmtComments(total)}
         </span>
       </div>
@@ -100,12 +101,12 @@ function CommentCard({ comment, lang, onLike }) {
             {comment.nickname}
           </span>
           <span style={{
-            fontSize: 11, fontWeight: 600, padding: '1px 7px', borderRadius: 'var(--radius)',
-            background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.color}33`,
+            fontSize: 13, fontWeight: 600, padding: '1px 7px', borderRadius: 'var(--radius)',
+            background: cfg.bg, color: cfg.color,
           }}>
-            {cfg.icon} {getSentLabel(cfg, lang)}
+            {getSentLabel(cfg, lang)}
           </span>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 'auto' }}>
             {relativeTime(comment.timestamp, lang)}
           </span>
         </div>
@@ -125,10 +126,10 @@ function CommentCard({ comment, lang, onLike }) {
             background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0',
             display: 'flex', alignItems: 'center', gap: 4,
             color: liked ? ACCENT : 'var(--text-muted)',
-            fontSize: 12, transition: 'color 0.15s',
+            fontSize: 13, transition: 'color 0.15s',
           }}
         >
-          👍 {likes > 0 && likes}
+          <Icon name="thumb" size={15} style={{ marginRight: 6 }} />{likes > 0 && likes}
         </button>
       </div>
     </div>
@@ -246,7 +247,7 @@ export default function CommentsPanel({ stocks, lang }) {
         borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 16,
       }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 10 }}>
-          📊 {symbol} {t.cmtSentiment}
+          <Icon name="chart" size={15} style={{ marginRight: 6 }} />{symbol} {t.cmtSentiment}
         </div>
         <SentimentBar stats={stats} t={t} />
       </div>
@@ -257,7 +258,7 @@ export default function CommentsPanel({ stocks, lang }) {
         borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 16,
       }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12 }}>
-          ✍️ {t.cmtShare}
+          <Icon name="edit" size={15} style={{ marginRight: 6 }} />{t.cmtShare}
         </div>
 
         {/* Nickname */}
@@ -297,7 +298,7 @@ export default function CommentsPanel({ stocks, lang }) {
           />
           <span style={{
             position: 'absolute', bottom: 8, right: 10,
-            fontSize: 11, color: content.length > 450 ? RED : 'var(--text-muted)',
+            fontSize: 13, color: content.length > 450 ? RED : 'var(--text-muted)',
             pointerEvents: 'none',
           }}>
             {content.length}/500
@@ -315,14 +316,14 @@ export default function CommentsPanel({ stocks, lang }) {
                 onClick={() => setSentiment(s)}
                 style={{
                   padding: '5px 14px', borderRadius: 'var(--radius)', cursor: 'pointer',
-                  fontSize: 12, fontWeight: active ? 700 : 400,
+                  fontSize: 13, fontWeight: active ? 700 : 400,
                   border: `1px solid ${active ? cfg.color : 'var(--border-primary)'}`,
                   background: active ? cfg.bg : 'transparent',
                   color: active ? cfg.color : 'var(--text-muted)',
                   transition: 'all 0.15s',
                 }}
               >
-                {cfg.icon} {getSentLabel(cfg, lang)}
+                {getSentLabel(cfg, lang)}
               </button>
             )
           })}
@@ -336,7 +337,7 @@ export default function CommentsPanel({ stocks, lang }) {
               background: submitting || content.trim().length < 10
                 ? 'var(--bg-tertiary)'
                 : `${ACCENT}`,
-              color: submitting || content.trim().length < 10 ? 'var(--text-muted)' : '#fff',
+              color: submitting || content.trim().length < 10 ? 'var(--text-muted)' : 'var(--accent-ink)',
               fontSize: 13, fontWeight: 600, transition: 'all 0.2s',
             }}
           >
@@ -344,8 +345,8 @@ export default function CommentsPanel({ stocks, lang }) {
           </button>
         </div>
 
-        {error   && <div style={{ marginTop: 8, fontSize: 12, color: RED   }}>{error}</div>}
-        {success && <div style={{ marginTop: 8, fontSize: 12, color: GREEN }}>{success}</div>}
+        {error   && <div style={{ marginTop: 8, fontSize: 13, color: RED   }}>{error}</div>}
+        {success && <div style={{ marginTop: 8, fontSize: 13, color: GREEN }}>{success}</div>}
       </div>
 
       {/* ── Comment list ── */}
@@ -354,9 +355,9 @@ export default function CommentsPanel({ stocks, lang }) {
         borderRadius: 'var(--radius)', padding: '14px 18px',
       }} ref={listRef}>
         <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-          💬 {t.cmtAll}
+          <Icon name="chat" size={15} style={{ marginRight: 6 }} />{t.cmtAll}
           {stats?.total > 0 && (
-            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>
               ({stats.total})
             </span>
           )}
@@ -385,7 +386,7 @@ export default function CommentsPanel({ stocks, lang }) {
                   style={{
                     background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                     borderRadius: 'var(--radius)', padding: '6px 22px',
-                    color: 'var(--text-secondary)', fontSize: 12, cursor: 'pointer',
+                    color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
                   }}
                 >
                   {loading ? '...' : t.cmtLoadMore}

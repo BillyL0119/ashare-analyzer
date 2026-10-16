@@ -26,9 +26,9 @@ function Pill({ value, suffix = '%', invert = false, decimals = 2 }) {
 function MetricRow({ label, value, suffix = '', decimals = 2, invert = false, hint }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: `1px solid ${THEME.border}` }}>
-      <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+      <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>
         {label}
-        {hint && <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 4 }}>({hint})</span>}
+        {hint && <span style={{ color: 'var(--text-muted)', fontSize: 13, marginLeft: 4 }}>({hint})</span>}
       </span>
       <Pill value={value} suffix={suffix} invert={invert} decimals={decimals} />
     </div>
@@ -57,7 +57,7 @@ function VaRTable({ varCvar, t }) {
     { label: `${t.riskParametric} CVaR`, field: 'param_cvar' },
   ]
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
       <thead>
         <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
           <th style={{ padding: '7px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{t.metric}</th>
@@ -162,7 +162,7 @@ function DistributionChart({ distribution, t }) {
 
 function StressTable({ tests, t, lang }) {
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
       <thead>
         <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
           <th style={{ padding: '7px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{t.riskScenario}</th>
@@ -213,7 +213,7 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name}</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
-        {data && <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>{data.trading_days} {lang === 'zh' ? '个交易日' : 'days'} | {lang === 'zh' ? '当前价' : 'Price'}: {data.current_price}</span>}
+        {data && <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 13 }}>{data.trading_days} {lang === 'zh' ? '个交易日' : 'days'} | {lang === 'zh' ? '当前价' : 'Price'}: {data.current_price}</span>}
       </div>
 
       {loading && <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>{t.riskLoading}</div>}
@@ -230,7 +230,7 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
               { label: t.riskSortino, v: data.tail_metrics.sortino, s: '' },
             ].map(({ label, v, s, invert }) => (
               <div key={label} style={{ textAlign: 'center' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: 11, marginBottom: 3 }}>{label}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 3 }}>{label}</div>
                 <Pill value={v} suffix={s} invert={invert} decimals={2} />
               </div>
             ))}

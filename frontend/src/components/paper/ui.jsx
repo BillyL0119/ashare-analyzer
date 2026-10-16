@@ -31,7 +31,7 @@ export function Seg({ value, onChange, options, size = 'md', full }) {
             flex: full ? 1 : 'none', whiteSpace: 'nowrap', border: 'none', cursor: o.disabled ? 'not-allowed' : 'pointer', borderRadius: 'var(--radius)',
             padding: size === 'sm' ? '4px 10px' : '6px 14px', fontSize: size === 'sm' ? 12 : 13, fontWeight: 650,
             background: value === o.value ? (o.color || 'var(--accent)') : 'transparent',
-            color: value === o.value ? '#fff' : o.disabled ? 'var(--text-muted)' : MUTED, opacity: o.disabled ? 0.5 : 1,
+            color: value === o.value ? 'var(--accent-ink)' : o.disabled ? 'var(--text-muted)' : MUTED, opacity: o.disabled ? 0.5 : 1,
           }}>
           {o.label}
         </button>
@@ -43,9 +43,9 @@ export function Seg({ value, onChange, options, size = 'md', full }) {
 export function Field({ label, children, hint }) {
   return (
     <label style={{ display: 'grid', gap: 5, minWidth: 0 }}>
-      <span style={{ fontSize: 11.5, color: MUTED, fontWeight: 600 }}>{label}</span>
+      <span style={{ fontSize: 13, color: MUTED, fontWeight: 600 }}>{label}</span>
       {children}
-      {hint && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{hint}</span>}
+      {hint && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{hint}</span>}
     </label>
   )
 }
@@ -58,9 +58,9 @@ export const inputStyle = {
 export function Stat({ label, value, sub, color, big }) {
   return (
     <div style={{ minWidth: 0 }}>
-      <div style={{ fontSize: 11.5, color: MUTED, fontWeight: 600, marginBottom: 3 }}>{label}</div>
+      <div style={{ fontSize: 13, color: MUTED, fontWeight: 600, marginBottom: 3 }}>{label}</div>
       <div className={big ? 'serif-num' : undefined} style={{ fontSize: big ? 30 : 17, fontWeight: big ? 400 : 700, color: color || 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{value}</div>
-      {sub && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>{sub}</div>}
     </div>
   )
 }
@@ -83,7 +83,7 @@ export function Button({ children, onClick, disabled, color = ACCENT, ghost, sty
       style={{
         border: ghost ? `1px solid ${BDR}` : 'none', borderRadius: 'var(--radius)', padding: '9px 16px', fontSize: 13.5, fontWeight: 600,
         cursor: disabled ? 'not-allowed' : 'pointer', background: ghost ? 'transparent' : disabled ? 'var(--bg-hover)' : color,
-        color: ghost ? 'var(--text-secondary)' : disabled ? 'var(--text-muted)' : '#fff', ...style,
+        color: ghost ? 'var(--text-secondary)' : disabled ? 'var(--text-muted)' : (color === ACCENT ? 'var(--accent-ink)' : '#fff'), ...style,
       }}>
       {children}
     </button>

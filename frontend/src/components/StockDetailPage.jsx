@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
+import Icon from './Icon'
 const BDR  = 'var(--border-primary)'
 const BG   = 'var(--bg-tertiary)'
 
@@ -16,7 +17,7 @@ function MetricCard({ label, value }) {
       background: BG, border: `1px solid ${BDR}`, borderRadius: 8,
       padding: '10px 14px', minWidth: 100, flex: 1,
     }}>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--sans)' }}>
         {value ?? '--'}
       </div>
@@ -37,11 +38,11 @@ function MiniSimilarRow({ item, onStockClick }) {
       onMouseEnter={(e) => { e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 7%, transparent)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
-      <span style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--sans)', minWidth: 56 }}>{item.code}</span>
+      <span style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--sans)', minWidth: 56 }}>{item.code}</span>
       <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.name}
       </span>
-      <span style={{ fontSize: 11, fontFamily: 'var(--sans)', color: '#7c9cb4', flexShrink: 0 }}>
+      <span style={{ fontSize: 13, fontFamily: 'var(--sans)', color: '#7c9cb4', flexShrink: 0 }}>
         {item.correlation?.toFixed(3)}
       </span>
     </div>
@@ -60,19 +61,19 @@ function MiniNewsRow({ item, t }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
         <span style={{
-          fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 8,
-          background: `${color}20`, color, border: `1px solid ${color}40`,
+          fontSize: 13, fontWeight: 600, padding: '1px 6px', borderRadius: 8,
+          background: `${color}20`, color,
           flexShrink: 0, marginTop: 1,
         }}>
           {label}
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 12, color: 'var(--text-primary)', lineHeight: 1.4,
+          <div style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.4,
             overflow: 'hidden', display: '-webkit-box',
             WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
             {item.title}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 3 }}>
             {item.source} {item.time ? `· ${item.time.slice(0, 10)}` : ''}
           </div>
         </div>
@@ -153,7 +154,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
             background: 'none', border: 'none', cursor: 'pointer',
             color: 'var(--text-muted)', fontSize: 20, zIndex: 1,
           }}
-        >✕</button>
+        ><Icon name="close" size={16} /></button>
 
         <div style={{ padding: '24px 28px' }}>
 
@@ -171,7 +172,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                   {name || q?.name || symbol}
                 </span>
                 {q?.industry && (
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--bg-hover)', borderRadius: 4, padding: '2px 7px' }}>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)', background: 'var(--bg-hover)', borderRadius: 4, padding: '2px 7px' }}>
                     {q.industry}
                   </span>
                 )}
@@ -217,12 +218,12 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                   {t.sdSimilar}
                 </div>
                 {simResults.length === 0 ? (
-                  <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center' }}>
+                  <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>
                     {t.sdNoData}
                   </div>
                 ) : (
                   <div>
-                    <div style={{ display: 'flex', padding: '5px 10px', fontSize: 10, color: 'var(--text-muted)',
+                    <div style={{ display: 'flex', padding: '5px 10px', fontSize: 13, color: 'var(--text-muted)',
                       fontWeight: 600, letterSpacing: '0.04em',
                       borderBottom: '1px solid var(--border-primary)' }}>
                       <span style={{ minWidth: 56 }}>CODE</span>
@@ -246,7 +247,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                   {t.sdNews}
                 </div>
                 {newsItems.length === 0 ? (
-                  <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 12, textAlign: 'center' }}>
+                  <div style={{ padding: '16px', color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>
                     {t.sdNoNews}
                   </div>
                 ) : (
@@ -261,10 +262,10 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
           {/* ── 5. AI Analysis summary ── */}
           {analysis && (
             <div style={{
-              background: 'rgba(124,156,180,0.06)', border: '1px solid rgba(124,156,180,0.2)',
+              background: 'rgba(124,156,180,0.06)',
               borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 20,
             }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#7c9cb4', marginBottom: 8, letterSpacing: '0.3px' }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#7c9cb4', marginBottom: 8, letterSpacing: '0.3px' }}>
                 {t.sdAI}
               </div>
               <div style={{ fontSize: 13, color: '#c7d2fe', lineHeight: 1.6 }}>

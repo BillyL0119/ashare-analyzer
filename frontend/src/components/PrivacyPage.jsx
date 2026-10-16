@@ -2,7 +2,7 @@ export default function PrivacyPage() {
   return (
     <div style={{
       maxWidth: 720, margin: '0 auto', padding: '48px 20px 64px',
-      color: 'var(--text-primary)', fontFamily: 'system-ui, sans-serif',
+      color: 'var(--text-primary)', fontFamily: 'var(--sans)',
       lineHeight: 1.7,
     }}>
       <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 4 }}>Privacy Policy</h1>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
         </a>
       </Section>
 
-      <hr style={{ borderColor: '#334155', margin: '40px 0' }} />
+      <div style={{ height: 40 }} />
 
       <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 24 }}>中文版</h2>
 
