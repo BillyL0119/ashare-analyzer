@@ -71,18 +71,18 @@ export default function AITeacher() {
   return (
     <>
       <div className="m-scroll m-no-tabbar" style={{ paddingBottom: 12 }}>
-        <div style={{ textAlign: 'center', fontWeight: 700, margin: '4px 0 14px' }}>{t('AI老师')}</div>
+        <div style={{ textAlign: 'center', fontWeight: 600, margin: '4px 0 14px' }}>{t('AI老师')}</div>
         {msgs.length === 0 ? (
           <div className="m-stack" style={{ gap: 20, alignItems: 'center', paddingTop: 18 }}>
-            <div style={{ width: 72, height: 72, borderRadius: 22, display: 'grid', placeItems: 'center', color: '#fff', background: 'var(--accent)', boxShadow: '0 10px 28px color-mix(in srgb, var(--accent) 35%, transparent)' }}>
+            <div style={{ width: 72, height: 72, borderRadius: 'var(--radius)', display: 'grid', placeItems: 'center', color: 'var(--accent-ink)', background: 'var(--accent)', boxShadow: '0 10px 28px color-mix(in srgb, var(--accent) 35%, transparent)' }}>
               <span style={{ width: 34, height: 34 }}>{Icon.spark}</span>
             </div>
-            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 800 }}>{t('AI股票老师')}</div><div className="m-muted" style={{ marginTop: 5, fontSize: 14 }}>{t('股票、基金、经济学，有问必答')}</div></div>
+            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 600 }}>{t('AI股票老师')}</div><div className="m-muted" style={{ marginTop: 5, fontSize: 14 }}>{t('股票、基金、经济学，有问必答')}</div></div>
             <div style={{ width: '100%' }}>
               <div className="m-sec"><span>{t('快速提问')}</span></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {SHORTCUTS.map((s, i) => (
-                  <button key={s} className="m-card" style={{ textAlign: 'left', minHeight: 96, padding: 14, fontWeight: 600, fontSize: 14, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 10 }} onClick={() => send(t(s))}>
+                  <button key={s} className="m-card" style={{ textAlign: 'left', minHeight: 96, padding: 14, fontWeight: 600, fontSize: 14, borderRadius: 'var(--radius)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 10 }} onClick={() => send(t(s))}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{SHORTCUT_ICONS[i]}</svg>
                     {t(s)}
                   </button>
@@ -94,7 +94,7 @@ export default function AITeacher() {
         ) : (
           <div style={{ display: 'grid', gap: 12 }}>
             {msgs.map((m, i) => m.role === 'user' ? (
-              <div key={i} style={{ justifySelf: 'end', maxWidth: '85%', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', color: '#fff', background: 'var(--accent)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{m.content}</div>
+              <div key={i} style={{ justifySelf: 'end', maxWidth: '85%', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', color: 'var(--accent-ink)', background: 'var(--accent)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{m.content}</div>
             ) : (
               <div key={i} style={{ justifySelf: 'start', maxWidth: '92%', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', background: 'var(--surface)', border: '1px solid var(--stroke)', fontSize: 15, lineHeight: 1.5 }}>
                 {m.content ? <Markdown text={m.content} /> : <span className="m-muted">● ● ●</span>}
@@ -107,11 +107,11 @@ export default function AITeacher() {
       <div style={{ padding: '8px 12px', display: 'flex', gap: 8, alignItems: 'flex-end', background: 'color-mix(in srgb, var(--surface) 90%, transparent)', borderTop: '1px solid var(--stroke)', marginBottom: 'calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px))' }}>
         <textarea value={input} onChange={(e) => setInput(e.target.value)} rows={1} placeholder={t('输入问题…')}
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
-          style={{ flex: 1, resize: 'none', maxHeight: 110, padding: '10px 14px', borderRadius: 20, border: '1px solid var(--stroke)', background: 'var(--surface)', color: 'var(--text)', font: 'inherit', fontSize: 16, outline: 0 }} />
+          style={{ flex: 1, resize: 'none', maxHeight: 110, padding: '10px 14px', borderRadius: 'var(--radius)', border: '1px solid var(--stroke)', background: 'var(--surface)', color: 'var(--text)', font: 'inherit', fontSize: 16, outline: 0 }} />
         {busy ? (
-          <button onClick={() => ctrl.current?.abort()} aria-label={t('停止生成')} style={{ width: 40, height: 40, borderRadius: 20, background: '#ef4444', color: '#fff', display: 'grid', placeItems: 'center' }}><span style={{ width: 18, height: 18 }}>{Icon.stop}</span></button>
+          <button onClick={() => ctrl.current?.abort()} aria-label={t('停止生成')} style={{ width: 40, height: 40, borderRadius: 'var(--radius)', background: '#ef4444', color: '#fff', display: 'grid', placeItems: 'center' }}><span style={{ width: 18, height: 18 }}>{Icon.stop}</span></button>
         ) : (
-          <button onClick={() => send()} disabled={!input.trim()} aria-label={t('发送')} style={{ width: 40, height: 40, borderRadius: 20, color: '#fff', display: 'grid', placeItems: 'center', background: input.trim() ? 'var(--accent)' : 'var(--text-3)', opacity: input.trim() ? 1 : .5 }}><span style={{ width: 20, height: 20 }}>{Icon.up}</span></button>
+          <button onClick={() => send()} disabled={!input.trim()} aria-label={t('发送')} style={{ width: 40, height: 40, borderRadius: 'var(--radius)', color: 'var(--accent-ink)', display: 'grid', placeItems: 'center', background: input.trim() ? 'var(--accent)' : 'var(--text-3)', opacity: input.trim() ? 1 : .5 }}><span style={{ width: 20, height: 20 }}>{Icon.up}</span></button>
         )}
       </div>
       <div className="m-tabbar-spacer" />

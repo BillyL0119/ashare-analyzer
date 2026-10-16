@@ -43,7 +43,7 @@ export default function PaperPerformance({ deviceId, market, refreshKey, gameId 
     <Section title={t('收益曲线')}>
       <div className="m-card" style={{ display: 'grid', gap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-          <span className="m-chip" style={{ fontWeight: 700, color: ahead ? 'var(--accent)' : '#F59E0B', background: ahead ? 'color-mix(in srgb, var(--accent) 14%, transparent)' : 'color-mix(in srgb, #F59E0B 14%, transparent)' }}>
+          <span className="m-chip" style={{ fontWeight: 600, color: ahead ? 'var(--accent)' : '#F59E0B', background: ahead ? 'color-mix(in srgb, var(--accent) 14%, transparent)' : 'color-mix(in srgb, #F59E0B 14%, transparent)' }}>
             {ahead ? t('跑赢大盘 %@', fmtPct(data.excess_pct).replace('+', '')) : t('跑输大盘 %@', fmtPct(data.excess_pct).replace('-', ''))}
           </span>
           <span className="m-label">{t('自 %@ 起', since)}</span>
@@ -57,11 +57,11 @@ export default function PaperPerformance({ deviceId, market, refreshKey, gameId 
           {[[t('我的收益'), fmtPct(data.return_pct), changeColor(data.return_pct, market)], [benchName, fmtPct(data.bench_return_pct), null], [t('最大回撤'), fmtPct(data.max_drawdown_pct), null]].map(([k, v, c], i) => (
             <div key={k} style={{ flex: 1, textAlign: 'center', borderLeft: i ? '1px solid var(--stroke)' : 'none', minWidth: 0 }}>
               <div className="m-label">{k}</div>
-              <div className="m-num" style={{ fontWeight: 700, marginTop: 3, fontSize: 15, color: c || undefined }}>{v}</div>
+              <div className="m-num" style={{ fontWeight: 600, marginTop: 3, fontSize: 15, color: c || undefined }}>{v}</div>
             </div>
           ))}
         </div>
-        <div style={{ display: 'flex', gap: 14, fontSize: 11.5 }} className="m-muted">
+        <div style={{ display: 'flex', gap: 14, fontSize: 13 }} className="m-muted">
           <span><b style={{ color: 'var(--accent)' }}>━</b> {t('我的组合')}</span>
           <span><b style={{ color: 'var(--text-3)' }}>┅</b> {benchName}</span>
         </div>

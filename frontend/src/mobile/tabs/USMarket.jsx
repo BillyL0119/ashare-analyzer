@@ -44,7 +44,7 @@ function SessionHeader({ session, asOf }) {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <b style={{ fontSize: 17 }}>{t('美股大盘')}</b>
-        <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 999, fontSize: 12, fontWeight: 650, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
+        <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 650, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
           <span style={{ width: 6, height: 6, borderRadius: 3, background: color }} />{label}
         </span>
       </div>
@@ -67,7 +67,7 @@ function IndexCard({ i, hero }) {
         </div>
         <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
           <Pill value={i.pct} market="us" width={84} />
-          {i.change != null && <span className="m-num" style={{ color: c, fontWeight: 650, fontSize: 12.5 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}
+          {i.change != null && <span className="m-num" style={{ color: c, fontWeight: 650, fontSize: 13 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}
         </div>
       </div>
     )
@@ -75,8 +75,8 @@ function IndexCard({ i, hero }) {
   return (
     <div className="m-tile" style={{ background: bg, padding: '9px 10px', minWidth: 0 }}>
       <div className="m-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</div>
-      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 14.5, fontWeight: 800 }}>{num(i.price)}</div>
-      <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(i.pct)}</div>
+      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 14.5, fontWeight: 600 }}>{num(i.price)}</div>
+      <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 13 }}>{pct(i.pct)}</div>
     </div>
   )
 }
@@ -119,7 +119,7 @@ function Movers({ d }) {
         <div className="m-card flush">
           {rows.map((q, i) => (
             <button className="m-row" key={q.symbol} onClick={() => nav(`/stock/us/${q.symbol}`)}>
-              <span className="m-num" style={{ width: 18, fontWeight: 800, fontSize: 13, color: i < 3 ? 'var(--accent)' : 'var(--text-3)' }}>{i + 1}</span>
+              <span className="m-num" style={{ width: 18, fontWeight: 600, fontSize: 13, color: i < 3 ? 'var(--accent)' : 'var(--text-3)' }}>{i + 1}</span>
               <div className="m-grow"><div className="m-name">{q.symbol}</div><div className="m-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{q.name}</div></div>
               <span className="m-num" style={{ fontWeight: 650 }}>{num(q.price)}</span>
               <Pill value={q.pct} market="us" width={78} />
@@ -143,8 +143,8 @@ function Sectors({ d }) {
           return (
             <button key={s.symbol} onClick={() => nav(`/stock/us/${s.symbol}`)} style={{ padding: '12px 10px', borderRadius: 14, textAlign: 'left', border: '1px solid var(--stroke)',
               background: `color-mix(in srgb, ${c} ${a}%, var(--surface))` }}>
-              <div style={{ fontSize: 12, fontWeight: 650, lineHeight: 1.2, minHeight: 29 }}>{t(SECTOR_ZH[s.name] || s.name)}</div>
-              <div className="m-num" style={{ color: c, fontWeight: 800, fontSize: 15, marginTop: 6 }}>{pct(s.pct)}</div>
+              <div style={{ fontSize: 13, fontWeight: 650, lineHeight: 1.2, minHeight: 29 }}>{t(SECTOR_ZH[s.name] || s.name)}</div>
+              <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 15, marginTop: 6 }}>{pct(s.pct)}</div>
               <div className="m-label m-num" style={{ marginTop: 1 }}>{s.symbol}</div>
             </button>
           )
@@ -164,9 +164,9 @@ function Mega({ d }) {
           const c = changeColor(q.pct, 'us')
           return (
             <button key={q.symbol} className="m-tile" style={{ textAlign: 'left', background: `color-mix(in srgb, ${c} 14%, transparent)` }} onClick={() => nav(`/stock/us/${q.symbol}`)}>
-              <div style={{ fontWeight: 800, fontSize: 14 }}>{q.symbol}</div>
-              <div className="m-num" style={{ fontWeight: 700, fontSize: 14, margin: '4px 0 2px' }}>{num(q.price)}</div>
-              <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(q.pct)}</div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{q.symbol}</div>
+              <div className="m-num" style={{ fontWeight: 600, fontSize: 14, margin: '4px 0 2px' }}>{num(q.price)}</div>
+              <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 13 }}>{pct(q.pct)}</div>
             </button>
           )
         })}
@@ -195,10 +195,10 @@ function Earnings() {
         <div className="m-card flush">
           {days.map((d) => (
             <div key={d}>
-              <div className="m-label" style={{ padding: '10px 16px 4px', fontWeight: 700 }}>{label(d)}</div>
+              <div className="m-label" style={{ padding: '10px 16px 4px', fontWeight: 600 }}>{label(d)}</div>
               {groups[d].slice(0, 5).map((e) => (
                 <button key={e.symbol} className="m-row" style={{ padding: '9px 16px' }} onClick={() => nav(`/stock/us/${e.symbol}`)}>
-                  <div className="m-grow"><div style={{ fontWeight: 700, fontSize: 14.5 }}>{e.symbol}</div>
+                  <div className="m-grow"><div style={{ fontWeight: 600, fontSize: 14.5 }}>{e.symbol}</div>
                     <div className="m-label" style={{ marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.name}</div></div>
                   {e.eps_estimate != null && <span className="m-num m-label">{t('预期 EPS %@', e.eps_estimate)}</span>}
                   {e.timing && <span className="m-chip">{e.timing === 'BMO' ? t('盘前') : t('盘后')}</span>}

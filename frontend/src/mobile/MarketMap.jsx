@@ -63,7 +63,7 @@ export default function MarketMap({ market }) {
         <div ref={box} style={{ position: 'relative', height: width ? height : 340, borderRadius: 10, overflow: 'hidden', background: '#1b1f2a' }}>
           {error && !data ? <ErrorBox onRetry={reload} /> : !tiles.length ? <Skeleton h={height} r={10} /> : tiles.map((x) => x.kind === 'sector' ? (
             x.showHead && (
-              <div key={x.key} style={{ position: 'absolute', left: x.x + 3, top: x.y, width: x.w - 6, height: HEADER, fontSize: 9.5, lineHeight: `${HEADER}px`, color: '#d1d5db', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', pointerEvents: 'none' }}>
+              <div key={x.key} style={{ position: 'absolute', left: x.x + 3, top: x.y, width: x.w - 6, height: HEADER, fontSize: 13, lineHeight: `${HEADER}px`, color: '#d1d5db', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', pointerEvents: 'none' }}>
                 {x.name} {pct(x.chg)}
               </div>
             )
@@ -78,12 +78,12 @@ export default function MarketMap({ market }) {
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', lineHeight: 1.15,
               }}
             >
-              {x.w > 30 && x.h > 18 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 13 : 10, fontWeight: 700, maxWidth: '96%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'clip' }}>{tileName(x.s)}</span>}
+              {x.w > 30 && x.h > 18 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 13 : 10, fontWeight: 600, maxWidth: '96%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'clip' }}>{tileName(x.s)}</span>}
               {x.w > 40 && x.h > 34 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 11 : 9, opacity: 0.9 }}>{pct(x.s.change_pct)}</span>}
             </button>
           ))}
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 4px 2px', fontSize: 11 }} className="m-muted">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 4px 2px', fontSize: 13 }} className="m-muted">
           <span>{t('面积代表市值，颜色代表今日涨跌')}</span>
           {(ups || downs) ? <span>{t('%lld 涨 · %lld 跌', ups, downs)}</span> : null}
         </div>

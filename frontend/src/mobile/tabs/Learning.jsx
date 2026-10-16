@@ -53,15 +53,15 @@ function List() {
       <h1 className="m-title" style={{ marginBottom: 0 }}>{t('学习中心')}</h1>
       <div className="m-strip" style={{ gap: 8 }}>
         {EXAM_ORDER.map((k) => (
-          <button key={k} onClick={() => choose(k)} aria-pressed={exam === k} style={{ flex: 'none', padding: '8px 16px', borderRadius: 999, fontWeight: 650, fontSize: 14,
-            background: exam === k ? 'var(--accent)' : 'var(--surface-hi)', color: exam === k ? '#fff' : 'var(--text)' }}>{EXAM_LABEL[k].startsWith('股') ? t(EXAM_LABEL[k]) : EXAM_LABEL[k]}</button>
+          <button key={k} onClick={() => choose(k)} aria-pressed={exam === k} style={{ flex: 'none', padding: '8px 16px', borderRadius: 'var(--radius)', fontWeight: 650, fontSize: 14,
+            background: exam === k ? 'var(--accent)' : 'var(--surface-hi)', color: exam === k ? 'var(--accent-ink)' : 'var(--text)' }}>{EXAM_LABEL[k].startsWith('股') ? t(EXAM_LABEL[k]) : EXAM_LABEL[k]}</button>
         ))}
       </div>
       {!data ? (error ? <ErrorBox onRetry={reload} /> : <><Skeleton h={78} r={20} /><SkeletonRows rows={4} /></>) : !cur ? null : (
         <>
           <div className="m-card" style={{ display: 'grid', gap: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <b style={{ fontSize: 14 }}>{t('学习进度')}</b><span className="m-num m-muted" style={{ fontSize: 12, fontWeight: 650 }}>{t('%lld/%lld 已学完', done, all.length)}</span>
+              <b style={{ fontSize: 14 }}>{t('学习进度')}</b><span className="m-num m-muted" style={{ fontSize: 13, fontWeight: 650 }}>{t('%lld/%lld 已学完', done, all.length)}</span>
             </div>
             <div style={{ height: 8, borderRadius: 4, background: 'var(--surface-hi)', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: `${all.length ? (done / all.length) * 100 : 0}%`, minWidth: done ? 8 : 0, borderRadius: 4, background: 'var(--accent)', transition: 'width .4s' }} />
@@ -100,7 +100,7 @@ function Topic() {
       {!data ? (error ? <ErrorBox onRetry={reload} /> : <><Skeleton h={40} w="80%" /><Skeleton h={220} r={20} /></>) : (
         <>
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, margin: '0 2px 12px', letterSpacing: -.3, lineHeight: 1.2 }}>{loc(data, 'title', lang)}</h1>
+            <h1 style={{ fontSize: 28, fontWeight: 600, margin: '0 2px 12px', letterSpacing: -.3, lineHeight: 1.2 }}>{loc(data, 'title', lang)}</h1>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <span className="m-chip" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{examName}</span>
               <span className="m-chip">{t('%lld 个章节', data.sections.length)}</span><span className="m-chip">{data.estimated_time}</span>
@@ -111,7 +111,7 @@ function Topic() {
             return (
               <div className="m-card" key={i} style={{ display: 'grid', gap: 14 }}>
                 <button onClick={() => setOpen({ ...open, [i]: !isOpen })} style={{ display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left', width: '100%' }} aria-expanded={isOpen}>
-                  <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 13, color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{i + 1}</span>
+                  <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontWeight: 600, fontSize: 13, color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{i + 1}</span>
                   <b style={{ flex: 1, fontSize: 17 }}>{loc(s, 'heading', lang)}</b>
                   <span style={{ width: 16, color: 'var(--text-2)', transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform .2s' }}>{Icon.chevron}</span>
                 </button>
@@ -120,10 +120,10 @@ function Topic() {
                     <p style={{ margin: 0, lineHeight: 1.65, fontSize: 15.5, whiteSpace: 'pre-wrap' }}>{loc(s, 'body', lang)}</p>
                     {terms(s).length > 0 && (
                       <div><div className="m-label" style={{ marginBottom: 8, fontWeight: 650 }}>{t('关键术语')}</div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{terms(s).map((k) => <span key={k} className="m-chip" style={{ fontSize: 12.5, padding: '5px 10px', color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{k}</span>)}</div></div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{terms(s).map((k) => <span key={k} className="m-chip" style={{ fontSize: 13, padding: '5px 10px', color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{k}</span>)}</div></div>
                     )}
-                    {loc(s, 'real_world', lang) && <Callout icon="🌐" title={t('真实案例')} color="var(--accent)" text={loc(s, 'real_world', lang)} />}
-                    {loc(s, 'exam_tip', lang) && <Callout icon="💡" title={t('考试技巧')} color="#F28B3C" text={loc(s, 'exam_tip', lang)} />}
+                    {loc(s, 'real_world', lang) && <Callout title={t('真实案例')} color="var(--accent)" text={loc(s, 'real_world', lang)} />}
+                    {loc(s, 'exam_tip', lang) && <Callout title={t('考试技巧')} color="var(--accent-gold, #c9a768)" text={loc(s, 'exam_tip', lang)} />}
                   </>
                 )}
               </div>
@@ -150,10 +150,10 @@ function Topic() {
   )
 }
 
-function Callout({ icon, title, color, text }) {
+function Callout({ title, color, text }) {
   return (
-    <div style={{ padding: 12, borderRadius: 14, background: `color-mix(in srgb, ${color} 10%, transparent)` }}>
-      <div style={{ fontSize: 12, fontWeight: 800, color, marginBottom: 6 }}>{icon} {title}</div>
+    <div style={{ padding: 12, borderRadius: 'var(--tile)', background: `color-mix(in srgb, ${color} 10%, transparent)` }}>
+      <div style={{ fontSize: 13, fontWeight: 500, color, marginBottom: 6 }}>{title}</div>
       <div style={{ fontSize: 14.5, lineHeight: 1.55 }}>{text}</div>
     </div>
   )

@@ -37,22 +37,22 @@ export default function MacroEvents() {
               <button key={id} className="m-row" style={{ width: '100%', background: 'none', border: 0, borderTop: i ? '1px solid var(--stroke)' : 0, textAlign: 'left', display: 'block', color: 'inherit', padding: '12px 14px' }}
                 onClick={() => setOpen(open === id ? null : id)} aria-expanded={open === id}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 52, flexShrink: 0, fontSize: 11.5, lineHeight: 1.3 }} className="m-muted">
+                  <div style={{ width: 52, flexShrink: 0, fontSize: 13, lineHeight: 1.3 }} className="m-muted">
                     {when.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}<br />
                     {when.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                   </div>
                   <div className="m-grow" style={{ minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {eventName(e.name, lang)}{e.period && <span className="m-muted" style={{ fontSize: 11, fontWeight: 500, marginLeft: 6 }}>{t(e.period === 'mom' ? '环比' : '同比')}</span>}
+                      {eventName(e.name, lang)}{e.period && <span className="m-muted" style={{ fontSize: 13, fontWeight: 500, marginLeft: 6 }}>{t(e.period === 'mom' ? '环比' : '同比')}</span>}
                     </div>
-                    <div className="m-muted" style={{ fontSize: 11.5, marginTop: 2 }}>
+                    <div className="m-muted" style={{ fontSize: 13, marginTop: 2 }}>
                       {e.released ? <>{t('实际')} <b style={{ color: 'var(--text)' }}>{e.actual}</b> · </> : null}
                       {t('预期')} {e.consensus || '—'} · {t('前值')} {e.previous || '—'}
                     </div>
                   </div>
-                  <span className="m-muted" style={{ fontSize: 12 }}>{open === id ? '▴' : '▾'}</span>
+                  <span className="m-muted" style={{ fontSize: 13 }}>{open === id ? '▴' : '▾'}</span>
                 </div>
-                {open === id && e.explain && <p style={{ margin: '10px 0 0', fontSize: 12.5, lineHeight: 1.6 }} className="m-muted">{e.explain}</p>}
+                {open === id && e.explain && <p style={{ margin: '10px 0 0', fontSize: 13, lineHeight: 1.6 }} className="m-muted">{e.explain}</p>}
               </button>
             )
           })}

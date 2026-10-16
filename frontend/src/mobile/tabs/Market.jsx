@@ -62,7 +62,7 @@ function SearchBox() {
         {Icon.search}
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('搜索股票或代码')} enterKeyHint="search"
           autoCapitalize="characters" autoCorrect="off" spellCheck={false} />
-        {q && <button onClick={() => setQ('')} aria-label={t('清除')} className="m-muted">✕</button>}
+        {q && <button onClick={() => setQ('')} aria-label={t('清除')} className="m-muted" style={{ width: 24, height: 24, display: 'grid', placeItems: 'center' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>}
       </label>
       {q.trim() && (
         <div className="m-card flush" style={{ marginBottom: 22 }}>
@@ -81,7 +81,7 @@ function SearchBox() {
         <div style={{ margin: '-6px 0 20px', display: 'flex', gap: 8, alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none' }}>
           <span className="m-label" style={{ flex: 'none' }}>{t('最近搜索')}</span>
           {recent.list.map((r) => <button key={r.market + r.code} className="m-chip" style={{ flex: 'none' }} onClick={() => open(nav, r.market, r.code)}>{r.name}</button>)}
-          <button className="m-link" style={{ flex: 'none', fontSize: 12 }} onClick={recent.clear}>{t('清除')}</button>
+          <button className="m-link" style={{ flex: 'none', fontSize: 13 }} onClick={recent.clear}>{t('清除')}</button>
         </div>
       )}
     </>
@@ -108,7 +108,7 @@ function IndexTile({ name, q, hero }) {
         </div>
         <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
           <Pill value={p} market="cn" width={84} />
-          {q && <span className="m-num" style={{ color: c, fontWeight: 650, fontSize: 12.5 }}>{q.change > 0 ? '+' : ''}{num(q.change)}</span>}
+          {q && <span className="m-num" style={{ color: c, fontWeight: 650, fontSize: 13 }}>{q.change > 0 ? '+' : ''}{num(q.change)}</span>}
         </div>
       </div>
     )
@@ -116,8 +116,8 @@ function IndexTile({ name, q, hero }) {
   return (
     <div className="m-tile" style={{ background: bg, padding: '10px 12px', minWidth: 0 }}>
       <div className="m-label">{name}</div>
-      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 15, fontWeight: 800 }}>{q ? num(q.value) : '--'}</div>
-      <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(p)}</div>
+      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 15, fontWeight: 600 }}>{q ? num(q.value) : '--'}</div>
+      <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 13 }}>{pct(p)}</div>
     </div>
   )
 }
@@ -152,7 +152,7 @@ function Overview() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <b style={{ fontSize: 17 }}>{t('A股大盘')}</b>
-              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 999, fontSize: 12, fontWeight: 650, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
+              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 650, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
                 <span style={{ width: 6, height: 6, borderRadius: 3, background: color }} />{label}
               </span>
             </div>
@@ -172,7 +172,7 @@ function Overview() {
         <div style={{ display: 'flex', gap: 2, height: 6, borderRadius: 3, overflow: 'hidden', background: 'var(--surface-hi)' }}>
           {total > 0 && <><span style={{ flex: up, background: 'var(--cn-up)' }} /><span style={{ flex: flat, background: 'var(--text-3)', opacity: .5 }} /><span style={{ flex: down, background: 'var(--cn-down)' }} /></>}
         </div>
-        <div className="m-num" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 11.5, fontWeight: 600 }}>
+        <div className="m-num" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 13, fontWeight: 600 }}>
           <span style={{ color: 'var(--cn-up)' }}>{t('%lld 上涨', up.toLocaleString())}</span>
           <span className="m-muted">{t('%lld 平盘', flat)}</span>
           <span style={{ color: 'var(--cn-down)' }}>{t('%lld 下跌', down.toLocaleString())}</span>
@@ -213,7 +213,7 @@ function Watchlist() {
       <Section title={t('自选股')}>
         <div className="m-card" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
           <span className="m-iconbtn" style={{ width: 44, height: 44, color: 'var(--accent)' }}>{Icon.star}</span>
-          <div><b style={{ fontSize: 14 }}>{t('还没有自选股')}</b><div className="m-label" style={{ marginTop: 3, fontSize: 12 }}>{t('搜索股票，点详情页右上角的星标即可添加')}</div></div>
+          <div><b style={{ fontSize: 14 }}>{t('还没有自选股')}</b><div className="m-label" style={{ marginTop: 3, fontSize: 13 }}>{t('搜索股票，点详情页右上角的星标即可添加')}</div></div>
         </div>
       </Section>
     )
@@ -250,8 +250,8 @@ function Global() {
                 return (
                   <div key={i.symbol} className="m-tile" style={{ background: `color-mix(in srgb, ${c} 14%, transparent)` }}>
                     <div className="m-label">{lang === 'zh' ? i.name_zh : i.name}</div>
-                    <div className="m-num" style={{ fontWeight: 800, fontSize: 15, margin: '5px 0 3px' }}>{num(i.close)}</div>
-                    <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(i.change_pct)}</div>
+                    <div className="m-num" style={{ fontWeight: 600, fontSize: 15, margin: '5px 0 3px' }}>{num(i.close)}</div>
+                    <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 13 }}>{pct(i.change_pct)}</div>
                   </div>
                 )
               })}
@@ -306,7 +306,7 @@ function Hot() {
         <div className="m-card flush">
           {data.slice(0, 20).map((s, i) => (
             <button className="m-row" key={s.code} onClick={() => open(nav, market, s.code)}>
-              <span className="m-num" style={{ width: 20, fontWeight: 800, fontSize: 13, color: i < 3 ? 'var(--accent)' : 'var(--text-3)' }}>{i + 1}</span>
+              <span className="m-num" style={{ width: 20, fontWeight: 600, fontSize: 13, color: i < 3 ? 'var(--accent)' : 'var(--text-3)' }}>{i + 1}</span>
               <div className="m-grow"><div className="m-name">{s.name}</div><div className="m-sub">{s.code}</div></div>
               <Pill value={s.change_pct} market={market} />
             </button>

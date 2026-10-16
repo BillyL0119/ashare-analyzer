@@ -42,7 +42,7 @@ export function ErrorBox({ onRetry }) {
   return (
     <div className="m-card m-empty">
       <div style={{ marginBottom: 12 }}>{t('加载失败')}</div>
-      <button className="m-pill" style={{ background: 'var(--accent)', color: '#fff' }} onClick={onRetry}>{t('重试')}</button>
+      <button className="m-pill" style={{ background: 'var(--accent)', color: 'var(--accent-ink)' }} onClick={onRetry}>{t('重试')}</button>
     </div>
   )
 }
@@ -87,7 +87,7 @@ export function Gauge({ title, score = 0, label }) {
   const d = `M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`
   return (
     <div className="m-tile" style={{ textAlign: 'center', padding: '12px 8px' }} role="img" aria-label={`${title}: ${Math.round(score)}, ${label}`}>
-      <div className="m-label" style={{ fontSize: 12 }}>{title}</div>
+      <div className="m-label" style={{ fontSize: 13 }}>{title}</div>
       <svg viewBox="0 0 128 76" style={{ width: '100%', maxWidth: 150, display: 'block', margin: '4px auto 0' }}>
         <defs><linearGradient id={id} gradientUnits="userSpaceOnUse" x1={cx - R} x2={cx + R} y1="0" y2="0">
           {GAUGE_COLORS.map((c, i) => <stop key={c} offset={i / 4} stopColor={c} />)}
@@ -95,9 +95,9 @@ export function Gauge({ title, score = 0, label }) {
         <path d={d} fill="none" stroke="var(--surface)" strokeWidth="10" strokeLinecap="round" />
         <path d={d} fill="none" stroke={`url(#${id})`} strokeWidth="10" strokeLinecap="round"
           strokeDasharray={len} strokeDashoffset={len * (1 - shown / 100)} style={{ transition: 'stroke-dashoffset .9s ease-out' }} />
-        <text x={cx} y={cy - 4} textAnchor="middle" className="m-num" style={{ fontSize: 28, fontWeight: 800, fill: 'var(--text)' }}>{Math.round(score)}</text>
+        <text x={cx} y={cy - 4} textAnchor="middle" className="m-num" style={{ fontSize: 28, fontWeight: 600, fill: 'var(--text)' }}>{Math.round(score)}</text>
       </svg>
-      <div style={{ color: gaugeTint(score), fontWeight: 800, fontSize: 13 }}>{label}</div>
+      <div style={{ color: gaugeTint(score), fontWeight: 600, fontSize: 13 }}>{label}</div>
     </div>
   )
 }
