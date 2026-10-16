@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import Icon from './Icon'
 
-const ACCENT = '#a08672'
-const ACCENT2 = '#7c9cb4'
+const ACCENT = '#8ab4f8'
+const ACCENT2 = '#c58af9'
 
 function PctBadge({ val }) {
   if (val == null) return <span style={{ color: 'var(--text-muted)' }}>N/A</span>

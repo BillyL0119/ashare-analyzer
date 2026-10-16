@@ -7,7 +7,7 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 
-const COLORS = ['#a08672', '#7c9cb4', '#26a69a', '#ffa726']
+const COLORS = ['#8ab4f8', '#c58af9', '#26a69a', '#ffa726']
 
 export default function RadarPanel({ stocks }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -86,7 +86,7 @@ export default function RadarPanel({ stocks }) {
       },
       splitArea: {
         areaStyle: {
-          color: ['transparent', 'rgba(160,134,114,0.05)'],
+          color: ['transparent', 'rgba(138,180,248,0.05)'],
         },
       },
       axisLine: {

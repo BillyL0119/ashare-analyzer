@@ -28,7 +28,7 @@ function PctBadge({ val, market }) {
   )
 }
 
-export default function SearchBar({ fullWidth = false, autoFocus = false }) {
+export default function SearchBar({ fullWidth = false, autoFocus = false, hero = false }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [open, setOpen] = useState(false)
@@ -153,7 +153,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
 
   const dropdownStyle = {
     position: 'absolute',
-    top: 'calc(100% + 6px)',
+    top: 'calc(100% + 8px)',
     left: 0,
     right: 0,
     background: 'var(--bg-secondary)',
@@ -177,8 +177,12 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   })
 
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', width: fullWidth ? '100%' : 'clamp(150px, 22vw, 300px)', minWidth: 0, flexShrink: 0 }}>
+    <div ref={wrapperRef} style={{ position: 'relative', width: fullWidth || hero ? '100%' : 'clamp(150px, 22vw, 300px)', minWidth: 0, flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+        <svg width={hero ? 22 : 16} height={hero ? 22 : 16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"
+          style={{ position: 'absolute', left: hero ? 24 : 14, color: 'var(--text-muted)', pointerEvents: 'none' }}>
+          <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
+        </svg>
         <input
           type="text"
           value={query}
@@ -191,12 +195,13 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
           disabled={isFull}
           style={{
             width: '100%',
-            padding: '8px 14px',
-            background: 'var(--bg-secondary)',
-            border: `1px solid ${focused ? 'var(--accent)' : 'var(--border-primary)'}`,
-            borderRadius: 'var(--radius)',
+            padding: hero ? '22px 28px 22px 60px' : '9px 16px 9px 38px',
+            background: hero ? 'var(--bg-secondary)' : (focused ? 'var(--bg-tertiary)' : 'var(--bg-secondary)'),
+            border: hero ? `1px solid ${focused ? 'var(--border-glow)' : 'transparent'}` : '1px solid transparent',
+            borderRadius: 999,
             color: 'var(--text-primary)',
-            fontSize: 13,
+            fontSize: hero ? 18 : 14,
+            boxShadow: hero && focused ? '0 4px 24px rgba(0,0,0,0.25)' : 'none',
             outline: 'none',
             cursor: isFull ? 'not-allowed' : 'text',
             transition: 'border-color 0.2s, box-shadow 0.2s',
@@ -205,13 +210,13 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
           }}
         />
         {searching && (
-          <span style={{ color: 'var(--text-muted)', fontSize: 13, position: 'absolute', right: 14 }}>{t.searching}</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 13, position: 'absolute', right: hero ? 28 : 14 }}>{t.searching}</span>
         )}
       </div>
 
       {/* Hot stocks panel */}
       {showHot && (
-        <div style={{ ...dropdownStyle, right: 'auto', width: fullWidth ? '100%' : 'min(520px, calc(100vw - 32px))' }}>
+        <div style={{ ...dropdownStyle, right: 'auto', width: fullWidth || hero ? '100%' : 'min(520px, calc(100vw - 32px))' }}>
           <div style={{ padding: '8px 12px 6px', fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.4px', borderBottom: '1px solid var(--border-primary)' }}>
             {t.sbHot}
           </div>

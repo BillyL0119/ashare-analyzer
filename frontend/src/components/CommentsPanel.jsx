@@ -7,7 +7,7 @@ import Icon from './Icon'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
-const ACCENT   = '#a08672'
+const ACCENT   = '#8ab4f8'
 const GREEN    = '#22c55e'
 const RED      = '#ef4444'
 const AMBER    = '#f59e0b'

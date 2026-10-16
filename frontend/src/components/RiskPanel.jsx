@@ -7,7 +7,7 @@ import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const COLORS = ['#a08672', '#b388ff', '#ffb74d', '#90a4ae']
+const COLORS = ['#8ab4f8', '#b388ff', '#ffb74d', '#90a4ae']
 
 // ── Small helpers ─────────────────────────────────────────────────────────────
 
@@ -37,7 +37,7 @@ function MetricRow({ label, value, suffix = '', decimals = 2, invert = false, hi
 
 function SectionTitle({ children }) {
   return (
-    <div style={{ color: '#a08672', fontSize: 13, fontWeight: 600, margin: '16px 0 8px', letterSpacing: 0.3 }}>
+    <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, margin: '16px 0 8px', letterSpacing: 0.3 }}>
       {children}
     </div>
   )
@@ -61,7 +61,7 @@ function VaRTable({ varCvar, t }) {
       <thead>
         <tr style={{ background: 'rgba(255,255,255,0.06)' }}>
           <th style={{ padding: '7px 10px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 500 }}>{t.metric}</th>
-          {cols.map(c => <th key={c.key} style={{ padding: '7px 10px', textAlign: 'right', color: '#a08672', fontWeight: 600 }}>{c.label}</th>)}
+          {cols.map(c => <th key={c.key} style={{ padding: '7px 10px', textAlign: 'right', color: '#8ab4f8', fontWeight: 600 }}>{c.label}</th>)}
         </tr>
       </thead>
       <tbody>

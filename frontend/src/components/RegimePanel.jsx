@@ -7,7 +7,7 @@ import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const STOCK_COLORS = ['#a08672', '#b388ff', '#ffb74d', '#90a4ae']
+const STOCK_COLORS = ['#8ab4f8', '#b388ff', '#ffb74d', '#90a4ae']
 
 const REGIME_COLORS = {
   bull:     '#ef5350',
@@ -166,8 +166,8 @@ function RegimePriceChart({ series, lang, t }) {
         type: 'line',
         data: closes,
         showSymbol: false,
-        lineStyle: { width: 1.8, color: '#a08672' },
-        itemStyle: { color: '#a08672' },
+        lineStyle: { width: 1.8, color: '#8ab4f8' },
+        itemStyle: { color: '#8ab4f8' },
         xAxisIndex: 0, yAxisIndex: 0,
       },
       {
@@ -303,19 +303,19 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
 
           {/* Price + regime chart */}
           <div>
-            <div style={{ color: '#a08672', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
+            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
             <RegimePriceChart series={data.series} lang={lang} t={t} />
           </div>
 
           {/* Transition history */}
           <div>
-            <div style={{ color: '#a08672', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
+            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
             <TransitionTable transitions={data.transitions} lang={lang} t={t} />
           </div>
 
           {/* Interpretation */}
           <div>
-            <div style={{ color: '#a08672', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
+            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
             <Interpretation text={data.interpretation[lang]} />
           </div>
         </div>
@@ -334,8 +334,8 @@ export default function RegimePanel({ stocks }) {
   const [win, setWin] = useState(20)
 
   const btnStyle = (active) => ({
-    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#a08672' : THEME.border}`,
-    background: active ? 'rgba(160,134,114,0.12)' : 'var(--bg-hover)', color: active ? '#a08672' : THEME.text, cursor: 'pointer',
+    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#8ab4f8' : THEME.border}`,
+    background: active ? 'rgba(138,180,248,0.12)' : 'var(--bg-hover)', color: active ? '#8ab4f8' : THEME.text, cursor: 'pointer',
   })
 
   return (

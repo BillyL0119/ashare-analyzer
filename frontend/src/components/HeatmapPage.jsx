@@ -18,7 +18,7 @@ const L = {
 const CSS = `
 .hm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); }
 .hm-chip { padding: 6px 12px; border-radius: var(--radius); font-size: 13px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
-.hm-chip.on { background: color-mix(in srgb, #a08672 14%, transparent); border-color: color-mix(in srgb, #a08672 55%, transparent); color: #a08672; font-weight: 600; }
+.hm-chip.on { background: color-mix(in srgb, #8ab4f8 14%, transparent); border-color: color-mix(in srgb, #8ab4f8 55%, transparent); color: #8ab4f8; font-weight: 600; }
 .hm-sec { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 13px; padding: 5px 0; color: var(--text-secondary); }
 .hm-sec span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hm-axis { position: relative; height: 6px; background: var(--bg-tertiary); border-radius: 3px; }
@@ -70,7 +70,7 @@ export default function HeatmapPage({ lang }) {
     const area = w * h * 0.85                      // minus sector headers and gaps
     return {
       tooltip: {
-        backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(160,134,114,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
+        backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(138,180,248,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
         formatter: (p) => {
           const d = p.data || {}
           if (d.sector) return `<b>${d.name}</b>${d.sym && d.sym !== d.name ? ` · ${d.sym}` : ''}<br/>${t.change}: <b>${pct(d.chg)}</b><br/>${t.price}: ${d.price ?? '—'}<br/>${t.cap}: ${money(d.value, market)}`

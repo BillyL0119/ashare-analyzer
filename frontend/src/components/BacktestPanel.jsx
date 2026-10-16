@@ -6,8 +6,8 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import useCompareStore from '../store/compareStore'
 
-const ACCENT = '#a08672'
-const ACCENT2 = '#7c9cb4'
+const ACCENT = '#8ab4f8'
+const ACCENT2 = '#c58af9'
 
 const STRATEGIES = [
   { key: 'ma',   zh: '双均线 (MA5/MA20)', en: 'MA Crossover (MA5/MA20)' },
@@ -64,7 +64,7 @@ function EquityChart({ data, isCN, us }) {
       lineStyle: { color: ACCENT, width: 2 },
       itemStyle: { color: ACCENT },
       showSymbol: false,
-      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(160,134,114,0.15)' }, { offset: 1, color: 'rgba(160,134,114,0.01)' }] } },
+      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(138,180,248,0.15)' }, { offset: 1, color: 'rgba(138,180,248,0.01)' }] } },
     },
   ]
 
@@ -85,7 +85,7 @@ function EquityChart({ data, isCN, us }) {
     tooltip: {
       trigger: 'axis',
       backgroundColor: 'rgba(5,10,22,0.95)',
-      borderColor: 'rgba(160,134,114,0.3)',
+      borderColor: 'rgba(138,180,248,0.3)',
       textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const date = params[0]?.axisValue || ''
@@ -105,7 +105,7 @@ function EquityChart({ data, isCN, us }) {
     xAxis: {
       type: 'category',
       data: dates,
-      axisLine: { lineStyle: { color: 'rgba(160,134,114,0.1)' } },
+      axisLine: { lineStyle: { color: 'rgba(138,180,248,0.1)' } },
       axisLabel: { color: THEME.text, fontSize: 10,
         formatter: (v) => v?.slice(0, 7) || v,
         interval: Math.floor(dates.length / 6),
@@ -115,7 +115,7 @@ function EquityChart({ data, isCN, us }) {
       type: 'value',
       scale: true,  // fit the curves instead of starting at $0
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: 'rgba(160,134,114,0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(138,180,248,0.06)' } },
       axisLabel: { color: THEME.text, fontSize: 10,
         formatter: (v) => money(v, us),
       },
@@ -162,7 +162,7 @@ function TradeTable({ trades, isCN }) {
             {paged.map((t, i) => {
               const color = t.win ? '#22c55e' : '#ef4444'
               return (
-                <tr key={i} style={{ borderTop: '1px solid rgba(160,134,114,0.06)' }}>
+                <tr key={i} style={{ borderTop: '1px solid rgba(138,180,248,0.06)' }}>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.buy_date}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-primary)', fontFamily: 'var(--sans)' }}>{t.buy_price}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.sell_date}</td>
@@ -288,7 +288,7 @@ export default function BacktestPanel({ stocks }) {
         <div style={{
           fontSize: 13, color: 'var(--text-muted)', marginBottom: 10,
           padding: '6px 10px', background: 'var(--bg-primary)',
-          borderRadius: 6, border: '1px solid rgba(160,134,114,0.07)',
+          borderRadius: 6, border: '1px solid rgba(138,180,248,0.07)',
         }}>
           {isCN ? STRATEGY_DESC[strategy].zh : STRATEGY_DESC[strategy].en}
         </div>
@@ -313,7 +313,7 @@ export default function BacktestPanel({ stocks }) {
           style={{
             padding: '8px 28px', borderRadius: 'var(--radius)', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 13, fontWeight: 600,
-            background: loading ? 'rgba(160,134,114,0.15)' : `${ACCENT}`,
+            background: loading ? 'rgba(138,180,248,0.15)' : `${ACCENT}`,
             color: loading ? 'var(--text-muted)' : 'var(--accent-ink)',
             
             transition: 'all 0.2s',

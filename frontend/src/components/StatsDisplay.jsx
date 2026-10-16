@@ -4,7 +4,7 @@ import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 import Icon from './Icon'
 
-const BDR   = 'rgba(160,134,114,0.12)'
+const BDR   = 'rgba(138,180,248,0.12)'
 const MUTED = 'var(--text-muted)'
 
 const FEATURE_LABELS = {
@@ -77,7 +77,7 @@ function BigStatCard({ label, value, sub, gradient, exportMode }) {
     }}>
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-        background: gradient || '#a08672',
+        background: gradient || '#8ab4f8',
         borderRadius: '16px 16px 0 0',
       }} />
       <div style={{ fontSize: 13, color: MUTED, marginBottom: 6, letterSpacing: '0.3px' }}>
@@ -140,7 +140,7 @@ export default function StatsDisplay({ lang, onClose }) {
       type: 'value',
       minInterval: 1,
       axisLabel: { color: MUTED, fontSize: 10 },
-      splitLine: { lineStyle: { color: 'rgba(160,134,114,0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(138,180,248,0.06)' } },
     },
     series: [{
       type: 'line',
@@ -148,14 +148,14 @@ export default function StatsDisplay({ lang, onClose }) {
       smooth: true,
       symbol: 'circle',
       symbolSize: 4,
-      lineStyle: { width: 2.5, color: '#a08672' },
-      itemStyle: { color: '#a08672' },
+      lineStyle: { width: 2.5, color: '#8ab4f8' },
+      itemStyle: { color: '#8ab4f8' },
       areaStyle: {
         color: {
           type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
           colorStops: [
-            { offset: 0, color: 'rgba(160,134,114,0.30)' },
-            { offset: 1, color: 'rgba(124,156,180,0.04)' },
+            { offset: 0, color: 'rgba(138,180,248,0.30)' },
+            { offset: 1, color: 'rgba(197,138,249,0.04)' },
           ],
         },
       },
@@ -163,7 +163,7 @@ export default function StatsDisplay({ lang, onClose }) {
   } : null
 
   // ── Pie chart: feature usage ─────────────────────────────────────────────
-  const PIE_COLORS = ['#a08672','#7c9cb4','#34d399','#fbbf24','#f87171','#a08672','#7c9cb4','#fb923c','#e879f9','#a08672']
+  const PIE_COLORS = ['#8ab4f8','#c58af9','#34d399','#fbbf24','#f87171','#8ab4f8','#c58af9','#fb923c','#e879f9','#8ab4f8']
 
   const pieOption = stats ? (() => {
     const fu = stats.feature_usage || {}
@@ -215,7 +215,7 @@ export default function StatsDisplay({ lang, onClose }) {
         ref={containerRef}
         style={{
           background: 'var(--bg-primary)',
-          border: '1px solid rgba(160,134,114,0.18)',
+          border: '1px solid rgba(138,180,248,0.18)',
           borderRadius: 'var(--radius)',
           width: '100%',
           maxWidth: 920,
@@ -230,7 +230,7 @@ export default function StatsDisplay({ lang, onClose }) {
           <div>
             <div style={{
               fontSize: 22, fontWeight: 600,
-              color: '#a08672',
+              color: '#8ab4f8',
               marginBottom: 4,
             }}>
               {t.stTitle}
@@ -287,14 +287,14 @@ export default function StatsDisplay({ lang, onClose }) {
                 label={t.stTotalVisits}
                 value={stats.total_visits.toLocaleString()}
                 sub={t.stThisWeek(stats.this_week_visits)}
-                gradient="#a08672"
+                gradient="#8ab4f8"
                 exportMode={exportMode}
               />
               <BigStatCard
                 label={t.stUniqueUsers}
                 value={stats.unique_devices.toLocaleString()}
                 sub={t.stUniqueToday(stats.today_unique)}
-                gradient="#7c9cb4"
+                gradient="#c58af9"
                 exportMode={exportMode}
               />
               <BigStatCard
@@ -353,7 +353,7 @@ export default function StatsDisplay({ lang, onClose }) {
                               {s.name}
                             </div>
                             <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                              <div style={{ width: `${(s.searches / maxS) * 100}%`, height: '100%', background: '#a08672', borderRadius: 2 }} />
+                              <div style={{ width: `${(s.searches / maxS) * 100}%`, height: '100%', background: '#8ab4f8', borderRadius: 2 }} />
                             </div>
                           </div>
                           <span style={{ fontSize: 13, color: MUTED, fontFamily: 'var(--sans)', minWidth: 28, textAlign: 'right' }}>
@@ -381,14 +381,14 @@ export default function StatsDisplay({ lang, onClose }) {
             <div style={{
               marginTop: 8,
               padding: '14px 20px',
-              background: 'rgba(160,134,114,0.05)',
+              background: 'rgba(138,180,248,0.05)',
               border: `1px solid ${BDR}`,
               borderRadius: 'var(--radius)',
               textAlign: 'center',
             }}>
               <div style={{
                 fontSize: 14, fontWeight: 600,
-                color: '#a08672',
+                color: '#8ab4f8',
               }}>
                 {t.stTagline(countryEst)}
               </div>

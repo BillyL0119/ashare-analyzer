@@ -1,11 +1,10 @@
-/* App-style phone UI, scoped under .m-app. Same palette and typeface as the desktop site:
-   soft black, one bronze accent, surfaces separated by tone. */
+/* App-style phone UI, scoped under .m-app. Same Gemini palette and typeface as the desktop site. */
 .m-app {
-  --bg: #111111; --surface: #1A1A1A; --surface-hi: #242424;
-  --stroke: rgba(255,255,255,.06); --text: #F2F2F2; --text-2: #B0B0B0; --text-3: #8A8A8A;
-  --accent: #A08672; --accent-2: #A08672; --accent-ink: #111111; --shadow: none;
+  --bg: #131314; --surface: #1E1F20; --surface-hi: #282A2C;
+  --stroke: rgba(255,255,255,.06); --text: #E3E3E3; --text-2: #C4C7C5; --text-3: #8E918F;
+  --accent: #A8C7FA; --accent-2: #C58AF9; --accent-ink: #062E6F; --shadow: none;
   --cn-up: #EF5350; --cn-down: #26A69A;
-  --radius: 12px; --tile: 8px;
+  --radius: 20px; --tile: 12px;
   --tabbar-h: 58px;
   position: fixed; inset: 0; display: flex; flex-direction: column;
   background: var(--bg); color: var(--text);
@@ -14,9 +13,9 @@
   overscroll-behavior: none;
 }
 :root[data-theme="light"] .m-app {
-  --bg: #F3F3F2; --surface: #FFFFFF; --surface-hi: #EBEBE9;
-  --stroke: rgba(0,0,0,.06); --text: #141414; --text-2: #454545; --text-3: #6B6B6B;
-  --accent: #7A604C; --accent-2: #7A604C; --accent-ink: #FFFFFF; --shadow: none;
+  --bg: #FFFFFF; --surface: #F0F4F9; --surface-hi: #E9EEF6;
+  --stroke: rgba(0,0,0,.06); --text: #1F1F1F; --text-2: #444746; --text-3: #5F6368;
+  --accent: #0B57D0; --accent-2: #8430CE; --accent-ink: #FFFFFF; --shadow: none;
 }
 .m-app *, .m-app *::before, .m-app *::after { box-sizing: border-box; }
 :where(.m-app) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -56,12 +55,12 @@
 
 /* pills / segments / chips */
 .m-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 68px; padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: 500; }
-.m-seg { display: inline-flex; padding: 3px; border-radius: 8px; background: var(--surface-hi); }
-.m-seg button { padding: 7px 13px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--text-2); }
-.m-seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); }
+.m-seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--surface-hi); }
+.m-seg button { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--text-2); }
+.m-seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .m-seg.full { display: flex; } .m-seg.full button { flex: 1; text-align: center; }
 .m-chip { display: inline-flex; padding: 3px 8px; border-radius: 4px; background: var(--surface-hi); color: var(--text-2); font-size: 13px; font-weight: 500; }
-.m-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; border-radius: 8px; color: var(--accent-ink); font-weight: 500; font-size: 16px;
+.m-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; border-radius: 999px; color: var(--accent-ink); font-weight: 500; font-size: 16px;
   background: var(--accent); }
 .m-btn[disabled] { opacity: .4; }
 .m-btn.ghost { background: var(--surface-hi); color: var(--text); }
@@ -82,7 +81,7 @@
 .m-nav-title small { display: block; font-size: 13px; font-weight: 400; }
 
 /* search */
-.m-search { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 8px; background: var(--surface); margin-bottom: 18px; }
+.m-search { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-radius: 999px; background: var(--surface); margin-bottom: 18px; }
 .m-search input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; font-size: 16px; }
 .m-search svg { width: 18px; height: 18px; color: var(--text-3); flex: none; }
 
@@ -115,3 +114,8 @@
    the scroll area. The scroller's top padding is safe-area + 6px, so pull the bar up by that much. */
 .m-app .m-nav { max-width: none; top: calc(-1 * (env(safe-area-inset-top, 0px) + 6px));
   margin-top: calc(-1 * (env(safe-area-inset-top, 0px) + 6px)); padding-top: calc(env(safe-area-inset-top, 0px) + 14px); }
+
+/* Gemini greeting on the market tab */
+.m-app .m-hello { display: grid; gap: 2px; font-size: 32px; line-height: 1.15; letter-spacing: -.02em; margin: 10px 2px 22px; }
+.m-hello-grad { background: linear-gradient(74deg, #4285f4 0%, #9b72cb 45%, #d96570 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.m-hello-ask { color: var(--text-3); font-size: 26px; }

@@ -5,8 +5,8 @@ import { getStockScore } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const ACCENT = '#a08672'
-const ACCENT2 = '#7c9cb4'
+const ACCENT = '#8ab4f8'
+const ACCENT2 = '#c58af9'
 
 const GRADE_COLOR = {
   'A+': '#00ff88', A: '#22c55e', 'B+': '#84cc16',
@@ -30,7 +30,7 @@ const DIM_LABEL = {
 }
 
 function ScoreRing({ score, grade }) {
-  const color = GRADE_COLOR[grade] || '#a08672'
+  const color = GRADE_COLOR[grade] || '#8ab4f8'
   const r = 54, cx = 70, cy = 70
   const circ = 2 * Math.PI * r
   const dash = (score / 100) * circ
@@ -77,7 +77,7 @@ function RadarChart({ dimensions }) {
       splitNumber: 4,
       axisName: { color: THEME.text, fontSize: 12, fontWeight: 600 },
       splitLine: { lineStyle: { color: THEME.border } },
-      splitArea: { show: true, areaStyle: { color: ['transparent', 'rgba(160,134,114,0.05)'] } },
+      splitArea: { show: true, areaStyle: { color: ['transparent', 'rgba(138,180,248,0.05)'] } },
       axisLine: { lineStyle: { color: THEME.border } },
     },
     series: [{
@@ -89,7 +89,7 @@ function RadarChart({ dimensions }) {
         symbolSize: 5,
         lineStyle: { color: ACCENT, width: 2 },
         itemStyle: { color: ACCENT },
-        areaStyle: { color: 'rgba(160,134,114,0.25)' },
+        areaStyle: { color: 'rgba(138,180,248,0.25)' },
       }],
     }],
   }

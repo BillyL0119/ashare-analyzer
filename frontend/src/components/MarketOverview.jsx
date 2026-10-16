@@ -1,4 +1,6 @@
 import useCompareStore from '../store/compareStore'
+import Icon from './Icon'
+import { Sparkle } from './HomeHero'
 
 // The end of the home page: what the site does, one capability per band, then a short letter
 // from the two students who made it. Everything here links somewhere real.
@@ -63,6 +65,9 @@ const FEATURES = [
     } },
 ]
 
+const ICONS = ['chart', 'news', 'trophy', 'book', 'spark', 'case']
+// Google's four colours, one per card in turn
+const ICON_TINT = ['var(--accent)', 'var(--red-bright)', 'var(--accent-gold)', 'var(--green-bright)']
 const GO = { zh: '打开', en: 'Open', ja: '開く', ko: '열기', fr: 'Ouvrir' }
 const HEAD = {
   zh: '一个网站，六件事',
@@ -140,60 +145,59 @@ export default function MarketOverview({ lang, onTabChange, onOpenKnowledge }) {
 
   return (
     <div className="bfs-home-end">
-      <section className="bfs-bands" data-reveal aria-label={HEAD[lang] || HEAD.en}>
-        <h2 className="bfs-bands-head">{HEAD[lang] || HEAD.en}</h2>
-        {FEATURES.map((f) => (
-          <a key={f.title.en} className="bfs-band" href={`/${f.action.appTab === 'analysis' ? '' : f.action.appTab === 'ai_teacher' ? 'ai-teacher' : f.action.appTab}`}
-            onClick={(e) => { e.preventDefault(); open(f.action) }}>
-            <span className="bfs-band-title">{f.title[lang] || f.title.en}</span>
-            <span className="bfs-band-desc">{f.desc[lang] || f.desc.en}</span>
-            <span className="bfs-band-go">{GO[lang] || GO.en}<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-          </a>
-        ))}
+      <section className="g-feat" data-reveal aria-label={HEAD[lang] || HEAD.en}>
+        <h2 className="g-feat-head">{HEAD[lang] || HEAD.en}</h2>
+        <div className="g-feat-grid">
+          {FEATURES.map((f, i) => (
+            <a key={f.title.en} className="g-feat-card" href={`/${f.action.appTab === 'analysis' ? '' : f.action.appTab === 'ai_teacher' ? 'ai-teacher' : f.action.appTab}`}
+              onClick={(e) => { e.preventDefault(); open(f.action) }}>
+              <span className="g-feat-icon" style={{ color: ICON_TINT[i % ICON_TINT.length] }}><Icon name={ICONS[i]} size={22} /></span>
+              <span className="g-feat-title">{f.title[lang] || f.title.en}</span>
+              <span className="g-feat-desc">{f.desc[lang] || f.desc.en}</span>
+              <span className="g-feat-go">{GO[lang] || GO.en}<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+            </a>
+          ))}
+        </div>
       </section>
 
-      <section className="bfs-letter" data-reveal aria-label="Billy & Frank">
-        <img src="/logo-dark.png" alt="" className="bfs-letter-mark" width="44" height="44" />
+      <section className="g-letter" data-reveal aria-label="Billy & Frank">
+        <div className="g-letter-head">
+          <Sparkle size={28} id="g-letter-spark" />
+          <span>Billy &amp; Frank</span>
+        </div>
         {letter.p.map((x, i) => (
           <p key={i}>{x}{i === letter.p.length - 1 && <> <a href="mailto:billyl090119@gmail.com">billyl090119@gmail.com</a></>}</p>
         ))}
-        <div className="bfs-letter-sign">Billy &amp; Frank</div>
-        <div className="bfs-letter-role">{letter.role}</div>
+        <div className="g-letter-role">{letter.role}</div>
       </section>
 
       <style>{`
-        .bfs-home-end { padding-top: 120px; }
-        .bfs-bands-head { font-size: clamp(30px, 3.2vw, 52px) !important; letter-spacing: -0.035em !important; margin: 0 0 32px !important; }
-        .bfs-band { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) auto; align-items: baseline; gap: 24px;
-          padding: 28px 24px; margin: 0 -24px; border-radius: var(--radius); color: var(--text-primary); text-decoration: none;
-          transition: background-color .25s ease; }
-        .bfs-band + .bfs-band { margin-top: 4px; }
-        .bfs-band:hover, .bfs-band:focus-visible { background: var(--bg-secondary); }
-        .bfs-band-title { font-size: clamp(24px, 2.35vw, 34px); letter-spacing: -0.03em; line-height: 1.1; }
-        .bfs-band-desc { font-size: var(--step-body); line-height: 1.5; color: var(--text-secondary); }
-        .bfs-band:hover .bfs-band-desc { color: var(--text-primary); }
-        .bfs-band-go { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: var(--text-secondary); }
-        .bfs-band-go svg { transition: transform .25s cubic-bezier(.22,1,.36,1); }
-        .bfs-band:hover .bfs-band-go { color: var(--accent); }
-        .bfs-band:hover .bfs-band-go svg { transform: translateX(4px); }
+        .bfs-home-end { padding-top: 96px; }
+        html .g-feat-head { font-size: clamp(28px, 2.8vw, 40px) !important; letter-spacing: -0.02em !important; margin: 0 0 24px !important; }
+        .g-feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+        .g-feat-card { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 20px; text-decoration: none;
+          background: var(--bg-secondary); color: var(--text-primary); transition: background-color .2s ease, transform .25s cubic-bezier(.22,1,.36,1); }
+        .g-feat-card:hover, .g-feat-card:focus-visible { background: var(--bg-hover); transform: translateY(-2px); }
+        .g-feat-icon { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-primary); margin-bottom: 8px; }
+        .g-feat-title { font-size: 22px; letter-spacing: -0.01em; }
+        .g-feat-desc { font-size: 15px; line-height: 1.55; color: var(--text-secondary); flex: 1; }
+        .g-feat-go { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--accent); margin-top: 6px; }
+        .g-feat-go svg { transition: transform .25s cubic-bezier(.22,1,.36,1); }
+        .g-feat-card:hover .g-feat-go svg { transform: translateX(4px); }
 
-        .bfs-letter { max-width: 560px; margin: 0 auto; padding: 160px 0 40px; }
-        .bfs-letter-mark { display: block; width: 44px; height: 44px; border-radius: 50%; background: #f2f2f2; padding: 8px; object-fit: contain; margin-bottom: 28px; }
-        .bfs-letter p { font-size: 17px; line-height: 1.6; margin: 0 0 1.1em; color: var(--text-primary); }
-        .bfs-letter a { color: var(--text-primary); text-underline-offset: 4px; text-decoration-color: var(--accent); }
-        .bfs-letter-sign { font-size: 24px; font-style: italic; letter-spacing: -0.02em; margin-top: 28px; }
-        .bfs-letter-role { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+        .g-letter { max-width: 720px; margin: 96px auto 0; padding: 36px 40px 32px; border-radius: 24px; background: var(--bg-secondary); }
+        .g-letter-head { display: flex; align-items: center; gap: 12px; font-size: 18px; margin-bottom: 20px; }
+        .g-letter p { font-size: 16px; line-height: 1.65; margin: 0 0 1em; color: var(--text-primary); }
+        .g-letter a { color: var(--accent); text-underline-offset: 3px; }
+        .g-letter-role { font-size: 14px; color: var(--text-muted); margin-top: 8px; }
 
-        @media (max-width: 800px) {
-          .bfs-home-end { padding-top: 72px; }
-          .bfs-band { grid-template-columns: 1fr auto; padding: 20px 16px; margin: 0 -16px; gap: 6px 16px; }
-          .bfs-band-title { grid-column: 1; }
-          .bfs-band-desc { grid-column: 1; grid-row: 2; font-size: 15px; }
-          .bfs-band-go { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-size: 0; }
-          .bfs-letter { padding: 96px 0 24px; }
-          .bfs-letter p { font-size: 16px; }
+        @media (max-width: 1000px) { .g-feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) {
+          .bfs-home-end { padding-top: 64px; }
+          .g-feat-grid { grid-template-columns: 1fr; }
+          .g-letter { margin-top: 64px; padding: 24px 20px; }
         }
-        @media (prefers-reduced-motion: reduce) { .bfs-band-go svg { transition: none; } }
+        @media (prefers-reduced-motion: reduce) { .g-feat-card, .g-feat-go svg { transition: none; } .g-feat-card:hover { transform: none; } }
       `}</style>
     </div>
   )

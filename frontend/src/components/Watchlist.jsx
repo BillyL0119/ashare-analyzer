@@ -6,7 +6,7 @@ import { T } from '../i18n/translations'
 import { riseColor, fallColor } from '../utils/chartHelpers'
 import { CUR, MARKET_TINT, guessMarket } from '../utils/markets'
 
-const ACCENT_BLUE = '#a08672'
+const ACCENT_BLUE = '#8ab4f8'
 
 function WatchlistItem({ stock, t, onRemove, onClick }) {
   const [quote, setQuote] = useState(null)

@@ -1,90 +1,95 @@
-/* Best Friend Stock design tokens.
-   One ground, one ink, one accent (bronze). Surfaces step in tone; no gradients, glows or glass.
+/* Best Friend Stock design tokens, in Gemini's palette.
+   Dark: #131314 ground, #1E1F20 surfaces, light-blue primary with dark-blue ink on it.
+   The blue-violet-rose Gemini gradient is kept for the few signature moments (greeting, sparkle).
    Market colours (up/down) are data, not decoration. Every component reads these variables. */
 
 /* ── Dark theme (default) ────────────────────────────────── */
 :root,
 :root[data-theme="dark"] {
-  --bg-primary:      #111111;
-  --bg-secondary:    #1a1a1a;
-  --bg-tertiary:     #222222;
-  --bg-hover:        #2a2a2a;
-  --border-primary:  #262626;
-  --border-glow:     #383838;
-  --text-primary:    #f2f2f2;
-  --text-secondary:  #b5b5b5;
-  --text-muted:      #8f8f8f;
-  --card-bg:         #1a1a1a;
-  --nav-bg:          #111111;
-  --nav-bg-dim:      #111111;
-  --map-ocean:       #161616;
-  --map-sphere:      #141414;
-  --map-border:      #333333;
-  --map-graticule:   #1b1b1b;
-  --map-land:        #262626;
-  --skeleton-base:   #1d1d1d;
-  --skeleton-shine:  #262626;
-  --chart-bg:        #1a1a1a;
-  --chart-text:      #a3a3a3;
-  --chart-border:    #262626;
-  --chart-tooltip:   rgba(17,17,17,0.96);
+  --bg-primary:      #131314;
+  --bg-secondary:    #1e1f20;
+  --bg-tertiary:     #282a2c;
+  --bg-hover:        #333537;
+  --border-primary:  #2d2f31;
+  --border-glow:     #444746;
+  --text-primary:    #e3e3e3;
+  --text-secondary:  #c4c7c5;
+  --text-muted:      #8e918f;
+  --card-bg:         #1e1f20;
+  --nav-bg:          #131314;
+  --nav-bg-dim:      #131314;
+  --map-ocean:       #1a1b1c;
+  --map-sphere:      #181819;
+  --map-border:      #3a3c3e;
+  --map-graticule:   #202122;
+  --map-land:        #2c2e30;
+  --skeleton-base:   #1e1f20;
+  --skeleton-shine:  #282a2c;
+  --chart-bg:        #1e1f20;
+  --chart-text:      #a8abad;
+  --chart-border:    #2d2f31;
+  --chart-tooltip:   rgba(30,31,32,0.97);
 
-  /* the one accent, and the ink that sits on it */
-  --accent:        #a08672;
-  --accent-ink:    #111111;
+  /* primary (Gemini light blue) and the ink that sits on it */
+  --accent:        #a8c7fa;
+  --accent-ink:    #062e6f;
   --accent-soft:   color-mix(in srgb, var(--accent) 16%, transparent);
+  --gemini:        linear-gradient(74deg, #4285f4 0%, #9b72cb 45%, #d96570 100%);
+  --gemini-blue:   #4285f4;
+  --gemini-violet: #9b72cb;
+  --gemini-rose:   #d96570;
 
-  /* data series colours (charts, categories); never decoration */
+  /* data series colours (charts, categories) */
   --accent-blue:   var(--accent);
-  --accent-purple: #7c9cb4;
-  --accent-cyan:   #84a79c;
-  --accent-gold:   #c9a768;
-  --green-bright:  #2fb37a;
-  --red-bright:    #f0605a;
+  --accent-purple: #c58af9;
+  --accent-cyan:   #78d9ec;
+  --accent-gold:   #fdd663;
+  --green-bright:  #81c995;
+  --red-bright:    #f28b82;
 
-  --radius: 6px;
+  --radius: 16px;
 }
 
 /* ── Light theme ─────────────────────────────────────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #f3f3f2;
-  --bg-secondary:    #ffffff;
-  --bg-tertiary:     #ebebe9;
-  --bg-hover:        #e2e2e0;
-  --border-primary:  #e4e4e2;
-  --border-glow:     #cfcfcc;
-  --text-primary:    #141414;
-  --text-secondary:  #454545;
-  --text-muted:      #6b6b6b;
-  --card-bg:         #ffffff;
-  --nav-bg:          #f3f3f2;
-  --nav-bg-dim:      #f3f3f2;
-  --map-ocean:       #e9e9e7;
-  --map-sphere:      #efefed;
-  --map-border:      #c9c9c6;
-  --map-graticule:   #e2e2e0;
-  --map-land:        #d6d6d3;
-  --skeleton-base:   #ebebe9;
-  --skeleton-shine:  #f3f3f2;
+  --bg-primary:      #ffffff;
+  --bg-secondary:    #f0f4f9;
+  --bg-tertiary:     #e9eef6;
+  --bg-hover:        #dde3ea;
+  --border-primary:  #e3e3e3;
+  --border-glow:     #c4c7c5;
+  --text-primary:    #1f1f1f;
+  --text-secondary:  #444746;
+  --text-muted:      #5f6368;
+  --card-bg:         #f0f4f9;
+  --nav-bg:          #ffffff;
+  --nav-bg-dim:      #ffffff;
+  --map-ocean:       #f0f4f9;
+  --map-sphere:      #f5f8fc;
+  --map-border:      #c4c7c5;
+  --map-graticule:   #e9eef6;
+  --map-land:        #dde3ea;
+  --skeleton-base:   #e9eef6;
+  --skeleton-shine:  #f0f4f9;
   --chart-bg:        #ffffff;
-  --chart-text:      #454545;
-  --chart-border:    #ebebe9;
+  --chart-text:      #444746;
+  --chart-border:    #e9eef6;
   --chart-tooltip:   rgba(255,255,255,0.98);
 
-  --accent:        #7a604c;
+  --accent:        #0b57d0;
   --accent-ink:    #ffffff;
 
-  --accent-purple: #4f6f87;
-  --accent-cyan:   #4c7468;
-  --accent-gold:   #94702a;
-  --green-bright:  #0f7a4a;
-  --red-bright:    #c4321f;
+  --accent-purple: #8430ce;
+  --accent-cyan:   #007b83;
+  --accent-gold:   #b06000;
+  --green-bright:  #188038;
+  --red-bright:    #d93025;
 }
 
 :root {
   /* One family: Hanken Grotesk for Latin, the system's own sans for Chinese, Japanese and Korean.
      Figures are tabular wherever numbers line up. */
-  --sans: 'Hanken Grotesk', 'PingFang SC', 'Hiragino Sans', 'Noto Sans SC', 'Microsoft YaHei', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --sans: 'Google Sans', 'Google Sans Text', 'PingFang SC', 'Hiragino Sans', 'Noto Sans SC', 'Microsoft YaHei', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
   --heading: var(--sans);
   --serif: var(--sans);
   --mono: var(--sans);
@@ -95,7 +100,7 @@
   --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
 
   font: 16px/1.5 var(--sans);
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
   color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -215,24 +220,24 @@ button { font-family: inherit; }
 /* The primary action: flat accent fill, square-ish corners */
 .bfs-primary {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 44px; padding: 0 20px; border: none; border-radius: var(--radius);
+  min-height: 44px; padding: 0 24px; border: none; border-radius: 999px;
   background: var(--accent); color: var(--accent-ink);
   font: 500 15px/1 var(--sans); cursor: pointer; text-decoration: none;
   transition: background-color .2s ease, transform .15s ease;
 }
-.bfs-primary:hover { background: color-mix(in srgb, var(--accent) 86%, var(--text-primary)); }
+.bfs-primary:hover { background: color-mix(in srgb, var(--accent) 88%, var(--text-primary)); box-shadow: 0 1px 3px rgba(0,0,0,.3); }
 .bfs-quiet {
   display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px;
   background: none; border: none; color: var(--text-primary); font: 500 15px/1 var(--sans);
-  cursor: pointer; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--border-glow);
-  transition: text-decoration-color .2s ease;
+  cursor: pointer; text-decoration: none; border-radius: 999px; padding: 0 18px; color: var(--accent);
+  transition: background-color .2s ease;
 }
-.bfs-quiet:hover { text-decoration-color: var(--accent); }
+.bfs-quiet:hover { background: var(--accent-soft); }
 
 /* ── Bar controls ────────────────────────────────────────── */
 .bfs-ghost { transition: background-color .15s ease, color .15s ease; }
 .bfs-ghost:hover { background: var(--bg-hover) !important; color: var(--text-primary) !important; }
-.bfs-seg:hover { color: var(--text-primary) !important; }
+.bfs-seg[aria-pressed="false"]:hover { color: var(--text-primary) !important; background: var(--bg-hover) !important; }
 .bfs-menu-item { transition: background-color .12s ease; }
 .bfs-menu-item:hover { background: var(--bg-hover) !important; }
 @media (max-width: 1100px) { .bfs-wordmark-text { display: none; } }
@@ -274,7 +279,7 @@ button { font-family: inherit; }
   position: absolute;
   bottom: 0;
   left: 12px; right: 12px;
-  height: 2px;
+  height: 3px; border-radius: 3px 3px 0 0;
   background: transparent;
   transform: scaleX(0.4);
   transition: background-color 0.2s ease, transform 0.25s ease;

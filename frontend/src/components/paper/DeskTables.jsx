@@ -58,7 +58,7 @@ export function Positions({ s, view, market, onAction }) {
                 <td style={num}>-{p.shares}</td><td style={num}>{money(p.avg_price, market)}</td><td style={num}>{money(p.current_price, market)}</td>
                 <td style={num}>{money(-p.market_value, market, 0)}</td>
                 <td style={{ ...num, color: plColor(p.profit_loss, market) }}>{signed(p.profit_loss, market, 0)}<div style={{ fontSize: 13 }}>{pct(p.profit_loss_pct)}</div></td>
-                <td style={{ ...td, textAlign: 'right' }}><button style={small('#7c9cb4')} onClick={() => onAction({ side: 'cover', symbol: sym, shares: p.shares })}>{s.coverAction}</button></td>
+                <td style={{ ...td, textAlign: 'right' }}><button style={small('#c58af9')} onClick={() => onAction({ side: 'cover', symbol: sym, shares: p.shares })}>{s.coverAction}</button></td>
               </tr>
             ))}
           </Table>

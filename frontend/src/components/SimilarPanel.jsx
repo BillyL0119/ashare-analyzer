@@ -61,9 +61,9 @@ function IndustryPill({ label, type }) {
         whiteSpace: 'nowrap',
         background: isSame
           ? 'color-mix(in srgb, var(--accent) 12%, transparent)'
-          : 'rgba(124,156,180,0.12)',
-        color: isSame ? 'var(--accent)' : '#7c9cb4',
-        border: `1px solid ${isSame ? 'color-mix(in srgb, var(--accent) 25%, transparent)' : 'rgba(124,156,180,0.25)'}`,
+          : 'rgba(197,138,249,0.12)',
+        color: isSame ? 'var(--accent)' : '#c58af9',
+        border: `1px solid ${isSame ? 'color-mix(in srgb, var(--accent) 25%, transparent)' : 'rgba(197,138,249,0.25)'}`,
         letterSpacing: '0.02em',
       }}
     >

@@ -41,7 +41,7 @@ function KLine({ all, count, market, indicator }) {
       const b = boll(closes)
       series.push(line('UP', cut(b.up), css('--accent'), { type: 'dashed' }), line('MID', cut(b.mid), css('--text-3')), line('DN', cut(b.lo), css('--accent'), { type: 'dashed' }))
     } else {
-      series.push(line('MA5', cut(ma(closes, 5)), '#E0A100'), line('MA10', cut(ma(closes, 10)), '#7c9cb4'), line('MA20', cut(ma(closes, 20)), '#F28B3C'))
+      series.push(line('MA5', cut(ma(closes, 5)), '#E0A100'), line('MA10', cut(ma(closes, 10)), '#c58af9'), line('MA20', cut(ma(closes, 20)), '#F28B3C'))
     }
     series.push({ type: 'bar', data: candles.map((c) => ({ value: c.volume, itemStyle: { color: c.close >= c.open ? upC : downC, opacity: .75 } })), xAxisIndex: 1, yAxisIndex: 1, barMaxWidth: 9 })
     if (indicator === 'macd') {
@@ -51,7 +51,7 @@ function KLine({ all, count, market, indicator }) {
       series[series.length - 2].xAxisIndex = 2; series[series.length - 2].yAxisIndex = 2
       series[series.length - 1].xAxisIndex = 2; series[series.length - 1].yAxisIndex = 2
     } else if (indicator === 'rsi') {
-      const r = line('RSI', cut(rsi(closes)), '#7c9cb4'); r.xAxisIndex = 2; r.yAxisIndex = 2
+      const r = line('RSI', cut(rsi(closes)), '#c58af9'); r.xAxisIndex = 2; r.yAxisIndex = 2
       r.markLine = { silent: true, symbol: 'none', label: { show: false }, lineStyle: { type: 'dashed', color: txt, opacity: .5 }, data: [{ yAxis: 70 }, { yAxis: 30 }] }
       series.push(r)
     }

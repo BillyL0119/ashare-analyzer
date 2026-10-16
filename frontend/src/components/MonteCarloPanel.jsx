@@ -7,7 +7,7 @@ import { T } from '../i18n/translations'
 import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const COLORS = ['#a08672', '#b388ff', '#ffb74d', '#90a4ae']
+const COLORS = ['#8ab4f8', '#b388ff', '#ffb74d', '#90a4ae']
 
 // Share of the drift taken from the stock's own history; the rest is a long-run equity
 // return. Same rule as the backend (/simulation) used by the app.
@@ -258,11 +258,11 @@ export default function MonteCarloPanel({ stocks }) {
   const btnStyle = (active) => ({
     padding: '4px 10px',
     borderRadius: 4,
-    border: `1px solid ${active ? '#a08672' : THEME.border}`,
+    border: `1px solid ${active ? '#8ab4f8' : THEME.border}`,
     cursor: 'pointer',
     fontSize: 12,
-    background: active ? 'rgba(160,134,114,0.12)' : 'var(--bg-hover)',
-    color: active ? '#a08672' : THEME.text,
+    background: active ? 'rgba(138,180,248,0.12)' : 'var(--bg-hover)',
+    color: active ? '#8ab4f8' : THEME.text,
     transition: 'all 0.15s',
   })
 
@@ -301,7 +301,7 @@ export default function MonteCarloPanel({ stocks }) {
             cursor: running ? 'wait' : 'pointer',
             fontSize: 13,
             fontWeight: 600,
-            background: running ? 'var(--bg-hover)' : '#a08672',
+            background: running ? 'var(--bg-hover)' : '#8ab4f8',
             color: running ? 'var(--text-muted)' : 'var(--accent-ink)',
             transition: 'all 0.15s',
           }}

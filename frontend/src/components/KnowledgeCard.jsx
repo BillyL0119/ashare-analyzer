@@ -5,8 +5,8 @@ import Icon from './Icon'
 
 const LS_KEY = 'bfs_knowledge_date'
 const CATEGORY_COLOR = {
-  '宏观经济': '#7c9cb4',
-  '微观经济': '#7c9cb4',
+  '宏观经济': '#c58af9',
+  '微观经济': '#c58af9',
   '估值':    'var(--accent)',
   '技术分析': '#26a69a',
   '基本面':  '#ffa726',

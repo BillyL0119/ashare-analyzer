@@ -197,9 +197,9 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 background: 'transparent',
-                color: viewMode === key ? '#a08672' : 'var(--text-secondary)',
+                color: viewMode === key ? '#8ab4f8' : 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
-                boxShadow: viewMode === key ? 'inset 0 -2px 0 #a08672' : 'none',
+                boxShadow: viewMode === key ? 'inset 0 -2px 0 #8ab4f8' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
@@ -232,7 +232,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               fontSize: 13, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#a08672' }}
+            onFocus={(e) => { e.target.style.borderColor = '#8ab4f8' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
           <span>{t.to}</span>
@@ -246,7 +246,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               fontSize: 13, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#a08672' }}
+            onFocus={(e) => { e.target.style.borderColor = '#8ab4f8' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
         </div>

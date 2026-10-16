@@ -7,7 +7,7 @@ import { getStockFactor } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const COLORS = ['#a08672', '#f78166', '#3fb950', '#d2a8ff']
+const COLORS = ['#8ab4f8', '#f78166', '#3fb950', '#d2a8ff']
 
 function bold(text) {
   if (!text) return []
@@ -71,10 +71,10 @@ function RollingBetaChart({ rolling, t }) {
         type: 'line',
         data: betas,
         smooth: true,
-        lineStyle: { color: '#a08672', width: 2 },
+        lineStyle: { color: '#8ab4f8', width: 2 },
         areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{ offset: 0, color: 'rgba(160,134,114,0.3)' },
-                       { offset: 1, color: 'rgba(160,134,114,0)' }] } },
+          colorStops: [{ offset: 0, color: 'rgba(138,180,248,0.3)' },
+                       { offset: 1, color: 'rgba(138,180,248,0)' }] } },
         symbol: 'none',
       },
       {
@@ -106,11 +106,11 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
       </div>
       <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden',
         background: THEME.border }}>
-        <div style={{ width: `${pctSys}%`, background: '#a08672', transition: 'width 0.5s' }} />
+        <div style={{ width: `${pctSys}%`, background: '#8ab4f8', transition: 'width 0.5s' }} />
         <div style={{ width: `${pctIdio}%`, background: '#3fb950', transition: 'width 0.5s' }} />
       </div>
       <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
-        <span style={{ color: '#a08672', fontSize: 13 }}>■ Systematic</span>
+        <span style={{ color: '#8ab4f8', fontSize: 13 }}>■ Systematic</span>
         <span style={{ color: '#3fb950', fontSize: 13 }}>■ Idiosyncratic</span>
       </div>
     </div>
@@ -140,10 +140,10 @@ function CorrelationBars({ correlations, t }) {
             <div key={`b-${sym}`} style={{ position: 'relative', height: 8, borderRadius: 4,
               background: THEME.border, overflow: 'hidden' }}>
               <div style={{ position: 'absolute', left: 0, top: 0, height: '100%',
-                width: `${pct}%`, background: isPos ? '#a08672' : '#f85149',
+                width: `${pct}%`, background: isPos ? '#8ab4f8' : '#f85149',
                 borderRadius: 4, transition: 'width 0.5s' }} />
             </div>,
-            <span key={`c-${sym}`} style={{ color: isPos ? '#a08672' : '#f85149',
+            <span key={`c-${sym}`} style={{ color: isPos ? '#8ab4f8' : '#f85149',
               fontSize: 13, fontWeight: 600 }}>
               {v.correlation.toFixed(3)}
             </span>,
@@ -196,7 +196,7 @@ function StockFactor({ stock, color, t, lang, params }) {
     </div>
   )
 
-  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#a08672'
+  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#8ab4f8'
   const alphaColor = data.alpha_annual_pct >= 0 ? '#ef5350' : '#26a69a'
 
   return (

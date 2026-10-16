@@ -101,7 +101,7 @@ export default function StockCard({ stock }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-          <span style={{ color: '#a08672', fontFamily: 'var(--sans)', fontSize: 14, fontWeight: 600 }}>
+          <span style={{ color: '#8ab4f8', fontFamily: 'var(--sans)', fontSize: 14, fontWeight: 600 }}>
             {code}
           </span>
           {displayName && <span style={{ color: THEME.text, fontSize: 14 }}>{displayName}</span>}
@@ -126,16 +126,16 @@ export default function StockCard({ stock }) {
             style={{
               padding: '3px 9px',
               borderRadius: 4,
-              border: '1px solid rgba(160,134,114,0.35)',
+              border: '1px solid rgba(138,180,248,0.35)',
               cursor: 'pointer',
               fontSize: 13,
-              background: 'rgba(160,134,114,0.08)',
-              color: '#a08672',
+              background: 'rgba(138,180,248,0.08)',
+              color: '#8ab4f8',
               transition: 'all 0.15s',
               whiteSpace: 'nowrap',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(160,134,114,0.2)'; e.currentTarget.style.borderColor = '#a08672' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(160,134,114,0.08)'; e.currentTarget.style.borderColor = 'rgba(160,134,114,0.35)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.2)'; e.currentTarget.style.borderColor = '#8ab4f8' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.08)'; e.currentTarget.style.borderColor = 'rgba(138,180,248,0.35)' }}
           >
             <Icon name="book" size={15} style={{ marginRight: 6 }} />{t.klineBtn}
           </button>
@@ -150,7 +150,7 @@ export default function StockCard({ stock }) {
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 13,
-                background: period === key ? '#a08672' : 'var(--bg-hover)',
+                background: period === key ? '#8ab4f8' : 'var(--bg-hover)',
                 color: period === key ? 'var(--accent-ink)' : THEME.text,
                 transition: 'background 0.15s',
               }}
@@ -172,7 +172,7 @@ export default function StockCard({ stock }) {
                   border: 'none',
                   cursor: 'pointer',
                   fontSize: 13,
-                  background: adjust === key ? '#a08672' : 'var(--bg-hover)',
+                  background: adjust === key ? '#8ab4f8' : 'var(--bg-hover)',
                   color: adjust === key ? 'var(--accent-ink)' : THEME.text,
                   transition: 'background 0.15s',
                 }}
@@ -190,14 +190,14 @@ export default function StockCard({ stock }) {
           style={{
             padding: '3px 8px',
             borderRadius: 4,
-            border: '1px solid rgba(160,134,114,0.18)',
+            border: '1px solid rgba(138,180,248,0.18)',
             cursor: 'pointer',
             fontSize: 13,
             background: 'transparent',
             color: 'var(--text-muted)',
             transition: 'all 0.15s',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(160,134,114,0.12)'; e.currentTarget.style.color = '#a08672' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.12)'; e.currentTarget.style.color = '#8ab4f8' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
           {t.exportBtn}
@@ -249,13 +249,13 @@ export default function StockCard({ stock }) {
           title={t.copyLink}
           style={{
             padding: '3px 8px', borderRadius: 4,
-            border: '1px solid rgba(160,134,114,0.25)',
+            border: '1px solid rgba(138,180,248,0.25)',
             cursor: 'pointer', fontSize: 13,
             background: copied ? 'rgba(52,211,153,0.12)' : 'transparent',
             color: copied ? '#34d399' : 'var(--text-muted)',
             transition: 'all 0.15s', whiteSpace: 'nowrap',
           }}
-          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(160,134,114,0.1)'; e.currentTarget.style.color = '#a08672' } }}
+          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(138,180,248,0.1)'; e.currentTarget.style.color = '#8ab4f8' } }}
           onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' } }}
         >
           {copied ? '' : ''}
@@ -326,7 +326,7 @@ export default function StockCard({ stock }) {
                 style={{
                   padding: '5px 18px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
                   fontSize: 13, fontWeight: 600,
-                  background: '#a08672',
+                  background: '#8ab4f8',
                   color: 'var(--accent-ink)',
                 }}
               >

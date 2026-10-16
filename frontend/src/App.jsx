@@ -321,7 +321,7 @@ export default function App() {
     animation: 'bfsPageFadeIn 0.15s ease both',
   }
   const iconBtn = (active) => ({
-    width: 36, height: 36, borderRadius: 'var(--radius)', border: 'none', flexShrink: 0, cursor: 'pointer',
+    width: 40, height: 40, borderRadius: 999, border: 'none', flexShrink: 0, cursor: 'pointer',
     background: active ? 'var(--bg-hover)' : 'transparent',
     color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -405,7 +405,7 @@ export default function App() {
         </a>
 
         {/* Market switch: a segmented control from the product */}
-        <div role="group" aria-label="Market" style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: 3, gap: 2, flexShrink: 0 }}>
+        <div role="group" aria-label="Market" style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: 999, padding: 4, gap: 2, flexShrink: 0 }}>
           {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN },
             { key: 'hk', label: t.marketHK }, { key: 'jp', label: t.marketJP }].map(({ key, label }) => (
             <button
@@ -415,10 +415,10 @@ export default function App() {
               className="bfs-seg"
               style={{
                 padding: compactBar ? '5px 8px' : '6px 12px',
-                borderRadius: 4, border: 'none', cursor: 'pointer',
+                borderRadius: 999, border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: 500,
-                background: market === key ? 'var(--bg-secondary)' : 'transparent',
-                color: market === key ? 'var(--text-primary)' : 'var(--text-secondary)',
+                background: market === key ? 'var(--accent)' : 'transparent',
+                color: market === key ? 'var(--accent-ink)' : 'var(--text-secondary)',
               }}
             >
               {compactBar && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
@@ -509,7 +509,7 @@ export default function App() {
                         onClick={() => pickLang(code, () => setShowMobileMenu(false))}
                         aria-pressed={lang === code}
                         style={{
-                          padding: '6px 10px', borderRadius: 4, fontSize: 13, border: 'none', cursor: 'pointer',
+                          padding: '6px 12px', borderRadius: 999, fontSize: 13, border: 'none', cursor: 'pointer',
                           background: lang === code ? 'var(--accent)' : 'var(--bg-tertiary)',
                           color: lang === code ? 'var(--accent-ink)' : 'var(--text-primary)',
                         }}
@@ -664,6 +664,7 @@ export default function App() {
             <AITeacherPage lang={lang} />
           ) : (
             <>
+              <div style={selectedSymbols.length === 0 ? { maxWidth: 1120, margin: '0 auto' } : undefined}>
               {selectedSymbols.length === 0 && (
                 <HomeHero lang={lang} market={market} onOpenAuth={() => setShowAuth(true)} onTabChange={handleTabChange} />
               )}
@@ -679,6 +680,7 @@ export default function App() {
                 <ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary>
               )}
               <div><ComparePanel onTabChange={handleTabChange} onOpenKnowledge={() => setShowInsight(true)} /></div>
+              </div>
             </>
           )}
         </Suspense>

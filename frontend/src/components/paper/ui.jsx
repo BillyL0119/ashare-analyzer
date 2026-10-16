@@ -5,7 +5,7 @@ export const BDR = 'var(--border-primary)'
 export const MUTED = 'var(--text-secondary)'
 export const UP = '#10b981'
 export const DOWN = '#ef4444'
-export const ACCENT = '#a08672'
+export const ACCENT = '#8ab4f8'
 
 export const fmt = (n, d = 2) => (n == null || isNaN(n) ? '—' : Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }))
 export const money = (n, m, d = 2) => (n == null ? '—' : `${n < 0 ? '-' : ''}${CUR[m] || '$'}${fmt(Math.abs(n), d)}`)

@@ -13,8 +13,8 @@ const RED_LIGHT   = '#fca5a5'
 const RED_MID     = '#ef4444'
 const RED_DARK    = '#b91c1c'
 const NEUTRAL     = '#64748b'
-const ACCENT      = '#a08672'
-const ACCENT2     = '#7c9cb4'
+const ACCENT      = '#8ab4f8'
+const ACCENT2     = '#c58af9'
 
 // Map pct to color (red-neutral-green spectrum)
 function pctColor(pct, cn = false) {
@@ -327,7 +327,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setView(key)} style={{
                 ...pillBtn(view === key),
-                background: view === key ? 'rgba(160,134,114,0.15)' : 'var(--bg-tertiary)',
+                background: view === key ? 'rgba(138,180,248,0.15)' : 'var(--bg-tertiary)',
                 color: view === key ? ACCENT : 'var(--text-muted)',
                 border: `1px solid ${view === key ? ACCENT + '55' : 'var(--border-primary)'}`,
               }}>
@@ -345,7 +345,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                 <button key={key} onClick={() => setPeriod(key)} style={{
                   padding: '4px 12px', borderRadius: 'var(--radius)', border: 'none',
                   cursor: 'pointer', fontSize: 13, fontWeight: period === key ? 700 : 400,
-                  background: period === key ? 'rgba(124,156,180,0.15)' : 'var(--bg-tertiary)',
+                  background: period === key ? 'rgba(197,138,249,0.15)' : 'var(--bg-tertiary)',
                   color: period === key ? ACCENT2 : 'var(--text-muted)',
                   border: `1px solid ${period === key ? ACCENT2 + '55' : 'var(--border-primary)'}`,
                   transition: 'all 0.15s',
@@ -426,7 +426,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                       gap: 0,
                       padding: '7px 14px',
                       borderBottom: i < sectors.length - 1 ? '1px solid var(--border-primary)' : 'none',
-                      background: i % 2 === 0 ? 'transparent' : 'rgba(160,134,114,0.02)',
+                      background: i % 2 === 0 ? 'transparent' : 'rgba(138,180,248,0.02)',
                       alignItems: 'center',
                     }}
                   >

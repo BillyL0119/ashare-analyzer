@@ -1,12 +1,12 @@
 import { useState } from 'react'
 
-const ACCENT  = '#7c9cb4'
+const ACCENT  = '#c58af9'
 const MUTED   = 'var(--text-muted)'
 const BDR     = 'color-mix(in srgb, var(--accent) 10%, transparent)'
 const CARD    = 'var(--bg-tertiary)'
 const GREEN   = '#34d399'
 const RED     = '#ef4444'
-const BLUE    = '#a08672'
+const BLUE    = '#8ab4f8'
 const YELLOW  = '#f59e0b'
 
 // ─── Anatomy parts ────────────────────────────────────────────────────────────

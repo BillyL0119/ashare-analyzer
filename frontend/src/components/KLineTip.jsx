@@ -4,7 +4,7 @@ import { T } from '../i18n/translations'
 const MUTED  = 'var(--text-muted)'
 const GREEN  = '#34d399'
 const RED    = '#ef4444'
-const BLUE   = '#a08672'
+const BLUE   = '#8ab4f8'
 const YELLOW = '#f59e0b'
 const BDR    = 'color-mix(in srgb, var(--accent) 12%, transparent)'
 

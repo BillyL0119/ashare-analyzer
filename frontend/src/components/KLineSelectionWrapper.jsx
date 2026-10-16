@@ -252,20 +252,20 @@ export default function KLineSelectionWrapper({ candles, ma, groupId, market, co
             cursor: 'pointer', fontSize: 13, fontWeight: 600,
             background: selectMode
               ? 'rgba(239,83,80,0.18)'
-              : 'rgba(160,134,114,0.12)',
-            color: selectMode ? '#ef5350' : '#a08672',
+              : 'rgba(138,180,248,0.12)',
+            color: selectMode ? '#ef5350' : '#8ab4f8',
             transition: 'all 0.15s',
             backdropFilter: 'blur(4px)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = selectMode
               ? 'rgba(239,83,80,0.3)'
-              : 'rgba(160,134,114,0.25)'
+              : 'rgba(138,180,248,0.25)'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = selectMode
               ? 'rgba(239,83,80,0.18)'
-              : 'rgba(160,134,114,0.12)'
+              : 'rgba(138,180,248,0.12)'
           }}
           title={selectMode ? t.kswExitTitle : t.kswDragHint}
         >

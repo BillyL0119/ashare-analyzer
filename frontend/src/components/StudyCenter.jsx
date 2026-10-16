@@ -138,9 +138,9 @@ function KeyTermPill({ term }) {
   return (
     <span style={{
       fontSize: 13, padding: '3px 9px', borderRadius: 'var(--radius)',
-      background: 'rgba(124,156,180,0.15)',
-      color: '#7c9cb4',
-      border: '1px solid rgba(124,156,180,0.2)',
+      background: 'rgba(197,138,249,0.15)',
+      color: '#c58af9',
+      border: '1px solid rgba(197,138,249,0.2)',
       whiteSpace: 'nowrap',
     }}>
       {term}
@@ -149,7 +149,7 @@ function KeyTermPill({ term }) {
 }
 
 // ── Economic Diagrams (AP Macro) ───────────────────────────────────────────────
-const DA = 'rgba(160,134,114,0.45)'   // axis
+const DA = 'rgba(138,180,248,0.45)'   // axis
 const DL = 'rgba(154,160,166,0.8)'    // axis label
 const DT = 'var(--text-primary)'   // text on diagram
 
@@ -209,7 +209,7 @@ function PPCDiagram() {
       <circle cx="260" cy="108" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="252" y="100" textAnchor="end" fill={DT} fontSize="10.5">A: Efficient</text>
       {/* B: Inefficient — inside PPC; (155/290)²+(70/180)²=0.44<1, ok */}
-      <circle cx="210" cy="165" r="5.5" fill="#a08672" stroke="#0f1117" strokeWidth="2"/>
+      <circle cx="210" cy="165" r="5.5" fill="#8ab4f8" stroke="#0f1117" strokeWidth="2"/>
       <text x="220" y="160" fill={DT} fontSize="10.5">B: Inefficient</text>
       {/* C: outside PPC, inside PPC'; (250/290)²+(135/180)²=1.31>1, (250/362.5)²+(135/225)²=0.84<1, ok */}
       <circle cx="305" cy="100" r="5.5" fill="#f87171" stroke="#0f1117" strokeWidth="2"/>
@@ -228,9 +228,9 @@ function ASModelDiagram() {
       caption="SRAS slopes up: sticky wages in short run. LRAS is vertical at Yf (potential output). A leftward SRAS shift (e.g. oil shock) causes stagflation: ↑P and ↓Y simultaneously."
     >
       <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
-      <line x1="268" y1="235" x2="268" y2="18" stroke="#7c9cb4" strokeWidth="2.2" strokeDasharray="6,4"/>
-      <text x="271" y="14" fill="#7c9cb4" fontSize="10.5" fontWeight="700">LRAS</text>
-      <text x="262" y="254" fill="#7c9cb4" fontSize="10">Yf</text>
+      <line x1="268" y1="235" x2="268" y2="18" stroke="#c58af9" strokeWidth="2.2" strokeDasharray="6,4"/>
+      <text x="271" y="14" fill="#c58af9" fontSize="10.5" fontWeight="700">LRAS</text>
+      <text x="262" y="254" fill="#c58af9" fontSize="10">Yf</text>
       <line x1="75" y1="55" x2="390" y2="228" stroke="#f59e0b" strokeWidth="1.8" opacity="0.72"/>
       <text x="73" y="51" fill="#f59e0b" fontSize="10.5" fontWeight="700">AD</text>
       <line x1="68" y1="228" x2="385" y2="52" stroke="#34d399" strokeWidth="2.2"/>
@@ -257,17 +257,17 @@ function ADASDiagram() {
       caption="Y₁ < Yf → recessionary gap. Self-correction: excess unemployment → wages fall → SRAS shifts right → economy returns to Yf at lower P. Active policy: fiscal/monetary stimulus shifts AD₁→AD₂."
     >
       <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
-      <line x1="285" y1="235" x2="285" y2="18" stroke="#7c9cb4" strokeWidth="2.2" strokeDasharray="7,4"/>
-      <text x="288" y="14" fill="#7c9cb4" fontSize="10.5" fontWeight="700">LRAS</text>
-      <text x="279" y="250" fill="#7c9cb4" fontSize="10">Yf</text>
+      <line x1="285" y1="235" x2="285" y2="18" stroke="#c58af9" strokeWidth="2.2" strokeDasharray="7,4"/>
+      <text x="288" y="14" fill="#c58af9" fontSize="10.5" fontWeight="700">LRAS</text>
+      <text x="279" y="250" fill="#c58af9" fontSize="10">Yf</text>
       <line x1="68" y1="228" x2="390" y2="50" stroke="#34d399" strokeWidth="2"/>
       <text x="393" y="47" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS</text>
-      <line x1="68" y1="52" x2="375" y2="228" stroke="#a08672" strokeWidth="2"/>
-      <text x="65" y="48" fill="#a08672" fontSize="10.5" fontWeight="700">AD₁</text>
-      <line x1="130" y1="52" x2="418" y2="215" stroke="#a08672" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="422" y="219" fill="#a08672" fontSize="10" opacity="0.62">AD₂</text>
-      <path d="M 224,141 L 257,124" stroke="#a08672" strokeWidth="1.3" fill="none" opacity="0.58"/>
-      <polygon points="251,118 259,124 251,130" fill="#a08672" opacity="0.58"/>
+      <line x1="68" y1="52" x2="375" y2="228" stroke="#8ab4f8" strokeWidth="2"/>
+      <text x="65" y="48" fill="#8ab4f8" fontSize="10.5" fontWeight="700">AD₁</text>
+      <line x1="130" y1="52" x2="418" y2="215" stroke="#8ab4f8" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="422" y="219" fill="#8ab4f8" fontSize="10" opacity="0.62">AD₂</text>
+      <path d="M 224,141 L 257,124" stroke="#8ab4f8" strokeWidth="1.3" fill="none" opacity="0.58"/>
+      <polygon points="251,118 259,124 251,130" fill="#8ab4f8" opacity="0.58"/>
       <circle cx="224" cy="141" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="232" y="136" fill={DT} fontSize="10">E₁</text>
       <line x1="224" y1="235" x2="224" y2="240" stroke={DA} strokeWidth="1.5"/>
@@ -293,8 +293,8 @@ function MoneyMarketDiagram() {
       <text x="219" y="254" fill="var(--text-secondary)" fontSize="10">M*</text>
       <line x1="290" y1="235" x2="290" y2="22" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.48"/>
       <text x="293" y="18" fill="#34d399" fontSize="10" opacity="0.52">Ms₂</text>
-      <line x1="72" y1="52" x2="398" y2="228" stroke="#a08672" strokeWidth="2.2"/>
-      <text x="70" y="48" fill="#a08672" fontSize="11" fontWeight="700">Md</text>
+      <line x1="72" y1="52" x2="398" y2="228" stroke="#8ab4f8" strokeWidth="2.2"/>
+      <text x="70" y="48" fill="#8ab4f8" fontSize="11" fontWeight="700">Md</text>
       <circle cx="225" cy="135" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="135" x2="225" y2="135" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="139" fill="var(--text-secondary)" fontSize="10">i*</text>
@@ -319,10 +319,10 @@ function LoanableFundsDiagram() {
       <ChartAxes xlabel="Quantity of Loanable Funds →" ylabel="Real Interest Rate (r) →"/>
       <line x1="68" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
       <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_LF</text>
-      <line x1="68" y1="52" x2="392" y2="228" stroke="#a08672" strokeWidth="2.2"/>
-      <text x="65" y="48" fill="#a08672" fontSize="10.5" fontWeight="700">D_LF</text>
-      <line x1="130" y1="52" x2="418" y2="210" stroke="#a08672" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="422" y="214" fill="#a08672" fontSize="10" opacity="0.62">D₂</text>
+      <line x1="68" y1="52" x2="392" y2="228" stroke="#8ab4f8" strokeWidth="2.2"/>
+      <text x="65" y="48" fill="#8ab4f8" fontSize="10.5" fontWeight="700">D_LF</text>
+      <line x1="130" y1="52" x2="418" y2="210" stroke="#8ab4f8" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="422" y="214" fill="#8ab4f8" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="230" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="230" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="144" fill="var(--text-secondary)" fontSize="10">r*</text>
@@ -333,8 +333,8 @@ function LoanableFundsDiagram() {
       <text x="275" y="150" fill="#f87171" fontSize="10">out ↑r</text>
       <path d="M 50,137 L 50,127" stroke="rgba(248,113,113,0.5)" strokeWidth="1.3"/>
       <polygon points="46,130 50,123 54,130" fill="rgba(248,113,113,0.5)"/>
-      <path d="M 228,137 L 257,122" stroke="#a08672" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="255,118 262,124 254,130" fill="#a08672" opacity="0.52"/>
+      <path d="M 228,137 L 257,122" stroke="#8ab4f8" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="255,118 262,124 254,130" fill="#8ab4f8" opacity="0.52"/>
     </DiagramWrap>
   )
 }
@@ -346,9 +346,9 @@ function PhillipsDiagram() {
       caption="SRPC: short-run trade-off (↓ unemployment → ↑ inflation). LRPC: vertical at NAIRU — no long-run trade-off. Supply shock or rising expectations shifts SRPC right: stagflation."
     >
       <ChartAxes xlabel="Unemployment Rate (%) →" ylabel="Inflation Rate (%) →"/>
-      <line x1="232" y1="235" x2="232" y2="20" stroke="#7c9cb4" strokeWidth="2.2" strokeDasharray="7,4"/>
-      <text x="236" y="16" fill="#7c9cb4" fontSize="10.5" fontWeight="700">LRPC</text>
-      <text x="219" y="252" fill="#7c9cb4" fontSize="10">NAIRU</text>
+      <line x1="232" y1="235" x2="232" y2="20" stroke="#c58af9" strokeWidth="2.2" strokeDasharray="7,4"/>
+      <text x="236" y="16" fill="#c58af9" fontSize="10.5" fontWeight="700">LRPC</text>
+      <text x="219" y="252" fill="#c58af9" fontSize="10">NAIRU</text>
       <path d="M 95,52 Q 200,130 390,220" fill="none" stroke="#f59e0b" strokeWidth="2.2"/>
       <text x="92" y="48" fill="#f59e0b" fontSize="10.5" fontWeight="700">SRPC₁</text>
       <path d="M 158,52 Q 265,130 420,208" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
@@ -374,25 +374,25 @@ function ForexDiagram() {
       caption="D_USD from foreigners buying US goods/assets. S_USD from Americans buying foreign goods/assets. Fed raises rates → D shifts right → USD appreciates (e rises) → NX falls → AD shifts left."
     >
       <ChartAxes xlabel="Quantity of USD →" ylabel="Exchange Rate (e = $/USD) →"/>
-      <line x1="72" y1="52" x2="392" y2="228" stroke="#a08672" strokeWidth="2.2"/>
-      <text x="68" y="48" fill="#a08672" fontSize="10.5" fontWeight="700">D_USD</text>
+      <line x1="72" y1="52" x2="392" y2="228" stroke="#8ab4f8" strokeWidth="2.2"/>
+      <text x="68" y="48" fill="#8ab4f8" fontSize="10.5" fontWeight="700">D_USD</text>
       <line x1="72" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
       <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_USD</text>
-      <line x1="138" y1="52" x2="416" y2="210" stroke="#a08672" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="420" y="214" fill="#a08672" fontSize="10" opacity="0.62">D₂</text>
+      <line x1="138" y1="52" x2="416" y2="210" stroke="#8ab4f8" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="420" y="214" fill="#8ab4f8" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="232" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="232" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="31" y="144" fill="var(--text-secondary)" fontSize="10">e*</text>
       <text x="226" y="254" fill="var(--text-secondary)" fontSize="10">Q*</text>
-      <circle cx="263" cy="123" r="4.5" fill="#a08672" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
-      <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(160,134,114,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="28" y="127" fill="rgba(160,134,114,0.65)" fontSize="10">e₂↑</text>
-      <text x="282" y="136" fill="rgba(160,134,114,0.72)" fontSize="10">USD</text>
-      <text x="282" y="148" fill="rgba(160,134,114,0.72)" fontSize="10">appreciates</text>
-      <path d="M 50,137 L 50,126" stroke="rgba(160,134,114,0.5)" strokeWidth="1.3"/>
-      <polygon points="46,129 50,122 54,129" fill="rgba(160,134,114,0.5)"/>
-      <path d="M 228,137 L 260,121" stroke="#a08672" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="258,117 265,123 257,129" fill="#a08672" opacity="0.52"/>
+      <circle cx="263" cy="123" r="4.5" fill="#8ab4f8" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
+      <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(138,180,248,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="28" y="127" fill="rgba(138,180,248,0.65)" fontSize="10">e₂↑</text>
+      <text x="282" y="136" fill="rgba(138,180,248,0.72)" fontSize="10">USD</text>
+      <text x="282" y="148" fill="rgba(138,180,248,0.72)" fontSize="10">appreciates</text>
+      <path d="M 50,137 L 50,126" stroke="rgba(138,180,248,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,129 50,122 54,129" fill="rgba(138,180,248,0.5)"/>
+      <path d="M 228,137 L 260,121" stroke="#8ab4f8" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="258,117 265,123 257,129" fill="#8ab4f8" opacity="0.52"/>
     </DiagramWrap>
   )
 }
@@ -484,7 +484,7 @@ function SectionBlock({ section, index, total, lang, exam }) {
       )}
 
       {index < total - 1 && (
-        <div style={{ height: 1, background: 'rgba(160,134,114,0.08)', margin: '24px 0 0 15px' }} />
+        <div style={{ height: 1, background: 'rgba(138,180,248,0.08)', margin: '24px 0 0 15px' }} />
       )}
     </div>
   )
@@ -556,7 +556,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
   const handleKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }
 
   return (
-    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(160,134,114,0.10)' }}>
+    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(138,180,248,0.10)' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
         <span style={{ fontSize: 20 }}><Icon name="spark" size={16} /></span>
@@ -706,7 +706,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       tooltip: {
         trigger: 'axis',
         backgroundColor: '#1a2035',
-        borderColor: 'rgba(160,134,114,0.2)',
+        borderColor: 'rgba(138,180,248,0.2)',
         textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (params) => {
           let s = `<div style="margin-bottom:4px;font-size: 13px;color:#9aa0a6">${params[0]?.axisValue}</div>`
@@ -727,7 +727,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       grid: { left: 48, right: 24, top: 40, bottom: 36 },
       xAxis: {
         type: 'time',
-        axisLine: { lineStyle: { color: 'rgba(160,134,114,0.15)' } },
+        axisLine: { lineStyle: { color: 'rgba(138,180,248,0.15)' } },
         axisLabel: { color: THEME.text, fontSize: 10 },
         splitLine: { show: false },
       },
@@ -737,7 +737,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
         nameTextStyle: { color: THEME.text, fontSize: 10 },
         axisLine: { show: false },
         axisLabel: { color: THEME.text, fontSize: 10 },
-        splitLine: { lineStyle: { color: 'rgba(160,134,114,0.07)' } },
+        splitLine: { lineStyle: { color: 'rgba(138,180,248,0.07)' } },
       },
       series,
     }
@@ -914,7 +914,7 @@ function EventTimeline({ zh }) {
                 <div key={i} style={{
                   display: 'flex', gap: 12, marginBottom: i < active.exam_points.length - 1 ? 14 : 0,
                   paddingBottom: i < active.exam_points.length - 1 ? 14 : 0,
-                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(160,134,114,0.07)' : 'none',
+                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(138,180,248,0.07)' : 'none',
                 }}>
                   <span style={{
                     flexShrink: 0, fontSize: 13, fontWeight: 600,
@@ -1190,7 +1190,7 @@ export default function StudyCenter({ lang }) {
               <div className="skeleton" style={{ height: 12, width: '35%' }} />
               {/* Section blocks */}
               {[0, 1, 2].map(i => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(160,134,114,0.07)` : 'none' }}>
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(138,180,248,0.07)` : 'none' }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <div className="skeleton" style={{ height: 18, width: `${[55, 45, 60][i]}%` }} />
                   </div>
@@ -1247,10 +1247,10 @@ export default function StudyCenter({ lang }) {
                     setActiveExam('ai_teacher')
                   }}
                   style={{
-                    background: 'rgba(160,134,114,0.08)',
-                    border: '1px solid rgba(160,134,114,0.20)',
+                    background: 'rgba(138,180,248,0.08)',
+                    border: '1px solid rgba(138,180,248,0.20)',
                     borderRadius: 8, padding: '5px 14px', fontSize: 13,
-                    color: '#a08672', cursor: 'pointer',
+                    color: '#8ab4f8', cursor: 'pointer',
                   }}
                 >
                   <Icon name="cap" size={15} style={{ marginRight: 6 }} />{t.discussWithAI || 'Discuss with AI Tutor →'}

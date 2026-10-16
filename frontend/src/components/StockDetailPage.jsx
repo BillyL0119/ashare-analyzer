@@ -42,7 +42,7 @@ function MiniSimilarRow({ item, onStockClick }) {
       <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.name}
       </span>
-      <span style={{ fontSize: 13, fontFamily: 'var(--sans)', color: '#7c9cb4', flexShrink: 0 }}>
+      <span style={{ fontSize: 13, fontFamily: 'var(--sans)', color: '#c58af9', flexShrink: 0 }}>
         {item.correlation?.toFixed(3)}
       </span>
     </div>
@@ -214,7 +214,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
               {/* Left: similar stocks */}
               <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
-                  fontSize: 13, fontWeight: 600, color: '#7c9cb4' }}>
+                  fontSize: 13, fontWeight: 600, color: '#c58af9' }}>
                   {t.sdSimilar}
                 </div>
                 {simResults.length === 0 ? (
@@ -262,10 +262,10 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
           {/* ── 5. AI Analysis summary ── */}
           {analysis && (
             <div style={{
-              background: 'rgba(124,156,180,0.06)',
+              background: 'rgba(197,138,249,0.06)',
               borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 20,
             }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#7c9cb4', marginBottom: 8, letterSpacing: '0.3px' }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#c58af9', marginBottom: 8, letterSpacing: '0.3px' }}>
                 {t.sdAI}
               </div>
               <div style={{ fontSize: 13, color: '#c7d2fe', lineHeight: 1.6 }}>
@@ -282,7 +282,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                 setTimeout(() => onLoadMain(symbol, name), 50)
               }}
               style={{
-                background: '#7c9cb4',
+                background: '#c58af9',
                 color: '#fff', border: 'none', borderRadius: 8,
                 padding: '10px 36px', cursor: 'pointer', fontSize: 14, fontWeight: 600,
               }}

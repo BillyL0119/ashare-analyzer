@@ -36,17 +36,17 @@ export function getChartTheme() {
     up:      riseColor(market),
     down:    fallColor(market),
     ma5:     '#e2d39a',
-    ma10:    '#a08672',
+    ma10:    '#8ab4f8',
     ma20:    '#d9894a',
-    ma60:    '#7c9cb4',
+    ma60:    '#c58af9',
     dif:        isLight ? '#374151'              : '#e8eaed',
     dea:     '#d9894a',
     macdUp:  riseColor(market),
     macdDown:fallColor(market),
-    rsi6:    '#a08672',
+    rsi6:    '#8ab4f8',
     rsi12:   '#d9894a',
-    rsi24:   '#7c9cb4',
-    volume:  '#a08672',
+    rsi24:   '#c58af9',
+    volume:  '#8ab4f8',
   }
 }
 
@@ -364,7 +364,7 @@ export function buildRSIOption(rsiData) {
 
 export function buildOverlayOption(symbolsData, lang = 'zh') {
   const T      = getChartTheme()
-  const colors = ['#a08672', '#b388ff', '#ffb74d', '#90a4ae']
+  const colors = ['#8ab4f8', '#b388ff', '#ffb74d', '#90a4ae']
   const allDates = [...new Set(
     symbolsData.flatMap((s) => s.candles.map((c) => c.date.slice(0, 10)))
   )].sort()

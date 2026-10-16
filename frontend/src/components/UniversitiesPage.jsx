@@ -6,8 +6,8 @@ import Icon from './Icon'
 const API = import.meta.env.VITE_API_BASE || ''
 
 // ── palette ──────────────────────────────────────────────────────────────────
-const BLUE   = '#a08672'
-const PURPLE = '#7c9cb4'
+const BLUE   = '#8ab4f8'
+const PURPLE = '#c58af9'
 const GREEN  = '#10b981'
 const AMBER  = '#f59e0b'
 
@@ -71,10 +71,10 @@ const hasUG = (u) => u.undergrad && !u.undergrad.none
 const SPECIALTIES = ['Finance', 'Accounting', 'Economics', 'Consulting', 'Tech']
 
 const SPECIALTY_COLORS = {
-  Finance: 'var(--accent)', Accounting: '#7c9cb4', Economics: '#10b981',
+  Finance: 'var(--accent)', Accounting: '#c58af9', Economics: '#10b981',
   Marketing: '#f59e0b', Consulting: '#ef4444', Strategy: '#06b6d4',
-  MBA: '#7c9cb4', Undergraduate: '#84cc16', Tech: '#f97316',
-  Analytics: '#7c9cb4', Entrepreneurship: '#34d399', STEM: '#fb923c',
+  MBA: '#c58af9', Undergraduate: '#84cc16', Tech: '#f97316',
+  Analytics: '#c58af9', Entrepreneurship: '#34d399', STEM: '#fb923c',
 }
 
 function tagColor(tag) {
@@ -1441,7 +1441,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
   }
   const bubbleUser = {
     maxWidth: '80%',
-    background: 'rgba(124,156,180,0.1)',
+    background: 'rgba(197,138,249,0.1)',
     borderRadius: '14px 4px 14px 14px', padding: '10px 14px',
     fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
   }
@@ -1490,8 +1490,8 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
           }}>
             <div style={{
               ...avatarBase,
-              background: m.role === 'user' ? 'rgba(124,156,180,0.2)' : `${BLUE}22`,
-              border: `1px solid ${m.role === 'user' ? 'rgba(124,156,180,0.4)' : `${BLUE}44`}`,
+              background: m.role === 'user' ? 'rgba(197,138,249,0.2)' : `${BLUE}22`,
+              border: `1px solid ${m.role === 'user' ? 'rgba(197,138,249,0.4)' : `${BLUE}44`}`,
             }}>
               {m.role === 'user' ? '' : ''}
             </div>

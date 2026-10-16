@@ -3,26 +3,42 @@ import useCompareStore from '../store/compareStore'
 import { useMobile } from '../hooks/useMobile'
 import { sharedJson } from '../utils/sharedFetch'
 import { T } from '../i18n/translations'
+import SearchBar from './SearchBar'
+import Icon from './Icon'
 
-// The first screen. The site is named for a friend who explains the market, so the hero is that
-// friend talking: today's live index moves and sentiment, written out as a plain sentence in the
-// reader's language. The market switch on the note is the same switch as the one in the bar.
+// The first screen, laid out the way Gemini greets you: a gradient hello, one large rounded
+// search, a row of suggestion cards, and then the "answer": today's live index moves and
+// sentiment written out as a plain sentence, the friend in Best Friend Stock talking.
 
-const LINES = {
-  zh: ['股市里，', '有我陪你。'],
-  en: ['Your best friend', 'in the market.'],
-  ja: ['株式市場の', 'ベストフレンド。'],
-  ko: ['주식 시장의', '베스트 프렌드.'],
-  fr: ['Votre meilleur ami', 'en bourse.'],
+const HELLO = {
+  zh: ['你好，股友', '今天想看哪只股票？'],
+  en: ['Hi, friend', 'Which stock shall we look at today?'],
+  ja: ['こんにちは', '今日はどの銘柄を見ますか？'],
+  ko: ['안녕하세요', '오늘은 어떤 종목을 볼까요?'],
+  fr: ['Bonjour', 'Quelle action regardons-nous aujourd’hui ?'],
 }
-const SUB = {
-  zh: '给学生的免费股票网站：美股、A 股、港股、日股的行情和 K 线，$100,000 虚拟资金模拟炒股，A-Level、IB、AP 经济学课程。不用注册，没有广告。',
-  en: 'A free stock site for students: live US, China, Hong Kong and Japan markets, $100,000 of virtual cash to practise trading, and A-Level, IB and AP Economics. No sign-up, no ads.',
-  ja: '学生のための無料株式サイト。米国・中国・香港・日本の相場とチャート、仮想資金 $100,000 の模擬トレード、A-Level・IB・AP 経済学。登録不要、広告なし。',
-  ko: '학생을 위한 무료 주식 사이트. 미국·중국·홍콩·일본 시세와 차트, 가상자금 $100,000 모의 투자, A-Level·IB·AP 경제학. 가입도 광고도 없습니다.',
-  fr: 'Un site boursier gratuit pour les élèves : marchés US, Chine, Hong Kong et Japon en direct, 100 000 $ virtuels pour s’entraîner, et l’économie A-Level, IB et AP. Sans inscription ni publicité.',
+const HINT = {
+  zh: '免费给学生用：美股、A 股、港股、日股行情，$100,000 模拟炒股，A-Level / IB / AP 经济学。不用注册，没有广告。',
+  en: 'Free for students: live US, China, Hong Kong and Japan markets, $100,000 of paper trading, and A-Level, IB and AP Economics. No sign-up, no ads.',
+  ja: '学生向け・無料：米国・中国・香港・日本の相場、$100,000 の模擬トレード、A-Level・IB・AP 経済学。登録不要、広告なし。',
+  ko: '학생을 위한 무료 서비스: 미국·중국·홍콩·일본 시세, $100,000 모의 투자, A-Level·IB·AP 경제학. 가입도 광고도 없습니다.',
+  fr: 'Gratuit pour les élèves : marchés US, Chine, Hong Kong et Japon, 100 000 $ de bourse virtuelle, économie A-Level, IB et AP. Sans inscription ni publicité.',
 }
-const CTA = { zh: '用 $100,000 模拟炒股', en: 'Practise with $100,000', ja: '$100,000 で模擬トレード', ko: '$100,000로 모의 투자', fr: 'S’entraîner avec 100 000 $' }
+// Suggestion cards: each one opens a real part of the site
+const CARDS = [
+  { icon: 'trophy', tab: 'paper', text: {
+    zh: '用 $100,000 虚拟资金模拟炒股，和同学比收益', en: 'Practise trading with $100,000 of virtual cash and race your friends',
+    ja: '仮想資金 $100,000 で模擬トレード、友だちと成績を競う', ko: '가상자금 $100,000로 모의 투자하고 친구와 수익률 경쟁', fr: 'S’entraîner avec 100 000 $ virtuels et se mesurer aux amis' } },
+  { icon: 'spark', tab: 'ai_teacher', text: {
+    zh: '问 AI 老师：市盈率到底说明了什么？', en: 'Ask the AI teacher: what does a P/E ratio actually tell me?',
+    ja: 'AI 先生に質問：PER は何を示している？', ko: 'AI 선생님께 질문: PER은 무엇을 말해 줄까?', fr: 'Demander au prof IA : que dit vraiment le PER ?' } },
+  { icon: 'chart', tab: 'heatmap', text: {
+    zh: '看今天的市场热力图，哪些板块在涨', en: 'See today’s market heatmap and which sectors are rising',
+    ja: '今日のヒートマップで上昇セクターを見る', ko: '오늘의 히트맵에서 오르는 섹터 보기', fr: 'Voir la carte du marché et les secteurs en hausse' } },
+  { icon: 'cap', tab: 'study', text: {
+    zh: '学 A-Level、IB、AP 经济学，配真实市场案例', en: 'Study A-Level, IB and AP Economics with real market cases',
+    ja: 'A-Level・IB・AP 経済学を実例で学ぶ', ko: 'A-Level·IB·AP 경제학을 실제 사례로 공부', fr: 'Réviser l’économie A-Level, IB et AP avec des cas réels' } },
+]
 const NOTE_TITLE = { zh: '今天的市场，用一句话说', en: 'Today’s market, in plain words', ja: '今日の相場をひとことで', ko: '오늘의 시장, 한 문장으로', fr: 'Le marché du jour, en clair' }
 const SENT = { zh: '情绪指数', en: 'Sentiment', ja: 'センチメント', ko: '심리 지수', fr: 'Sentiment' }
 const FEAR = { zh: ['恐慌', '贪婪'], en: ['Fear', 'Greed'], ja: ['恐怖', '強欲'], ko: ['공포', '탐욕'], fr: ['Peur', 'Avidité'] }
@@ -63,6 +79,20 @@ function sentence(list, lang) {
   return s.charAt(0).toUpperCase() + s.slice(1) + '.'
 }
 
+// Gemini's four-point sparkle, filled with its gradient
+export function Sparkle({ size = 28, id = 'g-sparkle-fill' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden="true" className="g-sparkle">
+      <defs>
+        <linearGradient id={id} x1="0" y1="28" x2="28" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#4285f4" /><stop offset=".55" stopColor="#9b72cb" /><stop offset="1" stopColor="#d96570" />
+        </linearGradient>
+      </defs>
+      <path fill={`url(#${id})`} d="M14 28C14 26.06 13.63 24.24 12.88 22.53 12.16 20.81 11.17 19.32 9.92 18.08 8.67 16.83 7.19 15.84 5.47 15.12 3.76 14.38 1.94 14 0 14 1.94 14 3.76 13.63 5.47 12.88 7.19 12.16 8.67 11.17 9.92 9.92 11.17 8.67 12.16 7.19 12.88 5.47 13.63 3.76 14 1.94 14 0 14 1.94 14.37 3.76 15.1 5.47 15.84 7.19 16.83 8.67 18.08 9.92 19.33 11.17 20.81 12.16 22.53 12.88 24.24 13.63 26.06 14 28 14 26.06 14 24.24 14.38 22.53 15.12 20.81 15.84 19.33 16.83 18.08 18.08 16.83 19.32 15.84 20.81 15.1 22.53 14.37 24.24 14 26.06 14 28Z" />
+    </svg>
+  )
+}
+
 export default function HomeHero({ lang, market, onTabChange }) {
   const t = T[lang] || T.en
   const isMobile = useMobile()
@@ -76,7 +106,7 @@ export default function HomeHero({ lang, market, onTabChange }) {
     return () => { alive = false }
   }, [])
 
-  const lines = LINES[lang] || LINES.en
+  const hello = HELLO[lang] || HELLO.en
   const byCode = Object.fromEntries((data?.indices || []).map((i) => [i.symbol, i]))
   const list = (PICK[market] || PICK.us).map((c) => byCode[c]).filter((i) => i && i.change_pct != null)
   const sent = market === 'cn' ? data?.cn_sentiment : market === 'us' ? data?.us_sentiment : null
@@ -85,24 +115,30 @@ export default function HomeHero({ lang, market, onTabChange }) {
   const fear = FEAR[lang] || FEAR.en
 
   return (
-    <section className="bfs-hero" aria-labelledby="bfs-hero-title">
-      <div className="bfs-hero-copy">
-        <h1 id="bfs-hero-title" className="bfs-hero-title">
-          <span className="bfs-mask-line"><span>{lines[0]}</span></span>
-          <span className="bfs-mask-line"><span>{lines[1]}</span></span>
-        </h1>
-        <p className="bfs-hero-sub">{SUB[lang] || SUB.en}</p>
-        <div className="bfs-hero-actions">
-          <button className="bfs-primary" onClick={() => onTabChange?.('paper')}>{CTA[lang] || CTA.en}</button>
-          <button className="bfs-quiet" onClick={() => onTabChange?.('study')}>{t.moStudy}</button>
-        </div>
+    <section className="g-home" aria-labelledby="g-hello">
+      <h1 id="g-hello" className="g-hello">
+        <span className="bfs-mask-line"><span className="g-grad">{hello[0]}</span></span>
+        <span className="bfs-mask-line"><span className="g-ask">{hello[1]}</span></span>
+      </h1>
+
+      <div className="g-search"><SearchBar hero /></div>
+      <p className="g-hint">{HINT[lang] || HINT.en}</p>
+
+      <div className="g-cards">
+        {CARDS.map((c) => (
+          <button key={c.tab} className="g-card" onClick={() => onTabChange?.(c.tab)}>
+            <span className="g-card-text">{c.text[lang] || c.text.en}</span>
+            <span className="g-card-icon"><Icon name={c.icon} size={20} /></span>
+          </button>
+        ))}
       </div>
 
-      {/* The note: a working fragment of the product, live */}
-      <div className="bfs-note" data-ui aria-live="polite">
-        <div className="bfs-note-top">
-          <span className="bfs-note-title">{NOTE_TITLE[lang] || NOTE_TITLE.en}</span>
-          <div role="group" aria-label="Market" className="bfs-note-tabs">
+      {/* The answer: a working fragment of the product, live */}
+      <div className="g-answer" data-ui aria-live="polite">
+        <div className="g-answer-head">
+          <Sparkle />
+          <span className="g-answer-title">{NOTE_TITLE[lang] || NOTE_TITLE.en}</span>
+          <div role="group" aria-label="Market" className="g-tabs">
             {[['us', t.marketUS], ['cn', t.marketCN], ['hk', t.marketHK], ['jp', t.marketJP]].map(([k, label]) => (
               <button key={k} aria-pressed={market === k} onClick={() => setMarket(k)}>
                 {isMobile && lang !== 'zh' ? k.toUpperCase() : label}
@@ -111,82 +147,96 @@ export default function HomeHero({ lang, market, onTabChange }) {
           </div>
         </div>
 
-        <p className="bfs-note-sentence" key={market + lang}>
+        <p className="g-answer-text" key={market + lang}>
           {list.length ? sentence(list, lang) : failed ? (NONE[lang] || NONE.en) : (WAIT[lang] || WAIT.en)}
         </p>
 
         {list.length > 0 && (
-          <div className="bfs-note-figures" key={'f' + market}>
+          <div className="g-figures" key={'f' + market}>
             {list.map((i) => (
-              <div key={i.symbol}>
-                <div className="bfs-note-name">{nameOf(i, lang)}</div>
-                <div className="bfs-note-value">{i.close != null ? i.close.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—'}</div>
-                <div className="bfs-note-pct" style={{ color: tone(i.change_pct) }}>{i.change_pct > 0 ? '+' : ''}{i.change_pct.toFixed(2)}%</div>
+              <div key={i.symbol} className="g-figure">
+                <div className="g-figure-name">{nameOf(i, lang)}</div>
+                <div className="g-figure-value">{i.close != null ? i.close.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—'}</div>
+                <div className="g-figure-pct" style={{ color: tone(i.change_pct) }}>{i.change_pct > 0 ? '+' : ''}{i.change_pct.toFixed(2)}%</div>
               </div>
             ))}
-          </div>
-        )}
-
-        {sent && (
-          <div className="bfs-note-meter">
-            <div className="bfs-note-meter-head">
-              <span>{SENT[lang] || SENT.en}</span>
-              <strong>{Math.round(sent.score)} · {lang === 'zh' ? sent.label_zh : sent.label_en}</strong>
-            </div>
-            <div className="bfs-note-track" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(sent.score)}>
-              <span className="bfs-note-mark" style={{ left: `${Math.max(0, Math.min(100, sent.score))}%` }} />
-            </div>
-            <div className="bfs-note-ends"><span>{fear[0]}</span><span>{fear[1]}</span></div>
+            {sent && (
+              <div className="g-figure g-meter">
+                <div className="g-figure-name">{SENT[lang] || SENT.en}</div>
+                <div className="g-figure-value">{Math.round(sent.score)} <small>{lang === 'zh' ? sent.label_zh : sent.label_en}</small></div>
+                <div className="g-track" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(sent.score)}>
+                  <span className="g-mark" style={{ left: `${Math.max(0, Math.min(100, sent.score))}%` }} />
+                </div>
+                <div className="g-ends"><span>{fear[0]}</span><span>{fear[1]}</span></div>
+              </div>
+            )}
           </div>
         )}
       </div>
 
       <style>{`
-        .bfs-hero { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px;
-          align-items: start; padding: 64px 0 96px; }
-        .bfs-hero-copy { grid-column: 1 / span 6; }
-        html .bfs-hero .bfs-hero-title { margin: 0 0 32px !important; font-size: clamp(48px, 6.4vw, 104px) !important; line-height: 1.0 !important;
-          font-weight: 500 !important; letter-spacing: -0.045em !important; }
-                .bfs-hero-sub { font-size: var(--step-body); line-height: 1.55; color: var(--text-primary); max-width: 34em; margin: 0 0 32px;
-          animation: bfsSlideUp .7s cubic-bezier(.22,1,.36,1) .35s both; }
-        .bfs-hero-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; animation: bfsSlideUp .7s cubic-bezier(.22,1,.36,1) .45s both; }
-        .bfs-hero-actions .bfs-primary { min-height: 48px; padding: 0 24px; font-size: 16px; }
+        .g-home { padding: 72px 0 64px; }
+        html .g-home .g-hello { margin: 0 0 40px !important; font-size: clamp(40px, 4.6vw, 64px) !important; line-height: 1.12 !important;
+          font-weight: 500 !important; letter-spacing: -0.02em !important; }
+        .g-grad { background: var(--gemini); -webkit-background-clip: text; background-clip: text; color: transparent;
+          background-size: 200% 100%; animation: bfsMaskRise 0.9s cubic-bezier(.16,1,.3,1) both, gGrad 9s ease-in-out 1s infinite alternate; padding-bottom: .06em; }
+        .g-ask { color: var(--text-muted); }
+        @keyframes gGrad { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
 
-        .bfs-note { grid-column: 7 / span 6; background: var(--bg-secondary); border-radius: var(--radius); padding: 28px 28px 24px;
-          animation: bfsSlideUp .8s cubic-bezier(.22,1,.36,1) .25s both; }
-        .bfs-note-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-        .bfs-note-title { font-size: 14px; color: var(--text-secondary); }
-        .bfs-note-tabs { display: flex; gap: 2px; background: var(--bg-tertiary); padding: 3px; border-radius: var(--radius); }
-        .bfs-note-tabs button { border: 0; background: transparent; color: var(--text-secondary); font-size: 13px; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
-        .bfs-note-tabs button:hover { color: var(--text-primary); }
-        .bfs-note-tabs button[aria-pressed="true"] { background: var(--bg-hover); color: var(--text-primary); }
-        .bfs-note-sentence { font-size: 24px; line-height: 1.28; letter-spacing: -0.02em; margin: 0 0 28px; min-height: 2.56em;
+        .g-search { animation: bfsSlideUp .7s cubic-bezier(.22,1,.36,1) .3s both; }
+        .g-hint { margin: 16px 8px 40px; font-size: 15px; line-height: 1.55; color: var(--text-secondary);
+          animation: bfsSlideUp .7s cubic-bezier(.22,1,.36,1) .38s both; }
+
+        .g-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 40px; }
+        .g-card { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; min-height: 176px;
+          padding: 18px 18px 16px; text-align: left; border: 0; border-radius: var(--radius); cursor: pointer;
+          background: var(--bg-secondary); color: var(--text-primary); font: inherit; font-size: 16px; line-height: 1.45;
+          transition: background-color .2s ease; animation: bfsSlideUp .7s cubic-bezier(.22,1,.36,1) both; }
+        .g-card:nth-child(1) { animation-delay: .44s; } .g-card:nth-child(2) { animation-delay: .5s; }
+        .g-card:nth-child(3) { animation-delay: .56s; } .g-card:nth-child(4) { animation-delay: .62s; }
+        .g-card:hover { background: var(--bg-hover); }
+        .g-card-icon { align-self: flex-end; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+          background: var(--bg-primary); color: var(--text-primary); transition: color .2s ease; }
+        .g-card:hover .g-card-icon { color: var(--accent); }
+
+        .g-answer { background: var(--bg-secondary); border-radius: 24px; padding: 28px 32px 30px;
+          animation: bfsSlideUp .8s cubic-bezier(.22,1,.36,1) .66s both; }
+        .g-answer-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+        .g-sparkle { flex: none; animation: gSpin 1.2s cubic-bezier(.22,1,.36,1) .8s both; }
+        @keyframes gSpin { from { transform: rotate(-90deg) scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+        .g-answer-title { font-size: 15px; color: var(--text-secondary); }
+        .g-tabs { margin-left: auto; display: flex; gap: 4px; }
+        .g-tabs button { border: 0; background: transparent; color: var(--text-secondary); font: inherit; font-size: 14px;
+          padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: background-color .15s ease, color .15s ease; }
+        .g-tabs button:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .g-tabs button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+        .g-answer-text { font-size: clamp(22px, 2vw, 28px); line-height: 1.4; margin: 0 0 28px 42px; min-height: 1.4em;
           animation: bfsSlideUp .5s cubic-bezier(.22,1,.36,1) both; }
-        .bfs-note-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; padding: 20px 0 0;
+        .g-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-left: 42px;
           animation: bfsSlideUp .5s cubic-bezier(.22,1,.36,1) .06s both; }
-        .bfs-note-name { font-size: 13px; color: var(--text-secondary); }
-        .bfs-note-value { font-size: 24px; letter-spacing: -0.03em; margin: 2px 0; }
-        .bfs-note-pct { font-size: 14px; font-weight: 500; }
-        .bfs-note-meter { margin-top: 28px; }
-        .bfs-note-meter-head { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); margin-bottom: 10px; }
-        .bfs-note-meter-head strong { color: var(--text-primary); font-weight: 500; }
-        .bfs-note-track { position: relative; height: 8px; border-radius: 4px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
-        .bfs-note-track::before { content: ''; grid-column: 1 / -1; grid-row: 1; border-radius: 4px; background:
-          var(--bg-tertiary); }
-        .bfs-note-mark { position: absolute; top: -5px; width: 4px; height: 18px; margin-left: -2px; border-radius: 2px; background: var(--accent);
-          transition: left 1s cubic-bezier(.22,1,.36,1); }
-        .bfs-note-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+        .g-figure { background: var(--bg-primary); border-radius: 16px; padding: 14px 16px; }
+        .g-figure-name { font-size: 13px; color: var(--text-secondary); }
+        .g-figure-value { font-size: 24px; margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+        .g-figure-value small { font-size: 14px; color: var(--text-secondary); margin-left: 4px; }
+        .g-figure-pct { font-size: 14px; font-weight: 500; }
+        .g-track { position: relative; height: 6px; border-radius: 3px; margin-top: 10px;
+          background: linear-gradient(90deg, var(--red-bright), var(--accent-gold), var(--green-bright)); opacity: .9; }
+        .g-mark { position: absolute; top: -4px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%;
+          background: var(--text-primary); box-shadow: 0 0 0 3px var(--bg-primary); transition: left 1s cubic-bezier(.22,1,.36,1); }
+        .g-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-top: 6px; }
 
         @media (max-width: 1000px) {
-          .bfs-hero { padding: 28px 0 40px; row-gap: 28px; }
-          .bfs-hero-copy, .bfs-note { grid-column: 1 / -1; }
-          html .bfs-hero .bfs-hero-title { font-size: clamp(40px, 11vw, 64px) !important; margin-bottom: 18px !important; }
-          .bfs-note { padding: 20px 18px; }
+          .g-home { padding: 32px 0 40px; }
+          .g-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          html .g-home .g-hello { font-size: clamp(28px, 7vw, 48px) !important; margin-bottom: 24px !important; }
+          .g-card { min-height: 132px; }
+          .g-answer { padding: 20px 18px 22px; border-radius: 20px; }
+          .g-answer-text, .g-figures { margin-left: 0; }
+          .g-tabs { margin-left: 0; width: 100%; }
         }
-        @media (max-width: 600px) { .bfs-hero-actions .bfs-primary { width: 100%; } }
         @media (prefers-reduced-motion: reduce) {
-          .bfs-hero-sub, .bfs-hero-actions, .bfs-note, .bfs-note-sentence, .bfs-note-figures { animation: none; }
-          .bfs-note-mark { transition: none; }
+          .g-grad, .g-search, .g-hint, .g-card, .g-answer, .g-sparkle, .g-answer-text, .g-figures { animation: none; }
+          .g-mark { transition: none; }
         }
       `}</style>
     </section>

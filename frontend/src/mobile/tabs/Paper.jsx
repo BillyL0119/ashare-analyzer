@@ -66,7 +66,7 @@ function useQuote(symbol, market) {
 
 const SIDE_LABEL = { buy: '买入', sell: '卖出', short: '卖空', cover: '买入平仓' }
 const SIDE_BADGE = { buy: '买', sell: '卖', short: '空', cover: '平' }
-const SIDE_TINT = { buy: 'var(--accent)', sell: '#F28B3C', short: '#7c9cb4', cover: '#7c9cb4' }
+const SIDE_TINT = { buy: 'var(--accent)', sell: '#F28B3C', short: '#c58af9', cover: '#c58af9' }
 const TYPE_LABEL = { market: '市价单', limit: '限价单', stop: '止损单', stop_limit: '止损限价单', trailing_stop: '追踪止损' }
 const TYPE_HELP = {
   market: '市价单按当前价格立即成交（休市时排队到开盘）。', limit: '限价单只在达到你设定的价格或更好时成交。',

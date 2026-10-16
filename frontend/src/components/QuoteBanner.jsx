@@ -20,9 +20,9 @@ export default function QuoteBanner({ lang }) {
   const title = zh ? (quote.title_cn || quote.title) : (quote.title || quote.title_cn)
 
   return (
-    <figure data-reveal style={{ margin: '0 auto', maxWidth: 880, padding: '120px 0 0' }}>
-      <blockquote style={{ margin: 0, fontSize: 'clamp(24px, 2.35vw, 34px)', lineHeight: 1.3, letterSpacing: '-0.025em', color: 'var(--text-primary)' }}>
-        <p style={{ margin: 0 }}>“{text}”</p>
+    <figure data-reveal style={{ margin: '0 auto', maxWidth: 880, padding: '96px 0 0', textAlign: 'center' }}>
+      <blockquote style={{ margin: 0, textWrap: 'balance', fontSize: 'clamp(24px, 2.35vw, 34px)', lineHeight: 1.3, letterSpacing: '-0.025em', color: 'var(--text-primary)' }}>
+        <p style={{ margin: 0 }}><span style={{ background: 'var(--gemini)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>“</span>{text}<span style={{ background: 'var(--gemini)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>”</span></p>
       </blockquote>
       {author && (
         <figcaption style={{ marginTop: 20, fontSize: 15, color: 'var(--text-secondary)' }}>

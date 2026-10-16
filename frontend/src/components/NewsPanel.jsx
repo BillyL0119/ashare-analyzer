@@ -402,7 +402,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
                   <div style={{
                     marginTop: 12,
                     fontSize: 13,
-                    color: '#7c9cb4',
+                    color: '#c58af9',
                     lineHeight: 1.5,
                     paddingTop: 10,
                     borderTop: '1px solid var(--border-primary)',

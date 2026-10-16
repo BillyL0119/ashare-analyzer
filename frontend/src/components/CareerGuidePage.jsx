@@ -229,8 +229,8 @@ const QUESTIONS = [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const ACCENT = '#a08672'
-const PURPLE = '#7c9cb4'
+const ACCENT = '#8ab4f8'
+const PURPLE = '#c58af9'
 
 const cardStyle = {
   background: 'var(--bg-secondary)',
@@ -243,7 +243,7 @@ const cardStyle = {
 
 const TYPE_LABELS_ZH = { technical: '技术面试', behavioral: '行为面试', case: '案例分析' }
 const TYPE_LABELS_EN = { technical: 'Technical', behavioral: 'Behavioral', case: 'Case Analysis' }
-const TYPE_COLORS = { technical: 'var(--accent)', behavioral: '#7c9cb4', case: '#26a69a' }
+const TYPE_COLORS = { technical: 'var(--accent)', behavioral: '#c58af9', case: '#26a69a' }
 
 function QuestionCard({ q, zh }) {
   const [showFramework, setShowFramework] = useState(false)
@@ -405,14 +405,14 @@ function ChatBubble({ role: msgRole, content, streaming }) {
         width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 14,
-        background: isUser ? 'rgba(124,156,180,0.2)' : 'color-mix(in srgb, var(--accent) 20%, transparent)',
-        border: `1px solid ${isUser ? '#7c9cb4' : ACCENT}44`,
+        background: isUser ? 'rgba(197,138,249,0.2)' : 'color-mix(in srgb, var(--accent) 20%, transparent)',
+        border: `1px solid ${isUser ? '#c58af9' : ACCENT}44`,
       }}>
         {isUser ? '' : ''}
       </div>
       <div style={{
         maxWidth: '80%',
-        background: isUser ? 'rgba(124,156,180,0.1)' : 'color-mix(in srgb, var(--accent) 7%, transparent)',
+        background: isUser ? 'rgba(197,138,249,0.1)' : 'color-mix(in srgb, var(--accent) 7%, transparent)',
         border: `1px solid ${isUser ? '#8b5cf688' : `${ACCENT}44`}`,
         borderRadius: 8, padding: '10px 14px',
         color: 'var(--text-primary)',

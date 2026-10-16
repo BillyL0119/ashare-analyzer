@@ -3,7 +3,7 @@ import useSymbolSuggest from '../../hooks/useSymbolSuggest'
 import { CUR } from '../../utils/markets'
 import { BDR, MUTED, UP, DOWN, ACCENT, Card, Seg, Field, inputStyle, Button, fmt, money, estFee } from './ui'
 
-const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#7c9cb4' }
+const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#c58af9' }
 const PH = { us: 'AAPL / Apple', cn: '600519 / 茅台', hk: '00700 / 腾讯', jp: '7203 / Toyota' }
 const CODE_OK = { us: /^[A-Z0-9.-]{1,10}$/i, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }
 

@@ -323,14 +323,26 @@ function useMode() {
   return [mode, change]
 }
 
+// Gemini-style greeting on the phone's first screen (same words as the desktop hero)
+const HELLO = {
+  zh: ['你好，股友', '今天想看哪只股票？'], en: ['Hi, friend', 'Which stock shall we look at today?'],
+  ja: ['こんにちは', '今日はどの銘柄を見ますか？'], ko: ['안녕하세요', '오늘은 어떤 종목을 볼까요?'],
+  fr: ['Bonjour', 'Quelle action regardons-nous aujourd’hui ?'],
+}
+
 export default function Market({ onSettings }) {
   const t = useT()
+  const lang = useLangStore((s) => s.lang)
   const [mode, setMode] = useMode()
+  const hello = HELLO[lang] || HELLO.en
   return (
     <div className="m-stack" style={{ gap: 0 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 className="m-title">{t('行情')}</h1>
-        <button className="m-iconbtn" onClick={onSettings} aria-label={t('关于')}>{Icon.more}</button>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <h1 className="m-title m-hello">
+          <span className="m-hello-grad">{hello[0]}</span>
+          <span className="m-hello-ask">{hello[1]}</span>
+        </h1>
+        <button className="m-iconbtn" onClick={onSettings} aria-label={t('关于')} style={{ marginTop: 8, flex: 'none' }}>{Icon.more}</button>
       </div>
       <SearchBox />
       <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>

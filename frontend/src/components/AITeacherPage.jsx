@@ -3,8 +3,8 @@ import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
 import Icon from './Icon'
 
-const ACCENT  = '#a08672'
-const ACCENT2 = '#7c9cb4'
+const ACCENT  = '#8ab4f8'
+const ACCENT2 = '#c58af9'
 const BDR     = 'var(--border-primary)'
 const MUTED   = 'var(--text-muted)'
 

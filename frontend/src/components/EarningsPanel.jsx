@@ -5,7 +5,7 @@ const MUTED = 'var(--text-muted)'
 const BDR = 'color-mix(in srgb, var(--accent) 10%, transparent)'
 
 const MARKET_CFG = {
-  us: { color: '#7c9cb4', bg: 'rgba(124,156,180,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
+  us: { color: '#c58af9', bg: 'rgba(197,138,249,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
   cn: { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', zh: 'A股',  en: 'A-Shares',  ja: 'A株',   ko: 'A주식',  fr: 'A-Share' },
 }
 
