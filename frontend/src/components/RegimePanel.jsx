@@ -114,7 +114,7 @@ function RegimePriceChart({ series, lang, t }) {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'cross' },
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: 'rgba(17,17,17,0.9)',
       borderColor: THEME.border,
       textStyle: { color: THEME.text, fontSize: 11 },
       formatter: (params) => {

@@ -846,7 +846,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 8000,
-      background: 'rgba(2,8,19,0.96)',
+      background: 'rgba(17,17,17,0.96)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderTop: `1px solid ${BLUE}44`,
@@ -2221,7 +2221,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
   return (
     <div style={{
       position: 'sticky', top: 54, zIndex: 99,
-      background: 'var(--nav-bg, rgba(2,8,19,0.9))',
+      background: 'var(--nav-bg, rgba(17,17,17,0.9))',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
       borderBottom: '1px solid var(--border-primary)',

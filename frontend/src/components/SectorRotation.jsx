@@ -461,7 +461,6 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {summary && (
             <div style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-              borderLeft: `3px solid ${ACCENT2}`,
               borderRadius: 'var(--radius)', padding: '10px 14px',
               fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7,
             }}>

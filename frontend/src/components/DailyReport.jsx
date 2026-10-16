@@ -39,7 +39,6 @@ export default function DailyReport({ lang }) {
     return (
       <div className="skeleton-appear" style={{
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-        borderLeft: '2px solid var(--accent-blue)',
         borderRadius: 'var(--radius)', padding: '10px 16px', marginBottom: 8,
         display: 'flex', alignItems: 'center', gap: 10,
       }}>
@@ -63,7 +62,6 @@ export default function DailyReport({ lang }) {
     <div style={{
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
-      borderLeft: '2px solid var(--accent-blue)',
       borderRadius: 'var(--radius)', marginBottom: 4, overflow: 'hidden',
     }}>
       {/* Header row */}

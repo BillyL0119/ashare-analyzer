@@ -92,7 +92,6 @@ export default function StockCard({ stock }) {
           padding: '8px 12px',
           paddingLeft: 12,
           borderBottom: `1px solid ${THEME.border}`,
-          borderLeft: '3px solid #a08672',
           display: 'flex',
           alignItems: 'center',
           gap: isMobile ? 6 : 12,

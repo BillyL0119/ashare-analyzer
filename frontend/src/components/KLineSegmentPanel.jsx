@@ -179,8 +179,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
               </div>
               {result.news.map((n, i) => (
                 <div key={i} style={{
-                  fontSize: 13, padding: '3px 0 3px 8px',
-                  borderLeft: '2px solid #26a69a',
+                  fontSize: 13, padding: '3px 0',
                   marginBottom: 3,
                 }}>
                   <span style={{ color: 'var(--text-muted)', marginRight: 4 }}>[{n.date}]</span>
