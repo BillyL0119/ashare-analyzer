@@ -342,7 +342,7 @@ export default function StockDetail() {
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
           <span style={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span><span className="m-sub" style={{ flex: 'none' }}>{code}</span><span className="m-chip">{t(chipLabel(market))}</span>
           <button onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
-            style={{ marginLeft: 'auto', flex: 'none', padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>
+            style={{ marginLeft: 'auto', flex: 'none', padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'var(--accent)' }}>
             {t('模拟买入')}
           </button>
         </div>
@@ -378,7 +378,7 @@ export default function StockDetail() {
           <div>
             <div className="m-label" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}><span>{has52 ? t('52周最低') : t('区间最低')}</span><span>{has52 ? t('52周最高') : t('区间最高')}</span></div>
             <div style={{ position: 'relative', height: 14 }}>
-              <span style={{ position: 'absolute', left: 0, right: 0, top: 4, height: 6, borderRadius: 3, background: `linear-gradient(90deg, ${changeColor(-1, market)}, ${changeColor(1, market)})`, opacity: .75 }} />
+              <span style={{ position: 'absolute', left: 0, right: 0, top: 4, height: 6, borderRadius: 3, background: `${changeColor(-1, market)}`, opacity: .75 }} />
               <span style={{ position: 'absolute', top: 0, width: 14, height: 14, borderRadius: 7, background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,.35)', left: `calc((100% - 14px) * ${pos})` }} />
             </div>
             <div className="m-num" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 7, fontSize: 12.5, fontWeight: 700 }}><span>{num(lo)}</span><span>{num(hi)}</span></div>

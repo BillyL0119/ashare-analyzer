@@ -42,7 +42,7 @@ export function ErrorBox({ onRetry }) {
   return (
     <div className="m-card m-empty">
       <div style={{ marginBottom: 12 }}>{t('加载失败')}</div>
-      <button className="m-pill" style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', color: '#fff' }} onClick={onRetry}>{t('重试')}</button>
+      <button className="m-pill" style={{ background: 'var(--accent)', color: '#fff' }} onClick={onRetry}>{t('重试')}</button>
     </div>
   )
 }

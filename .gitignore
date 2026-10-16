@@ -25,3 +25,6 @@ backend/data/*.cache.json
 backend/data/daily_report.json
 backend/data/price_cache/
 backend/data/similar_cache/
+
+# design-review screenshots from the taste-skill inspector
+frontend/.taste-skill/inspect/

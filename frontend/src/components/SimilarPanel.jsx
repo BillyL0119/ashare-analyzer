@@ -42,7 +42,7 @@ function CorrBar({ value }) {
       <div style={{ width: 60, height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
         <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 3 }} />
       </div>
-      <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: 'monospace', minWidth: 36 }}>
+      <span style={{ fontSize: 12, fontWeight: 600, color, fontFamily: 'var(--sans)', minWidth: 36 }}>
         {value.toFixed(3)}
       </span>
     </div>
@@ -57,13 +57,13 @@ function IndustryPill({ label, type }) {
         fontSize: 10,
         fontWeight: 600,
         padding: '2px 6px',
-        borderRadius: 10,
+        borderRadius: 'var(--radius)',
         whiteSpace: 'nowrap',
         background: isSame
-          ? 'rgba(138,180,248,0.12)'
-          : 'rgba(192,132,252,0.12)',
-        color: isSame ? '#8ab4f8' : '#c084fc',
-        border: `1px solid ${isSame ? 'rgba(138,180,248,0.25)' : 'rgba(192,132,252,0.25)'}`,
+          ? 'color-mix(in srgb, var(--accent) 12%, transparent)'
+          : 'rgba(124,156,180,0.12)',
+        color: isSame ? 'var(--accent)' : '#7c9cb4',
+        border: `1px solid ${isSame ? 'color-mix(in srgb, var(--accent) 25%, transparent)' : 'rgba(124,156,180,0.25)'}`,
         letterSpacing: '0.02em',
       }}
     >
@@ -80,8 +80,8 @@ function ModeToggle({ mode, setMode, t }) {
       style={{
         display: 'flex',
         background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(138,180,248,0.12)',
-        borderRadius: 20,
+        border: '1px solid color-mix(in srgb, var(--accent) 12%, transparent)',
+        borderRadius: 'var(--radius)',
         padding: 3,
         gap: 2,
         flexShrink: 0,
@@ -96,13 +96,13 @@ function ModeToggle({ mode, setMode, t }) {
           onClick={() => setMode(key)}
           style={{
             padding: '4px 14px',
-            borderRadius: 16,
+            borderRadius: 'var(--radius)',
             border: 'none',
             cursor: 'pointer',
             fontSize: 12,
             fontWeight: mode === key ? 600 : 400,
             background: mode === key
-              ? 'linear-gradient(135deg, #8ab4f8, #c084fc)'
+              ? 'var(--accent)'
               : 'transparent',
             color: mode === key ? '#fff' : 'var(--text-muted)',
             transition: 'all 0.2s ease',
@@ -177,13 +177,13 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       >
         <span
           style={{
-            background: 'rgba(138,180,248,0.08)',
-            border: '1px solid rgba(138,180,248,0.3)',
+            background: 'color-mix(in srgb, var(--accent) 8%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
             borderRadius: 4,
             padding: '2px 8px',
             fontSize: 12,
-            color: '#8ab4f8',
-            fontFamily: 'monospace',
+            color: 'var(--accent)',
+            fontFamily: 'var(--sans)',
           }}
         >
           {stock.code}
@@ -254,19 +254,19 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     alignItems: 'center',
                     gap: 10,
                     padding: '8px 10px',
-                    background: 'rgba(138,180,248,0.04)',
+                    background: 'color-mix(in srgb, var(--accent) 4%, transparent)',
                     border: `1px solid ${THEME.border}`,
                     borderRadius: 8,
                   }}
                 >
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, minWidth: 18 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, minWidth: 18 }}>
                     {idx + 1}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
                       <span
                         onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                        style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                        style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--sans)', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                       >
                         {item.code}
                       </span>
@@ -296,7 +296,6 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                   fontSize: 11,
                   color: 'var(--text-muted)',
                   fontWeight: 600,
-                  textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                 }}
               >
@@ -321,15 +320,15 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     borderBottom: idx < data.results.length - 1 ? `1px solid ${THEME.border}` : 'none',
                     transition: 'background 0.1s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 6%, transparent)' }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                 >
-                  <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 700 }}>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
                     {idx + 1}
                   </span>
                   <span
                     onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                    style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                    style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--sans)', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                   >
                     {item.code}
                   </span>

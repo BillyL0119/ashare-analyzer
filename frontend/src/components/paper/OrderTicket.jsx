@@ -3,7 +3,7 @@ import useSymbolSuggest from '../../hooks/useSymbolSuggest'
 import { CUR } from '../../utils/markets'
 import { BDR, MUTED, UP, DOWN, ACCENT, Card, Seg, Field, inputStyle, Button, fmt, money, estFee } from './ui'
 
-const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#6366f1' }
+const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#7c9cb4' }
 const PH = { us: 'AAPL / Apple', cn: '600519 / 茅台', hk: '00700 / 腾讯', jp: '7203 / Toyota' }
 const CODE_OK = { us: /^[A-Z0-9.-]{1,10}$/i, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }
 
@@ -134,14 +134,14 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         <div style={{ position: 'relative' }}>
           <input value={symbol} onChange={(e) => { setSymbol(e.target.value.trim().toUpperCase()); setSuggestOpen(true) }}
             onFocus={() => setSuggestOpen(true)} onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
-            placeholder={PH[market]} autoComplete="off" style={{ ...inputStyle, fontWeight: 700 }} id="pt-order-symbol" />
+            placeholder={PH[market]} autoComplete="off" style={{ ...inputStyle, fontWeight: 600 }} id="pt-order-symbol" />
           {showSuggest && (
-            <div role="listbox" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 30, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden' }}>
+            <div role="listbox" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 30, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden' }}>
               {suggestions.map((x) => (
                 <div key={x.symbol} role="option" onMouseDown={(e) => { e.preventDefault(); setSymbol(x.symbol); setSuggestOpen(false) }}
                   style={{ display: 'flex', gap: 10, padding: '8px 12px', cursor: 'pointer', fontSize: 12.5 }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}>
-                  <b style={{ minWidth: 56, fontFamily: 'var(--mono, monospace)' }}>{x.symbol}</b>
+                  <b style={{ minWidth: 56, fontFamily: 'var(--sans)' }}>{x.symbol}</b>
                   <span style={{ flex: 1, minWidth: 0, color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lang === 'zh' && x.nameZh ? x.nameZh : x.name}</span>
                   {x.price != null && <span style={{ fontVariantNumeric: 'tabular-nums' }}>{CUR[market]}{fmt(x.price)}</span>}
                 </div>
@@ -162,7 +162,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
             <input type="number" min={market === 'us' ? 1 : lot} step={market === 'us' ? 1 : lot} value={shares}
               onChange={(e) => setShares(Math.max(0, Math.floor(Number(e.target.value) || 0)))} style={inputStyle} aria-label={s.shares} />
             <button type="button" onClick={() => maxShares > 0 && setShares(maxShares)} disabled={!(maxShares > 0)}
-              style={{ ...inputStyle, width: 'auto', padding: '0 10px', cursor: 'pointer', fontSize: 12, color: ACCENT, fontWeight: 700, whiteSpace: 'nowrap', flex: 'none' }}>
+              style={{ ...inputStyle, width: 'auto', padding: '0 10px', cursor: 'pointer', fontSize: 12, color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap', flex: 'none' }}>
               {side === 'sell' || side === 'cover' ? s.all : s.max}
             </button>
           </div>
@@ -199,7 +199,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         )}
       </div>
 
-      <p style={{ margin: 0, fontSize: 12, lineHeight: 1.6, color: MUTED, background: 'var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px' }}>
+      <p style={{ margin: 0, fontSize: 12, lineHeight: 1.6, color: MUTED, background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: '9px 12px' }}>
         {side === 'short' ? s.help.short : s.help[type]}
       </p>
 

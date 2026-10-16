@@ -158,7 +158,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
     right: 0,
     background: 'var(--bg-secondary)',
     border: '1px solid var(--border-primary)',
-    borderRadius: 12,
+    borderRadius: 'var(--radius)',
     zIndex: 1000,
     boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
     overflow: 'hidden',
@@ -193,14 +193,14 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
             width: '100%',
             padding: '8px 14px',
             background: 'var(--bg-secondary)',
-            border: `1px solid ${focused ? '#0ea5e9' : 'var(--border-primary)'}`,
-            borderRadius: 24,
+            border: `1px solid ${focused ? 'var(--accent)' : 'var(--border-primary)'}`,
+            borderRadius: 'var(--radius)',
             color: 'var(--text-primary)',
             fontSize: 13,
             outline: 'none',
             cursor: isFull ? 'not-allowed' : 'text',
             transition: 'border-color 0.2s, box-shadow 0.2s',
-            boxShadow: focused ? '0 0 0 3px rgba(14,165,233,0.15)' : 'none',
+            boxShadow: focused ? '0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent)' : 'none',
             letterSpacing: '0.15px',
           }}
         />
@@ -238,7 +238,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                       >
                         <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
                         {m !== 'cn' && (
-                          <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
+                          <span style={{ color: 'var(--accent)', fontFamily: 'var(--sans)', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
                         )}
                         <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                         <PctBadge val={s.change_pct} market={m} />
@@ -266,10 +266,10 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                 onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
               >
-                <span style={{ color: '#0ea5e9', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
+                <span style={{ color: 'var(--accent)', fontFamily: 'var(--sans)', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
                 <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                 <span style={{
-                  fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
+                  fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
                   background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
                 }}>
                   {s._market === 'us' ? 'US' : s._market === 'cn' ? (lang === 'zh' ? 'A股' : 'CN') : marketLabel(s._market, lang)}

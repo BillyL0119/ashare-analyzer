@@ -7,7 +7,7 @@ import { getStockFactor } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const COLORS = ['#8ab4f8', '#f78166', '#3fb950', '#d2a8ff']
+const COLORS = ['#a08672', '#f78166', '#3fb950', '#d2a8ff']
 
 function bold(text) {
   if (!text) return []
@@ -71,10 +71,10 @@ function RollingBetaChart({ rolling, t }) {
         type: 'line',
         data: betas,
         smooth: true,
-        lineStyle: { color: '#8ab4f8', width: 2 },
+        lineStyle: { color: '#a08672', width: 2 },
         areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{ offset: 0, color: 'rgba(138,180,248,0.3)' },
-                       { offset: 1, color: 'rgba(138,180,248,0)' }] } },
+          colorStops: [{ offset: 0, color: 'rgba(160,134,114,0.3)' },
+                       { offset: 1, color: 'rgba(160,134,114,0)' }] } },
         symbol: 'none',
       },
       {
@@ -106,11 +106,11 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
       </div>
       <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden',
         background: THEME.border }}>
-        <div style={{ width: `${pctSys}%`, background: '#8ab4f8', transition: 'width 0.5s' }} />
+        <div style={{ width: `${pctSys}%`, background: '#a08672', transition: 'width 0.5s' }} />
         <div style={{ width: `${pctIdio}%`, background: '#3fb950', transition: 'width 0.5s' }} />
       </div>
       <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
-        <span style={{ color: '#8ab4f8', fontSize: 11 }}>■ Systematic</span>
+        <span style={{ color: '#a08672', fontSize: 11 }}>■ Systematic</span>
         <span style={{ color: '#3fb950', fontSize: 11 }}>■ Idiosyncratic</span>
       </div>
     </div>
@@ -140,10 +140,10 @@ function CorrelationBars({ correlations, t }) {
             <div key={`b-${sym}`} style={{ position: 'relative', height: 8, borderRadius: 4,
               background: THEME.border, overflow: 'hidden' }}>
               <div style={{ position: 'absolute', left: 0, top: 0, height: '100%',
-                width: `${pct}%`, background: isPos ? '#8ab4f8' : '#f85149',
+                width: `${pct}%`, background: isPos ? '#a08672' : '#f85149',
                 borderRadius: 4, transition: 'width 0.5s' }} />
             </div>,
-            <span key={`c-${sym}`} style={{ color: isPos ? '#8ab4f8' : '#f85149',
+            <span key={`c-${sym}`} style={{ color: isPos ? '#a08672' : '#f85149',
               fontSize: 12, fontWeight: 600 }}>
               {v.correlation.toFixed(3)}
             </span>,
@@ -176,7 +176,7 @@ function StockFactor({ stock, color, t, lang, params }) {
   const cardStyle = {
     background: 'rgba(255,255,255,0.04)',
     border: `1px solid ${THEME.border}`,
-    borderRadius: 10,
+    borderRadius: 'var(--radius)',
     padding: 16,
     flex: '1 1 400px',
     minWidth: 320,
@@ -184,19 +184,19 @@ function StockFactor({ stock, color, t, lang, params }) {
 
   if (loading) return (
     <div style={cardStyle}>
-      <div style={{ color, fontWeight: 700, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
+      <div style={{ color, fontWeight: 600, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
       <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.factorLoading}</div>
     </div>
   )
 
   if (error) return (
     <div style={cardStyle}>
-      <div style={{ color, fontWeight: 700, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
+      <div style={{ color, fontWeight: 600, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
       <div style={{ color: '#f85149', fontSize: 13 }}>{error}</div>
     </div>
   )
 
-  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#8ab4f8'
+  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#a08672'
   const alphaColor = data.alpha_annual_pct >= 0 ? '#ef5350' : '#26a69a'
 
   return (
@@ -204,7 +204,7 @@ function StockFactor({ stock, color, t, lang, params }) {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         marginBottom: 14 }}>
-        <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name} ({stock.code})</span>
+        <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name} ({stock.code})</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.factorSummary} · {data.sample_days}d</span>
       </div>
 
@@ -219,7 +219,7 @@ function StockFactor({ stock, color, t, lang, params }) {
           <div key={label} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
             borderRadius: 6, padding: '8px 10px', textAlign: 'center' }}>
             <div style={{ color: 'var(--text-muted)', fontSize: 11, marginBottom: 3 }}>{label}</div>
-            <div style={{ color: c, fontWeight: 700, fontSize: 16 }}>{val}</div>
+            <div style={{ color: c, fontWeight: 600, fontSize: 16 }}>{val}</div>
           </div>
         ))}
       </div>

@@ -26,11 +26,12 @@ const num = (v) => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximum
 const CSS = `
 .usp-hit { transition: background .15s, border-color .15s, transform .15s; }
 .usp-hit:hover { background: var(--bg-hover) !important; }
-.usp-tile:hover { border-color: var(--border-glow) !important; transform: translateY(-1px); }
-.usp-hit:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .usp-hit { transition: none; } .usp-tile:hover { transform: none; } }
+.usp-tile:hover { background: var(--bg-hover) !important; }
+.usp-seg { transition: background-color .15s, color .15s; }
+.usp-seg:hover { color: var(--text-primary) !important; }
+@media (prefers-reduced-motion: reduce) { .usp-hit { transition: none; } }
 `
-const card = { background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12 }
+const card = { background: 'var(--bg-secondary)', borderRadius: 'var(--radius)' }
 
 const OPENS_AT = {
   zh: (w) => `美东时间 ${w} 开盘`, en: (w) => `Opens ${w} ET`, ja: (w) => `米国東部時間 ${w} 開場`,
@@ -73,40 +74,42 @@ export default function USMarketPanel({ lang }) {
   const b = d.breadth
 
   return (
-    <div style={{ ...card, padding: 16, marginBottom: 10, display: 'grid', gap: 16 }}>
+    <section data-reveal style={{ ...card, padding: 24, marginBottom: 16, display: 'grid', gap: 24 }}>
       <style>{CSS}</style>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <span style={{ width: 7, height: 7, borderRadius: 4, background: s.state === 'regular' ? UP : s.state === 'closed' ? 'var(--text-muted)' : 'var(--accent-gold)' }} />
-        <strong style={{ fontSize: 14 }}>{t.title}</strong>
-        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 10, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{label}{cd && ` · ${cd}`}</span>
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)' }}>{d.session.et_time.slice(11)} ET · {t.delayed}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <h2 style={{ fontSize: 24, margin: 0 }}>{t.title}</h2>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, color: 'var(--text-secondary)' }}>
+          <span style={{ width: 8, height: 8, borderRadius: 4, background: s.state === 'regular' ? UP : s.state === 'closed' ? 'var(--text-muted)' : 'var(--accent-gold)' }} />
+          {label}{cd && ` · ${cd}`}
+        </span>
+        <span style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-muted)' }}>{d.session.et_time.slice(11)} ET · {t.delayed}</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
         {d.indices.map((i) => (
-          <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 10, padding: '10px 12px' }}>
-            <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{zh ? INDEX_ZH[i.name] || i.name : i.name}</div>
-            <div className="serif-num" style={{ fontSize: 27, margin: '2px 0' }}>{num(i.price)}</div>
+          <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: '14px 16px' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{zh ? INDEX_ZH[i.name] || i.name : i.name}</div>
+            <div className="serif-num" style={{ fontSize: 30, margin: '4px 0' }}>{num(i.price)}</div>
             <div style={{ fontSize: 13, fontWeight: 600, color: col(i.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(i.pct)}{i.change != null && <span style={{ marginLeft: 8, opacity: 0.8 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}</div>
           </div>
         ))}
       </div>
 
       <div>
-        <div style={{ display: 'flex', height: 5, borderRadius: 3, overflow: 'hidden', gap: 2 }}>
+        <div style={{ display: 'flex', height: 6, borderRadius: 3, overflow: 'hidden', gap: 3 }}>
           <span style={{ flex: b.advancing, background: UP }} /><span style={{ flex: b.declining, background: DOWN }} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)', marginTop: 5 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'var(--text-secondary)', marginTop: 8 }}>
           <span>{b.advancing} {t.up}</span><span>{b.declining} {t.down}</span>
         </div>
       </div>
 
       <div>
-        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.mega}</div>
+        <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 10 }}>{t.mega}</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(96px, 1fr))', gap: 8 }}>
           {d.mega_caps.map((q) => (
-            <button key={q.symbol} className="usp-hit usp-tile" onClick={() => openUS(q)} style={{ minWidth: 0, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 10, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
-              <div style={{ fontWeight: 700, fontSize: 14 }}>{q.symbol}</div>
+            <button key={q.symbol} className="usp-hit usp-tile" onClick={() => openUS(q)} style={{ minWidth: 0, textAlign: 'left', background: 'var(--bg-tertiary)', border: 'none', borderRadius: 'var(--radius)', padding: '10px 12px', color: 'inherit', cursor: 'pointer' }}>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{q.symbol}</div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</div>
             </button>
@@ -116,14 +119,14 @@ export default function USMarketPanel({ lang }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
         <div>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+          <div role="group" style={{ display: 'inline-flex', gap: 2, padding: 3, marginBottom: 10, background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)' }}>
             {['gainers', 'losers', 'active'].map((k) => (
-              <button key={k} onClick={() => setTab(k)} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 14, cursor: 'pointer', border: '1px solid var(--border-primary)', background: tab === k ? 'var(--accent-blue)' : 'transparent', color: tab === k ? '#fff' : 'var(--text-secondary)' }}>{t[k]}</button>
+              <button key={k} className="usp-seg" aria-pressed={tab === k} onClick={() => setTab(k)} style={{ fontSize: 13, padding: '6px 12px', borderRadius: 4, cursor: 'pointer', border: 'none', background: tab === k ? 'var(--bg-hover)' : 'transparent', color: tab === k ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{t[k]}</button>
             ))}
           </div>
           {rows.map((q) => (
             <button key={q.symbol} className="usp-hit" onClick={() => openUS(q)} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '8px 6px', borderRadius: 6, background: 'none', border: 'none', borderBottom: '1px solid var(--border-primary)', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}>
-              <span style={{ width: 56, fontWeight: 700, fontSize: 14 }}>{q.symbol}</span>
+              <span style={{ width: 56, fontWeight: 600, fontSize: 14 }}>{q.symbol}</span>
               <span style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.name}</span>
               <span style={{ fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</span>
               <span style={{ width: 66, textAlign: 'right', fontSize: 12, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</span>
@@ -131,7 +134,7 @@ export default function USMarketPanel({ lang }) {
           ))}
         </div>
         <div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.sectors}</div>
+          <div style={{ fontSize: 14, color: 'var(--text-secondary)', padding: '10px 0 9px' }}>{t.sectors}</div>
           {/* Diverging bars: zero in the middle, length to scale with the largest move */}
           {d.sectors.map((x) => {
             const c = col(x.pct)
@@ -139,11 +142,10 @@ export default function USMarketPanel({ lang }) {
             return (
               <button key={x.symbol} className="usp-hit" onClick={() => openUS({ symbol: x.symbol, name: x.name })} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr) 62px', alignItems: 'center', gap: 10, width: '100%', padding: '7px 6px', borderRadius: 6, background: 'none', border: 'none', borderBottom: '1px solid var(--border-primary)', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}>
                 <span style={{ fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {(zh && SECTOR.zh[x.name]) || x.name}<span style={{ marginLeft: 6, fontSize: 11, color: 'var(--text-muted)' }}>{x.symbol}</span>
+                  {(zh && SECTOR.zh[x.name]) || x.name}<span style={{ marginLeft: 6, fontSize: 13, color: 'var(--text-muted)' }}>{x.symbol}</span>
                 </span>
                 <span style={{ position: 'relative', height: 8, borderRadius: 4, background: 'var(--bg-tertiary)' }}>
-                  <span style={{ position: 'absolute', left: '50%', top: -2, bottom: -2, width: 1, background: 'var(--border-glow)' }} />
-                  <span style={{ position: 'absolute', top: 0, bottom: 0, borderRadius: 4, background: c, width: `${Math.max(w, 1.5)}%`, ...(x.pct >= 0 ? { left: '50%' } : { right: '50%' }) }} />
+                                    <span style={{ position: 'absolute', top: 0, bottom: 0, borderRadius: 4, background: c, width: `${Math.max(w, 1.5)}%`, ...(x.pct >= 0 ? { left: '50%' } : { right: '50%' }) }} />
                 </span>
                 <span style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: c, fontVariantNumeric: 'tabular-nums' }}>{pct(x.pct)}</span>
               </button>
@@ -151,6 +153,6 @@ export default function USMarketPanel({ lang }) {
           })}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

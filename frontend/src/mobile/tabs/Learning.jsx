@@ -64,7 +64,7 @@ function List() {
               <b style={{ fontSize: 14 }}>{t('学习进度')}</b><span className="m-num m-muted" style={{ fontSize: 12, fontWeight: 650 }}>{t('%lld/%lld 已学完', done, all.length)}</span>
             </div>
             <div style={{ height: 8, borderRadius: 4, background: 'var(--surface-hi)', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${all.length ? (done / all.length) * 100 : 0}%`, minWidth: done ? 8 : 0, borderRadius: 4, background: 'linear-gradient(90deg,var(--accent),var(--accent-2))', transition: 'width .4s' }} />
+              <div style={{ height: '100%', width: `${all.length ? (done / all.length) * 100 : 0}%`, minWidth: done ? 8 : 0, borderRadius: 4, background: 'var(--accent)', transition: 'width .4s' }} />
             </div>
           </div>
           {cur.papers?.length ? cur.papers.map((p) => (

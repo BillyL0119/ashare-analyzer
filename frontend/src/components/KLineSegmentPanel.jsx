@@ -20,7 +20,7 @@ function StatCard({ label, value, color }) {
       borderRadius: 6, padding: '7px 10px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 3 }}>{label}</div>
-      <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: color || 'var(--text-primary)' }}>
+      <div style={{ fontSize: 13, fontWeight: 600, fontFamily: 'var(--sans)', color: color || 'var(--text-primary)' }}>
         {value}
       </div>
     </div>
@@ -36,7 +36,7 @@ function AIText({ text }) {
         // Section header: **Title**
         if (/^\*\*[^*]+\*\*$/.test(line.trim())) {
           return (
-            <div key={i} style={{ color: '#8ab4f8', fontWeight: 700, fontSize: 13, marginTop: 12, marginBottom: 3 }}>
+            <div key={i} style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 13, marginTop: 12, marginBottom: 3 }}>
               {line.trim().slice(2, -2)}
             </div>
           )
@@ -96,12 +96,12 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
     <div style={{
       margin: '0 0 4px 0',
       borderTop: `1px solid ${THEME.border}`,
-      background: 'rgba(14,165,233,0.03)',
+      background: 'color-mix(in srgb, var(--accent) 3%, transparent)',
       padding: '12px 14px',
     }}>
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <span style={{ fontSize: 12, color: '#8ab4f8', fontWeight: 700 }}>
+        <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600 }}>
           {t.ksTitle}
         </span>
         <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
@@ -204,8 +204,8 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
 
           {/* AI text */}
           <div style={{
-            background: 'rgba(138,180,248,0.05)',
-            border: `1px solid rgba(138,180,248,0.2)`,
+            background: 'color-mix(in srgb, var(--accent) 5%, transparent)',
+            border: `1px solid color-mix(in srgb, var(--accent) 20%, transparent)`,
             borderRadius: 6, padding: '10px 14px',
           }}>
             <AIText text={result.ai_analysis} />
@@ -239,8 +239,8 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           style={{
             display: 'block', width: '100%', padding: '10px 0',
             background: loading
-              ? 'rgba(138,180,248,0.15)'
-              : 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)',
+              ? 'color-mix(in srgb, var(--accent) 15%, transparent)'
+              : 'var(--accent)',
             color: '#fff', border: 'none', borderRadius: 6,
             cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 14, fontWeight: 600, letterSpacing: '0.3px',

@@ -77,21 +77,21 @@ const PRESETS = [
 
 const money = (v) => (v == null ? '—' : v >= 1e12 ? `$${(v / 1e12).toFixed(2)}T` : v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : v >= 1e6 ? `$${(v / 1e6).toFixed(0)}M` : `$${v.toFixed(0)}`)
 const vol = (v) => (v == null ? '—' : v >= 1e9 ? `${(v / 1e9).toFixed(2)}B` : v >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : v >= 1e3 ? `${(v / 1e3).toFixed(0)}K` : String(v))
-const UP = '#26a69a', DOWN = '#ef5350', ACCENT = '#0ea5e9'
+const UP = '#26a69a', DOWN = '#ef5350', ACCENT = 'var(--accent)'
 
 const CSS = `
 .sc-wrap { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }
-.sc-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
+.sc-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); }
 .sc-filters { padding: 14px; display: grid; gap: 14px; position: sticky; top: 112px; }
-.sc-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.sc-lbl { font-size: 11px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); margin-bottom: 6px; }
 .sc-in { width: 100%; box-sizing: border-box; padding: 7px 10px; border-radius: 8px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
 .sc-in:focus { border-color: ${ACCENT}; }
 .sc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.sc-chip { padding: 6px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); white-space: nowrap; }
+.sc-chip { padding: 6px 12px; border-radius: var(--radius); font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); white-space: nowrap; }
 .sc-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
 .sc-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer; padding: 3px 0; }
 .sc-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.sc-table th { text-align: right; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); padding: 10px 10px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; user-select: none; }
+.sc-table th { text-align: right; font-size: 11px; font-weight: 600; letter-spacing: .04em;  color: var(--text-muted); padding: 10px 10px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; user-select: none; }
 .sc-table th.l, .sc-table td.l { text-align: left; }
 .sc-table th.sortable { cursor: pointer; }
 .sc-table th.sortable:hover { color: var(--text-primary); }
@@ -165,8 +165,8 @@ export default function ScreenerPage({ lang }) {
     <div style={{ maxWidth: 1280, margin: '0 auto', paddingTop: 22, paddingBottom: 48 }}>
       <style>{CSS}</style>
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: ACCENT }}>{t.eyebrow}</div>
-        <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.1em', color: ACCENT }}>{t.eyebrow}</div>
+        <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
         <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 680, lineHeight: 1.6 }}>{t.sub(data?.universe || 5000)}</p>
       </div>
 
@@ -269,7 +269,7 @@ export default function ScreenerPage({ lang }) {
                 {rows.map((r) => (
                   <tr key={r.symbol} className="row" tabIndex={0} onClick={() => open(r)} onKeyDown={(e) => e.key === 'Enter' && open(r)}>
                     <td className="l" style={{ maxWidth: 150 }}>
-                      <div style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontWeight: 700, color: ACCENT }}>{r.symbol}</div>
+                      <div style={{ fontFamily: 'var(--sans)', fontWeight: 600, color: ACCENT }}>{r.symbol}</div>
                       <div className="sc-show-sm" style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
                     </td>
                     <td className="l sc-hide-sm" style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis' }}>

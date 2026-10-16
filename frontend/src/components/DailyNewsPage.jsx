@@ -12,7 +12,7 @@ const SOURCE_COLORS = {
   '新浪财经要闻':    '#e8321e',
   '新浪A股':         '#e8321e',
   'BBC Business':    '#bb1919',
-  'Guardian Business':'#3b82f6',
+  'Guardian Business':'var(--accent)',
   'Reuters Business':'#ff8c00',
   'Yahoo Finance':   '#6001d2',
   'MarketWatch':     '#00a651',
@@ -31,14 +31,14 @@ function SourceBadge({ name }) {
       width: 28, height: 28, borderRadius: 8, flexShrink: 0, marginTop: 1,
       background: color + '22', color, border: `1px solid ${color}44`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 12, fontWeight: 700,
+      fontSize: 12, fontWeight: 600,
     }}>
       {letter.toUpperCase()}
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #38bdf8; }
-        .bfs-news-row:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: var(--accent); }
+        .bfs-news-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>
@@ -47,9 +47,9 @@ function SourceBadge({ name }) {
 }
 
 const CAT_CONFIG = {
-  all:      { zh: '全部',   en: 'All',       ja: '全て',    ko: '전체',    fr: 'Tous',      color: '#0ea5e9' },
-  market:   { zh: '市场行情', en: 'Market',   ja: '市況',    ko: '시황',    fr: 'Marché',    color: '#38bdf8' },
-  macro:    { zh: '宏观政策', en: 'Macro',    ja: 'マクロ',  ko: '거시',    fr: 'Macro',     color: '#a78bfa' },
+  all:      { zh: '全部',   en: 'All',       ja: '全て',    ko: '전체',    fr: 'Tous',      color: 'var(--accent)' },
+  market:   { zh: '市场行情', en: 'Market',   ja: '市況',    ko: '시황',    fr: 'Marché',    color: 'var(--accent)' },
+  macro:    { zh: '宏观政策', en: 'Macro',    ja: 'マクロ',  ko: '거시',    fr: 'Macro',     color: '#7c9cb4' },
   company:  { zh: '公司动态', en: 'Company',  ja: '企業',    ko: '기업',    fr: 'Entreprise', color: '#34d399' },
   industry: { zh: '行业资讯', en: 'Industry', ja: '業界',    ko: '산업',    fr: 'Industrie', color: '#fb923c' },
   breaking: { zh: '突发事件', en: 'Breaking', ja: '速報',    ko: '속보',    fr: 'Flash',     color: '#f87171' },
@@ -82,7 +82,7 @@ function Pill({ active, color, onClick, children }) {
     <button
       onClick={onClick}
       style={{
-        padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
+        padding: '5px 14px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
@@ -134,7 +134,7 @@ function NewsRow({ item, lang, first }) {
 
 function SkeletonCard() {
   return (
-    <div className="skeleton" style={{ height: 64, borderRadius: 10, marginBottom: 8 }} />
+    <div className="skeleton" style={{ height: 64, borderRadius: 'var(--radius)', marginBottom: 8 }} />
   )
 }
 
@@ -222,7 +222,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
             {t.dnTitle}
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -242,9 +242,9 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             onClick={() => fetchNews(catFilter, langFilter)}
             disabled={loading}
             style={{
-              padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.4)',
-              background: loading ? 'rgba(14,165,233,0.05)' : 'rgba(14,165,233,0.1)',
-              color: '#0ea5e9', fontSize: 12, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
+              padding: '6px 16px', borderRadius: 'var(--radius)', border: '1px solid color-mix(in srgb, var(--accent) 40%, transparent)',
+              background: loading ? 'color-mix(in srgb, var(--accent) 5%, transparent)' : 'color-mix(in srgb, var(--accent) 10%, transparent)',
+              color: 'var(--accent)', fontSize: 12, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
               transition: 'all 0.2s',
             }}
           >
@@ -256,7 +256,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       {/* Divider */}
       <div style={{
         height: 1, marginBottom: 18,
-        background: 'linear-gradient(90deg, rgba(14,165,233,0.4) 0%, rgba(139,92,246,0.3) 50%, transparent 100%)',
+        background: 'color-mix(in srgb, var(--accent) 40%, transparent)',
       }} />
 
       {/* Filter bar */}
@@ -284,7 +284,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             <Pill
               key={opt.key}
               active={langFilter === opt.key}
-              color="#0ea5e9"
+              color="var(--accent)"
               onClick={() => setLang(opt.key)}
             >
               {opt[lang] || opt.en}
@@ -314,7 +314,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         <>
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 12, overflow: 'hidden', marginBottom: 8,
+            borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 8,
           }}>
             {displayed.map((item, i) => (
               <NewsRow key={`${item.source}-${i}`} item={item} lang={lang} first={i === 0} />
@@ -326,7 +326,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
               style={{
                 display: 'block', width: '100%', padding: '12px 0',
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 12, color: 'var(--text-secondary)', fontSize: 13,
+                borderRadius: 'var(--radius)', color: 'var(--text-secondary)', fontSize: 13,
                 cursor: 'pointer', marginTop: 4,
                 transition: 'background 0.2s',
               }}
@@ -342,8 +342,8 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #38bdf8; }
-        .bfs-news-row:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: var(--accent); }
+        .bfs-news-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>

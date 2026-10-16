@@ -17,7 +17,7 @@ function MetricCard({ label, value }) {
       padding: '10px 14px', minWidth: 100, flex: 1,
     }}>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--sans)' }}>
         {value ?? '--'}
       </div>
     </div>
@@ -34,14 +34,14 @@ function MiniSimilarRow({ item, onStockClick }) {
         borderBottom: '1px solid var(--border-primary)',
         transition: 'background 0.12s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.07)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 7%, transparent)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
-      <span style={{ fontSize: 11, color: '#0ea5e9', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
+      <span style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--sans)', minWidth: 56 }}>{item.code}</span>
       <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.name}
       </span>
-      <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#8b5cf6', flexShrink: 0 }}>
+      <span style={{ fontSize: 11, fontFamily: 'var(--sans)', color: '#7c9cb4', flexShrink: 0 }}>
         {item.correlation?.toFixed(3)}
       </span>
     </div>
@@ -60,7 +60,7 @@ function MiniNewsRow({ item, t }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
         <span style={{
-          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 8,
+          fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 8,
           background: `${color}20`, color, border: `1px solid ${color}40`,
           flexShrink: 0, marginTop: 1,
         }}>
@@ -141,7 +141,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
     >
       <div style={{
         background: 'var(--bg-secondary)', border: `1px solid ${BDR}`,
-        borderRadius: 16, width: '100%', maxWidth: 880,
+        borderRadius: 'var(--radius)', width: '100%', maxWidth: 880,
         maxHeight: '90vh', overflowY: 'auto',
         position: 'relative',
       }}>
@@ -162,12 +162,12 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{
-                  background: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.3)',
-                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: '#0ea5e9', fontFamily: 'monospace',
+                  background: 'color-mix(in srgb, var(--accent) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
+                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--sans)',
                 }}>
                   {symbol}
                 </span>
-                <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <span style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-primary)' }}>
                   {name || q?.name || symbol}
                 </span>
                 {q?.industry && (
@@ -178,7 +178,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
               </div>
               {price !== null && (
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 8 }}>
-                  <span style={{ fontSize: 28, fontWeight: 700, color: up ? upColor : downColor, fontFamily: 'monospace' }}>
+                  <span style={{ fontSize: 28, fontWeight: 600, color: up ? upColor : downColor, fontFamily: 'var(--sans)' }}>
                     {Number(price).toFixed(2)}
                   </span>
                   {change !== null && (
@@ -211,9 +211,9 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
           {!loading && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
               {/* Left: similar stocks */}
-              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
+              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
-                  fontSize: 13, fontWeight: 600, color: '#8b5cf6' }}>
+                  fontSize: 13, fontWeight: 600, color: '#7c9cb4' }}>
                   {t.sdSimilar}
                 </div>
                 {simResults.length === 0 ? (
@@ -223,7 +223,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                 ) : (
                   <div>
                     <div style={{ display: 'flex', padding: '5px 10px', fontSize: 10, color: 'var(--text-muted)',
-                      fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em',
+                      fontWeight: 600, letterSpacing: '0.04em',
                       borderBottom: '1px solid var(--border-primary)' }}>
                       <span style={{ minWidth: 56 }}>CODE</span>
                       <span style={{ flex: 1 }}>NAME</span>
@@ -240,7 +240,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
               </div>
 
               {/* Right: latest news */}
-              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
+              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
                   fontSize: 13, fontWeight: 600, color: '#ffa726' }}>
                   {t.sdNews}
@@ -261,10 +261,10 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
           {/* ── 5. AI Analysis summary ── */}
           {analysis && (
             <div style={{
-              background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)',
-              borderRadius: 10, padding: '14px 18px', marginBottom: 20,
+              background: 'rgba(124,156,180,0.06)', border: '1px solid rgba(124,156,180,0.2)',
+              borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 20,
             }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#818cf8', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#7c9cb4', marginBottom: 8, letterSpacing: '0.3px' }}>
                 {t.sdAI}
               </div>
               <div style={{ fontSize: 13, color: '#c7d2fe', lineHeight: 1.6 }}>
@@ -281,7 +281,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                 setTimeout(() => onLoadMain(symbol, name), 50)
               }}
               style={{
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                background: '#7c9cb4',
                 color: '#fff', border: 'none', borderRadius: 8,
                 padding: '10px 36px', cursor: 'pointer', fontSize: 14, fontWeight: 600,
               }}

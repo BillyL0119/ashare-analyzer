@@ -62,7 +62,7 @@
 .m-seg.full { display: flex; } .m-seg.full button { flex: 1; text-align: center; }
 .m-chip { display: inline-flex; padding: 3px 8px; border-radius: 999px; background: var(--surface-hi); color: var(--text-2); font-size: 11px; font-weight: 600; }
 .m-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; border-radius: 18px; color: #fff; font-weight: 700; font-size: 16px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+  background: var(--accent); }
 .m-btn[disabled] { opacity: .4; }
 .m-btn.ghost { background: var(--surface-hi); color: var(--text); }
 .m-link { color: var(--accent); font-weight: 600; }
@@ -70,7 +70,7 @@
 /* skeleton */
 .m-skel { border-radius: 10px; background: var(--surface-hi); position: relative; overflow: hidden; }
 .m-skel::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text) 9%, transparent), transparent); animation: m-shimmer 1.3s infinite; }
+  background: color-mix(in srgb, var(--text) 9%, transparent); animation: m-shimmer 1.3s infinite; }
 @keyframes m-shimmer { to { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .m-skel::after { animation: none; } }
 

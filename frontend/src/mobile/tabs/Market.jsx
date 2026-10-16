@@ -98,7 +98,7 @@ const idxPct = (q) => {
 function IndexTile({ name, q, hero }) {
   const p = idxPct(q)
   const c = changeColor(p, 'cn')
-  const bg = `linear-gradient(135deg, color-mix(in srgb, ${c} 16%, transparent), var(--surface-hi))`
+  const bg = `color-mix(in srgb, ${c} 16%, transparent)`
   if (hero) {
     return (
       <div className="m-tile" style={{ background: bg, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
@@ -248,7 +248,7 @@ function Global() {
               {s.indices.filter((i) => i.close > 0 && i.change_pct != null).map((i) => {
                 const m = marketOfRegion(i.region); const c = changeColor(i.change_pct, m)
                 return (
-                  <div key={i.symbol} className="m-tile" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${c} 14%, transparent), var(--surface-hi))` }}>
+                  <div key={i.symbol} className="m-tile" style={{ background: `color-mix(in srgb, ${c} 14%, transparent)` }}>
                     <div className="m-label">{lang === 'zh' ? i.name_zh : i.name}</div>
                     <div className="m-num" style={{ fontWeight: 800, fontSize: 15, margin: '5px 0 3px' }}>{num(i.close)}</div>
                     <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(i.change_pct)}</div>

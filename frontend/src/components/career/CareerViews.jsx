@@ -7,23 +7,23 @@ import { CATEGORIES, FIRMS } from './firms'
 
 const CSS = `
 .cg-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.cg-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+.cg-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .04em; 
   color: var(--text-muted); padding: 10px 12px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; }
 .cg-table td { padding: 11px 12px; border-bottom: 1px solid var(--border-primary); color: var(--text-secondary); vertical-align: top; }
 .cg-table tr:last-child td { border-bottom: none; }
 .cg-row { cursor: pointer; transition: background .12s; }
 .cg-row:hover { background: var(--bg-hover); }
-.cg-row:focus-visible { outline: 2px solid var(--accent-blue, #0ea5e9); outline-offset: -2px; }
-.cg-row.is-active { background: color-mix(in srgb, #0ea5e9 9%, transparent); }
-.cg-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
-.cg-h { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 10px; }
-.cg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12px;
+.cg-row:focus-visible { outline: 2px solid var(--accent-blue, var(--accent)); outline-offset: -2px; }
+.cg-row.is-active { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+.cg-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); }
+.cg-h { font-size: 12px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); margin: 0 0 10px; }
+.cg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--radius); font-size: 12px;
   border: 1px solid var(--border-primary); background: transparent; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
-.cg-chip.is-on { background: color-mix(in srgb, #0ea5e9 14%, transparent); border-color: color-mix(in srgb, #0ea5e9 55%, transparent); color: #0ea5e9; font-weight: 600; }
+.cg-chip.is-on { background: color-mix(in srgb, var(--accent) 14%, transparent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); color: var(--accent); font-weight: 600; }
 .cg-chip .n { font-size: 11px; opacity: .7; }
-.cg-tick { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #0ea5e9;
-  background: none; border: 1px solid color-mix(in srgb, #0ea5e9 35%, transparent); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
-.cg-tick:hover { background: color-mix(in srgb, #0ea5e9 10%, transparent); }
+.cg-tick { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--accent);
+  background: none; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
+.cg-tick:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .cg-profile { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; }
 .cg-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 @media (max-width: 900px) { .cg-profile { grid-template-columns: minmax(0, 1fr); } .cg-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -94,9 +94,9 @@ export function CareersView({ zh, onShowFirms }) {
 
 function Tile({ label, value, sub }) {
   return (
-    <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '12px 14px', minWidth: 0 }}>
+    <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 'var(--radius)', padding: '12px 14px', minWidth: 0 }}>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>{label}</div>
-      <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.25 }}>{value}</div>
+      <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.25 }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{sub}</div>}
     </div>
   )
@@ -115,7 +115,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
       {/* Header */}
       <div className="cg-panel" style={{ padding: '18px 18px 16px', display: 'grid', gap: 14 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: role.color }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.08em', color: role.color }}>
             {zh ? '职业路径' : 'Career track'} · {L(m.short, zh)}
           </div>
           <h2 style={{ margin: '4px 0 6px', fontSize: 22, color: 'var(--text-primary)', letterSpacing: '-.2px' }}>{zh ? role.title : role.titleEn}</h2>
@@ -173,11 +173,11 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
               {m.timeline.map((s, i) => (
                 <li key={i} style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', gap: 12 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 700, color: role.color, background: `${role.color}1f`, border: `1px solid ${role.color}55` }}>{i + 1}</span>
+                    <span style={{ width: 22, height: 22, borderRadius: 'var(--radius)', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: role.color, background: `${role.color}1f`, border: `1px solid ${role.color}55` }}>{i + 1}</span>
                     {i < m.timeline.length - 1 && <span style={{ flex: 1, width: 1, background: 'var(--border-primary)', minHeight: 14 }} />}
                   </div>
                   <div style={{ paddingBottom: i < m.timeline.length - 1 ? 14 : 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{L(s.when, zh)}</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{L(s.when, zh)}</div>
                     <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginTop: 2 }}>{L(s.what, zh)}</div>
                   </div>
                 </li>
@@ -194,7 +194,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
                   const hasTime = rest.length > 0
                   return (
                     <div key={i} style={{ display: 'grid', gridTemplateColumns: hasTime ? '92px minmax(0, 1fr)' : 'minmax(0, 1fr)', gap: 10, fontSize: 13, lineHeight: 1.6 }}>
-                      {hasTime && <span style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 12, color: role.color, fontWeight: 600, paddingTop: 1 }}>{time}</span>}
+                      {hasTime && <span style={{ fontFamily: 'var(--sans)', fontSize: 12, color: role.color, fontWeight: 600, paddingTop: 1 }}>{time}</span>}
                       <span style={{ color: 'var(--text-secondary)' }}>{hasTime ? rest.join(' — ') : line}</span>
                     </div>
                   )
@@ -210,7 +210,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
             <h3 className="cg-h">{zh ? '常见去向' : 'Exit opportunities'}</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {(zh ? m.exits.zh : m.exits.en).map((x) => (
-                <span key={x} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 999, background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>{x}</span>
+                <span key={x} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 'var(--radius)', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>{x}</span>
               ))}
             </div>
           </section>
@@ -327,7 +327,7 @@ export function FirmsView({ zh, initialCat = 'all' }) {
                     ? <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{zh ? '未上市' : 'Not listed'}</span>
                     : /^(us|cn|hk|jp):/.test(x.ticker)
                       ? <button className="cg-tick" onClick={() => open(x)} title={zh ? '查看股票分析' : 'Open stock analysis'}>{x.ticker.split(':')[1]} →</button>
-                      : <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: '"JetBrains Mono", ui-monospace, monospace' }}>{x.ticker.split(':')[1]} · {x.hq}</span>}
+                      : <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--sans)' }}>{x.ticker.split(':')[1]} · {x.hq}</span>}
                 </td>
               </tr>
             ))}

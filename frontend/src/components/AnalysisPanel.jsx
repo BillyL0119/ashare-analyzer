@@ -7,7 +7,7 @@ import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import AddComparisonStocks from './AddComparisonStocks'
 
-const COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
+const COLORS = ['var(--accent)', '#b388ff', '#ffb74d', '#90a4ae']
 
 function GaugeBar({ value, label, color }) {
   const pct = Math.round(((value + 1) / 2) * 100)
@@ -62,7 +62,7 @@ function InterpretationBlock({ text }) {
           )
         return (
           <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '10px 14px' }}>
-            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{title}</div>
+            <div style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{title}</div>
             <div style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.7 }}>{renderBold(body)}</div>
           </div>
         )
@@ -122,10 +122,10 @@ export default function AnalysisPanel({ stocks }) {
         return (
           <div key={idx} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <span style={{ color: colorA, fontWeight: 700, fontSize: 15 }}>{a.name}</span>
+              <span style={{ color: colorA, fontWeight: 600, fontSize: 15 }}>{a.name}</span>
               {a.name !== a.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{a.code}</span>}
               <span style={{ color: 'var(--text-muted)', margin: '0 4px' }}>vs</span>
-              <span style={{ color: colorB, fontWeight: 700, fontSize: 15 }}>{b.name}</span>
+              <span style={{ color: colorB, fontWeight: 600, fontSize: 15 }}>{b.name}</span>
               {b.name !== b.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{b.code}</span>}
               {data && (
                 <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
@@ -139,7 +139,7 @@ export default function AnalysisPanel({ stocks }) {
             {data && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '14px 18px' }}>
-                  <GaugeBar value={data.correlation} label={t.returnCorr} color="#64b5f6" />
+                  <GaugeBar value={data.correlation} label={t.returnCorr} color="var(--accent)" />
                   <GaugeBar value={data.price_similarity} label={t.priceSim} color="#66bb6a" />
                 </div>
 
@@ -174,7 +174,7 @@ export default function AnalysisPanel({ stocks }) {
                 </div>
 
                 <div>
-                  <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{t.summary}</div>
+                  <div style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{t.summary}</div>
                   <InterpretationBlock text={data.interpretation} />
                 </div>
               </div>

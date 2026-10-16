@@ -17,7 +17,7 @@ const LABELS = {
 export const marketLabel = (m, lang) => (LABELS[m] || LABELS.us)[lang] || (LABELS[m] || LABELS.us).en
 
 // Badge colours for search results / watchlist chips
-export const MARKET_TINT = { us: '#0ea5e9', cn: '#22c55e', hk: '#f97316', jp: '#e11d48' }
+export const MARKET_TINT = { us: 'var(--accent)', cn: '#22c55e', hk: '#f97316', jp: '#e11d48' }
 
 export const realtimePath = (m, code) => (m === 'cn' ? `/stocks/${code}/realtime` : `/${m}/stock/${code}/realtime`)
 export const historyPath = (m, code) => (m === 'cn' ? `/stocks/${code}/history` : `/${m}/stock/${code}`)

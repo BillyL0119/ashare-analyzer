@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
 
 const MUTED = 'var(--text-muted)'
-const BDR = 'rgba(138,180,248,0.10)'
+const BDR = 'color-mix(in srgb, var(--accent) 10%, transparent)'
 
 const MARKET_CFG = {
-  us: { color: '#6366f1', bg: 'rgba(99,102,241,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
+  us: { color: '#7c9cb4', bg: 'rgba(124,156,180,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
   cn: { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', zh: 'A股',  en: 'A-Shares',  ja: 'A株',   ko: 'A주식',  fr: 'A-Share' },
 }
 
@@ -33,8 +33,8 @@ function EarningsRow({ item, lang, t, onStockClick }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '9px 14px',
-        borderBottom: '1px solid rgba(138,180,248,0.06)',
-        background: hover ? 'rgba(138,180,248,0.04)' : 'transparent',
+        borderBottom: '1px solid color-mix(in srgb, var(--accent) 6%, transparent)',
+        background: hover ? 'color-mix(in srgb, var(--accent) 4%, transparent)' : 'transparent',
         transition: 'background 0.12s',
         cursor: onStockClick ? 'pointer' : 'default',
       }}
@@ -42,7 +42,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
     >
       {/* Symbol */}
       <span style={{
-        fontFamily: 'monospace', fontSize: 12, fontWeight: 700,
+        fontFamily: 'var(--sans)', fontSize: 12, fontWeight: 600,
         color: mkt.color, minWidth: 60, flexShrink: 0,
       }}>
         {item.symbol}
@@ -59,7 +59,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
       {/* Report type badge (A-share) */}
       {item.timing && (
         <span style={{
-          fontSize: 10, padding: '2px 7px', borderRadius: 10, flexShrink: 0,
+          fontSize: 10, padding: '2px 7px', borderRadius: 'var(--radius)', flexShrink: 0,
           background: mkt.bg, color: mkt.color,
           border: `1px solid ${mkt.color}40`,
           fontWeight: 600,
@@ -80,7 +80,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
             )}
             {epsBeat && (
               <span style={{
-                fontSize: 13, fontWeight: 700,
+                fontSize: 13, fontWeight: 600,
                 color: epsBeat === 'beat' ? '#34d399' : '#f87171',
               }}>
                 {epsBeat === 'beat' ? '▲' : '▼'}
@@ -88,7 +88,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
             )}
             {hasActualEps && (
               <span style={{
-                fontSize: 12, fontWeight: 700,
+                fontSize: 12, fontWeight: 600,
                 color: epsBeat === 'beat' ? '#34d399' : epsBeat === 'miss' ? '#f87171' : 'var(--text-primary)',
               }}>
                 {item.eps_actual}
@@ -111,7 +111,7 @@ function EarningsRow({ item, lang, t, onStockClick }) {
               </span>
             )}
             {hasActualRev && (
-              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>
                 {item.revenue_actual}
               </span>
             )}
@@ -133,11 +133,11 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '6px 14px',
-        background: 'rgba(138,180,248,0.06)',
+        background: 'color-mix(in srgb, var(--accent) 6%, transparent)',
         borderRadius: '8px 8px 0 0',
-        borderBottom: '1px solid rgba(138,180,248,0.12)',
+        borderBottom: '1px solid color-mix(in srgb, var(--accent) 12%, transparent)',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#8ab4f8', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--sans)' }}>
           {dateStr}
         </span>
         <span style={{
@@ -156,7 +156,7 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
       <div style={{
         background: 'rgba(255,255,255,0.015)',
         borderRadius: '0 0 8px 8px',
-        border: '1px solid rgba(138,180,248,0.08)',
+        border: '1px solid color-mix(in srgb, var(--accent) 8%, transparent)',
         borderTop: 'none',
       }}>
         {items.map((item, i) => (
@@ -201,8 +201,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div style={{
           fontSize: 16, fontWeight: 600,
-          background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          color: 'var(--accent)',
         }}>
           {t.earTitle}
         </div>
@@ -223,7 +222,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
               key={m}
               onClick={() => setMarket(m)}
               style={{
-                padding: '5px 18px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                padding: '5px 18px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: active ? 700 : 400,
                 background: active ? cfg.bg : 'rgba(255,255,255,0.05)',
                 color: active ? cfg.color : MUTED,

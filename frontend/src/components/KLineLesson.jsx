@@ -1,12 +1,12 @@
 import { useState } from 'react'
 
-const ACCENT  = '#ec4899'
+const ACCENT  = '#7c9cb4'
 const MUTED   = 'var(--text-muted)'
-const BDR     = 'rgba(138,180,248,0.10)'
+const BDR     = 'color-mix(in srgb, var(--accent) 10%, transparent)'
 const CARD    = 'var(--bg-tertiary)'
 const GREEN   = '#34d399'
 const RED     = '#ef4444'
-const BLUE    = '#8ab4f8'
+const BLUE    = '#a08672'
 const YELLOW  = '#f59e0b'
 
 // ─── Anatomy parts ────────────────────────────────────────────────────────────
@@ -290,7 +290,7 @@ export default function KLineLesson({ zh }) {
         {/* ── ANATOMY ── */}
         {section === 'anatomy' && (
           <div>
-            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 600, color: 'var(--text-primary)' }}>
               {zh ? 'K线图解——解读每一根蜡烛' : 'Candlestick Anatomy — Reading Every Candle'}
             </h2>
             <p style={{ margin: '0 0 24px', fontSize: 13, color: MUTED, lineHeight: 1.6 }}>
@@ -303,7 +303,7 @@ export default function KLineLesson({ zh }) {
               {/* SVG */}
               <div style={{
                 background: CARD, border: `1px solid ${BDR}`,
-                borderRadius: 12, padding: '20px 16px', flexShrink: 0,
+                borderRadius: 'var(--radius)', padding: '20px 16px', flexShrink: 0,
               }}>
                 <div style={{ fontSize: 11, color: MUTED, marginBottom: 12, textAlign: 'center' }}>
                   {zh ? '（阳线示例 — 当日上涨）' : '(Bullish candle example — price rose)'}
@@ -317,10 +317,10 @@ export default function KLineLesson({ zh }) {
                   <div style={{
                     background: `rgba(${hoveredPart.color === GREEN ? '52,211,153' : hoveredPart.color === BLUE ? '138,180,248' : '245,158,11'},0.08)`,
                     border: `1px solid ${hoveredPart.color}44`,
-                    borderRadius: 10, padding: '16px 18px',
+                    borderRadius: 'var(--radius)', padding: '16px 18px',
                     transition: 'all 0.2s',
                   }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: hoveredPart.color, marginBottom: 8 }}>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: hoveredPart.color, marginBottom: 8 }}>
                       {zh ? hoveredPart.label_zh : hoveredPart.label_en}
                     </div>
                     <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
@@ -330,7 +330,7 @@ export default function KLineLesson({ zh }) {
                 ) : (
                   <div style={{
                     background: CARD, border: `1px solid ${BDR}`,
-                    borderRadius: 10, padding: '16px 18px', color: MUTED, fontSize: 13,
+                    borderRadius: 'var(--radius)', padding: '16px 18px', color: MUTED, fontSize: 13,
                   }}>
                     {zh ? '👆 将鼠标悬停在K线的任意部分查看详细说明' : '👆 Hover over any part of the candle to see its explanation'}
                   </div>
@@ -372,9 +372,9 @@ export default function KLineLesson({ zh }) {
                 { icon: '📏', title_zh: '影线的意义', title_en: 'What Wicks Tell You', body_zh: '上影线越长→上方阻力越强；下影线越长→下方支撑越强。', body_en: 'Longer upper wick = stronger resistance above; longer lower wick = stronger support below.' },
                 { icon: '🕐', title_zh: '时间周期', title_en: 'Time Frames', body_zh: '一根K线可以代表1分钟、1小时、1天、1周等不同时间段，形状逻辑相同。', body_en: 'A candle can represent 1 min, 1 hour, 1 day, 1 week, etc. The same shape logic applies.' },
               ].map(card => (
-                <div key={card.icon} style={{ background: CARD, border: `1px solid ${BDR}`, borderRadius: 10, padding: '14px 16px' }}>
+                <div key={card.icon} style={{ background: CARD, border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', padding: '14px 16px' }}>
                   <div style={{ fontSize: 20, marginBottom: 6 }}>{card.icon}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
                     {zh ? card.title_zh : card.title_en}
                   </div>
                   <div style={{ fontSize: 12, color: MUTED, lineHeight: 1.6 }}>
@@ -389,7 +389,7 @@ export default function KLineLesson({ zh }) {
         {/* ── PATTERNS ── */}
         {section === 'patterns' && (
           <div>
-            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 600, color: 'var(--text-primary)' }}>
               {zh ? '常见K线形态' : 'Common Candlestick Patterns'}
             </h2>
             <p style={{ margin: '0 0 24px', fontSize: 13, color: MUTED, lineHeight: 1.6 }}>
@@ -411,7 +411,7 @@ export default function KLineLesson({ zh }) {
                     style={{
                       background: isOpen ? 'rgba(255,255,255,0.035)' : CARD,
                       border: `1px solid ${isOpen ? sigColor + '44' : BDR}`,
-                      borderRadius: 10, cursor: 'pointer', overflow: 'hidden',
+                      borderRadius: 'var(--radius)', cursor: 'pointer', overflow: 'hidden',
                       transition: 'all 0.2s',
                     }}
                   >
@@ -431,11 +431,11 @@ export default function KLineLesson({ zh }) {
 
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
+                          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
                             {zh ? pat.name_zh : pat.name_en}
                           </span>
                           <span style={{
-                            fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20,
+                            fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 'var(--radius)',
                             background: `${sigColor}1a`, color: sigColor, border: `1px solid ${sigColor}44`,
                           }}>
                             {zh ? sigLabel.zh : sigLabel.en}
@@ -481,7 +481,7 @@ export default function KLineLesson({ zh }) {
               })}
             </div>
 
-            <div style={{ marginTop: 20, padding: '12px 16px', background: 'rgba(138,180,248,0.05)', border: `1px solid ${BLUE}22`, borderRadius: 8, fontSize: 12, color: MUTED, lineHeight: 1.7 }}>
+            <div style={{ marginTop: 20, padding: '12px 16px', background: 'color-mix(in srgb, var(--accent) 5%, transparent)', border: `1px solid ${BLUE}22`, borderRadius: 8, fontSize: 12, color: MUTED, lineHeight: 1.7 }}>
               {zh
                 ? '⚠️ K线形态是参考信号，不是买卖指令。需结合趋势（多日走势）、成交量（是否放量）和其他技术指标综合分析。'
                 : '⚠️ Candlestick patterns are reference signals, not buy/sell orders. Always combine with trend direction, volume confirmation, and other technical indicators.'}
@@ -492,7 +492,7 @@ export default function KLineLesson({ zh }) {
         {/* ── QUIZ ── */}
         {section === 'quiz' && (
           <div style={{ maxWidth: 600 }}>
-            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 600, color: 'var(--text-primary)' }}>
               {zh ? '小测验——检验一下你的理解' : 'Quick Quiz — Test Your Understanding'}
             </h2>
             <p style={{ margin: '0 0 24px', fontSize: 13, color: MUTED }}>
@@ -503,12 +503,12 @@ export default function KLineLesson({ zh }) {
               <div style={{
                 background: score === QUIZ.length ? 'rgba(52,211,153,0.08)' : CARD,
                 border: `1px solid ${score === QUIZ.length ? GREEN + '44' : BDR}`,
-                borderRadius: 12, padding: '32px 24px', textAlign: 'center',
+                borderRadius: 'var(--radius)', padding: '32px 24px', textAlign: 'center',
               }}>
                 <div style={{ fontSize: 48, marginBottom: 12 }}>
                   {score === QUIZ.length ? '🎉' : score >= 2 ? '👍' : '📖'}
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
+                <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>
                   {zh ? `得分：${score} / ${QUIZ.length}` : `Score: ${score} / ${QUIZ.length}`}
                 </div>
                 <div style={{ fontSize: 14, color: MUTED, marginBottom: 24, lineHeight: 1.6 }}>
@@ -519,16 +519,16 @@ export default function KLineLesson({ zh }) {
                     : (zh ? '继续加油！先仔细阅读「K线解剖」和「常见形态」，再来挑战一次吧。' : 'Keep going! Read through the Anatomy and Patterns sections carefully, then try again.')}
                 </div>
                 <button onClick={restartQuiz} style={{
-                  padding: '10px 28px', borderRadius: 20, border: 'none', cursor: 'pointer',
-                  fontSize: 14, fontWeight: 700,
-                  background: `linear-gradient(135deg, ${ACCENT}, #8b5cf6)`, color: '#fff',
+                  padding: '10px 28px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
+                  fontSize: 14, fontWeight: 600,
+                  background: `${ACCENT}`, color: '#fff',
                 }}>
                   {zh ? '重新测验' : 'Try Again'}
                 </button>
               </div>
             ) : (
               <div>
-                <div style={{ background: CARD, border: `1px solid ${BDR}`, borderRadius: 10, padding: '20px 18px', marginBottom: 16 }}>
+                <div style={{ background: CARD, border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', padding: '20px 18px', marginBottom: 16 }}>
                   <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.7 }}>
                     {zh ? q.q_zh : q.q_en}
                   </div>
@@ -562,7 +562,7 @@ export default function KLineLesson({ zh }) {
                     background: selected === q.answer ? 'rgba(52,211,153,0.08)' : 'rgba(239,68,68,0.08)',
                     border: `1px solid ${selected === q.answer ? GREEN : RED}33`,
                   }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: selected === q.answer ? GREEN : RED, marginBottom: 6 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: selected === q.answer ? GREEN : RED, marginBottom: 6 }}>
                       {selected === q.answer
                         ? (zh ? '✓ 正确！' : '✓ Correct!')
                         : (zh ? '✗ 答错了，正确答案是：' + (zh ? q.opts_zh : q.opts_en)[q.answer] : '✗ Incorrect. The answer is: ' + (zh ? q.opts_zh : q.opts_en)[q.answer])}
@@ -575,9 +575,9 @@ export default function KLineLesson({ zh }) {
 
                 {revealed && (
                   <button onClick={nextQuestion} style={{
-                    marginTop: 16, padding: '10px 28px', borderRadius: 20, border: 'none',
-                    cursor: 'pointer', fontSize: 14, fontWeight: 700,
-                    background: `linear-gradient(135deg, ${ACCENT}, #8b5cf6)`, color: '#fff',
+                    marginTop: 16, padding: '10px 28px', borderRadius: 'var(--radius)', border: 'none',
+                    cursor: 'pointer', fontSize: 14, fontWeight: 600,
+                    background: `${ACCENT}`, color: '#fff',
                   }}>
                     {quizIdx + 1 >= QUIZ.length ? (zh ? '查看结果' : 'See Results') : (zh ? '下一题 →' : 'Next →')}
                   </button>

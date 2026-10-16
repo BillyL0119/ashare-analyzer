@@ -42,27 +42,27 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
     grid: { top: 30, bottom: 26, left: 64, right: 14 },
     legend: { top: 0, textStyle: { color: '#8a94a6', fontSize: 11 }, itemWidth: 14, itemHeight: 3 },
     tooltip: {
-      trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(138,180,248,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
+      trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(160,134,114,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
       valueFormatter: (v) => `${cur}${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
     },
-    xAxis: { type: 'category', data: points.map((p) => p.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(138,180,248,0.15)' } } },
+    xAxis: { type: 'category', data: points.map((p) => p.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(160,134,114,0.15)' } } },
     yAxis: {
       type: 'value', scale: true,
       axisLabel: { color: '#8a94a6', fontSize: 10, formatter: (v) => `${cur}${v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : (v / 1e3).toFixed(1) + 'K'}` },
-      splitLine: { lineStyle: { color: 'rgba(138,180,248,0.07)' } },
+      splitLine: { lineStyle: { color: 'rgba(160,134,114,0.07)' } },
     },
     series: [
-      { name: t.mine, type: 'line', data: points.map((p) => p.value), smooth: true, symbol: 'none', lineStyle: { width: 2.5, color: '#0ea5e9' }, areaStyle: { color: 'rgba(14,165,233,0.08)' } },
+      { name: t.mine, type: 'line', data: points.map((p) => p.value), smooth: true, symbol: 'none', lineStyle: { width: 2.5, color: '#a08672' }, areaStyle: { color: 'rgba(160,134,114,0.08)' } },
       { name: bench, type: 'line', data: points.map((p) => p.bench), smooth: true, symbol: 'none', lineStyle: { width: 1.8, color: '#8a94a6', type: 'dashed' } },
-      { name: '', type: 'line', data: points.map(() => data.initial), symbol: 'none', lineStyle: { width: 1, color: 'rgba(138,180,248,0.25)' }, tooltip: { show: false }, silent: true },
+      { name: '', type: 'line', data: points.map(() => data.initial), symbol: 'none', lineStyle: { width: 1, color: 'rgba(160,134,114,0.25)' }, tooltip: { show: false }, silent: true },
     ],
   }), [points, bench, cur, t, data])
 
   const ahead = (data?.excess_pct ?? 0) >= 0
   return (
-    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12, padding: '16px 18px' }}>
+    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 'var(--radius)', padding: '16px 18px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{t.title}</span>
+        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{t.title}</span>
         {data?.since && <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{t.since(data.since)}</span>}
       </div>
       {!option ? (
@@ -73,8 +73,8 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
             <Stat label={t.ret} value={pct(data.return_pct)} color={data.return_pct >= 0 ? riseColor(market) : fallColor(market)} />
             <Stat label={bench} value={pct(data.bench_return_pct)} />
             <Stat label={t.dd} value={pct(data.max_drawdown_pct)} />
-            <span style={{ alignSelf: 'center', fontSize: 12.5, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
-              color: ahead ? '#0ea5e9' : '#f59e0b', background: ahead ? 'rgba(14,165,233,0.12)' : 'rgba(245,158,11,0.12)' }}>
+            <span style={{ alignSelf: 'center', fontSize: 12.5, fontWeight: 600, padding: '4px 10px', borderRadius: 'var(--radius)',
+              color: ahead ? '#a08672' : '#f59e0b', background: ahead ? 'rgba(160,134,114,0.12)' : 'rgba(245,158,11,0.12)' }}>
               {ahead ? t.beat(pct(data.excess_pct).replace('+', '')) : t.lag(pct(data.excess_pct).replace('-', ''))}
             </span>
           </div>
@@ -90,7 +90,7 @@ function Stat({ label, value, color }) {
   return (
     <div>
       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</div>
-      <div style={{ fontSize: 17, fontWeight: 800, color: color || 'var(--text-primary)' }}>{value}</div>
+      <div style={{ fontSize: 17, fontWeight: 600, color: color || 'var(--text-primary)' }}>{value}</div>
     </div>
   )
 }

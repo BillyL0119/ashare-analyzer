@@ -112,27 +112,11 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   if (selectedSymbols.length === 0 && viewMode !== 'calendar' && viewMode !== 'earnings' && viewMode !== 'global_news') {
     return (
       <>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 24, marginTop: 4 }}>
           {market === 'cn' && (
-            <button
-              onClick={() => setViewMode('calendar')}
-              style={{
-                padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
-                fontSize: 12, background: 'rgba(138,180,248,0.1)', color: '#8ab4f8',
-              }}
-            >
-              {t.calendarTab}
-            </button>
+            <button className="bfs-quiet" onClick={() => setViewMode('calendar')}>{t.calendarTab}</button>
           )}
-          <button
-            onClick={() => setViewMode('earnings')}
-            style={{
-              padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
-              fontSize: 12, background: 'rgba(99,102,241,0.12)', color: '#818cf8',
-            }}
-          >
-            {t.earningsTab}
-          </button>
+          <button className="bfs-quiet" onClick={() => setViewMode('earnings')}>{t.earningsTab}</button>
         </div>
         <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} onOpenKnowledge={onOpenKnowledge} />
         {detailSymbol && (
@@ -158,7 +142,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           overflowX: isMobile ? 'auto' : 'visible',
           background: 'var(--bg-secondary)',
           border: '1px solid var(--border-primary)',
-          borderRadius: 16,
+          borderRadius: 'var(--radius)',
           padding: '6px 10px',
         }}
       >
@@ -204,7 +188,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               aria-pressed={viewMode === key}
               style={{
                 padding: isMobile ? '4px 10px' : '5px 10px',
-                borderRadius: 20,
+                borderRadius: 'var(--radius)',
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: isMobile ? 11 : 12,
@@ -213,9 +197,9 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 background: 'transparent',
-                color: viewMode === key ? '#0ea5e9' : 'var(--text-secondary)',
+                color: viewMode === key ? '#a08672' : 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
-                boxShadow: viewMode === key ? 'inset 0 -2px 0 #0ea5e9' : 'none',
+                boxShadow: viewMode === key ? 'inset 0 -2px 0 #a08672' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
@@ -248,7 +232,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               fontSize: 12, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#0ea5e9' }}
+            onFocus={(e) => { e.target.style.borderColor = '#a08672' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
           <span>{t.to}</span>
@@ -262,7 +246,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               fontSize: 12, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#0ea5e9' }}
+            onFocus={(e) => { e.target.style.borderColor = '#a08672' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
         </div>

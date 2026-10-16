@@ -35,7 +35,7 @@ function Field({ label, type, value, onChange, placeholder }) {
           background: 'var(--bg-tertiary)', color: 'var(--text-primary)',
           fontSize: 14, outline: 'none', transition: 'border-color 0.15s',
         }}
-        onFocus={e  => { e.target.style.borderColor = '#0ea5e9' }}
+        onFocus={e  => { e.target.style.borderColor = 'var(--accent)' }}
         onBlur={e   => { e.target.style.borderColor = 'var(--border-primary)' }}
       />
     </div>
@@ -115,7 +115,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 16, width: '100%', maxWidth: 420,
+        borderRadius: 'var(--radius)', width: '100%', maxWidth: 420,
         position: 'relative',
         boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         animation: 'bfsPageFadeIn 0.2s ease both',
@@ -131,7 +131,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
         <div style={{ padding: '28px 32px' }}>
           {/* Header */}
           <div style={{ marginBottom: 22 }}>
-            <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+            <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
               {title}
             </div>
             <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.4 }}>
@@ -217,7 +217,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                 <button
                   type="button"
                   onClick={() => switchMode(RESET)}
-                  style={{ fontSize: 12, color: '#0ea5e9', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  style={{ fontSize: 12, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
                   {t.authForgotPw}
                 </button>
@@ -242,7 +242,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
               disabled={loading}
               style={{
                 width: '100%', padding: '11px 0', borderRadius: 8, border: 'none',
-                background: loading ? 'rgba(14,165,233,0.4)' : 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                background: loading ? 'color-mix(in srgb, var(--accent) 40%, transparent)' : 'var(--accent)',
                 color: '#fff', fontSize: 14, fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 transition: 'opacity 0.15s',

@@ -6,7 +6,7 @@ import getDeviceId from '../utils/deviceId'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
-const ACCENT   = '#0ea5e9'
+const ACCENT   = '#a08672'
 const GREEN    = '#22c55e'
 const RED      = '#ef4444'
 const AMBER    = '#f59e0b'
@@ -87,7 +87,7 @@ function CommentCard({ comment, lang, onLike }) {
         width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
         background: avatarColor(comment.nickname),
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 14, fontWeight: 700, color: '#fff',
+        fontSize: 14, fontWeight: 600, color: '#fff',
       }}>
         {initial}
       </div>
@@ -96,11 +96,11 @@ function CommentCard({ comment, lang, onLike }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         {/* Row 1: name + sentiment + time */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
             {comment.nickname}
           </span>
           <span style={{
-            fontSize: 11, fontWeight: 600, padding: '1px 7px', borderRadius: 10,
+            fontSize: 11, fontWeight: 600, padding: '1px 7px', borderRadius: 'var(--radius)',
             background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.color}33`,
           }}>
             {cfg.icon} {getSentLabel(cfg, lang)}
@@ -243,9 +243,9 @@ export default function CommentsPanel({ stocks, lang }) {
       {/* ── Sentiment stats ── */}
       <div style={{
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-        borderRadius: 12, padding: '14px 18px', marginBottom: 16,
+        borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 16,
       }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 10 }}>
           📊 {symbol} {t.cmtSentiment}
         </div>
         <SentimentBar stats={stats} t={t} />
@@ -254,9 +254,9 @@ export default function CommentsPanel({ stocks, lang }) {
       {/* ── Post comment ── */}
       <div style={{
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-        borderRadius: 12, padding: '14px 18px', marginBottom: 16,
+        borderRadius: 'var(--radius)', padding: '14px 18px', marginBottom: 16,
       }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12 }}>
           ✍️ {t.cmtShare}
         </div>
 
@@ -314,7 +314,7 @@ export default function CommentsPanel({ stocks, lang }) {
                 key={s}
                 onClick={() => setSentiment(s)}
                 style={{
-                  padding: '5px 14px', borderRadius: 20, cursor: 'pointer',
+                  padding: '5px 14px', borderRadius: 'var(--radius)', cursor: 'pointer',
                   fontSize: 12, fontWeight: active ? 700 : 400,
                   border: `1px solid ${active ? cfg.color : 'var(--border-primary)'}`,
                   background: active ? cfg.bg : 'transparent',
@@ -331,11 +331,11 @@ export default function CommentsPanel({ stocks, lang }) {
             onClick={handleSubmit}
             disabled={submitting || content.trim().length < 10}
             style={{
-              marginLeft: 'auto', padding: '6px 20px', borderRadius: 20,
+              marginLeft: 'auto', padding: '6px 20px', borderRadius: 'var(--radius)',
               border: 'none', cursor: submitting || content.trim().length < 10 ? 'default' : 'pointer',
               background: submitting || content.trim().length < 10
                 ? 'var(--bg-tertiary)'
-                : `linear-gradient(135deg, ${ACCENT}, #38bdf8)`,
+                : `${ACCENT}`,
               color: submitting || content.trim().length < 10 ? 'var(--text-muted)' : '#fff',
               fontSize: 13, fontWeight: 600, transition: 'all 0.2s',
             }}
@@ -351,9 +351,9 @@ export default function CommentsPanel({ stocks, lang }) {
       {/* ── Comment list ── */}
       <div style={{
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-        borderRadius: 12, padding: '14px 18px',
+        borderRadius: 'var(--radius)', padding: '14px 18px',
       }} ref={listRef}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
           💬 {t.cmtAll}
           {stats?.total > 0 && (
             <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>
@@ -384,7 +384,7 @@ export default function CommentsPanel({ stocks, lang }) {
                   disabled={loading}
                   style={{
                     background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 20, padding: '6px 22px',
+                    borderRadius: 'var(--radius)', padding: '6px 22px',
                     color: 'var(--text-secondary)', fontSize: 12, cursor: 'pointer',
                   }}
                 >

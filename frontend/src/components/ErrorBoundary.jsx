@@ -21,7 +21,7 @@ export default class ErrorBoundary extends Component {
     if (this.props.fallback !== undefined) return this.props.fallback
     return (
       <div role="alert" style={{
-        padding: '16px 20px', margin: '12px 0', borderRadius: 10,
+        padding: '16px 20px', margin: '12px 0', borderRadius: 'var(--radius)',
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
         color: 'var(--text-secondary)', fontSize: 13,
       }}>

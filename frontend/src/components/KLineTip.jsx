@@ -4,9 +4,9 @@ import { T } from '../i18n/translations'
 const MUTED  = 'var(--text-muted)'
 const GREEN  = '#34d399'
 const RED    = '#ef4444'
-const BLUE   = '#8ab4f8'
+const BLUE   = '#a08672'
 const YELLOW = '#f59e0b'
-const BDR    = 'rgba(138,180,248,0.12)'
+const BDR    = 'color-mix(in srgb, var(--accent) 12%, transparent)'
 
 // ─── Tiny candle SVG helper ───────────────────────────────────────────────────
 // open, close, high, low are y-coords in a 70px-tall canvas
@@ -136,14 +136,14 @@ export default function KLineTip({ zh, lang, onClose }) {
         overflowY: 'auto',
         background: '#10141f',
         border: `1px solid ${BDR}`,
-        borderRadius: 14,
+        borderRadius: 'var(--radius)',
         boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
         padding: '18px 20px 24px',
       }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
               {t.ktTitle}
             </div>
             <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>
@@ -159,16 +159,16 @@ export default function KLineTip({ zh, lang, onClose }) {
         {/* Anatomy */}
         <div style={{
           background: 'rgba(255,255,255,0.025)', border: `1px solid ${BDR}`,
-          borderRadius: 10, padding: '12px 14px', marginBottom: 14,
+          borderRadius: 'var(--radius)', padding: '12px 14px', marginBottom: 14,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: MUTED, marginBottom: 10, letterSpacing: '0.5px' }}>
             {t.ktAnatomy}
           </div>
           <AnatomyMini zh={zh} />
         </div>
 
         {/* Patterns */}
-        <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: MUTED, marginBottom: 8, letterSpacing: '0.5px' }}>
           {t.ktPatterns}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -185,11 +185,11 @@ export default function KLineTip({ zh, lang, onClose }) {
                 </svg>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
                       {zh ? pat.name_zh : pat.name_en}
                     </span>
                     <span style={{
-                      fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 10,
+                      fontSize: 9, fontWeight: 600, padding: '1px 6px', borderRadius: 'var(--radius)',
                       background: `${SIG_COLOR[pat.signal]}1a`, color: SIG_COLOR[pat.signal],
                     }}>
                       {pat.signal.toUpperCase()}

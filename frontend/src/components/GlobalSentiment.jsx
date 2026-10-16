@@ -6,7 +6,7 @@ import { T } from '../i18n/translations'
 import useThemeStore from '../store/themeStore'
 import {
   ComposableMap, Geographies, Geography,
-  Marker, Graticule, Sphere,
+  Marker, Sphere,
 } from 'react-simple-maps'
 import worldAtlas from 'world-atlas/countries-110m.json'
 
@@ -34,18 +34,6 @@ function changePctColor(pct) {
   if (pct < 0)  return '#ef4444'
   return 'var(--text-secondary)'
 }
-function changePctBg(pct) {
-  if (pct === null || pct === undefined) return 'rgba(148,163,184,0.06)'
-  if (pct > 0) return 'rgba(16,185,129,0.08)'
-  if (pct < 0) return 'rgba(239,68,68,0.08)'
-  return 'rgba(148,163,184,0.06)'
-}
-function changePctBorder(pct) {
-  if (pct === null || pct === undefined) return 'rgba(148,163,184,0.15)'
-  if (pct > 0) return 'rgba(16,185,129,0.2)'
-  if (pct < 0) return 'rgba(239,68,68,0.2)'
-  return 'rgba(148,163,184,0.15)'
-}
 
 // ── Sentiment gauge ───────────────────────────────────────────────────────────
 function scoreColor(s) {
@@ -56,11 +44,10 @@ function scoreColor(s) {
   return '#22c55e'
 }
 
-// Semicircle gauge in plain SVG: soft full-range track, a progress arc in the same five-colour
-// scale ending in a knob at the score, and the score itself set large in the middle.
-const GAUGE_STOPS = ['#ef4444', '#f97316', '#fbbf24', '#84cc16', '#22c55e']
+// Semicircle gauge in plain SVG: a flat track, a progress arc in the score's colour ending in a knob,
+// and the score itself set large in the middle.
 
-function SemiGauge({ score, id }) {
+function SemiGauge({ score }) {
   const [shown, setShown] = useState(0)
   useEffect(() => { const r = requestAnimationFrame(() => setShown(score)); return () => cancelAnimationFrame(r) }, [score])
   const W = 160, R = 66, CX = W / 2, CY = 78, SW = 11
@@ -72,17 +59,12 @@ function SemiGauge({ score, id }) {
   const ease = 'cubic-bezier(.22,1,.36,1)'
   return (
     <svg viewBox={`0 0 ${W} ${CY + SW / 2 + 2}`} width="100%" style={{ display: 'block', maxWidth: 160, margin: '0 auto', overflow: 'visible' }} aria-hidden="true">
-      <defs>
-        <linearGradient id={`g-${id}`} x1={CX - R} y1="0" x2={CX + R} y2="0" gradientUnits="userSpaceOnUse">
-          {GAUGE_STOPS.map((c, i) => <stop key={c} offset={`${(i / (GAUGE_STOPS.length - 1)) * 100}%`} stopColor={c} />)}
-        </linearGradient>
-      </defs>
-      <path d={arc} fill="none" stroke={`url(#g-${id})`} strokeOpacity="0.16" strokeWidth={SW} strokeLinecap="round" />
-      <path d={arc} fill="none" stroke={`url(#g-${id})`} strokeWidth={SW} strokeLinecap="round"
+      <path d={arc} fill="none" stroke="var(--bg-tertiary)" strokeWidth={SW} strokeLinecap="round" />
+      <path d={arc} fill="none" stroke={scoreColor(score)} strokeWidth={SW} strokeLinecap="round"
         strokeDasharray={len} strokeDashoffset={len * (1 - v / 100)}
         style={{ transition: `stroke-dashoffset 1.1s ${ease}` }} />
-      <circle cx={kx} cy={ky} r={SW / 2 + 2.5} fill="#fff" stroke={scoreColor(score)} strokeWidth="3"
-        style={{ transition: `cx 1.1s ${ease}, cy 1.1s ${ease}`, filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.35))' }} />
+      <circle cx={kx} cy={ky} r={SW / 2 + 2.5} fill="var(--text-primary)" stroke={scoreColor(score)} strokeWidth="3"
+        style={{ transition: `cx 1.1s ${ease}, cy 1.1s ${ease}` }} />
     </svg>
   )
 }
@@ -95,19 +77,19 @@ const PART_LABEL = {
   breadth:  { zh: '涨跌家数', en: 'Breadth', tipZh: '上涨股票占比', tipEn: 'Share of stocks that rose' },
 }
 
-function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
+function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts }) {
   const label = zh ? labelZh : labelEn
   const color = scoreColor(score)
   return (
-    <div className="bfs-card" style={{
-      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-      borderRadius: 14, padding: '12px 10px 10px', textAlign: 'center', fontFamily: 'var(--sans)',
+    <div style={{
+      background: 'var(--bg-tertiary)',
+      borderRadius: 'var(--radius)', padding: '14px 12px 12px', textAlign: 'center', fontFamily: 'var(--sans)',
     }}>
-      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
+      <div style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
         {title}
       </div>
       <div style={{ position: 'relative', marginTop: 6 }}>
-        <SemiGauge score={score} id={id} />
+        <SemiGauge score={score} />
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: -2, lineHeight: 1 }}>
           <div className="serif-num" style={{ fontSize: 36, color: 'var(--text-primary)' }}>
             {Math.round(score)}
@@ -115,27 +97,23 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
         </div>
       </div>
       <div style={{ marginTop: 8 }}>
-        <span style={{
-          display: 'inline-block', padding: '3px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 600, letterSpacing: '.01em',
-          color, background: `color-mix(in srgb, ${color} 14%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 35%, transparent)`,
-        }}>{label}</span>
+        <span style={{ fontSize: 15, fontWeight: 500, color }}>{label}</span>
       </div>
       {parts?.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${parts.length}, minmax(0, 1fr))`, marginTop: 10,
-          borderTop: '1px solid var(--border-primary)', paddingTop: 8 }}>
-          {parts.map((p, i) => {
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${parts.length}, minmax(0, 1fr))`, marginTop: 12, gap: 4 }}>
+          {parts.map((p) => {
             const l = PART_LABEL[p.key] || { zh: p.key, en: p.key }
             const raw = p.key === 'vix' && (p.value ?? vix) != null ? Number(p.value ?? vix).toFixed(1) : null
             return (
               <div key={p.key} title={zh ? l.tipZh : l.tipEn}
-                style={{ borderLeft: i ? '1px solid var(--border-primary)' : 'none', padding: '0 4px', minWidth: 0 }}>
-                <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '.04em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                style={{ padding: '0 2px', minWidth: 0 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {zh ? l.zh : l.en}
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2, color: scoreColor(p.score), fontVariantNumeric: 'tabular-nums' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, marginTop: 2, color: scoreColor(p.score), fontVariantNumeric: 'tabular-nums' }}>
                   {Math.round(p.score)}
                 </div>
-                {raw && <div style={{ fontSize: 10, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>{raw}</div>}
+                {raw && <div style={{ fontSize: 13, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>{raw}</div>}
               </div>
             )
           })}
@@ -181,16 +159,16 @@ function TickerBar({ indices, zh }) {
         return (
           <div key={i} style={{
             flexShrink: 0, minWidth: 100,
-            background: changePctBg(pct), border: `1px solid ${changePctBorder(pct)}`,
-            borderRadius: 8, padding: '4px 10px', textAlign: 'center',
+            background: 'var(--bg-tertiary)',
+            borderRadius: 'var(--radius)', padding: '8px 12px', textAlign: 'left',
           }}>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2, whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 2, whiteSpace: 'nowrap' }}>
               {zh ? (idx.name_zh || idx.name) : (CN_INDEX_EN[idx.name] || idx.name)}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: changePctColor(pct) }}>
+            <div style={{ fontSize: 15, fontWeight: 500, color: changePctColor(pct) }}>
               {pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'}
             </div>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
               {idx.close != null ? Number(idx.close).toLocaleString() : '—'}
             </div>
           </div>
@@ -214,9 +192,9 @@ function LoadingSkeleton() {
           borderRadius: 8,
         }} />
         {/* Gauge cards */}
-        <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8 }}>
+        <div style={{ flex: isMobile ? 'none' : '0 0 220px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8 }}>
           {[0, 1].map(i => (
-            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: '12px 10px', borderRadius: 10, border: '1px solid rgba(138,180,248,0.08)' }}>
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: '12px 10px', borderRadius: 'var(--radius)', border: '1px solid color-mix(in srgb, var(--accent) 8%, transparent)' }}>
               <div className="skeleton" style={{ height: 10, width: '60%', margin: '0 auto' }} />
               {/* Gauge arc placeholder */}
               <div className="skeleton" style={{ height: 80, borderRadius: 8 }} />
@@ -229,7 +207,7 @@ function LoadingSkeleton() {
       {/* Ticker bar placeholders */}
       <div style={{ display: 'flex', gap: 8, flexShrink: 0, overflow: 'hidden' }}>
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} style={{ flexShrink: 0, width: 100, borderRadius: 8, padding: '8px 10px', border: '1px solid rgba(138,180,248,0.07)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div key={i} style={{ flexShrink: 0, width: 100, borderRadius: 8, padding: '8px 10px', border: '1px solid color-mix(in srgb, var(--accent) 7%, transparent)', display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div className="skeleton" style={{ height: 9, width: '70%' }} />
             <div className="skeleton" style={{ height: 13, width: '55%' }} />
             <div className="skeleton" style={{ height: 9, width: '45%' }} />
@@ -261,8 +239,6 @@ function WorldMap({ indices, lang }) {
   const isLight = theme === 'light'
   const css = (v, fb) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fb
   const oceanColor     = css('--map-ocean', isLight ? '#c8ddf0' : 'var(--bg-tertiary)')
-  const sphereStroke   = isLight ? 'var(--map-border)' : '#1a2a4a'
-  const graticuleColor = css('--map-graticule', isLight ? '#d8e8f4' : '#0f1f3d')
   const landEmpty      = css('--map-land', isLight ? '#d8e4ee' : '#1a2035')
   const landBorder     = css('--map-border', isLight ? '#8aa8c8' : '#2a3a5c')
 
@@ -329,19 +305,19 @@ function WorldMap({ indices, lang }) {
     return createPortal(
       <div role="tooltip" style={{
         position: 'fixed', left, top, zIndex: 9999, width: W, boxSizing: 'border-box',
-        background: 'rgba(6,15,30,0.96)', border: `1px solid ${color}`, borderRadius: 8,
-        padding: '9px 12px', pointerEvents: 'none', lineHeight: 1.3,
-        boxShadow: '0 6px 24px rgba(0,0,0,0.55)',
+        background: 'var(--bg-secondary)', borderTop: `3px solid ${color}`, borderRadius: 'var(--radius)',
+        padding: '10px 12px', pointerEvents: 'none', lineHeight: 1.3,
+        boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
       }}>
         {list.map((idx, i) => (
           <div key={idx.symbol} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginTop: i ? 7 : 0 }}>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{indexName(idx)}</div>
-              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.55)', fontVariantNumeric: 'tabular-nums' }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{indexName(idx)}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
                 {idx.close != null ? Number(idx.close).toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
               </div>
             </div>
-            <div style={{ fontSize: i ? 13 : 16, fontWeight: 800, color: idx.change_pct >= 0 ? '#34d399' : '#f87171', fontVariantNumeric: 'tabular-nums' }}>
+            <div style={{ fontSize: i ? 13 : 16, fontWeight: 600, color: idx.change_pct >= 0 ? 'var(--green-bright)' : 'var(--red-bright)', fontVariantNumeric: 'tabular-nums' }}>
               {pctStr(idx.change_pct)}
             </div>
           </div>
@@ -362,8 +338,7 @@ function WorldMap({ indices, lang }) {
         height={420}
         style={{ width: '100%', height: 'auto', display: 'block', marginTop: -10 }}
       >
-        <Sphere id="rsm-sphere-bg" fill={oceanColor} stroke={sphereStroke} strokeWidth={0.5} />
-        <Graticule stroke={graticuleColor} strokeWidth={0.4} />
+        <Sphere id="rsm-sphere-bg" fill={oceanColor} stroke="none" />
 
         <Geographies geography={GEO_URL}>
           {({ geographies }) =>
@@ -378,7 +353,7 @@ function WorldMap({ indices, lang }) {
                   key={geo.rsmKey}
                   geography={geo}
                   fill={fill}
-                  stroke={active ? '#fff' : landBorder}
+                  stroke={active ? 'var(--text-primary)' : landBorder}
                   strokeWidth={active ? 1.2 : 0.4}
                   style={{
                     default: { fill, outline: 'none' },
@@ -404,8 +379,8 @@ function WorldMap({ indices, lang }) {
                 <animate attributeName="opacity" values="0.28;0.06;0.28" dur="2.4s" repeatCount="indefinite" />
               </circle>
               <circle r={9} fill="transparent" style={{ cursor: 'pointer' }} {...shapeProps(geoId)} />
-              <circle r={tip?.geoId === geoId ? 5 : 4} fill={color} stroke="#fff" strokeWidth={tip?.geoId === geoId ? 1.2 : 0.6}
-                style={{ pointerEvents: 'none', filter: `drop-shadow(0 0 3px ${color})` }} />
+              <circle r={tip?.geoId === geoId ? 5 : 4} fill={color} stroke="var(--text-primary)" strokeWidth={tip?.geoId === geoId ? 1.2 : 0.6}
+                style={{ pointerEvents: 'none' }} />
             </Marker>
           )
         })}
@@ -413,11 +388,11 @@ function WorldMap({ indices, lang }) {
 
       {/* Colour scale (same as the market heatmap) */}
       <div style={{ position: 'absolute', bottom: 6, left: 10, display: 'flex', alignItems: 'center', gap: 4, pointerEvents: 'none', lineHeight: 1 }}>
-        <span style={{ fontSize: 9, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>-3%</span>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>-3%</span>
         {[-3, -2, -1, 0, 1, 2, 3].map((v) => <span key={v} style={{ width: 14, height: 7, borderRadius: 2, background: tileColor(v, 'us', isLight) }} />)}
-        <span style={{ fontSize: 9, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>+3%</span>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>+3%</span>
       </div>
-      <div style={{ position: 'absolute', bottom: 6, right: 10, fontSize: 9, color: 'var(--text-muted)', pointerEvents: 'none', lineHeight: 1 }}>
+      <div style={{ position: 'absolute', bottom: 6, right: 10, fontSize: 13, color: 'var(--text-muted)', pointerEvents: 'none', lineHeight: 1 }}>
         {t.gsHover}
       </div>
       {tipEl}
@@ -448,54 +423,40 @@ export default function GlobalSentiment({ lang }) {
   const updTime = data?.updated_at?.slice(11, 16) ?? ''
 
   return (
-    <div style={{
+    <section data-reveal style={{
       background: 'var(--bg-secondary)',
-      border: '1px solid var(--border-primary)',
-      borderRadius: 12,
-      marginBottom: 10,
-      height: 'calc(100vh - 130px)',
+      borderRadius: 'var(--radius)',
+      marginBottom: 16,
+      height: collapsed ? 'auto' : (isMobile ? 'auto' : 'min(760px, calc(100vh - 150px))'),
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      backdropFilter: 'blur(8px)',
     }}>
       {/* ── Header ── */}
-      <div
+      <button
         onClick={() => setCollapsed(v => !v)}
+        aria-expanded={!collapsed}
         style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '4px 14px', cursor: 'pointer', flexShrink: 0, height: 36,
-          borderBottom: collapsed ? 'none' : '1px solid var(--border-primary)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%',
+          padding: '20px 24px 16px', cursor: 'pointer', flexShrink: 0, background: 'none', border: 0, color: 'inherit', textAlign: 'left',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 7, height: 7, borderRadius: '50%',
-            background: loading ? '#fbbf24' : '#22c55e',
-            boxShadow: `0 0 6px ${loading ? '#fbbf24' : '#22c55e'}`,
-            flexShrink: 0,
-          }} />
-          <span style={{
-            fontSize: 13, fontWeight: 700,
-            background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          }}>
-            {t.gsTitle}
-          </span>
+        <span style={{ display: 'flex', alignItems: 'baseline', gap: 14, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.02em' }}>{t.gsTitle}</span>
           {updTime && !loading && (
-            <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
               {t.gsUpdated(updTime)}
             </span>
           )}
-        </div>
-        <span className={`bfs-chevron${collapsed ? '' : ' is-open'}`} style={{ fontSize: 11, color: 'var(--text-muted)', userSelect: 'none' }}>
-          ▼
         </span>
-      </div>
+        <svg className={`bfs-chevron${collapsed ? '' : ' is-open'}`} width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" style={{ color: 'var(--text-secondary)' }}>
+          <path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      </button>
 
       {/* ── Body ── */}
       {!collapsed && (
-        <div style={{ padding: '0 8px 4px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
+        <div style={{ padding: '0 16px 16px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
           {loading ? (
             <LoadingSkeleton />
           ) : (
@@ -508,9 +469,9 @@ export default function GlobalSentiment({ lang }) {
                 </div>
 
                 {/* Sentiment gauges */}
-                <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8, overflowY: isMobile ? 'visible' : 'auto', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
+                <div style={{ flex: isMobile ? 'none' : '0 0 220px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8, overflowY: isMobile ? 'visible' : 'auto', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
                   {!isMobile && (
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', letterSpacing: '0.3px' }}>
+                    <div style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
                       {t.gsSentIndex}
                     </div>
                   )}
@@ -538,12 +499,7 @@ export default function GlobalSentiment({ lang }) {
                     />
                   </div>
                   {!isMobile && (
-                    <div style={{
-                      fontSize: 10, lineHeight: 1.6, color: 'var(--text-muted)',
-                      padding: '8px 10px',
-                      background: 'var(--bg-secondary)',
-                      borderRadius: 8, border: '1px solid var(--border-primary)',
-                    }}>
+                    <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text-muted)', padding: '4px 2px' }}>
                       {zh
                         ? '0 = 极度恐慌，100 = 极度贪婪。由 RSI、距 52 周高点、VIX 和涨跌家数合成，仅供学习。'
                         : '0 = extreme fear, 100 = extreme greed. Built from RSI, distance to the 52-week high, VIX and market breadth. For learning only.'}
@@ -567,6 +523,6 @@ export default function GlobalSentiment({ lang }) {
           to   { opacity: 1; }
         }
       `}</style>
-    </div>
+    </section>
   )
 }

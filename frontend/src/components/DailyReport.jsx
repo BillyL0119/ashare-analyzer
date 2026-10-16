@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
 
-const ACCENT = '#0ea5e9'
-const ACCENT2 = '#8b5cf6'
+const ACCENT = '#a08672'
+const ACCENT2 = '#7c9cb4'
 
 function PctBadge({ val }) {
   if (val == null) return <span style={{ color: 'var(--text-muted)' }}>N/A</span>
@@ -39,7 +39,7 @@ export default function DailyReport({ lang }) {
       <div className="skeleton-appear" style={{
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
         borderLeft: '2px solid var(--accent-blue)',
-        borderRadius: 10, padding: '10px 16px', marginBottom: 8,
+        borderRadius: 'var(--radius)', padding: '10px 16px', marginBottom: 8,
         display: 'flex', alignItems: 'center', gap: 10,
       }}>
         <span style={{ fontSize: 16, flexShrink: 0 }}>📰</span>
@@ -63,7 +63,7 @@ export default function DailyReport({ lang }) {
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
       borderLeft: '2px solid var(--accent-blue)',
-      borderRadius: 10, marginBottom: 4, overflow: 'hidden',
+      borderRadius: 'var(--radius)', marginBottom: 4, overflow: 'hidden',
     }}>
       {/* Header row */}
       <button
@@ -76,9 +76,8 @@ export default function DailyReport({ lang }) {
       >
         <span style={{ fontSize: 16, flexShrink: 0 }}>📰</span>
         <span style={{
-          fontSize: 12, fontWeight: 700,
-          background: `linear-gradient(90deg,${ACCENT},${ACCENT2})`,
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          fontSize: 12, fontWeight: 600,
+          color: `${ACCENT}`,
           flexShrink: 0, whiteSpace: 'nowrap',
         }}>
           {t.drTitle}
@@ -146,12 +145,12 @@ export default function DailyReport({ lang }) {
           {/* Sentiment */}
           {(sent.us_score != null || sent.cn_score != null) && (
             <div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8, fontWeight: 600, letterSpacing: '0.4px' }}>
                 {t.drMood}
               </div>
               {sent.us_score != null && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                  <span style={{ fontSize: 22, fontWeight: 800, color: ACCENT, fontFamily: '"JetBrains Mono", monospace' }}>
+                  <span style={{ fontSize: 22, fontWeight: 600, color: ACCENT, fontFamily: 'var(--sans)' }}>
                     {Math.round(sent.us_score)}
                   </span>
                   <div>
@@ -164,7 +163,7 @@ export default function DailyReport({ lang }) {
               )}
               {sent.cn_score != null && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: '"JetBrains Mono", monospace' }}>
+                  <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'var(--sans)' }}>
                     {Math.round(sent.cn_score)}
                   </span>
                   <div>

@@ -30,7 +30,7 @@ function NewsSkeleton() {
           display: 'flex', flexDirection: 'column', gap: 7,
         }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <div className="skeleton" style={{ height: 18, width: 48, borderRadius: 10, flexShrink: 0 }} />
+            <div className="skeleton" style={{ height: 18, width: 48, borderRadius: 'var(--radius)', flexShrink: 0 }} />
             <div className="skeleton" style={{ height: 14, flex: 1 }} />
           </div>
           <div className="skeleton" style={{ height: 11, width: '72%', marginLeft: 56 }} />
@@ -102,7 +102,7 @@ function SentimentGauge({ score, t }) {
           style={{ transition: 'stroke-dasharray 0.5s ease, stroke 0.3s' }}
         />
       </svg>
-      <div style={{ fontSize: 18, fontWeight: 700, color, marginTop: -12 }}>
+      <div style={{ fontSize: 18, fontWeight: 600, color, marginTop: -12 }}>
         {score > 0 ? '+' : ''}{score.toFixed(2)}
       </div>
     </div>
@@ -135,7 +135,7 @@ function NewsItem({ item, t }) {
         borderBottom: `1px solid ${THEME.border}`,
         transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.04)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 4%, transparent)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       {/* Main row */}
@@ -144,9 +144,9 @@ function NewsItem({ item, t }) {
         <span style={{
           flexShrink: 0,
           fontSize: 10,
-          fontWeight: 700,
+          fontWeight: 600,
           padding: '2px 8px',
-          borderRadius: 10,
+          borderRadius: 'var(--radius)',
           background: `${borderColor}1a`,
           color: borderColor,
           border: `1px solid ${borderColor}40`,
@@ -178,7 +178,7 @@ function NewsItem({ item, t }) {
             <span>{sourceName(item.source, useLangStore.getState().lang)}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
-              <span style={{ color: '#0ea5e9', fontSize: 10, background: 'rgba(14,165,233,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
+              <span style={{ color: 'var(--accent)', fontSize: 10, background: 'color-mix(in srgb, var(--accent) 10%, transparent)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
             )}
           </div>
         </div>
@@ -209,8 +209,8 @@ function NewsItem({ item, t }) {
         <div style={{
           marginTop: 10,
           padding: '10px 12px',
-          background: 'rgba(14,165,233,0.04)',
-          border: '1px solid rgba(14,165,233,0.10)',
+          background: 'color-mix(in srgb, var(--accent) 4%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--accent) 10%, transparent)',
           borderRadius: 6,
           fontSize: 12,
           color: 'var(--text-muted)',
@@ -218,7 +218,7 @@ function NewsItem({ item, t }) {
         }}>
           {ai.reason && (
             <div>
-              <span style={{ color: '#0ea5e9', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
+              <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
               {ai.reason}
             </div>
           )}
@@ -233,7 +233,7 @@ function NewsItem({ item, t }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                style={{ color: '#0ea5e9', textDecoration: 'none', fontSize: 11 }}
+                style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 11 }}
               >
                 {t.newsReadMore}
               </a>
@@ -252,15 +252,15 @@ function FilterPill({ active, color, onClick, children }) {
       onClick={onClick}
       style={{
         padding: '3px 11px',
-        borderRadius: 12,
+        borderRadius: 'var(--radius)',
         border: 'none',
         cursor: 'pointer',
         fontSize: 11,
         fontWeight: active ? 600 : 400,
         background: active
-          ? `${color || 'rgba(14,165,233,0.25)'}30`
+          ? `${color || 'color-mix(in srgb, var(--accent) 25%, transparent)'}30`
           : 'var(--bg-hover)',
-        color: active ? (color || '#0ea5e9') : 'var(--text-muted)',
+        color: active ? (color || 'var(--accent)') : 'var(--text-muted)',
         transition: 'all 0.15s',
         letterSpacing: '0.2px',
       }}
@@ -328,13 +328,13 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
         }}
       >
         <span style={{
-          background: 'rgba(14,165,233,0.08)',
-          border: '1px solid rgba(14,165,233,0.3)',
+          background: 'color-mix(in srgb, var(--accent) 8%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
           borderRadius: 4,
           padding: '2px 8px',
           fontSize: 12,
-          color: '#0ea5e9',
-          fontFamily: 'monospace',
+          color: 'var(--accent)',
+          fontFamily: 'var(--sans)',
         }}>
           {stock.code}
         </span>
@@ -379,8 +379,8 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           {/* ── Overview card ── */}
           {data.overall && (
             <div style={{
-              background: 'rgba(14,165,233,0.03)',
-              border: '1px solid rgba(14,165,233,0.10)',
+              background: 'color-mix(in srgb, var(--accent) 3%, transparent)',
+              border: '1px solid color-mix(in srgb, var(--accent) 10%, transparent)',
               borderRadius: 8,
               padding: '14px 16px',
               marginBottom: 14,
@@ -389,7 +389,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
               gap: 20,
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10, textTransform: 'uppercase' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10 }}>
                   {t.newsOverview}
                 </div>
                 <SentimentBar
@@ -402,7 +402,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
                   <div style={{
                     marginTop: 12,
                     fontSize: 13,
-                    color: '#8b5cf6',
+                    color: '#7c9cb4',
                     lineHeight: 1.5,
                     paddingTop: 10,
                     borderTop: '1px solid var(--border-primary)',

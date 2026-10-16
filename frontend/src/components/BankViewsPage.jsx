@@ -27,9 +27,9 @@ function bankColor(name) {
 
 // ── Action type config ────────────────────────────────────────────────────────
 const ACTION_CONFIG = {
-  rating:   { zh: '评级变动', en: 'Rating Change', ja: '格付け変更', ko: '등급 변경',    fr: 'Changement de note', color: '#0ea5e9' },
+  rating:   { zh: '评级变动', en: 'Rating Change', ja: '格付け変更', ko: '등급 변경',    fr: 'Changement de note', color: 'var(--accent)' },
   target:   { zh: '目标价',   en: 'Price Target',  ja: '目標株価',   ko: '목표 주가',    fr: 'Objectif de prix',   color: '#f59e0b' },
-  macro:    { zh: '宏观展望', en: 'Macro',         ja: 'マクロ',     ko: '거시 전망',    fr: 'Macro',              color: '#a78bfa' },
+  macro:    { zh: '宏观展望', en: 'Macro',         ja: 'マクロ',     ko: '거시 전망',    fr: 'Macro',              color: '#7c9cb4' },
   strategy: { zh: '策略观点', en: 'Strategy',      ja: '戦略',       ko: '전략',         fr: 'Stratégie',          color: '#34d399' },
   outlook:  { zh: '市场观点', en: 'Market Outlook',ja: '市場見通し', ko: '시장 전망',    fr: 'Perspectives',       color: '#fb923c' },
 }
@@ -71,7 +71,7 @@ function Pill({ active, color, onClick, children }) {
     <button
       onClick={onClick}
       style={{
-        padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
+        padding: '5px 14px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
@@ -128,7 +128,7 @@ function ViewRow({ item, t, lang, first }) {
 
 function SkeletonCard() {
   return (
-    <div className="skeleton" style={{ height: 84, borderRadius: 10, marginBottom: 8 }} />
+    <div className="skeleton" style={{ height: 84, borderRadius: 'var(--radius)', marginBottom: 8 }} />
   )
 }
 
@@ -218,7 +218,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 12 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
             {t.bvTitle}
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -241,9 +241,9 @@ export default function BankViewsPage({ lang = 'zh' }) {
             onClick={() => fetchData(bankFilter)}
             disabled={loading}
             style={{
-              padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.4)',
-              background: loading ? 'rgba(14,165,233,0.05)' : 'rgba(14,165,233,0.1)',
-              color: '#0ea5e9', fontSize: 12, fontWeight: 600,
+              padding: '6px 16px', borderRadius: 'var(--radius)', border: '1px solid color-mix(in srgb, var(--accent) 40%, transparent)',
+              background: loading ? 'color-mix(in srgb, var(--accent) 5%, transparent)' : 'color-mix(in srgb, var(--accent) 10%, transparent)',
+              color: 'var(--accent)', fontSize: 12, fontWeight: 600,
               cursor: loading ? 'default' : 'pointer', transition: 'all 0.2s',
             }}
           >
@@ -255,18 +255,18 @@ export default function BankViewsPage({ lang = 'zh' }) {
       {/* Divider */}
       <div style={{
         height: 1, marginBottom: 18,
-        background: 'linear-gradient(90deg, rgba(14,165,233,0.4) 0%, rgba(139,92,246,0.3) 50%, transparent 100%)',
+        background: 'color-mix(in srgb, var(--accent) 40%, transparent)',
       }} />
 
       {/* Filter bar */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12, alignItems: 'center' }}>
         {/* Bank filter pills */}
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          <Pill active={bankFilter === 'all'} color="#0ea5e9" onClick={() => selectBank('all')}>
+          <Pill active={bankFilter === 'all'} color="var(--accent)" onClick={() => selectBank('all')}>
             {t.bvAll}
           </Pill>
           {allBanks.map(b => (
-            <Pill key={b} active={bankFilter === b} color="#0ea5e9" onClick={() => selectBank(b)}>
+            <Pill key={b} active={bankFilter === b} color="var(--accent)" onClick={() => selectBank(b)}>
               {b}
             </Pill>
           ))}
@@ -282,7 +282,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
 
       {/* Action type filter */}
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 16 }}>
-        <Pill active={actionFilter === 'all'} color="#0ea5e9" onClick={() => selectAction('all')}>
+        <Pill active={actionFilter === 'all'} color="var(--accent)" onClick={() => selectAction('all')}>
           {t.bvAllTypes}
         </Pill>
         {Object.entries(ACTION_CONFIG).map(([k, cfg]) => (
@@ -303,7 +303,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
         <>
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 12, overflow: 'hidden', marginBottom: 8,
+            borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 8,
           }}>
             {displayed.map((item, i) => (
               <ViewRow key={`${item.source}-${i}`} item={item} t={t} lang={lang} first={i === 0} />
@@ -315,7 +315,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
               style={{
                 display: 'block', width: '100%', padding: '12px 0',
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 12, color: 'var(--text-secondary)', fontSize: 13,
+                borderRadius: 'var(--radius)', color: 'var(--text-secondary)', fontSize: 13,
                 cursor: 'pointer', marginTop: 4, transition: 'background 0.2s',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
@@ -330,8 +330,8 @@ export default function BankViewsPage({ lang = 'zh' }) {
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #38bdf8; }
-        .bfs-news-row:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: var(--accent); }
+        .bfs-news-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>

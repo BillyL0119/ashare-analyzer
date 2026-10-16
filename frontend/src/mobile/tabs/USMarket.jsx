@@ -57,7 +57,7 @@ function IndexCard({ i, hero }) {
   const t = useT(); const lang = useLangStore((s) => s.lang)
   const c = changeColor(i.pct, 'us')
   const title = lang === 'zh' ? i.name_zh : (INDEX_ZH[i.name] ? t(INDEX_ZH[i.name]) : i.name)
-  const bg = `linear-gradient(135deg, color-mix(in srgb, ${c} 16%, transparent), var(--surface-hi))`
+  const bg = `color-mix(in srgb, ${c} 16%, transparent)`
   if (hero) {
     return (
       <div className="m-tile" style={{ background: bg, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
@@ -163,7 +163,7 @@ function Mega({ d }) {
         {d.mega_caps.map((q) => {
           const c = changeColor(q.pct, 'us')
           return (
-            <button key={q.symbol} className="m-tile" style={{ textAlign: 'left', background: `linear-gradient(135deg, color-mix(in srgb, ${c} 14%, transparent), var(--surface-hi))` }} onClick={() => nav(`/stock/us/${q.symbol}`)}>
+            <button key={q.symbol} className="m-tile" style={{ textAlign: 'left', background: `color-mix(in srgb, ${c} 14%, transparent)` }} onClick={() => nav(`/stock/us/${q.symbol}`)}>
               <div style={{ fontWeight: 800, fontSize: 14 }}>{q.symbol}</div>
               <div className="m-num" style={{ fontWeight: 700, fontSize: 14, margin: '4px 0 2px' }}>{num(q.price)}</div>
               <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(q.pct)}</div>

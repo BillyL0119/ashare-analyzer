@@ -16,9 +16,9 @@ const L = {
 }
 
 const CSS = `
-.hm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
-.hm-chip { padding: 6px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
-.hm-chip.on { background: color-mix(in srgb, #0ea5e9 14%, transparent); border-color: color-mix(in srgb, #0ea5e9 55%, transparent); color: #0ea5e9; font-weight: 600; }
+.hm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); }
+.hm-chip { padding: 6px 12px; border-radius: var(--radius); font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.hm-chip.on { background: color-mix(in srgb, #a08672 14%, transparent); border-color: color-mix(in srgb, #a08672 55%, transparent); color: #a08672; font-weight: 600; }
 .hm-sec { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 12.5px; padding: 5px 0; color: var(--text-secondary); }
 .hm-sec span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hm-axis { position: relative; height: 6px; background: var(--bg-tertiary); border-radius: 3px; }
@@ -70,7 +70,7 @@ export default function HeatmapPage({ lang }) {
     const area = w * h * 0.85                      // minus sector headers and gaps
     return {
       tooltip: {
-        backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(138,180,248,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
+        backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(160,134,114,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
         formatter: (p) => {
           const d = p.data || {}
           if (d.sector) return `<b>${d.name}</b>${d.sym && d.sym !== d.name ? ` · ${d.sym}` : ''}<br/>${t.change}: <b>${pct(d.chg)}</b><br/>${t.price}: ${d.price ?? '—'}<br/>${t.cap}: ${money(d.value, market)}`
@@ -94,7 +94,7 @@ export default function HeatmapPage({ lang }) {
             label: {
               show: true, position: 'inside', overflow: 'truncate', color: '#fff', lineHeight: 15,
               formatter: (p) => `{s|${p.name}}\n{p|${pct(p.data.chg)}}`,
-              rich: { s: { fontSize: 12, fontWeight: 700, color: '#fff' }, p: { fontSize: 11, color: 'rgba(255,255,255,0.88)' } },
+              rich: { s: { fontSize: 12, fontWeight: 600, color: '#fff' }, p: { fontSize: 11, color: 'rgba(255,255,255,0.88)' } },
             },
           },
         ],
@@ -135,8 +135,8 @@ export default function HeatmapPage({ lang }) {
       <style>{CSS}</style>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#0ea5e9' }}>{t.eyebrow}</div>
-          <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '.1em', color: '#a08672' }}>{t.eyebrow}</div>
+          <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
           <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 720, lineHeight: 1.6 }}>
             {market === 'us' ? t.subUs(data?.count || limit) : market === 'hk' ? t.subHk(data?.count || Math.min(limit, 300))
               : market === 'jp' ? t.subJp(data?.count || Math.min(limit, 300)) : t.subCn(data?.count || 200)}
@@ -176,7 +176,7 @@ export default function HeatmapPage({ lang }) {
 
       {sectors.length > 0 && (
         <div className="hm-card" style={{ padding: '14px 18px', marginTop: 14 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 8px' }}>{t.sectors} <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>· {t.weighted}</span></h2>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px' }}>{t.sectors} <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>· {t.weighted}</span></h2>
           {sectors.map((g) => {
             const v = g.change_pct ?? 0
             const w = (Math.abs(v) / maxAbs) * 50

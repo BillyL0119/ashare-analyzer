@@ -3,7 +3,7 @@ import ReactECharts from '../lib/echarts'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 
-const BDR   = 'rgba(138,180,248,0.12)'
+const BDR   = 'rgba(160,134,114,0.12)'
 const MUTED = 'var(--text-muted)'
 
 const FEATURE_LABELS = {
@@ -38,7 +38,7 @@ function SourceBlock({ stats, lang }) {
   if (!total) return null
   const L = lang === 'zh' ? 'zh' : 'en'
   return (
-    <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', marginBottom: 16 }}>
+    <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', padding: '16px 20px', marginBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12, flexWrap: 'wrap', gap: 6 }}>
         <span style={{ fontSize: 13, fontWeight: 600, color: '#34d399' }}>{L === 'zh' ? '访问来源' : 'Traffic sources'}</span>
         {uiTotal > 0 && (
@@ -52,9 +52,9 @@ function SourceBlock({ stats, lang }) {
           <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 12, color: 'var(--text-primary)', minWidth: 96 }}>{SOURCE_LABELS[key]?.[L] ?? key}</span>
             <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-              <div style={{ width: `${(n / sources[0][1]) * 100}%`, height: '100%', background: 'linear-gradient(90deg,#34d399,#8ab4f8)', borderRadius: 2 }} />
+              <div style={{ width: `${(n / sources[0][1]) * 100}%`, height: '100%', background: '#34d399', borderRadius: 2 }} />
             </div>
-            <span style={{ fontSize: 11, color: MUTED, fontFamily: 'monospace', minWidth: 40, textAlign: 'right' }}>{n} · {Math.round((n / total) * 100)}%</span>
+            <span style={{ fontSize: 11, color: MUTED, fontFamily: 'var(--sans)', minWidth: 40, textAlign: 'right' }}>{n} · {Math.round((n / total) * 100)}%</span>
           </div>
         ))}
       </div>
@@ -67,7 +67,7 @@ function BigStatCard({ icon, label, value, sub, gradient, exportMode }) {
     <div style={{
       background: 'var(--bg-tertiary)',
       border: `1px solid ${BDR}`,
-      borderRadius: 16,
+      borderRadius: 'var(--radius)',
       padding: exportMode ? '16px 20px' : '20px 24px',
       flex: 1,
       minWidth: 150,
@@ -76,18 +76,17 @@ function BigStatCard({ icon, label, value, sub, gradient, exportMode }) {
     }}>
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-        background: gradient || 'linear-gradient(90deg,#8ab4f8,#c084fc)',
+        background: gradient || '#a08672',
         borderRadius: '16px 16px 0 0',
       }} />
       <div style={{ fontSize: 18, marginBottom: 4 }}>{icon}</div>
-      <div style={{ fontSize: 11, color: MUTED, marginBottom: 6, letterSpacing: '0.3px', textTransform: 'uppercase' }}>
+      <div style={{ fontSize: 11, color: MUTED, marginBottom: 6, letterSpacing: '0.3px' }}>
         {label}
       </div>
       <div style={{
-        fontSize: exportMode ? 30 : 36, fontWeight: 800, fontFamily: 'monospace',
-        background: gradient || 'linear-gradient(90deg,#8ab4f8,#c084fc)',
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-        letterSpacing: '-1px',
+        fontSize: exportMode ? 30 : 36, fontWeight: 600, fontFamily: 'var(--sans)',
+        color: gradient || 'var(--text-primary)',
+        letterSpacing: '-0.03em',
       }}>
         {value}
       </div>
@@ -141,7 +140,7 @@ export default function StatsDisplay({ lang, onClose }) {
       type: 'value',
       minInterval: 1,
       axisLabel: { color: MUTED, fontSize: 10 },
-      splitLine: { lineStyle: { color: 'rgba(138,180,248,0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(160,134,114,0.06)' } },
     },
     series: [{
       type: 'line',
@@ -149,14 +148,14 @@ export default function StatsDisplay({ lang, onClose }) {
       smooth: true,
       symbol: 'circle',
       symbolSize: 4,
-      lineStyle: { width: 2.5, color: '#0ea5e9' },
-      itemStyle: { color: '#0ea5e9' },
+      lineStyle: { width: 2.5, color: '#a08672' },
+      itemStyle: { color: '#a08672' },
       areaStyle: {
         color: {
           type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
           colorStops: [
-            { offset: 0, color: 'rgba(138,180,248,0.30)' },
-            { offset: 1, color: 'rgba(192,132,252,0.04)' },
+            { offset: 0, color: 'rgba(160,134,114,0.30)' },
+            { offset: 1, color: 'rgba(124,156,180,0.04)' },
           ],
         },
       },
@@ -164,7 +163,7 @@ export default function StatsDisplay({ lang, onClose }) {
   } : null
 
   // ── Pie chart: feature usage ─────────────────────────────────────────────
-  const PIE_COLORS = ['#8ab4f8','#c084fc','#34d399','#fbbf24','#f87171','#60a5fa','#a78bfa','#fb923c','#e879f9','#38bdf8']
+  const PIE_COLORS = ['#a08672','#7c9cb4','#34d399','#fbbf24','#f87171','#a08672','#7c9cb4','#fb923c','#e879f9','#a08672']
 
   const pieOption = stats ? (() => {
     const fu = stats.feature_usage || {}
@@ -192,7 +191,7 @@ export default function StatsDisplay({ lang, onClose }) {
         center: ['38%', '50%'],
         avoidLabelOverlap: false,
         label: { show: false },
-        emphasis: { label: { show: true, fontSize: 12, fontWeight: 700, color: THEME.tooltipText } },
+        emphasis: { label: { show: true, fontSize: 12, fontWeight: 600, color: THEME.tooltipText } },
         data: entries.map(([key, val], i) => ({
           name: (FEATURE_LABELS[key]?.[lang] ?? key),
           value: val,
@@ -216,8 +215,8 @@ export default function StatsDisplay({ lang, onClose }) {
         ref={containerRef}
         style={{
           background: 'var(--bg-primary)',
-          border: '1px solid rgba(138,180,248,0.18)',
-          borderRadius: 20,
+          border: '1px solid rgba(160,134,114,0.18)',
+          borderRadius: 'var(--radius)',
           width: '100%',
           maxWidth: 920,
           maxHeight: exportMode ? 'none' : '92vh',
@@ -230,9 +229,8 @@ export default function StatsDisplay({ lang, onClose }) {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
           <div>
             <div style={{
-              fontSize: 22, fontWeight: 800,
-              background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              fontSize: 22, fontWeight: 600,
+              color: '#a08672',
               marginBottom: 4,
             }}>
               {t.stTitle}
@@ -290,7 +288,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 label={t.stTotalVisits}
                 value={stats.total_visits.toLocaleString()}
                 sub={t.stThisWeek(stats.this_week_visits)}
-                gradient="linear-gradient(90deg,#8ab4f8,#6366f1)"
+                gradient="#a08672"
                 exportMode={exportMode}
               />
               <BigStatCard
@@ -298,7 +296,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 label={t.stUniqueUsers}
                 value={stats.unique_devices.toLocaleString()}
                 sub={t.stUniqueToday(stats.today_unique)}
-                gradient="linear-gradient(90deg,#c084fc,#8b5cf6)"
+                gradient="#7c9cb4"
                 exportMode={exportMode}
               />
               <BigStatCard
@@ -306,7 +304,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 label={t.stStocksAnalyzed}
                 value={(stats.stocks_analyzed || 0).toLocaleString()}
                 sub={t.stTopStock(stats.top_stocks[0]?.symbol ?? '--')}
-                gradient="linear-gradient(90deg,#34d399,#059669)"
+                gradient="#34d399"
                 exportMode={exportMode}
               />
               <BigStatCard
@@ -314,7 +312,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 label={t.stStudySessions}
                 value={(stats.study_sessions || 0).toLocaleString()}
                 sub={t.stStudyCenter}
-                gradient="linear-gradient(90deg,#fbbf24,#f59e0b)"
+                gradient="#fbbf24"
                 exportMode={exportMode}
               />
             </div>
@@ -322,7 +320,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {/* ── 30-day chart ── */}
             <div style={{
               background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
-              borderRadius: 12, padding: '16px 12px', marginBottom: 16,
+              borderRadius: 'var(--radius)', padding: '16px 12px', marginBottom: 16,
             }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-blue)', marginBottom: 10 }}>
                 {t.stChartTitle}
@@ -338,7 +336,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {/* ── Bottom two columns ── */}
             <div style={{ display: 'grid', gridTemplateColumns: pieOption ? '1fr 1fr' : '1fr', gap: 16, marginBottom: 16 }}>
               {/* Top 5 stocks */}
-              <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px' }}>
+              <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', padding: '16px 20px' }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#fbbf24', marginBottom: 12 }}>
                   {t.stTop5}
                 </div>
@@ -350,19 +348,19 @@ export default function StatsDisplay({ lang, onClose }) {
                       const maxS = stats.top_stocks[0]?.searches || 1
                       return (
                         <div key={s.symbol} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <span style={{ fontSize: 12, color: i < 3 ? '#fbbf24' : MUTED, fontWeight: 700, minWidth: 18, textAlign: 'right' }}>
+                          <span style={{ fontSize: 12, color: i < 3 ? '#fbbf24' : MUTED, fontWeight: 600, minWidth: 18, textAlign: 'right' }}>
                             {i + 1}
                           </span>
-                          <span style={{ fontSize: 12, color: 'var(--accent-blue)', fontFamily: 'monospace', minWidth: 52 }}>{s.symbol}</span>
+                          <span style={{ fontSize: 12, color: 'var(--accent-blue)', fontFamily: 'var(--sans)', minWidth: 52 }}>{s.symbol}</span>
                           <div style={{ flex: 1 }}>
                             <div style={{ fontSize: 12, color: 'var(--text-primary)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {s.name}
                             </div>
                             <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                              <div style={{ width: `${(s.searches / maxS) * 100}%`, height: '100%', background: 'linear-gradient(90deg,#8ab4f8,#c084fc)', borderRadius: 2 }} />
+                              <div style={{ width: `${(s.searches / maxS) * 100}%`, height: '100%', background: '#a08672', borderRadius: 2 }} />
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: MUTED, fontFamily: 'monospace', minWidth: 28, textAlign: 'right' }}>
+                          <span style={{ fontSize: 11, color: MUTED, fontFamily: 'var(--sans)', minWidth: 28, textAlign: 'right' }}>
                             {s.searches}
                           </span>
                         </div>
@@ -374,7 +372,7 @@ export default function StatsDisplay({ lang, onClose }) {
 
               {/* Feature usage pie */}
               {pieOption && (
-                <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 12px' }}>
+                <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 'var(--radius)', padding: '16px 12px' }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-purple)', marginBottom: 10 }}>
                     {t.stFeatureUsage}
                   </div>
@@ -387,15 +385,14 @@ export default function StatsDisplay({ lang, onClose }) {
             <div style={{
               marginTop: 8,
               padding: '14px 20px',
-              background: 'rgba(138,180,248,0.05)',
+              background: 'rgba(160,134,114,0.05)',
               border: `1px solid ${BDR}`,
-              borderRadius: 12,
+              borderRadius: 'var(--radius)',
               textAlign: 'center',
             }}>
               <div style={{
                 fontSize: 14, fontWeight: 600,
-                background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                color: '#a08672',
               }}>
                 {t.stTagline(countryEst)}
               </div>

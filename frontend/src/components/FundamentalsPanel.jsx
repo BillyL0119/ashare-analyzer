@@ -89,12 +89,12 @@ const fmtDate = (iso, lang) => {
 }
 
 const CSS = `
-.fu-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px; min-width: 0; }
-.fu-h { margin: 0 0 12px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+.fu-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius); padding: 16px; min-width: 0; }
+.fu-h { margin: 0 0 12px; font-size: 12px; font-weight: 600; letter-spacing: .06em;  color: var(--text-muted); }
 .fu-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
-.fu-tile { background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 10px; padding: 11px 12px; min-width: 0; }
+.fu-tile { background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius); padding: 11px 12px; min-width: 0; }
 .fu-tile .l { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fu-tile .v { font-size: 17px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fu-tile .v { font-size: 17px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fu-tile .s { font-size: 11px; color: var(--text-muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fu-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
 .fu-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
@@ -143,9 +143,9 @@ function CompanyFundamentals({ code, t, lang }) {
   if (!data) {
     return (
       <div style={{ display: 'grid', gap: 12 }}>
-        <div className="skeleton" style={{ height: 110, borderRadius: 12 }} />
-        <div className="skeleton" style={{ height: 150, borderRadius: 12 }} />
-        <div className="skeleton" style={{ height: 300, borderRadius: 12 }} />
+        <div className="skeleton" style={{ height: 110, borderRadius: 'var(--radius)' }} />
+        <div className="skeleton" style={{ height: 150, borderRadius: 'var(--radius)' }} />
+        <div className="skeleton" style={{ height: 300, borderRadius: 'var(--radius)' }} />
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.loading}</div>
       </div>
     )
@@ -185,7 +185,7 @@ function Overview({ data, quote, t }) {
     <section className="fu-card">
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
         <h3 style={{ margin: 0, fontSize: 20, color: 'var(--text-primary)', letterSpacing: '-.2px' }}>{name}</h3>
-        <span style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 13, color: 'var(--text-muted)' }}>{data.symbol}</span>
+        <span style={{ fontFamily: 'var(--sans)', fontSize: 13, color: 'var(--text-muted)' }}>{data.symbol}</span>
         {p.website && (
           <a href={p.website} target="_blank" rel="noopener noreferrer" style={{ marginLeft: 'auto', fontSize: 12, color: BLUE, textDecoration: 'none' }}>
             {t.website} ↗
@@ -347,7 +347,7 @@ function Earnings({ rows, t }) {
           const c = beat == null ? 'var(--text-muted)' : beat ? GREEN : RED
           return (
             <div key={r.quarter} style={{ textAlign: 'center', fontSize: 11, padding: '6px 4px', borderRadius: 8, background: 'var(--bg-tertiary)' }}>
-              <div style={{ color: c, fontWeight: 700 }}>{signPct(r.surprise_pct)}</div>
+              <div style={{ color: c, fontWeight: 600 }}>{signPct(r.surprise_pct)}</div>
               <div style={{ color: 'var(--text-muted)', marginTop: 2 }}>{beat == null ? '' : beat ? t.beat : t.miss}</div>
             </div>
           )
@@ -384,7 +384,7 @@ function Analysts({ a, price, t }) {
       )}
       {a.target != null && (
         <div style={{ marginTop: 22 }}>
-          <div style={{ position: 'relative', height: 6, borderRadius: 3, background: `linear-gradient(90deg, ${RED}55, ${AMBER}55, ${GREEN}55)` }}>
+          <div style={{ position: 'relative', height: 6, borderRadius: 3, background: `${RED}55` }}>
             {/* average target: blue bar; current price: ring (stays visible when the two coincide) */}
             {at(a.target) != null && <span title={t.avg} style={{ position: 'absolute', left: `calc(${at(a.target)}% - 2px)`, top: -6, width: 4, height: 18, borderRadius: 2, background: BLUE }} />}
             {at(price) != null && <span title={t.current} style={{ position: 'absolute', left: `calc(${at(price)}% - 7px)`, top: -4, width: 14, height: 14, borderRadius: 7, border: '2px solid var(--text-primary)', background: 'var(--bg-secondary)', boxSizing: 'border-box' }} />}
@@ -393,7 +393,7 @@ function Analysts({ a, price, t }) {
             {[[t.low, a.target_low], [t.avg, a.target], [t.high, a.target_high], [t.current, price]].map(([k, v]) => (
               <div key={k}>
                 <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{k}</div>
-                <div style={{ color: k === t.avg ? BLUE : 'var(--text-primary)', fontWeight: 700, marginTop: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div style={{ color: k === t.avg ? BLUE : 'var(--text-primary)', fontWeight: 600, marginTop: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
                   {k === t.current && <span style={{ width: 9, height: 9, borderRadius: 5, border: '2px solid var(--text-primary)', boxSizing: 'border-box' }} />}{v != null ? `$${v.toFixed(2)}` : '—'}</div>
               </div>
             ))}

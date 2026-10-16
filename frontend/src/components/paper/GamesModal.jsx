@@ -39,7 +39,7 @@ export default function GamesModal({ s, accountKey, nickname, marketLabels, onCl
         {mode === 'join' ? (
           <Field label={g.code}>
             <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))} placeholder={g.codePh}
-              style={{ ...inputStyle, letterSpacing: 4, fontWeight: 800, fontSize: 18, textAlign: 'center' }} autoFocus />
+              style={{ ...inputStyle, letterSpacing: 4, fontWeight: 600, fontSize: 18, textAlign: 'center' }} autoFocus />
           </Field>
         ) : (<>
           <Field label={g.name}><input value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} placeholder={g.namePh} style={inputStyle} /></Field>

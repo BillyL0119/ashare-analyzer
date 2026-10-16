@@ -6,7 +6,7 @@ import { T } from '../i18n/translations'
 import { riseColor, fallColor } from '../utils/chartHelpers'
 import { CUR, MARKET_TINT, guessMarket } from '../utils/markets'
 
-const ACCENT_BLUE = '#8ab4f8'
+const ACCENT_BLUE = '#a08672'
 
 function WatchlistItem({ stock, t, onRemove, onClick }) {
   const [quote, setQuote] = useState(null)
@@ -32,19 +32,19 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
         padding: '9px 12px', borderBottom: '1px solid var(--border-primary)',
         cursor: 'pointer', transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 6%, transparent)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2, flexWrap: 'nowrap' }}>
-          <span style={{ fontSize: 11, color: ACCENT_BLUE, fontFamily: 'monospace', flexShrink: 0 }}>
+          <span style={{ fontSize: 11, color: ACCENT_BLUE, fontFamily: 'var(--sans)', flexShrink: 0 }}>
             {stock.code}
           </span>
           <span style={{ fontSize: 12, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>
             {stock.name}
           </span>
           <span style={{
-            fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4, flexShrink: 0,
+            fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 4, flexShrink: 0,
             background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
           }}>
             {m === 'us' ? 'US' : m === 'cn' ? t.marketCN : m === 'hk' ? t.marketHK : t.marketJP}
@@ -113,14 +113,14 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
         width: 290, maxHeight: 420,
         background: 'var(--bg-secondary)',
         backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-        border: '1px solid var(--border-primary)', borderRadius: 14,
+        border: '1px solid var(--border-primary)', borderRadius: 'var(--radius)',
         boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}
     >
       <div style={{
         padding: '11px 14px', borderBottom: '1px solid var(--border-primary)',
-        fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.2px',
+        fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.2px',
       }}>
         ⭐ {t.navWatchlist}
       </div>

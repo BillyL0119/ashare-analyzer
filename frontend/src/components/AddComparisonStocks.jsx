@@ -35,9 +35,9 @@ export default function AddComparisonStocks({ lang = 'zh' }) {
   return (
     <div style={{
       maxWidth: 520, margin: '32px auto', padding: '24px 26px', textAlign: 'center',
-      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 14,
+      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 'var(--radius)',
     }}>
-      <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{c.title}</div>
+      <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>{c.title}</div>
       <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 16 }}>{c.body}</div>
       <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
         {picks.slice(0, 4).map((s) => (
@@ -46,8 +46,8 @@ export default function AddComparisonStocks({ lang = 'zh' }) {
             className="bfs-add-peer"
             onClick={() => addSymbol(s)}
             style={{
-              padding: '7px 14px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600,
-              background: 'rgba(14,165,233,0.10)', color: '#0ea5e9', border: '1px solid rgba(14,165,233,0.35)',
+              padding: '7px 14px', borderRadius: 'var(--radius)', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+              background: 'color-mix(in srgb, var(--accent) 10%, transparent)', color: 'var(--accent)', border: '1px solid color-mix(in srgb, var(--accent) 35%, transparent)',
             }}
           >
             + {market === 'us' ? s.code : s.name}
@@ -57,8 +57,8 @@ export default function AddComparisonStocks({ lang = 'zh' }) {
           </button>
         ))}
       </div>
-      <style>{`.bfs-add-peer:hover { background: rgba(14,165,233,0.18) !important; }
-        .bfs-add-peer:focus-visible { outline: 2px solid #0ea5e9; outline-offset: 2px; }`}</style>
+      <style>{`.bfs-add-peer:hover { background: color-mix(in srgb, var(--accent) 18%, transparent) !important; }
+        .bfs-add-peer:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }`}</style>
     </div>
   )
 }

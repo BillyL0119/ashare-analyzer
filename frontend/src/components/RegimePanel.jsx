@@ -7,7 +7,7 @@ import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const STOCK_COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
+const STOCK_COLORS = ['#a08672', '#b388ff', '#ffb74d', '#90a4ae']
 
 const REGIME_COLORS = {
   bull:     '#ef5350',
@@ -41,11 +41,11 @@ function RegimeBadge({ regime, duration, lang, t }) {
         padding: '8px 18px',
         textAlign: 'center',
       }}>
-        <div style={{ color, fontSize: 20, fontWeight: 800 }}>{regimeLabel(regime, lang)}</div>
+        <div style={{ color, fontSize: 20, fontWeight: 600 }}>{regimeLabel(regime, lang)}</div>
         <div style={{ color: 'var(--text-muted)', fontSize: 11, marginTop: 2 }}>{t.regimeCurrent}</div>
       </div>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: THEME.text, fontSize: 22, fontWeight: 700 }}>{duration}</div>
+        <div style={{ color: THEME.text, fontSize: 22, fontWeight: 600 }}>{duration}</div>
         <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{t.regimeDuration} ({lang === 'zh' ? '天' : 'd'})</div>
       </div>
     </div>
@@ -125,7 +125,7 @@ function RegimePriceChart({ series, lang, t }) {
         html += `<div>Price: <b>${row.close}</b></div>`
         if (row.regime) {
           const col = REGIME_COLORS[row.regime]
-          html += `<div>Regime: <span style="color:${col};font-weight:700">${regimeLabel(row.regime, lang)}</span></div>`
+          html += `<div>Regime: <span style="color:${col};font-weight: 600">${regimeLabel(row.regime, lang)}</span></div>`
         }
         if (row.roll_ret != null) html += `<div>Roll Ret: ${row.roll_ret > 0 ? '+' : ''}${row.roll_ret.toFixed(2)}%</div>`
         if (row.roll_vol != null) html += `<div>Roll Vol: ${row.roll_vol.toFixed(1)}%</div>`
@@ -166,8 +166,8 @@ function RegimePriceChart({ series, lang, t }) {
         type: 'line',
         data: closes,
         showSymbol: false,
-        lineStyle: { width: 1.8, color: '#64b5f6' },
-        itemStyle: { color: '#64b5f6' },
+        lineStyle: { width: 1.8, color: '#a08672' },
+        itemStyle: { color: '#a08672' },
         xAxisIndex: 0, yAxisIndex: 0,
       },
       {
@@ -281,7 +281,7 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
     <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-        <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
+        <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name}</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
         {data && (
           <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
@@ -303,19 +303,19 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
 
           {/* Price + regime chart */}
           <div>
-            <div style={{ color: '#0ea5e9', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
+            <div style={{ color: '#a08672', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
             <RegimePriceChart series={data.series} lang={lang} t={t} />
           </div>
 
           {/* Transition history */}
           <div>
-            <div style={{ color: '#0ea5e9', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
+            <div style={{ color: '#a08672', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
             <TransitionTable transitions={data.transitions} lang={lang} t={t} />
           </div>
 
           {/* Interpretation */}
           <div>
-            <div style={{ color: '#0ea5e9', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
+            <div style={{ color: '#a08672', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
             <Interpretation text={data.interpretation[lang]} />
           </div>
         </div>
@@ -334,8 +334,8 @@ export default function RegimePanel({ stocks }) {
   const [win, setWin] = useState(20)
 
   const btnStyle = (active) => ({
-    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#0ea5e9' : THEME.border}`,
-    background: active ? 'rgba(14,165,233,0.12)' : 'var(--bg-hover)', color: active ? '#0ea5e9' : THEME.text, cursor: 'pointer',
+    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#a08672' : THEME.border}`,
+    background: active ? 'rgba(160,134,114,0.12)' : 'var(--bg-hover)', color: active ? '#a08672' : THEME.text, cursor: 'pointer',
   })
 
   return (

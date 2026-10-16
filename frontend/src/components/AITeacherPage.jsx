@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
 
-const ACCENT  = '#0ea5e9'
-const ACCENT2 = '#8b5cf6'
+const ACCENT  = '#a08672'
+const ACCENT2 = '#7c9cb4'
 const BDR     = 'var(--border-primary)'
 const MUTED   = 'var(--text-muted)'
 
@@ -90,16 +90,16 @@ function Bubble({ msg }) {
       {!isUser && (
         <div style={{
           width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-          background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
+          background: `${ACCENT}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
         }}>🎓</div>
       )}
       <div style={{
         maxWidth: '76%',
         background: isUser
-          ? `linear-gradient(135deg,rgba(14,165,233,0.16),rgba(139,92,246,0.13))`
+          ? `color-mix(in srgb, var(--accent) 16%, transparent)`
           : 'var(--bg-tertiary)',
-        border: `1px solid ${isUser ? 'rgba(14,165,233,0.22)' : 'var(--border-primary)'}`,
+        border: `1px solid ${isUser ? 'color-mix(in srgb, var(--accent) 22%, transparent)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '16px 16px 4px 16px' : '4px 16px 16px 16px',
         padding: '11px 15px',
         fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.75,
@@ -113,7 +113,7 @@ function Bubble({ msg }) {
       {isUser && (
         <div style={{
           width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-          background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.2)',
+          background: 'color-mix(in srgb, var(--accent) 12%, transparent)', border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
         }}>👤</div>
       )}
@@ -236,26 +236,25 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
       display: 'flex', flexDirection: 'column',
       height: embedded ? '100%' : 'calc(100vh - 60px)',
       background: 'var(--bg-primary)',
-      borderRadius: 12, border: `1px solid ${BDR}`,
+      borderRadius: 'var(--radius)', border: `1px solid ${BDR}`,
       overflow: 'hidden',
     }}>
       {/* ── Top banner ── */}
       <div style={{
         padding: '12px 20px', flexShrink: 0,
-        background: 'rgba(14,165,233,0.04)',
+        background: 'color-mix(in srgb, var(--accent) 4%, transparent)',
         borderBottom: `1px solid ${BDR}`,
         display: 'flex', alignItems: 'center', gap: 14,
       }}>
         <div style={{
-          width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-          background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
+          width: 38, height: 38, borderRadius: 'var(--radius)', flexShrink: 0,
+          background: `${ACCENT}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
         }}>🎓</div>
         <div>
           <div style={{
-            fontSize: 16, fontWeight: 800,
-            background: `linear-gradient(90deg,${ACCENT},${ACCENT2})`,
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            fontSize: 16, fontWeight: 600,
+            color: `${ACCENT}`,
           }}>
             {t.atTitle}
           </div>
@@ -288,7 +287,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           display: 'flex', flexDirection: 'column',
           overflowY: 'auto',
         }}>
-          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 700, color: 'rgba(14,165,233,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 600, color: 'color-mix(in srgb, var(--accent) 50%, transparent)', letterSpacing: '0.08em' }}>
             {t.atTopics}
           </div>
 
@@ -300,7 +299,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: '8px 12px', cursor: 'pointer',
-                  background: activeCat === i ? 'rgba(14,165,233,0.08)' : 'transparent',
+                  background: activeCat === i ? 'color-mix(in srgb, var(--accent) 8%, transparent)' : 'transparent',
                   borderLeft: activeCat === i ? `3px solid ${ACCENT}` : '3px solid transparent',
                   transition: 'all 0.12s',
                 }}
@@ -323,17 +322,17 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                       onClick={() => send(zh ? t.zh : t.en)}
                       style={{
                         padding: '6px 10px 6px 28px', cursor: 'pointer',
-                        fontSize: 11, color: 'rgba(14,165,233,0.65)',
+                        fontSize: 11, color: 'color-mix(in srgb, var(--accent) 65%, transparent)',
                         borderRadius: 6, lineHeight: 1.4,
                         transition: 'all 0.12s',
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(14,165,233,0.06)'
+                        e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 6%, transparent)'
                         e.currentTarget.style.color = ACCENT
                       }}
                       onMouseLeave={e => {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'rgba(14,165,233,0.65)'
+                        e.currentTarget.style.color = 'color-mix(in srgb, var(--accent) 65%, transparent)'
                       }}
                     >
                       {zh ? t.zh : t.en}
@@ -354,7 +353,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: '50%',
-                  background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
+                  background: `${ACCENT}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
                 }}>🎓</div>
                 <div style={{ display: 'flex', gap: 4 }}>
@@ -390,24 +389,24 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   flex: 1,
                   background: 'var(--bg-secondary)',
-                  border: `1px solid rgba(14,165,233,0.2)`,
-                  borderRadius: 12, color: 'var(--text-primary)',
+                  border: `1px solid color-mix(in srgb, var(--accent) 20%, transparent)`,
+                  borderRadius: 'var(--radius)', color: 'var(--text-primary)',
                   padding: '10px 14px', fontSize: 14,
                   resize: 'none', outline: 'none', lineHeight: 1.6,
                   fontFamily: 'inherit',
                   transition: 'border-color 0.2s',
                 }}
-                onFocus={e => e.target.style.borderColor = 'rgba(14,165,233,0.45)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(14,165,233,0.2)'}
+                onFocus={e => e.target.style.borderColor = 'color-mix(in srgb, var(--accent) 45%, transparent)'}
+                onBlur={e => e.target.style.borderColor = 'color-mix(in srgb, var(--accent) 20%, transparent)'}
               />
               <button
                 onClick={() => send()}
                 disabled={busy || !input.trim()}
                 style={{
                   background: input.trim() && !busy
-                    ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
+                    ? `${ACCENT}`
                     : 'var(--bg-tertiary)',
-                  border: 'none', borderRadius: 12,
+                  border: 'none', borderRadius: 'var(--radius)',
                   padding: '0 22px', fontSize: 20,
                   color: input.trim() && !busy ? '#fff' : '#4a5568',
                   cursor: input.trim() && !busy ? 'pointer' : 'default',

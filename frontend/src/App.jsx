@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import LiquidBackground from './components/LiquidBackground'
+import Icon from './components/Icon'
+import HomeHero from './components/HomeHero'
 import SplashScreen, { shouldShowSplash } from './components/SplashScreen'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
@@ -36,8 +37,6 @@ import useWatchlistStore from './store/watchlistStore'
 import { T } from './i18n/translations'
 import { useMobile } from './hooks/useMobile'
 import { trackVisit, trackFeature } from './utils/analytics'
-
-const ACCENT_BLUE = '#0ea5e9'
 
 // Skeleton placeholder shown while lazy page chunks are loading
 function PageSkeleton() {
@@ -75,6 +74,15 @@ const FOOTER_NOTE = {
   ko: '학습용이며 투자 조언이 아닙니다. 데이터가 지연될 수 있습니다.',
   fr: "À but pédagogique uniquement, pas un conseil en investissement. Les données peuvent être retardées.",
 }
+const FOOTER_WHAT = {
+  zh: '两个高中生做给学生的免费股票与经济学网站',
+  en: 'a free stock and economics site, made by two students for students',
+  ja: '高校生2人が学生のために作った無料の株式・経済学サイト',
+  ko: '고등학생 두 명이 학생을 위해 만든 무료 주식·경제학 사이트',
+  fr: 'un site gratuit de bourse et d’économie, fait par deux lycéens pour les élèves',
+}
+const FOOTER_CONTACT = { zh: '联系我们', en: 'Contact', ja: 'お問い合わせ', ko: '문의', fr: 'Contact' }
+const FOOTER_PRIVACY = { zh: '隐私政策', en: 'Privacy', ja: 'プライバシー', ko: '개인정보', fr: 'Confidentialité' }
 const ROLE_LABELS = {
   admin:  { en: 'Admin', zh: '管理员', ja: '管理者', ko: '관리자', fr: 'Admin' },
   member: { en: 'Member', zh: '会员', ja: 'メンバー', ko: '멤버', fr: 'Membre' },
@@ -89,6 +97,11 @@ const LANG_OPTIONS = [
   { code: 'ko', label: '한국어' },
   { code: 'fr', label: 'FR' },
 ]
+
+// Logged-in users get a cookie hint so the next page load starts in their language
+function rememberLangHint(code) {
+  document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
+}
 
 export default function App() {
   const { market, setMarket, selectedSymbols, switchMarketAndAddSymbol } = useCompareStore()
@@ -108,7 +121,6 @@ export default function App() {
     : studyRouteMatch ? 'study'
     : (PATH_TABS[location.pathname.replace(/(.)\/+$/, '$1')] || 'analysis')   // '/heatmap/' is '/heatmap'
   const [showStats,        setShowStats]        = useState(false)
-  const [scrolled,         setScrolled]         = useState(false)
   const [showInsight,      setShowInsight]      = useState(false)
   const [showAIFloat,      setShowAIFloat]      = useState(false)
   const [showWatchlist,    setShowWatchlist]    = useState(false)
@@ -173,13 +185,6 @@ export default function App() {
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [showLangDropdown, showUserMenu, showMobileMenu])
-
-  // Scroll-aware header
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   // Update document title and canonical on tab/stock change for SEO
   useEffect(() => {
@@ -302,10 +307,37 @@ export default function App() {
     return <Suspense fallback={<PageSkeleton />}><PrivacyPage /></Suspense>
   }
 
+  const menuItem = {
+    display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+    padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer',
+    fontSize: 14, color: 'var(--text-primary)',
+  }
+  const menuBox = {
+    position: 'absolute', top: 42, right: 0, zIndex: 9000,
+    background: 'var(--bg-secondary)', borderRadius: 'var(--radius)', padding: '6px 0',
+    boxShadow: '0 12px 32px rgba(0,0,0,0.28)',   // a real overlay: the one place a shadow belongs
+    animation: 'bfsPageFadeIn 0.15s ease both',
+  }
+  const iconBtn = (active) => ({
+    width: 36, height: 36, borderRadius: 'var(--radius)', border: 'none', flexShrink: 0, cursor: 'pointer',
+    background: active ? 'var(--bg-hover)' : 'transparent',
+    color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+  })
+  const pickLang = (code, close) => {
+    setLang(code); close()
+    if (user) {
+      setLangPreference(code)
+      rememberLangHint(code)
+      showToast('Language saved')
+    } else {
+      localStorage.setItem('bfs_lang', code)
+    }
+  }
+  const flipTheme = () => { const next = theme === 'dark' ? 'light' : 'dark'; toggleTheme(); if (user) { setThemePreference(next); showToast('Theme saved') } }
+
   return (
     <>
-    {/* Liquid background — fixed layer, sits below all content (z-index:0) */}
-    <LiquidBackground />
     {/* Splash screen — renders above everything, unmounts after animation */}
     {splashActive && (
       <SplashScreen
@@ -315,24 +347,19 @@ export default function App() {
     )}
     {/* WelcomeModal and KnowledgeCard stay outside the opacity wrapper
         because they are position:fixed — wrapping them in an opacity<1 div
-        would break their viewport positioning. They are revealed naturally
-        as the splash overlay fades out. */}
+        would break their viewport positioning. */}
     <WelcomeModal onLangSelect={(lang) => setLang(lang)} />
     <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
     <AuthModal open={showAuth} onClose={() => setShowAuth(false)} lang={lang} />
     <div
       style={{
         position: 'relative',
-        zIndex: 1,
         minHeight: '100vh',
-        background: 'transparent',
+        background: 'var(--bg-primary)',
         color: 'var(--text-primary)',
-        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        fontFamily: 'var(--sans)',
         display: 'flex',
         flexDirection: 'column',
-        letterSpacing: '0.15px',
-        // When splash plays: opacity transition for seamless cross-fade.
-        // Without splash: keep the original bfsPageFadeIn animation.
         ...(hadSplash ? {
           opacity: contentVisible ? 1 : 0,
           transition: 'opacity 0.45s ease',
@@ -341,63 +368,55 @@ export default function App() {
         }),
       }}
     >
-      {/* Sticky nav wrapper — primary header + secondary tab bar scroll together */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0 }}>
-      {/* Glassmorphism header */}
+      {/* Sticky bar: wordmark, market, search, a few controls, one action; the section tabs below it */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0, background: 'var(--nav-bg)' }}>
       <header
         style={{
-          background: scrolled ? 'var(--nav-bg)' : 'var(--nav-bg-dim)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: 'none',
-          boxShadow: scrolled ? (theme === 'light' ? '0 1px 4px rgba(0,0,0,0.12)' : '0 1px 32px rgba(0,0,0,0.6)') : 'none',
-          padding: isMobile ? '8px 10px' : '10px 24px',
+          background: 'var(--nav-bg)',
+          padding: isMobile ? '8px 12px' : '12px 28px',
           display: 'flex',
           alignItems: 'center',
           rowGap: 8,
-          columnGap: isMobile ? 8 : 18,
-          // Phones: search drops to its own full-width row so the top row fits 360px screens
+          columnGap: isMobile ? 8 : 20,
           flexWrap: isMobile ? 'wrap' : 'nowrap',
-          transition: 'background 0.3s ease, box-shadow 0.3s ease',
           position: 'relative',
           zIndex: 10,
         }}
       >
-        {/* Logo */}
-        <div
-          onClick={() => handleTabChange('analysis')}
-          style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, cursor: 'pointer', opacity: 1, transition: 'opacity 0.15s' }}
-          onMouseEnter={e => e.currentTarget.style.opacity = '0.72'}
-          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+        {/* Wordmark */}
+        <a
+          href="/"
+          onClick={(e) => { e.preventDefault(); handleTabChange('analysis') }}
+          className="bfs-wordmark"
+          style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, cursor: 'pointer', textDecoration: 'none', color: 'var(--text-primary)' }}
         >
           <img
             src="/logo-dark.png"
             alt="Best Friend Stock"
-            style={{ height: isMobile ? 32 : 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
+            style={{ height: isMobile ? 28 : 32, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />
           {!isMobile && (
-            <span style={{ fontFamily: 'var(--heading)', fontSize: 19, fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            <span style={{ fontSize: 17, fontWeight: 500, letterSpacing: '-0.02em' }}>
               Best Friend Stock
             </span>
           )}
-        </div>
+        </a>
 
-        {/* Market toggle — pill style */}
-        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 24, padding: 3, gap: 2, flexShrink: 0 }}>
+        {/* Market switch: a segmented control from the product */}
+        <div role="group" aria-label="Market" style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius)', padding: 3, gap: 2, flexShrink: 0 }}>
           {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN },
             { key: 'hk', label: t.marketHK }, { key: 'jp', label: t.marketJP }].map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setMarket(key)}
               aria-pressed={market === key}
+              className="bfs-seg"
               style={{
-                padding: isMobile ? '4px 7px' : '5px 12px',
-                borderRadius: 20, border: 'none', cursor: 'pointer',
-                fontSize: isMobile ? 11 : 13, fontWeight: 600, letterSpacing: '0.2px',
-                background: market === key ? 'linear-gradient(135deg, var(--accent-blue), #38bdf8)' : 'transparent',
-                color: market === key ? '#fff' : 'var(--text-secondary)',
-                transition: 'all 0.2s ease',
-                boxShadow: market === key ? '0 2px 12px rgba(14,165,233,0.3)' : 'none',
+                padding: isMobile ? '5px 8px' : '6px 12px',
+                borderRadius: 4, border: 'none', cursor: 'pointer',
+                fontSize: 13, fontWeight: 500,
+                background: market === key ? 'var(--bg-secondary)' : 'transparent',
+                color: market === key ? 'var(--text-primary)' : 'var(--text-secondary)',
               }}
             >
               {isMobile && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
@@ -407,61 +426,25 @@ export default function App() {
 
         {isMobile ? (showMobileSearch && <div style={{ order: 10, flexBasis: '100%' }}><SearchBar fullWidth autoFocus /></div>) : <SearchBar />}
 
-        {/* Right-side controls pushed to the far right */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: isMobile ? 5 : 8, flexShrink: 0 }}>
+        {/* Right-side controls */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: isMobile ? 2 : 4, flexShrink: 0 }}>
 
-          {/* Language dropdown — desktop only */}
           {!isMobile && (
             <div ref={langDropdownRef} style={{ position: 'relative' }}>
               <button
                 onClick={() => setShowLangDropdown(v => !v)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '5px 12px', borderRadius: 20,
-                  border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)',
-                  cursor: 'pointer', fontSize: 12, fontWeight: 600,
-                  color: 'var(--text-secondary)', transition: 'all 0.2s ease', whiteSpace: 'nowrap',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
-                onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)' }}
+                aria-expanded={showLangDropdown}
+                className="bfs-ghost"
+                style={{ ...iconBtn(showLangDropdown), width: 'auto', padding: '0 10px', gap: 6, fontSize: 14 }}
               >
                 {LANG_OPTIONS.find(l => l.code === lang)?.label ?? 'EN'}
-                <span style={{ fontSize: 9, opacity: 0.7 }}>▾</span>
+                <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
               </button>
               {showLangDropdown && (
-                <div
-                  style={{
-                    position: 'absolute', top: 38, right: 0,
-                    background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 10, minWidth: 120, zIndex: 9000,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '4px 0',
-                    animation: 'bfsPageFadeIn 0.15s ease both',
-                  }}
-                >
+                <div style={{ ...menuBox, minWidth: 140 }}>
                   {LANG_OPTIONS.map(({ code, label }) => (
-                    <button
-                      key={code}
-                      onClick={() => {
-                        setLang(code); setShowLangDropdown(false)
-                        if (user) {
-                          setLangPreference(code)
-                          document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
-                          showToast('Language saved')
-                        } else {
-                          localStorage.setItem('bfs_lang', code)
-                        }
-                      }}
-                      style={{
-                        display: 'block', width: '100%', textAlign: 'left',
-                        padding: '8px 16px', background: lang === code ? 'rgba(14,165,233,0.1)' : 'none',
-                        border: 'none', cursor: 'pointer', fontSize: 13,
-                        fontWeight: lang === code ? 600 : 400,
-                        color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
-                        transition: 'background 0.12s',
-                      }}
-                      onMouseEnter={e => { if (lang !== code) e.currentTarget.style.background = 'var(--bg-hover)' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = lang === code ? 'rgba(14,165,233,0.1)' : 'none' }}
-                    >
+                    <button key={code} onClick={() => pickLang(code, () => setShowLangDropdown(false))} className="bfs-menu-item"
+                      style={{ ...menuItem, fontWeight: lang === code ? 600 : 400, color: lang === code ? 'var(--accent)' : 'var(--text-primary)' }}>
                       {label}
                     </button>
                   ))}
@@ -470,74 +453,34 @@ export default function App() {
             </div>
           )}
 
-          {/* Theme toggle — desktop only */}
           {!isMobile && (
-            <button
-              onClick={() => { const next = theme === 'dark' ? 'light' : 'dark'; toggleTheme(); if (user) { setThemePreference(next); showToast('Theme saved') } }}
-              title={theme === 'dark' ? t.lightMode : t.darkMode}
-              style={{
-                width: 34, height: 34, borderRadius: '50%',
-                border: '1px solid var(--border-primary)', background: 'transparent',
-                cursor: 'pointer', fontSize: 16,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 0.2s ease', flexShrink: 0,
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
+            <button onClick={flipTheme} title={theme === 'dark' ? t.lightMode : t.darkMode} aria-label={theme === 'dark' ? t.lightMode : t.darkMode} className="bfs-ghost" style={iconBtn(false)}>
+              <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
             </button>
           )}
 
           {isMobile && (
-            <button
-              onClick={() => setShowMobileSearch(v => !v)}
-              aria-label={t.searchPlaceholder}
-              aria-expanded={showMobileSearch}
-              style={{
-                width: 34, height: 34, borderRadius: '50%', flexShrink: 0, cursor: 'pointer',
-                border: `1px solid ${showMobileSearch ? '#0ea5e9' : 'var(--border-primary)'}`,
-                background: showMobileSearch ? 'rgba(14,165,233,0.15)' : 'transparent',
-                color: showMobileSearch ? '#0ea5e9' : 'var(--text-secondary)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            <button onClick={() => setShowMobileSearch(v => !v)} aria-label={t.searchPlaceholder} aria-expanded={showMobileSearch} className="bfs-ghost" style={iconBtn(showMobileSearch)}>
+              <Icon name="search" size={18} />
             </button>
           )}
 
-          {/* 💡 Daily Insight + 🎓 AI Tutor (desktop only) + ⭐ Watchlist (always) */}
           {[
             ...(isMobile ? [] : [
-              { key: 'insight',   icon: '💡', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: t.navInsight,   badge: null },
-              { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: t.navAITutor,   badge: null },
+              { key: 'insight', icon: 'bulb', active: showInsight, onClick: () => setShowInsight(v => !v), title: t.navInsight, badge: null },
+              { key: 'ai',      icon: 'cap',  active: showAIFloat, onClick: () => setShowAIFloat(v => !v), title: t.navAITutor, badge: null },
             ]),
-            { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: t.navWatchlist, badge: watchlistCount > 0 ? watchlistCount : null },
+            { key: 'watchlist', icon: 'star', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: t.navWatchlist, badge: watchlistCount > 0 ? watchlistCount : null },
           ].map(({ key, icon, active, onClick, title, badge }) => (
             <div key={key} ref={key === 'watchlist' ? watchlistBtnRef : undefined} style={{ position: 'relative', flexShrink: 0 }}>
-              <button
-                onClick={onClick}
-                title={title}
-                style={{
-                  width: 34, height: 34, borderRadius: '50%',
-                  border: `1px solid ${active ? '#0ea5e9' : 'var(--border-primary)'}`,
-                  background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
-                  cursor: 'pointer', fontSize: 16,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.2s ease',
-                  boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = active ? 'rgba(14,165,233,0.15)' : 'transparent'; e.currentTarget.style.boxShadow = active ? '0 0 10px rgba(14,165,233,0.25)' : 'none' }}
-              >
-                {icon}
+              <button onClick={onClick} title={title} aria-label={title} aria-pressed={active} className="bfs-ghost" style={iconBtn(active)}>
+                <Icon name={icon} size={18} fill={key === 'watchlist' && watchlistCount > 0} />
               </button>
               {badge != null && (
                 <div style={{
-                  position: 'absolute', top: -4, right: -4,
-                  background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
-                  color: '#fff', fontSize: 9, fontWeight: 700,
-                  width: 15, height: 15, borderRadius: '50%',
+                  position: 'absolute', top: 2, right: 0,
+                  background: 'var(--accent)', color: 'var(--accent-ink)',
+                  fontSize: 10, fontWeight: 600, minWidth: 16, height: 16, padding: '0 4px', borderRadius: 8,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   pointerEvents: 'none',
                 }}>
@@ -550,155 +493,80 @@ export default function App() {
             </div>
           ))}
 
-          {/* ⋯ Mobile overflow menu — mobile only */}
           {isMobile && (
             <div ref={mobileMenuRef} style={{ position: 'relative', flexShrink: 0 }}>
-              <button
-                onClick={() => setShowMobileMenu(v => !v)}
-                style={{
-                  width: 34, height: 34, borderRadius: '50%',
-                  border: `1px solid ${showMobileMenu ? '#0ea5e9' : 'var(--border-primary)'}`,
-                  background: showMobileMenu ? 'rgba(14,165,233,0.15)' : 'transparent',
-                  cursor: 'pointer', fontSize: 18, letterSpacing: '-2px',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = showMobileMenu ? 'rgba(14,165,233,0.15)' : 'transparent' }}
-              >
-                •••
+              <button onClick={() => setShowMobileMenu(v => !v)} aria-label="Menu" aria-expanded={showMobileMenu} className="bfs-ghost" style={iconBtn(showMobileMenu)}>
+                <Icon name="more" size={20} />
               </button>
               {showMobileMenu && (
-                <div
-                  style={{
-                    position: 'absolute', top: 40, right: 0,
-                    background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 12, minWidth: 190, zIndex: 9000,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.45)', padding: '8px 0',
-                    animation: 'bfsPageFadeIn 0.15s ease both',
-                  }}
-                >
-                  {/* Language chips */}
-                  <div style={{ padding: '4px 12px 8px', borderBottom: '1px solid var(--border-primary)', marginBottom: 4 }}>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Language</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                      {LANG_OPTIONS.map(({ code, label }) => (
-                        <button
-                          key={code}
-                          onClick={() => {
-                            setLang(code); setShowMobileMenu(false)
-                            if (user) {
-                              setLangPreference(code)
-                              document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
-                              showToast('Language saved')
-                            } else {
-                              localStorage.setItem('bfs_lang', code)
-                            }
-                          }}
-                          style={{
-                            padding: '4px 8px', borderRadius: 6, fontSize: 11,
-                            background: lang === code ? 'rgba(14,165,233,0.15)' : 'var(--bg-tertiary)',
-                            border: `1px solid ${lang === code ? 'rgba(14,165,233,0.4)' : 'var(--border-primary)'}`,
-                            cursor: 'pointer', fontWeight: lang === code ? 700 : 400,
-                            color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
-                          }}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
+                <div style={{ ...menuBox, minWidth: 210 }}>
+                  <div style={{ padding: '6px 16px 10px', display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {LANG_OPTIONS.map(({ code, label }) => (
+                      <button
+                        key={code}
+                        onClick={() => pickLang(code, () => setShowMobileMenu(false))}
+                        aria-pressed={lang === code}
+                        style={{
+                          padding: '6px 10px', borderRadius: 4, fontSize: 13, border: 'none', cursor: 'pointer',
+                          background: lang === code ? 'var(--accent)' : 'var(--bg-tertiary)',
+                          color: lang === code ? 'var(--accent-ink)' : 'var(--text-primary)',
+                        }}
+                      >
+                        {label}
+                      </button>
+                    ))}
                   </div>
-                  {/* Theme */}
-                  <button
-                    onClick={() => { const next = theme === 'dark' ? 'light' : 'dark'; toggleTheme(); setShowMobileMenu(false); if (user) { setThemePreference(next); showToast('Theme saved') } }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 14px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
-                  >
-                    <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
-                    <span>{theme === 'dark' ? t.lightMode : t.darkMode}</span>
+                  <button onClick={() => { flipTheme(); setShowMobileMenu(false) }} className="bfs-menu-item" style={menuItem}>
+                    <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={16} /><span>{theme === 'dark' ? t.lightMode : t.darkMode}</span>
                   </button>
-                  {/* Daily Insight */}
-                  <button
-                    onClick={() => { setShowInsight(v => !v); setShowMobileMenu(false) }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 14px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
-                  >
-                    <span>💡</span><span>{t.navInsight}</span>
+                  <button onClick={() => { setShowInsight(v => !v); setShowMobileMenu(false) }} className="bfs-menu-item" style={menuItem}>
+                    <Icon name="bulb" size={16} /><span>{t.navInsight}</span>
                   </button>
-                  {/* AI Tutor */}
-                  <button
-                    onClick={() => { setShowAIFloat(v => !v); setShowMobileMenu(false) }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 14px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
-                  >
-                    <span>🎓</span><span>{t.navAITutor}</span>
+                  <button onClick={() => { setShowAIFloat(v => !v); setShowMobileMenu(false) }} className="bfs-menu-item" style={menuItem}>
+                    <Icon name="cap" size={16} /><span>{t.navAITutor}</span>
                   </button>
                 </div>
               )}
             </div>
           )}
 
-          {/* Auth button / user avatar */}
-          <div ref={userMenuRef} style={{ position: 'relative', flexShrink: 0 }}>
+          {/* Account: the one action in the bar */}
+          <div ref={userMenuRef} style={{ position: 'relative', flexShrink: 0, marginLeft: isMobile ? 2 : 8 }}>
             {user ? (
               <>
                 <button
                   onClick={() => setShowUserMenu(v => !v)}
                   title={user.email}
+                  aria-expanded={showUserMenu}
                   style={{
-                    width: 34, height: 34, borderRadius: '50%',
-                    border: '1px solid rgba(14,165,233,0.4)',
-                    background: 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))',
-                    cursor: 'pointer', fontSize: 13, fontWeight: 700,
-                    color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'all 0.2s',
+                    width: 36, height: 36, borderRadius: '50%', border: 'none',
+                    background: 'var(--accent)', color: 'var(--accent-ink)',
+                    cursor: 'pointer', fontSize: 14, fontWeight: 600,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))' }}
                 >
                   {(user.email?.[0] ?? '?').toUpperCase()}
                 </button>
                 {showUserMenu && (
-                  <div
-                    style={{
-                      position: 'absolute', top: 40, right: 0,
-                      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 10, minWidth: 200, zIndex: 9000,
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '8px 0',
-                      animation: 'bfsPageFadeIn 0.15s ease both',
-                    }}
-                  >
-                    <div style={{ padding: '8px 16px 10px', borderBottom: '1px solid var(--border-primary)' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ ...menuBox, minWidth: 220 }}>
+                    <div style={{ padding: '8px 16px 10px' }}>
+                      <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {user.email}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>
                         {t.signedIn}
-                        {role !== 'user' && (
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 999, color: role === 'admin' ? '#0ea5e9' : '#fbbf24', background: role === 'admin' ? 'rgba(14,165,233,0.14)' : 'rgba(251,191,36,0.14)' }}>
-                            {(ROLE_LABELS[role] || ROLE_LABELS.admin)[lang] || (ROLE_LABELS[role] || ROLE_LABELS.admin).en}
-                          </span>
-                        )}
+                        {role !== 'user' && <> · {(ROLE_LABELS[role] || ROLE_LABELS.admin)[lang] || (ROLE_LABELS[role] || ROLE_LABELS.admin).en}</>}
                       </div>
                     </div>
                     {role === 'admin' && (
-                      <button
-                        onClick={() => { setShowUserMenu(false); navigate('/admin') }}
-                        style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
-                      >
+                      <button onClick={() => { setShowUserMenu(false); navigate('/admin') }} className="bfs-menu-item" style={menuItem}>
                         {ADMIN_LINK[lang] || ADMIN_LINK.en}
                       </button>
                     )}
                     <button
                       onClick={async () => { setShowUserMenu(false); document.cookie = 'bfs_lang_hint=; path=/; max-age=0; SameSite=Lax'; await signOut() }}
-                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#ef5350', transition: 'background 0.12s' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                      className="bfs-menu-item"
+                      style={{ ...menuItem, color: 'var(--red-bright)' }}
                     >
                       {t.signOut}
                     </button>
@@ -706,30 +574,11 @@ export default function App() {
                 )}
               </>
             ) : isMobile ? (
-              <button
-                onClick={() => setShowAuth(true)}
-                aria-label={t.signIn}
-                title={t.signIn}
-                style={{
-                  width: 34, height: 34, borderRadius: '50%', cursor: 'pointer',
-                  border: '1px solid rgba(14,165,233,0.35)', background: 'rgba(14,165,233,0.08)', color: '#0ea5e9',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></svg>
+              <button onClick={() => setShowAuth(true)} aria-label={t.signIn} title={t.signIn} className="bfs-ghost" style={iconBtn(false)}>
+                <Icon name="user" size={18} />
               </button>
             ) : (
-              <button
-                onClick={() => setShowAuth(true)}
-                style={{
-                  padding: '5px 14px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.35)',
-                  background: 'rgba(14,165,233,0.08)',
-                  cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#0ea5e9',
-                  whiteSpace: 'nowrap', transition: 'all 0.2s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.18)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)' }}
-              >
+              <button onClick={() => setShowAuth(true)} className="bfs-primary" style={{ minHeight: 36, padding: '0 16px', fontSize: 14 }}>
                 {t.signIn}
               </button>
             )}
@@ -738,23 +587,16 @@ export default function App() {
         </div>{/* end right-side controls */}
 
       </header>
-      {/* Gradient nav border line */}
-      <div style={{
-        height: 1,
-        background: 'linear-gradient(90deg, transparent, var(--border-primary) 20%, var(--border-glow) 50%, var(--border-primary) 80%, transparent)',
-      }} />
-      {/* Secondary tab nav */}
-      <div
+      {/* Section tabs */}
+      <nav
+        aria-label="Sections"
+        className="tab-bar"
         style={{
-          background: scrolled ? 'var(--nav-bg)' : 'var(--nav-bg-dim)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          padding: isMobile ? '0 12px' : '0 24px',
+          padding: isMobile ? '0 8px' : '0 16px',
           display: 'flex',
           alignItems: 'center',
-          gap: 2,
-          borderBottom: '1px solid var(--border-primary)',
           overflowX: 'auto',
+          background: 'var(--bg-secondary)',
         }}
       >
         {[
@@ -769,31 +611,31 @@ export default function App() {
           { key: 'universities', label: t.tabUniversities },
           { key: 'career',       label: t.tabCareer },
         ].map(({ key, label }) => (
-          <button
+          <a
             key={key}
-            onClick={() => handleTabChange(key)}
+            href={TAB_PATHS[key]}
+            onClick={(e) => { e.preventDefault(); handleTabChange(key) }}
+            aria-current={appTab === key ? 'page' : undefined}
             className={`bfs-nav-tab${appTab === key ? ' is-active' : ''}`}
             style={{
-              padding: '8px 14px', border: 'none', borderBottom: appTab === key ? '2px solid #0ea5e9' : '2px solid transparent',
-              cursor: 'pointer', fontSize: 12, fontWeight: appTab === key ? 600 : 400,
-              background: 'transparent',
-              color: appTab === key ? '#0ea5e9' : 'var(--text-secondary)',
-              transition: 'color 0.15s ease, border-color 0.15s ease',
+              padding: '12px 12px', textDecoration: 'none',
+              fontSize: 14, fontWeight: appTab === key ? 500 : 400,
+              color: appTab === key ? 'var(--text-primary)' : 'var(--text-secondary)',
               whiteSpace: 'nowrap', flexShrink: 0,
             }}
           >
             {label}
-          </button>
+          </a>
         ))}
         {!isMobile && (
-          <div style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 11, letterSpacing: '0.3px', flexShrink: 0, paddingLeft: 16 }}>
+          <div style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 13, flexShrink: 0, padding: '0 12px 0 16px' }}>
             {t.dataSource}
           </div>
         )}
-      </div>
-      </div>{/* end sticky nav wrapper */}
+      </nav>
+      </div>{/* end sticky bar */}
 
-      <main style={{ padding: isMobile ? '2px 12px' : '2px 24px', flex: 1 }}>
+      <main style={{ padding: isMobile ? '12px 12px 0' : '20px 28px 0', flex: 1 }}>
         <ErrorBoundary key={appTab}>
         <Suspense fallback={<PageSkeleton />}>
           {appTab === 'study' ? (
@@ -821,17 +663,20 @@ export default function App() {
           ) : (
             <>
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
+                <HomeHero lang={lang} market={market} onOpenAuth={() => setShowAuth(true)} onTabChange={handleTabChange} />
               )}
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-2"><ErrorBoundary fallback={null}>
+                <div className="bfs-enter-3"><ErrorBoundary fallback={null}>
                   {market === 'hk' || market === 'jp' ? <IntlMarketPanel lang={lang} market={market} /> : <USMarketPanel lang={lang} />}
                 </ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-2"><ErrorBoundary><GlobalSentiment lang={lang} /></ErrorBoundary></div>
+                <div className="bfs-enter-4"><ErrorBoundary><GlobalSentiment lang={lang} /></ErrorBoundary></div>
               )}
-              <div className="bfs-enter-3"><ComparePanel onTabChange={handleTabChange} onOpenKnowledge={() => setShowInsight(true)} /></div>
+              {selectedSymbols.length === 0 && (
+                <ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary>
+              )}
+              <div><ComparePanel onTabChange={handleTabChange} onOpenKnowledge={() => setShowInsight(true)} /></div>
             </>
           )}
         </Suspense>
@@ -839,48 +684,31 @@ export default function App() {
       </main>
 
       {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
-      {/* Toast notification for saved preferences */}
       {toast && (
-        <div style={{
+        <div role="status" style={{
           position: 'fixed', bottom: 80, right: 24, zIndex: 9998,
-          background: 'var(--bg-secondary)', border: '1px solid rgba(52,211,153,0.35)',
-          borderRadius: 8, padding: '8px 14px', fontSize: 13,
-          color: 'var(--text-primary)', boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
+          background: 'var(--text-primary)', color: 'var(--bg-primary)',
+          borderRadius: 'var(--radius)', padding: '10px 16px', fontSize: 14,
           display: 'flex', alignItems: 'center', gap: 8,
           animation: 'bfsPageFadeIn 0.2s ease both',
           pointerEvents: 'none',
         }}>
-          <span style={{ color: '#34d399', fontSize: 15, lineHeight: 1 }}>✓</span>
+          <Icon name="check" size={16} />
           {toast}
         </div>
       )}
       <Suspense fallback={null}>
         <AITeacherFloat lang={lang} open={showAIFloat} onClose={() => setShowAIFloat(false)} />
       </Suspense>
-      <footer style={{
-        textAlign: 'center',
-        padding: '12px 24px',
-        fontSize: 11,
-        color: 'var(--text-muted)',
-        borderTop: '1px solid var(--border-primary)',
-        flexShrink: 0,
-      }}>
-        <div style={{ marginBottom: 4, fontSize: 11, color: 'var(--text-muted)' }}>
-          {FOOTER_NOTE[lang] || FOOTER_NOTE.en}
-        </div>
-        <a
-          href="mailto:billyl090119@gmail.com"
-          style={{ color: '#9ca3af', textDecoration: 'none' }}
-        >
-          {t.contactLink}
-        </a>
-        {' · '}
-        <button
-          onClick={() => setShowStats(true)}
-          style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: '#9ca3af', cursor: 'pointer' }}
-        >
-          {lang === 'zh' ? '访问统计' : 'Site stats'}
-        </button>
+      {/* The close: one quiet line */}
+      <footer className="bfs-footer" style={{ padding: isMobile ? '64px 16px 24px' : '96px 28px 28px', flexShrink: 0, fontSize: 14 }}>
+        <span style={{ color: 'var(--text-secondary)' }}>Best Friend Stock · {FOOTER_WHAT[lang] || FOOTER_WHAT.en}</span>
+        <span className="bfs-footer-links">
+          <a href="mailto:billyl090119@gmail.com">{FOOTER_CONTACT[lang] || FOOTER_CONTACT.en}</a>
+          <button onClick={() => setShowStats(true)}>{lang === 'zh' ? '访问统计' : 'Site stats'}</button>
+          <a href="/privacy">{FOOTER_PRIVACY[lang] || FOOTER_PRIVACY.en}</a>
+        </span>
+        <span style={{ color: 'var(--text-muted)' }}>{FOOTER_NOTE[lang] || FOOTER_NOTE.en}</span>
       </footer>
 
       <style>{`
@@ -894,7 +722,7 @@ export default function App() {
         }
         @media (prefers-reduced-motion: reduce) {
           [style*="bfsPageFadeIn"],
-          [style*="bfsSkeletonPulse"] { animation: none !important; opacity: 0.5 !important; }
+          [style*="bfsSkeletonPulse"] { animation: none !important; }
         }
       `}</style>
     </div>

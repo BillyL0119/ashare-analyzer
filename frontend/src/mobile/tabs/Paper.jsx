@@ -65,7 +65,7 @@ function useQuote(symbol, market) {
 
 const SIDE_LABEL = { buy: '买入', sell: '卖出', short: '卖空', cover: '买入平仓' }
 const SIDE_BADGE = { buy: '买', sell: '卖', short: '空', cover: '平' }
-const SIDE_TINT = { buy: 'var(--accent)', sell: '#F28B3C', short: '#8B5CF6', cover: '#6366F1' }
+const SIDE_TINT = { buy: 'var(--accent)', sell: '#F28B3C', short: '#7c9cb4', cover: '#7c9cb4' }
 const TYPE_LABEL = { market: '市价单', limit: '限价单', stop: '止损单', stop_limit: '止损限价单', trailing_stop: '追踪止损' }
 const TYPE_HELP = {
   market: '市价单按当前价格立即成交（休市时排队到开盘）。', limit: '限价单只在达到你设定的价格或更好时成交。',
@@ -174,7 +174,7 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
               <div style={{ margin: '8px -16px -4px', width: 'calc(100% + 32px)' }}>
                 {suggestions.map((x) => (
                   <button key={x.symbol} className="m-row" onClick={() => setSymbol(x.symbol)} style={{ padding: '10px 16px' }}>
-                    <span className="m-num" style={{ fontWeight: 800, minWidth: 64, fontFamily: 'ui-monospace, Menlo, monospace' }}>{x.symbol}</span>
+                    <span className="m-num" style={{ fontWeight: 800, minWidth: 64, fontFamily: 'var(--sans)' }}>{x.symbol}</span>
                     <span className="m-grow m-muted" style={{ fontSize: 13, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lang === 'zh' && x.nameZh ? x.nameZh : x.name}</span>
                     {x.price != null && <span className="m-num" style={{ fontSize: 13 }}>{money(x.price, cur)}</span>}
                   </button>
@@ -302,7 +302,7 @@ function GameSheet({ nickname, onClose, onJoined }) {
           {mode === 'join' ? (
             <label style={{ display: 'grid', gap: 6 }}><span className="m-label">{t('邀请码')}</span>
               <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))} placeholder="ABC123" autoCapitalize="characters" autoComplete="off"
-                style={{ ...field, textAlign: 'center', letterSpacing: 6, fontWeight: 800, fontSize: 22, fontFamily: 'ui-monospace, Menlo, monospace' }} /></label>
+                style={{ ...field, textAlign: 'center', letterSpacing: 6, fontWeight: 800, fontSize: 22, fontFamily: 'var(--sans)' }} /></label>
           ) : (<>
             <label style={{ display: 'grid', gap: 6 }}><span className="m-label">{t('比赛名称')}</span><input value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} style={field} /></label>
             <Segment full value={gm} onChange={(m) => { setGm(m); setCash(GAME_CASH[m][1]); if (m !== 'us') setShort(false) }} options={['us', 'cn', 'hk', 'jp'].map((m) => ({ value: m, label: t(chipLabel(m)) }))} />
@@ -342,7 +342,7 @@ function Board({ market, onClose }) {
               {[1, 0, 2].filter((i) => rows[i]).map((i) => {
                 const r = rows[i]; const first = i === 0
                 return (
-                  <div key={i} className="m-card" style={{ flex: 1, textAlign: 'center', padding: first ? '20px 6px' : '14px 6px', borderColor: r.is_me ? 'var(--accent)' : `color-mix(in srgb, ${medal[i]} 40%, transparent)`, background: `linear-gradient(180deg, color-mix(in srgb, ${medal[i]} 22%, var(--surface)), var(--surface))` }}>
+                  <div key={i} className="m-card" style={{ flex: 1, textAlign: 'center', padding: first ? '20px 6px' : '14px 6px', borderColor: r.is_me ? 'var(--accent)' : `color-mix(in srgb, ${medal[i]} 40%, transparent)`, background: `color-mix(in srgb, ${medal[i]} 22%, var(--surface))` }}>
                     <div style={{ color: medal[i], fontWeight: 800, fontSize: first ? 30 : 24 }} className="m-num">{r.rank}</div>
                     <div style={{ fontSize: 12, fontWeight: 650, margin: '6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.nickname}{r.is_me ? t('（我）') : ''}</div>
                     <Pill value={r.return_pct} market={market} minWidth={0} />
@@ -485,7 +485,7 @@ export default function Paper() {
           </div>
           <div className="m-label m-num">{t(chipLabel(game.market))} · {t('%lld 人参加', game.members)} · {ended ? game.end_date : t('%lld 天后结束', daysLeft(game.end_date))}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span className="m-num" style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontWeight: 800, letterSpacing: 3, fontSize: 18 }}>{game.code}</span>
+            <span className="m-num" style={{ fontFamily: 'var(--sans)', fontWeight: 800, letterSpacing: 3, fontSize: 18 }}>{game.code}</span>
             <span className="m-grow" />
             <button onClick={copyInvite} style={{ padding: '7px 12px', borderRadius: 999, background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)', fontSize: 13, fontWeight: 650 }}>{t('复制邀请')}</button>
             <button onClick={leaveGame} style={{ padding: '7px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#ef4444', fontSize: 13, fontWeight: 650 }}>{game.is_owner ? t('删除比赛') : t('退出比赛')}</button>
@@ -494,7 +494,7 @@ export default function Paper() {
       )}
 
       {!view ? <Skeleton h={220} r={24} /> : (
-        <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `linear-gradient(135deg, color-mix(in srgb, ${view.ret === 0 ? 'var(--accent)' : accent} 20%, var(--surface)), var(--surface) 60%)` }}>
+        <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `color-mix(in srgb, ${view.ret === 0 ? 'var(--accent)' : accent} 20%, var(--surface))` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="m-muted" style={{ fontWeight: 650, fontSize: 14 }}>{game ? game.name : t(ACCOUNT_LABEL[market])}</span>
             {view.rank > 0 && (
@@ -622,7 +622,7 @@ export default function Paper() {
 
       {!ended && (
         <button onClick={() => setSheet({ side: 'buy' })} aria-label={t('买入')} style={{ position: 'fixed', right: 20, bottom: 'calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 16px)', width: 56, height: 56, borderRadius: 28, color: '#fff', fontSize: 30, lineHeight: 1,
-          background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', boxShadow: '0 8px 22px color-mix(in srgb, var(--accent) 45%, transparent)', zIndex: 15 }}>+</button>
+          background: 'var(--accent)', boxShadow: '0 8px 22px color-mix(in srgb, var(--accent) 45%, transparent)', zIndex: 15 }}>+</button>
       )}
 
       {sheet?.side && view && <TradeSheet key={`${active}-${sheet.side}-${sheet.symbol || ''}`} market={market} view={raw} init={sheet} gameId={gameId} onClose={() => setSheet(null)} onDone={done} />}

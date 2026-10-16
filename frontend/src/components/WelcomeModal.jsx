@@ -155,8 +155,8 @@ export default function WelcomeModal({ onLangSelect }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
-        background: '#161b2e', borderRadius: 16,
-        border: '1px solid rgba(14,165,233,0.3)',
+        background: '#161b2e', borderRadius: 'var(--radius)',
+        border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
         padding: '40px 32px', width: 480, maxWidth: '94vw',
         textAlign: 'center',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -177,21 +177,21 @@ export default function WelcomeModal({ onLangSelect }) {
               key={code}
               onClick={() => handleLangSelect(code)}
               style={{
-                padding: '16px 10px', borderRadius: 12,
-                background: 'rgba(14,165,233,0.06)',
-                border: '1px solid rgba(14,165,233,0.2)',
+                padding: '16px 10px', borderRadius: 'var(--radius)',
+                background: 'color-mix(in srgb, var(--accent) 6%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)',
                 cursor: 'pointer', color: '#e8eaf0',
                 transition: 'all 0.2s',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', gap: 8,
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(99,102,241,0.2)'
-                e.currentTarget.style.borderColor = 'rgba(99,102,241,0.5)'
+                e.currentTarget.style.background = 'rgba(124,156,180,0.2)'
+                e.currentTarget.style.borderColor = 'rgba(124,156,180,0.5)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(14,165,233,0.06)'
-                e.currentTarget.style.borderColor = 'rgba(14,165,233,0.2)'
+                e.currentTarget.style.background = 'color-mix(in srgb, var(--accent) 6%, transparent)'
+                e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--accent) 20%, transparent)'
               }}
             >
               <Flag height={22} />

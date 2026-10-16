@@ -64,7 +64,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
       <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>{label}</div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-        <span style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>
+        <span style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-primary)' }}>
           {fmtVal(value)}
         </span>
         <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{unit === '亿' && lang !== 'zh' ? ' × CNY 100M' : unit}</span>
@@ -110,7 +110,6 @@ function SectionBlock({ titleKey, metrics, data, lang }) {
           fontSize: 13,
           fontWeight: 600,
           color: 'var(--text-muted)',
-          textTransform: 'uppercase',
           letterSpacing: '0.05em',
           marginBottom: 10,
           paddingBottom: 6,
@@ -210,13 +209,13 @@ export default function FinancialPanel({ stocks }) {
             >
               <span
                 style={{
-                  background: 'rgba(138,180,248,0.08)',
-                  border: '1px solid rgba(138,180,248,0.3)',
+                  background: 'color-mix(in srgb, var(--accent) 8%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
                   borderRadius: 4,
                   padding: '2px 8px',
                   fontSize: 12,
-                  color: '#8ab4f8',
-                  fontFamily: 'monospace',
+                  color: 'var(--accent)',
+                  fontFamily: 'var(--sans)',
                 }}
               >
                 {stock.code}

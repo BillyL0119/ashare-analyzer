@@ -5,7 +5,7 @@ export default function PrivacyPage() {
       color: 'var(--text-primary)', fontFamily: 'system-ui, sans-serif',
       lineHeight: 1.7,
     }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>Privacy Policy</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 4 }}>Privacy Policy</h1>
       <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 40 }}>
         隐私政策 · Last updated: October 2026
       </p>
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
 
       <Section title="8. Contact">
         Questions? Email us at{' '}
-        <a href="mailto:billyl090119@gmail.com" style={{ color: '#38bdf8' }}>
+        <a href="mailto:billyl090119@gmail.com" style={{ color: 'var(--accent)' }}>
           billyl090119@gmail.com
         </a>
       </Section>
@@ -95,7 +95,7 @@ export default function PrivacyPage() {
 
       <Section title="8. 联系我们">
         如有疑问，请发送邮件至{' '}
-        <a href="mailto:billyl090119@gmail.com" style={{ color: '#38bdf8' }}>
+        <a href="mailto:billyl090119@gmail.com" style={{ color: 'var(--accent)' }}>
           billyl090119@gmail.com
         </a>
       </Section>

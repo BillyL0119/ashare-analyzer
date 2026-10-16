@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import Root from './Root.jsx'
 import ErrorBoundary from './components/ErrorBoundary'
+import { startReveal } from './utils/reveal'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,3 +15,5 @@ createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </StrictMode>,
 )
+
+startReveal()

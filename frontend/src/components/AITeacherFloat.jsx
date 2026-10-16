@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
 
-const ACCENT = '#0ea5e9'
-const ACCENT2 = '#8b5cf6'
+const ACCENT = '#a08672'
+const ACCENT2 = '#7c9cb4'
 const BDR = 'var(--border-primary)'
 
 const QUICK_PROMPTS = {
@@ -38,16 +38,16 @@ function Bubble({ msg, accent }) {
       {!isUser && (
         <div style={{
           width: 26, height: 26, borderRadius: '50%', flexShrink: 0, marginRight: 7, marginTop: 2,
-          background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
+          background: `${ACCENT}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
         }}>🎓</div>
       )}
       <div style={{
         maxWidth: '82%',
         background: isUser
-          ? `linear-gradient(135deg,rgba(14,165,233,0.18),rgba(139,92,246,0.15))`
+          ? `color-mix(in srgb, var(--accent) 18%, transparent)`
           : 'var(--bg-tertiary)',
-        border: `1px solid ${isUser ? 'rgba(14,165,233,0.25)' : 'var(--border-primary)'}`,
+        border: `1px solid ${isUser ? 'color-mix(in srgb, var(--accent) 25%, transparent)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
         padding: '9px 13px',
         fontSize: 13,
@@ -185,8 +185,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           width: 350, height: 480,
           background: '#0b0f1a',
           border: `1px solid ${BDR}`,
-          borderRadius: 16,
-          boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(14,165,233,0.08)',
+          borderRadius: 'var(--radius)',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent)',
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
         }}>
@@ -194,7 +194,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '11px 14px',
-            background: 'rgba(14,165,233,0.04)',
+            background: 'color-mix(in srgb, var(--accent) 4%, transparent)',
             borderBottom: `1px solid ${BDR}`,
             flexShrink: 0,
           }}>
@@ -202,9 +202,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               <span style={{ fontSize: 18 }}>🎓</span>
               <div>
                 <div style={{
-                  fontSize: 13, fontWeight: 700,
-                  background: `linear-gradient(90deg,${ACCENT},${ACCENT2})`,
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                  fontSize: 13, fontWeight: 600,
+                  color: `${ACCENT}`,
                 }}>
                   {t.atTitle}
                 </div>
@@ -249,9 +248,9 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   onClick={() => send(p)}
                   disabled={busy}
                   style={{
-                    fontSize: 11, padding: '4px 9px', borderRadius: 10,
-                    background: 'rgba(14,165,233,0.08)',
-                    border: '1px solid rgba(14,165,233,0.18)',
+                    fontSize: 11, padding: '4px 9px', borderRadius: 'var(--radius)',
+                    background: 'color-mix(in srgb, var(--accent) 8%, transparent)',
+                    border: '1px solid color-mix(in srgb, var(--accent) 18%, transparent)',
                     color: ACCENT, cursor: 'pointer',
                     transition: 'all 0.15s',
                   }}
@@ -278,7 +277,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               disabled={busy}
               style={{
                 flex: 1, background: 'var(--bg-tertiary)',
-                border: `1px solid rgba(14,165,233,0.2)`, borderRadius: 10,
+                border: `1px solid color-mix(in srgb, var(--accent) 20%, transparent)`, borderRadius: 'var(--radius)',
                 color: 'var(--text-primary)', padding: '8px 11px', fontSize: 13,
                 resize: 'none', outline: 'none', lineHeight: 1.55,
                 fontFamily: 'inherit',
@@ -289,9 +288,9 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               disabled={busy || !input.trim()}
               style={{
                 background: input.trim() && !busy
-                  ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
+                  ? `${ACCENT}`
                   : 'var(--bg-hover)',
-                border: 'none', borderRadius: 10, padding: '0 14px',
+                border: 'none', borderRadius: 'var(--radius)', padding: '0 14px',
                 color: input.trim() && !busy ? '#fff' : 'var(--text-muted)',
                 fontSize: 18, cursor: input.trim() && !busy ? 'pointer' : 'default',
                 transition: 'all 0.2s', flexShrink: 0,

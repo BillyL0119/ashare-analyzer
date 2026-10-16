@@ -1,114 +1,120 @@
+/* Best Friend Stock design tokens.
+   One ground, one ink, one accent (bronze). Surfaces step in tone; no gradients, glows or glass.
+   Market colours (up/down) are data, not decoration. Every component reads these variables. */
+
 /* ── Dark theme (default) ────────────────────────────────── */
 :root,
 :root[data-theme="dark"] {
-  --bg-primary:      #020813;
-  --bg-secondary:    #060f1e;
-  --bg-tertiary:     #0a1628;
-  --bg-hover:        #0f1f3d;
-  --border-primary:  #1a2f50;
-  --border-glow:     #2a4a7f;
-  --text-primary:    #e2e8f0;
-  --text-secondary:  #94a3b8;
-  --text-muted:      #73839a;
-  --card-bg:         #060f1e;
-  --nav-bg:          rgba(2, 8, 19, 0.95);
-  --nav-bg-dim:      rgba(2, 8, 19, 0.88);
-  --map-ocean:       #0a1628;
-  --map-sphere:      #050d1a;
-  --map-border:      #2a3a5c;
-  --map-graticule:   #0f1f3d;
-  --map-land:        #1a2035;
-  --skeleton-base:   #0a1628;
-  --skeleton-shine:  #1a2f50;
-  --chart-bg:        #060f1e;
-  --chart-text:      #94a3b8;
-  --chart-border:    #1a2f50;
-  --chart-tooltip:   rgba(2,8,19,0.95);
+  --bg-primary:      #111111;
+  --bg-secondary:    #1a1a1a;
+  --bg-tertiary:     #222222;
+  --bg-hover:        #2a2a2a;
+  --border-primary:  #262626;
+  --border-glow:     #383838;
+  --text-primary:    #f2f2f2;
+  --text-secondary:  #b5b5b5;
+  --text-muted:      #8f8f8f;
+  --card-bg:         #1a1a1a;
+  --nav-bg:          #111111;
+  --nav-bg-dim:      #111111;
+  --map-ocean:       #161616;
+  --map-sphere:      #141414;
+  --map-border:      #333333;
+  --map-graticule:   #1b1b1b;
+  --map-land:        #262626;
+  --skeleton-base:   #1d1d1d;
+  --skeleton-shine:  #262626;
+  --chart-bg:        #1a1a1a;
+  --chart-text:      #a3a3a3;
+  --chart-border:    #262626;
+  --chart-tooltip:   rgba(17,17,17,0.96);
 
-  /* ── accent / signal colours (shared) */
-  --accent-blue:   #0ea5e9;
-  --accent-purple: #8b5cf6;
-  --accent-cyan:   #06b6d4;
-  --accent-gold:   #f59e0b;
-  --green-bright:  #10b981;
-  --red-bright:    #ef4444;
+  /* the one accent, and the ink that sits on it */
+  --accent:        #a08672;
+  --accent-ink:    #111111;
+  --accent-soft:   color-mix(in srgb, var(--accent) 16%, transparent);
+
+  /* data series colours (charts, categories); never decoration */
+  --accent-blue:   var(--accent);
+  --accent-purple: #7c9cb4;
+  --accent-cyan:   #84a79c;
+  --accent-gold:   #c9a768;
+  --green-bright:  #2fb37a;
+  --red-bright:    #e5534b;
+
+  --radius: 6px;
 }
 
+/* ── Light theme ─────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --bg-primary:      #f3f3f2;
+  --bg-secondary:    #ffffff;
+  --bg-tertiary:     #ebebe9;
+  --bg-hover:        #e2e2e0;
+  --border-primary:  #e4e4e2;
+  --border-glow:     #cfcfcc;
+  --text-primary:    #141414;
+  --text-secondary:  #454545;
+  --text-muted:      #6b6b6b;
+  --card-bg:         #ffffff;
+  --nav-bg:          #f3f3f2;
+  --nav-bg-dim:      #f3f3f2;
+  --map-ocean:       #e9e9e7;
+  --map-sphere:      #efefed;
+  --map-border:      #c9c9c6;
+  --map-graticule:   #e2e2e0;
+  --map-land:        #d6d6d3;
+  --skeleton-base:   #ebebe9;
+  --skeleton-shine:  #f3f3f2;
+  --chart-bg:        #ffffff;
+  --chart-text:      #454545;
+  --chart-border:    #ebebe9;
+  --chart-tooltip:   rgba(255,255,255,0.98);
+
+  --accent:        #7a604c;
+  --accent-ink:    #ffffff;
+
+  --accent-purple: #4f6f87;
+  --accent-cyan:   #4c7468;
+  --accent-gold:   #94702a;
+  --green-bright:  #0f7a4a;
+  --red-bright:    #c4321f;
+}
 
 :root {
+  /* One family: Hanken Grotesk for Latin, the system's own sans for Chinese, Japanese and Korean.
+     Figures are tabular wherever numbers line up. */
+  --sans: 'Hanken Grotesk', 'PingFang SC', 'Hiragino Sans', 'Noto Sans SC', 'Microsoft YaHei', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --heading: var(--sans);
+  --serif: var(--sans);
+  --mono: var(--sans);
 
-  /* ── Legacy vars (kept for App.css compat) ────────────── */
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --step-small: 13px;
+  --step-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
 
-  /* Typography: an editorial serif for headings (Source Serif 4, CJK serifs as fallbacks) over a
-     quiet sans for the interface (Inter with optical sizes). Data stays in the sans with tabular figures. */
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans', 'Noto Sans SC', sans-serif;
-  --heading: 'Source Serif 4', 'Noto Serif SC', 'Songti SC', 'Hiragino Mincho ProN', 'Yu Mincho', 'AppleMyungjo', 'Nanum Myeongjo', Georgia, serif;
-  --serif: var(--heading);
-  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
-
-  font: 18px/150% var(--sans);
-  letter-spacing: 0;
-  font-optical-sizing: auto;
-  font-feature-settings: 'cv11' 0, 'ss03' 1;   /* Inter: rounder quotes and commas */
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  font: 16px/1.5 var(--sans);
+  letter-spacing: -0.005em;
+  color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
+:root[data-theme="light"] { color-scheme: light; }
 
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ── Global theme transition ─────────────────────────────────────────────── */
-html {
-  transition: background-color 0.3s ease;
-}
+/* ── Theme switch: colours ease, nothing else ────────────── */
+html { transition: background-color 0.3s ease; }
 body,
 body * {
-  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease,
-              box-shadow 0.25s ease;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease;
 }
-/* Exempt animations from the blanket transition */
 body *[style*="animation"],
 body *[class*="skeleton"] {
   transition: none !important;
@@ -117,78 +123,21 @@ body *[class*="skeleton"] {
 body {
   margin: 0;
   background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: var(--sans);
 }
 
-/* ── Light theme (Bloomberg terminal day mode) ───────────── */
-:root[data-theme="light"] {
-  --bg-primary:      #f0f4f8;
-  --bg-secondary:    #ffffff;
-  --bg-tertiary:     #e8edf2;
-  --bg-hover:        #dde3ea;
-  --border-primary:  #c8d0da;
-  --border-glow:     #a0b0c8;
-  --text-primary:    #0d1b2a;
-  --text-secondary:  #3d5166;
-  --text-muted:      #5b6e80;
-  --card-bg:         #ffffff;
-  --nav-bg:          rgba(240, 244, 248, 0.97);
-  --nav-bg-dim:      rgba(240, 244, 248, 0.92);
-  --map-ocean:       #c8ddf0;
-  --map-sphere:      #b8d0e8;
-  --map-border:      #8aa8c8;
-  --map-graticule:   #d8e8f4;
-  --map-land:        #d8e4ee;
-  --skeleton-base:   #e2e8f0;
-  --skeleton-shine:  #f0f4f8;
-  --chart-bg:        #ffffff;
-  --chart-text:      #3d5166;
-  --chart-border:    #e8edf2;
-  --chart-tooltip:   rgba(255,255,255,0.98);
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  --accent-blue:   #0066cc;
-  --accent-purple: #6633cc;
-  --accent-cyan:   #0099aa;
-  --accent-gold:   #cc7700;
-  --green-bright:  #007a3d;
-  --red-bright:    #cc2200;
-}
-
-/* ── Structural overrides ─────────────────────────────────────────────────── */
-body {
-  color: var(--text-primary);
-}
-
-/* Light: nav solid + shadow, no glassmorphism */
-:root[data-theme="light"] header {
-  background: rgba(240, 244, 248, 0.98) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
-}
-/* Light: cards white + elevation */
-:root[data-theme="light"] .bfs-card {
-  background: var(--card-bg) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-:root[data-theme="light"] .bfs-card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
-}
-
-/* ── Skeleton shimmer ───────────────────────────────────────────────────── */
+/* ── Skeleton: a flat surface that breathes ──────────────── */
 @keyframes bfsSkeleton {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
 }
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-base)  25%,
-    var(--skeleton-shine) 50%,
-    var(--skeleton-base)  75%
-  );
-  background-size: 200% 100%;
-  animation: bfsSkeleton 1.5s ease-in-out infinite;
+  background: var(--skeleton-shine);
+  animation: bfsSkeleton 1.4s ease-in-out infinite;
   border-radius: 4px;
   transition: none !important;
 }
@@ -200,17 +149,31 @@ body {
   to   { opacity: 1; }
 }
 
-/* ── Page entrance stagger ──────────────────────────────────────────────── */
+/* ── Entrances: parts of a section rise in turn ──────────── */
 @keyframes bfsSlideUp {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.bfs-enter-1 { animation: bfsSlideUp 0.4s ease both; }
-.bfs-enter-2 { animation: bfsSlideUp 0.4s ease 0.12s both; }
-.bfs-enter-3 { animation: bfsSlideUp 0.4s ease 0.24s both; }
-.bfs-enter-4 { animation: bfsSlideUp 0.4s ease 0.36s both; }
+.bfs-enter-1 { animation: bfsSlideUp 0.6s cubic-bezier(.22,1,.36,1) both; }
+.bfs-enter-2 { animation: bfsSlideUp 0.6s cubic-bezier(.22,1,.36,1) 0.08s both; }
+.bfs-enter-3 { animation: bfsSlideUp 0.6s cubic-bezier(.22,1,.36,1) 0.16s both; }
+.bfs-enter-4 { animation: bfsSlideUp 0.6s cubic-bezier(.22,1,.36,1) 0.24s both; }
 
-/* ── Cursor / typing animations ─────────────────────────────────────────── */
+/* Scroll reveal (see utils/reveal.js): children of [data-reveal] rise once as the block enters */
+[data-reveal] > * { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1) !important; }
+[data-reveal].is-in > * { opacity: 1; transform: none; }
+[data-reveal].is-in > *:nth-child(2) { transition-delay: .07s !important; }
+[data-reveal].is-in > *:nth-child(3) { transition-delay: .14s !important; }
+[data-reveal].is-in > *:nth-child(4) { transition-delay: .21s !important; }
+[data-reveal].is-in > *:nth-child(n+5) { transition-delay: .28s !important; }
+html.no-js [data-reveal] > * { opacity: 1; transform: none; }
+
+/* Masked line reveal for the one headline that performs */
+.bfs-mask-line { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.bfs-mask-line > span { display: inline-block; animation: bfsMaskRise 0.9s cubic-bezier(.16,1,.3,1) both; }
+.bfs-mask-line:nth-child(2) > span { animation-delay: 0.11s; }
+@keyframes bfsMaskRise { from { transform: translateY(105%); } to { transform: none; } }
+
 @keyframes bfsCursorBlink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
@@ -223,38 +186,70 @@ body {
   40%            { transform: scale(1.0); opacity: 1; }
 }
 
-/* ── Card hover lift ────────────────────────────────────────────────────── */
+/* ── Surfaces: hover is a tone step, never a lift or a glow ─ */
 .bfs-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 .bfs-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.12);
   border-color: var(--border-glow) !important;
 }
-
-/* ── Ticker item hover ──────────────────────────────────────────────────── */
 .bfs-ticker-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease;
   cursor: default;
 }
 .bfs-ticker-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.12);
-  z-index: 1;
+  background: var(--bg-hover) !important;
 }
 
-/* ── Button interactions ────────────────────────────────────────────────── */
+/* ── Controls ────────────────────────────────────────────── */
 .bfs-btn {
-  transition: filter 0.2s ease, transform 0.2s ease !important;
-}
-.bfs-btn:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
+  transition: background-color 0.2s ease, transform 0.15s ease !important;
 }
 .bfs-btn:active {
   transform: scale(0.97) !important;
-  filter: brightness(0.9) !important;
+}
+/* Shared press feedback for every button and link */
+button:not(:disabled):active, a:active { transform: translateY(1px); }
+button { font-family: inherit; }
+
+/* The primary action: flat accent fill, square-ish corners */
+.bfs-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 20px; border: none; border-radius: var(--radius);
+  background: var(--accent); color: var(--accent-ink);
+  font: 500 15px/1 var(--sans); cursor: pointer; text-decoration: none;
+  transition: background-color .2s ease, transform .15s ease;
+}
+.bfs-primary:hover { background: color-mix(in srgb, var(--accent) 86%, var(--text-primary)); }
+.bfs-quiet {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px;
+  background: none; border: none; color: var(--text-primary); font: 500 15px/1 var(--sans);
+  cursor: pointer; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--border-glow);
+  transition: text-decoration-color .2s ease;
+}
+.bfs-quiet:hover { text-decoration-color: var(--accent); }
+
+/* ── Bar controls ────────────────────────────────────────── */
+.bfs-ghost { transition: background-color .15s ease, color .15s ease; }
+.bfs-ghost:hover { background: var(--bg-hover) !important; color: var(--text-primary) !important; }
+.bfs-seg:hover { color: var(--text-primary) !important; }
+.bfs-menu-item { transition: background-color .12s ease; }
+.bfs-menu-item:hover { background: var(--bg-hover) !important; }
+.bfs-wordmark img { transition: transform .3s cubic-bezier(.22,1,.36,1); }
+.bfs-wordmark:hover img { transform: rotate(-6deg); }
+
+/* ── Footer: one quiet line ──────────────────────────────── */
+.bfs-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: 24px; }
+.bfs-footer > :last-child { text-align: right; }
+.bfs-footer-links { display: flex; gap: 24px; }
+.bfs-footer-links a, .bfs-footer-links button {
+  color: var(--text-primary); text-decoration: none; background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
+  text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; transition: text-decoration-color .2s ease;
+}
+.bfs-footer-links a:hover, .bfs-footer-links button:hover { text-decoration-color: var(--accent); }
+@media (max-width: 900px) {
+  .bfs-footer { grid-template-columns: 1fr; gap: 8px; }
+  .bfs-footer > :last-child { text-align: left; }
 }
 
 /* ── Chevron rotation ───────────────────────────────────────────────────── */
@@ -267,332 +262,34 @@ body {
   transform: rotate(180deg);
 }
 
-/* ── Nav tab active underline ───────────────────────────────────────────── */
+/* ── Section tabs ────────────────────────────────────────── */
 .bfs-nav-tab {
   position: relative;
   overflow: visible;
 }
+.bfs-nav-tab:hover { color: var(--text-primary) !important; }
 .bfs-nav-tab::after {
   content: '';
   position: absolute;
-  bottom: -3px;
-  left: 4px; right: 4px;
+  bottom: 0;
+  left: 12px; right: 12px;
   height: 2px;
   background: transparent;
-  border-radius: 1px;
-  transition: background 0.2s ease;
+  transform: scaleX(0.4);
+  transition: background-color 0.2s ease, transform 0.25s ease;
 }
 .bfs-nav-tab.is-active::after {
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  background: var(--accent);
+  transform: none;
 }
 
-/* ── Card entrance ──────────────────────────────────────────────────────── */
-@keyframes bfsCardSlideIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Liquid / Gooey background ───────────────────────────────────────────── */
-/*
- * Two-layer model:
- *   Layer 1 (.bfs-blob)      – 3 large, very blurry ambient blobs; pure atmosphere.
- *   Layer 2 (.bfs-goo-layer) – 6 solid-colour blobs behind an SVG gooey filter.
- *     The SVG feGaussianBlur + feColorMatrix alpha-boost makes blobs that come
- *     within ~200 px of each other merge into a single liquid droplet shape and
- *     re-separate cleanly when they drift apart – the classic metaball effect.
- *
- * Stacking:
- *   .bfs-liquid-bg  position:fixed z-index:0  pointer-events:none
- *   App main wrapper position:relative z-index:1 background:transparent
- *   Cards / charts  opaque var(--bg-secondary) – blobs never bleed through.
- */
-
-/* ── Container ── */
-.bfs-liquid-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* screen mode: blobs only ADD light — they never obscure or darken content */
-  mix-blend-mode: screen;
-}
-
-/* ── SVG filter element (zero-size, invisible) ── */
-.bfs-svg-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-/* ═══════════════════════════════════════════════
-   LAYER 1 – Ambient blobs (soft atmospheric glow)
-   ═══════════════════════════════════════════════ */
-.bfs-blob {
-  position: absolute;
-  border-radius: 50%;
-  will-change: transform;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  animation-fill-mode: both;
-  transition: none !important;
-}
-
-/* Blue – top-left */
-.bfs-b1 {
-  width: 600px; height: 600px;
-  top: -220px; left: -140px;
-  background: radial-gradient(circle, rgba(14,165,233,0.16) 0%, transparent 68%);
-  filter: blur(90px);
-  animation-name: bfsAmb1;
-  animation-duration: 26s;
-}
-/* Violet – bottom-right */
-.bfs-b2 {
-  width: 540px; height: 540px;
-  bottom: -200px; right: -120px;
-  background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 68%);
-  filter: blur(100px);
-  animation-name: bfsAmb2;
-  animation-duration: 33s;
-  animation-delay: -11s;
-}
-/* Cyan – lower-left (moved away from center) */
-.bfs-b3 {
-  width: 380px; height: 380px;
-  bottom: -80px; left: -60px;
-  background: radial-gradient(circle, rgba(6,182,212,0.09) 0%, transparent 68%);
-  filter: blur(80px);
-  animation-name: bfsAmb3;
-  animation-duration: 24s;
-  animation-delay: -7s;
-}
-
-@keyframes bfsAmb1 {
-  from { transform: translate(0, 0)      scale(1);    }
-  to   { transform: translate(90px, 110px) scale(1.08); }
-}
-@keyframes bfsAmb2 {
-  from { transform: translate(0, 0)        scale(1);    }
-  to   { transform: translate(-80px,-95px) scale(0.93); }
-}
-@keyframes bfsAmb3 {
-  from { transform: translate(0, 0)        scale(0.94); }
-  to   { transform: translate(60px, -70px) scale(1.06); }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   LAYER 2 – Gooey metaball blobs
-   The filter on .bfs-goo-layer is applied to all children
-   simultaneously so their blurred halos interact → merging.
-   ═══════════════════════════════════════════════════════════ */
-
-.bfs-goo-layer {
-  position: absolute;
-  inset: 0;
-  /* SVG gooey filter (defined inline in LiquidBackground.jsx) */
-  filter: url(#bfs-goo);
-  /* Halved opacity — content always readable */
-  opacity: 0.12;
-  transition: none !important;
-}
-
-.bfs-gblob {
-  position: absolute;
-  will-change: transform;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  animation-fill-mode: both;
-  transition: none !important;
-}
-
-/*
- * Blob placement strategy (v2 — corner/edge only):
- *   All 6 blobs are anchored near the 4 corners or side edges.
- *   Page centre is intentionally kept free of blobs so content cards are
- *   never visually cluttered by background activity.
- *   Pair targets: (bg1↔bg2) upper-left, (bg3↔bg5) upper-right,
- *                 (bg4↔bg6) lower — left + right corners.
- *   Animation travel reduced to ≤65 px so blobs never drift to page centre.
- */
-
-/* bg1 – blue, upper-left corner  (centre ≈ 10%, 15%) */
-.bg1 {
-  width: 270px; height: 270px;
-  top: calc(15% - 135px); left: calc(10% - 135px);
-  background:
-    radial-gradient(ellipse at 36% 28%, rgba(255,255,255,0.42) 0%, transparent 46%),
-    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
-  animation: bfsGoo1 20s ease-in-out 0s infinite alternate both,
-             bfsMorph1 11s ease-in-out -2s infinite alternate both;
-}
-/* bg2 – violet, upper-left cluster  (centre ≈ 22%, 13%) — drifts toward bg1 */
-.bg2 {
-  width: 260px; height: 260px;
-  top: calc(13% - 130px); left: calc(22% - 130px);
-  background:
-    radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
-    radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
-  animation: bfsGoo2 25s ease-in-out -6s infinite alternate both,
-             bfsMorph2 13s ease-in-out -5s infinite alternate both;
-}
-/* bg3 – blue, upper-right corner  (centre ≈ 87%, 14%) — drifts toward bg5 */
-.bg3 {
-  width: 280px; height: 280px;
-  top: calc(14% - 140px); left: calc(87% - 140px);
-  background:
-    radial-gradient(ellipse at 33% 32%, rgba(255,255,255,0.40) 0%, transparent 46%),
-    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
-  animation: bfsGoo3 22s ease-in-out -11s infinite alternate both,
-             bfsMorph3 9s ease-in-out -8s infinite alternate both;
-}
-/* bg4 – cyan, lower-left corner  (centre ≈ 10%, 84%) — drifts toward bg6 */
-.bg4 {
-  width: 260px; height: 260px;
-  top: calc(84% - 130px); left: calc(10% - 130px);
-  background:
-    radial-gradient(ellipse at 38% 26%, rgba(255,255,255,0.38) 0%, transparent 44%),
-    radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 76%);
-  animation: bfsGoo4 27s ease-in-out -4s infinite alternate both,
-             bfsMorph4 15s ease-in-out -3s infinite alternate both;
-}
-/* bg5 – violet, right edge  (centre ≈ 82%, 28%) — drifts toward bg3 */
-.bg5 {
-  width: 270px; height: 270px;
-  top: calc(28% - 135px); left: calc(82% - 135px);
-  background:
-    radial-gradient(ellipse at 38% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
-    radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
-  animation: bfsGoo5 19s ease-in-out -9s infinite alternate both,
-             bfsMorph5 10s ease-in-out -7s infinite alternate both;
-}
-/* bg6 – blue, lower-right corner  (centre ≈ 88%, 84%) — drifts toward bg4 */
-.bg6 {
-  width: 260px; height: 260px;
-  top: calc(84% - 130px); left: calc(88% - 130px);
-  background:
-    radial-gradient(ellipse at 34% 28%, rgba(255,255,255,0.40) 0%, transparent 46%),
-    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
-  animation: bfsGoo6 23s ease-in-out -15s infinite alternate both,
-             bfsMorph6 12s ease-in-out -1s infinite alternate both;
-}
-
-/*
- * Keyframe vectors (v2 — short travel ≤65 px so blobs stay near corners):
- *   bg1 moves +55px right / +60px down  →  merges with bg2 in upper-left
- *   bg2 moves −45px left  / +55px down  →  merges with bg1
- *   bg3 moves −55px left  / +65px down  →  merges with bg5 on upper-right
- *   bg5 moves +35px right / −60px up    →  merges with bg3
- *   bg4 moves +60px right / −50px up    →  merges with bg6 at lower area
- *   bg6 moves −55px left  / −60px up    →  merges with bg4
- */
-@keyframes bfsGoo1 {
-  from { transform: translate(0,    0)    scale(1);    }
-  to   { transform: translate(55px, 60px) scale(1.06); }
-}
-@keyframes bfsGoo2 {
-  from { transform: translate(0,     0)    scale(1);    }
-  to   { transform: translate(-45px, 55px) scale(0.96); }
-}
-@keyframes bfsGoo3 {
-  from { transform: translate(0,     0)    scale(1);    }
-  to   { transform: translate(-55px, 65px) scale(1.05); }
-}
-@keyframes bfsGoo4 {
-  from { transform: translate(0,    0)     scale(1);    }
-  to   { transform: translate(60px, -50px) scale(1.04); }
-}
-@keyframes bfsGoo5 {
-  from { transform: translate(0,    0)     scale(0.95); }
-  to   { transform: translate(35px, -60px) scale(1.06); }
-}
-@keyframes bfsGoo6 {
-  from { transform: translate(0,     0)     scale(1);    }
-  to   { transform: translate(-55px, -60px) scale(0.97); }
-}
-
-/* ── Organic shape morphing keyframes ─────────────────────────────────────
-   Each blob has a unique 5-step border-radius cycle using the 8-value syntax
-   (horizontal / vertical radii per corner) for natural amoeba-like deformation.
-   Durations are 9–15 s, all different from the position animations, so the
-   shape change and movement are always out of phase → fully organic feel.
-   ────────────────────────────────────────────────────────────────────────── */
-@keyframes bfsMorph1 {
-  0%   { border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%; }
-  25%  { border-radius: 55% 45% 38% 62% / 60% 50% 45% 40%; }
-  50%  { border-radius: 35% 65% 50% 50% / 55% 45% 60% 40%; }
-  75%  { border-radius: 62% 38% 55% 45% / 40% 60% 42% 58%; }
-  100% { border-radius: 48% 52% 42% 58% / 38% 62% 52% 48%; }
-}
-@keyframes bfsMorph2 {
-  0%   { border-radius: 68% 32% 45% 55% / 35% 65% 50% 50%; }
-  25%  { border-radius: 40% 60% 55% 45% / 58% 42% 38% 62%; }
-  50%  { border-radius: 55% 45% 62% 38% / 48% 52% 45% 55%; }
-  75%  { border-radius: 38% 62% 42% 58% / 62% 38% 60% 40%; }
-  100% { border-radius: 52% 48% 35% 65% / 45% 55% 55% 45%; }
-}
-@keyframes bfsMorph3 {
-  0%   { border-radius: 35% 65% 50% 50% / 60% 40% 55% 45%; }
-  25%  { border-radius: 62% 38% 45% 55% / 42% 58% 65% 35%; }
-  50%  { border-radius: 48% 52% 58% 42% / 55% 45% 38% 62%; }
-  75%  { border-radius: 58% 42% 35% 65% / 38% 62% 50% 50%; }
-  100% { border-radius: 45% 55% 62% 38% / 60% 40% 45% 55%; }
-}
-@keyframes bfsMorph4 {
-  0%   { border-radius: 50% 50% 38% 62% / 55% 45% 60% 40%; }
-  25%  { border-radius: 38% 62% 55% 45% / 40% 60% 35% 65%; }
-  50%  { border-radius: 62% 38% 48% 52% / 58% 42% 52% 48%; }
-  75%  { border-radius: 45% 55% 65% 35% / 35% 65% 48% 52%; }
-  100% { border-radius: 58% 42% 42% 58% / 50% 50% 62% 38%; }
-}
-@keyframes bfsMorph5 {
-  0%   { border-radius: 60% 40% 55% 45% / 38% 62% 48% 52%; }
-  25%  { border-radius: 45% 55% 40% 60% / 62% 38% 55% 45%; }
-  50%  { border-radius: 58% 42% 62% 38% / 50% 50% 35% 65%; }
-  75%  { border-radius: 35% 65% 48% 52% / 42% 58% 60% 40%; }
-  100% { border-radius: 50% 50% 35% 65% / 58% 42% 45% 55%; }
-}
-@keyframes bfsMorph6 {
-  0%   { border-radius: 48% 52% 35% 65% / 60% 40% 58% 42%; }
-  25%  { border-radius: 65% 35% 58% 42% / 45% 55% 40% 60%; }
-  50%  { border-radius: 40% 60% 52% 48% / 35% 65% 55% 45%; }
-  75%  { border-radius: 55% 45% 42% 58% / 62% 38% 48% 52%; }
-  100% { border-radius: 38% 62% 60% 40% / 50% 50% 38% 62%; }
-}
-
-/* ── Mobile: lighter filter, fewer/smaller blobs ── */
-@media (max-width: 768px) {
-  /* Drop lower 3 goo blobs – keep only top 3 */
-  .bg4, .bg5, .bg6 { display: none; }
-  /* Switch to lighter mobile filter (stdDeviation 9 instead of 14) */
-  .bfs-goo-layer { filter: url(#bfs-goo-sm); opacity: 0.10; }
-  /* Shrink ambient blobs */
-  .bfs-b1 { width: 360px; height: 360px; filter: blur(55px); }
-  .bfs-b2 { width: 320px; height: 320px; filter: blur(60px); }
-  .bfs-b3 { width: 220px; height: 220px; filter: blur(45px); }
-  /* Smaller goo blobs – corner-anchored, safe distance from edges */
-  .bg1 { width: 190px; height: 190px; top: calc(15% - 95px); left: calc(10% - 95px); }
-  .bg2 { width: 190px; height: 190px; top: calc(13% - 95px); left: calc(22% - 95px); }
-  .bg3 { width: 190px; height: 190px; top: calc(14% - 95px); left: calc(87% - 95px); }
-}
-
-/* ── Light theme – tone down substantially ── */
-:root[data-theme="light"] .bfs-liquid-bg { opacity: 0.18; }
-
-/* ── Reduced motion ─────────────────────────────────────────────────────── */
+/* ── Reduced motion: keep the content, drop the travel ───── */
 @media (prefers-reduced-motion: reduce) {
-  /* Freeze liquid background */
-  .bfs-blob,
-  .bfs-gblob { animation: none !important; will-change: auto; }
-  /* Page entrance / UI animations */
-  .bfs-enter-1, .bfs-enter-2, .bfs-enter-3, .bfs-enter-4 {
-    animation: none !important;
-  }
-  .bfs-chevron { transition: none !important; }
-  .bfs-card    { transition: none !important; }
+  .bfs-enter-1, .bfs-enter-2, .bfs-enter-3, .bfs-enter-4,
+  .bfs-mask-line > span { animation: none !important; }
+  [data-reveal] > * { opacity: 1 !important; transform: none !important; }
+  .bfs-chevron, .bfs-card, .bfs-nav-tab::after { transition: none !important; }
+  button:active, a:active { transform: none; }
 }
 
 #root {
@@ -609,29 +306,26 @@ h1,
 h2,
 h3,
 .serif {
-  font-family: var(--heading);
-  font-optical-sizing: auto;
+  font-family: var(--sans);
   text-wrap: balance;
 }
-h1, h2 { color: var(--text-primary, var(--text-h)); }
-/* Page titles: larger, so the serif has room to breathe */
-html:not([data-ui="mobile"]) h1 { font-size: clamp(26px, 2.4vw, 34px) !important; line-height: 1.15 !important; }
-/* Headline numbers (scores, account value, index levels) set in the serif with lining figures */
+h1, h2 { color: var(--text-primary); }
+/* Page titles: one confident size, tight tracking */
+html:not([data-ui="mobile"]) h1 { font-size: clamp(30px, 2.8vw, 44px) !important; line-height: 1.08 !important; }
+/* Headline numbers (scores, account value, index levels): the same face, tabular lining figures */
 .serif-num {
-  font-family: var(--heading) !important;
+  font-family: var(--sans) !important;
   font-weight: 500 !important;
   font-variant-numeric: lining-nums tabular-nums;
-  font-optical-sizing: auto;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
 }
-/* Serif headings read best at a medium weight; components set heavier inline weights for the old sans */
 /* Desktop UI only: the phone UI (data-ui="mobile") sizes its own titles in mobile.css */
-html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
-html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 600 !important; letter-spacing: -0.005em !important; }
+html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.03em !important; }
+html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
 
 h1 {
   font-size: 56px;
-  letter-spacing: -1.68px;
+  letter-spacing: -0.03em;
   margin: 32px 0;
   @media (max-width: 1024px) {
     font-size: 36px;
@@ -640,8 +334,7 @@ h1 {
 }
 h2 {
   font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
+  line-height: 1.15;
   margin: 0 0 8px;
   @media (max-width: 1024px) {
     font-size: 20px;
@@ -651,19 +344,13 @@ p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
+code {
   display: inline-flex;
   border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  color: var(--text-primary);
+  font-size: 0.92em;
+  padding: 1px 6px;
+  background: var(--bg-tertiary);
 }
 
 /* ── Mobile responsive ───────────────────────────────────────────────────── */

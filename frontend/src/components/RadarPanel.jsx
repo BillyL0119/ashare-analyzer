@@ -7,7 +7,7 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 
-const COLORS = ['#8ab4f8', '#c084fc', '#26a69a', '#ffa726']
+const COLORS = ['#a08672', '#7c9cb4', '#26a69a', '#ffa726']
 
 export default function RadarPanel({ stocks }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -86,7 +86,7 @@ export default function RadarPanel({ stocks }) {
       },
       splitArea: {
         areaStyle: {
-          color: ['transparent', 'rgba(138,180,248,0.05)'],
+          color: ['transparent', 'rgba(160,134,114,0.05)'],
         },
       },
       axisLine: {
@@ -187,7 +187,7 @@ export default function RadarPanel({ stocks }) {
                         const score = dataMap[s.code]?.scores?.[ind.key]
                         const color = score >= 70 ? '#26a69a' : score >= 40 ? '#e8c34a' : '#ef5350'
                         return (
-                          <td key={s.code} style={{ textAlign: 'center', color, fontWeight: 700, padding: '5px 8px' }}>
+                          <td key={s.code} style={{ textAlign: 'center', color, fontWeight: 600, padding: '5px 8px' }}>
                             {score ?? '—'}
                           </td>
                         )

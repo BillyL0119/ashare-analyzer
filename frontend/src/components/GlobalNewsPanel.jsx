@@ -23,7 +23,7 @@ function SourceBadge({ name }) {
     <div style={{
       width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
       background: color, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 0,
+      fontSize: 13, fontWeight: 600, color: '#fff', letterSpacing: 0,
     }}>
       {letter.toUpperCase()}
     </div>
@@ -49,10 +49,10 @@ function Pill({ active, onClick, children }) {
     <button
       onClick={onClick}
       style={{
-        padding: '4px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
+        padding: '4px 12px', borderRadius: 'var(--radius)', border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
-        background: active ? 'rgba(14,165,233,0.18)' : 'var(--bg-tertiary)',
-        color: active ? '#0ea5e9' : 'var(--text-secondary)',
+        background: active ? 'color-mix(in srgb, var(--accent) 18%, transparent)' : 'var(--bg-tertiary)',
+        color: active ? 'var(--accent)' : 'var(--text-secondary)',
         transition: 'all 0.18s',
       }}
     >
@@ -74,7 +74,7 @@ function NewsCard({ item, t }) {
         style={{
           background: 'var(--bg-secondary)',
           border: '1px solid var(--border-primary)',
-          borderRadius: 10,
+          borderRadius: 'var(--radius)',
           padding: '12px 14px',
           cursor: 'pointer',
           marginBottom: 8,
@@ -175,7 +175,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onClick={() => fetchNews(filters)}
               style={{
                 marginLeft: 8, fontSize: 11, background: 'none', border: 'none',
-                color: '#0ea5e9', cursor: 'pointer', padding: 0,
+                color: 'var(--accent)', cursor: 'pointer', padding: 0,
               }}
             >
               {t.gnRefresh}
@@ -217,7 +217,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onChange={e => applyFilter({ ...filters, source: e.target.value })}
               style={{
                 background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
-                borderRadius: 20, padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
+                borderRadius: 'var(--radius)', padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
               }}
             >
               <option value="all">{t.gnAllSources}</option>
@@ -232,7 +232,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[0, 1, 2, 3, 4].map(i => (
             <div key={i} style={{
-              height: 80, borderRadius: 10,
+              height: 80, borderRadius: 'var(--radius)',
               background: 'var(--bg-hover)',
               animation: 'pulse 1.5s ease-in-out infinite',
             }} />
@@ -253,7 +253,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               style={{
                 display: 'block', width: '100%', padding: '10px 0',
                 background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
-                borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
+                borderRadius: 'var(--radius)', color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
                 marginTop: 4,
               }}
             >
