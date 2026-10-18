@@ -2737,6 +2737,54 @@ export const STR = {
   "AI 요약은 제목과 리드를 바탕으로 AI가 작성하며 틀릴 수 있습니다. 원문을 확인하세요.",
   "Les résumés IA sont rédigés par une IA à partir du titre et du chapeau et peuvent contenir des erreurs. Vérifiez l'article d'origine."
  ],
+ "分红": [
+  "Dividend",
+  "配当",
+  "배당",
+  "Dividende"
+ ],
+ "拆股": [
+  "Split",
+  "株式分割",
+  "주식 분할",
+  "Division"
+ ],
+ "送转": [
+  "Bonus shares",
+  "無償割当",
+  "무상증자",
+  "Actions gratuites"
+ ],
+ "息": [
+  "D",
+  "配",
+  "배",
+  "D"
+ ],
+ "拆": [
+  "SP",
+  "分",
+  "분",
+  "Di"
+ ],
+ "送": [
+  "B",
+  "無",
+  "무",
+  "AG"
+ ],
+ "每股 %@": [
+  "%@ per share",
+  "1株 %@",
+  "주당 %@",
+  "%@ par action"
+ ],
+ "%lld股": [
+  "%lld sh",
+  "%lld株",
+  "%lld주",
+  "%lld act."
+ ],
  "刚刚": [
   "Just now",
   "たった今",

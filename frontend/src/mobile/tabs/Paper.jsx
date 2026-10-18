@@ -72,6 +72,8 @@ const TYPE_HELP = {
   stop: '止损单在价格到达触发价后按市价成交，常用来止损。', stop_limit: '止损限价单在价格到达触发价后变成限价单，急跌时可能成交不了。',
   trailing_stop: '追踪止损的触发价跟着最高价按百分比上移，价格回落这么多就卖出，用来锁住利润。',
 }
+const CORP_LABEL = { dividend: '分红', split: '拆股', bonus: '送转' }
+const CORP_BADGE = { dividend: '息', split: '拆', bonus: '送' }
 const STATUS_LABEL = { open: '未成交', filled: '已成交', cancelled: '已撤销', expired: '已过期', rejected: '被拒' }
 const STATUS_COLOR = { open: 'var(--accent)', filled: '#22C55E', cancelled: 'var(--text-3)', expired: 'var(--text-3)', rejected: '#ef4444' }
 const SHORT_MARGIN = 0.5   // extra margin the server holds on a short, as a share of its value
@@ -600,7 +602,15 @@ export default function Paper() {
       {view && (view.txs.length > 0 || view.closed.length > 0) && (
         <Section title={t('最近交易')}>
           <div className="m-card flush">
-            {view.txs.map((x, i) => (
+            {view.txs.map((x, i) => CORP_LABEL[x.type] ? (
+              // Dividend / split / bonus shares, applied on the ex-date
+              <div className="m-row" key={i}>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: '#0EA5E9' }}>{t(CORP_BADGE[x.type])}</span>
+                <div className="m-grow"><div className="m-name">{t(CORP_LABEL[x.type])} · {x.name || x.symbol}</div>
+                  <div className="m-label m-num">{x.type === 'dividend' ? t('每股 %@', cur + num(x.price)) : `${x.ratio || ''} · ${x.shares > 0 ? '+' : ''}${t('%lld股', x.shares)}`}</div></div>
+                <div style={{ textAlign: 'right' }}>{x.amount ? <div className="m-num" style={{ fontWeight: 650, color: changeColor(x.amount, market) }}>{x.amount > 0 ? '+' : '-'}{money(Math.abs(x.amount), cur)}</div> : null}<div className="m-label">{x.date}</div></div>
+              </div>
+            ) : (
               <div className="m-row" key={i}>
                 <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: SIDE_TINT[x.type] || 'var(--text-3)' }}>{t(SIDE_BADGE[x.type] || '卖')}</span>
                 <div className="m-grow"><div className="m-name">{x.name || x.symbol}</div><div className="m-label m-num">{t('%lld股 @ %@', x.shares, cur + num(x.price))}</div></div>

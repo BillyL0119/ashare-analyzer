@@ -797,7 +797,42 @@ private struct TransactionRow: View {
     private var side: OrderSide { OrderSide(rawValue: tx.type) ?? .sell }
     private var currency: String { (Market(rawValue: tx.market) ?? .us).currencySymbol }
 
+    private static let corpLabel = ["dividend": "分红", "split": "拆股", "bonus": "送转"]
+    private static let corpBadge = ["dividend": "息", "split": "拆", "bonus": "送"]
+
     var body: some View {
+        if tx.isCorporateAction { corporateRow } else { tradeRow }
+    }
+
+    private var corporateRow: some View {
+        HStack {
+            Text(L(Self.corpBadge[tx.type] ?? "息"))
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 28, height: 28)
+                .background(Color(r: 0x0E, g: 0xA5, b: 0xE9), in: Circle())
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(L(Self.corpLabel[tx.type] ?? "分红")) · \(tx.name.isEmpty ? tx.symbol : tx.name)")
+                    .font(.subheadline)
+                    .lineLimit(1)
+                Text(tx.type == "dividend" ? L("每股 %@", "\(currency)\(String(format: "%.2f", tx.price))")
+                     : "\(tx.ratio ?? "") · \(tx.shares > 0 ? "+" : "")\(L("%lld股", tx.sharesInt))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 2) {
+                if tx.amount != 0 {
+                    Text("\(tx.amount > 0 ? "+" : "-")\(currency)\(String(format: "%.2f", abs(tx.amount)))")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.changeColor(tx.amount, market: Market(rawValue: tx.market) ?? .us))
+                }
+                Text(tx.date).font(.caption2).foregroundStyle(.tertiary)
+            }
+        }
+    }
+
+    private var tradeRow: some View {
         HStack {
             Text(side.badge)
                 .font(.caption2.weight(.bold))

@@ -40,6 +40,8 @@ const zh = {
     hk: '港股：零佣金，买卖各收 0.1% 印花税（按元向上取整）和约 0.0085% 交易所费用；按每只股票的每手股数交易；可当日卖出。',
     jp: '日股：零佣金、无交易税；100 股为一个交易单位（ETF 为 1 股）；可当日卖出。',
   },
+  corp: { dividend: '分红', split: '拆股', bonus: '送转' },
+  corpNote: '分红、拆股和送转会在除权日自动处理（美股和 A 股；港股、日股暂不支持），分红按税前金额计入。卖空的股票在除息日需支付股息。',
   hoursNote: '交易时间按各交易所的常规时段计算，节假日以交易所公告为准。',
   // competitions
   game: {
@@ -92,6 +94,8 @@ const en = {
     hk: 'Hong Kong: zero commission; 0.1% stamp duty each way (rounded up to the dollar) plus ~0.0085% exchange levies; each stock trades in its own board lot; same-day selling.',
     jp: 'Japan: zero commission, no transaction tax; trading unit of 100 shares (ETFs 1); same-day selling.',
   },
+  corp: { dividend: 'Dividend', split: 'Split', bonus: 'Bonus shares' },
+  corpNote: 'Dividends, stock splits and bonus shares are applied automatically on the ex-date (US and A-shares; Hong Kong and Japan not yet). Dividends are credited before tax, and short sellers pay the dividend.',
   hoursNote: 'Trading hours follow each exchange\'s regular sessions; public holidays follow the exchange calendar.',
   game: {
     title: 'Class & club competitions', intro: 'Start a competition, share the invite code, and everyone trades the same market with the same starting cash.',
@@ -143,6 +147,8 @@ const ja = {
     hk: '香港株：手数料無料；印紙税は売買とも0.1%（1ドル未満切り上げ）＋取引所課徴金約0.0085%；銘柄ごとの売買単位；当日売却可。',
     jp: '日本株：手数料無料、取引税なし；売買単位100株（ETFは1口）；当日売却可。',
   },
+  corp: { dividend: '配当', split: '株式分割', bonus: '無償割当' },
+  corpNote: '配当・株式分割・無償割当は権利落ち日に自動で反映されます（米国株・中国A株。香港株・日本株は未対応）。配当は税引前で計上され、空売り中の銘柄は配当相当額を支払います。',
   hoursNote: '取引時間は各取引所の通常の立会時間に基づきます。祝日は取引所の発表に従います。',
   game: {
     ...en.game, title: 'クラス・部活の大会', intro: '大会を作って招待コードを共有すれば、同じ市場・同じ元手で収益を競えます。',
@@ -194,6 +200,8 @@ const ko = {
     hk: '홍콩 주식: 수수료 무료; 인지세 매수·매도 각 0.1%(1달러 미만 올림) + 거래소 부과금 약 0.0085%; 종목별 거래 단위; 당일 매도 가능.',
     jp: '일본 주식: 수수료 무료, 거래세 없음; 거래 단위 100주(ETF는 1주); 당일 매도 가능.',
   },
+  corp: { dividend: '배당', split: '주식 분할', bonus: '무상증자' },
+  corpNote: '배당, 주식 분할, 무상증자는 권리락일에 자동 반영됩니다(미국·중국 A주, 홍콩·일본은 미지원). 배당은 세전 금액으로 반영되며 공매도 중인 종목은 배당금을 지급합니다.',
   hoursNote: '거래 시간은 각 거래소의 정규 시간을 따르며, 휴장일은 거래소 공지를 따릅니다.',
   game: {
     ...en.game, title: '반·동아리 대회', intro: '대회를 만들고 초대 코드를 공유하면 같은 시장, 같은 원금으로 수익률을 겨룹니다.',
@@ -245,6 +253,8 @@ const fr = {
     hk: 'Hong Kong : sans commission ; droit de timbre de 0,1 % dans chaque sens (arrondi au dollar supérieur) plus ~0,0085 % de frais de bourse ; chaque titre a son propre lot ; revente le jour même.',
     jp: 'Japon : sans commission ni taxe sur les transactions ; unité de 100 actions (ETF : 1) ; revente le jour même.',
   },
+  corp: { dividend: 'Dividende', split: 'Division', bonus: 'Actions gratuites' },
+  corpNote: "Dividendes, divisions d'actions et actions gratuites sont appliqués automatiquement à la date de détachement (actions US et A chinoises ; Hong Kong et Japon pas encore). Les dividendes sont crédités avant impôt et les vendeurs à découvert paient le dividende.",
   hoursNote: "Les horaires suivent les séances normales de chaque bourse ; les jours fériés suivent le calendrier de la bourse.",
   game: {
     ...en.game, title: 'Compétitions de classe et de club', intro: 'Créez une compétition, partagez le code et tout le monde investit sur le même marché avec le même capital.',

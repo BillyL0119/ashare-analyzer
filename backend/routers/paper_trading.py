@@ -417,7 +417,8 @@ def _game_standings(g: dict) -> tuple[list, dict]:
     for d, meta, b in rows:
         v = b.value(prices)
         out.append({"device": d, "nickname": meta.get("nickname") or "?", "total_value": round(v, 2),
-                    "return_pct": round((v - b.initial) / b.initial * 100, 2), "trades": len(b.transactions)})
+                    "return_pct": round((v - b.initial) / b.initial * 100, 2),
+                    "trades": sum(1 for t in b.transactions if t.get("type") in E.SIDES)})
     out.sort(key=lambda r: r["total_value"], reverse=True)
     return out, prices
 
@@ -989,6 +990,90 @@ def _match_once(now: Optional[datetime] = None, quotes_override: Optional[dict] 
                     _rank_cache.pop(m, None)
 
 
+# ── Corporate actions (dividends, splits, bonus shares) ──────────────────────
+#
+# Once per market per local day, shortly after midnight there (before the open, so the books
+# are still as they were at the previous close), the actions effective that day are applied to
+# every portfolio holding the stock. A source failure is retried after 30 minutes.
+
+_CA_MARKETS = ("us", "cn")
+_ca_done: dict = {}
+_ca_retry: dict = {}
+
+
+def _held_books():
+    """[(device_id, kind, key, market)] for every portfolio with a position or open order, and their symbols."""
+    out, held = [], defaultdict(set)
+    for path in glob.glob(os.path.join(_DATA_DIR, "*.json")):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                a = json.load(f)
+        except Exception:
+            continue
+        for m in _CA_MARKETS:
+            syms = set(a.get(PREFIX[m] + "portfolio") or {}) | set(a.get(PREFIX[m] + "shorts") or {}) | \
+                {o["symbol"] for o in a.get(PREFIX[m] + "orders", []) if o.get("status") == "open"}
+            if syms:
+                out.append((a["device_id"], "m", m, m))
+                held[m] |= syms
+        for gid, store in (a.get("games") or {}).items():
+            g = _load_game(gid)
+            if not g or g["market"] not in _CA_MARKETS:
+                continue
+            syms = set(store.get("portfolio") or {}) | set(store.get("shorts") or {}) | \
+                {o["symbol"] for o in store.get("orders", []) if o.get("status") == "open"}
+            if syms:
+                out.append((a["device_id"], "g", gid, g["market"]))
+                held[g["market"]] |= syms
+    return out, held
+
+
+def _corporate_actions_pass(now: Optional[datetime] = None, actions_override: Optional[dict] = None) -> int:
+    from services import corporate_actions as CA
+    now = now or datetime.now(timezone.utc)
+    pending = [m for m in _CA_MARKETS
+               if _ca_done.get(m) != E._local(m, now).date().isoformat() and time.time() >= _ca_retry.get(m, 0)]
+    if not pending:
+        return 0
+    books, held = _held_books()
+    applied = 0
+    for m in pending:
+        day = E._local(m, now).date().isoformat()
+        try:
+            actions = actions_override.get(m, []) if actions_override is not None else CA.events(m, day, held.get(m, set()))
+        except Exception as e:
+            logger.warning("corporate actions %s %s: %s", m, day, e)
+            _ca_retry[m] = time.time() + 1800
+            continue
+        if actions:
+            last = E.quotes(m, sorted({a["symbol"] for a in actions}))
+            for a in actions:
+                a.setdefault("price", (last.get(a["symbol"]) or {}).get("price"))
+            today = E.beijing_today()
+            for device_id, kind, key, bm in books:
+                if bm != m:
+                    continue
+                with _lock(device_id):
+                    acc = _load_account(device_id)
+                    if not acc:
+                        continue
+                    if kind == "m":
+                        book = _market_book(acc, key)
+                    else:
+                        g = _load_game(key)
+                        if not g or key not in acc.get("games", {}):
+                            continue
+                        book = _game_book(acc, g)
+                    txs = [t for a in actions for t in E.apply_action(book, a, today)]
+                    if txs:
+                        _save_account(acc)
+                        applied += len(txs)
+            logger.info("corporate actions %s %s: %d actions, %d entries", m, day, len(actions), applied)
+            _rank_cache.pop(m, None)
+        _ca_done[m] = day
+    return applied
+
+
 def _matcher_loop():
     while True:
         try:
@@ -999,6 +1084,10 @@ def _matcher_loop():
             _finalize_games()
         except Exception as e:
             logger.warning("competition finalize: %s", e)
+        try:
+            _corporate_actions_pass()
+        except Exception as e:
+            logger.warning("corporate actions: %s", e)
         time.sleep(20)
 
 
@@ -1058,16 +1147,34 @@ def _performance(book: Book) -> dict:
     closes = {s: _daily_closes(s, market, span) for s in sorted({t["symbol"] for t in txs})}
 
     sign = {"buy": 1, "sell": -1, "short": -1, "cover": 1}
+    # US closes are split-adjusted (qfq): count earlier trades in post-split shares and let the
+    # split entry add none. A-share closes are unadjusted: splits and bonus shares add shares.
+    adjusted = market == "us"
+    mult = [1.0] * len(txs)
+    if adjusted:
+        factor: dict = {}
+        for j in range(len(txs) - 1, -1, -1):
+            t = txs[j]
+            mult[j] = factor.get(t["symbol"], 1.0)
+            if t["type"] == "split" and t.get("ratio"):
+                new, old = (float(x) for x in t["ratio"].split(":"))
+                factor[t["symbol"]] = factor.get(t["symbol"], 1.0) * new / old
     cash, holdings, i, last = initial, {}, 0, {}
     points = [{"date": base_day, "value": round(initial, 2), "bench": round(initial, 2)}]
     for d in days:
         while i < len(txs) and txs[i]["date"] <= d:
             t = txs[i]
             amt, fee = float(t.get("amount") or 0), float(t.get("commission") or 0)
+            if t["type"] in E.CORP_TYPES:
+                cash += amt                                      # dividend received/paid, cash in lieu
+                if t["type"] != "dividend" and not adjusted:
+                    holdings[t["symbol"]] = holdings.get(t["symbol"], 0) + int(t["shares"])
+                i += 1
+                continue
             s = sign.get(t["type"], 0)
             cash += -(amt + fee) if s > 0 else (amt - fee)
-            holdings[t["symbol"]] = holdings.get(t["symbol"], 0) + s * int(t["shares"])
-            last.setdefault(t["symbol"], float(t["price"]))
+            holdings[t["symbol"]] = holdings.get(t["symbol"], 0) + s * int(t["shares"]) * mult[i]
+            last.setdefault(t["symbol"], float(t["price"]) / mult[i])
             i += 1
         value = cash
         for sym, n in holdings.items():

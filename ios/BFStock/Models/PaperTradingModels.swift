@@ -167,8 +167,12 @@ struct PaperTransaction: Decodable, Identifiable {
     let commission: Double
     let profitLoss: Double?
     let market: String
+    /// Splits / bonus shares: "4:1" or "+4/10"
+    let ratio: String?
 
     var id: String { "\(date)_\(symbol)_\(type)_\(amount)" }
+    /// Dividend, split or bonus shares (applied on the ex-date), not a trade
+    var isCorporateAction: Bool { ["dividend", "split", "bonus"].contains(type) }
     var isBuy: Bool { type == "buy" }
 }
 

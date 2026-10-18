@@ -471,6 +471,80 @@ def execute(book: Book, side: str, symbol: str, shares: int, price: float, name:
     return {"price": price, "commission": f, "cash_remaining": book.cash, **result}
 
 
+# ── Corporate actions ────────────────────────────────────────────────────────
+
+CORP_TYPES = ("dividend", "split", "bonus")
+
+
+def apply_action(book: Book, a: dict, today: str) -> list:
+    """Apply one corporate action (see services/corporate_actions) to the book, once.
+    Dividends: holders receive cash per share, short sellers pay it. Splits and bonus shares:
+    shares scale by the ratio with the cost basis kept; a fraction left over is paid out in cash
+    at the pre-action price (cash in lieu); open orders on the stock are rescaled.
+    `a["price"]` is the last price before the action (needed for cash in lieu).
+    Returns the transactions written."""
+    applied = book.s.setdefault(book.k("corp_actions"), [])
+    key = f"{a['type']}:{a['symbol']}:{a['date']}"
+    if key in applied:
+        return []
+    m, sym = book.market, a["symbol"]
+    pos, sp = book.portfolio.get(sym), book.shorts.get(sym)
+    now = datetime.now(BEIJING).strftime("%H:%M")
+    base = {"date": today, "time": now, "symbol": sym, "market": m, "commission": 0.0, "ex_date": a["date"]}
+    txs = []
+
+    if a["type"] == "dividend":
+        cash = float(a["cash"])
+        if pos:
+            n = int(pos["shares"])
+            amt = rnd(m, n * cash)
+            book.cash = book.cash + amt
+            txs.append({**base, "type": "dividend", "name": pos.get("name", ""), "shares": n, "price": cash, "amount": amt})
+        if sp:
+            n = int(sp["shares"])
+            amt = rnd(m, n * cash)
+            book.cash = book.cash - amt                      # the short seller owes the dividend to the lender
+            txs.append({**base, "type": "dividend", "name": sp.get("name", ""), "shares": -n, "price": cash, "amount": -amt})
+
+    elif a["type"] in ("split", "bonus"):
+        if a["type"] == "split":
+            r, label = a["new"] / a["old"], f"{a['new']}:{a['old']}"
+        else:
+            r, label = 1 + float(a["bonus"]), f"+{round(float(a['bonus']) * 10, 4):g}/10"
+        px = float(a.get("price") or 0)
+        for held, sign, cost_key in ((pos, 1, "avg_cost"), (sp, -1, "avg_price")):
+            if not held:
+                continue
+            old = int(held["shares"])
+            exact = old * r
+            new = int(exact + 1e-9)
+            lieu = rnd(m, (exact - new) * px / r) if px else 0.0
+            book.cash = book.cash + sign * lieu
+            if new <= 0:
+                (book.portfolio if sign > 0 else book.shorts).pop(sym, None)
+            else:
+                held["shares"] = new
+                held[cost_key] = round(held[cost_key] * old / exact, 4)
+                if "lock_shares" in held:
+                    held["lock_shares"] = min(new, int(int(held["lock_shares"]) * r + 1e-9))
+            txs.append({**base, "type": a["type"], "name": held.get("name", ""), "shares": sign * (new - old),
+                        "price": 0.0, "amount": sign * lieu, "ratio": label})
+        for o in book.open_orders():
+            if o["symbol"] != sym:
+                continue
+            o["shares"] = int(int(o["shares"]) * r + 1e-9)
+            for f in ("limit_price", "stop_price", "watermark", "ref_price"):
+                if o.get(f):
+                    o[f] = round(o[f] / r, 4)
+            if o["shares"] <= 0:
+                o.update(status="cancelled", reason="Cancelled by a share consolidation", closed_at=datetime.now(timezone.utc).isoformat())
+
+    book.transactions.extend(txs)
+    applied.append(key)
+    del applied[:-500]
+    return txs
+
+
 # ── Orders ───────────────────────────────────────────────────────────────────
 
 def new_order_id() -> str:
@@ -582,7 +656,7 @@ def book_view(book: Book, q: dict, today: str, tx_limit: int = 50) -> dict:
         "analytics": {
             "day_change": rnd(m, day_change), "day_change_pct": round(day_change / start_value * 100 if start_value else 0, 2),
             "unrealized_pl": rnd(m, unreal), "realized_pl": rnd(m, sum(t["profit_loss"] for t in closed)),
-            "trades": len(book.transactions), "closed_trades": len(closed),
+            "trades": sum(1 for t in book.transactions if t.get("type") in SIDES), "closed_trades": len(closed),
             "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
             "best_trade": slim(best), "worst_trade": slim(worst),
             "fees_paid": book.s.get(book.k("total_commission_paid"), 0),

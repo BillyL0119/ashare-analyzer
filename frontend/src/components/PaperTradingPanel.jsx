@@ -195,7 +195,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       </div>
 
       <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7, textAlign: 'center' }}>
-        {s.rules[market] || ''} {s.hoursNote}
+        {s.rules[market] || ''} {s.hoursNote} {s.corpNote}
       </div>
 
       {modal === 'games' && (
