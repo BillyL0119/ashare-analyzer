@@ -2815,6 +2815,30 @@ export const STR = {
   "모두 완료! 거래의 기본을 익혔어요.",
   "Tout est fait ! Vous maîtrisez les bases du trading."
  ],
+ "账户": [
+  "Account",
+  "アカウント",
+  "계정",
+  "Compte"
+ ],
+ "退出登录": [
+  "Sign out",
+  "ログアウト",
+  "로그아웃",
+  "Se déconnecter"
+ ],
+ "登录 / 注册": [
+  "Sign in / Sign up",
+  "ログイン / 新規登録",
+  "로그인 / 회원가입",
+  "Se connecter / S'inscrire"
+ ],
+ "登录后，模拟盘账户在手机和电脑上同步。": [
+  "Sign in to use the same paper trading account on your phone and computer.",
+  "ログインすると、スマホとパソコンで同じ模擬取引口座を使えます。",
+  "로그인하면 휴대폰과 컴퓨터에서 같은 모의투자 계좌를 사용할 수 있습니다.",
+  "Connectez-vous pour utiliser le même compte de simulation sur téléphone et ordinateur."
+ ],
  "刚刚": [
   "Just now",
   "たった今",

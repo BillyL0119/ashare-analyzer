@@ -26,7 +26,9 @@ from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from contextvars import ContextVar
+
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 
 from security import clean_text
@@ -34,7 +36,27 @@ from services import paper_engine as E
 from services import paper_missions
 from services.paper_engine import Book, CURRENCY, INITIAL, MARKETS, PREFIX, SHORT_MARKETS
 
-router = APIRouter()
+# Accounts of signed-in users are keyed by their Supabase user id (a lowercase UUID v4); anyone could
+# send that id, so those accounts also need the user's own access token. Device ids (random web ids,
+# the iOS app's uppercase UUID) are unguessable keys in themselves and need nothing more.
+_USER_ID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")
+_auth_header: ContextVar = ContextVar("paper_auth", default=None)
+
+
+async def _capture_auth(authorization: Optional[str] = Header(None)) -> None:
+    _auth_header.set(authorization or "")
+
+
+def _owner(device_id: str) -> None:
+    if not _USER_ID.fullmatch(device_id or ""):
+        return
+    from services.auth import _bearer, verify_token
+    ident = verify_token(_bearer(_auth_header.get() or ""))
+    if not ident or ident.get("id") != device_id:
+        raise HTTPException(401, "Please sign in again to use this account")
+
+
+router = APIRouter(dependencies=[Depends(_capture_auth)])
 logger = logging.getLogger("paper_trading")
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "paper_trading")
@@ -475,6 +497,7 @@ def _views(account: dict) -> dict:
 
 @router.post("/account")
 def create_or_get_account(body: DeviceBody):
+    _owner(body.device_id)
     with _lock(body.device_id):
         account = _load_account(body.device_id)
         is_new = account is None
@@ -507,6 +530,7 @@ def create_or_get_account(body: DeviceBody):
 
 @router.get("/account/{device_id}")
 def get_account(device_id: str):
+    _owner(device_id)
     account = _load_account(device_id)
     if account is None:
         raise HTTPException(status_code=404, detail="账户不存在")
@@ -521,6 +545,7 @@ def get_account(device_id: str):
 
 @router.post("/nickname")
 def set_nickname(body: NicknameBody):
+    _owner(body.device_id)
     nick = _clean_nick(body.nickname)
     if not nick:
         raise HTTPException(400, "Nickname required")
@@ -563,6 +588,7 @@ def _need_bp(market: str, bp: float, need: float):
 
 @router.post("/buy")
 def buy_stock(body: BuyBody):
+    _owner(body.device_id)
     market = _norm_market(body.market)
     with _Localized(body.lang, market), _lock(body.device_id):
         account = _load_account(body.device_id)
@@ -583,6 +609,7 @@ def buy_stock(body: BuyBody):
 
 @router.post("/sell")
 def sell_stock(body: SellBody):
+    _owner(body.device_id)
     market = _norm_market(body.market)
     with _Localized(body.lang, market), _lock(body.device_id):
         account = _load_account(body.device_id)
@@ -636,6 +663,7 @@ def _resolve_book(account: dict, market: str, game_id: Optional[str]) -> tuple:
 
 @router.post("/order")
 def place_order(body: OrderBody):
+    _owner(body.device_id)
     if not _rate_ok(body.device_id):
         raise HTTPException(429, "Too many orders; wait a minute")
     side, otype, tif = body.side.lower(), body.type.lower(), body.tif.lower()
@@ -734,6 +762,7 @@ def place_order(body: OrderBody):
 
 @router.post("/order/cancel")
 def cancel_order(body: CancelBody):
+    _owner(body.device_id)
     with _lock(body.device_id):
         account = _load_account(body.device_id)
         if not account:
@@ -757,6 +786,7 @@ def cancel_order(body: CancelBody):
 
 @router.post("/games/create")
 def create_game(body: GameCreateBody):
+    _owner(body.device_id)
     market = _norm_market(body.market, "us")
     name = re.sub(r"\s+", " ", clean_text(body.name)).strip()
     if not (2 <= len(name) <= 40):
@@ -797,6 +827,7 @@ def create_game(body: GameCreateBody):
 
 @router.post("/games/join")
 def join_game(body: GameJoinBody):
+    _owner(body.device_id)
     nick = _clean_nick(body.nickname)
     with _games_lock:
         g = _game_by_code(body.code)
@@ -819,6 +850,7 @@ def join_game(body: GameJoinBody):
 
 @router.post("/games/leave")
 def leave_game(body: GameIdBody):
+    _owner(body.device_id)
     with _games_lock:
         g = _load_game(body.game_id)
         if not g or body.device_id not in g.get("members", {}):
@@ -837,6 +869,7 @@ def leave_game(body: GameIdBody):
 
 @router.post("/games/delete")
 def delete_game(body: GameIdBody):
+    _owner(body.device_id)
     with _games_lock:
         g = _load_game(body.game_id)
         if not g or g.get("owner") != body.device_id:
@@ -853,6 +886,7 @@ def delete_game(body: GameIdBody):
 
 @router.post("/games/account")
 def game_account(body: GameIdBody):
+    _owner(body.device_id)
     g = _load_game(body.game_id)
     if not g or body.device_id not in g.get("members", {}):
         raise HTTPException(404, "Competition not found")
@@ -897,6 +931,7 @@ def leaderboard(device_id: str = "", market: str = "cn"):
 
 @router.post("/reset")
 def reset_account(body: DeviceBody):
+    _owner(body.device_id)
     """Fresh start for the four market accounts; nickname and competitions are kept."""
     with _lock(body.device_id):
         account = _load_account(body.device_id)
@@ -1208,6 +1243,7 @@ class PerformanceBody(BaseModel):
 
 @router.post("/performance")
 def performance(body: PerformanceBody):
+    _owner(body.device_id)
     market = _norm_market(body.market, "us")
     account = _load_account(body.device_id)
     g = _load_game(body.game_id) if body.game_id else None

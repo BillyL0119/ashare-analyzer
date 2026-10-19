@@ -8,6 +8,7 @@ import Missions from './paper/Missions'
 import { Positions, Orders, History, Leaderboard } from './paper/DeskTables'
 import { BDR, MUTED, UP, DOWN, Card, Seg, Stat, Modal, Button, inputStyle, money, signed, pct, plColor } from './paper/ui'
 import getDeviceId from '../utils/deviceId'
+import { paperHeaders } from '../utils/paperAuth'
 
 // Paper trading desk: four market accounts plus competitions, each traded through the same order
 // ticket (market / limit / stop / stop-limit / trailing stop, short selling in US accounts).
@@ -21,7 +22,7 @@ const localNick = (nick, lang) => (nick || '').replace(/^用户#/, `${NICK_PREFI
 const MARKETS = ['us', 'cn', 'hk', 'jp']
 
 async function postJSON(path, body) {
-  const r = await fetch(`/api/paper/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  const r = await fetch(`/api/paper/${path}`, { method: 'POST', headers: paperHeaders(), body: JSON.stringify(body) })
   const d = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(typeof d.detail === 'string' ? d.detail : 'Error')
   return d

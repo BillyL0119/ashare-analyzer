@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CUR } from '../../utils/markets'
 import { MUTED, DOWN, Modal, Field, inputStyle, Button, Seg } from './ui'
+import { paperHeaders } from '../../utils/paperAuth'
 
 // Starting-cash choices per market (the server accepts anything in the same range)
 const CASH = { us: [10_000, 100_000, 1_000_000], cn: [100_000, 1_000_000, 10_000_000], hk: [100_000, 1_000_000, 10_000_000], jp: [1_000_000, 10_000_000, 100_000_000] }
@@ -22,7 +23,7 @@ export default function GamesModal({ s, accountKey, nickname, marketLabels, onCl
   const post = async (path, body) => {
     setBusy(true); setErr('')
     try {
-      const r = await fetch(`/api/paper/games/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: accountKey, ...body }) })
+      const r = await fetch(`/api/paper/games/${path}`, { method: 'POST', headers: paperHeaders(), body: JSON.stringify({ device_id: accountKey, ...body }) })
       const d = await r.json()
       if (!r.ok) throw new Error(typeof d.detail === 'string' ? d.detail : 'Error')
       onJoined(d.game)

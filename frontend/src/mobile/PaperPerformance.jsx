@@ -3,6 +3,7 @@ import { useT } from './i18n'
 import { Section } from './ui'
 import useLangStore from '../store/langStore'
 import { changeColor } from './helpers'
+import { paperHeaders } from '../utils/paperAuth'
 
 // Account value vs the S&P 500 / CSI 300 / Hang Seng / Nikkei 225 since the first trade, drawn as plain SVG lines.
 const W = 340, H = 150, PAD = 4
@@ -16,7 +17,7 @@ export default function PaperPerformance({ deviceId, market, refreshKey, gameId 
 
   useEffect(() => {
     let alive = true
-    fetch('/api/paper/performance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: deviceId, market, game_id: gameId || null }) })
+    fetch('/api/paper/performance', { method: 'POST', headers: paperHeaders(), body: JSON.stringify({ device_id: deviceId, market, game_id: gameId || null }) })
       .then((r) => (r.ok ? r.json() : null)).then((d) => { if (alive) setData(d) }).catch(() => {})
     return () => { alive = false }
   }, [deviceId, market, refreshKey, gameId])

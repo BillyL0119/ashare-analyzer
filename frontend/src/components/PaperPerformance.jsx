@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import ReactECharts from '../lib/echarts'
 import { riseColor, fallColor } from '../utils/chartHelpers'
 import { CUR } from '../utils/markets'
+import { paperHeaders } from '../utils/paperAuth'
 
 // Paper trading performance: the account's value day by day (rebuilt from its trades on the server)
 // against the S&P 500 (US), CSI 300 (A-shares), Hang Seng (HK) or Nikkei 225 (Japan), both starting from the same money.
@@ -24,7 +25,7 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
   useEffect(() => {
     let alive = true
     fetch('/api/paper/performance', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: paperHeaders(),
       body: JSON.stringify({ device_id: accountKey, market, game_id: gameId || null }),
     })
       .then((r) => (r.ok ? r.json() : null))

@@ -9,16 +9,14 @@ import { CUR } from '../../utils/markets'
 import { Icon } from '../icons'
 import { ErrorBox, Pill, Section, Segment, Skeleton } from '../ui'
 import { estFee } from '../../components/paper/ui'
-import { newDeviceId } from '../../utils/deviceId'
+import { paperKey, paperHeaders } from '../../utils/paperAuth'
+import useAuthStore from '../../store/authStore'
 
-function deviceId() {
-  let id = localStorage.getItem('bfs_device_id')
-  if (!id) { id = newDeviceId(); localStorage.setItem('bfs_device_id', id) }
-  return id
-}
+// Signed in: the user's account (shared with the desktop site); otherwise this browser's device id
+const deviceId = paperKey
 
 async function post(path, body) {
-  const res = await fetch('/api/paper' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: deviceId(), ...body }) })
+  const res = await fetch('/api/paper' + path, { method: 'POST', headers: paperHeaders(), body: JSON.stringify({ device_id: deviceId(), ...body }) })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'error')
   return data
@@ -472,11 +470,12 @@ export default function Paper() {
     try { setAcc(await post('/account', { lang })); setErr(null) } catch (e) { setErr(e) }
     if (gameId) loadGame(gameId)
   }, [gameId, loadGame, lang])
+  const uid = useAuthStore((st) => st.user?.id)
   useEffect(() => {
     let on = true
     post('/account', { lang }).then((a) => { if (on) { setAcc(a); setErr(null) } }).catch((e) => { if (on) setErr(e) })
     return () => { on = false }
-  }, [lang])                     // missions come back in the reader's language
+  }, [lang, uid])                // missions in the reader's language; signing in or out switches account
   useEffect(() => {
     if (!gameId) return undefined
     let on = true

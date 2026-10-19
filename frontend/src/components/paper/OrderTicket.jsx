@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import useSymbolSuggest from '../../hooks/useSymbolSuggest'
 import { CUR } from '../../utils/markets'
 import { BDR, MUTED, UP, DOWN, ACCENT, Card, Seg, Field, inputStyle, Button, fmt, money, estFee } from './ui'
+import { paperHeaders } from '../../utils/paperAuth'
 
 const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#6366f1' }
 const PH = { us: 'AAPL / Apple', cn: '600519 / 茅台', hk: '00700 / 腾讯', jp: '7203 / Toyota' }
@@ -98,7 +99,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
     setBusy(true); setMsg(null)
     try {
       const r = await fetch('/api/paper/order', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: paperHeaders(),
         body: JSON.stringify({
           device_id: accountKey, market, symbol: sym, shares: Number(shares), side, type, tif, lang, game_id: gameId || null,
           limit_price: needLimit ? Number(limitPrice) : null, stop_price: needStop ? Number(stopPrice) : null,

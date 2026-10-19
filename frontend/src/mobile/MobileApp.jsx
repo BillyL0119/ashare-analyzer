@@ -6,6 +6,7 @@ import { Icon } from './icons'
 import Settings from './Settings'
 import Market from './tabs/Market'
 import { trackFeature, trackVisit } from '../utils/analytics'
+import useAuthStore from '../store/authStore'
 
 const StockDetail = lazy(() => import('./tabs/StockDetail'))
 const Learning = lazy(() => import('./tabs/Learning'))
@@ -31,6 +32,12 @@ function TabBar() {
 
 export default function MobileApp() {
   const [settings, setSettings] = useState(false)
+  // Signed-in sessions (from either UI) carry over: paper trading uses the same account as the desktop site
+  useEffect(() => {
+    let cleanup
+    useAuthStore.getState().init().then((fn) => { cleanup = fn })
+    return () => { cleanup?.() }
+  }, [])
   const loc = useLocation()
   const inStock = loc.pathname.startsWith('/stock/')
   const fullScreen = inStock || /^\/study\/.+/.test(loc.pathname)

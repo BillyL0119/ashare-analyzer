@@ -3,6 +3,9 @@ import useThemeStore from '../store/themeStore'
 import { setUIOverride, inAppName } from '../utils/device'
 import { useT, SUPPORTED_LANGS } from './i18n'
 import { Segment } from './ui'
+import { useState } from 'react'
+import useAuthStore from '../store/authStore'
+import AuthModal from '../components/AuthModal'
 
 export default function Settings({ onClose }) {
   const t = useT()
@@ -36,6 +39,7 @@ export default function Settings({ onClose }) {
               ))}
             </div>
           </div>
+          <Account lang={lang} />
           {inApp && <div className="m-tile m-muted" style={{ fontSize: 12.5 }}>{t('在 App 内置浏览器中打开')} · {t('用系统浏览器打开')} ↗</div>}
           <button className="m-btn ghost" onClick={desktop}>{t('切换到电脑版')}</button>
           <div className="m-card">
@@ -45,6 +49,32 @@ export default function Settings({ onClose }) {
           <button className="m-btn" onClick={onClose}>{t('关闭')}</button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// Sign in to share the paper trading account (and saved settings) with the desktop site
+function Account({ lang }) {
+  const t = useT()
+  const { user, signOut } = useAuthStore()
+  const [open, setOpen] = useState(false)
+  return (
+    <div>
+      <div className="m-sec"><span>{t('账户')}</span></div>
+      <div className="m-card" style={{ display: 'grid', gap: 10 }}>
+        {user ? (
+          <>
+            <span style={{ fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</span>
+            <button className="m-btn ghost" onClick={() => signOut()}>{t('退出登录')}</button>
+          </>
+        ) : (
+          <>
+            <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.5 }}>{t('登录后，模拟盘账户在手机和电脑上同步。')}</span>
+            <button className="m-btn" onClick={() => setOpen(true)}>{t('登录 / 注册')}</button>
+          </>
+        )}
+      </div>
+      <AuthModal open={open} onClose={() => setOpen(false)} lang={lang} />
     </div>
   )
 }
