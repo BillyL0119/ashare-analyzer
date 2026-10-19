@@ -6,6 +6,7 @@ import OrderTicket from './paper/OrderTicket'
 import GamesModal from './paper/GamesModal'
 import Missions from './paper/Missions'
 import Checkup from './paper/Checkup'
+import StockSearch from './paper/StockSearch'
 import { Positions, Orders, History, Leaderboard } from './paper/DeskTables'
 import { BDR, MUTED, UP, DOWN, Card, Seg, Stat, Modal, Button, inputStyle, money, signed, pct, plColor } from './paper/ui'
 import getDeviceId from '../utils/deviceId'
@@ -147,6 +148,12 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
     ...MARKETS.map((m) => ({ value: m, label: s.markets[m] })),
     ...(account?.games || []).map((g) => ({ value: `g:${g.id}`, label: `🏆 ${g.name}` })),
   ]
+  // Search result's Trade button: switch to that market's account and fill in the ticket
+  const tradeFromSearch = (r) => {
+    if (!gameId && r.market !== active) { setActive(r.market); setGameView(null) }
+    setPrefill({ symbol: r.code, side: 'buy', t: Date.now() })
+    setTimeout(() => document.getElementById('pt-ticket')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
+  }
   const inviteText = game ? `${s.game.inviteText(game.name, game.code)} ${window.location.origin}/paper` : ''
 
   if (err && !account) return <div style={{ textAlign: 'center', padding: '60px 0', color: DOWN }}>{err}</div>
@@ -169,7 +176,10 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           <h1 style={{ margin: 0, fontSize: 26 }}>{s.title}</h1>
           <p style={{ margin: '4px 0 0', fontSize: 13.5, color: MUTED, maxWidth: 640 }}>{s.subtitle}</p>
         </div>
-        <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>🏆 {s.newGame}</Button>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', flex: '1 1 420px', justifyContent: 'flex-end', minWidth: 0 }}>
+          <StockSearch s={s} lang={lang} first={market || 'us'} only={gameId ? market : null} onTrade={tradeFromSearch} />
+          <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>🏆 {s.newGame}</Button>
+        </div>
       </div>
 
       {!user && (

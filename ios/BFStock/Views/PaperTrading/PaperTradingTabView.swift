@@ -12,6 +12,9 @@ struct PaperTradingTabView: View {
     @State private var showTradeToast = false
     @State private var showNickname = false
     @State private var nickDraft = ""
+    @StateObject private var search = MarketViewModel()      // only its cross-market stock search is used here
+    @State private var searchText = ""
+    @State private var chartTarget: StockSearchResult?
 
     private let haptic = UINotificationFeedbackGenerator()
 
@@ -44,6 +47,12 @@ struct PaperTradingTabView: View {
             .navigationTitle("tab.paper_trading")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarItems }
+            .searchable(text: $searchText, prompt: Text(L("搜索股票，查看走势或交易")))
+            .onChange(of: searchText) { _, new in search.search(new) }
+            .overlay { searchResults }
+            .navigationDestination(item: $chartTarget) { r in
+                StockDetailView(code: r.code, name: r.name, market: r.resolvedMarket)
+            }
         }
         .task { await vm.loadAccount() }
         .task(id: selectedGame) {
@@ -202,6 +211,74 @@ struct PaperTradingTabView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: vm.isTradingBusy)
+    }
+
+    // MARK: - Stock search
+
+    private func openChart(_ code: String, name: String?) {
+        chartTarget = StockSearchResult(code: code, name: name ?? code, changePct: nil, market: market.rawValue)
+    }
+
+    /// Results across the four markets: tap for the chart page, Trade to open the order sheet on it.
+    @ViewBuilder
+    private var searchResults: some View {
+        if !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+            ScrollView {
+                VStack(spacing: 0) {
+                    if search.isSearching && search.searchResults.isEmpty {
+                        ProgressView(String(localized: "loading")).frame(maxWidth: .infinity, minHeight: 80)
+                    } else if let err = search.searchError {
+                        Text(err).foregroundStyle(.secondary).font(.subheadline).padding()
+                    } else if search.searchResults.isEmpty {
+                        Text("暂无结果").foregroundStyle(.secondary).font(.subheadline).frame(maxWidth: .infinity, minHeight: 80)
+                    } else {
+                        let rows = Array(search.searchResults.enumerated())
+                        ForEach(rows, id: \.element.id) { idx, r in
+                            let m = r.resolvedMarket
+                            HStack(spacing: 8) {
+                                Button { chartTarget = r } label: {
+                                    HStack(spacing: 8) {
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text(r.name).font(.subheadline.weight(.semibold)).lineLimit(1)
+                                            Text("\(r.code) · \(m.label)").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                                        }
+                                        Spacer(minLength: 4)
+                                        if let p = r.changePct {
+                                            Text(String(format: "%+.2f%%", p))
+                                                .font(.subheadline.weight(.semibold)).monospacedDigit()
+                                                .foregroundStyle(p == 0 ? Color.secondary : Theme.changeColor(p, market: m))
+                                                .fixedSize()
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
+                                    .accessibilityElement(children: .combine)
+                                }
+                                .buttonStyle(.plain)
+                                // A competition trades one market only
+                                if !ended, game == nil || m == market {
+                                    Button {
+                                        if game == nil { selectedMarket = m }
+                                        searchText = ""
+                                        order = OrderSheetItem(side: .buy, symbol: r.code)
+                                    } label: {
+                                        Text(L("交易")).font(.footnote.weight(.semibold))
+                                            .padding(.horizontal, 12).padding(.vertical, 6)
+                                            .foregroundStyle(.white).background(DS.accent, in: Capsule())
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            if idx < rows.count - 1 { RowDivider() }
+                        }
+                    }
+                }
+                .card(padding: 0)
+                .padding(16)
+            }
+            .background(DS.bg)
+        }
     }
 
     // MARK: - Learning missions
@@ -383,6 +460,12 @@ struct PaperTradingTabView: View {
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     if !ended { order = OrderSheetItem(side: .sell, symbol: item.key) }
+                                }
+                                .contextMenu {
+                                    Button { openChart(item.key, name: item.value.name) } label: { Label(L("查看走势"), systemImage: "chart.xyaxis.line") }
+                                    if !ended {
+                                        Button { order = OrderSheetItem(side: .sell, symbol: item.key) } label: { Label(L("交易"), systemImage: "arrow.left.arrow.right") }
+                                    }
                                 }
                             if idx < positions.count - 1 { RowDivider() }
                         }

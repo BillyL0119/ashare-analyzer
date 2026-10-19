@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BDR, MUTED, UP, DOWN, ACCENT, fmt, money, signed, pct, plColor } from './ui'
+import { BDR, MUTED, UP, DOWN, ACCENT, fmt, money, signed, pct, plColor, StockLink } from './ui'
 
 const th = { textAlign: 'left', padding: '8px 10px', fontSize: 11.5, color: MUTED, fontWeight: 600, whiteSpace: 'nowrap', borderBottom: `1px solid ${BDR}` }
 const td = { padding: '9px 10px', fontSize: 13, borderBottom: `1px solid ${BDR}`, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }
@@ -33,7 +33,7 @@ export function Positions({ s, view, market, onAction }) {
       </>}>
         {longs.map(([sym, p]) => (
           <tr key={sym}>
-            <td style={td}><b style={{ color: ACCENT }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span>
+            <td style={td}><StockLink market={market} code={sym} name={p.name} title={s.search.viewChart}><b style={{ color: ACCENT }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span></StockLink>
               <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fmt(p.market_value / total * 100, 1)}%{p.available_shares < p.shares ? ` · ${s.available(p.available_shares)}` : ''}</div></td>
             <td style={num}>{p.shares}</td><td style={num}>{money(p.avg_cost, market)}</td><td style={num}>{money(p.current_price, market)}</td>
             <td style={num}>{money(p.market_value, market, 0)}</td>
@@ -54,7 +54,7 @@ export function Positions({ s, view, market, onAction }) {
           </>}>
             {shorts.map(([sym, p]) => (
               <tr key={sym}>
-                <td style={td}><b style={{ color: '#f59e0b' }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span></td>
+                <td style={td}><StockLink market={market} code={sym} name={p.name} title={s.search.viewChart}><b style={{ color: '#f59e0b' }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span></StockLink></td>
                 <td style={num}>-{p.shares}</td><td style={num}>{money(p.avg_price, market)}</td><td style={num}>{money(p.current_price, market)}</td>
                 <td style={num}>{money(-p.market_value, market, 0)}</td>
                 <td style={{ ...num, color: plColor(p.profit_loss, market) }}>{signed(p.profit_loss, market, 0)}<div style={{ fontSize: 11 }}>{pct(p.profit_loss_pct)}</div></td>
@@ -89,7 +89,7 @@ export function Orders({ s, view, market, lang, onCancel }) {
         <tr key={o.id} style={{ opacity: o.status === 'open' ? 1 : 0.65 }}>
           <td style={td}>{when(o.created_at)}</td>
           <td style={{ ...td, fontWeight: 700 }}>{s.side[o.side]}</td>
-          <td style={td}><b>{o.symbol}</b></td>
+          <td style={td}><StockLink market={market} code={o.symbol} title={s.search.viewChart}><b>{o.symbol}</b></StockLink></td>
           <td style={num}>{o.shares}</td>
           <td style={td}>{s.type[o.type]}{o.type !== 'market' ? ` · ${o.tif === 'gtc' ? 'GTC' : s.tif.day}` : ''}</td>
           <td style={{ ...td, whiteSpace: 'normal', minWidth: 160, color: MUTED, fontSize: 12 }}>{terms(o, s, market)}</td>
@@ -135,7 +135,7 @@ export function History({ s, view, market, filename }) {
               <tr key={i}>
                 <td style={td}>{t.date}{t.time ? ` ${t.time}` : ''}</td>
                 <td style={{ ...td, fontWeight: 700, color: ACCENT }}>{corp}</td>
-                <td style={td}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 12 }}>{t.name}</span></td>
+                <td style={td}><StockLink market={market} code={t.symbol} name={t.name} title={s.search.viewChart}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 12 }}>{t.name}</span></StockLink></td>
                 <td style={num}>{t.type === 'dividend' ? Math.abs(t.shares) : `${t.shares > 0 ? '+' : ''}${t.shares}`}</td>
                 <td style={num}>{t.type === 'dividend' ? money(t.price, market) : t.ratio || '—'}</td>
                 <td style={{ ...num, color: plColor(t.amount, market) }}>{t.amount ? signed(t.amount, market) : '—'}</td>
@@ -147,7 +147,7 @@ export function History({ s, view, market, filename }) {
             <tr key={i}>
               <td style={td}>{t.date}{t.time ? ` ${t.time}` : ''}</td>
               <td style={{ ...td, fontWeight: 700, color: t.type === 'buy' || t.type === 'cover' ? UP : DOWN }}>{s.side[t.type] || t.type}</td>
-              <td style={td}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 12 }}>{t.name}</span></td>
+              <td style={td}><StockLink market={market} code={t.symbol} name={t.name} title={s.search.viewChart}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 12 }}>{t.name}</span></StockLink></td>
               <td style={num}>{t.shares}</td><td style={num}>{money(t.price, market)}</td><td style={num}>{money(t.amount, market, 0)}</td>
               <td style={num}>{money(t.commission, market)}</td>
               <td style={{ ...num, color: plColor(t.profit_loss, market) }}>{t.profit_loss != null ? signed(t.profit_loss, market, 0) : '—'}</td>

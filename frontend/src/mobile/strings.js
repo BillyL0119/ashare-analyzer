@@ -2869,6 +2869,24 @@ export const STR = {
   "포트폴리오 점검",
   "Bilan du portefeuille"
  ],
+ "搜索股票，查看走势或交易": [
+  "Search a stock to see its chart or trade it",
+  "銘柄を検索してチャートを見る・取引する",
+  "종목을 검색해 차트를 보거나 거래하세요",
+  "Cherchez une action pour voir son graphique ou la trader"
+ ],
+ "交易": [
+  "Trade",
+  "取引",
+  "거래",
+  "Trader"
+ ],
+ "查看走势": [
+  "View chart",
+  "チャートを見る",
+  "차트 보기",
+  "Voir le graphique"
+ ],
  "刚刚": [
   "Just now",
   "たった今",

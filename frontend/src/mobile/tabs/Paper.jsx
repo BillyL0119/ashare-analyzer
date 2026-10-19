@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import useStockSearch from '../../hooks/useStockSearch'
 import useLangStore from '../../store/langStore'
 import PaperPerformance from '../PaperPerformance'
 import useSymbolSuggest from '../../hooks/useSymbolSuggest'
@@ -96,6 +98,7 @@ function PriceInput({ label, value, onChange, cur }) {
 
 function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
   const t = useT()
+  const nav = useNavigate()
   const lang = useLangStore((st) => st.lang)
   const cur = CUR[market]
   const shortOk = !!view?.short_ok
@@ -168,7 +171,8 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
             <input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder={t(PLACEHOLDER[market])} autoCapitalize="characters" autoCorrect="off" autoComplete="off" enterKeyHint="search"
               style={{ width: '100%', minWidth: 0, background: 'none', border: 0, outline: 0, fontSize: symbol ? 26 : 17, fontWeight: symbol ? 800 : 500, fontFamily: symbol ? 'ui-monospace, Menlo, monospace' : 'inherit' }} />
             <div style={{ minHeight: 18, fontSize: 13, marginTop: 4 }}>
-              {quote?.price ? <span><b>{quote.name}</b> <span className="m-muted m-num">· {money(quote.price, cur)}</span></span>
+              {quote?.price ? <span><b>{quote.name}</b> <span className="m-muted m-num">· {money(quote.price, cur)}</span>
+                <button onClick={() => nav(`/stock/${market}/${encodeURIComponent(sym)}`)} className="m-link" style={{ marginLeft: 10, fontSize: 13 }}>{t('查看走势')} ›</button></span>
                 : quote?.missing && !showSuggest ? <span style={{ color: '#ef4444' }}>{t('没有找到这只股票')}</span> : null}
             </div>
             {showSuggest && (
@@ -196,7 +200,10 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
           <div className="m-card" style={{ display: 'grid', gap: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button onClick={() => setSymbol('')} style={{ fontSize: 18, fontWeight: 800 }}>{sym} <span className="m-muted" style={{ fontSize: 13, fontWeight: 500 }}>{held.name}</span></button>
-              <Pill value={held.profit_loss_pct} market={market} />
+              <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <button onClick={() => nav(`/stock/${market}/${encodeURIComponent(sym)}`)} className="m-link" style={{ fontSize: 13 }}>{t('查看走势')} ›</button>
+                <Pill value={held.profit_loss_pct} market={market} />
+              </span>
             </div>
             <div className="m-tiles">
               {[[t('现价'), money(held.current_price, cur)], [t('成本'), money(side === 'sell' ? held.avg_cost : held.avg_price, cur)],
@@ -361,6 +368,43 @@ function CheckupCard({ market, gameId, refreshKey }) {
         })}
       </div>
     </Section>
+  )
+}
+
+// Look up any stock: tap a result for its chart page, or Trade to open the order sheet on it
+function PaperSearch({ only, first, onTrade }) {
+  const t = useT(); const nav = useNavigate()
+  const lang = useLangStore((st) => st.lang)
+  const [q, setQ] = useState('')
+  const rows = useStockSearch(q, lang, { only, first })
+  return (
+    <div>
+      <label className="m-search" style={{ marginBottom: q.trim() ? 10 : 0 }}>
+        {Icon.search}
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('搜索股票，查看走势或交易')} enterKeyHint="search"
+          autoCapitalize="characters" autoCorrect="off" spellCheck={false} />
+        {q && <button onClick={() => setQ('')} aria-label={t('清除')} className="m-muted">✕</button>}
+      </label>
+      {q.trim() && (
+        <div className="m-card flush">
+          {rows == null && <div className="m-empty">{t('加载中')}…</div>}
+          {rows && rows.length === 0 && <div className="m-empty">{t('未找到相关股票')}</div>}
+          {(rows || []).map((r) => (
+            <div className="m-row" key={r.market + r.code} role="button" tabIndex={0} style={{ cursor: 'pointer' }}
+              onClick={() => nav(`/stock/${r.market}/${encodeURIComponent(r.code)}`)}
+              onKeyDown={(e) => { if (e.key === 'Enter') nav(`/stock/${r.market}/${encodeURIComponent(r.code)}`) }}>
+              <div className="m-grow" style={{ minWidth: 0 }}>
+                <div className="m-name" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
+                <div className="m-sub m-num">{r.code} · {t(chipLabel(r.market))}</div>
+              </div>
+              {r.pct != null && <Pill value={r.pct} market={r.market} width={68} />}
+              <button onClick={(e) => { e.stopPropagation(); setQ(''); onTrade(r) }}
+                style={{ flex: 'none', padding: '6px 12px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontSize: 13, fontWeight: 650 }}>{t('交易')}</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -617,6 +661,8 @@ export default function Paper() {
           <button onClick={() => setSheet('games')} style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 650, whiteSpace: 'nowrap', border: '1px dashed var(--stroke)', color: 'var(--accent)' }}>+ {t('比赛')}</button>
         </div>
       </div>
+
+      <PaperSearch only={gameId ? market : null} first={market} onTrade={(r) => { if (!gameId && r.market !== active) setActive(r.market); setSheet({ side: 'buy', symbol: r.code }) }} />
 
       {game && (
         <div className="m-card" style={{ display: 'grid', gap: 10 }}>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import useSymbolSuggest from '../../hooks/useSymbolSuggest'
 import { CUR } from '../../utils/markets'
-import { BDR, MUTED, UP, DOWN, ACCENT, Card, Seg, Field, inputStyle, Button, fmt, money, estFee } from './ui'
+import { BDR, MUTED, UP, DOWN, ACCENT, Card, Seg, Field, inputStyle, Button, fmt, money, estFee, StockLink } from './ui'
 import { paperHeaders } from '../../utils/paperAuth'
 
 const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#6366f1' }
@@ -119,7 +119,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
   const types = ['market', 'limit', 'stop', 'stop_limit', ...(side === 'sell' || side === 'cover' ? ['trailing_stop'] : [])]
 
   return (
-    <Card style={{ display: 'grid', gap: 14, alignContent: 'start' }}>
+    <Card id="pt-ticket" style={{ display: 'grid', gap: 14, alignContent: 'start', scrollMarginTop: 80 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <Seg value={side} onChange={setSide} options={sides} size="sm" />
         {sess && (
@@ -152,7 +152,8 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         </div>
         <div style={{ minHeight: 18, fontSize: 12.5 }}>
           {q?.price ? <span><b>{q.name}</b> <span style={{ color: MUTED }}>· {money(q.price, market)}</span>
-            {q.chg != null && <span style={{ color: (q.chg >= 0) === (market !== 'cn') ? UP : DOWN, marginLeft: 6 }}>{q.chg > 0 ? '+' : ''}{Number(q.chg).toFixed(2)}%</span>}</span>
+            {q.chg != null && <span style={{ color: (q.chg >= 0) === (market !== 'cn') ? UP : DOWN, marginLeft: 6 }}>{q.chg > 0 ? '+' : ''}{Number(q.chg).toFixed(2)}%</span>}
+            <StockLink market={market} code={sym} name={q.name} style={{ color: ACCENT, fontWeight: 650, marginLeft: 10 }}>{s.search.viewChart} ↗</StockLink></span>
             : q?.missing ? <span style={{ color: DOWN }}>—</span> : null}
         </div>
       </Field>

@@ -1,5 +1,7 @@
 // Small building blocks shared by the paper trading desk.
+import { useNavigate } from 'react-router-dom'
 import { CUR } from '../../utils/markets'
+import useCompareStore from '../../store/compareStore'
 
 export const BDR = 'var(--border-primary)'
 export const MUTED = 'var(--text-secondary)'
@@ -98,4 +100,23 @@ export function estFee(m, side, amount, shares) {
   if (m === 'us') return selling ? shares * 0.000008 : 0
   if (m === 'hk') return Math.ceil(amount * 0.001) + amount * 0.000085
   return 0
+}
+
+export const stockHref = (market, code) => `/stock/${market}/${encodeURIComponent(code)}`
+
+/** A ticker that opens the stock's chart page; a modified click still opens a new tab. */
+export function StockLink({ market, code, name, children, style, title }) {
+  const nav = useNavigate()
+  const href = stockHref(market, code)
+  return (
+    <a href={href} title={title} style={{ color: 'inherit', textDecoration: 'none', ...style }}
+      onClick={(e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return
+        e.preventDefault()
+        useCompareStore.getState().switchMarketAndAddSymbol(market, { code, name: name || code })
+        nav(href)
+      }}>
+      {children}
+    </a>
+  )
 }

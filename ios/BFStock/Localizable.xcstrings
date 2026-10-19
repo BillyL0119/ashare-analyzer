@@ -2672,6 +2672,35 @@
         }
       }
     },
+    "交易": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trade"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trader"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取引"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거래"
+          }
+        }
+      }
+    },
     "交易中": {
       "extractionState": "manual",
       "localizations": {
@@ -8646,6 +8675,35 @@
         }
       }
     },
+    "搜索股票，查看走势或交易": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search a stock to see its chart or trade it"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cherchez une action pour voir son graphique ou la trader"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "銘柄を検索してチャートを見る・取引する"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종목을 검색해 차트를 보거나 거래하세요"
+          }
+        }
+      }
+    },
     "搜索股票，点详情页右上角的星标即可添加": {
       "extractionState": "manual",
       "localizations": {
@@ -10208,6 +10266,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "출처 보기"
+          }
+        }
+      }
+    },
+    "查看走势": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View chart"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir le graphique"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "チャートを見る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "차트 보기"
           }
         }
       }
