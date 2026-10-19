@@ -2839,6 +2839,36 @@ export const STR = {
   "로그인하면 휴대폰과 컴퓨터에서 같은 모의투자 계좌를 사용할 수 있습니다.",
   "Connectez-vous pour utiliser le même compte de simulation sur téléphone et ordinateur."
  ],
+ "这台设备上有你登录前的 %lld 笔模拟交易。要把它们转到你的账户吗？": [
+  "This device has %lld practice trades from before you signed in. Move them to your account?",
+  "この端末にログイン前の模擬取引が%lld件あります。あなたのアカウントに移しますか？",
+  "이 기기에 로그인 전 모의 거래 %lld건이 있습니다. 내 계정으로 옮길까요?",
+  "Cet appareil contient %lld opérations d'entraînement d'avant votre connexion. Les transférer sur votre compte ?"
+ ],
+ "转到我的账户": [
+  "Move to my account",
+  "アカウントに移す",
+  "내 계정으로 옮기기",
+  "Transférer sur mon compte"
+ ],
+ "不用了": [
+  "No thanks",
+  "移さない",
+  "괜찮아요",
+  "Non merci"
+ ],
+ "已转到你的账户": [
+  "Moved to your account",
+  "アカウントに移しました",
+  "계정으로 옮겼습니다",
+  "Transféré sur votre compte"
+ ],
+ "组合体检": [
+  "Check-up",
+  "ポートフォリオ診断",
+  "포트폴리오 점검",
+  "Bilan du portefeuille"
+ ],
  "刚刚": [
   "Just now",
   "たった今",

@@ -11,6 +11,7 @@ import { ErrorBox, Pill, Section, Segment, Skeleton } from '../ui'
 import { estFee } from '../../components/paper/ui'
 import { paperKey, paperHeaders } from '../../utils/paperAuth'
 import useAuthStore from '../../store/authStore'
+import getDeviceId from '../../utils/deviceId'
 
 // Signed in: the user's account (shared with the desktop site); otherwise this browser's device id
 const deviceId = paperKey
@@ -313,6 +314,56 @@ function MissionsCard({ missions, onAction }) {
   )
 }
 
+const CHECK_LEVEL = { warn: ['!', '#f59e0b'], info: ['i', '#0ea5e9'], good: ['✓', '#10b981'] }
+const CHECK_PALETTE = ['#0ea5e9', '#8b5cf6', '#f59e0b', '#10b981', '#ec4899', '#6366f1', '#14b8a6', '#f97316']
+
+// Portfolio check-up: where the money sits plus plain findings, worked out by the server
+function CheckupCard({ market, gameId, refreshKey }) {
+  const t = useT()
+  const lang = useLangStore((st) => st.lang)
+  const [data, setData] = useState(null)
+  useEffect(() => {
+    let on = true
+    post('/checkup', { market, game_id: gameId || null, lang }).then((d) => { if (on) setData(d) }).catch(() => {})
+    return () => { on = false }
+  }, [market, gameId, lang, refreshKey])
+  if (!data?.findings?.length) return null
+  let ci = 0
+  const alloc = (data.allocation || []).map((a) => ({ ...a, color: a.cash ? 'var(--text-3)' : CHECK_PALETTE[ci++ % CHECK_PALETTE.length] }))
+  return (
+    <Section title={t('组合体检')}>
+      <div className="m-card" style={{ display: 'grid', gap: 12 }}>
+        {alloc.length > 0 && (
+          <div style={{ display: 'grid', gap: 8 }}>
+            <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden', background: 'var(--surface-hi)' }}>
+              {alloc.map((a) => <div key={a.name} style={{ width: `${a.pct}%`, background: a.color }} />)}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px' }}>
+              {alloc.map((a) => (
+                <span key={a.name} className="m-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: 2, background: a.color }} />{a.name} <b className="m-num">{a.pct}%</b>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        {data.findings.map((f) => {
+          const [icon, color] = CHECK_LEVEL[f.level] || CHECK_LEVEL.info
+          return (
+            <div key={f.id} style={{ display: 'flex', gap: 10 }}>
+              <span aria-hidden="true" style={{ flex: 'none', width: 20, height: 20, marginTop: 1, borderRadius: 10, display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 800, color: '#fff', background: color }}>{icon}</span>
+              <div style={{ minWidth: 0, display: 'grid', gap: 2 }}>
+                <b style={{ fontSize: 14 }}>{f.title}</b>
+                <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.5 }}>{f.body}</span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </Section>
+  )
+}
+
 function NickSheet({ nickname, onClose, onDone }) {
   const t = useT()
   const [nick, setNick] = useState(nickname && !/^用户#/.test(nickname) ? nickname : '')
@@ -471,6 +522,21 @@ export default function Paper() {
     if (gameId) loadGame(gameId)
   }, [gameId, loadGame, lang])
   const uid = useAuthStore((st) => st.user?.id)
+  // Signed in with an empty account while this browser traded as a guest: offer to move that over
+  const [guestTrades, setGuestTrades] = useState(0)
+  const countActivity = (a) => (a?.games?.length || 0) + ['us', 'cn', 'hk', 'jp'].reduce((n, mk) => n + (a?.markets?.[mk]?.transactions?.length || 0) + (a?.markets?.[mk]?.orders?.length || 0), 0)
+  const userEmpty = !!uid && !!acc && countActivity(acc) === 0
+  useEffect(() => {
+    let skip = false
+    try { skip = localStorage.getItem('bfs_claim_skip') === getDeviceId() } catch { /* storage blocked */ }
+    if (!userEmpty || skip) return undefined
+    let alive = true
+    fetch('/api/paper/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: getDeviceId() }) })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((g) => { if (alive && g) setGuestTrades(['us', 'cn', 'hk', 'jp'].reduce((n, mk) => n + (g.markets?.[mk]?.transactions?.length || 0), 0) + (g.games?.length || 0)) })
+      .catch(() => {})
+    return () => { alive = false }
+  }, [userEmpty])
   useEffect(() => {
     let on = true
     post('/account', { lang }).then((a) => { if (on) { setAcc(a); setErr(null) } }).catch((e) => { if (on) setErr(e) })
@@ -600,6 +666,17 @@ export default function Paper() {
         </div>
       )}
 
+      {userEmpty && guestTrades > 0 && (
+        <div className="m-card" style={{ display: 'grid', gap: 10, borderColor: 'var(--accent)' }}>
+          <span style={{ fontSize: 14, lineHeight: 1.5 }}>{t('这台设备上有你登录前的 %lld 笔模拟交易。要把它们转到你的账户吗？', guestTrades)}</span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="m-btn" style={{ flex: 1 }} onClick={async () => {
+              try { await post('/claim', { from_device: getDeviceId() }); setGuestTrades(0); setToast(t('已转到你的账户')); load() } catch (e) { setToast(e.message) }
+            }}>{t('转到我的账户')}</button>
+            <button className="m-btn ghost" style={{ flex: 1 }} onClick={() => { setGuestTrades(0); try { localStorage.setItem('bfs_claim_skip', getDeviceId()) } catch { /* storage blocked */ } }}>{t('不用了')}</button>
+          </div>
+        </div>
+      )}
       {!gameId && <MissionsCard missions={acc?.missions} onAction={missionAction} />}
 
       {acc && view && <PaperPerformance deviceId={deviceId()} market={market} gameId={gameId} refreshKey={`${view.count}-${view.cash}`} />}
@@ -658,6 +735,8 @@ export default function Paper() {
           </div>
         </Section>
       )}
+
+      {view && (view.positions.length > 0 || view.shorts.length > 0) && <CheckupCard market={market} gameId={gameId} refreshKey={`${view.count}-${view.cash}`} />}
 
       {game && gameAcc?.leaderboard && (
         <div id="pt-standings">

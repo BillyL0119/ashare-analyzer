@@ -931,8 +931,8 @@ def leaderboard(device_id: str = "", market: str = "cn"):
 
 @router.post("/reset")
 def reset_account(body: DeviceBody):
-    _owner(body.device_id)
     """Fresh start for the four market accounts; nickname and competitions are kept."""
+    _owner(body.device_id)
     with _lock(body.device_id):
         account = _load_account(body.device_id)
         if account is not None:
@@ -943,6 +943,96 @@ def reset_account(body: DeviceBody):
     for m in MARKETS:
         _rank_cache.pop(m, None)
     return {"success": True, "message": "账户已重置：美股 $10万、A股 100万元、港股 HK$100万、日股 ¥1000万"}
+
+
+# ── Portfolio check-up ───────────────────────────────────────────────────────
+
+class CheckupBody(BaseModel):
+    device_id: str
+    market: Optional[str] = "us"
+    game_id: Optional[str] = None
+    lang: Optional[str] = None
+
+
+@router.post("/checkup")
+def portfolio_checkup(body: CheckupBody):
+    """Where the money sits (sectors, cash) and plain findings to learn from; see services/portfolio_checkup."""
+    _owner(body.device_id)
+    from services.portfolio_checkup import checkup
+    account = _load_account(body.device_id)
+    if account is None:
+        return checkup({}, _norm_market(body.market, "us"), body.lang)
+    if body.game_id:
+        g = _load_game(body.game_id)
+        if not g or body.game_id not in account.get("games", {}):
+            raise HTTPException(404, "Competition not found")
+        book, market = _game_book(account, g), g["market"]
+    else:
+        market = _norm_market(body.market, "us")
+        book = _market_book(account, market)
+    view = E.book_view(book, E.quotes(market, sorted(book.symbols())), E.beijing_today())
+    return checkup(view, market, body.lang)
+
+
+# ── Bring a device's paper trading over to the signed-in account ─────────────
+
+class ClaimBody(BaseModel):
+    device_id: str          # the signed-in user's id: the account to fill
+    from_device: str        # this browser's device id, whose trading moves over
+
+
+def _has_activity(acc: Optional[dict]) -> bool:
+    if not acc:
+        return False
+    if acc.get("games"):
+        return True
+    return any(acc.get(PREFIX[m] + "transactions") or acc.get(PREFIX[m] + "orders") for m in MARKETS)
+
+
+@router.post("/claim")
+def claim_device_account(body: ClaimBody):
+    """After signing in: move what this browser traded as a guest into the (still empty) user account,
+    so signing in never makes earlier practice disappear. Only possible while the user account has
+    no activity of its own; the device id stays the proof, as it was for trading on that device."""
+    _owner(body.device_id)
+    uid, src_id = body.device_id, body.from_device
+    if not _USER_ID.fullmatch(uid):
+        raise HTTPException(400, "Sign in first")
+    _safe_id(src_id)
+    if _USER_ID.fullmatch(src_id) or src_id == uid:
+        raise HTTPException(400, "Invalid device id")
+    first, second = sorted((uid, src_id))
+    with _lock(first), _lock(second):
+        src = _load_account(src_id)
+        if not _has_activity(src):
+            return {"success": False, "reason": "nothing to move"}
+        user = _load_account(uid)
+        if _has_activity(user):
+            raise HTTPException(409, "Your account already has its own trades")
+        moved = json.loads(json.dumps(src))
+        moved["device_id"] = uid
+        if user and not str(user.get("nickname", "")).startswith("用户#"):
+            moved["nickname"] = user["nickname"]
+        with _games_lock:
+            for gid in list(moved.get("games", {})):
+                g = _load_game(gid)
+                if not g:
+                    continue
+                members = g.setdefault("members", {})
+                if src_id in members:
+                    members[uid] = members.pop(src_id)
+                if g.get("owner") == src_id:
+                    g["owner"] = uid
+                _write_json(_game_path(gid), g)
+        _write_json(_account_path(uid), moved)          # not _save_account: this is not a new account
+        try:
+            os.remove(_account_path(src_id))            # its trading now lives in the user account
+        except OSError:
+            pass
+    for m in MARKETS:
+        _rank_cache.pop(m, None)
+    logger.info("paper account moved from a device to a signed-in account")
+    return {"success": True}
 
 
 # ── Order matcher ────────────────────────────────────────────────────────────

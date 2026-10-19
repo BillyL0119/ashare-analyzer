@@ -51,6 +51,7 @@ struct PaperTradingTabView: View {
         }
         .task(id: "\(perfKey)|\(current?.cash ?? 0)|\(current?.transactions.count ?? 0)") {
             await vm.loadPerformance(market: market, gameId: selectedGame)
+            await vm.loadCheckup(market: market, gameId: selectedGame)
         }
         .task {
             // Waiting orders fill in the background; keep the page current while it is open
@@ -162,6 +163,8 @@ struct PaperTradingTabView: View {
                 positionsList(current?.portfolio ?? account.positions(market))
 
                 if let shorts = current?.shorts, !shorts.isEmpty { shortsList(shorts) }
+
+                if let c = vm.checkup[perfKey], !c.allocation.isEmpty { CheckupSection(checkup: c) }
 
                 if game != nil, let board = vm.gameAccount?.leaderboard, !board.isEmpty { standings(board) }
 
@@ -549,6 +552,96 @@ private struct MissionsSection: View {
                 }
             }
             .card()
+        }
+    }
+}
+
+// MARK: - Portfolio check-up
+
+private struct CheckupSection: View {
+    let checkup: PaperCheckup
+    private static let palette: [Color] = [.cyan, .purple, .orange, .green, .pink, .indigo, .teal, .yellow]
+
+    private var colored: [(PaperCheckup.Slice, Color)] {
+        var i = 0
+        return checkup.allocation.map { s in
+            if s.cash == true { return (s, Color.secondary.opacity(0.5)) }
+            defer { i += 1 }
+            return (s, Self.palette[i % Self.palette.count])
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(L("组合体检")) { EmptyView() }
+            VStack(alignment: .leading, spacing: 12) {
+                GeometryReader { geo in
+                    HStack(spacing: 0) {
+                        ForEach(colored, id: \.0.id) { s, c in
+                            c.frame(width: geo.size.width * s.pct / 100)
+                        }
+                    }
+                }
+                .frame(height: 10)
+                .clipShape(Capsule())
+                FlowRow(colored.map { "\($0.0.name) \(String(format: "%g", $0.0.pct))%" }, colors: colored.map(\.1))
+                ForEach(checkup.findings) { f in
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: f.level == "warn" ? "exclamationmark.circle.fill"
+                              : f.level == "good" ? "checkmark.circle.fill" : "info.circle.fill")
+                            .foregroundStyle(f.level == "warn" ? Color.orange : f.level == "good" ? Color.green : Color.blue)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(f.title).font(.subheadline.weight(.semibold))
+                            Text(f.body).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+            }
+            .card()
+        }
+    }
+}
+
+/// Legend chips that wrap onto as many lines as they need.
+private struct FlowRow: View {
+    let items: [String]
+    let colors: [Color]
+    init(_ items: [String], colors: [Color]) { self.items = items; self.colors = colors }
+
+    var body: some View {
+        WrapLayout(spacing: 12, lineSpacing: 4) {
+            ForEach(items.indices, id: \.self) { i in
+                HStack(spacing: 5) {
+                    RoundedRectangle(cornerRadius: 2).fill(colors[i]).frame(width: 8, height: 8)
+                    Text(items[i]).font(.caption).foregroundStyle(.secondary).monospacedDigit()
+                }
+            }
+        }
+    }
+}
+
+private struct WrapLayout: Layout {
+    var spacing: CGFloat
+    var lineSpacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let width = proposal.width ?? .infinity
+        var x: CGFloat = 0, y: CGFloat = 0, line: CGFloat = 0, widest: CGFloat = 0
+        for v in subviews {
+            let s = v.sizeThatFits(.unspecified)
+            if x > 0, x + s.width > width { y += line + lineSpacing; x = 0; line = 0 }
+            x += s.width + spacing; line = max(line, s.height); widest = max(widest, x - spacing)
+        }
+        return CGSize(width: min(widest, width), height: y + line)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x = bounds.minX, y = bounds.minY, line: CGFloat = 0
+        for v in subviews {
+            let s = v.sizeThatFits(.unspecified)
+            if x > bounds.minX, x + s.width > bounds.maxX { y += line + lineSpacing; x = bounds.minX; line = 0 }
+            v.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(s))
+            x += s.width + spacing; line = max(line, s.height)
         }
     }
 }

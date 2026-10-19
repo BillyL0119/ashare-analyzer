@@ -276,3 +276,30 @@ struct SellBody: Encodable {
     let market: String
     var lang: String = Lang.code
 }
+
+// MARK: - Portfolio check-up
+
+struct CheckupBody: Encodable {
+    let deviceId: String
+    let market: String
+    var gameId: String? = nil
+    var lang: String = Lang.code
+}
+
+/// Where the money sits and plain findings about the mix; worked out by the server.
+struct PaperCheckup: Decodable, Equatable {
+    struct Slice: Decodable, Equatable, Identifiable {
+        let name: String
+        let pct: Double
+        var cash: Bool?
+        var id: String { name }
+    }
+    struct Finding: Decodable, Equatable, Identifiable {
+        let id: String
+        let level: String       // warn, info, good
+        let title: String
+        let body: String
+    }
+    let allocation: [Slice]
+    let findings: [Finding]
+}

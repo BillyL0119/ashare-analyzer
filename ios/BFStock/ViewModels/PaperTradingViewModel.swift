@@ -13,6 +13,7 @@ final class PaperTradingViewModel: ObservableObject {
     @Published var performance: [String: PaperPerformance] = [:]   // by market raw value, or "g:<id>"
     @Published var gameAccount: PaperGameAccount?
     @Published var gameError: String?
+    @Published var checkup: [String: PaperCheckup] = [:]          // same keys as `performance`
 
     private let deviceID: String
 
@@ -82,6 +83,14 @@ final class PaperTradingViewModel: ObservableObject {
         if let p: PaperPerformance = try? await postTrade(path: "/paper/performance",
                                                           body: PerformanceBody(deviceId: deviceID, market: market.rawValue, gameId: gameId)) {
             performance[gameId.map { "g:\($0)" } ?? market.rawValue] = p
+        }
+    }
+
+    /// Portfolio check-up for one market (or competition).
+    func loadCheckup(market: Market, gameId: String? = nil) async {
+        if let c: PaperCheckup = try? await postTrade(path: "/paper/checkup",
+                                                      body: CheckupBody(deviceId: deviceID, market: market.rawValue, gameId: gameId)) {
+            checkup[gameId.map { "g:\($0)" } ?? market.rawValue] = c
         }
     }
 

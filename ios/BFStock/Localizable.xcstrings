@@ -2237,6 +2237,35 @@
         }
       }
     },
+    "不用了": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No thanks"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non merci"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移さない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "괜찮아요"
+          }
+        }
+      }
+    },
     "与相近岗位的区别": {
       "extractionState": "manual",
       "localizations": {
@@ -6699,6 +6728,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "종료"
+          }
+        }
+      }
+    },
+    "已转到你的账户": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moved to your account"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transféré sur votre compte"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アカウントに移しました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정으로 옮겼습니다"
           }
         }
       }
@@ -12503,6 +12561,35 @@
         }
       }
     },
+    "组合体检": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-up"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilan du portefeuille"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ポートフォリオ診断"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "포트폴리오 점검"
+          }
+        }
+      }
+    },
     "结束日期": {
       "extractionState": "manual",
       "localizations": {
@@ -14417,6 +14504,35 @@
         }
       }
     },
+    "转到我的账户": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to my account"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transférer sur mon compte"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アカウントに移す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 계정으로 옮기기"
+          }
+        }
+      }
+    },
     "输入你的回答…": {
       "extractionState": "manual",
       "localizations": {
@@ -14587,6 +14703,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "하는 일"
+          }
+        }
+      }
+    },
+    "这台设备上有你登录前的 %lld 笔模拟交易。要把它们转到你的账户吗？": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device has %lld practice trades from before you signed in. Move them to your account?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cet appareil contient %lld opérations d'entraînement d'avant votre connexion. Les transférer sur votre compte ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この端末にログイン前の模擬取引が%lld件あります。あなたのアカウントに移しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 기기에 로그인 전 모의 거래 %lld건이 있습니다. 내 계정으로 옮길까요?"
           }
         }
       }

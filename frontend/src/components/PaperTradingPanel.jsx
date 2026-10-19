@@ -5,6 +5,7 @@ import ptStrings from './paper/ptStrings'
 import OrderTicket from './paper/OrderTicket'
 import GamesModal from './paper/GamesModal'
 import Missions from './paper/Missions'
+import Checkup from './paper/Checkup'
 import { Positions, Orders, History, Leaderboard } from './paper/DeskTables'
 import { BDR, MUTED, UP, DOWN, Card, Seg, Stat, Modal, Button, inputStyle, money, signed, pct, plColor } from './paper/ui'
 import getDeviceId from '../utils/deviceId'
@@ -55,6 +56,28 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const [prefill, setPrefill] = useState(prefillUrl)
   const [board, setBoard] = useState(null)
   const [toast, setToast] = useState(null)
+  // Signed in with an empty account while this browser traded as a guest: offer to move that over
+  const [guestTrades, setGuestTrades] = useState(0)
+  const hasActivity = (a) => (a?.games?.length || 0) + MARKETS.reduce((n, mk) => n + (a?.markets?.[mk]?.transactions?.length || 0) + (a?.markets?.[mk]?.orders?.length || 0), 0)
+  const userEmpty = !!user && !!account && hasActivity(account) === 0
+  useEffect(() => {
+    let skip = false
+    try { skip = localStorage.getItem('bfs_claim_skip') === getDeviceId() } catch { /* storage blocked */ }
+    if (!userEmpty || skip) return undefined
+    let alive = true
+    fetch('/api/paper/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ device_id: getDeviceId() }) })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((g) => { if (alive && g) setGuestTrades(MARKETS.reduce((n, mk) => n + (g.markets?.[mk]?.transactions?.length || 0), 0) + (g.games?.length || 0)) })
+      .catch(() => {})
+    return () => { alive = false }
+  }, [userEmpty])
+  const claim = async () => {
+    try {
+      await postJSON('claim', { device_id: user.id, from_device: getDeviceId() })
+      setGuestTrades(0); setToast({ ok: true, text: s.claim.done }); load()
+    } catch (e) { setToast({ ok: false, text: e.message }) }
+  }
+  const skipClaim = () => { setGuestTrades(0); try { localStorage.setItem('bfs_claim_skip', getDeviceId()) } catch { /* storage blocked */ } }
   const [modal, setModal] = useState(null)         // 'games' | 'reset' | 'nick'
   const [nickDraft, setNickDraft] = useState('')
   const [copied, setCopied] = useState(false)
@@ -117,6 +140,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
     { value: 'positions', label: s.tabs.positions },
     { value: 'orders', label: `${s.tabs.orders}${openOrders ? ` · ${openOrders}` : ''}` },
     { value: 'history', label: s.tabs.history },
+    { value: 'checkup', label: s.tabs.checkup },
     { value: 'leaderboard', label: game?.status === 'ended' ? s.finalStandings : s.tabs.leaderboard },
   ]
   const portfolioOptions = [
@@ -198,6 +222,13 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         )}
       </Card>
 
+      {userEmpty && guestTrades > 0 && (
+        <Card style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', borderColor: '#0ea5e966' }}>
+          <span style={{ flex: '1 1 280px', fontSize: 13.5 }}>{s.claim.text(guestTrades)}</span>
+          <Button onClick={claim}>{s.claim.move}</Button>
+          <Button ghost onClick={skipClaim}>{s.claim.skip}</Button>
+        </Card>
+      )}
       {!gameId && <Missions s={s} missions={account?.missions} onAction={missionAction} />}
 
       <div className="pt-grid">
@@ -212,6 +243,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
             {tab === 'positions' && <Positions s={s} view={view} market={market} onAction={(p) => { setPrefill({ ...p, t: Date.now() }); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />}
             {tab === 'orders' && <Orders s={s} view={view} market={market} lang={lang} onCancel={cancel} />}
             {tab === 'history' && <History s={s} view={view} market={market} filename={`paper-${gameId ? game?.code : active}-${new Date().toISOString().slice(0, 10)}.csv`} />}
+            {tab === 'checkup' && <Checkup accountKey={accountKey} market={market} gameId={gameId} lang={lang} refreshKey={`${view?.transactions?.length ?? 0}-${view?.cash}`} />}
             {tab === 'leaderboard' && <Leaderboard s={s} rows={gameId ? gameView?.leaderboard : board} market={market} />}
           </Card>
         </div>
