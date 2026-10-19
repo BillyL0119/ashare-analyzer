@@ -4,6 +4,7 @@ import PaperPerformance from './PaperPerformance'
 import ptStrings from './paper/ptStrings'
 import OrderTicket from './paper/OrderTicket'
 import GamesModal from './paper/GamesModal'
+import Missions from './paper/Missions'
 import { Positions, Orders, History, Leaderboard } from './paper/DeskTables'
 import { BDR, MUTED, UP, DOWN, Card, Seg, Stat, Modal, Button, inputStyle, money, signed, pct, plColor } from './paper/ui'
 import getDeviceId from '../utils/deviceId'
@@ -65,11 +66,11 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
 
   const load = useCallback(async () => {
     try {
-      const a = await postJSON('account', { device_id: accountKey })
+      const a = await postJSON('account', { device_id: accountKey, lang })
       setAccount(a); setErr(null)
       if (gameId) setGameView(await postJSON('games/account', { device_id: accountKey, game_id: gameId }))
     } catch (e) { setErr(e.message) }
-  }, [accountKey, gameId])
+  }, [accountKey, gameId, lang])   // a new language reloads the missions in it
 
   useEffect(() => { if (!authLoading) load() }, [load, authLoading])
   // Open orders fill in the background: refresh every 30 s while the page is visible
@@ -88,6 +89,25 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
     try { const d = await postJSON('order/cancel', { device_id: accountKey, order_id: o.id, game_id: gameId, lang }); setToast({ ok: true, text: d.message }); load() }
     catch (e) { setToast({ ok: false, text: e.message }) }
   }
+  // A learning mission's button: open the order ticket (or dialog) set up for that step
+  const missionAction = (m) => {
+    const top = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (m.action === 'nickname') { setNickDraft(''); setModal('nick'); return }
+    if (m.action === 'game') { setModal('games'); return }
+    if (m.action === 'market') {
+      const traded = (mk) => (account?.markets?.[mk]?.transactions || []).length > 0
+      setActive(MARKETS.find((mk) => !traded(mk) && mk !== active) || 'cn'); setGameView(null); top(); return
+    }
+    if (m.action === 'short') { setActive('us'); setPrefill({ side: 'short', t: Date.now() }); top(); return }
+    if (m.action === 'protect') {
+      const held = Object.entries(view?.portfolio || {})[0]
+      setPrefill(held ? { side: 'sell', symbol: held[0], shares: held[1].available_shares || held[1].shares, type: 'stop', t: Date.now() }
+        : { side: 'buy', t: Date.now() })
+      top(); return
+    }
+    setPrefill({ side: 'buy', type: m.action === 'limit' ? 'limit' : 'market', t: Date.now() }); top()
+  }
+
   const onOrderDone = (d) => { setToast({ ok: true, text: d.message }); setTab(d.pending ? 'orders' : 'positions'); load() }
 
   const an = view?.analytics || {}
@@ -176,6 +196,8 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
           </div>
         )}
       </Card>
+
+      {!gameId && <Missions s={s} missions={account?.missions} onAction={missionAction} />}
 
       <div className="pt-grid">
         {view && market && (

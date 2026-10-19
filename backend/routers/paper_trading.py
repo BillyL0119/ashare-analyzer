@@ -31,6 +31,7 @@ from pydantic import BaseModel
 
 from security import clean_text
 from services import paper_engine as E
+from services import paper_missions
 from services.paper_engine import Book, CURRENCY, INITIAL, MARKETS, PREFIX, SHORT_MARKETS
 
 router = APIRouter()
@@ -275,6 +276,7 @@ def _rank_of(device_id: str, market: str) -> int:
 
 class DeviceBody(BaseModel):
     device_id: str
+    lang: Optional[str] = None          # language of the learning missions
 
 
 class BuyBody(BaseModel):
@@ -494,6 +496,7 @@ def create_or_get_account(body: DeviceBody):
         **{k: v for k, v in account.items() if k != "games"},
         "markets": views,
         "games": games,
+        "missions": paper_missions.missions(account, body.lang),
         # Original fields, for older app builds
         "portfolio": cn["portfolio"], "total_value": cn["total_value"], "return_pct": cn["return_pct"], "rank": cn["rank"],
         "transactions": account.get("transactions", [])[-20:],

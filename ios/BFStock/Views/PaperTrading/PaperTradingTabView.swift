@@ -10,6 +10,8 @@ struct PaperTradingTabView: View {
     @State private var showResetConfirm = false
     @State private var showLeaveConfirm = false
     @State private var showTradeToast = false
+    @State private var showNickname = false
+    @State private var nickDraft = ""
 
     private let haptic = UINotificationFeedbackGenerator()
 
@@ -59,7 +61,7 @@ struct PaperTradingTabView: View {
         }
         .sheet(item: $order) { item in
             let gid = selectedGame, m = market
-            TradeSheet(market: m, initialSide: item.side, view: current, initialSymbol: item.symbol) { draft in
+            TradeSheet(market: m, initialSide: item.side, view: current, initialSymbol: item.symbol, initialKind: item.kind) { draft in
                 Task { await vm.placeOrder { draft.body(deviceId: $0, market: m, gameId: gid) } }
             }
         }
@@ -68,6 +70,14 @@ struct PaperTradingTabView: View {
         }
         .sheet(isPresented: $showGames) {
             GameSheet(vm: vm, nickname: vm.account?.nickname) { g in selectedGame = g.id }
+        }
+        .alert(L("你的昵称"), isPresented: $showNickname) {
+            TextField(L("你的昵称"), text: $nickDraft)
+            Button(L("保存")) {
+                let name = nickDraft.trimmingCharacters(in: .whitespaces)
+                Task { if let err = await vm.setNickname(name) { vm.tradeError = err } }
+            }
+            Button("取消", role: .cancel) {}
         }
         .alert("确认重置账户", isPresented: $showResetConfirm) {
             Button("重置", role: .destructive) { Task { await vm.resetAccount() } }
@@ -139,6 +149,10 @@ struct PaperTradingTabView: View {
                     ProgressView().frame(maxWidth: .infinity, minHeight: 180)
                 }
 
+                if game == nil, let missions = account.missions, !missions.isEmpty {
+                    MissionsSection(missions: missions) { missionAction($0, account: account) }
+                }
+
                 if let perf = vm.performance[perfKey], perf.points.count > 1 {
                     PerformanceSection(perf: perf, market: market)
                 }
@@ -185,6 +199,37 @@ struct PaperTradingTabView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: vm.isTradingBusy)
+    }
+
+    // MARK: - Learning missions
+
+    /// A mission's button: open the ticket (or dialog) set up for that step.
+    private func missionAction(_ m: PaperMission, account: PaperAccount) {
+        switch m.action {
+        case "nickname":
+            nickDraft = account.nickname.hasPrefix("用户#") ? "" : account.nickname
+            showNickname = true
+        case "game":
+            showGames = true
+        case "market":
+            let traded = { (mk: Market) in !(account.view(mk)?.transactions.isEmpty ?? true) }
+            selectedGame = nil
+            selectedMarket = [Market.us, .cn, .hk, .jp].first { !traded($0) && $0 != selectedMarket } ?? .cn
+        case "short":
+            selectedGame = nil
+            selectedMarket = .us
+            order = OrderSheetItem(side: .short, symbol: nil)
+        case "protect":
+            if let held = current?.portfolio.first {
+                order = OrderSheetItem(side: .sell, symbol: held.key, kind: .stop)
+            } else {
+                order = OrderSheetItem(side: .buy, symbol: nil)
+            }
+        case "limit":
+            order = OrderSheetItem(side: .buy, symbol: nil, kind: .limit)
+        default:
+            order = OrderSheetItem(side: .buy, symbol: nil)
+        }
     }
 
     // MARK: - Competitions
@@ -451,6 +496,61 @@ private struct OrderSheetItem: Identifiable {
     let id = UUID()
     let side: OrderSide
     let symbol: String?
+    var kind: OrderKind = .market
+}
+
+// MARK: - Learning missions
+
+private struct MissionsSection: View {
+    let missions: [PaperMission]
+    let onAction: (PaperMission) -> Void
+    @AppStorage("bfs_pt_missions_open") private var open = true
+
+    var body: some View {
+        let done = missions.filter(\.done).count
+        let next = missions.first { !$0.done }
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(L("学习任务")) {
+                Button(open ? L("收起") : L("展开")) { withAnimation(.snappy) { open.toggle() } }
+                    .font(.caption).buttonStyle(.plain).foregroundStyle(.secondary)
+            }
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 10) {
+                    Text(L("已完成 %lld/%lld", done, missions.count)).font(.caption).foregroundStyle(.secondary).monospacedDigit()
+                    ProgressView(value: Double(done), total: Double(missions.count)).tint(DS.accent)
+                }
+                if open {
+                    if let next {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(next.title).font(.subheadline.weight(.semibold))
+                            Text(next.body).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                            if next.action != nil {
+                                Button { onAction(next) } label: {
+                                    Text(L("去完成")).font(.footnote.weight(.semibold))
+                                        .padding(.horizontal, 14).padding(.vertical, 7)
+                                        .foregroundStyle(.white).background(DS.accent, in: Capsule())
+                                }
+                                .buttonStyle(.plain).padding(.top, 2)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(12)
+                        .background(DS.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        ForEach(missions.filter { $0.id != next.id }) { m in
+                            HStack(spacing: 8) {
+                                Image(systemName: m.done ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(m.done ? DS.accent : Color.secondary)
+                                Text(m.title).font(.footnote).strikethrough(m.done).foregroundStyle(m.done ? .secondary : .primary)
+                            }
+                        }
+                    } else {
+                        Text(L("全部完成！你已经掌握了模拟交易的基本功。")).font(.footnote).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .card()
+        }
+    }
 }
 
 // MARK: - Competition header

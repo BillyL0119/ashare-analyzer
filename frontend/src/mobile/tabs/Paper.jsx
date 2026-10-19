@@ -102,7 +102,7 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
   const shortOk = !!view?.short_ok
   const [side, setSide] = useState(init?.side || 'buy')
   const [symbol, setSymbol] = useState(init?.symbol || '')
-  const [type0, setType] = useState('market')
+  const [type0, setType] = useState(init?.type || 'market')
   const [tif, setTif] = useState('day')
   const [limit0, setLimit] = useState(null); const [stop0, setStop] = useState(null); const [trail, setTrail] = useState('5')
   const opening = side === 'buy' || side === 'short'
@@ -277,6 +277,65 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
 const GAME_CASH = { us: [10_000, 100_000, 1_000_000], cn: [100_000, 1_000_000, 10_000_000], hk: [100_000, 1_000_000, 10_000_000], jp: [1_000_000, 10_000_000, 100_000_000] }
 const isoIn = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10) }
 
+function MissionsCard({ missions, onAction }) {
+  const t = useT()
+  const [open, setOpen] = useState(() => { try { return localStorage.getItem('bfs_pt_missions') !== 'closed' } catch { return true } })
+  if (!missions?.length) return null
+  const done = missions.filter((m) => m.done).length
+  const next = missions.find((m) => !m.done)
+  const toggle = () => { setOpen(!open); try { localStorage.setItem('bfs_pt_missions', open ? 'closed' : 'open') } catch { /* storage blocked */ } }
+  return (
+    <Section title={t('学习任务')} action={<button onClick={toggle} className="m-muted" style={{ fontSize: 13 }}>{open ? t('收起') : t('展开')}</button>}>
+      <div className="m-card" style={{ display: 'grid', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span className="m-label m-num" style={{ flex: 'none' }}>{t('已完成 %lld/%lld', done, missions.length)}</span>
+          <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'var(--surface-hi)', overflow: 'hidden' }}>
+            <div style={{ width: `${(done / missions.length) * 100}%`, height: '100%', background: 'var(--accent)' }} />
+          </div>
+        </div>
+        {open && (!next ? <div className="m-muted" style={{ fontSize: 14 }}>{t('全部完成！你已经掌握了模拟交易的基本功。')}</div> : (
+          <>
+            <div style={{ display: 'grid', gap: 6, padding: 12, borderRadius: 14, background: 'color-mix(in srgb, var(--accent) 10%, transparent)' }}>
+              <b style={{ fontSize: 15 }}>{next.title}</b>
+              <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.5 }}>{next.body}</span>
+              {next.action && <button onClick={() => onAction(next)} style={{ justifySelf: 'start', marginTop: 4, padding: '8px 16px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 650, fontSize: 13.5 }}>{t('去完成')}</button>}
+            </div>
+            <div style={{ display: 'grid', gap: 2 }}>
+              {missions.filter((m) => m !== next).map((m) => (
+                <div key={m.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, opacity: m.done ? 0.55 : 0.9, padding: '3px 0' }}>
+                  <span aria-hidden="true" style={{ width: 16, textAlign: 'center', color: m.done ? 'var(--accent)' : 'var(--text-3)', fontWeight: 800 }}>{m.done ? '✓' : '○'}</span>
+                  <span style={{ textDecoration: m.done ? 'line-through' : 'none' }}>{m.title}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        ))}
+      </div>
+    </Section>
+  )
+}
+
+function NickSheet({ nickname, onClose, onDone }) {
+  const t = useT()
+  const [nick, setNick] = useState(nickname && !/^用户#/.test(nickname) ? nickname : '')
+  const [err, setErr] = useState('')
+  const save = async () => {
+    try { const r = await post('/nickname', { nickname: nick.trim() }); onDone(r.nickname) } catch (e) { setErr(e.message) }
+  }
+  return (
+    <Sheet onClose={onClose}>
+      <div className="m-stack" style={{ gap: 14 }}>
+        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('你的昵称')}</div>
+        <input value={nick} onChange={(e) => setNick(e.target.value.slice(0, 16))} autoFocus
+          style={{ width: '100%', minWidth: 0, background: 'var(--surface-hi)', border: 0, outline: 0, borderRadius: 12, padding: '12px 14px', fontSize: 16, color: 'var(--text)' }} />
+        {err && <div style={{ color: '#ef4444', fontSize: 13, textAlign: 'center' }}>{err}</div>}
+        <button className="m-btn" disabled={nick.trim().length < 2} onClick={save}>{t('保存')}</button>
+        <button className="m-btn ghost" onClick={onClose}>{t('取消')}</button>
+      </div>
+    </Sheet>
+  )
+}
+
 function GameSheet({ nickname, onClose, onJoined }) {
   const t = useT()
   const [mode, setMode] = useState('join')
@@ -410,14 +469,14 @@ export default function Paper() {
     try { setGameAcc(await post('/games/account', { game_id: gid })) } catch (e) { setToast(e.message); setActive('us') }
   }, [])
   const load = useCallback(async () => {
-    try { setAcc(await post('/account', {})); setErr(null) } catch (e) { setErr(e) }
+    try { setAcc(await post('/account', { lang })); setErr(null) } catch (e) { setErr(e) }
     if (gameId) loadGame(gameId)
-  }, [gameId, loadGame])
+  }, [gameId, loadGame, lang])
   useEffect(() => {
     let on = true
-    post('/account', {}).then((a) => { if (on) { setAcc(a); setErr(null) } }).catch((e) => { if (on) setErr(e) })
+    post('/account', { lang }).then((a) => { if (on) { setAcc(a); setErr(null) } }).catch((e) => { if (on) setErr(e) })
     return () => { on = false }
-  }, [])
+  }, [lang])                     // missions come back in the reader's language
   useEffect(() => {
     if (!gameId) return undefined
     let on = true
@@ -427,6 +486,22 @@ export default function Paper() {
   // Pending orders fill in the background, so refresh while the page is open
   useEffect(() => { const id = setInterval(() => { if (!document.hidden) load() }, 30_000); return () => clearInterval(id) }, [load])
   useEffect(() => { if (!toast) return undefined; const id = setTimeout(() => setToast(''), 3200); return () => clearTimeout(id) }, [toast])
+
+  // A learning mission's button: open the sheet set up for that step
+  const missionAction = (m) => {
+    if (m.action === 'nickname') return setSheet('nick')
+    if (m.action === 'game') return setSheet('games')
+    if (m.action === 'market') {
+      const traded = (mk) => (acc?.markets?.[mk]?.transactions || []).length > 0
+      return setActive(['us', 'cn', 'hk', 'jp'].find((mk) => !traded(mk) && mk !== active) || 'cn')
+    }
+    if (m.action === 'short') { setActive('us'); return setSheet({ side: 'short' }) }
+    if (m.action === 'protect') {
+      const held = Object.entries(acc?.markets?.[market]?.portfolio || {})[0]
+      return setSheet(held ? { side: 'sell', symbol: held[0], shares: held[1].available_shares || held[1].shares, type: 'stop' } : { side: 'buy' })
+    }
+    setSheet({ side: 'buy', type: m.action === 'limit' ? 'limit' : 'market' })
+  }
 
   const cur = CUR[market]
   const raw = gameId ? (gameAcc?.game?.id === gameId ? gameAcc : null) : acc?.markets?.[market]
@@ -525,6 +600,8 @@ export default function Paper() {
           </div>
         </div>
       )}
+
+      {!gameId && <MissionsCard missions={acc?.missions} onAction={missionAction} />}
 
       {acc && view && <PaperPerformance deviceId={deviceId()} market={market} gameId={gameId} refreshKey={`${view.count}-${view.cash}`} />}
 
@@ -637,6 +714,7 @@ export default function Paper() {
 
       {sheet?.side && view && <TradeSheet key={`${active}-${sheet.side}-${sheet.symbol || ''}`} market={market} view={raw} init={sheet} gameId={gameId} onClose={() => setSheet(null)} onDone={done} />}
       {sheet === 'board' && <Board market={market} onClose={() => setSheet(null)} />}
+      {sheet === 'nick' && <NickSheet nickname={acc?.nickname} onClose={() => setSheet(null)} onDone={(n) => { setSheet(null); setToast(n); load() }} />}
       {sheet === 'games' && <GameSheet nickname={acc?.nickname} onClose={() => setSheet(null)} onJoined={(x) => { setSheet(null); setActive('g:' + x.id); setToast(x.name); load() }} />}
       {sheet === 'reset' && (
         <Sheet onClose={() => setSheet(null)}>

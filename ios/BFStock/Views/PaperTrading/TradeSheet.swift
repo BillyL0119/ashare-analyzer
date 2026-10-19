@@ -73,6 +73,7 @@ struct TradeSheet: View {
     /// The portfolio the order goes into (cash, holdings, shorts); nil while it loads
     var view: PaperMarketAccount? = nil
     var initialSymbol: String? = nil          // opened from a stock page or a holding: the order starts filled in
+    var initialKind: OrderKind = .market       // a learning mission can open the ticket on a limit or stop order
     let onConfirm: (OrderDraft) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -189,6 +190,7 @@ struct TradeSheet: View {
         .presentationBackground(DS.bg)
         .onAppear {
             side = initialSide
+            kind = initialKind
             if let s = initialSymbol, symbol.isEmpty { symbol = s }
             if side == .sell, let p = view?.portfolio[sym] { setShares(max(1, p.availableSharesInt)) }
             else if side == .cover, let p = view?.shorts?[sym] { setShares(p.sharesInt) }

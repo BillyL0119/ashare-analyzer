@@ -148,6 +148,20 @@ final class PaperTradingViewModel: ObservableObject {
         return r.game
     }
 
+    /// Returns an error message, or nil when saved.
+    func setNickname(_ name: String) async -> String? {
+        struct OK: Decodable { let success: Bool }
+        do {
+            let _: OK = try await postTrade(path: "/paper/nickname", body: NicknameBody(deviceId: deviceID, nickname: name))
+            await loadAccount()
+            return nil
+        } catch let e as APIError {
+            return e.errorDescription
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
     func leaveGame(_ game: PaperGame) async {
         struct OK: Decodable { let success: Bool }
         do {

@@ -23,6 +23,7 @@ struct PaperAccount: Decodable {
     let markets: [String: PaperMarketAccount]?
     /// Competitions this device has joined
     let games: [PaperGame]?
+    let missions: [PaperMission]?
 }
 
 /// One portfolio (a market account or a competition), as the server sends it.
@@ -200,6 +201,21 @@ struct TradeResult: Decodable, Equatable {
 
 struct PaperAccountBody: Encodable {
     let deviceId: String
+    var lang: String = Lang.code          // language of the learning missions
+}
+
+/// A learning mission; the server decides `done` from the account.
+struct PaperMission: Decodable, Identifiable, Equatable {
+    let id: String
+    let action: String?        // buy, limit, protect, market, nickname, game, short
+    let title: String
+    let body: String
+    let done: Bool
+}
+
+struct NicknameBody: Encodable {
+    let deviceId: String
+    let nickname: String
 }
 
 struct BuyBody: Encodable {

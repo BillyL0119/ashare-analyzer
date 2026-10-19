@@ -60,7 +60,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
     setSymbol(prefill.symbol || '')
     if (prefill.side) setSide(prefill.side)
     if (prefill.shares) setShares(prefill.shares)
-    setType('market'); setMsg(null)
+    setType(prefill.type || 'market'); setMsg(null)
   }, [prefill])
 
   const q = useQuote(symbol, market)

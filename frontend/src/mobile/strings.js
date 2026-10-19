@@ -2785,6 +2785,36 @@ export const STR = {
   "%lld주",
   "%lld act."
  ],
+ "学习任务": [
+  "Learning missions",
+  "学習ミッション",
+  "학습 미션",
+  "Missions d'apprentissage"
+ ],
+ "保存": [
+  "Save",
+  "保存",
+  "저장",
+  "Enregistrer"
+ ],
+ "去完成": [
+  "Do it",
+  "やってみる",
+  "해보기",
+  "Essayer"
+ ],
+ "已完成 %lld/%lld": [
+  "%lld of %lld done",
+  "%lld/%lld 完了",
+  "%lld/%lld 완료",
+  "%lld sur %lld terminées"
+ ],
+ "全部完成！你已经掌握了模拟交易的基本功。": [
+  "All done! You have the basics of trading down.",
+  "すべて完了！取引の基本が身につきました。",
+  "모두 완료! 거래의 기본을 익혔어요.",
+  "Tout est fait ! Vous maîtrisez les bases du trading."
+ ],
  "刚刚": [
   "Just now",
   "たった今",
