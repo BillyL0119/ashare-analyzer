@@ -172,11 +172,11 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: '1 1 380px' }}>
           <h1 style={{ margin: 0, fontSize: 26 }}>{s.title}</h1>
           <p style={{ margin: '4px 0 0', fontSize: 13.5, color: MUTED, maxWidth: 640 }}>{s.subtitle}</p>
         </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', flex: '1 1 420px', justifyContent: 'flex-end', minWidth: 0 }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', flex: '0 1 600px', justifyContent: 'flex-end', minWidth: 0 }}>
           <StockSearch s={s} lang={lang} first={market || 'us'} only={gameId ? market : null} onTrade={tradeFromSearch} />
           <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>🏆 {s.newGame}</Button>
         </div>
@@ -189,10 +189,11 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         </div>
       )}
 
-      <Seg value={active} onChange={(v) => { setActive(v); setGameView(null); setPrefill(null) }} options={portfolioOptions} />
-
-      {/* Account summary */}
+      {/* Account summary: the market / competition switch sits on the card it drives */}
       <Card style={{ display: 'grid', gap: 14 }}>
+        <div style={{ margin: '-4px -6px 0', paddingBottom: 12, borderBottom: `1px solid ${BDR}` }}>
+          <Seg value={active} onChange={(v) => { setActive(v); setGameView(null); setPrefill(null) }} options={portfolioOptions} />
+        </div>
         {game && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13 }}>
             <b style={{ fontSize: 15 }}>🏆 {game.name}</b>

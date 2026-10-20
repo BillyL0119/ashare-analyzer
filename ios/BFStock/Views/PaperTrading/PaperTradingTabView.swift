@@ -590,7 +590,7 @@ private struct OrderSheetItem: Identifiable {
 private struct MissionsSection: View {
     let missions: [PaperMission]
     let onAction: (PaperMission) -> Void
-    @AppStorage("bfs_pt_missions_open") private var open = true
+    @AppStorage("bfs_pt_missions_list") private var open = false     // the full checklist; the next step always shows
 
     var body: some View {
         let done = missions.filter(\.done).count
@@ -605,32 +605,33 @@ private struct MissionsSection: View {
                     Text(L("已完成 %lld/%lld", done, missions.count)).font(.caption).foregroundStyle(.secondary).monospacedDigit()
                     ProgressView(value: Double(done), total: Double(missions.count)).tint(DS.accent)
                 }
-                if open {
-                    if let next {
-                        VStack(alignment: .leading, spacing: 6) {
+                if let next {
+                    HStack(alignment: .center, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 4) {
                             Text(next.title).font(.subheadline.weight(.semibold))
                             Text(next.body).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                            if next.action != nil {
-                                Button { onAction(next) } label: {
-                                    Text(L("去完成")).font(.footnote.weight(.semibold))
-                                        .padding(.horizontal, 14).padding(.vertical, 7)
-                                        .foregroundStyle(.white).background(DS.accent, in: Capsule())
-                                }
-                                .buttonStyle(.plain).padding(.top, 2)
-                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(12)
-                        .background(DS.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        ForEach(missions.filter { $0.id != next.id }) { m in
-                            HStack(spacing: 8) {
-                                Image(systemName: m.done ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(m.done ? DS.accent : Color.secondary)
-                                Text(m.title).font(.footnote).strikethrough(m.done).foregroundStyle(m.done ? .secondary : .primary)
+                        if next.action != nil {
+                            Button { onAction(next) } label: {
+                                Text(L("去完成")).font(.footnote.weight(.semibold))
+                                    .padding(.horizontal, 14).padding(.vertical, 7)
+                                    .foregroundStyle(.white).background(DS.accent, in: Capsule())
                             }
+                            .buttonStyle(.plain)
                         }
-                    } else {
-                        Text(L("全部完成！你已经掌握了模拟交易的基本功。")).font(.footnote).foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text(L("全部完成！你已经掌握了模拟交易的基本功。")).font(.footnote).foregroundStyle(.secondary)
+                }
+                if open {
+                    Divider()
+                    ForEach(missions.filter { $0.id != next?.id }) { m in
+                        HStack(spacing: 8) {
+                            Image(systemName: m.done ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(m.done ? DS.accent : Color.secondary)
+                            Text(m.title).font(.footnote).strikethrough(m.done).foregroundStyle(m.done ? .secondary : .primary)
+                        }
                     }
                 }
             }

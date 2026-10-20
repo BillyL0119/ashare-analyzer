@@ -283,15 +283,25 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
 const GAME_CASH = { us: [10_000, 100_000, 1_000_000], cn: [100_000, 1_000_000, 10_000_000], hk: [100_000, 1_000_000, 10_000_000], jp: [1_000_000, 10_000_000, 100_000_000] }
 const isoIn = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10) }
 
+// Market switch labels short enough to fit four across a phone
+const SHORT_MARKET = {
+  zh: { us: '美股', cn: 'A股', hk: '港股', jp: '日股' },
+  en: { us: 'US', cn: 'China A', hk: 'HK', jp: 'Japan' },
+  ja: { us: '米国', cn: '中国A', hk: '香港', jp: '日本' },
+  ko: { us: '미국', cn: '중국A', hk: '홍콩', jp: '일본' },
+  fr: { us: 'US', cn: 'Chine A', hk: 'HK', jp: 'Japon' },
+}
+
 function MissionsCard({ missions, onAction }) {
   const t = useT()
-  const [open, setOpen] = useState(() => { try { return localStorage.getItem('bfs_pt_missions') !== 'closed' } catch { return true } })
+  // The next step always shows; the full checklist folds out on demand
+  const [open, setOpen] = useState(() => { try { return localStorage.getItem('bfs_pt_missions_list') === 'open' } catch { return false } })
   if (!missions?.length) return null
   const done = missions.filter((m) => m.done).length
   const next = missions.find((m) => !m.done)
-  const toggle = () => { setOpen(!open); try { localStorage.setItem('bfs_pt_missions', open ? 'closed' : 'open') } catch { /* storage blocked */ } }
+  const toggle = () => { setOpen(!open); try { localStorage.setItem('bfs_pt_missions_list', open ? 'closed' : 'open') } catch { /* storage blocked */ } }
   return (
-    <Section title={t('学习任务')} action={<button onClick={toggle} className="m-muted" style={{ fontSize: 13 }}>{open ? t('收起') : t('展开')}</button>}>
+    <Section title={t('学习任务')} action={<button onClick={toggle} aria-expanded={open} className="m-muted" style={{ fontSize: 13 }}>{open ? t('收起') : t('展开')}</button>}>
       <div className="m-card" style={{ display: 'grid', gap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span className="m-label m-num" style={{ flex: 'none' }}>{t('已完成 %lld/%lld', done, missions.length)}</span>
@@ -299,23 +309,25 @@ function MissionsCard({ missions, onAction }) {
             <div style={{ width: `${(done / missions.length) * 100}%`, height: '100%', background: 'var(--accent)' }} />
           </div>
         </div>
-        {open && (!next ? <div className="m-muted" style={{ fontSize: 14 }}>{t('全部完成！你已经掌握了模拟交易的基本功。')}</div> : (
-          <>
-            <div style={{ display: 'grid', gap: 6, padding: 12, borderRadius: 14, background: 'color-mix(in srgb, var(--accent) 10%, transparent)' }}>
+        {!next ? <div className="m-muted" style={{ fontSize: 14 }}>{t('全部完成！你已经掌握了模拟交易的基本功。')}</div> : (
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <div style={{ flex: 1, minWidth: 0, display: 'grid', gap: 3 }}>
               <b style={{ fontSize: 15 }}>{next.title}</b>
-              <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.5 }}>{next.body}</span>
-              {next.action && <button onClick={() => onAction(next)} style={{ justifySelf: 'start', marginTop: 4, padding: '8px 16px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 650, fontSize: 13.5 }}>{t('去完成')}</button>}
+              <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{next.body}</span>
             </div>
-            <div style={{ display: 'grid', gap: 2 }}>
-              {missions.filter((m) => m !== next).map((m) => (
-                <div key={m.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, opacity: m.done ? 0.55 : 0.9, padding: '3px 0' }}>
-                  <span aria-hidden="true" style={{ width: 16, textAlign: 'center', color: m.done ? 'var(--accent)' : 'var(--text-3)', fontWeight: 800 }}>{m.done ? '✓' : '○'}</span>
-                  <span style={{ textDecoration: m.done ? 'line-through' : 'none' }}>{m.title}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        ))}
+            {next.action && <button onClick={() => onAction(next)} style={{ flex: 'none', padding: '8px 14px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 650, fontSize: 13.5 }}>{t('去完成')}</button>}
+          </div>
+        )}
+        {open && (
+          <div style={{ display: 'grid', gap: 2, paddingTop: 10, borderTop: '1px solid var(--stroke)' }}>
+            {missions.filter((m) => m !== next).map((m) => (
+              <div key={m.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, opacity: m.done ? 0.55 : 0.9, padding: '3px 0' }}>
+                <span aria-hidden="true" style={{ width: 16, textAlign: 'center', color: m.done ? 'var(--accent)' : 'var(--text-3)', fontWeight: 800 }}>{m.done ? '✓' : '○'}</span>
+                <span style={{ textDecoration: m.done ? 'line-through' : 'none' }}>{m.title}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Section>
   )
@@ -649,9 +661,10 @@ export default function Paper() {
         <b>{t('模拟盘')}</b>
         <button className="m-iconbtn" onClick={() => (gameId ? document.getElementById('pt-standings')?.scrollIntoView({ behavior: 'smooth' }) : setSheet('board'))} aria-label={t('收益排行榜')}>🏆</button>
       </div>
+      <PaperSearch only={gameId ? market : null} first={market} onTrade={(r) => { if (!gameId && r.market !== active) setActive(r.market); setSheet({ side: 'buy', symbol: r.code }) }} />
       {/* The switch drives the whole page (account card, positions, trades), so it sits on top */}
       <div style={{ margin: '-8px 2px -6px', display: 'grid', gap: 10 }}>
-        <Segment value={active} onChange={setActive} options={['us', 'cn', 'hk', 'jp'].map((m) => ({ value: m, label: t(chipLabel(m)) }))} />
+        <Segment full value={active} onChange={setActive} options={['us', 'cn', 'hk', 'jp'].map((m) => ({ value: m, label: (SHORT_MARKET[lang] || SHORT_MARKET.en)[m] }))} />
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none' }}>
           {(acc?.games || []).map((x) => (
             <button key={x.id} onClick={() => setActive('g:' + x.id)} aria-pressed={active === 'g:' + x.id}
@@ -661,8 +674,6 @@ export default function Paper() {
           <button onClick={() => setSheet('games')} style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 650, whiteSpace: 'nowrap', border: '1px dashed var(--stroke)', color: 'var(--accent)' }}>+ {t('比赛')}</button>
         </div>
       </div>
-
-      <PaperSearch only={gameId ? market : null} first={market} onTrade={(r) => { if (!gameId && r.market !== active) setActive(r.market); setSheet({ side: 'buy', symbol: r.code }) }} />
 
       {game && (
         <div className="m-card" style={{ display: 'grid', gap: 10 }}>
