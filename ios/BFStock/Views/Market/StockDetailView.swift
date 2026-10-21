@@ -49,7 +49,7 @@ struct StockDetailView: View {
                 }
 
                 if market == .us {
-                    FundamentalsSection(symbol: code, price: vm.quote?.price)
+                    FundamentalsSection(symbol: code, price: vm.quote?.price, pe: vm.quote?.peRatio)
                 }
 
                 // Hong Kong / Japan: the score, simulation, peer and news services cover US and A-shares

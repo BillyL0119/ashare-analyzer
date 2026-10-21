@@ -103,12 +103,14 @@ final class FundamentalsViewModel: ObservableObject {
 /// analyst consensus and top institutional holders. Same data as the website's Fundamentals tab.
 struct FundamentalsSection: View {
     let price: Double?
+    var pe: Double? = nil          // trailing P/E from the quote: EPS when the earnings table is empty
     @StateObject private var vm: FundamentalsViewModel
     @State private var quarterly = false
     @State private var showFullDescription = false
 
-    init(symbol: String, price: Double?) {
+    init(symbol: String, price: Double?, pe: Double? = nil) {
         self.price = price
+        self.pe = pe
         _vm = StateObject(wrappedValue: FundamentalsViewModel(symbol: symbol))
     }
 
@@ -169,7 +171,9 @@ struct FundamentalsSection: View {
 
     private func statsCard(_ d: Fundamentals) -> some View {
         let s = d.stats
-        let ttm: Double? = d.earnings.count >= 4 ? d.earnings.suffix(4).compactMap(\.eps).reduce(0, +) : nil
+        // Last four reported quarters, or price / trailing P/E when Nasdaq's table comes back empty
+        let ttm: Double? = d.earnings.count >= 4 ? d.earnings.suffix(4).compactMap(\.eps).reduce(0, +)
+            : ((price ?? 0) > 0 && (pe ?? 0) > 0 ? price! / pe! : nil)
         let target = d.analysts?.target ?? s.oneYearTarget
         let upside: Double? = (target != nil && (price ?? 0) > 0) ? (target! - price!) / price! * 100 : nil
         var tiles: [(String, String, String?, Color?)] = []

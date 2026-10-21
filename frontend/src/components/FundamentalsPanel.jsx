@@ -222,7 +222,10 @@ function Tile({ label, value, sub, children }) {
 function KeyStats({ data, quote, t, lang }) {
   const st = data.stats || {}
   const price = quote?.price
-  const ttmEps = data.earnings?.length >= 4 ? data.earnings.slice(-4).reduce((s, e) => s + (e.eps ?? 0), 0) : null
+  // Last four reported quarters; without them (Nasdaq's surprise table can come back empty) the
+  // trailing P/E on the quote gives the same figure: EPS = price / P/E
+  const ttmEps = data.earnings?.length >= 4 ? data.earnings.slice(-4).reduce((s, e) => s + (e.eps ?? 0), 0)
+    : price > 0 && quote?.pe_ratio > 0 ? price / quote.pe_ratio : null
   const lo = st.week52_low ?? quote?.week52_low, hi = st.week52_high ?? quote?.week52_high
   const posPct = price != null && lo != null && hi > lo ? Math.min(100, Math.max(0, ((price - lo) / (hi - lo)) * 100)) : null
   const target = data.analysts?.target ?? st.one_year_target

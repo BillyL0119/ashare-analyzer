@@ -65,6 +65,9 @@ export default defineConfig({
         codeSplitting: {
           groups: [
             { name: 'vendor-react', test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/, priority: 20 },
+            // tslib is shared by echarts and the Supabase client: left to the echarts group it made every
+            // page that signs in (the whole phone site) download all of echarts for two tiny helpers
+            { name: 'vendor-tslib', test: /node_modules[\\/]tslib[\\/]/, priority: 30 },
             { name: 'vendor-echarts', test: /node_modules[\\/](echarts|echarts-for-react|zrender|size-sensor)[\\/]/, priority: 10 },
             { name: 'vendor-recharts', test: /node_modules[\\/]recharts[\\/]/, priority: 10 },
           ],

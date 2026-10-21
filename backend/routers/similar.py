@@ -108,9 +108,7 @@ def _load_name_map():
                 _name_map[code] = q["name"]
         logger.info("Name map loaded via Tencent batch: %d stocks", len(_name_map))
     except Exception as exc:
-        logger.error("Sina batch name lookup failed: %s", exc)
-
-threading.Thread(target=_load_name_map, daemon=True).start()
+        logger.error("Tencent batch name lookup failed: %s", exc)
 
 
 def _get_stock_name(code: str) -> str:
@@ -138,6 +136,9 @@ _FALLBACK_PEERS = [
     "000651", "600690", "002241",   # 消费电子
     "600900", "601991",             # 电力
 ]
+
+# Started only now: the loader reads _INDUSTRY_MAP and _FALLBACK_PEERS defined just above
+threading.Thread(target=_load_name_map, daemon=True).start()
 
 
 # ── Low-level helpers ─────────────────────────────────────────────────────────

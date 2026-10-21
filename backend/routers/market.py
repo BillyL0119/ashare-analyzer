@@ -174,7 +174,6 @@ def _fetch_index(sym_param: str):
     return sym_param, ak.stock_zh_index_spot_em(symbol=sym_param)
 
 
-threading.Thread(target=_get_spot_df, daemon=True).start()  # warm up on startup
 
 
 def _safe_float(val, default: float = 0.0) -> float:
@@ -946,3 +945,7 @@ def daily_report():
     except Exception as e:
         logger.warning("daily_report cache write failed: %s", e)
     return report
+
+
+# Warm up on startup, once every helper above is defined
+threading.Thread(target=_get_spot_df, daemon=True).start()

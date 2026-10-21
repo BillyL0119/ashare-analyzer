@@ -7,11 +7,28 @@ import Settings from './Settings'
 import Market from './tabs/Market'
 import { trackFeature, trackVisit } from '../utils/analytics'
 import useAuthStore from '../store/authStore'
+import useLangStore from '../store/langStore'
 
 const StockDetail = lazy(() => import('./tabs/StockDetail'))
 const Learning = lazy(() => import('./tabs/Learning'))
 const AITeacher = lazy(() => import('./tabs/AITeacher'))
 const Paper = lazy(() => import('./tabs/Paper'))
+
+// Tab titles, the same wording as the desktop site (a stock page sets its own)
+const TITLES = {
+  zh: {
+    analysis: 'BestFriendStock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
+    study: 'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门',
+    paper_trading: 'BestFriendStock | 模拟炒股 - 用虚拟资金练习美股与A股交易',
+    ai_tutor: 'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
+  },
+  en: {
+    analysis: 'Best Friend Stock | Free US & China Stock Analysis, Paper Trading and Economics',
+    study: 'Best Friend Stock | Economics Study Center: A-Level, IB, AP, IGCSE',
+    paper_trading: 'Best Friend Stock | Paper Trading with $1M Virtual Cash',
+    ai_tutor: 'Best Friend Stock | AI Economics Teacher',
+  },
+}
 
 function TabBar() {
   const t = useT()
@@ -51,6 +68,10 @@ export default function MobileApp() {
   // Same feature names the desktop site reports, so both UIs show up in one usage chart.
   const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
   useEffect(() => { if (section) trackFeature(section) }, [section])
+  const lang = useLangStore((st) => st.lang)
+  useEffect(() => {
+    if (section) document.title = (lang === 'zh' ? TITLES.zh : TITLES.en)[section]
+  }, [section, lang])
 
   return (
     <div className="m-app">

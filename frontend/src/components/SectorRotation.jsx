@@ -235,7 +235,8 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
   const t = T[lang] || T.en
   const zh = lang === 'zh'
 
-  const [market,  setMarket]  = useState(defaultMarket)
+  // Sector rotation covers A-shares and the US; a Hong Kong or Japan stock page opens on the US view
+  const [market,  setMarket]  = useState(defaultMarket === 'cn' ? 'cn' : 'us')
   const [data,    setData]    = useState(null)
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState('')
@@ -247,7 +248,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
     setError('')
     setLoading(true)
     fetch(`${API}/api/sectors/rotation?market=${market}`)
-      .then(r => r.json())
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
       .then(d => {
         if (d.pending) setError(t.srPending)
         else if (d.error) setError(d.error)
