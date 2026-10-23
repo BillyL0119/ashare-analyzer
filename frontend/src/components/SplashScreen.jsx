@@ -169,7 +169,7 @@ export default function SplashScreen({ onContentVisible, onDone }) {
                   so clip doesn't interfere with 3D transforms */}
               <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 6 }}>
                 <img
-                  src="/logo-dark.png"
+                  src="/logo-header.png"
                   alt=""
                   aria-hidden="true"
                   style={{

@@ -22,9 +22,14 @@ function readLangHint() {
   return lang
 }
 
+const HTML_LANG = { zh: 'zh-CN', en: 'en', ja: 'ja', ko: 'ko', fr: 'fr' }
+// <html lang> follows the reader's language so screen readers use the right voice
+const markHtml = (lang) => { try { document.documentElement.lang = HTML_LANG[lang] || 'en' } catch { /* no DOM */ } }
+
 const useLangStore = create((set) => ({
   lang: readLangHint(),
-  setLang: (lang) => set({ lang }),
+  setLang: (lang) => { markHtml(lang); set({ lang }) },
 }))
+markHtml(useLangStore.getState().lang)
 
 export default useLangStore

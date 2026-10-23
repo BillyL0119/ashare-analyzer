@@ -916,12 +916,34 @@ def _generate_daily_report(today: str) -> dict:
 _partial_report: tuple | None = None
 
 
+_report_lock = threading.Lock()
+
+
+def _build_report(today: str) -> dict:
+    """Build today's report and keep it: on disk when complete, in memory for 10 minutes when a source
+    was down. One build at a time (US indices wait on the shared V8 lock, sometimes a minute)."""
+    global _partial_report
+    with _report_lock:
+        report = _generate_daily_report(today)
+        if not report["cn_indices"] or not report["us_indices"]:
+            _partial_report = (time.time(), report)   # a source was down: serve it, retry in 10 minutes
+            return report
+        try:
+            os.makedirs(os.path.dirname(_REPORT_PATH), exist_ok=True)
+            with open(_REPORT_PATH, "w", encoding="utf-8") as f:
+                json.dump(report, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logger.warning("daily_report cache write failed: %s", e)
+        return report
+
+
 @router.get("/daily-report")
 def daily_report():
-    """Return today's market daily report (cached by date, Beijing time)."""
+    """Return today's market daily report (cached by date, Beijing time). On a new day the last saved
+    report is served while today's is built in the background, so no request waits on the build."""
     today = datetime.now(_BEIJING_TZ).strftime("%Y-%m-%d")
 
-    # Return cached report if it's for today
+    cached = None
     if os.path.exists(_REPORT_PATH):
         try:
             with open(_REPORT_PATH, encoding="utf-8") as f:
@@ -929,22 +951,15 @@ def daily_report():
             if cached.get("date") == today and cached.get("cn_indices") and cached.get("us_indices"):
                 return cached
         except Exception:
-            pass
+            cached = None
 
-    global _partial_report
     if _partial_report and _partial_report[1].get("date") == today and time.time() - _partial_report[0] < 600:
         return _partial_report[1]
-    report = _generate_daily_report(today)
-    if not report["cn_indices"] or not report["us_indices"]:
-        _partial_report = (time.time(), report)   # a source was down: serve it, retry in 10 minutes
-        return report
-    try:
-        os.makedirs(os.path.dirname(_REPORT_PATH), exist_ok=True)
-        with open(_REPORT_PATH, "w", encoding="utf-8") as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        logger.warning("daily_report cache write failed: %s", e)
-    return report
+    if cached:
+        if not _report_lock.locked():
+            threading.Thread(target=_build_report, args=(today,), daemon=True, name="daily-report").start()
+        return cached
+    return _build_report(today)   # first run on this server: nothing saved yet
 
 
 # Warm up on startup, once every helper above is defined

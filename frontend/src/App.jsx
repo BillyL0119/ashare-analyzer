@@ -371,7 +371,7 @@ export default function App() {
           onMouseLeave={e => e.currentTarget.style.opacity = '1'}
         >
           <img
-            src="/logo-dark.png"
+            src="/logo-header.png"
             alt="Best Friend Stock"
             style={{ height: isMobile ? 32 : 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />

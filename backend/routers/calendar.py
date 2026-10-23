@@ -148,13 +148,20 @@ def _dividends_for(code: str) -> list:
     return events
 
 
+_DIVIDEND_BUDGET = 8 * 60   # seconds; about 45s on a normal day
+
+
 def _fetch_dividends() -> list:
     """Ex-dividend dates for widely held names. cninfo only answers per stock (there is no
     working market-wide feed from the server), so a fixed list is queried one by one: its request
     signing runs in an embedded V8 (mini_racer) that crashes the process when used from several
     threads at once. Runs in the background refresh, ~0.7s per stock."""
     events = []
+    deadline = time.time() + _DIVIDEND_BUDGET
     for code in _dividend_watchlist():
+        if time.time() > deadline:      # cninfo slowed right down: keep what we have, finish the build
+            logger.warning("calendar dividends: time budget used, stopped before %s", code)
+            break
         events.extend(_dividends_for(code))
     return events
 
@@ -242,8 +249,14 @@ def _load_disk() -> None:
 _load_disk()
 
 
-def _refresh():
+_refresh_started = 0.0
+_refresh_gen = 0
+_STUCK_AFTER = 20 * 60     # a build normally takes about a minute
+
+
+def _refresh(gen: int):
     global _cache_ts, _cache_data, _refreshing
+    t0 = time.time()
     try:
         data = _build()
         if data["events"] or _cache_data is None:
@@ -256,19 +269,27 @@ def _refresh():
                 os.replace(tmp, _DISK)
             except Exception as e:
                 logger.warning("calendar cache write failed: %s", e)
+        logger.info("calendar built: %d events in %.0fs", len(data["events"]), time.time() - t0)
     except Exception as e:
         logger.warning("calendar build failed: %s", e)
     finally:
-        _refreshing = False
+        if gen == _refresh_gen:      # a build given up on as stuck must not clear its successor's flag
+            _refreshing = False
 
 
 def _start_refresh() -> None:
-    global _refreshing
-    if _refreshing:
+    """One build at a time. A build still running after _STUCK_AFTER is treated as hung (a feed that
+    stops answering mid-response): a new one starts, so the calendar cannot freeze for days."""
+    global _refreshing, _refresh_started, _refresh_gen
+    now = time.time()
+    if _refreshing and now - _refresh_started < _STUCK_AFTER:
         return
-    _refreshing = True
+    if _refreshing:
+        logger.warning("calendar build running for %.0f min, starting a new one", (now - _refresh_started) / 60)
+    _refreshing, _refresh_started = True, now
+    _refresh_gen += 1
     import threading
-    threading.Thread(target=_refresh, daemon=True, name="calendar-refresh").start()
+    threading.Thread(target=_refresh, args=(_refresh_gen,), daemon=True, name="calendar-refresh").start()
 
 
 def warmup():
