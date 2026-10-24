@@ -163,6 +163,11 @@ struct PaperTradingTabView: View {
                     MissionsSection(missions: missions) { missionAction($0, account: account) }
                 }
 
+                if game == nil {
+                    NavigationLink { TimeMachineView() } label: { TimeMachineEntryCard() }
+                        .buttonStyle(.plain)
+                }
+
                 if let perf = vm.performance[perfKey], perf.points.count > 1 {
                     PerformanceSection(perf: perf, market: market)
                 }

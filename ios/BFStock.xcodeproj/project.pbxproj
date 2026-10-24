@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		42AEFDCA2C4E45FD96E7D90A /* TimeMachineGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970A9BBF37D4168AE595740 /* TimeMachineGameView.swift */; };
+		25C61EE405D04A389DF434E6 /* TimeMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBBDD851DBD42AAAC373C1F /* TimeMachineView.swift */; };
+		FADDCA2E5BA743ACBA4D380D /* TimeMachineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6030318D8744BCEB590BD49 /* TimeMachineViewModel.swift */; };
+		49307AB40B9D4076BF3B9527 /* TimeMachineModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A17E1D21749D5BB43AB43 /* TimeMachineModels.swift */; };
 		25BC6D13451B486C89EED108 /* PerformanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A57D62CF7BE4F01B81FA63A /* PerformanceSection.swift */; };
 		BE06E577153745D4A7AAE05A /* MacroEventsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */; };
 		E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */; };
@@ -67,6 +71,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7970A9BBF37D4168AE595740 /* TimeMachineGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachineGameView.swift; sourceTree = "<group>"; };
+		BFBBDD851DBD42AAAC373C1F /* TimeMachineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachineView.swift; sourceTree = "<group>"; };
+		C6030318D8744BCEB590BD49 /* TimeMachineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachineViewModel.swift; sourceTree = "<group>"; };
+		168A17E1D21749D5BB43AB43 /* TimeMachineModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachineModels.swift; sourceTree = "<group>"; };
 		7A57D62CF7BE4F01B81FA63A /* PerformanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceSection.swift; sourceTree = "<group>"; };
 		BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroEventsSection.swift; sourceTree = "<group>"; };
 		E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketHeatmapSection.swift; sourceTree = "<group>"; };
@@ -128,6 +136,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		13F7EF4FB1CE4BBC86F406F8 /* TimeMachine */ = {
+			isa = PBXGroup;
+			children = (
+				BFBBDD851DBD42AAAC373C1F /* TimeMachineView.swift */,
+				7970A9BBF37D4168AE595740 /* TimeMachineGameView.swift */,
+			);
+			path = TimeMachine;
+			sourceTree = "<group>";
+		};
 		3ED2A7A101604B6D88734109 /* Career */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,6 +204,7 @@
 				16D68E22A6888B07DF14F795 /* PaperTradingModels.swift */,
 				D9DCB7A60EC9BA2999826BF7 /* StockDetailModels.swift */,
 				909940DE369348CDACC7F077 /* ExtraFeatureModels.swift */,
+				168A17E1D21749D5BB43AB43 /* TimeMachineModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -248,6 +266,7 @@
 				E3F519285DA64A7EAF526F45 /* News */,
 				AB2920E52ED0403B8EA92DB9 /* Universities */,
 				3ED2A7A101604B6D88734109 /* Career */,
+				13F7EF4FB1CE4BBC86F406F8 /* TimeMachine */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -263,6 +282,7 @@
 				3F0129239F49312C2C498A4A /* WatchlistQuoteViewModel.swift */,
 				7E8D0B23A5E88499DABB4A9F /* WatchlistStore.swift */,
 				FFC78DAD6F9F47839C0DE2D5 /* ExtraFeatureViewModels.swift */,
+				C6030318D8744BCEB590BD49 /* TimeMachineViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -392,6 +412,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42AEFDCA2C4E45FD96E7D90A /* TimeMachineGameView.swift in Sources */,
+				25C61EE405D04A389DF434E6 /* TimeMachineView.swift in Sources */,
+				FADDCA2E5BA743ACBA4D380D /* TimeMachineViewModel.swift in Sources */,
+				49307AB40B9D4076BF3B9527 /* TimeMachineModels.swift in Sources */,
 				25BC6D13451B486C89EED108 /* PerformanceSection.swift in Sources */,
 				BE06E577153745D4A7AAE05A /* MacroEventsSection.swift in Sources */,
 				E83A530F1ACA49CD8244E681 /* MarketHeatmapSection.swift in Sources */,

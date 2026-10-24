@@ -1,6 +1,64 @@
 {
   "sourceLanguage": "zh-Hans",
   "strings": {
+    "%@ 除权除息（%@）：到账现金 %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ex-rights (%@): %@ cash paid"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ détachement (%@) : %@ versés"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 権利落ち（%@）：現金 %@ を受け取り"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 권리락(%@): 현금 %@ 입금"
+          }
+        }
+      }
+    },
+    "%@ 除权除息（%@）：到账现金 %@，送转 %lld 股": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ex-rights (%@): %@ cash paid, %lld bonus shares"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ détachement (%@) : %@ versés, %lld actions gratuites"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 権利落ち（%@）：現金 %@ を受け取り、%lld株を無償で受け取り"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 권리락(%@): 현금 %@ 입금, 무상 %lld주"
+          }
+        }
+      }
+    },
     "%lld 上涨": {
       "extractionState": "manual",
       "localizations": {
@@ -88,6 +146,64 @@
         }
       }
     },
+    "%lld 个交易日": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld trading days"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld jours de bourse"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 営業日"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 거래일"
+          }
+        }
+      }
+    },
+    "%lld 个可交易品种": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld things to trade"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld titres à négocier"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取引できる銘柄 %lld"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거래 가능 종목 %lld개"
+          }
+        }
+      }
+    },
     "%lld 个章节": {
       "extractionState": "manual",
       "localizations": {
@@ -142,6 +258,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld명 참가"
+          }
+        }
+      }
+    },
+    "%lld 人完成": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld finished"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ont terminé"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld人がクリア"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld명 완료"
           }
         }
       }
@@ -668,6 +813,35 @@
         }
       }
     },
+    "2008 金融危机、2020 疫情暴跌、2015 股灾、2022 加息…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The 2008 crisis, the 2020 COVID crash, China 2015, the 2022 rate shock…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La crise de 2008, le krach du Covid en 2020, la Chine en 2015, la hausse des taux de 2022…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2008年金融危機、2020年コロナ暴落、2015年中国株暴落、2022年利上げ…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2008 금융위기, 2020 코로나 폭락, 2015 중국 증시 폭락, 2022 금리 인상…"
+          }
+        }
+      }
+    },
     "3/4": {
       "extractionState": "manual",
       "localizations": {
@@ -1186,6 +1360,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "A주 심리"
+          }
+        }
+      }
+    },
+    "A股按 %lld 股的整数倍买入。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A-shares are bought in multiples of %lld."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les actions A s'achètent par multiples de %lld."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中国A株は%lld株単位で買います。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중국 A주는 %lld주 단위로 매수합니다."
           }
         }
       }
@@ -1976,6 +2179,64 @@
         }
       }
     },
+    "一天天往前走": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move forward day by day"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avancez jour après jour"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1日ずつ進む"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "하루씩 전진"
+          }
+        }
+      }
+    },
+    "一直持有指数基金": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just holding the index fund"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simple détention du fonds indiciel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インデックスを持ち続けた場合"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지수 펀드를 계속 보유했다면"
+          }
+        }
+      }
+    },
     "七巨头": {
       "extractionState": "manual",
       "localizations": {
@@ -2117,6 +2378,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "상하이종합"
+          }
+        }
+      }
+    },
+    "下一周": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next week"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semaine suivante"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1週間進む"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 주"
+          }
+        }
+      }
+    },
+    "下一天": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next day"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jour suivant"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翌日へ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 날"
           }
         }
       }
@@ -2788,6 +3107,35 @@
         }
       }
     },
+    "交易记录": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trades"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordres"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取引履歴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거래 내역"
+          }
+        }
+      }
+    },
     "亿": {
       "extractionState": "manual",
       "localizations": {
@@ -3397,6 +3745,35 @@
         }
       }
     },
+    "价格为当时真实的每日收盘价（美股：新浪财经；A股：腾讯财经），A股分红送转按除权日发放；美股未计入现金分红。新闻为有据可查的公开事件。仅供学习。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prices are the real daily closes of the time (US: Sina Finance; China: Tencent). A-share dividends and bonus shares are paid on ex-dates; US cash dividends are not included. News items are documented public events. For learning only."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les cours sont les vraies clôtures quotidiennes de l'époque (US : Sina Finance ; Chine : Tencent). Les dividendes et actions gratuites des actions A sont versés à la date de détachement ; les dividendes en espèces US ne sont pas inclus. Les nouvelles sont des événements publics documentés. À but pédagogique."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "価格は当時の実際の日次終値です（米国株：新浪財経、中国株：騰訊）。中国A株の配当・無償株は権利落ち日に反映し、米国株の現金配当は含みません。ニュースは記録の残る公開情報です。学習専用です。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가격은 당시 실제 일별 종가입니다(미국: 시나 파이낸스, 중국: 텐센트). 중국 A주 배당·무상주는 권리락일에 반영하며 미국 주식 현금 배당은 포함하지 않습니다. 뉴스는 기록으로 확인되는 공개 사건입니다. 학습용입니다."
+          }
+        }
+      }
+    },
     "休市": {
       "extractionState": "manual",
       "localizations": {
@@ -3542,6 +3919,35 @@
         }
       }
     },
+    "你的收益": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your return"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre performance"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたの収益"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 수익률"
+          }
+        }
+      }
+    },
     "你的昵称": {
       "extractionState": "manual",
       "localizations": {
@@ -3567,6 +3973,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "닉네임"
+          }
+        }
+      }
+    },
+    "你的最好成绩": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your best"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre record"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自己ベスト"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최고 기록"
+          }
+        }
+      }
+    },
+    "你的账户": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre compte"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたの口座"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 계좌"
           }
         }
       }
@@ -3654,6 +4118,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "생성 중지"
+          }
+        }
+      }
+    },
+    "停牌": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suspended"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suspendu"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "売買停止"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거래 정지"
           }
         }
       }
@@ -4006,6 +4499,35 @@
         }
       }
     },
+    "共交易 %lld 次": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld trades"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ordres"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取引 %lld 回"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거래 %lld회"
+          }
+        }
+      }
+    },
     "关于": {
       "extractionState": "manual",
       "localizations": {
@@ -4151,6 +4673,35 @@
         }
       }
     },
+    "再玩一次": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play again"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejouer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 하기"
+          }
+        }
+      }
+    },
     "军工": {
       "extractionState": "manual",
       "localizations": {
@@ -4263,6 +4814,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "줄이기"
+          }
+        }
+      }
+    },
+    "出错了，请稍后再试": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong, please try again"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une erreur est survenue, réessayez"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "エラーが発生しました。もう一度お試しください"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오류가 발생했습니다. 다시 시도해 주세요"
           }
         }
       }
@@ -5050,6 +5630,35 @@
         }
       }
     },
+    "匿名同学": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anonymous"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anonyme"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "匿名"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "익명"
+          }
+        }
+      }
+    },
     "午间休市": {
       "extractionState": "manual",
       "localizations": {
@@ -5224,6 +5833,35 @@
         }
       }
     },
+    "历史穿越交易": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History Time Machine"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Machine à remonter le temps"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歴史タイムマシン取引"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "역사 타임머신 트레이딩"
+          }
+        }
+      }
+    },
     "原材料": {
       "extractionState": "manual",
       "localizations": {
@@ -5282,6 +5920,35 @@
         }
       }
     },
+    "发生于 %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Happened %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Survenu le %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ の出来事"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 발생"
+          }
+        }
+      }
+    },
     "发送": {
       "extractionState": "manual",
       "localizations": {
@@ -5336,6 +6003,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "취소"
+          }
+        }
+      }
+    },
+    "只看得到当天以前的真实价格和新闻，未来对你保密": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only real prices and news up to that day; the future stays hidden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seuls les vrais cours et nouvelles jusqu'à ce jour ; l'avenir reste caché"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その日までの実際の価格とニュースだけ。未来は見えません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그날까지의 실제 가격과 뉴스만 보입니다. 미래는 비밀"
+          }
+        }
+      }
+    },
+    "可交易品种": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What you can trade"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que vous pouvez négocier"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取引できる銘柄"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거래 가능 종목"
           }
         }
       }
@@ -5456,6 +6181,35 @@
         }
       }
     },
+    "同一段历史排行榜": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leaderboard for this period"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classement de cette époque"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この時代のランキング"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 시기 순위"
+          }
+        }
+      }
+    },
     "同比": {
       "extractionState": "manual",
       "localizations": {
@@ -5481,6 +6235,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "전년비"
+          }
+        }
+      }
+    },
+    "后来发生了什么": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What happened next"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce qui s'est passé ensuite"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その後どうなったか"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그 후에 일어난 일"
+          }
+        }
+      }
+    },
+    "和一直持有指数基金比一比，学习对应的考试知识点": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare with just holding the index fund and learn the exam points"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparez avec la simple détention du fonds indiciel et révisez les notions d'examen"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インデックスを持ち続けた場合と比べ、試験の要点を学ぶ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지수 펀드를 계속 보유한 경우와 비교하고 시험 포인트를 배워요"
           }
         }
       }
@@ -5597,6 +6409,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "종합보다 %lld위 높음"
+          }
+        }
+      }
+    },
+    "回到 2008 金融危机、2020 疫情暴跌等真实时刻，用虚拟资金一天天做决定": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go back to 2008, the 2020 COVID crash and other real moments, and decide day by day with virtual cash"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revivez 2008, le krach du Covid en 2020 et d'autres vrais moments, en décidant jour après jour avec de l'argent virtuel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2008年の金融危機や2020年のコロナ暴落など実際の時代に戻り、仮想資金で1日ずつ判断します"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2008 금융위기, 2020 코로나 폭락 같은 실제 순간으로 돌아가 가상 자금으로 하루씩 결정하세요"
+          }
+        }
+      }
+    },
+    "回到真实的历史时刻：你只能看到当天以前的行情和新闻，用虚拟资金一天天做决定，结束后揭晓结局。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go back to a real moment in market history. You only see prices and news up to that day, make your moves with virtual cash one day at a time, and find out how it ended."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revenez à un vrai moment de l'histoire des marchés. Vous ne voyez que les cours et l'actualité jusqu'à ce jour, décidez jour après jour avec de l'argent virtuel, puis découvrez la fin."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "実際の相場の歴史に戻ります。その日までの値動きとニュースだけを見て、仮想資金で1日ずつ判断し、最後に結末がわかります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실제 시장의 역사 속으로 돌아갑니다. 그날까지의 시세와 뉴스만 보고 가상 자금으로 하루씩 결정한 뒤 결말을 확인하세요."
           }
         }
       }
@@ -5771,6 +6641,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "초대 복사"
+          }
+        }
+      }
+    },
+    "复盘": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking back"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "振り返り"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "되돌아보기"
           }
         }
       }
@@ -6322,6 +7221,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "실제"
+          }
+        }
+      }
+    },
+    "对应的考试知识点": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exam points"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notions d'examen"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "試験の要点"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시험 포인트"
           }
         }
       }
@@ -7254,6 +8182,35 @@
         }
       }
     },
+    "开始穿越": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "はじめる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시작"
+          }
+        }
+      }
+    },
     "开始面试": {
       "extractionState": "manual",
       "localizations": {
@@ -7308,6 +8265,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "당일"
+          }
+        }
+      }
+    },
+    "当时的新闻": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "News at the time"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'actualité de l'époque"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当時のニュース"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "당시 뉴스"
           }
         }
       }
@@ -7544,6 +8530,35 @@
         }
       }
     },
+    "总资产": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total value"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeur totale"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "総資産"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "총자산"
+          }
+        }
+      }
+    },
     "恐慌": {
       "extractionState": "manual",
       "localizations": {
@@ -7743,6 +8758,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "거래량"
+          }
+        }
+      }
+    },
+    "成交金额约 %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order value about %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Montant d'environ %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "約定金額 約%@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "체결 금액 약 %@"
           }
         }
       }
@@ -8414,6 +9458,93 @@
         }
       }
     },
+    "持有 %lld 股": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You hold %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous détenez %lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld株保有"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld주 보유"
+          }
+        }
+      }
+    },
+    "指数基金": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Index fund"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonds indiciel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インデックス"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지수 펀드"
+          }
+        }
+      }
+    },
+    "指数基金在 %@ 跌到最低点。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The index fund hit its lowest point on %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fonds indiciel a touché son point bas le %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インデックスは %@ に最安値をつけました。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지수 펀드는 %@에 최저점을 찍었습니다."
+          }
+        }
+      }
+    },
     "指标": {
       "extractionState": "manual",
       "localizations": {
@@ -8439,6 +9570,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "지표"
+          }
+        }
+      }
+    },
+    "按当天收盘价成交，不收手续费。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fills at the day's closing price, no fees."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exécuté au cours de clôture du jour, sans frais."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その日の終値で約定、手数料なし。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그날 종가로 체결, 수수료 없음."
           }
         }
       }
@@ -8497,6 +9657,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "미국 상장사 %lld개를 섹터·규모·밸류에이션·추세로 필터링"
+          }
+        }
+      }
+    },
+    "换一段历史": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All scenarios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les époques"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時代を選び直す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 시기 고르기"
           }
         }
       }
@@ -8613,6 +9802,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "주문하기"
+          }
+        }
+      }
+    },
+    "揭晓结局": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See how it ended"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Découvrez la fin"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結末を見る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "결말 확인"
           }
         }
       }
@@ -9019,6 +10237,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "데이터 안내"
+          }
+        }
+      }
+    },
+    "新": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新着"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 소식"
           }
         }
       }
@@ -9487,6 +10734,35 @@
         }
       }
     },
+    "最亏的一笔": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Worst trade"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pire opération"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一番の損失"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가장 많이 잃은 거래"
+          }
+        }
+      }
+    },
     "最低": {
       "extractionState": "manual",
       "localizations": {
@@ -9686,6 +10962,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "최종 순위"
+          }
+        }
+      }
+    },
+    "最赚的一笔": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best trade"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meilleure opération"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一番の利益"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가장 많이 번 거래"
           }
         }
       }
@@ -10121,6 +11426,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "기관 보유 비중"
+          }
+        }
+      }
+    },
+    "来源": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出典"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "출처"
           }
         }
       }
@@ -11662,6 +12996,64 @@
         }
       }
     },
+    "现金": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cash"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liquidités"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現金"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현금"
+          }
+        }
+      }
+    },
+    "现金不足": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not enough cash"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liquidités insuffisantes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現金が足りません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현금이 부족합니다"
+          }
+        }
+      }
+    },
     "用虚拟资金练习买卖，不承担真实风险": {
       "extractionState": "manual",
       "localizations": {
@@ -12010,6 +13402,35 @@
         }
       }
     },
+    "目前还没有大事发生。往前走走看。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing big has happened yet. Move forward and see."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien d'important pour l'instant. Avancez pour voir."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ大きな出来事はありません。進めてみましょう。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 큰 사건이 없습니다. 앞으로 가 보세요."
+          }
+        }
+      }
+    },
     "目标价": {
       "extractionState": "manual",
       "localizations": {
@@ -12035,6 +13456,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "목표가"
+          }
+        }
+      }
+    },
+    "直接跳到这段历史的最后一天并揭晓结果吗？之后不能再交易。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jump to the last day of this period and see the result? You cannot trade after that."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passer au dernier jour de la période et voir le résultat ? Vous ne pourrez plus négocier ensuite."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この期間の最終日まで進んで結果を見ますか？その後は取引できません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 기간의 마지막 날로 이동해 결과를 볼까요? 이후에는 거래할 수 없습니다."
           }
         }
       }
@@ -12561,6 +14011,35 @@
         }
       }
     },
+    "第 %lld / %lld 天": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Day %lld / %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jour %lld / %lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld / %lld 日目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld / %lld일째"
+          }
+        }
+      }
+    },
     "策略": {
       "extractionState": "manual",
       "localizations": {
@@ -12677,6 +14156,35 @@
         }
       }
     },
+    "结局揭晓": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How it ended"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le dénouement"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結末"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "결말"
+          }
+        }
+      }
+    },
     "结束日期": {
       "extractionState": "manual",
       "localizations": {
@@ -12702,6 +14210,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "종료일"
+          }
+        }
+      }
+    },
+    "继续": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reprendre"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "続ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계속하기"
           }
         }
       }
@@ -14330,6 +15867,35 @@
         }
       }
     },
+    "起始资金": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starting cash"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capital de départ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元手"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시작 자금"
+          }
+        }
+      }
+    },
     "超买:70": {
       "extractionState": "manual",
       "localizations": {
@@ -14591,6 +16157,35 @@
         }
       }
     },
+    "跳到结束": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip to end"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aller à la fin"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最後まで進む"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "끝까지 이동"
+          }
+        }
+      }
+    },
     "转到我的账户": {
       "extractionState": "manual",
       "localizations": {
@@ -14736,6 +16331,35 @@
         }
       }
     },
+    "还没有持仓，现在全是现金。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No holdings yet: it is all cash."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune position : tout est en liquidités."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ保有なし：すべて現金です。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 보유 종목이 없습니다: 모두 현금이에요."
+          }
+        }
+      }
+    },
     "还没有自选股": {
       "extractionState": "manual",
       "localizations": {
@@ -14794,6 +16418,35 @@
         }
       }
     },
+    "这只股票今天停牌，不能交易": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trading in this stock is suspended today"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La cotation de ce titre est suspendue aujourd'hui"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この銘柄は本日売買停止中で取引できません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 종목은 오늘 거래 정지되어 거래할 수 없습니다"
+          }
+        }
+      }
+    },
     "这台设备上有你登录前的 %lld 笔模拟交易。要把它们转到你的账户吗？": {
       "extractionState": "manual",
       "localizations": {
@@ -14848,6 +16501,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "진행 중"
+          }
+        }
+      }
+    },
+    "进行到第 %lld/%lld 天": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Day %lld of %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jour %lld sur %lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%2$lld日中%1$lld日目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%2$lld일 중 %1$lld일째"
           }
         }
       }
@@ -15026,6 +16708,35 @@
         }
       }
     },
+    "选一段历史": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a moment"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez une époque"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時代を選ぶ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시기 고르기"
+          }
+        }
+      }
+    },
     "选择持仓": {
       "extractionState": "manual",
       "localizations": {
@@ -15196,6 +16907,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "다시 시작"
+          }
+        }
+      }
+    },
+    "重新开始会清空这一局的持仓和记录，确定吗？": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restarting clears this run's holdings and history. Continue?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommencer efface les positions et l'historique de cette partie. Continuer ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "やり直すとこの回の保有と記録が消えます。よろしいですか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작하면 이번 판의 보유 종목과 기록이 지워집니다. 계속할까요?"
           }
         }
       }
