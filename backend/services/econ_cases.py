@@ -58,8 +58,29 @@ def _id(title: str) -> str:
 _CALENDAR = re.compile(r"\d{1,2}月|\d{4}年|\d{1,2}日")   # "8月" for "August": a date word, not a figure
 
 
+_MONTHS = r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)"
+_DATES = re.compile(rf"\b\d{{1,2}}(?:st|nd|rd|th)?\s+{_MONTHS}\b|\b{_MONTHS}\s+\d{{1,2}}\b|\b(?:19|20)\d{{2}}\b|\d{{1,2}}月|\d{{4}}年|\d{{1,2}}日")
+_CJK = re.compile(r"[\u4e00-\u9fff]")
+
+
 def _numbers(text: str) -> set:
     return {n.replace(",", "").rstrip(".") for n in _NUM.findall(_CALENDAR.sub(" ", text or ""))}
+
+
+def _is_figure(text: str) -> bool:
+    """A quotable figure is a quantity (amount, percentage, price), not just a date."""
+    return bool(_NUM.search(_DATES.sub(" ", text)))
+
+
+def _right_language(lang: str, text: str) -> bool:
+    return bool(_CJK.search(text)) if lang == "zh" else not _CJK.search(text)
+
+
+def _valid_stored(c: dict) -> bool:
+    if c.get("rejected"):
+        return True
+    return all(_right_language(lang, str((c.get(lang) or {}).get(k) or ""))
+               for lang in ("zh", "en") for k in ("what", "angle", "evaluate", "question"))
 
 
 def _load() -> None:
@@ -68,8 +89,9 @@ def _load() -> None:
         with open(_PATH, encoding="utf-8") as f:
             data = json.load(f)
         now = time.time()
+        # A case written in the wrong language is dropped (not marked rejected), so it is written again
         _db = {k: v for k, v in data.items()
-               if now - v.get("ts", 0) < (_KEEP_REJECTED if v.get("rejected") else _KEEP_CASES)}
+               if now - v.get("ts", 0) < (_KEEP_REJECTED if v.get("rejected") else _KEEP_CASES) and _valid_stored(v)}
     except Exception:
         _db = {}
 
@@ -135,7 +157,9 @@ def _prompt() -> str:
         "essays. You get one news article (headline and the source's short lead). Decide whether it is a clear, "
         "useful example of one or more of these concepts:\n" + concept_list + "\n\n"
         "Rules: use only facts stated in the headline and lead; never add numbers, names, dates or events that "
-        "are not there; textbook reasoning is fine but must not introduce new facts. Write in your own words, "
+        "are not there; textbook reasoning is fine but must not introduce new facts. Never infer a person's job "
+        "title or role: give a role only when the source states it for that same person, otherwise use the name "
+        "alone. Write in your own words, "
         "do not copy sentences from the source. No investment advice.\n"
         "Return JSON only:\n"
         '{"useful": true|false, "concepts": ["concept_id", ...] (1 to 3, most relevant first), '
@@ -144,9 +168,11 @@ def _prompt() -> str:
         "what: 1-2 sentences on what happened. angle: 2-3 sentences explaining how it illustrates the concept "
         "(the mechanism a student would draw or explain). evaluate: 1-2 sentences giving one evaluation point "
         "(another factor, a limitation, short run vs long run, who wins and who loses). question: one exam-style "
-        "question that uses this example. data: up to 3 short phrases with figures quoted from the article, "
-        "keeping every number exactly as written in the source (Arabic numerals); empty if it has none.\n"
-        "zh is Simplified Chinese, en is English. If the article is not a useful economics example "
+        "question that uses this example. data: up to 3 short phrases with quantities from the article (amounts, "
+        "percentages, prices; not dates), keeping every number exactly as written in the source (Arabic "
+        "numerals); empty if it has none.\n"
+        "Every field of zh, including the question, is written in Simplified Chinese; every field of en in "
+        "English. If the article is not a useful economics example "
         '(celebrity, crime, sport, a single stock tip, too vague), return {"useful": false}.'
     )
 
@@ -184,11 +210,14 @@ def _check(item: dict, out: dict) -> dict | None:
         if not texts["what"] or not texts["angle"] or not texts["question"]:
             return None
         for k, v in texts.items():
+            if not _right_language(lang, v):
+                logger.info("case %s rejected: %s/%s is in the wrong language", item["id"], lang, k)
+                return None
             if _numbers(v) - allowed:
                 logger.info("case %s rejected: %s/%s has figures not in the source", item["id"], lang, k)
                 return None
         data = [str(d).strip() for d in (part.get("data") or []) if str(d).strip()][:3]
-        data = [d for d in data if _numbers(d) and not (_numbers(d) - sourced)]   # quotable figures: only the article's
+        data = [d for d in data if _is_figure(d) and not (_numbers(d) - sourced)]   # quotable figures: only the article's
         case[lang] = {**{k: v[:600] for k, v in texts.items()}, "data": [d[:200] for d in data]}
     return case
 
