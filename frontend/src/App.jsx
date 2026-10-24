@@ -17,6 +17,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import useAuthStore from './store/authStore'
 
 const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
+const TimeMachinePage    = lazy(() => import('./components/timemachine/TimeMachinePage'))
 const StudyCenter        = lazy(() => import('./components/StudyCenter'))
 const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
 const UniversitiesPage   = lazy(() => import('./components/UniversitiesPage'))
@@ -29,6 +30,7 @@ const HeatmapPage        = lazy(() => import('./components/HeatmapPage'))
 const MacroCalendarPage  = lazy(() => import('./components/MacroCalendarPage'))
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
+import tmStrings from './components/timemachine/tmStrings'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -61,6 +63,7 @@ const TAB_PATHS = {
   news:         '/news',
   macro:        '/macro',
   paper:        '/paper',
+  time_machine: '/time-machine',
   study:        '/study',
   universities: '/universities',
   bank_views:   '/bank_views',
@@ -214,6 +217,7 @@ export default function App() {
       analysis:     'BestFriendStock | 免费美股A股分析 · AI智能投资 · 模拟炒股 · 经济学学习',
       news:         'BestFriendStock | 每日大事件 - 市场重大新闻',
       paper:        'BestFriendStock | 模拟炒股 - 用虚拟资金练习美股与A股交易',
+      time_machine: 'BestFriendStock | 历史穿越交易 - 回到2008金融危机、2020疫情暴跌、2015股灾做投资决定',
       study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门',
       universities: 'BestFriendStock | 全球商学院指南 - 100+顶尖商学院数据库',
       bank_views:   'BestFriendStock | 大行观点 - 顶级投行研究观点',
@@ -228,6 +232,7 @@ export default function App() {
       analysis:     'Best Friend Stock | Free US & China Stock Analysis, Paper Trading and Economics',
       news:         'Best Friend Stock | Daily Market News',
       paper:        'Best Friend Stock | Paper Trading with $1M Virtual Cash',
+      time_machine: 'Best Friend Stock | History Time Machine: Trade Through 2008, 2020 and 2022',
       study:        'Best Friend Stock | Economics Study Center: A-Level, IB, AP, IGCSE',
       universities: 'Best Friend Stock | Business School Guide',
       bank_views:   'Best Friend Stock | Bank Research Views',
@@ -293,6 +298,7 @@ export default function App() {
   const handleTabChange = (tab) => {
     navigate(TAB_PATHS[tab] || '/')
     if (tab === 'paper') trackFeature('paper_trading')
+    else if (tab === 'time_machine') trackFeature('time_machine')
     else if (tab === 'study') trackFeature('study')
     else if (tab === 'universities') trackFeature('universities')
     else trackFeature('analysis')
@@ -765,6 +771,7 @@ export default function App() {
           { key: 'macro',        label: t.tabMacro },
           { key: 'bank_views',   label: t.tabBankViews },
           { key: 'paper',        label: t.tabPaper },
+          { key: 'time_machine', label: tmStrings(lang).nav },
           { key: 'study',        label: t.tabStudy },
           { key: 'universities', label: t.tabUniversities },
           { key: 'career',       label: t.tabCareer },
@@ -800,6 +807,8 @@ export default function App() {
             <StudyCenter lang={lang} />
           ) : appTab === 'paper' ? (
             <PaperTradingPanel lang={lang} onOpenAuth={() => setShowAuth(true)} />
+          ) : appTab === 'time_machine' ? (
+            <TimeMachinePage lang={lang} />
           ) : appTab === 'universities' ? (
             <UniversitiesPage lang={lang} />
           ) : appTab === 'news' ? (

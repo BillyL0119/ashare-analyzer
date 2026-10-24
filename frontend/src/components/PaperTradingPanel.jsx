@@ -7,6 +7,8 @@ import GamesModal from './paper/GamesModal'
 import Missions from './paper/Missions'
 import Checkup from './paper/Checkup'
 import StockSearch from './paper/StockSearch'
+import tmStrings from './timemachine/tmStrings'
+import { useNavigate } from 'react-router-dom'
 import { Positions, Orders, History, Leaderboard } from './paper/DeskTables'
 import { BDR, MUTED, UP, DOWN, Card, Seg, Stat, Modal, Button, inputStyle, money, signed, pct, plColor } from './paper/ui'
 import getDeviceId from '../utils/deviceId'
@@ -34,6 +36,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   const s = ptStrings(lang)
   const { user, loading: authLoading } = useAuthStore()
   const accountKey = user?.id ?? getDeviceId()
+  const navigate = useNavigate()
 
   // /paper?buy=AAPL&market=us (a stock page's "Paper trade" button) opens with the order filled in
   const [prefillUrl] = useState(() => {
@@ -179,6 +182,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', flex: '0 1 600px', justifyContent: 'flex-end', minWidth: 0 }}>
           <StockSearch s={s} lang={lang} first={market || 'us'} only={gameId ? market : null} onTrade={tradeFromSearch} />
           <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>🏆 {s.newGame}</Button>
+          <Button ghost onClick={() => navigate('/time-machine')} style={{ fontSize: 13 }}>🕰 {tmStrings(lang).nav}</Button>
         </div>
       </div>
 

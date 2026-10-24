@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStockSearch from '../../hooks/useStockSearch'
+import tmStrings from '../../components/timemachine/tmStrings'
 import useLangStore from '../../store/langStore'
 import PaperPerformance from '../PaperPerformance'
 import useSymbolSuggest from '../../hooks/useSymbolSuggest'
@@ -550,6 +551,7 @@ function daysLeft(end) {
 export default function Paper() {
   const t = useT()
   const lang = useLangStore((st) => st.lang)
+  const nav = useNavigate()
   const [acc, setAcc] = useState(null); const [err, setErr] = useState(null)
   // /paper?buy=AAPL&market=us (a stock page's "Paper trade" button) opens the order sheet filled in
   const [prefill] = useState(() => {
@@ -735,6 +737,17 @@ export default function Paper() {
         </div>
       )}
       {!gameId && <MissionsCard missions={acc?.missions} onAction={missionAction} />}
+
+      {!gameId && (
+        <button className="m-card" onClick={() => nav('/time-machine')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
+          <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>🕰</span>
+          <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
+            <b style={{ fontSize: 15 }}>{tmStrings(lang).title}</b>
+            <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{tmStrings(lang).how[0][1]}</span>
+          </span>
+          <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
+        </button>
+      )}
 
       {acc && view && <PaperPerformance deviceId={deviceId()} market={market} gameId={gameId} refreshKey={`${view.count}-${view.cash}`} />}
 

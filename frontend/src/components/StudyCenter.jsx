@@ -772,7 +772,11 @@ function EventPriceChart({ eventId, tickers, zh }) {
 }
 
 // ── Economic Events Timeline ───────────────────────────────────────────────────
+// Study events that have a playable time-machine scenario
+const TIME_MACHINE = { financial_crisis_2008: 'gfc_2008', covid_2020: 'covid_2020', ashare_crash_2015: 'ashare_2015', fed_hikes_2022: 'rates_2022' }
+
 function EventTimeline({ zh }) {
+  const navigate = useNavigate()
   const [events, setEvents]       = useState([])
   const [loading, setLoading]     = useState(false)
   const [activeId, setActiveId]   = useState(null)
@@ -889,6 +893,12 @@ function EventTimeline({ zh }) {
               <p style={{ margin: 0, fontSize: 14, lineHeight: 1.8, color: 'var(--text-secondary)' }}>
                 {zh ? active.description : active.description_en}
               </p>
+              {TIME_MACHINE[active.id] && (
+                <button onClick={() => navigate(`/time-machine?s=${TIME_MACHINE[active.id]}`)} style={{
+                  marginTop: 12, padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                  color: '#fff', background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                }}>🕰 {zh ? '穿越回去，亲自交易这段历史' : 'Go back and trade through it yourself'}</button>
+              )}
             </div>
 
             {/* Price chart */}

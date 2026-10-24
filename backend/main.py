@@ -29,6 +29,7 @@ from routers.market import router as market_router
 from routers.export import router as export_router
 from routers.calendar import router as calendar_router
 from routers.paper_trading import router as paper_router
+from routers.time_machine import router as time_machine_router
 from routers.analytics import router as analytics_router
 from routers.study import router as study_router
 from routers.earnings import router as earnings_router
@@ -155,6 +156,12 @@ async def sitemap():
     <loc>https://bestfriendstock.com/study</loc>
     <lastmod>{today}</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestfriendstock.com/time-machine</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
@@ -444,6 +451,7 @@ app.include_router(market_router, prefix="/api/market", tags=["market"])
 app.include_router(export_router, prefix="/api/export", tags=["export"])
 app.include_router(calendar_router, prefix="/api/calendar", tags=["calendar"])
 app.include_router(paper_router, prefix="/api/paper", tags=["paper_trading"])
+app.include_router(time_machine_router, prefix="/api/time-machine", tags=["time_machine"])
 app.include_router(analytics_router, prefix="/api/analytics", tags=["analytics"])
 app.include_router(study_router, prefix="/api/study", tags=["study"])
 app.include_router(earnings_router, prefix="/api/earnings", tags=["earnings"])
