@@ -14,6 +14,7 @@ const Learning = lazy(() => import('./tabs/Learning'))
 const AITeacher = lazy(() => import('./tabs/AITeacher'))
 const Paper = lazy(() => import('./tabs/Paper'))
 const TimeMachine = lazy(() => import('./tabs/TimeMachine'))
+const Cases = lazy(() => import('./tabs/Cases'))
 
 // Tab titles, the same wording as the desktop site (a stock page sets its own)
 const TITLES = {
@@ -23,6 +24,7 @@ const TITLES = {
     paper_trading: 'BestFriendStock | 模拟炒股 - 用虚拟资金练习美股与A股交易',
     ai_tutor: 'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     time_machine: 'BestFriendStock | 历史穿越交易 - 回到2008金融危机、2020疫情暴跌、2015股灾做投资决定',
+    cases: 'BestFriendStock | 经济学案例库 - IB、A-Level、AP 论文可用的真实新闻案例',
   },
   en: {
     analysis: 'Best Friend Stock | Free US & China Stock Analysis, Paper Trading and Economics',
@@ -30,6 +32,7 @@ const TITLES = {
     paper_trading: 'Best Friend Stock | Paper Trading with $1M Virtual Cash',
     ai_tutor: 'Best Friend Stock | AI Economics Teacher',
     time_machine: 'Best Friend Stock | History Time Machine: Trade Through 2008, 2020 and 2022',
+    cases: 'Best Friend Stock | Economics Case Library: Real-World Examples for IB, A-Level and AP Essays',
   },
 }
 
@@ -69,7 +72,7 @@ export default function MobileApp() {
   }, [])
 
   // Same feature names the desktop site reports, so both UIs show up in one usage chart.
-  const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/time-machine' ? 'time_machine' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
+  const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/time-machine' ? 'time_machine' : loc.pathname === '/cases' ? 'cases' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
   useEffect(() => { if (section) trackFeature(section) }, [section])
   const lang = useLangStore((st) => st.lang)
   useEffect(() => {
@@ -86,6 +89,7 @@ export default function MobileApp() {
           <Route path="/ai-teacher" element={<AITeacher />} />
           <Route path="/paper" element={<Page><Paper /></Page>} />
           <Route path="/time-machine" element={<Page><TimeMachine /></Page>} />
+          <Route path="/cases" element={<Page><Cases /></Page>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

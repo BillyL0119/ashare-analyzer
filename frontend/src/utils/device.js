@@ -55,7 +55,7 @@ export function chooseUI({ ua = '', width = 1024, search = '', storage = null } 
 
 /** Pages the phone UI implements. Anything else (privacy policy, news, universities, ...) keeps the full site. */
 export function mobileSupports(pathname = '/') {
-  return pathname === '/' || /^\/(stock\/(cn|us|hk|jp)\/[^/]+|study(\/.*)?|ai-teacher|paper|time-machine)\/?$/.test(pathname)
+  return pathname === '/' || /^\/(stock\/(cn|us|hk|jp)\/[^/]+|study(\/.*)?|ai-teacher|paper|time-machine|cases)\/?$/.test(pathname)
 }
 
 export function currentUI() {

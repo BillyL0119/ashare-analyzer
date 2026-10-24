@@ -967,6 +967,8 @@ export default function StudyCenter({ lang }) {
   const navigate = useNavigate()
 
   const examFromUrl = location.pathname.match(/^\/study\/(\w+)$/)?.[1]
+  // ?topic=ib_6 (from the case library) opens that topic once the curriculum has loaded
+  const [topicFromUrl] = useState(() => new URLSearchParams(location.search).get('topic'))
   const [activeExam, setActiveExam] = useState(
     () => VALID_EXAMS.includes(examFromUrl) ? examFromUrl : 'stocks'
   )
@@ -996,7 +998,8 @@ export default function StudyCenter({ lang }) {
       .then((d) => {
         setCurriculum(d)
         const firstId = d.papers?.[0]?.topics?.[0]?.id
-        if (firstId) selectTopic(firstId, activeExam)
+        const wanted = topicFromUrl && d.papers?.some((p) => p.topics?.some((t) => t.id === topicFromUrl)) ? topicFromUrl : null
+        if (wanted || firstId) selectTopic(wanted || firstId, activeExam)
       })
       .catch(console.error)
       .finally(() => setLoadingCurr(false))

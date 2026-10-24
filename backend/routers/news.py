@@ -464,6 +464,8 @@ def get_global_news(
         items = [i for i in items if i['lang'] == lang]
     if category and category != 'all':
         items = [i for i in items if i['category'] == category]
+    # The source's own lead stays on the server (as on /daily): only headline, link and metadata go out
+    items = [{k: v for k, v in i.items() if k != 'summary'} for i in items]
 
     return {**payload, 'items': items, 'count': len(items)}
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import casesStrings from '../../components/cases/casesStrings'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import useLangStore from '../../store/langStore'
 import { useT } from '../i18n'
@@ -51,6 +52,14 @@ function List() {
   return (
     <div className="m-stack" style={{ gap: 18 }}>
       <h1 className="m-title" style={{ marginBottom: 0 }}>{t('学习中心')}</h1>
+      <button className="m-card" onClick={() => nav('/cases')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
+        <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>📰</span>
+        <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
+          <b style={{ fontSize: 15 }}>{casesStrings(lang).title}</b>
+          <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{casesStrings(lang).subtitle}</span>
+        </span>
+        <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
+      </button>
       <div className="m-strip" style={{ gap: 8 }}>
         {EXAM_ORDER.map((k) => (
           <button key={k} onClick={() => choose(k)} aria-pressed={exam === k} style={{ flex: 'none', padding: '8px 16px', borderRadius: 999, fontWeight: 650, fontSize: 14,
