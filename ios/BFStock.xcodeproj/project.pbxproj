@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A26D2F8A1E62437D83C38CB6 /* ClassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BB0B289E41440D9614E927 /* ClassesView.swift */; };
+		65A93F482E364CFCA97385EB /* ClassesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5312955FD3140D7A89DBD01 /* ClassesViewModel.swift */; };
+		25FC9E7FFD364461AE788543 /* ClassModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE171F3C8CA94C68BDA120F8 /* ClassModels.swift */; };
 		42AEFDCA2C4E45FD96E7D90A /* TimeMachineGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970A9BBF37D4168AE595740 /* TimeMachineGameView.swift */; };
 		25C61EE405D04A389DF434E6 /* TimeMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBBDD851DBD42AAAC373C1F /* TimeMachineView.swift */; };
 		FADDCA2E5BA743ACBA4D380D /* TimeMachineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6030318D8744BCEB590BD49 /* TimeMachineViewModel.swift */; };
@@ -71,6 +74,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D0BB0B289E41440D9614E927 /* ClassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesView.swift; sourceTree = "<group>"; };
+		B5312955FD3140D7A89DBD01 /* ClassesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesViewModel.swift; sourceTree = "<group>"; };
+		FE171F3C8CA94C68BDA120F8 /* ClassModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassModels.swift; sourceTree = "<group>"; };
 		7970A9BBF37D4168AE595740 /* TimeMachineGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachineGameView.swift; sourceTree = "<group>"; };
 		BFBBDD851DBD42AAAC373C1F /* TimeMachineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachineView.swift; sourceTree = "<group>"; };
 		C6030318D8744BCEB590BD49 /* TimeMachineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachineViewModel.swift; sourceTree = "<group>"; };
@@ -136,6 +142,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		B187F66975F9407BB78DDDE9 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				D0BB0B289E41440D9614E927 /* ClassesView.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
 		13F7EF4FB1CE4BBC86F406F8 /* TimeMachine */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +219,7 @@
 				D9DCB7A60EC9BA2999826BF7 /* StockDetailModels.swift */,
 				909940DE369348CDACC7F077 /* ExtraFeatureModels.swift */,
 				168A17E1D21749D5BB43AB43 /* TimeMachineModels.swift */,
+				FE171F3C8CA94C68BDA120F8 /* ClassModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -267,6 +282,7 @@
 				AB2920E52ED0403B8EA92DB9 /* Universities */,
 				3ED2A7A101604B6D88734109 /* Career */,
 				13F7EF4FB1CE4BBC86F406F8 /* TimeMachine */,
+				B187F66975F9407BB78DDDE9 /* Classes */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -283,6 +299,7 @@
 				7E8D0B23A5E88499DABB4A9F /* WatchlistStore.swift */,
 				FFC78DAD6F9F47839C0DE2D5 /* ExtraFeatureViewModels.swift */,
 				C6030318D8744BCEB590BD49 /* TimeMachineViewModel.swift */,
+				B5312955FD3140D7A89DBD01 /* ClassesViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -414,6 +431,9 @@
 			files = (
 				42AEFDCA2C4E45FD96E7D90A /* TimeMachineGameView.swift in Sources */,
 				25C61EE405D04A389DF434E6 /* TimeMachineView.swift in Sources */,
+				A26D2F8A1E62437D83C38CB6 /* ClassesView.swift in Sources */,
+				65A93F482E364CFCA97385EB /* ClassesViewModel.swift in Sources */,
+				25FC9E7FFD364461AE788543 /* ClassModels.swift in Sources */,
 				FADDCA2E5BA743ACBA4D380D /* TimeMachineViewModel.swift in Sources */,
 				49307AB40B9D4076BF3B9527 /* TimeMachineModels.swift in Sources */,
 				25BC6D13451B486C89EED108 /* PerformanceSection.swift in Sources */,

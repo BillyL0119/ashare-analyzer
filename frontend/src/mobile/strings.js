@@ -3553,6 +3553,186 @@ export const STR = {
   "오류가 발생했습니다. 다시 시도해 주세요",
   "Une erreur est survenue, réessayez"
  ],
+ "班级": [
+  "Classes",
+  "クラス",
+  "클래스",
+  "Classes"
+ ],
+ "加入老师的班级：作业根据你在 App 里的练习自动完成": [
+  "Join your teacher's class: assignments complete themselves as you practise in the app",
+  "先生のクラスに参加：アプリで練習すると課題が自動で完了します",
+  "선생님 클래스에 참여하세요: 앱에서 연습하면 과제가 자동으로 완료됩니다",
+  "Rejoignez la classe de votre enseignant : les devoirs se valident tout seuls quand vous vous entraînez dans l'app"
+ ],
+ "用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易和历史穿越自动完成。": [
+  "Join your teacher's class with its code. Assignments complete themselves from your learning missions, paper trading and time-machine runs in this app.",
+  "先生からもらったクラスコードで参加します。課題は、このアプリでの学習ミッション・模擬取引・タイムマシンの結果から自動で完了します。",
+  "선생님이 준 클래스 코드로 참여하세요. 과제는 이 앱에서의 학습 미션, 모의 투자, 타임머신 결과로 자동 완료됩니다.",
+  "Rejoignez la classe de votre enseignant avec son code. Les devoirs se valident tout seuls à partir de vos missions, de votre trading fictif et de la machine à remonter le temps dans cette app."
+ ],
+ "我加入的班级": [
+  "My classes",
+  "参加しているクラス",
+  "내 클래스",
+  "Mes classes"
+ ],
+ "退出班级": [
+  "Leave class",
+  "クラスを退出",
+  "클래스 나가기",
+  "Quitter la classe"
+ ],
+ "确定退出这个班级吗？老师将看不到你的进度。": [
+  "Leave this class? Your teacher will no longer see your progress.",
+  "このクラスを退出しますか？先生はあなたの進み具合を見られなくなります。",
+  "이 클래스에서 나갈까요? 선생님이 더 이상 진행 상황을 볼 수 없습니다.",
+  "Quitter cette classe ? Votre enseignant ne verra plus vos progrès."
+ ],
+ "老师：%@": [
+  "Teacher: %@",
+  "先生：%@",
+  "선생님: %@",
+  "Enseignant : %@"
+ ],
+ "你的昵称：%@": [
+  "Your name: %@",
+  "ニックネーム：%@",
+  "내 닉네임: %@",
+  "Votre nom : %@"
+ ],
+ "作业": [
+  "Assignments",
+  "課題",
+  "과제",
+  "Devoirs"
+ ],
+ "老师还没有布置作业。": [
+  "No assignments yet.",
+  "まだ課題はありません。",
+  "아직 과제가 없습니다.",
+  "Pas encore de devoirs."
+ ],
+ "班级码": [
+  "Class code",
+  "クラスコード",
+  "클래스 코드",
+  "Code de la classe"
+ ],
+ "已完成": [
+  "Done",
+  "完了",
+  "완료",
+  "Fait"
+ ],
+ "未完成": [
+  "To do",
+  "未完了",
+  "미완료",
+  "À faire"
+ ],
+ "截止 %@": [
+  "Due %@",
+  "締切 %@",
+  "마감 %@",
+  "Pour le %@"
+ ],
+ "班级排行": [
+  "Class leaderboard",
+  "クラスランキング",
+  "클래스 순위",
+  "Classement de la classe"
+ ],
+ "美股收益": [
+  "US return",
+  "米国株収益",
+  "미국 수익률",
+  "Perf. US"
+ ],
+ "加入班级": [
+  "Join a class",
+  "クラスに参加",
+  "클래스 참여",
+  "Rejoindre une classe"
+ ],
+ "你还没有加入班级。向老师要班级码，在下面输入即可。": [
+  "You have not joined a class yet. Ask your teacher for the class code and enter it below.",
+  "まだクラスに参加していません。先生からクラスコードをもらい、下に入力してください。",
+  "아직 참여한 클래스가 없습니다. 선생님께 클래스 코드를 받아 아래에 입력하세요.",
+  "Vous n'avez rejoint aucune classe. Demandez le code à votre enseignant et saisissez-le ci-dessous."
+ ],
+ "例如 PR96RQ": [
+  "e.g. PR96RQ",
+  "例：PR96RQ",
+  "예: PR96RQ",
+  "ex. PR96RQ"
+ ],
+ "查找": [
+  "Find",
+  "検索",
+  "찾기",
+  "Chercher"
+ ],
+ "App 和网页版的模拟账户是分开的。如果你在网页上加入过这个班级，请在 App 里再加入一次，App 里的进度才会算进去。": [
+  "The app and the website have separate paper accounts. If you joined this class on the website, join it here too so your progress in the app counts.",
+  "アプリとウェブ版の模擬口座は別々です。ウェブで参加したクラスも、アプリでの進み具合を反映させるにはアプリでもう一度参加してください。",
+  "앱과 웹사이트의 모의 계좌는 서로 다릅니다. 웹에서 이 클래스에 참여했다면 앱에서도 다시 참여해야 앱에서의 진행 상황이 반영됩니다.",
+  "L'app et le site ont des comptes fictifs distincts. Si vous avez rejoint cette classe sur le site, rejoignez-la aussi ici pour que vos progrès dans l'app comptent."
+ ],
+ "%lld 名学生": [
+  "Students: %lld",
+  "生徒 %lld人",
+  "학생 %lld명",
+  "Élèves : %lld"
+ ],
+ "已加入": [
+  "Joined",
+  "参加済み",
+  "참여함",
+  "Inscrit"
+ ],
+ "你在班上的昵称": [
+  "Your name in this class",
+  "クラスでのニックネーム",
+  "클래스에서 쓸 닉네임",
+  "Votre nom dans cette classe"
+ ],
+ "老师能认出你的名字，2–16 个字": [
+  "A name your teacher will recognise, 2–16 characters",
+  "先生がわかる名前（2〜16文字）",
+  "선생님이 알아볼 이름 (2–16자)",
+  "Un nom que votre enseignant reconnaîtra, 2 à 16 caractères"
+ ],
+ "加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩。老师看不到你的邮箱，你可以随时退出。": [
+  "When you join, your teacher can see your nickname, learning missions, number of trades and returns, and time-machine results. Your teacher cannot see your email, and you can leave at any time.",
+  "参加すると、先生はあなたのニックネーム、学習ミッション、取引回数と収益、タイムマシンの結果を見られます。メールアドレスは見えません。いつでも退出できます。",
+  "참여하면 선생님은 닉네임, 학습 미션, 거래 횟수와 수익률, 타임머신 결과를 볼 수 있습니다. 이메일은 보이지 않으며 언제든지 나갈 수 있습니다.",
+  "En rejoignant, votre enseignant voit votre pseudo, vos missions, le nombre d'ordres et vos performances, et vos résultats de la machine à remonter le temps. Il ne voit pas votre e-mail ; vous pouvez partir à tout moment."
+ ],
+ "加入": [
+  "Join",
+  "参加する",
+  "참여하기",
+  "Rejoindre"
+ ],
+ "没有找到这个班级码，请向老师确认。": [
+  "No class with that code. Check it with your teacher.",
+  "そのコードのクラスはありません。先生に確認してください。",
+  "해당 코드의 클래스가 없습니다. 선생님께 확인하세요.",
+  "Aucune classe avec ce code. Vérifiez auprès de votre enseignant."
+ ],
+ "昵称需要 2–16 个字，只能用文字、数字、空格或 - _ . #": [
+  "Nickname: 2–16 letters, numbers, spaces or - _ . #",
+  "ニックネームは2〜16文字で、文字・数字・スペース・- _ . # が使えます",
+  "닉네임은 2–16자이며 문자, 숫자, 공백, - _ . # 만 쓸 수 있습니다",
+  "Pseudo : 2 à 16 lettres, chiffres, espaces ou - _ . #"
+ ],
+ "这个班级已满": [
+  "This class is full",
+  "このクラスは満員です",
+  "이 클래스는 정원이 찼습니다",
+  "Cette classe est complète"
+ ],
  "加载中...": [
   "Loading...",
   "読み込み中...",

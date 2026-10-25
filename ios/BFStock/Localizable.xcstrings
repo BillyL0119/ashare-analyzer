@@ -349,6 +349,35 @@
         }
       }
     },
+    "%lld 名学生": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Students: %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Élèves : %lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "生徒 %lld人"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학생 %lld명"
+          }
+        }
+      }
+    },
     "%lld 天后结束": {
       "extractionState": "manual",
       "localizations": {
@@ -1244,6 +1273,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "AI 면접관이 한 번에 한 문제씩 묻고 4~5회 후 점수와 조언을 줍니다"
+          }
+        }
+      }
+    },
+    "App 和网页版的模拟账户是分开的。如果你在网页上加入过这个班级，请在 App 里再加入一次，App 里的进度才会算进去。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app and the website have separate paper accounts. If you joined this class on the website, join it here too so your progress in the app counts."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'app et le site ont des comptes fictifs distincts. Si vous avez rejoint cette classe sur le site, rejoignez-la aussi ici pour que vos progrès dans l'app comptent."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリとウェブ版の模擬口座は別々です。ウェブで参加したクラスも、アプリでの進み具合を反映させるにはアプリでもう一度参加してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱과 웹사이트의 모의 계좌는 서로 다릅니다. 웹에서 이 클래스에 참여했다면 앱에서도 다시 참여해야 앱에서의 진행 상황이 반영됩니다."
           }
         }
       }
@@ -3919,6 +3977,64 @@
         }
       }
     },
+    "作业": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assignments"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Devoirs"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "課題"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "과제"
+          }
+        }
+      }
+    },
+    "你在班上的昵称": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your name in this class"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre nom dans cette classe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クラスでのニックネーム"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클래스에서 쓸 닉네임"
+          }
+        }
+      }
+    },
     "你的收益": {
       "extractionState": "manual",
       "localizations": {
@@ -3977,6 +4093,35 @@
         }
       }
     },
+    "你的昵称：%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your name: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre nom : %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ニックネーム：%@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 닉네임: %@"
+          }
+        }
+      }
+    },
     "你的最好成绩": {
       "extractionState": "manual",
       "localizations": {
@@ -4031,6 +4176,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "내 계좌"
+          }
+        }
+      }
+    },
+    "你还没有加入班级。向老师要班级码，在下面输入即可。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have not joined a class yet. Ask your teacher for the class code and enter it below."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous n'avez rejoint aucune classe. Demandez le code à votre enseignant et saisissez-le ci-dessous."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだクラスに参加していません。先生からクラスコードをもらい、下に入力してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 참여한 클래스가 없습니다. 선생님께 클래스 코드를 받아 아래에 입력하세요."
+          }
+        }
+      }
+    },
+    "例如 PR96RQ": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. PR96RQ"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ex. PR96RQ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例：PR96RQ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예: PR96RQ"
           }
         }
       }
@@ -5282,6 +5485,64 @@
         }
       }
     },
+    "加入": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejoindre"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "参加する"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "참여하기"
+          }
+        }
+      }
+    },
+    "加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩。老师看不到你的邮箱，你可以随时退出。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you join, your teacher can see your nickname, learning missions, number of trades and returns, and time-machine results. Your teacher cannot see your email, and you can leave at any time."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En rejoignant, votre enseignant voit votre pseudo, vos missions, le nombre d'ordres et vos performances, et vos résultats de la machine à remonter le temps. Il ne voit pas votre e-mail ; vous pouvez partir à tout moment."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "参加すると、先生はあなたのニックネーム、学習ミッション、取引回数と収益、タイムマシンの結果を見られます。メールアドレスは見えません。いつでも退出できます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "참여하면 선생님은 닉네임, 학습 미션, 거래 횟수와 수익률, 타임머신 결과를 볼 수 있습니다. 이메일은 보이지 않으며 언제든지 나갈 수 있습니다."
+          }
+        }
+      }
+    },
     "加入比赛": {
       "extractionState": "manual",
       "localizations": {
@@ -5307,6 +5568,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "참가"
+          }
+        }
+      }
+    },
+    "加入班级": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join a class"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejoindre une classe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クラスに参加"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클래스 참여"
+          }
+        }
+      }
+    },
+    "加入老师的班级：作业根据你在 App 里的练习自动完成": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join your teacher's class: assignments complete themselves as you practise in the app"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejoignez la classe de votre enseignant : les devoirs se valident tout seuls quand vous vous entraînez dans l'app"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先生のクラスに参加：アプリで練習すると課題が自動で完了します"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선생님 클래스에 참여하세요: 앱에서 연습하면 과제가 자동으로 완료됩니다"
           }
         }
       }
@@ -7457,6 +7776,35 @@
         }
       }
     },
+    "已加入": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Joined"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inscrit"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "参加済み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "참여함"
+          }
+        }
+      }
+    },
     "已复制": {
       "extractionState": "manual",
       "localizations": {
@@ -7511,6 +7859,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "학습 완료"
+          }
+        }
+      }
+    },
+    "已完成": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료"
           }
         }
       }
@@ -8878,6 +9255,35 @@
         }
       }
     },
+    "我加入的班级": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My classes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mes classes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "参加しているクラス"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 클래스"
+          }
+        }
+      }
+    },
     "我的收益": {
       "extractionState": "manual",
       "localizations": {
@@ -8932,6 +9338,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "내 포트폴리오"
+          }
+        }
+      }
+    },
+    "截止 %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour le %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "締切 %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마감 %@"
           }
         }
       }
@@ -10531,6 +10966,35 @@
         }
       }
     },
+    "昵称需要 2–16 个字，只能用文字、数字、空格或 - _ . #": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nickname: 2–16 letters, numbers, spaces or - _ . #"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pseudo : 2 à 16 lettres, chiffres, espaces ou - _ . #"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ニックネームは2〜16文字で、文字・数字・スペース・- _ . # が使えます"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닉네임은 2–16자이며 문자, 숫자, 공백, - _ . # 만 쓸 수 있습니다"
+          }
+        }
+      }
+    },
     "暂无持仓": {
       "extractionState": "manual",
       "localizations": {
@@ -11169,6 +11633,35 @@
         }
       }
     },
+    "未完成": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To do"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À faire"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未完了"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미완료"
+          }
+        }
+      }
+    },
     "未开始": {
       "extractionState": "manual",
       "localizations": {
@@ -11571,6 +12064,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "극단적 탐욕"
+          }
+        }
+      }
+    },
+    "查找": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chercher"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "찾기"
           }
         }
       }
@@ -12358,6 +12880,35 @@
         }
       }
     },
+    "没有找到这个班级码，请向老师确认。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No class with that code. Check it with your teacher."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune classe avec ce code. Vérifiez auprès de votre enseignant."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "そのコードのクラスはありません。先生に確認してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "해당 코드의 클래스가 없습니다. 선생님께 확인하세요."
+          }
+        }
+      }
+    },
     "没有找到这只股票": {
       "extractionState": "manual",
       "localizations": {
@@ -13054,6 +13605,122 @@
         }
       }
     },
+    "班级": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クラス"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클래스"
+          }
+        }
+      }
+    },
+    "班级排行": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Class leaderboard"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classement de la classe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クラスランキング"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클래스 순위"
+          }
+        }
+      }
+    },
+    "班级码": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Class code"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code de la classe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クラスコード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클래스 코드"
+          }
+        }
+      }
+    },
+    "用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易和历史穿越自动完成。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join your teacher's class with its code. Assignments complete themselves from your learning missions, paper trading and time-machine runs in this app."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejoignez la classe de votre enseignant avec son code. Les devoirs se valident tout seuls à partir de vos missions, de votre trading fictif et de la machine à remonter le temps dans cette app."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先生からもらったクラスコードで参加します。課題は、このアプリでの学習ミッション・模擬取引・タイムマシンの結果から自動で完了します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선생님이 준 클래스 코드로 참여하세요. 과제는 이 앱에서의 학습 미션, 모의 투자, 타임머신 결과로 자동 완료됩니다."
+          }
+        }
+      }
+    },
     "用虚拟资金练习买卖，不承担真实风险": {
       "extractionState": "manual",
       "localizations": {
@@ -13688,6 +14355,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "확인"
+          }
+        }
+      }
+    },
+    "确定退出这个班级吗？老师将看不到你的进度。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave this class? Your teacher will no longer see your progress."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter cette classe ? Votre enseignant ne verra plus vos progrès."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このクラスを退出しますか？先生はあなたの進み具合を見られなくなります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 클래스에서 나갈까요? 선생님이 더 이상 진행 상황을 볼 수 없습니다."
           }
         }
       }
@@ -14620,6 +15316,35 @@
         }
       }
     },
+    "美股收益": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "US return"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perf. US"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "米国株収益"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미국 수익률"
+          }
+        }
+      }
+    },
     "美股热门": {
       "extractionState": "manual",
       "localizations": {
@@ -14674,6 +15399,93 @@
           "stringUnit": {
             "state": "translated",
             "value": "미국주식 계좌"
+          }
+        }
+      }
+    },
+    "老师能认出你的名字，2–16 个字": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A name your teacher will recognise, 2–16 characters"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un nom que votre enseignant reconnaîtra, 2 à 16 caractères"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先生がわかる名前（2〜16文字）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선생님이 알아볼 이름 (2–16자)"
+          }
+        }
+      }
+    },
+    "老师还没有布置作业。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No assignments yet."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore de devoirs."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ課題はありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 과제가 없습니다."
+          }
+        }
+      }
+    },
+    "老师：%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teacher: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enseignant : %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先生：%@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선생님: %@"
           }
         }
       }
@@ -16389,6 +17201,35 @@
         }
       }
     },
+    "这个班级已满": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This class is full"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette classe est complète"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このクラスは満員です"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 클래스는 정원이 찼습니다"
+          }
+        }
+      }
+    },
     "这份工作做什么": {
       "extractionState": "manual",
       "localizations": {
@@ -16617,6 +17458,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "나가기"
+          }
+        }
+      }
+    },
+    "退出班级": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave class"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter la classe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クラスを退出"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클래스 나가기"
           }
         }
       }

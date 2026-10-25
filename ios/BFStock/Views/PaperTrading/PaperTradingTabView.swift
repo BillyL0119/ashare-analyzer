@@ -7,6 +7,7 @@ struct PaperTradingTabView: View {
     @State private var order: OrderSheetItem?
     @State private var showLeaderboard = false
     @State private var showGames = false
+    @State private var showClasses = false
     @State private var showResetConfirm = false
     @State private var showLeaveConfirm = false
     @State private var showTradeToast = false
@@ -52,6 +53,11 @@ struct PaperTradingTabView: View {
             .overlay { searchResults }
             .navigationDestination(item: $chartTarget) { r in
                 StockDetailView(code: r.code, name: r.name, market: r.resolvedMarket)
+            }
+            .navigationDestination(isPresented: $showClasses) {
+                ClassesView(nickname: vm.account?.nickname, missionCount: vm.account?.missions?.count ?? 10) { ref in
+                    openMission(ref)
+                }
             }
         }
         .task { await vm.loadAccount() }
@@ -165,6 +171,8 @@ struct PaperTradingTabView: View {
 
                 if game == nil {
                     NavigationLink { TimeMachineView() } label: { TimeMachineEntryCard() }
+                        .buttonStyle(.plain)
+                    Button { showClasses = true } label: { ClassesEntryCard() }
                         .buttonStyle(.plain)
                 }
 
@@ -315,6 +323,15 @@ struct PaperTradingTabView: View {
         default:
             order = OrderSheetItem(side: .buy, symbol: nil)
         }
+    }
+
+    /// A class assignment's learning mission: back to the account, then the same step its own button opens.
+    private func openMission(_ id: String) {
+        showClasses = false
+        selectedGame = nil
+        guard let account = vm.account, let m = account.missions?.first(where: { $0.id == id }), m.action != nil else { return }
+        // Let the pop finish before a sheet or alert goes up
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { missionAction(m, account: account) }
     }
 
     // MARK: - Competitions
