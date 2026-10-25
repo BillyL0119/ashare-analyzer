@@ -313,8 +313,11 @@ def _load():
         _explained = {}
 
 
+_V = "v2"   # bump when the facts or the prompt change, so older explanations are written again
+
+
 def cached_explanation(market: str, sym: str, date: str) -> dict | None:
-    return _explained.get(f"{market}:{sym}:{date}")
+    return _explained.get(f"{_V}:{market}:{sym}:{date}")
 
 
 def _fact_text(sym: str, day: dict) -> str:
@@ -324,6 +327,11 @@ def _fact_text(sym: str, day: dict) -> str:
         lines.append(f"The market benchmark ({day['benchmark']}) moved {day['market_pct']:+.2f}% that day.")
     if day.get("sector_pct") is not None:
         lines.append(f"Its sector ETF ({day['sector_etf']}, {day['sector']}) moved {day['sector_pct']:+.2f}%.")
+    lines.append({
+        "market": "Classification: market-wide move (the market moved the same way by a similar amount).",
+        "sector": "Classification: sector-wide move (its sector moved the same way by a similar amount).",
+        "stock": "Classification: company-specific move (much larger than both the market's and the sector's move).",
+    }[day["kind"]])
     for x in f["filings"]:
         names = "; ".join(_ITEMS[i][1] for i in x["items"]) or _FORMS.get(x["form"], ("", x["form"]))[1]
         lines.append(f"SEC filing {x['form']} accepted {x['time']} ET: {names}.")
@@ -337,7 +345,7 @@ def _fact_text(sym: str, day: dict) -> str:
 
 
 def explain(market: str, sym: str, date: str) -> dict | None:
-    key = f"{market}:{sym}:{date}"
+    key = f"{_V}:{market}:{sym}:{date}"
     if key in _explained:
         return _explained[key]
     day = next((d for d in big_moves(market, sym)["days"] if d["date"] == date), None)
@@ -357,7 +365,7 @@ def explain(market: str, sym: str, date: str) -> dict | None:
         "Use ONLY the facts given; do not add events, numbers, names or causes that are not in them. If the facts "
         "show a filing or headline but not its content, say the move coincided with it rather than claiming it caused "
         "it. If the market or sector moved the same way, explain that it was largely a market-wide or sector-wide "
-        "move. If no company fact is given, say the records here do not show a company-specific reason. "
+        "move. Follow the classification line when describing how much was market, sector or company. If no company fact is given, say the records here do not show a company-specific reason. "
         "Then add one sentence on the economics or investing idea a student can learn from it (for example how "
         "earnings surprises move prices, systematic vs unsystematic risk, or interest rates and valuations). "
         "Keep every number exactly as in the facts. No investment advice. "
