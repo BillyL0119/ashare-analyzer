@@ -27,3 +27,4 @@ backend/data/price_cache/
 backend/data/similar_cache/
 backend/data/time_machine_runs/
 backend/data/econ_cases.json
+backend/data/classes/

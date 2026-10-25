@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStockSearch from '../../hooks/useStockSearch'
 import tmStrings from '../../components/timemachine/tmStrings'
+import classStrings from '../../components/classes/classStrings'
 import useLangStore from '../../store/langStore'
 import PaperPerformance from '../PaperPerformance'
 import useSymbolSuggest from '../../hooks/useSymbolSuggest'
@@ -744,6 +745,16 @@ export default function Paper() {
           <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
             <b style={{ fontSize: 15 }}>{tmStrings(lang).title}</b>
             <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{tmStrings(lang).how[0][1]}</span>
+          </span>
+          <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
+        </button>
+      )}
+      {!gameId && (
+        <button className="m-card" onClick={() => nav('/class')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
+          <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>🏫</span>
+          <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
+            <b style={{ fontSize: 15 }}>{classStrings(lang).title}</b>
+            <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{classStrings(lang).myClassesEmpty}</span>
           </span>
           <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
         </button>
