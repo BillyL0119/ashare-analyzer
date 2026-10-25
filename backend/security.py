@@ -43,6 +43,7 @@ RATE_RULES = [
     ("/api/time-machine",    "POST", 240, 60),   # a day per click when moving through a scenario
     ("/api/classes/create",  "POST", 10, 3600),
     ("/api/classes",         "POST", 120, 60),
+    ("/api/moves",           "POST", 30, 60),    # AI explanation of a price move
     ("/api/comments",        "POST", 60, 3600),
     ("/api/export",          "*",    20, 60),    # PDF/Excel generation is CPU heavy
     ("/api/backtest",        "*",    40, 60),

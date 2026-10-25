@@ -11,6 +11,8 @@ import { ErrorBox, Pill, Section, Segment, Skeleton, SkeletonRows } from '../ui'
 import { changeColor, quotePath, historyPath, chipLabel } from '../helpers'
 import { CUR, localName } from '../../utils/markets'
 import { Icon } from '../icons'
+import MovesPanel from '../../components/moves/MovesPanel'
+import movesStrings from '../../components/moves/movesStrings'
 
 const PERIODS = [['10', '10日'], ['30', '30日'], ['60', '60日'], ['120', '120日'], ['250', '1年']]
 const css = (name) => (typeof document === 'undefined' ? '#888' : getComputedStyle(document.querySelector('.m-app') || document.body).getPropertyValue(name).trim() || '#888')
@@ -138,6 +140,27 @@ const usd = (v) => {
   return `${s}$${a.toFixed(0)}`
 }
 const shortPeriod = (p) => (/^FY\d{4}$/.test(p) ? 'FY' + p.slice(4) : p.replace(/ (\d{2})(\d{2})$/, ' $2'))
+
+// "Why did it move?", in the phone theme; it loads only when opened (a first build can take seconds)
+const PHONE_THEME = {
+  '--bg-secondary': 'var(--surface)', '--bg-tertiary': 'var(--surface-hi)', '--border-primary': 'var(--stroke)',
+  '--text-primary': 'var(--text)', '--text-secondary': 'var(--text-2)', '--text-muted': 'var(--text-3)',
+}
+function Moves({ symbol, market }) {
+  const lang = useLangStore((st) => st.lang)
+  const s = movesStrings(lang)
+  const [open, setOpen] = useState(false)
+  return (
+    <Section title={s.tab}>
+      {open ? <div style={PHONE_THEME}><MovesPanel symbol={symbol} market={market} lang={lang} /></div> : (
+        <button className="m-card" onClick={() => setOpen(true)} style={{ display: 'grid', gap: 4, textAlign: 'left', width: '100%' }}>
+          <b style={{ fontSize: 15 }}>📉📈 {s.title}</b>
+          <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{s.intro}</span>
+        </button>
+      )}
+    </Section>
+  )
+}
 
 function Fundamentals({ symbol, price }) {
   const t = useT()
@@ -387,6 +410,7 @@ export default function StockDetail() {
       </div>
 
       {market === 'us' && <Fundamentals symbol={code} price={d?.price} />}
+      {(market === 'us' || market === 'cn') && <Moves symbol={code} market={market} />}
       {!hkjp && <News symbol={code} market={market} />}
       <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>
     </div>

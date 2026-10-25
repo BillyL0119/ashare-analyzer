@@ -32,6 +32,7 @@ from routers.paper_trading import router as paper_router
 from routers.time_machine import router as time_machine_router
 from routers.econ_cases import router as cases_router
 from routers.classes import router as classes_router
+from routers.move_reasons import router as moves_router
 from routers.analytics import router as analytics_router
 from routers.study import router as study_router
 from routers.earnings import router as earnings_router
@@ -470,6 +471,7 @@ app.include_router(paper_router, prefix="/api/paper", tags=["paper_trading"])
 app.include_router(time_machine_router, prefix="/api/time-machine", tags=["time_machine"])
 app.include_router(cases_router, prefix="/api/cases", tags=["econ_cases"])
 app.include_router(classes_router, prefix="/api/classes", tags=["classes"])
+app.include_router(moves_router, prefix="/api/moves", tags=["move_reasons"])
 app.include_router(analytics_router, prefix="/api/analytics", tags=["analytics"])
 app.include_router(study_router, prefix="/api/study", tags=["study"])
 app.include_router(earnings_router, prefix="/api/earnings", tags=["earnings"])

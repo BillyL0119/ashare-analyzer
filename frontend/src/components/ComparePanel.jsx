@@ -25,6 +25,8 @@ import BacktestPanel from './BacktestPanel'
 import GlobalNewsPanel from './GlobalNewsPanel'
 import CommentsPanel from './CommentsPanel'
 import SectorRotation from './SectorRotation'
+import MovesPanel from './moves/MovesPanel'
+import movesStrings from './moves/movesStrings'
 
 function OverlaySlot({ stock, onData }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
@@ -85,7 +87,7 @@ function OverlayView({ lang }) {
 }
 
 // View modes where the date range is irrelevant
-const _NO_DATE_MODES = new Set(['fundamentals', 'news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
+const _NO_DATE_MODES = new Set(['moves', 'fundamentals', 'news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
 
 export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -177,6 +179,8 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           hkjp ? [] : [
             // company fundamentals (statements, estimates, analysts) cover US-listed companies
             ...(market === 'us' ? [{ key: 'fundamentals', label: t.fundamentalsTab }] : []),
+            // why the biggest daily moves happened (US: SEC filings, Fed; A-shares: cninfo announcements)
+            ...(market === 'us' || market === 'cn' ? [{ key: 'moves', label: movesStrings(lang).tab }] : []),
             { key: 'score', label: t.scoreTab },
             { key: 'radar', label: t.radarTab },
             { key: 'similar', label: t.similarTrend },
@@ -292,6 +296,10 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
         <EarningsPanel lang={lang} onStockSelect={handleStockSelect} />
       ) : viewMode === 'fundamentals' ? (
         <FundamentalsPanel stocks={selectedSymbols} market={market} />
+      ) : viewMode === 'moves' ? (
+        <div style={{ display: 'grid', gap: 28 }}>
+          {selectedSymbols.map((st) => <MovesPanel key={st.code} symbol={st.code} market={market} lang={lang} />)}
+        </div>
       ) : viewMode === 'score' ? (
         <ScorePanel stocks={selectedSymbols} />
       ) : viewMode === 'backtest' ? (
