@@ -74,6 +74,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C8D1EA774E8D45E0AAB2D440 /* BFStock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BFStock.entitlements; sourceTree = "<group>"; };
 		D0BB0B289E41440D9614E927 /* ClassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesView.swift; sourceTree = "<group>"; };
 		B5312955FD3140D7A89DBD01 /* ClassesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesViewModel.swift; sourceTree = "<group>"; };
 		FE171F3C8CA94C68BDA120F8 /* ClassModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassModels.swift; sourceTree = "<group>"; };
@@ -196,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				E03B117A68743D1287F02A31 /* Assets.xcassets */,
+				C8D1EA774E8D45E0AAB2D440 /* BFStock.entitlements */,
 				99E543D63D447BAE5B9D2FB0 /* BFStockApp.swift */,
 				EC44A9E89594F07607E53C7B /* ContentView.swift */,
 				56F70275105BC9DAB01632A9 /* Localizable.xcstrings */,
@@ -501,6 +503,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BFStock/BFStock.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BFStock/Preview Content\"";
@@ -644,6 +647,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BFStock/BFStock.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BFStock/Preview Content\"";

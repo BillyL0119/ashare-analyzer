@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PaperTradingTabView: View {
+    @Binding var classLink: String?                   // a class code from an invite link: opens Classes on it
     @StateObject private var vm = PaperTradingViewModel()
     @State private var selectedMarket: Market = .us
     @State private var selectedGame: String?          // a competition's id; nil shows the personal account
@@ -55,11 +56,12 @@ struct PaperTradingTabView: View {
                 StockDetailView(code: r.code, name: r.name, market: r.resolvedMarket)
             }
             .navigationDestination(isPresented: $showClasses) {
-                ClassesView(nickname: vm.account?.nickname, missionCount: vm.account?.missions?.count ?? 10) { ref in
+                ClassesView(link: $classLink, nickname: vm.account?.nickname, missionCount: vm.account?.missions?.count ?? 10) { ref in
                     openMission(ref)
                 }
             }
         }
+        .task(id: classLink) { if classLink != nil { showClasses = true } }
         .task { await vm.loadAccount() }
         .task(id: selectedGame) {
             if let id = selectedGame { await vm.loadGame(id) } else { vm.gameAccount = nil }

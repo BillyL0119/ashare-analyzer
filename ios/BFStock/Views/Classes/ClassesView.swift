@@ -34,6 +34,7 @@ struct ClassesEntryCard: View {
 /// Join a teacher's class with its code, follow its assignments and leaderboard, or leave it.
 /// Teachers create and manage classes on the website.
 struct ClassesView: View {
+    @Binding var link: String?        // class code from an invite link, looked up on arrival
     let nickname: String?             // the paper account's, suggested as the class nickname
     let missionCount: Int
     let onMission: (String) -> Void   // opens the paper-trading step for a learning mission id
@@ -42,42 +43,55 @@ struct ClassesView: View {
     @StateObject private var tm = TimeMachineViewModel()
     @State private var scenarioID: String?
     @State private var leaving: StudentClass?
+    @State private var code = ""
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 22) {
-                Text(L("用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易和历史穿越自动完成。"))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 4)
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    Text(L("用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易和历史穿越自动完成。"))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 4)
 
-                if let list = vm.classes {
-                    if !list.isEmpty {
-                        VStack(alignment: .leading, spacing: 10) {
-                            SectionHeader(L("我加入的班级"))
-                            ForEach(list) { c in
-                                ClassCard(c: c, missionCount: missionCount, onStart: start) { leaving = c }
+                    if let list = vm.classes {
+                        if !list.isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                SectionHeader(L("我加入的班级"))
+                                ForEach(list) { c in
+                                    ClassCard(c: c, missionCount: missionCount, onStart: start) { leaving = c }
+                                }
                             }
                         }
+                        if let err = vm.loadError {
+                            ErrorRetryView(message: err) { Task { await vm.load() } }
+                        }
+                        JoinClassCard(vm: vm, code: $code, nickname: nickname, joinedCodes: Set(list.map(\.code)), empty: list.isEmpty)
+                            .id("join")
+                    } else {
+                        VStack(alignment: .leading, spacing: 12) {
+                            SkeletonBar(width: 160, height: 18)
+                            SkeletonBar(height: 12)
+                            SkeletonBar(height: 48, radius: 12)
+                            SkeletonBar(height: 48, radius: 12)
+                        }
+                        .card()
                     }
-                    if let err = vm.loadError {
-                        ErrorRetryView(message: err) { Task { await vm.load() } }
-                    }
-                    JoinClassCard(vm: vm, nickname: nickname, joinedCodes: Set(list.map(\.code)), empty: list.isEmpty)
-                } else {
-                    VStack(alignment: .leading, spacing: 12) {
-                        SkeletonBar(width: 160, height: 18)
-                        SkeletonBar(height: 12)
-                        SkeletonBar(height: 48, radius: 12)
-                        SkeletonBar(height: 48, radius: 12)
-                    }
-                    .card()
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .padding(.bottom, 40)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 40)
+            .task(id: link) {
+                // An invite link: look the class up on the join card and bring it into view
+                guard let c = link else { return }
+                code = c
+                if vm.classes == nil { await vm.load() }
+                await vm.find(c)
+                withAnimation { proxy.scrollTo("join", anchor: .top) }
+                link = nil      // last: changing the id cancels this task
+            }
         }
         .background(DS.bg.ignoresSafeArea())
         .navigationTitle(L("班级"))
@@ -271,11 +285,11 @@ private struct ClassCard: View {
 
 private struct JoinClassCard: View {
     @ObservedObject var vm: ClassesViewModel
+    @Binding var code: String
     let nickname: String?
     let joinedCodes: Set<String>
     let empty: Bool
 
-    @State private var code = ""
     @State private var nick = ""
     private let haptic = UINotificationFeedbackGenerator()
 
@@ -381,6 +395,7 @@ private struct JoinClassCard: View {
                 .disabled(vm.busy || !nickOK)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(DS.accent.opacity(0.07), in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous).strokeBorder(DS.accent.opacity(0.35)))

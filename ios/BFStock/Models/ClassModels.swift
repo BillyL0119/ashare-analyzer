@@ -66,3 +66,14 @@ struct ClassLeaveBody: Encodable {
     let classId: String
     let deviceId: String
 }
+
+/// Invite links: https://bestfriendstock.com/class/CODE (universal links, see BFStock.entitlements).
+enum ClassLink {
+    static func code(from url: URL) -> String? {
+        guard let host = url.host?.lowercased(), host == "bestfriendstock.com" || host == "www.bestfriendstock.com" else { return nil }
+        let parts = url.pathComponents.filter { $0 != "/" }
+        guard parts.count == 2, parts[0].lowercased() == "class" else { return nil }
+        let code = parts[1].uppercased()
+        return code.count == 6 && code.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber) }) ? code : nil
+    }
+}

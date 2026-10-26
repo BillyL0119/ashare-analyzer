@@ -1,31 +1,40 @@
 import SwiftUI
 
+enum AppTab: Hashable { case market, learning, news, teacher, paper }
+
 struct ContentView: View {
     @State private var showSplash = true
+    @State private var tab = AppTab.market
+    @State private var classLink: String?     // class code from an invite link, opened on the paper tab
 
     var body: some View {
         ZStack {
-            TabView {
+            TabView(selection: $tab) {
                 MarketTabView()
                     .tabItem {
                         Label("tab.market", systemImage: "chart.line.uptrend.xyaxis")
                     }
+                    .tag(AppTab.market)
                 LearningTabView()
                     .tabItem {
                         Label("tab.learning", systemImage: "book.fill")
                     }
+                    .tag(AppTab.learning)
                 NewsTabView()
                     .tabItem {
                         Label(L("资讯"), systemImage: "newspaper.fill")
                     }
+                    .tag(AppTab.news)
                 AITeacherTabView()
                     .tabItem {
                         Label("tab.ai_teacher", systemImage: "bubble.left.and.bubble.right.fill")
                     }
-                PaperTradingTabView()
+                    .tag(AppTab.teacher)
+                PaperTradingTabView(classLink: $classLink)
                     .tabItem {
                         Label("tab.paper_trading", systemImage: "dollarsign.circle.fill")
                     }
+                    .tag(AppTab.paper)
             }
             .tint(DS.accent)
 
@@ -40,6 +49,11 @@ struct ContentView: View {
         .dynamicTypeSize(.xSmall ... .accessibility1)
         // The splash is a dark blue screen; hide the status bar rather than show dark text on it.
         .statusBarHidden(showSplash)
+        .onOpenURL { url in
+            guard let code = ClassLink.code(from: url) else { return }
+            tab = .paper
+            classLink = code
+        }
         .task {
             try? await Task.sleep(for: .seconds(1.7))
             withAnimation(.easeInOut(duration: 0.5)) { showSplash = false }
