@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useCompareStore from '../store/compareStore'
+import { SECTOR_ZH } from '../utils/heatmap'
 
-// US stock screener (/api/us/screener). Sector names come from Nasdaq in English; the Chinese
-// view translates the 12 top-level sectors, industries stay in English.
+// US stock screener (/api/us/screener). Sectors are GICS in English, the same ones the heatmap
+// groups by; the Chinese view translates them, industries (Nasdaq's) stay in English.
 
 const L = {
   zh: {
@@ -17,7 +18,7 @@ const L = {
     results: (a, b, n) => `第 ${a}–${b} 条，共 ${n.toLocaleString()} 家`, none: '没有符合条件的公司，试试放宽条件',
     colSymbol: '代码', colName: '公司', colSector: '板块', colCap: '市值', colPrice: '股价', colChange: '涨跌', colVolume: '成交量', colPe: '市盈率', colHigh: '距高点',
     prev: '上一页', next: '下一页', loading: '正在加载…', error: '暂时无法加载选股数据',
-    note: '数据：Nasdaq（公司列表、行业）· 腾讯（价格、市盈率、52 周区间）。价格每 10 分钟更新，可能有延迟，仅供学习。',
+    note: '数据：Nasdaq（公司列表、细分行业）· GICS（板块）· 腾讯（价格、市盈率、52 周区间）。价格每 10 分钟更新，可能有延迟，仅供学习。',
     peNote: '市盈率为空的公司（亏损或无数据）不参与市盈率筛选',
   },
   en: {
@@ -31,7 +32,7 @@ const L = {
     results: (a, b, n) => `${a}–${b} of ${n.toLocaleString()}`, none: 'No companies match. Try loosening the filters.',
     colSymbol: 'Symbol', colName: 'Company', colSector: 'Sector', colCap: 'Market cap', colPrice: 'Price', colChange: 'Change', colVolume: 'Volume', colPe: 'P/E', colHigh: 'From high',
     prev: 'Previous', next: 'Next', loading: 'Loading…', error: 'The screener is unavailable right now',
-    note: 'Data: Nasdaq (company list, sectors) · Tencent (prices, P/E, 52-week range). Prices refresh every 10 minutes and may be delayed. For learning only.',
+    note: 'Data: Nasdaq (company list, industries) · GICS (sectors) · Tencent (prices, P/E, 52-week range). Prices refresh every 10 minutes and may be delayed. For learning only.',
     peNote: 'Companies without a P/E (losses or no data) are left out of P/E filters',
   },
 }
@@ -54,12 +55,6 @@ L.fr = { ...L.en, eyebrow: 'Filtre', title: 'Filtre d\'actions US', presets: 'Fi
   usOnly: 'Sociétés américaines uniquement', reset: 'Effacer les filtres', none: 'Aucune société ne correspond',
   colSymbol: 'Symbole', colName: 'Société', colSector: 'Secteur', colCap: 'Capitalisation', colPrice: 'Cours', colChange: 'Var.', colVolume: 'Volume', colPe: 'PER', colHigh: 'Vs plus haut',
   prev: 'Précédent', next: 'Suivant', loading: 'Chargement…' }
-
-const SECTOR_ZH = {
-  Technology: '科技', 'Health Care': '医疗保健', Finance: '金融', 'Consumer Discretionary': '非必需消费', Industrials: '工业',
-  'Real Estate': '房地产', Energy: '能源', Utilities: '公用事业', 'Basic Materials': '基础材料', 'Consumer Staples': '必需消费',
-  Telecommunications: '电信', Miscellaneous: '其他',
-}
 
 const PAGE = 50
 const EMPTY = { q: '', sector: '', industry: '', cap: [], pe_min: '', pe_max: '', price_min: '', price_max: '', change_min: '', change_max: '', volume_min: '', near_high: '', us_only: false, ipo_since: '' }

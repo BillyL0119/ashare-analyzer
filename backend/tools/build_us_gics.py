@@ -1,11 +1,12 @@
 """
-Builds data/us_gics_sectors.json: the GICS sector of the largest US-listed companies, for the US heatmap.
+Builds data/us_gics_sectors.json: the GICS sector of the largest US-listed companies, for the US
+screener and heatmap.
 
-Nasdaq's own sector field (what the screener carries) puts Visa and Walmart under Consumer Discretionary,
-Tesla and Thermo Fisher under Industrials and BHP under Energy, so the heatmap groups by GICS instead:
+Nasdaq's own sector field puts Visa and Walmart under Consumer Discretionary, Tesla and Thermo Fisher
+under Industrials and BHP under Energy, so the screener (and the heatmap built on it) uses GICS instead:
   - every S&P 500 member, from the daily holdings of the eleven Select Sector SPDR ETFs (one per sector);
   - the large foreign and non-index listings in MANUAL below (the ADRs among the 300 biggest tiles).
-Anything else falls back to Nasdaq's sector, renamed to the GICS word (routers/heatmap.py).
+Anything else falls back to Nasdaq's sector, renamed to the GICS word (routers/screener.py us_sector).
 
 Run from backend/ every few months, or after a GICS reshuffle:  python3 tools/build_us_gics.py
 Needs openpyxl (local only; the server just reads the JSON).

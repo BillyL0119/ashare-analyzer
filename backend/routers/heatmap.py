@@ -3,7 +3,7 @@ Market heatmap — /api/heatmap?market=us|cn|hk|jp&limit=N
 
 Tiles sized by market cap and coloured by today's move, grouped by sector.
   us: the largest N US-listed companies from the screener universe (live Tencent quotes,
-      refreshed by the screener's background enrichment), grouped by Nasdaq sector.
+      refreshed by the screener's background enrichment), grouped by its GICS sector.
   cn: the ~210 followed A-shares in data/industry_map.json, grouped by those industries,
       quoted in one Tencent batch (cached 60s).
   hk: the largest N Hong Kong equities (HKEX securities list), grouped by Hang Seng Industry
@@ -52,27 +52,8 @@ def _group(rows: list[dict], key: str) -> list[dict]:
     return out
 
 
-_GICS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "us_gics_sectors.json")
-_gics: dict = {}
-# Nasdaq's sector words for the companies outside the GICS list, renamed to the GICS ones;
-# "Technology" stays short so it fits a tile header
-_SECTOR_NAMES = {"Information Technology": "Technology", "Finance": "Financials",
-                 "Telecommunications": "Communication Services", "Basic Materials": "Materials",
-                 "Miscellaneous": "Other"}
 # A second listing of a company already on the map: Berkshire's A shares, Comcast's exchangeable notes
 _US_SKIP = {"BRK.A", "CCZ"}
-
-
-def _us_sector(r: dict) -> str:
-    """GICS sector (tools/build_us_gics.py); Nasdaq's own puts Visa under Consumer Discretionary."""
-    if not _gics:
-        try:
-            with open(_GICS_PATH, encoding="utf-8") as f:
-                _gics.update(json.load(f)["sectors"])
-        except Exception as e:
-            logger.warning(f"heatmap: no GICS sectors ({e})")
-    s = _gics.get(r["symbol"]) or r.get("sector") or "Other"
-    return _SECTOR_NAMES.get(s, s)
 
 
 def _us(limit: int) -> dict:
@@ -83,7 +64,7 @@ def _us(limit: int) -> dict:
     tiles = [{
         "symbol": r["symbol"], "name": r["name"], "market_cap": r["market_cap"],
         "change_pct": round(r["change_pct"], 2), "price": r.get("price"),
-        "sector": _us_sector(r), "industry": r.get("industry"),
+        "sector": r.get("sector") or "Other", "industry": r.get("industry"),
     } for r in rows[:limit]]
     return {"market": "us", "count": len(tiles), "sectors": _group(tiles, "sector"),
             "updated": _state.get("enrich_ts") or _state.get("ts")}

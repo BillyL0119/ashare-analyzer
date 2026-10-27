@@ -97,9 +97,10 @@ def _returns(closes: dict) -> dict:
 
 # ── US facts ──────────────────────────────────────────────────────────────────
 
-_SECTOR_ETF = {"Technology": "XLK", "Finance": "XLF", "Financials": "XLF", "Health Care": "XLV", "Energy": "XLE",
+# keyed on the screener's GICS sector names (routers/screener.py us_sector)
+_SECTOR_ETF = {"Technology": "XLK", "Financials": "XLF", "Health Care": "XLV", "Energy": "XLE",
                "Consumer Discretionary": "XLY", "Consumer Staples": "XLP", "Industrials": "XLI",
-               "Basic Materials": "XLB", "Utilities": "XLU", "Real Estate": "XLRE", "Telecommunications": "XLC"}
+               "Materials": "XLB", "Utilities": "XLU", "Real Estate": "XLRE", "Communication Services": "XLC"}
 
 # SEC Form 8-K item numbers (the SEC's own item titles, shortened)
 _ITEMS = {

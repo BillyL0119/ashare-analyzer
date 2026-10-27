@@ -3,7 +3,7 @@ Portfolio check-up: where the money sits (by sector and position) and a few plai
 student can learn from, e.g. one stock carrying most of the account, or a losing position without
 a stop. Rules only, nothing generated, in five languages.
 
-Sectors come from data the site already uses: US the Nasdaq sector of the screener universe,
+Sectors come from data the site already uses: US the GICS sector of the screener universe,
 A-shares the followed-industry map, Hong Kong the Hang Seng industry from HKEX quote data (largest
 300 companies), Japan the TSE 33 sectors from the JPX list. Unknown ones show as "Other".
 """
@@ -13,9 +13,9 @@ import os
 
 _LANGS = ("zh", "en", "ja", "ko", "fr")
 _US_ZH = {
-    "Technology": "科技", "Health Care": "医疗保健", "Finance": "金融", "Consumer Discretionary": "非必需消费",
+    "Technology": "科技", "Health Care": "医疗保健", "Financials": "金融", "Consumer Discretionary": "非必需消费",
     "Industrials": "工业", "Real Estate": "房地产", "Energy": "能源", "Utilities": "公用事业",
-    "Basic Materials": "基础材料", "Consumer Staples": "必需消费", "Telecommunications": "电信", "Miscellaneous": "其他",
+    "Materials": "原材料", "Consumer Staples": "必需消费", "Communication Services": "通信服务",
 }
 _OTHER = {"zh": "其他", "en": "Other", "ja": "その他", "ko": "기타", "fr": "Autres"}
 _CASH = {"zh": "现金", "en": "Cash", "ja": "現金", "ko": "현금", "fr": "Liquidités"}
@@ -97,7 +97,7 @@ def _sectors(market: str, symbols: list) -> dict:
             idx = {r["symbol"]: r.get("sector") for r in _universe() if r.get("symbol") in symbols}
             for s in symbols:
                 sec = idx.get(s)
-                if sec:
+                if sec and sec != "Other":
                     out[s] = (sec, _US_ZH.get(sec, sec))
         elif market == "cn":
             from routers.heatmap import _CN_SECTOR_EN

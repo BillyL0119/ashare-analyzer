@@ -134,12 +134,11 @@ struct ScreenerView: View {
     private static let sortOptions: [(String, String)] = [
         ("market_cap", "市值"), ("change_pct", "涨跌幅"), ("volume", "成交量"), ("pe", "市盈率"), ("price", "股价"),
     ]
+    /// GICS sector names, as the screener and the US heatmap send them
     static let sectorZh: [String: String] = [
-        "Technology": "科技", "Health Care": "医疗保健", "Finance": "金融", "Consumer Discretionary": "非必需消费",
+        "Technology": "科技", "Health Care": "医疗保健", "Financials": "金融", "Consumer Discretionary": "非必需消费",
         "Industrials": "工业", "Real Estate": "房地产", "Energy": "能源", "Utilities": "公用事业",
-        "Basic Materials": "基础材料", "Consumer Staples": "必需消费", "Telecommunications": "电信", "Miscellaneous": "其他",
-        // GICS names the US heatmap groups by
-        "Financials": "金融", "Communication Services": "通信服务", "Materials": "原材料", "Other": "其他",
+        "Materials": "原材料", "Consumer Staples": "必需消费", "Communication Services": "通信服务", "Other": "其他",
     ]
 
     var body: some View {

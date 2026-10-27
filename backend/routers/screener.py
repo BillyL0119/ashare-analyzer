@@ -3,6 +3,8 @@ US stock screener — /api/us/screener
 
 Universe: every US-listed common stock from Nasdaq's public screener feed (~7,000 rows: price,
 day change, volume, market cap, sector, industry, country, IPO year), refreshed every 15 min.
+Sectors are GICS (data/us_gics_sectors.json, the S&P 500 and large ADRs) with Nasdaq's sector,
+renamed to the GICS word, for the rest; industries stay Nasdaq's. The US heatmap groups by the same.
 Live layer: Nasdaq's bulk feed lags a trading day, so price, day change, volume and market cap
 come from Tencent batch quotes (the same source as the stock pages), together with P/E and the
 52-week range. Rebuilt in a background thread every 10 min while the US market is open, 30 min
@@ -11,7 +13,9 @@ otherwise (~20-40s per build; until the first one finishes the Nasdaq values are
 Filters, sorting and paging run in memory, so a query costs a few ms.
 """
 
+import json
 import logging
+import os
 import re
 import threading
 import time
@@ -40,6 +44,31 @@ def tidy_company_name(name: str) -> str:
     name = (name or "").strip()
     m = _THE_TAIL.match(name)
     return f"The {m.group(1)}{m.group(2)}".strip() if m else name
+
+
+_GICS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "us_gics_sectors.json")
+# Nasdaq's sector words for the companies outside the GICS list, renamed to the GICS ones;
+# "Technology" stays short so it fits a heatmap tile header
+_SECTOR_NAMES = {"Information Technology": "Technology", "Finance": "Financials",
+                 "Telecommunications": "Communication Services", "Basic Materials": "Materials",
+                 "Miscellaneous": "Other"}
+
+
+def _load_gics() -> dict:
+    try:
+        with open(_GICS_PATH, encoding="utf-8") as f:
+            return json.load(f)["sectors"]
+    except Exception as e:
+        logger.warning(f"screener: no GICS sectors ({e})")
+        return {}
+
+_GICS = _load_gics()
+
+
+def us_sector(symbol: str, nasdaq_sector: Optional[str]) -> Optional[str]:
+    """GICS sector (tools/build_us_gics.py); Nasdaq's own puts Visa under Consumer Discretionary."""
+    s = _GICS.get(symbol) or nasdaq_sector
+    return _SECTOR_NAMES.get(s, s) if s else None
 
 _UNIVERSE_TTL = 900
 def _enrich_ttl() -> float:
@@ -90,7 +119,7 @@ def _fetch_universe() -> list[dict]:
             "change_pct": _num(x.get("pctchange")),
             "volume": _num(x.get("volume")),
             "market_cap": cap,
-            "sector": (x.get("sector") or "").strip() or None,
+            "sector": us_sector(sym, (x.get("sector") or "").strip() or None),
             "industry": (x.get("industry") or "").strip() or None,
             "country": (x.get("country") or "").strip() or None,
             "ipo_year": int(ipo) if ipo else None,
@@ -256,5 +285,5 @@ def screen(
         "universe": len(rows),
         "enriched": len(_state["enrich"]),
         "updated": datetime.utcfromtimestamp(_state["ts"]).strftime("%Y-%m-%dT%H:%M:%SZ") if _state["ts"] else None,
-        "source": "Nasdaq (company list, sectors) · Tencent (prices, P/E, 52-week range)",
+        "source": "Nasdaq (company list, industries) · GICS (sectors) · Tencent (prices, P/E, 52-week range)",
     }
