@@ -344,7 +344,7 @@ export default function StockDetail() {
     const myriad = ['zh', 'ja', 'ko'].includes(localStorage.getItem('bfs_lang') || 'zh')
     const unit = market === 'cn' ? t('手') : t('股')
     if (myriad) return (v >= 1e8 ? (v / 1e8).toFixed(2) + t('亿') : v >= 1e4 ? (v / 1e4).toFixed(1) + t('万') : v.toFixed(0)) + unit
-    return (v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(1) + 'K' : v.toFixed(0)) + (market === 'cn' ? ' ' + unit : '')
+    return (v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(1) + 'K' : v.toFixed(0)) + (market === 'cn' ? ' ' + unit.trim() : '')   // the English unit is " lots"
   }
 
   return (

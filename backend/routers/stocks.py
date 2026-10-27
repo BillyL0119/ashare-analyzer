@@ -208,6 +208,27 @@ def hot_stocks(market: str = Query("cn", pattern="^(cn|us)$")):
         return result
 
 
+def _with_live_bar(symbol: str, df, end_date: str):
+    """Sina's daily history gains a day's bar only some time after the close, so through the trading
+    day the chart (and its MA/MACD/RSI) stopped at yesterday while the quote showed today. Add today's
+    bar from the live quote until Sina has it. Unadjusted prices equal forward-adjusted (qfq) ones
+    for the latest day."""
+    import pandas as pd
+    q = get_realtime_quote(symbol)
+    t = (q or {}).get("time") or ""
+    if len(t) < 8 or not (q.get("volume", 0) > 0 and q.get("open", 0) > 0):   # no live quote, or not traded yet
+        return df
+    day = f"{t[:4]}-{t[4:6]}-{t[6:8]}"
+    last = df.iloc[-1]
+    if day <= str(last["date"]) or t[:8] > end_date:
+        return df
+    prev = float(last["close"])
+    bar = {"date": day, "open": q["open"], "close": q["price"], "high": q["high"], "low": q["low"],
+           "volume": q["volume"], "amount": q["amount"],
+           "pct_change": (q["price"] / prev - 1) * 100 if prev else 0.0, "turnover": q.get("turnover", 0.0)}
+    return pd.concat([df, pd.DataFrame([bar])], ignore_index=True)
+
+
 @router.get("/{symbol}/history", response_model=StockHistoryResponse)
 def stock_history(
     symbol: str,
@@ -237,6 +258,9 @@ def stock_history(
 
     # If we got data but it falls entirely before the requested start_date, keep it anyway
     # so the user sees the last available trading data
+
+    if period == "daily" and adjust != "hfq":
+        df = _with_live_bar(symbol, df, end_date)
 
     name = get_stock_name(symbol)
     indicators = calc_all_indicators(df)

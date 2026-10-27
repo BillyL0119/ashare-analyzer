@@ -272,6 +272,23 @@ def _resample_to_period(df: pd.DataFrame, period: str) -> pd.DataFrame:
     return resampled
 
 
+def _is_fund(code: str) -> bool:
+    """Exchange-traded funds: 5xxxxx in Shanghai, 1xxxxx in Shenzhen (510300, 159915)."""
+    return code.lstrip("shszbj").startswith(("5", "1"))
+
+
+def _fetch_fund_daily(sina_symbol: str, start_date: str, end_date: str) -> Optional[pd.DataFrame]:
+    """ETF/LOF daily bars from Sina's fund history (the stock feed has none for funds), unadjusted."""
+    df = v8_call_first(ak.fund_etf_hist_sina, symbol=sina_symbol)
+    if df is None or df.empty:
+        return None
+    df["date"] = df["date"].astype(str)
+    lo, hi = f"{start_date[:4]}-{start_date[4:6]}-{start_date[6:]}", f"{end_date[:4]}-{end_date[4:6]}-{end_date[6:]}"
+    df = df[(df["date"] >= lo) & (df["date"] <= hi)]
+    df["turnover"] = 0.0
+    return df
+
+
 def _fetch_b_share_daily(sina_symbol: str, start_date: str, end_date: str, adjust: str) -> Optional[pd.DataFrame]:
     """Fetch B-share OHLCV via akshare. Avoids py_mini_racer (crashes on Apple Silicon)."""
     try:
@@ -457,6 +474,8 @@ def _fetch_stock_history(symbol: str, period: str, start_date: str, end_date: st
 
         if _is_b_share(symbol):
             df = _fetch_b_share_daily(sina_symbol, start_date, end_date, ak_adjust)
+        elif _is_fund(symbol):
+            df = _fetch_fund_daily(sina_symbol, start_date, end_date)
         else:
             df = sina_a_daily(sina_symbol, start_date, end_date, ak_adjust)
 
@@ -530,6 +549,8 @@ def _tencent_live_quote(symbol: str) -> Optional[dict]:
             "open": float(f[5] or price), "prev_close": prev,
             "pe_ttm": num(39), "pb": num(46), "market_cap": num(45, 1e8),   # cap in 100M CNY -> CNY
             "week52_high": num(67), "week52_low": num(68),
+            "turnover": num(38) or 0.0,                     # % of free float traded today
+            "time": f[30],                                  # quote time, Beijing: "20261027152252"
         }
     except Exception:
         return None
