@@ -64,10 +64,21 @@ _FIN_SECTIONS = ["每股指标", "盈利能力", "成长能力", "营运能力",
 def _financial_indicator(symbol: str, start_year: str) -> pd.DataFrame:
     """ak.stock_financial_analysis_indicator(symbol, start_year) (same frame), with Sina's yearly pages
     fetched in parallel: akshare reads them one after another, ~1s each."""
-    def page(year: str) -> str:
-        return requests.get(_FIN_PAGE.format(symbol, year), headers={"User-Agent": "Mozilla/5.0"}, timeout=10).text
+    def page(year: str, must_have: str = "每股指标") -> str:
+        # From the server a request now and then stalls for 10s+ (akshare, with no timeout, just
+        # waited): give each try a few seconds, and keep only a page that has its table.
+        for attempt in range(4):
+            try:
+                text = requests.get(_FIN_PAGE.format(symbol, year), headers={"User-Agent": "Mozilla/5.0"},
+                                    timeout=(3, 5)).text
+                if must_have in text:
+                    return text
+            except requests.RequestException:
+                pass
+            time.sleep(0.5 * attempt)
+        raise RuntimeError(f"Sina financial page {symbol}/{year} unavailable")
 
-    first = page("2020")                       # akshare reads the year list from this page
+    first = page("2020", "con02-1")            # akshare reads the year list from this page
     soup = BeautifulSoup(first, features="lxml")
     year_list = [a.text for a in soup.find(attrs={"id": "con02-1"}).find("table").find_all("a")]
     if start_year not in year_list:
@@ -101,7 +112,7 @@ def _financial_indicator(symbol: str, start_year: str) -> pd.DataFrame:
     return out_df
 
 
-_result_cache: dict = {}     # symbol -> (ts, result); quarterly figures, so 12h is plenty
+_result_cache: dict = {}     # symbol -> (expires, result); quarterly figures, so 12h is plenty
 
 
 @router.get("/{symbol}")
@@ -111,11 +122,13 @@ def financial_analysis(symbol: str):
     PE/PB from Tencent quotes; financial ratios from Sina's financial guideline pages.
     """
     hit = _result_cache.get(symbol)
-    if hit and time.time() - hit[0] < 12 * 3600:
+    if hit and time.time() < hit[0]:
         return hit[1]
     result = _build_financial(symbol)
-    if result.get("profitability") or result.get("valuation", {}).get("pe_ttm"):
-        _result_cache[symbol] = (time.time(), result)
+    if result.get("profitability"):
+        _result_cache[symbol] = (time.time() + 12 * 3600, result)
+    elif result.get("valuation", {}).get("pe_ttm"):         # ratios failed: try them again soon
+        _result_cache[symbol] = (time.time() + 600, result)
     return result
 
 
