@@ -326,16 +326,17 @@ export default function StockDetail() {
   const last = candles[candles.length - 1]
   const open = d?.open > 0 ? d.open : last?.open, high = d?.high > 0 ? d.high : last?.high, low = d?.low > 0 ? d.low : last?.low
   const vol = d?.volume > 0 ? d.volume : last?.volume
-  const has52 = intl && d?.week52_low > 0 && d?.week52_high > 0
+  const has52 = d?.week52_low > 0 && d?.week52_high > 0
   const [lo, hi] = has52 ? [d.week52_low, d.week52_high] : all ? [Math.min(...all.map((c) => c.low)), Math.max(...all.map((c) => c.high))] : [null, null]
   const pos = price != null && hi > lo ? Math.min(1, Math.max(0, (price - lo) / (hi - lo))) : null
   const c = changeColor(p, market)
 
   const prevClose = d?.prev_close > 0 ? d.prev_close : (candles.length > 1 ? candles[candles.length - 2].close : null)
   const grid = [[t('今开'), open], [t('昨收'), prevClose], [t('最高'), high], [t('最低'), low]]
+  const myriad = ['zh', 'ja', 'ko'].includes(lang)   // 亿/万 read naturally only in these
   const money = (v) => {
     if (!(v > 0)) return '--'
-    if (intl) return CUR[market] + (v >= 1e12 ? (v / 1e12).toFixed(2) + 'T' : v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : (v / 1e6).toFixed(1) + 'M')
+    if (intl || !myriad) return CUR[market] + (v >= 1e12 ? (v / 1e12).toFixed(2) + 'T' : v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : (v / 1e6).toFixed(1) + 'M')
     return v >= 1e8 ? (v / 1e8).toFixed(2) + t('亿') : (v / 1e4).toFixed(2) + t('万')
   }
   const fmtVol = (v) => {
@@ -371,9 +372,12 @@ export default function StockDetail() {
         </div>
       </div>
 
-      {intl && d && (
+      {d && (intl || d.market_cap > 0) && (
         <div style={{ display: 'flex', alignItems: 'stretch', background: 'var(--surface-hi)', borderRadius: 14, padding: '12px 0' }}>
-          {[[t('总市值'), money(d.market_cap)], [t('市盈率'), d.pe_ratio > 0 ? d.pe_ratio.toFixed(1) : '--'], [t('成交额'), money(d.amount)]].map(([k, v], i) => (
+          {(intl ? [[t('总市值'), money(d.market_cap)], [t('市盈率'), d.pe_ratio > 0 ? d.pe_ratio.toFixed(1) : '--'], [t('成交额'), money(d.amount)]]
+            // A-shares: turnover is already in the grid below, so P/B takes its place
+            : [[t('总市值'), money(d.market_cap)], [t('市盈率'), d.pe_ttm > 0 ? d.pe_ttm.toFixed(1) : '--'], [t('市净率'), d.pb > 0 ? d.pb.toFixed(2) : '--']]
+          ).map(([k, v], i) => (
             <div key={k} style={{ flex: 1, textAlign: 'center', borderLeft: i ? '1px solid var(--line, rgba(128,128,128,.25))' : 'none' }}>
               <div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 800, fontSize: 15, marginTop: 3 }}>{v}</div>
             </div>
