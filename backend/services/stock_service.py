@@ -1,11 +1,19 @@
 import akshare as ak
+import ast
+import json
 import pandas as pd
+import py_mini_racer
 import requests
+from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional
 import math
 import threading
 import time
-from services.js_runtime import v8_call
+from akshare.index.cons import zh_sina_index_stock_hist_url
+from akshare.stock.cons import (hk_js_decode, zh_sina_a_stock_amount_url, zh_sina_a_stock_hfq_url,
+                                zh_sina_a_stock_hist_url, zh_sina_a_stock_qfq_url)
+from akshare.utils import demjson
+from services.js_runtime import v8_call, v8_call_first
 
 SINA_HEADERS = {"Referer": "https://finance.sina.com.cn", "User-Agent": "Mozilla/5.0"}
 _name_cache: dict = {}
@@ -87,7 +95,7 @@ def sina_daily_closes(code: str, n: int) -> dict:
     Tencent's K-line fails."""
     sym = _get_sina_symbol(code)
     if sym.startswith(("sh000", "sz399")):
-        df = v8_call(ak.stock_zh_index_daily, symbol=sym)
+        df = sina_index_daily(sym)
     elif sym[2:].startswith(("5", "1")):
         df = v8_call(ak.fund_etf_hist_sina, symbol=sym)
     else:
@@ -292,6 +300,132 @@ def _hist_ttl() -> int:
         return 120
 
 
+# ── Sina daily history, shared ─────────────────────────────────────────────────
+# akshare's stock_zh_a_daily downloads a stock's whole history, its share count and its adjustment
+# factors one after another and decodes the history in V8, all inside the V8 lock; the history,
+# indicator, score, radar, backtest, factor and pair panels each called it, so a stock page that
+# opens them together queued for 10s+. Here the pieces download in parallel outside the lock (only
+# the decode holds it, ahead of background jobs) and are cached per symbol, so one download serves every endpoint and window.
+# sina_a_daily / sina_index_daily build exactly the frames akshare builds from them.
+
+_sina_raw: dict = {}              # (sina_symbol, part) -> (ts, payload); a stock's whole history is ~1MB
+_sina_raw_locks: dict = {}        # (sina_symbol, part) -> Lock: concurrent callers share one download
+_sina_pool = ThreadPoolExecutor(max_workers=12, thread_name_prefix="sina")
+
+
+def _sina_decode(text: str) -> list:
+    """Sina's klc_kl.js bars, decoded with akshare's JS decoder (runs in V8: call under the lock)."""
+    js = py_mini_racer.MiniRacer()
+    js.eval(hk_js_decode)
+    return js.call("d", text.split("=")[1].split(";")[0].replace('"', ""))
+
+
+def _sina_download(sym: str, part: str):
+    if part == "bars":
+        r = requests.get(zh_sina_a_stock_hist_url.format(sym), timeout=10)
+        return pd.DataFrame(v8_call_first(_sina_decode, r.text))
+    if part == "index_bars":
+        r = requests.get(zh_sina_index_stock_hist_url.format(sym), params={"d": "2020_2_4"}, timeout=10)
+        return pd.DataFrame(v8_call_first(_sina_decode, r.text))
+    if part == "amount":                            # share count history
+        r = requests.get(zh_sina_a_stock_amount_url.format(sym, sym), timeout=10)
+        return demjson.decode(r.text[r.text.find("["): r.text.rfind("]") + 1])
+    url = zh_sina_a_stock_qfq_url if part == "qfq" else zh_sina_a_stock_hfq_url
+    r = requests.get(url.format(sym), timeout=10)  # adjustment factors, a JS object literal
+    obj = r.text.split("=")[1].split("\n")[0]
+    try:
+        return json.loads(obj)["data"]
+    except ValueError:
+        return ast.literal_eval(obj)["data"]
+
+
+def _sina_part(sym: str, part: str):
+    """One raw piece of a Sina history ("bars", "index_bars", "amount", "qfq", "hfq"), cached for _hist_ttl()."""
+    key = (sym, part)
+    hit = _sina_raw.get(key)
+    if hit and time.time() - hit[0] < _hist_ttl():
+        return hit[1]
+    with _hist_lock:
+        lock = _sina_raw_locks.setdefault(key, threading.Lock())
+    with lock:
+        hit = _sina_raw.get(key)
+        if hit and time.time() - hit[0] < _hist_ttl():
+            return hit[1]
+        payload = _sina_download(sym, part)
+        with _hist_lock:
+            _sina_raw[key] = (time.time(), payload)
+            if len(_sina_raw) > 150:              # ~50 stocks: drop the oldest
+                for old in sorted(_sina_raw, key=lambda k: _sina_raw[k][0])[:len(_sina_raw) - 120]:
+                    del _sina_raw[old]
+        return payload
+
+
+def sina_a_daily(sym: str, start_date: str = "19900101", end_date: str = "21000118", adjust: str = "") -> pd.DataFrame:
+    """ak.stock_zh_a_daily(sym, start_date, end_date, adjust) for "", "qfq" and "hfq", from the shared cache."""
+    parts = ["amount"] + ([adjust] if adjust in ("qfq", "hfq") else [])
+    pending = [_sina_pool.submit(_sina_part, sym, p) for p in parts]
+    bars = _sina_part(sym, "bars")
+    amount, *factor = [f.result() for f in pending]
+
+    data_df = bars.copy()
+    data_df.index = pd.to_datetime(data_df["date"]).dt.date
+    del data_df["date"]
+    data_df = data_df.drop(columns=["prevclose", "postVol", "postAmt"], errors="ignore")
+    data_df = data_df.astype("float")
+    amount_data_df = pd.DataFrame(amount)
+    amount_data_df.columns = ["date", "outstanding_share"]
+    amount_data_df.index = pd.to_datetime(amount_data_df.date)
+    del amount_data_df["date"]
+    temp_df = pd.merge(data_df, amount_data_df, left_index=True, right_index=True, how="outer")
+    temp_df.ffill(inplace=True)
+    temp_df = temp_df.astype(float)
+    temp_df["outstanding_share"] = temp_df["outstanding_share"] * 10000
+    temp_df["turnover"] = temp_df["volume"] / temp_df["outstanding_share"]
+    temp_df.columns = ["open", "high", "low", "close", "volume", "amount", "outstanding_share", "turnover"]
+    if adjust == "":
+        temp_df = temp_df[start_date:end_date]
+        temp_df.drop_duplicates(subset=["open", "high", "low", "close", "volume", "amount"], inplace=True)
+        for col in ("open", "high", "low", "close"):
+            temp_df[col] = round(temp_df[col], 2)
+        temp_df.dropna(inplace=True)
+        temp_df.drop_duplicates(inplace=True)
+        temp_df.reset_index(inplace=True)
+        temp_df["date"] = pd.to_datetime(temp_df["date"], errors="coerce").dt.date
+        return temp_df
+    if adjust not in ("qfq", "hfq"):
+        return None                                 # as akshare: no frame for other values
+
+    factor_df = pd.DataFrame(factor[0])
+    factor_df.columns = ["date", f"{adjust}_factor"]
+    factor_df.index = pd.to_datetime(factor_df.date)
+    del factor_df["date"]
+    temp_df = pd.merge(temp_df, factor_df, left_index=True, right_index=True, how="outer")
+    temp_df.ffill(inplace=True)
+    temp_df = temp_df.astype(float)
+    temp_df.dropna(inplace=True)
+    temp_df.drop_duplicates(subset=["open", "high", "low", "close", "volume", "amount"], inplace=True)
+    f = temp_df[f"{adjust}_factor"]
+    for col in ("open", "high", "close", "low"):
+        temp_df[col] = temp_df[col] * f if adjust == "hfq" else temp_df[col] / f
+    temp_df = temp_df.iloc[:, :-1]
+    temp_df = temp_df[start_date:end_date]
+    for col in ("open", "high", "low", "close"):
+        temp_df[col] = round(temp_df[col], 2)
+    temp_df.dropna(inplace=True)
+    temp_df.reset_index(inplace=True)
+    temp_df["date"] = pd.to_datetime(temp_df["date"], errors="coerce").dt.date
+    return temp_df
+
+
+def sina_index_daily(sym: str) -> pd.DataFrame:
+    """ak.stock_zh_index_daily(sym) (an A-share index's whole daily history), from the shared cache."""
+    temp_df = _sina_part(sym, "index_bars").copy()
+    temp_df["date"] = pd.to_datetime(temp_df["date"], errors="coerce").dt.date
+    for col in ("open", "close", "high", "low", "volume"):
+        temp_df[col] = pd.to_numeric(temp_df[col], errors="coerce")
+    return temp_df
+
+
 def get_stock_history(
     symbol: str,
     period: str = "daily",
@@ -324,12 +458,7 @@ def _fetch_stock_history(symbol: str, period: str, start_date: str, end_date: st
         if _is_b_share(symbol):
             df = _fetch_b_share_daily(sina_symbol, start_date, end_date, ak_adjust)
         else:
-            df = v8_call(ak.stock_zh_a_daily,
-                symbol=sina_symbol,
-                start_date=start_date,
-                end_date=end_date,
-                adjust=ak_adjust if ak_adjust else None,
-            )
+            df = sina_a_daily(sina_symbol, start_date, end_date, ak_adjust)
 
         if df is None or df.empty:
             return None

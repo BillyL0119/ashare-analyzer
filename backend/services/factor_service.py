@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 import akshare as ak
+from concurrent.futures import ThreadPoolExecutor
 
 RISK_FREE_ANNUAL = 0.025   # ~2.5% China 1-yr deposit rate proxy
 TRADING_DAYS = 252
@@ -16,6 +17,7 @@ INDICES = {
 # In-process cache: {tx_symbol: (timestamp, dates_list, log_returns_array)}
 _INDEX_CACHE: dict = {}
 _INDEX_TTL = 6 * 3600
+_INDEX_FAILED: dict = {}    # tx_symbol -> time both sources last failed: a factor request asks twice
 
 
 def _load_index(tx_symbol: str):
@@ -26,6 +28,8 @@ def _load_index(tx_symbol: str):
     hit = _INDEX_CACHE.get(tx_symbol)
     if hit and time.time() - hit[0] < _INDEX_TTL:
         return hit[1], hit[2]
+    if time.time() - _INDEX_FAILED.get(tx_symbol, 0) < 60:
+        return (hit[1], hit[2]) if hit else (None, None)
     def tencent():
         r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
                          params={"param": f"{tx_symbol},day,,,1000,qfq"}, timeout=8)
@@ -48,6 +52,7 @@ def _load_index(tx_symbol: str):
             return dates[1:], log_rets
         except Exception as e:
             print(f"[factor] Index load ({source.__name__}) failed for {tx_symbol}: {e}")
+    _INDEX_FAILED[tx_symbol] = time.time()
     if hit:
         return hit[1], hit[2]        # stale beats nothing
     return None, None
@@ -125,6 +130,10 @@ def analyze_factors(df: pd.DataFrame) -> dict:
     stock_dates = [_to_dash(d) for d in dates[1:]]  # aligned with log_rets
     start_date_dash = _to_dash(dates[0])
     end_date_dash   = _to_dash(dates[-1])
+
+    # Load (or refresh) the three indices at once rather than one after another
+    with ThreadPoolExecutor(max_workers=len(INDICES)) as pool:
+        list(pool.map(_load_index, [v["tx"] for v in INDICES.values()]))
 
     # ── Primary market proxy: CSI 300 ─────────────────────────────────────────
     mkt_dates, mkt_rets = _fetch_index_returns(INDICES["sh000300"]["tx"], start_date_dash, end_date_dash)

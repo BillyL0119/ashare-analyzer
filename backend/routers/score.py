@@ -20,7 +20,8 @@ import numpy as np
 import math
 import time
 import logging
-from services.js_runtime import v8_call
+from concurrent.futures import ThreadPoolExecutor
+from services.stock_service import sina_a_daily
 
 router = APIRouter()
 logger = logging.getLogger("score")
@@ -600,13 +601,16 @@ def _summary(total, grade, tech, fund, sent, risk) -> tuple:
 
 def _compute(symbol: str) -> dict:
     is_cn = _is_cn(symbol)
+    # Fundamentals (quote feed, yfinance) download alongside the price history
+    pool = ThreadPoolExecutor(max_workers=1)
+    fund_job = pool.submit(_fundamental_cn if is_cn else _fundamental_us, symbol)
+    pool.shutdown(wait=False)
 
     if is_cn:
-        # A-share: AkShare for price data
+        # A-share: Sina daily history (akshare's stock_zh_a_daily frame, shared cache)
         closes, volumes = [], []
         try:
-            import akshare as ak
-            df = v8_call(ak.stock_zh_a_daily, symbol=_to_sina(symbol), adjust="qfq")
+            df = sina_a_daily(_to_sina(symbol), adjust="qfq")
             df = df.sort_index().tail(252)
             closes  = df["close"].dropna().tolist()
             volumes = df["volume"].dropna().tolist() if "volume" in df.columns else []
@@ -632,10 +636,7 @@ def _compute(symbol: str) -> dict:
     vol_s, vol_zh, vol_en      = _volume_score(closes, volumes)
 
     try:
-        if is_cn:
-            fund_score, fund_details = _fundamental_cn(symbol)
-        else:
-            fund_score, fund_details = _fundamental_us(symbol)
+        fund_score, fund_details = fund_job.result()
     except Exception as e:
         logger.warning("fundamental %s: %s", symbol, e)
         fund_score  = 20

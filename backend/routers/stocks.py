@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 import time
 import requests as _req
+from concurrent.futures import ThreadPoolExecutor
 import akshare as ak
 
 from models.schemas import (
@@ -330,7 +331,8 @@ def pair_analysis(
             df = get_stock_history(sym, period, "19900101", end_date, adjust)
         return df
 
-    df1, df2 = load(symbol1), load(symbol2)
+    with ThreadPoolExecutor(max_workers=2) as pool:      # both histories download at once
+        df1, df2 = pool.map(load, (symbol1, symbol2))
     for sym, df in ((symbol1, df1), (symbol2, df2)):
         if df is None or df.empty:
             raise HTTPException(status_code=404, detail=f"No data for {sym}" if lang == "en" else f"{sym} 暂无数据")

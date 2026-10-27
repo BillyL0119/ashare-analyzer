@@ -15,7 +15,8 @@ from fastapi import APIRouter, HTTPException, Query
 import numpy as np
 import time
 import logging
-from services.js_runtime import v8_call
+from concurrent.futures import ThreadPoolExecutor
+from services.stock_service import sina_a_daily, sina_index_daily
 
 router = APIRouter()
 logger = logging.getLogger("backtest")
@@ -198,6 +199,19 @@ def _run(dates, closes, signals, is_cn: bool) -> dict:
     }
 
 
+def _benchmark_closes(is_cn: bool, limit: int) -> list:
+    """Last `limit` closes of the CSI 300 (A-shares) or SPY (US)."""
+    try:
+        if is_cn:
+            bm_df = sina_index_daily("sh000300").sort_index().tail(limit)
+            return bm_df["close"].dropna().tolist()
+        from routers.us_stocks import _tencent_history
+        return [c["close"] for c in _tencent_history("SPY", limit * 365 // 252 + 10) if c.get("close")][-limit:]
+    except Exception as e:
+        logger.warning("Benchmark data failed: %s", e)
+        return []
+
+
 # ── Route ─────────────────────────────────────────────────────────────────────
 
 @router.get("/{symbol}")
@@ -225,11 +239,13 @@ def backtest(
     try:
         # ── Price data ───────────────────────────────────────────────────────
         dates, closes = [], []
+        pool = ThreadPoolExecutor(max_workers=1)      # the benchmark downloads alongside the prices
+        bm_job = pool.submit(_benchmark_closes, is_cn, limit)
+        pool.shutdown(wait=False)
         if is_cn:
-            import akshare as ak
-            df = v8_call(ak.stock_zh_a_daily, symbol=_to_sina(symbol), adjust="qfq")
+            df = sina_a_daily(_to_sina(symbol), adjust="qfq")
             df = df.sort_index().tail(limit)
-            dates = [str(d)[:10] for d in df.index.tolist()]
+            dates = [str(d)[:10] for d in df["date"].tolist()]
             closes = df["close"].dropna().tolist()
         else:
             from routers.us_stocks import _tencent_history   # yfinance is rate limited from the server
@@ -247,18 +263,8 @@ def backtest(
         result = _run(dates, closes, signals, is_cn)
 
         # ── Benchmark ────────────────────────────────────────────────────────
-        bm_closes = []
         bm_name_zh, bm_name_en = ("沪深300", "CSI 300") if is_cn else ("标普500", "S&P 500")
-        try:
-            if is_cn:
-                import akshare as ak
-                bm_df = v8_call(ak.stock_zh_index_daily, symbol="sh000300").sort_index().tail(limit)
-                bm_closes = bm_df["close"].dropna().tolist()
-            else:
-                from routers.us_stocks import _tencent_history
-                bm_closes = [c["close"] for c in _tencent_history("SPY", limit * 365 // 252 + 10) if c.get("close")][-limit:]
-        except Exception as e:
-            logger.warning("Benchmark data failed: %s", e)
+        bm_closes = bm_job.result()
 
         if len(bm_closes) >= len(closes) * 0.8:
             bm = bm_closes[-len(closes):]

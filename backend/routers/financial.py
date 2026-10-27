@@ -1,8 +1,11 @@
 from fastapi import APIRouter, HTTPException
-import akshare as ak
 import pandas as pd
 import math
+import requests
 import time
+from concurrent.futures import ThreadPoolExecutor
+from io import StringIO
+from bs4 import BeautifulSoup
 
 router = APIRouter()
 
@@ -54,6 +57,50 @@ def _get_yf_valuation(symbol: str) -> dict:
 _get_yf_valuation._yf_cache = {}
 
 
+_FIN_PAGE = "https://money.finance.sina.com.cn/corp/go.php/vFD_FinancialGuideLine/stockid/{}/ctrl/{}/displaytype/4.phtml"
+_FIN_SECTIONS = ["每股指标", "盈利能力", "成长能力", "营运能力", "偿债及资本结构", "现金流量", "其他指标"]
+
+
+def _financial_indicator(symbol: str, start_year: str) -> pd.DataFrame:
+    """ak.stock_financial_analysis_indicator(symbol, start_year) (same frame), with Sina's yearly pages
+    fetched in parallel: akshare reads them one after another, ~1s each."""
+    def page(year: str) -> str:
+        return requests.get(_FIN_PAGE.format(symbol, year), headers={"User-Agent": "Mozilla/5.0"}, timeout=10).text
+
+    first = page("2020")                       # akshare reads the year list from this page
+    soup = BeautifulSoup(first, features="lxml")
+    year_list = [a.text for a in soup.find(attrs={"id": "con02-1"}).find("table").find_all("a")]
+    if start_year not in year_list:
+        return pd.DataFrame()
+    year_list = year_list[: year_list.index(start_year) + 1]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        pages = list(pool.map(lambda y: first if y == "2020" else page(y), year_list))
+
+    out_df = pd.DataFrame()
+    for text in pages:
+        temp_df = pd.read_html(StringIO(text))[12].iloc[:, :-1]
+        temp_df.columns = temp_df.iloc[0, :]
+        temp_df = temp_df.iloc[1:, :]
+        heads = [temp_df.loc[temp_df.iloc[:, 0].str.find(name) == 0, :].index[0] for name in _FIN_SECTIONS]
+        big_df = pd.DataFrame()
+        for i, head in enumerate(heads):
+            inner_df = (temp_df[head:] if i == len(heads) - 1 else temp_df[head: heads[i + 1] - 1]).T
+            big_df = pd.concat(objs=[big_df, inner_df.reset_index(drop=True)], axis=1)
+        big_df.columns = big_df.iloc[0, :].tolist()
+        big_df = big_df.iloc[1:, :]
+        big_df.index = temp_df.columns.tolist()[1:]
+        out_df = pd.concat(objs=[out_df, big_df])
+
+    out_df.dropna(inplace=True)
+    out_df.reset_index(inplace=True)
+    out_df.rename(columns={"index": "日期"}, inplace=True)
+    out_df.sort_values(by=["日期"], ignore_index=True, inplace=True)
+    out_df["日期"] = pd.to_datetime(out_df["日期"], errors="coerce").dt.date
+    for item in out_df.columns[1:]:
+        out_df[item] = pd.to_numeric(out_df[item], errors="coerce")
+    return out_df
+
+
 _result_cache: dict = {}     # symbol -> (ts, result); quarterly figures, so 12h is plenty
 
 
@@ -61,7 +108,7 @@ _result_cache: dict = {}     # symbol -> (ts, result); quarterly figures, so 12h
 def financial_analysis(symbol: str):
     """
     Return key financial ratios for a stock.
-    PE/PB from Tencent quotes; financial ratios from ak.stock_financial_analysis_indicator.
+    PE/PB from Tencent quotes; financial ratios from Sina's financial guideline pages.
     """
     hit = _result_cache.get(symbol)
     if hit and time.time() - hit[0] < 12 * 3600:
@@ -99,7 +146,7 @@ def _build_financial(symbol: str) -> dict:
 
     # ── Financial ratios from stock_financial_analysis_indicator ──────────────
     try:
-        df_fin = ak.stock_financial_analysis_indicator(symbol=symbol, start_year="2020")
+        df_fin = _financial_indicator(symbol, "2020")
         if df_fin is not None and not df_fin.empty:
             # Normalise column names (strip whitespace)
             df_fin.columns = [c.strip() for c in df_fin.columns]

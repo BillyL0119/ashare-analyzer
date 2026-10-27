@@ -15,12 +15,12 @@ Data sources: A-shares: akshare (price), yfinance (PE/PB), CSI 300.
 """
 
 from fastapi import APIRouter, HTTPException
-import akshare as ak
 import numpy as np
 import math
 import time
 import logging
-from services.js_runtime import v8_call
+from concurrent.futures import ThreadPoolExecutor
+from services.stock_service import sina_a_daily, sina_index_daily
 
 router = APIRouter()
 logger = logging.getLogger("radar")
@@ -134,37 +134,47 @@ def _compute_us(symbol: str) -> tuple:
     return _score_from_series(_safe(fund.get("pe")), _safe(fund.get("pb")), closes, volumes, mkt, us=True), name
 
 
-def _compute(symbol: str) -> dict:
-    # ── Price data (1 year daily) ────────────────────────────────────────────
-    closes: list[float] = []
-    volumes: list[float] = []
-    try:
-        df = v8_call(ak.stock_zh_a_daily, symbol=_to_sina(symbol), adjust="qfq")
-        df = df.sort_index().tail(252)
-        closes = df["close"].dropna().tolist()
-        if "volume" in df.columns:
-            volumes = df["volume"].dropna().tolist()
-    except Exception as e:
-        logger.warning("Price data failed for %s: %s", symbol, e)
-
-    # ── PE / PB from Tencent quotes (yfinance is rate limited from the server) ──
-    pe: float | None = None
-    pb: float | None = None
+def _pe_pb(symbol: str) -> tuple:
+    """PE / PB from Tencent quotes (yfinance is rate limited from the server)."""
     try:
         from services.stock_service import tencent_quotes
         q = tencent_quotes([symbol]).get(symbol) or {}
-        pe, pb = _safe(q.get("pe")), _safe(q.get("pb"))
+        return _safe(q.get("pe")), _safe(q.get("pb"))
     except Exception as e:
         logger.warning("Tencent PE/PB failed for %s: %s", symbol, e)
+        return None, None
 
-    # ── CSI 300 for market correlation ───────────────────────────────────────
-    mkt_closes: list[float] = []
+
+def _csi300_closes() -> list:
+    """CSI 300 closes for market correlation."""
     try:
-        mkt_df = v8_call(ak.stock_zh_index_daily, symbol="sh000300")
+        mkt_df = sina_index_daily("sh000300")
         mkt_df = mkt_df.sort_index().tail(252)
-        mkt_closes = mkt_df["close"].dropna().tolist()
+        return mkt_df["close"].dropna().tolist()
     except Exception as e:
         logger.debug("CSI 300 data failed: %s", e)
+        return []
+
+
+def _compute(symbol: str) -> dict:
+    # The quote and CSI 300 download alongside the price history
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        quote_job, mkt_job = pool.submit(_pe_pb, symbol), pool.submit(_csi300_closes)
+
+        # ── Price data (1 year daily) ────────────────────────────────────────
+        closes: list[float] = []
+        volumes: list[float] = []
+        try:
+            df = sina_a_daily(_to_sina(symbol), adjust="qfq")
+            df = df.sort_index().tail(252)
+            closes = df["close"].dropna().tolist()
+            if "volume" in df.columns:
+                volumes = df["volume"].dropna().tolist()
+        except Exception as e:
+            logger.warning("Price data failed for %s: %s", symbol, e)
+
+        pe, pb = quote_job.result()
+        mkt_closes: list[float] = mkt_job.result()
 
     # ── Compute each score ────────────────────────────────────────────────────
     scores: dict[str, int] = {}

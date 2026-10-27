@@ -16,7 +16,7 @@ import logging
 import pandas as pd
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from services.js_runtime import V8_LOCK
+from services.js_runtime import v8_call
 
 router = APIRouter()
 logger = logging.getLogger("sectors")
@@ -269,7 +269,6 @@ def _fetch_cn_board_hist(row) -> dict | None:
 def _fetch_ths_board(row) -> dict | None:
     """One Tonghuashun industry board: today's move from the summary row, 5d/20d/volume ratio from its index history."""
     try:
-        import akshare as ak
         name = str(row["板块"])
         today_pct = _safe_float(row.get("涨跌幅", 0))
         leader = str(row.get("领涨股", ""))
@@ -278,12 +277,11 @@ def _fetch_ths_board(row) -> dict | None:
         # 10jqka drops connections (SSL EOF) under bursts: one retry after a short pause
         for attempt in range(2):
             try:
-                with V8_LOCK:      # its hexin-v cookie is computed in mini_racer
-                    hist = ak.stock_board_industry_index_ths(
-                        symbol=name,
-                        start_date=(datetime.now() - timedelta(days=45)).strftime("%Y%m%d"),
-                        end_date=datetime.now().strftime("%Y%m%d"),
-                    )
+                hist = _ths_board_index(
+                    name,
+                    start_date=(datetime.now() - timedelta(days=45)).strftime("%Y%m%d"),
+                    end_date=datetime.now().strftime("%Y%m%d"),
+                )
                 break
             except Exception:
                 if attempt:
@@ -305,10 +303,88 @@ def _fetch_ths_board(row) -> dict | None:
         return None
 
 
+# akshare's 10jqka calls compute the hexin-v cookie in V8 and then download pages, and the whole
+# call ran under V8_LOCK: the summary once held it 77s (10jqka dropping connections), and every
+# stock page's Sina history decode waited behind it. These build the same frames with only the
+# cookie computed under the lock.
+_THS_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+           "Chrome/89.0.4389.90 Safari/537.36")
+_ths_codes: dict = {}         # board name -> 10jqka board code
+
+
+def _ths_cookie() -> str:
+    def calc():
+        import py_mini_racer
+        from akshare.stock_feature.stock_board_industry_ths import _get_file_content_ths
+        js = py_mini_racer.MiniRacer()
+        js.eval(_get_file_content_ths("ths.js"))
+        return js.call("v")
+    return v8_call(calc)
+
+
+def _ths_summary() -> pd.DataFrame:
+    """ak.stock_board_industry_summary_ths(): today's row for every 10jqka industry board."""
+    import requests
+    from io import StringIO
+    from bs4 import BeautifulSoup
+    headers = {"User-Agent": _THS_UA, "Cookie": f"v={_ths_cookie()}"}
+    url = "http://q.10jqka.com.cn/thshy/index/field/199112/order/desc/page/{}/ajax/1/"
+    first = requests.get(url.format(1), headers=headers, timeout=15).text
+    soup = BeautifulSoup(first, features="lxml")
+    page_num = soup.find(name="span", attrs={"class": "page_info"}).text.split("/")[1]
+    big_df = pd.DataFrame()
+    for page in range(1, int(page_num) + 1):
+        text = first if page == 1 else requests.get(url.format(page), headers=headers, timeout=15).text
+        big_df = pd.concat(objs=[big_df, pd.read_html(StringIO(text))[0]], ignore_index=True)
+    big_df.columns = ["序号", "板块", "涨跌幅", "总成交量", "总成交额", "净流入", "上涨家数", "下跌家数",
+                      "均价", "领涨股", "领涨股-最新价", "领涨股-涨跌幅"]
+    for col in ("涨跌幅", "总成交量", "总成交额", "净流入", "上涨家数", "下跌家数", "均价", "领涨股-最新价", "领涨股-涨跌幅"):
+        big_df[col] = pd.to_numeric(big_df[col], errors="coerce")
+    return big_df
+
+
+def _ths_board_codes() -> dict:
+    import requests
+    from bs4 import BeautifulSoup
+    if not _ths_codes:
+        headers = {"User-Agent": _THS_UA, "Cookie": f"v={_ths_cookie()}"}
+        r = requests.get("https://q.10jqka.com.cn/thshy/detail/code/881272/", headers=headers, timeout=15)
+        links = BeautifulSoup(r.text, features="lxml").find(name="div", attrs={"class": "cate_inner"}).find_all("a")
+        _ths_codes.update({a.text: a["href"].split("/")[-2] for a in links})
+    return _ths_codes
+
+
+def _ths_board_index(symbol: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """ak.stock_board_industry_index_ths(symbol, start_date, end_date): one board's daily index."""
+    import requests
+    from akshare.utils import demjson
+    code = _ths_board_codes()[symbol]
+    headers = {"User-Agent": _THS_UA, "Referer": "http://q.10jqka.com.cn", "Host": "d.10jqka.com.cn",
+               "Cookie": f"v={_ths_cookie()}"}
+    big_df = pd.DataFrame()
+    for year in range(int(start_date[:4]), datetime.now().year + 1):
+        text = requests.get(f"https://d.10jqka.com.cn/v4/line/bk_{code}/01/{year}.js", headers=headers, timeout=15).text
+        try:
+            data = demjson.decode(text[text.find("{"): -1])
+        except Exception:
+            continue
+        temp_df = pd.DataFrame(data["data"].split(";")).iloc[:, 0].str.split(",", expand=True)
+        big_df = pd.concat(objs=[big_df, temp_df], ignore_index=True)
+    if len(big_df.columns) not in (11, 12):
+        raise ValueError(f"unexpected 10jqka board data ({len(big_df.columns)} columns)")
+    big_df = big_df.iloc[:, :7]
+    big_df.columns = ["日期", "开盘价", "最高价", "最低价", "收盘价", "成交量", "成交额"]
+    big_df["日期"] = pd.to_datetime(big_df["日期"], errors="coerce").dt.date
+    big_df.index = pd.to_datetime(big_df["日期"], errors="coerce")
+    big_df = big_df[start_date:end_date]
+    big_df.reset_index(drop=True, inplace=True)
+    for col in ("开盘价", "最高价", "最低价", "收盘价", "成交量", "成交额"):
+        big_df[col] = pd.to_numeric(big_df[col], errors="coerce")
+    return big_df
+
+
 def _build_cn_ths() -> dict:
-    import akshare as ak
-    with V8_LOCK:
-        rows = ak.stock_board_industry_summary_ths().to_dict("records")
+    rows = _ths_summary().to_dict("records")
     sectors = []
     with ThreadPoolExecutor(max_workers=4) as ex:
         for res in ex.map(_fetch_ths_board, rows):
@@ -410,7 +486,7 @@ def sector_rotation(market: str = Query("cn", pattern="^(cn|us)$")):
     now = time.time()
 
     if market == "cn":
-        # Built only by the warm-up thread (about a minute through V8_LOCK): a request that built it
+        # Built only by the warm-up thread (about a minute, 90 boards): a request that built it
         # too would wait that long and stack up behind the others. Serve the latest copy, even stale.
         if _cn_data is not None:
             return _cn_data
@@ -446,7 +522,7 @@ def _load_cn_disk() -> None:
 
 
 def _warm_cn_loop():
-    """The CN build takes about a minute (90 boards, one at a time through V8_LOCK); keep it hot so users never wait for it."""
+    """The CN build takes about a minute (90 boards); keep it hot so users never wait for it."""
     global _cn_ts, _cn_data
     _load_cn_disk()
     while True:
