@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import casesStrings from './casesStrings'
+import diagramNav, { diagramHref } from '../diagrams/diagramNav'
 
 // Economics case library: real news turned into essay examples (concept, figures to quote,
 // evaluation, practice question), filterable by exam board, concept and keyword.
@@ -42,7 +43,7 @@ function loadSaved() {
   try { return JSON.parse(localStorage.getItem(SAVE_KEY) || '[]') } catch { return [] }
 }
 
-function CaseCard({ c, s, board, studyHref, saved, onToggleSave, onConcept, conceptTopics }) {
+function CaseCard({ c, s, board, studyHref, saved, onToggleSave, onConcept, conceptTopics, drawLabel }) {
   const [copied, setCopied] = useState(false)
   const cite = `${c.source}, "${c.title}", ${c.date}. ${c.url}`
   const copy = async () => {
@@ -80,6 +81,7 @@ function CaseCard({ c, s, board, studyHref, saved, onToggleSave, onConcept, conc
         <button className="cs-act" onClick={copy}>{copied ? `✓ ${s.copied}` : `⧉ ${s.copy}`}</button>
         <button className="cs-act" onClick={() => onToggleSave(c)} aria-pressed={saved}>{saved ? `★ ${s.unsave}` : `☆ ${s.save}`}</button>
         {study && <Link className="cs-act" to={study}>📘 {s.study}</Link>}
+        {diagramHref(c) && <Link className="cs-act" to={diagramHref(c)}>📐 {drawLabel}</Link>}
       </div>
     </article>
   )
@@ -91,8 +93,9 @@ export default function CasesPage({ lang, studyHref = defaultStudyHref }) {
   const s = casesStrings(lang)
   const [board, setBoard] = useState('')
   const [concept, setConcept] = useState('')
-  const [q, setQ] = useState('')
-  const [query, setQuery] = useState('')
+  // ?q= comes from links elsewhere on the site (the diagram lab's "read the full case")
+  const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get('q') || '')
+  const [query, setQuery] = useState(q)
   const [showSaved, setShowSaved] = useState(false)
   const [saved, setSaved] = useState(loadSaved)
   const [concepts, setConcepts] = useState([])
@@ -175,7 +178,7 @@ export default function CasesPage({ lang, studyHref = defaultStudyHref }) {
           {data && !libraryEmpty && list.length === 0 && <div className="cs-card cs-muted" style={{ fontSize: 14 }}>{showSaved ? s.savedEmpty : s.none}</div>}
           {list.map((c) => (
             <CaseCard key={c.id} c={c} s={s} board={board} studyHref={studyHref} saved={savedIds.has(c.id)}
-              onToggleSave={toggleSave} onConcept={pickConcept} conceptTopics={conceptTopics} />
+              onToggleSave={toggleSave} onConcept={pickConcept} conceptTopics={conceptTopics} drawLabel={diagramNav(lang).drawLink} />
           ))}
           {!showSaved && data && data.cases.length < data.total && (
             <button className="cs-pill" style={{ justifySelf: 'center' }} onClick={() => setLimit(limit + PAGE)}>{s.more}</button>

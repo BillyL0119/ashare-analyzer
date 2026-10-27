@@ -32,9 +32,12 @@ _DAILY_CAP = 150            # model calls per day
 _KEEP_REJECTED = 30 * 86400
 _KEEP_CASES = 730 * 86400
 
+_DIAGRAM_CAP = 300          # diagram-preset calls per day (short; services/econ_diagrams.py)
+
 _lock = threading.Lock()
 _db: dict = {}              # id -> case (or {"rejected": True, "ts": ...})
 _calls = {"day": "", "n": 0}
+_diagram_calls = {"day": "", "n": 0}
 _status = {"last_run": None, "added": 0}
 
 _KEYWORDS = re.compile(
@@ -244,7 +247,8 @@ def run_once(limit: int = _PER_RUN) -> int:
         with _lock:
             _db[item["id"]] = case or {"rejected": True, "ts": time.time()}
         added += bool(case)
-    if added or _db:
+    tagged = _tag_diagrams()
+    if added or tagged or _db:
         try:
             _save()
         except Exception as e:
@@ -252,6 +256,34 @@ def run_once(limit: int = _PER_RUN) -> int:
     _status.update(last_run=datetime.utcnow().isoformat() + "Z", added=added)
     logger.info("case library: %d new cases (%d calls today)", added, _calls["n"])
     return added
+
+
+def _tag_diagrams() -> int:
+    """Give each untagged case its diagram-lab preset (newest first). Returns cases tagged."""
+    from services import econ_diagrams
+    today = time.strftime("%Y-%m-%d")
+    done = 0
+    for case in [c for c in cases() if econ_diagrams.needs_tag(c)]:
+        with _lock:
+            if _diagram_calls["day"] != today:
+                _diagram_calls.update(day=today, n=0)
+            if _diagram_calls["n"] >= _DIAGRAM_CAP:
+                break
+            _diagram_calls["n"] += 1
+        try:
+            tag = econ_diagrams.classify(case)
+        except Exception as e:
+            logger.warning("diagram tagging failed: %s", e)
+            continue
+        if tag is None:
+            break                              # no API key
+        with _lock:
+            if case["id"] in _db:
+                _db[case["id"]]["diagram"] = tag
+        done += 1
+    if done:
+        logger.info("case library: %d cases tagged with a diagram", done)
+    return done
 
 
 def _loop() -> None:

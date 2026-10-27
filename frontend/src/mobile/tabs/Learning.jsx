@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import casesStrings from '../../components/cases/casesStrings'
+import diagramNav, { STUDY_DIAGRAM_LINKS } from '../../components/diagrams/diagramNav'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import useLangStore from '../../store/langStore'
 import { useT } from '../i18n'
@@ -57,6 +58,14 @@ function List() {
         <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
           <b style={{ fontSize: 15 }}>{casesStrings(lang).title}</b>
           <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{casesStrings(lang).subtitle}</span>
+        </span>
+        <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
+      </button>
+      <button className="m-card" onClick={() => nav('/diagrams')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
+        <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>📐</span>
+        <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
+          <b style={{ fontSize: 15 }}>{diagramNav(lang).title}</b>
+          <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{diagramNav(lang).card}</span>
         </span>
         <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
       </button>
@@ -127,6 +136,11 @@ function Topic() {
                 {isOpen && (
                   <>
                     <p style={{ margin: 0, lineHeight: 1.65, fontSize: 15.5, whiteSpace: 'pre-wrap' }}>{loc(s, 'body', lang)}</p>
+                    {STUDY_DIAGRAM_LINKS[s.diagram_type] && (
+                      <button onClick={() => nav(STUDY_DIAGRAM_LINKS[s.diagram_type])} style={{ display: 'flex', gap: 8, alignItems: 'center', textAlign: 'left', padding: '10px 12px', borderRadius: 14, fontWeight: 650, fontSize: 14, color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 10%, transparent)' }}>
+                        <span aria-hidden="true">📐</span>{diagramNav(lang).openLab}<span aria-hidden="true" style={{ marginLeft: 'auto' }}>›</span>
+                      </button>
+                    )}
                     {terms(s).length > 0 && (
                       <div><div className="m-label" style={{ marginBottom: 8, fontWeight: 650 }}>{t('关键术语')}</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{terms(s).map((k) => <span key={k} className="m-chip" style={{ fontSize: 12.5, padding: '5px 10px', color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{k}</span>)}</div></div>

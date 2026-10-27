@@ -19,6 +19,7 @@ import useAuthStore from './store/authStore'
 const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
 const TimeMachinePage    = lazy(() => import('./components/timemachine/TimeMachinePage'))
 const CasesPage          = lazy(() => import('./components/cases/CasesPage'))
+const DiagramLab         = lazy(() => import('./components/diagrams/DiagramLab'))
 const ClassPage          = lazy(() => import('./components/classes/ClassPage'))
 const StudyCenter        = lazy(() => import('./components/StudyCenter'))
 const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
@@ -34,6 +35,7 @@ const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import tmStrings from './components/timemachine/tmStrings'
 import casesStrings from './components/cases/casesStrings'
+import diagramNav from './components/diagrams/diagramNav'
 import classStrings from './components/classes/classStrings'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
@@ -69,6 +71,7 @@ const TAB_PATHS = {
   paper:        '/paper',
   time_machine: '/time-machine',
   cases:        '/cases',
+  diagrams:     '/diagrams',
   class:        '/class',
   study:        '/study',
   universities: '/universities',
@@ -227,6 +230,7 @@ export default function App() {
       paper:        'BestFriendStock | 模拟炒股 - 用虚拟资金练习美股与A股交易',
       time_machine: 'BestFriendStock | 历史穿越交易 - 回到2008金融危机、2020疫情暴跌、2015股灾做投资决定',
       cases:        'BestFriendStock | 经济学案例库 - IB、A-Level、AP 论文可用的真实新闻案例',
+      diagrams:     'BestFriendStock | 经济学图表实验室 - 可拖动的供求、AD-AS、外部性、汇率、关税图',
       class:        'BestFriendStock | 班级 - 老师布置作业、查看全班模拟交易与学习进度',
       study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门',
       universities: 'BestFriendStock | 全球商学院指南 - 100+顶尖商学院数据库',
@@ -244,6 +248,7 @@ export default function App() {
       paper:        'Best Friend Stock | Paper Trading with $1M Virtual Cash',
       time_machine: 'Best Friend Stock | History Time Machine: Trade Through 2008, 2020 and 2022',
       cases:        'Best Friend Stock | Economics Case Library: Real-World Examples for IB, A-Level and AP Essays',
+      diagrams:     'Best Friend Stock | Economics Diagram Lab: Interactive Supply and Demand, AD-AS and More',
       class:        'Best Friend Stock | Classes: Assignments and Progress for Economics Teachers',
       study:        'Best Friend Stock | Economics Study Center: A-Level, IB, AP, IGCSE',
       universities: 'Best Friend Stock | Business School Guide',
@@ -312,6 +317,7 @@ export default function App() {
     if (tab === 'paper') trackFeature('paper_trading')
     else if (tab === 'time_machine') trackFeature('time_machine')
     else if (tab === 'cases') trackFeature('cases')
+    else if (tab === 'diagrams') trackFeature('diagrams')
     else if (tab === 'class') trackFeature('class')
     else if (tab === 'study') trackFeature('study')
     else if (tab === 'universities') trackFeature('universities')
@@ -788,6 +794,7 @@ export default function App() {
           { key: 'time_machine', label: tmStrings(lang).nav },
           { key: 'study',        label: t.tabStudy },
           { key: 'cases',        label: casesStrings(lang).nav },
+          { key: 'diagrams',     label: diagramNav(lang).nav },
           { key: 'class',        label: classStrings(lang).nav },
           { key: 'universities', label: t.tabUniversities },
           { key: 'career',       label: t.tabCareer },
@@ -827,6 +834,8 @@ export default function App() {
             <TimeMachinePage lang={lang} />
           ) : appTab === 'cases' ? (
             <CasesPage lang={lang} />
+          ) : appTab === 'diagrams' ? (
+            <DiagramLab lang={lang} />
           ) : appTab === 'class' ? (
             <ClassPage lang={lang} code={classRouteMatch?.[1]} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'universities' ? (

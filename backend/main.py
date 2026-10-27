@@ -176,6 +176,12 @@ async def sitemap():
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://bestfriendstock.com/diagrams</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://bestfriendstock.com/time-machine</loc>
     <lastmod>{today}</lastmod>
     <changefreq>monthly</changefreq>

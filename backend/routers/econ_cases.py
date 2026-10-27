@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from services import econ_cases
 from services.econ_concepts import BOARDS, CONCEPTS, concept_view
+from services.econ_diagrams import diagram_view
 
 router = APIRouter()
 _LANGS = ("zh", "en", "ja", "ko", "fr")
@@ -27,6 +28,7 @@ def _view(c: dict, lang: str) -> dict:
         "concepts": [{"id": k, "name": concept_view(k, lang)["name"]} for k in c["concepts"] if k in CONCEPTS],
         "what": part.get("what"), "angle": part.get("angle"), "evaluate": part.get("evaluate"),
         "question": part.get("question"), "data": part.get("data") or [],
+        "diagram": diagram_view(c),
     }
 
 
@@ -37,9 +39,13 @@ def _on_board(c: dict, board: str) -> bool:
 @router.get("")
 def list_cases(lang: Optional[str] = Query(None), concept: Optional[str] = Query(None),
                board: Optional[str] = Query(None), q: Optional[str] = Query(None, max_length=60),
+               diagram: Optional[str] = Query(None, max_length=20),
                limit: int = Query(20, ge=1, le=50), offset: int = Query(0, ge=0, le=5000)):
     lang = _lang(lang)
     items = econ_cases.cases()
+    if diagram:
+        # Cases whose stored preset draws on this diagram (the lab's "in the news" list)
+        items = [c for c in items if (v := diagram_view(c)) and v["id"] == diagram and v["preset"]]
     if board in BOARDS:
         items = [c for c in items if _on_board(c, board)]
     counts: dict = {}

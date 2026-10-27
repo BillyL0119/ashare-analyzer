@@ -6,6 +6,7 @@ import { useMobile } from '../hooks/useMobile'
 import { T } from '../i18n/translations'
 import useAuthStore from '../store/authStore'
 import { THEME } from '../utils/chartHelpers'
+import diagramNav, { STUDY_DIAGRAM_LINKS } from './diagrams/diagramNav'
 const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
@@ -415,6 +416,7 @@ const KEY_POINT_LABEL  = { zh: '要点', en: 'KEY POINT', ja: 'ポイント', ko
 const EXAM_TIP_LABEL   = { zh: '考试要点', en: 'EXAM TIP', ja: '試験のポイント', ko: '시험 팁', fr: "CONSEIL D'EXAMEN" }
 
 function SectionBlock({ section, index, total, accentColor, lang, exam }) {
+  const navigate = useNavigate()
   const pick = (key) => {
     if (lang === 'zh') return section[key]
     if (lang === 'en') return section[`${key}_en`] || section[key]
@@ -439,6 +441,12 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
       </p>
 
       {section.diagram_type && <EconDiagram type={section.diagram_type} />}
+      {STUDY_DIAGRAM_LINKS[section.diagram_type] && (
+        <a href={STUDY_DIAGRAM_LINKS[section.diagram_type]} onClick={(e) => { e.preventDefault(); navigate(STUDY_DIAGRAM_LINKS[section.diagram_type]) }}
+          style={{ display: 'inline-flex', gap: 6, alignItems: 'center', margin: '-4px 0 14px 15px', fontSize: 13, fontWeight: 650, color: '#0ea5e9', textDecoration: 'none' }}>
+          📐 {diagramNav(lang).openLab} →
+        </a>
+      )}
 
       {(() => {
         const terms = (lang !== 'zh' && section.key_terms_en?.length > 0)
