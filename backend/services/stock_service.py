@@ -151,6 +151,14 @@ def get_stock_list(wait: bool = True) -> List[dict]:
         _stock_list_lock.release()
 
 
+def _is_index(sina_symbol: str) -> bool:
+    """Shanghai indices are sh000xxx (上证指数 sh000001, 沪深300 sh000300) and Shenzhen ones sz399xxx. They share
+    codes with stocks (sz000001 is 平安银行) and have no stock page, so search leaves them out: a pick of
+    上证指数 used to open 平安银行. Shanghai tradables start with 6 (shares), 5 (funds) or 9 (B shares)."""
+    ex, code = sina_symbol[:2], sina_symbol[2:]
+    return (ex == "sh" and not code.startswith(("6", "5", "9"))) or (ex == "sz" and code.startswith("399"))
+
+
 def _search_via_sina(q: str) -> List[dict]:
     """Try Sina's suggest API. Works fast from China-based servers."""
     try:
@@ -170,7 +178,7 @@ def _search_via_sina(q: str) -> List[dict]:
         results = []
         for entry in raw.split(";"):
             parts = entry.strip().split(",")
-            if len(parts) >= 5 and parts[1] in ("11", "12"):
+            if len(parts) >= 5 and parts[1] in ("11", "12") and not _is_index(parts[3].strip()):
                 code = parts[2].strip()
                 name = parts[4].strip() or parts[0].strip()
                 if code and name:
@@ -197,7 +205,7 @@ def _search_via_eastmoney(q: str) -> List[dict]:
             name = item.get("Name", "").strip()
             market = item.get("MktNum", "")
             # Only A-shares: market 0=SZ, 1=SH
-            if code and name and str(market) in ("0", "1"):
+            if code and name and str(market) in ("0", "1") and not _is_index(("sh" if str(market) == "1" else "sz") + code):
                 _name_cache[code] = name
                 results.append({"code": code, "name": name})
         return results[:30]
