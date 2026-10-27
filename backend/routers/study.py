@@ -1346,6 +1346,24 @@ STOCKS_CURRICULUM = {
 }
 
 
+def _inject_stocks_translations():
+    """Inject ja/ko/fr translations into the Stock Basics papers at startup."""
+    from .study_stocks_translations import STOCKS_PAPER_TITLES, STOCKS_TRANSLATIONS
+    for paper in STOCKS_CURRICULUM["papers"]:
+        for lang, val in STOCKS_PAPER_TITLES.get(paper["id"], {}).items():
+            paper[f"title_{lang}"] = val
+        for topic in paper["topics"]:
+            trans = STOCKS_TRANSLATIONS.get(topic["id"], {})
+            for lang, val in trans.get("title", {}).items():
+                topic[f"title_{lang}"] = val
+            for section, sec_trans in zip(topic["sections"], trans.get("sections", [])):
+                for field in ("heading", "body", "real_world", "exam_tip"):
+                    for lang, val in sec_trans.get(field, {}).items():
+                        section[f"{field}_{lang}"] = val
+
+
+_inject_stocks_translations()
+
 from .study_us import US_PAPER
 STOCKS_CURRICULUM["papers"].insert(0, US_PAPER)
 
