@@ -35,13 +35,19 @@ _HEADERS = {
 }
 _SYM_OK = re.compile(r"^[A-Z]{1,5}(\.[A-Z])?$")          # drops warrants/preferreds (ABR^D, XYZ/WS)
 _NOT_COMMON = re.compile(r"\b(warrants?|rights?|units?|depositary shares? representing a fraction|preferred|notes? due|debentures?)\b", re.I)
-_NAME_TAIL = re.compile(r"\s+(Class [A-C] )?(Common Stock|Ordinary Shares|American Depositary Shares|Common Shares|Capital Stock|Shares of Beneficial Interest)\b.*$", re.I)
+# Notes, bonds and preferreds filed without those exact words, listed with the issuer's market cap
+# (CCZ "Comcast Holdings ZONES" showed $221B, three times Comcast)
+_DEBT = re.compile(r"\d\s?%|\bZONES\b|\bsubordinated\b|\bsenior notes?\b|\bmortgage bonds?\b|\bperpetual\b|"
+                   r"\bfixed[- ]to[- ]floating\b|\bcumulative\b", re.I)
+_NAME_TAIL = re.compile(r"\s+(Class [A-C] )?(Common Stock|Ordinary Shares|American Deposit[ao]ry Shares?|Common Shares|Capital Stock|Shares of Beneficial Interest)\b.*$", re.I)
 _THE_TAIL = re.compile(r"^(.+?),?\s*\(The\)(.*)$")
+_OPEN_PAREN = re.compile(r"\s*\([^)]*$")      # what _NAME_TAIL leaves of "ADR (representing Ten Class B Common Shares)"
 
 
 def tidy_company_name(name: str) -> str:
-    """Nasdaq files "Coca-Cola Company (The)"; people write "The Coca-Cola Company"."""
-    name = (name or "").strip()
+    """Nasdaq files "Coca-Cola Company (The)"; people write "The Coca-Cola Company". It also leaves runs of
+    spaces where it dropped a character ("SAP  SE ADS", "Travel   Leisure Co.")."""
+    name = " ".join((name or "").split())
     m = _THE_TAIL.match(name)
     return f"The {m.group(1)}{m.group(2)}".strip() if m else name
 
@@ -106,15 +112,15 @@ def _fetch_universe() -> list[dict]:
     out = []
     for x in rows:
         sym = (x.get("symbol") or "").strip().upper().replace("/", ".")
-        name = (x.get("name") or "").strip()
+        name = " ".join((x.get("name") or "").split())      # single spaces, so _NAME_TAIL matches "Common  Stock"
         cap = _num(x.get("marketCap"))
         price = _num(x.get("lastsale"))
-        if not _SYM_OK.match(sym) or not cap or not price or _NOT_COMMON.search(name):
+        if not _SYM_OK.match(sym) or not cap or not price or _NOT_COMMON.search(name) or _DEBT.search(name):
             continue
         ipo = _num(x.get("ipoyear"))
         out.append({
             "symbol": sym,
-            "name": tidy_company_name(_NAME_TAIL.sub("", name).strip(" ,.") or name),
+            "name": tidy_company_name(_OPEN_PAREN.sub("", _NAME_TAIL.sub("", name)).strip(" ,.") or name),
             "price": price,
             "change_pct": _num(x.get("pctchange")),
             "volume": _num(x.get("volume")),
