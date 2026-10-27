@@ -34,7 +34,8 @@ _CACHE_STALE   = 86400   # seconds — serve stale rather than error
 _RETRY_N       = 3       # attempts per data source
 _RETRY_SLEEP   = 0.5     # seconds between retries
 _STOCK_TIMEOUT = 8       # per-stock fetch hard timeout (seconds)
-_TOTAL_TIMEOUT = 120     # overall endpoint deadline (seconds)
+_TOTAL_TIMEOUT = 45      # overall endpoint deadline (seconds): the proxy answers 504 at 60s, so a slow
+                         # scan returns the peers it has rather than nothing
 _MIN_RESULTS   = 5       # minimum acceptable result count before using stale cache
 _PEER_WORKERS  = 6       # peers fetched in parallel (Tencent first; the Sina fallback serializes on V8_LOCK)
 
@@ -251,6 +252,9 @@ def _src_hist(code: str, start: str, end: str, adjust: str):
     )
 
 
+_tencent_down_until = 0.0
+
+
 def _get_closes(code: str, start: str, end: str) -> pd.Series:
     """
     Fetch daily close prices with:
@@ -266,10 +270,15 @@ def _get_closes(code: str, start: str, end: str) -> pd.Series:
         (_src_hist, (code, start, end, "qfq"), "hist-qfq"),
         (_src_hist, (code, start, end, ""),    "hist-raw"),
     ]
+    global _tencent_down_until
     for fn, args, label in sources:
+        if fn is _src_tencent and time.time() < _tencent_down_until:
+            continue
         for attempt in range(1, _RETRY_N + 1):
             try:
                 result = _run_with_timeout(fn, args, timeout=_STOCK_TIMEOUT)
+                if result is None and fn is _src_tencent:
+                    raise TimeoutError("Tencent K-line timed out")
                 if result is not None and len(result) >= 10:
                     logger.debug("%s fetched via %s (attempt %d, %d rows)",
                                  code, label, attempt, len(result))
@@ -281,6 +290,11 @@ def _get_closes(code: str, start: str, end: str) -> pd.Series:
                                  code, label, attempt, len(result))
             except Exception as exc:
                 logger.debug("%s %s attempt %d error: %s", code, label, attempt, exc)
+                if fn is _src_tencent:
+                    # A failing feed fails every stock: skip it for 10 minutes instead of 3 tries each
+                    _tencent_down_until = time.time() + 600
+                    logger.warning("Tencent K-line failing (%s); using Sina for 10 minutes", exc)
+                    break
             if attempt < _RETRY_N:
                 time.sleep(_RETRY_SLEEP)
 
