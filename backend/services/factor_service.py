@@ -26,22 +26,31 @@ def _load_index(tx_symbol: str):
     hit = _INDEX_CACHE.get(tx_symbol)
     if hit and time.time() - hit[0] < _INDEX_TTL:
         return hit[1], hit[2]
-    try:
+    def tencent():
         r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
                          params={"param": f"{tx_symbol},day,,,1000,qfq"}, timeout=8)
         rows = ((r.json().get("data") or {}).get(tx_symbol) or {}).get("day") or []
-        dates = [row[0] for row in rows]
-        closes = np.array([float(row[2]) for row in rows])
-        if len(closes) < 30:
-            raise ValueError(f"only {len(closes)} bars")
-        log_rets = np.diff(np.log(np.where(closes > 0, closes, np.nan)))
-        _INDEX_CACHE[tx_symbol] = (time.time(), dates[1:], log_rets)
-        return dates[1:], log_rets
-    except Exception as e:
-        print(f"[factor] Index load failed for {tx_symbol}: {e}")
-        if hit:
-            return hit[1], hit[2]        # stale beats nothing
-        return None, None
+        return {row[0]: float(row[2]) for row in rows}
+
+    def sina():
+        from services.stock_service import sina_daily_closes
+        return sina_daily_closes(tx_symbol, 1000)
+
+    for source in (tencent, sina):
+        try:
+            by_day = source()
+            if len(by_day) < 30:
+                raise ValueError(f"only {len(by_day)} bars")
+            dates = sorted(by_day)
+            closes = np.array([by_day[d] for d in dates])
+            log_rets = np.diff(np.log(np.where(closes > 0, closes, np.nan)))
+            _INDEX_CACHE[tx_symbol] = (time.time(), dates[1:], log_rets)
+            return dates[1:], log_rets
+        except Exception as e:
+            print(f"[factor] Index load ({source.__name__}) failed for {tx_symbol}: {e}")
+    if hit:
+        return hit[1], hit[2]        # stale beats nothing
+    return None, None
 
 
 def _fetch_index_returns(tx_symbol: str, start_date_dash: str, end_date_dash: str):

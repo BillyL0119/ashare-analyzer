@@ -1243,13 +1243,18 @@ def _daily_closes(symbol: str, market: str, days: int) -> dict:
         if market in ("hk", "jp"):
             from routers.global_stocks import history
             return {c["date"]: c["close"] for c in history(market, symbol)}
-        from services.stock_service import _get_sina_symbol
+        from services.stock_service import _get_sina_symbol, sina_daily_closes
         code = _get_sina_symbol(symbol)
         n = max(min(int(days * 0.72) + 20, 1000), 30)
-        r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get", params={"param": f"{code},day,,,{n},"}, timeout=8)
-        node = (r.json().get("data") or {}).get(code) or {}
-        rows = node.get("day") or node.get("qfqday") or []
-        return {row[0]: float(row[2]) for row in rows}
+        try:
+            r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get", params={"param": f"{code},day,,,{n},"}, timeout=8)
+            node = (r.json().get("data") or {}).get(code) or {}
+            rows = node.get("day") or node.get("qfqday") or []
+            if rows:
+                return {row[0]: float(row[2]) for row in rows}
+        except Exception as e:
+            logger.warning("daily closes %s: Tencent failed (%s), using Sina", code, e)
+        return sina_daily_closes(code, n)
     except Exception as e:
         logger.warning("daily closes %s/%s failed: %s", market, symbol, e)
         return {}

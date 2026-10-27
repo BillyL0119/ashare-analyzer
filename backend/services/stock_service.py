@@ -81,6 +81,24 @@ def _get_sina_symbol(code: str) -> str:
     return f"sz{code}"  # Shenzhen A/B shares, funds (1xxxxx except 11), convertibles (12xxxx)
 
 
+def sina_daily_closes(code: str, n: int) -> dict:
+    """{YYYY-MM-DD: close} for the last n trading days of an A-share index ("sh000300"), fund ("sh510300")
+    or stock, unadjusted, from Sina's daily history (the feed the stock charts use): the fallback when
+    Tencent's K-line fails."""
+    sym = _get_sina_symbol(code)
+    if sym.startswith(("sh000", "sz399")):
+        df = v8_call(ak.stock_zh_index_daily, symbol=sym)
+    elif sym[2:].startswith(("5", "1")):
+        df = v8_call(ak.fund_etf_hist_sina, symbol=sym)
+    else:
+        start = time.strftime("%Y%m%d", time.localtime(time.time() - (n * 1.5 + 30) * 86400))
+        df = get_stock_history(sym[2:], "daily", start, time.strftime("%Y%m%d"), "")
+    if df is None or df.empty:
+        return {}
+    df = df.tail(n)
+    return {str(d)[:10]: float(c) for d, c in zip(df["date"], df["close"])}
+
+
 def yahoo_cn_symbol(code: str) -> str:
     """Bare A-share code -> Yahoo Finance ticker (600519.SS, 000001.SZ, 920002.BJ)."""
     ex = _get_sina_symbol(code)[:2]

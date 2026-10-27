@@ -62,12 +62,28 @@ def _us_closes(sym: str) -> dict:
 
 
 def _cn_closes(code: str) -> dict:
-    """Forward-adjusted daily closes from Tencent's K-line (codes like sh600519, sh510300)."""
-    r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
-                     params={"param": f"{code},day,,,300,qfq"}, timeout=10)
-    node = (r.json().get("data") or {}).get(code) or {}
-    rows = node.get("qfqday") or node.get("day") or []
-    return {row[0]: float(row[2]) for row in rows}
+    """Forward-adjusted daily closes from Tencent's K-line (codes like sh600519, sh510300). When Tencent
+    fails: Sina's K-line for a fund (unadjusted; a fund has no splits or bonus shares to adjust for),
+    the forward-adjusted Sina history for a stock (unadjusted, a bonus issue would look like a crash)."""
+    try:
+        r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
+                         params={"param": f"{code},day,,,300,qfq"}, timeout=10)
+        node = (r.json().get("data") or {}).get(code) or {}
+        rows = node.get("qfqday") or node.get("day") or []
+        if rows:
+            return {row[0]: float(row[2]) for row in rows}
+    except Exception as e:
+        logger.warning("Tencent K-line %s failed: %s", code, e)
+    from services.stock_service import get_stock_history, sina_daily_closes
+    if code[2:].startswith(("5", "1")):
+        closes = sina_daily_closes(code, 300)
+    else:
+        now = datetime.now()
+        df = get_stock_history(code[2:], "daily", (now - timedelta(days=450)).strftime("%Y%m%d"), now.strftime("%Y%m%d"), "qfq")
+        closes = dict(zip(df["date"], df["close"].astype(float))) if df is not None else {}
+    if not closes:
+        raise RuntimeError(f"no price history for {code}")     # a 503, not three hours of an empty page
+    return closes
 
 
 def _cn_code(sym: str) -> str:
