@@ -10,6 +10,13 @@ const fmtCap = (v, market, lang) => new Intl.NumberFormat(LOCALE[lang] || 'en-US
   notation: 'compact', style: 'currency', currency: market === 'us' ? 'USD' : 'CNY', maximumFractionDigits: 2,
 }).format(v)
 
+// A-share feeds give "2026-10-20 15:21:50", Yahoo gives "Tue, 27 Oct 2026 05:07:00 +0000"
+const newsDate = (s, lang) => {
+  if (/^\d{4}-\d\d-\d\d/.test(s)) return s.slice(0, 10)
+  const d = new Date(s)
+  return isNaN(d) || d.getFullYear() < 2000 ? s.slice(0, 16) : d.toLocaleDateString(LOCALE[lang] || 'en-US')
+}
+
 const SENT_COLOR = {
   positive: '#26a69a',
   neutral:  'var(--text-muted)',
@@ -54,7 +61,7 @@ function MiniSimilarRow({ item, onStockClick }) {
   )
 }
 
-function MiniNewsRow({ item, t }) {
+function MiniNewsRow({ item, t, lang }) {
   const sent = item.final_sentiment || 'neutral'
   const color = SENT_COLOR[sent] || SENT_COLOR.neutral
   const label = sent === 'positive' ? t.sdSentPos : sent === 'negative' ? t.sdSentNeg : t.sdSentNeu
@@ -79,7 +86,7 @@ function MiniNewsRow({ item, t }) {
             {item.title}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
-            {item.source} {item.time ? `· ${item.time.slice(0, 10)}` : ''}
+            {item.source} {item.time ? `· ${newsDate(item.time, lang)}` : ''}
           </div>
         </div>
       </div>
@@ -174,7 +181,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                   {symbol}
                 </span>
                 <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
-                  {name || q?.name || symbol}
+                  {(name && name !== symbol ? name : q?.name) || symbol}
                 </span>
                 {q?.industry && (
                   <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--bg-hover)', borderRadius: 4, padding: '2px 7px' }}>
@@ -257,7 +264,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                   </div>
                 ) : (
                   <div>
-                    {newsItems.map((item, i) => <MiniNewsRow key={i} item={item} t={t} />)}
+                    {newsItems.map((item, i) => <MiniNewsRow key={i} item={item} t={t} lang={lang} />)}
                   </div>
                 )}
               </div>
