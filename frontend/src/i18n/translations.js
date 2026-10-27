@@ -396,7 +396,7 @@ export const T = {
     cmtLoading: '加载中...',
     cmtComments: (n) => `${n} 条评论`,
     // Stock Detail
-    sdPE: '市盈率(PE)', sdPB: '市净率(PB)', sdMktCap: '市值(亿)',
+    sdPE: '市盈率(PE)', sdPB: '市净率(PB)', sdMktCap: '市值',
     sd52High: '52周高', sd52Low: '52周低', sdLoading: '加载数据中...',
     sdSimilar: '相似走势 TOP5', sdNoData: '暂无数据',
     sdNews: '新闻舆情（最新3条）', sdNoNews: '暂无新闻',
@@ -681,7 +681,7 @@ export const T = {
     financialNetMargin: 'Net Profit Margin',
     financialROE: 'ROE',
     financialRevenueGrowth: 'Revenue Growth YoY',
-    financialOperatingCF: 'Operating Cash Flow (亿)',
+    financialOperatingCF: 'Operating Cash Flow',
     financialYoY: 'YoY Change',
     financialReportDate: 'Report Date',
     financialUnit: '%',
@@ -894,7 +894,7 @@ export const T = {
     cmtLoading: 'Loading...',
     cmtComments: (n) => `${n} comment${n !== 1 ? 's' : ''}`,
     // Stock Detail
-    sdPE: 'P/E Ratio', sdPB: 'P/B Ratio', sdMktCap: 'Mkt Cap (亿)',
+    sdPE: 'P/E Ratio', sdPB: 'P/B Ratio', sdMktCap: 'Mkt Cap',
     sd52High: '52W High', sd52Low: '52W Low', sdLoading: 'Loading...',
     sdSimilar: 'Similar Stocks TOP5', sdNoData: 'No data',
     sdNews: 'Latest News (Top 3)', sdNoNews: 'No news',
@@ -1392,7 +1392,7 @@ export const T = {
     cmtLoading: '読み込み中...',
     cmtComments: (n) => `${n}件`,
     // Stock Detail
-    sdPE: 'PER', sdPB: 'PBR', sdMktCap: '時価総額(億)',
+    sdPE: 'PER', sdPB: 'PBR', sdMktCap: '時価総額',
     sd52High: '52週高値', sd52Low: '52週安値', sdLoading: '読み込み中...',
     sdSimilar: '類似銘柄 TOP5', sdNoData: 'データなし',
     sdNews: '最新ニュース（3件）', sdNoNews: 'ニュースなし',
@@ -1890,7 +1890,7 @@ export const T = {
     cmtLoading: '로딩 중...',
     cmtComments: (n) => `${n}개 댓글`,
     // Stock Detail
-    sdPE: 'PER', sdPB: 'PBR', sdMktCap: '시총(억)',
+    sdPE: 'PER', sdPB: 'PBR', sdMktCap: '시총',
     sd52High: '52주 고가', sd52Low: '52주 저가', sdLoading: '로딩 중...',
     sdSimilar: '유사종목 TOP5', sdNoData: '데이터 없음',
     sdNews: '최신뉴스 (3개)', sdNoNews: '뉴스 없음',
@@ -2175,7 +2175,7 @@ export const T = {
     financialNetMargin: 'Marge nette',
     financialROE: 'ROE',
     financialRevenueGrowth: 'Croissance CA YoY',
-    financialOperatingCF: 'Flux de tréso. opérationnel (亿)',
+    financialOperatingCF: 'Flux de tréso. opérationnel',
     financialYoY: 'Var. annuelle',
     financialReportDate: 'Date du rapport',
     financialUnit: '%',

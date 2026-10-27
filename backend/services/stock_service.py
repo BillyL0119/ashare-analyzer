@@ -385,12 +385,22 @@ def _tencent_live_quote(symbol: str) -> Optional[dict]:
         except (IndexError, ValueError):
             amount = float(f[37] or 0) * 1e4             # turnover in 10k CNY
         change = round(price - prev, 4)
+
+        def num(i, scale=1.0):
+            try:
+                v = float(f[i])
+            except (IndexError, ValueError):
+                return None
+            return v * scale if v > 0 else None      # 0 or negative means "not available" (a loss-making PE too)
+
         return {
             "code": symbol, "name": f[1].replace(" ", "") or get_stock_name(symbol),
             "price": price, "change": change, "pct_change": round(change / prev * 100, 4),
             "volume": float(f[6] or 0) * 100,              # lots of 100 shares -> shares
             "amount": amount, "high": float(f[33] or price), "low": float(f[34] or price),
             "open": float(f[5] or price), "prev_close": prev,
+            "pe_ttm": num(39), "pb": num(46), "market_cap": num(45, 1e8),   # cap in 100M CNY -> CNY
+            "week52_high": num(67), "week52_low": num(68),
         }
     except Exception:
         return None

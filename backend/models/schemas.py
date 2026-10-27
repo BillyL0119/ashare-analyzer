@@ -62,3 +62,9 @@ class RealtimeQuote(BaseModel):
     low: float
     open: float
     prev_close: float
+    # From the live feed only (the candle fallback has none of these)
+    pe_ttm: Optional[float] = None
+    pb: Optional[float] = None
+    market_cap: Optional[float] = None      # CNY
+    week52_high: Optional[float] = None
+    week52_low: Optional[float] = None

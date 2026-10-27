@@ -202,6 +202,7 @@ T = {
     "%lld 分钟": ("%lld min", "%lld分", "%lld분", "%lld min"),
     "市盈率": ("P/E", "PER", "PER", "P/E"),
     "总市值": ("Market cap", "時価総額", "시가총액", "Capi. boursière"),
+    "市净率": ("P/B", "PBR", "PBR", "P/B"),
     "52周最低": ("52W low", "52週安値", "52주 최저", "Plus bas 52 sem."),
     "52周最高": ("52W high", "52週高値", "52주 최고", "Plus haut 52 sem."),
     "财报日历": ("Earnings calendar", "決算カレンダー", "실적 캘린더", "Calendrier des résultats"),

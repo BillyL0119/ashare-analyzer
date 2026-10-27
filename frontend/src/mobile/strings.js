@@ -1057,6 +1057,12 @@ export const STR = {
   "시가총액",
   "Capi. boursière"
  ],
+ "市净率": [
+  "P/B",
+  "PBR",
+  "PBR",
+  "P/B"
+ ],
  "52周最低": [
   "52W low",
   "52週安値",

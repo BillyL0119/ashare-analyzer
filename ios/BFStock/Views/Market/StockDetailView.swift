@@ -25,7 +25,7 @@ struct StockDetailView: View {
                 quoteHeader
                     .padding(.horizontal, 4)
 
-                if market != .cn, let q = vm.quote {
+                if let q = vm.quote, market != .cn || q.marketCap != nil {
                     keyStats(q)
                 }
 
@@ -393,9 +393,16 @@ struct StockDetailView: View {
     }
 
     private func keyStats(_ q: RealtimeQuote) -> some View {
-        let items: [(String, String)] = [
-            (L("总市值"), usd(q.marketCap ?? 0)),
-            (L("市盈率"), (q.peRatio ?? 0) > 0 ? String(format: "%.1f", q.peRatio!) : "--"),
+        func ratio(_ v: Double?, _ digits: Int) -> String { (v ?? 0) > 0 ? String(format: "%.\(digits)f", v!) : "--" }
+        // A-shares: turnover is already in the grid below, so P/B takes its place
+        let cap = q.marketCap ?? 0
+        let items: [(String, String)] = market == .cn ? [
+            (L("总市值"), cap > 0 && Lang.usesMyriad ? Formatters.cnyAmount(cap) : usd(cap)),
+            (L("市盈率"), ratio(q.peTtm, 1)),
+            (L("市净率"), ratio(q.pb, 2)),
+        ] : [
+            (L("总市值"), usd(cap)),
+            (L("市盈率"), ratio(q.peRatio, 1)),
             (L("成交额"), usd(q.amount)),
         ]
         return HStack(spacing: 0) {

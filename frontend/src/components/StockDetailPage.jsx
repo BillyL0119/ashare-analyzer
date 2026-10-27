@@ -4,6 +4,12 @@ import { THEME, riseColor, fallColor } from '../utils/chartHelpers'
 const BDR  = 'var(--border-primary)'
 const BG   = 'var(--bg-tertiary)'
 
+const LOCALE = { zh: 'zh-CN', en: 'en-US', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR' }
+// Market cap arrives in whole currency units: dollars for US stocks, yuan for A-shares
+const fmtCap = (v, market, lang) => new Intl.NumberFormat(LOCALE[lang] || 'en-US', {
+  notation: 'compact', style: 'currency', currency: market === 'us' ? 'USD' : 'CNY', maximumFractionDigits: 2,
+}).format(v)
+
 const SENT_COLOR = {
   positive: '#26a69a',
   neutral:  'var(--text-muted)',
@@ -117,7 +123,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
 
   const q = quote
   const price  = q?.price ?? q?.close ?? null
-  const change = q?.change_pct ?? q?.pct_chg ?? null
+  const change = q?.change_pct ?? q?.pct_change ?? null
   const up     = change >= 0
 
   const simResults = similar?.results ?? similar?.data?.results ?? []
@@ -125,7 +131,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
 
   const pe  = q?.pe_ttm  ?? q?.pe  ?? q?.pe_ratio ?? null
   const pb  = q?.pb      ?? null
-  const cap = q?.total_mv ?? q?.market_cap ?? null
+  const cap = q?.market_cap ?? null
   const high52 = q?.high52w ?? q?.week52_high ?? null
   const low52  = q?.low52w  ?? q?.week52_low  ?? null
   const upColor = riseColor(market), downColor = fallColor(market)
@@ -195,7 +201,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
             <MetricCard label={t.sdPE} value={pe !== null ? Number(pe).toFixed(1) : '--'} />
             <MetricCard label={t.sdPB} value={pb !== null ? Number(pb).toFixed(2) : '--'} />
-            <MetricCard label={t.sdMktCap} value={cap !== null ? (Number(cap) / 1e4).toFixed(0) : '--'} />
+            <MetricCard label={t.sdMktCap} value={cap !== null ? fmtCap(cap, market, lang) : '--'} />
             <MetricCard label={t.sd52High} value={high52 !== null ? Number(high52).toFixed(2) : '--'} />
             <MetricCard label={t.sd52Low}  value={low52  !== null ? Number(low52).toFixed(2)  : '--'} />
           </div>

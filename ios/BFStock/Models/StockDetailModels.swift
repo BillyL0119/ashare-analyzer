@@ -12,8 +12,10 @@ struct RealtimeQuote: Decodable {
     let low: Double
     let open: Double
     let prevClose: Double
-    // US-only extras (nil for A-shares)
-    var peRatio: Double? = nil
+    // From the live feeds only (nil when the server answers from a daily candle)
+    var peRatio: Double? = nil      // US / HK / JP
+    var peTtm: Double? = nil        // A-shares
+    var pb: Double? = nil           // A-shares
     var marketCap: Double? = nil
     var week52High: Double? = nil
     var week52Low: Double? = nil
