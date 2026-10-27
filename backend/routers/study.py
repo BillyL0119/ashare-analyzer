@@ -97,6 +97,11 @@ def _inject_ap_micro_translations():
                         val = sec_trans.get(field, {}).get(lang_code, "")
                         if val:
                             section[f"{field}_{lang_code}"] = val
+                # Written in English only (*_en); like the other exam courses, English is also the base
+                # text, which Chinese readers get (without it their topic pages came out empty).
+                for field in ["body", "key_terms", "real_world", "exam_tip"]:
+                    if not section.get(field) and section.get(f"{field}_en"):
+                        section[field] = section[f"{field}_en"]
 
 
 def _inject_alevel_translations():

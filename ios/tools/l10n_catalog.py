@@ -199,6 +199,7 @@ T = {
     "距开盘 %@": ("Opens in %@", "開場まで %@", "개장까지 %@", "Ouverture dans %@"),
     "%lld小时 %lld分钟": ("%lld h %lld min", "%lld時間%lld分", "%lld시간 %lld분", "%lld h %lld min"),
     "%lld天": ("%lld d", "%lld日", "%lld일", "%lld j"),
+    "%lld 分钟": ("%lld min", "%lld分", "%lld분", "%lld min"),
     "市盈率": ("P/E", "PER", "PER", "P/E"),
     "总市值": ("Market cap", "時価総額", "시가총액", "Capi. boursière"),
     "52周最低": ("52W low", "52週安値", "52주 최저", "Plus bas 52 sem."),

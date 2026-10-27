@@ -125,7 +125,7 @@ struct TopicDetailView: View {
             chip(examName, icon: "graduationcap.fill", tint: DS.accent)
             chip(L("%lld 个章节", topic.sections.count), icon: "list.bullet", tint: .secondary)
             if let time = topic.estimatedTime {
-                chip(time, icon: "clock", tint: .secondary)
+                chip(studyMinutes(time), icon: "clock", tint: .secondary)
             }
             Spacer(minLength: 0)
         }

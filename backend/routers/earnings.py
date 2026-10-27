@@ -9,6 +9,8 @@ import logging
 from datetime import date, datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from routers.screener import tidy_company_name
+
 router = APIRouter()
 logger = logging.getLogger("earnings")
 
@@ -151,7 +153,7 @@ def _nasdaq_day(d: date) -> list:
         out.append({
             "date": d.isoformat(),
             "symbol": row.get("symbol"),
-            "name": row.get("name"),
+            "name": tidy_company_name(row.get("name") or ""),
             "market": "us",
             "eps_estimate": _fmt_eps(_money(row.get("epsForecast")) if row.get("epsForecast") else None),
             "eps_actual": None,
@@ -161,6 +163,9 @@ def _nasdaq_day(d: date) -> list:
             "market_cap": cap,
         })
     out.sort(key=lambda e: -e["market_cap"])
+    # One row per company: Alphabet reports once though GOOG and GOOGL are both listed
+    seen = set()
+    out = [e for e in out if not (e["name"] in seen or seen.add(e["name"]))]
     return out[:_PER_DAY]
 
 

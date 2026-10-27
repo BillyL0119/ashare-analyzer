@@ -26,19 +26,8 @@ final class PaperTradingViewModel: ObservableObject {
         error = nil
         defer { isLoading = false }
         do {
-            let encoder = JSONEncoder()
-            encoder.keyEncodingStrategy = .convertToSnakeCase
-            let body = PaperAccountBody(deviceId: deviceID)
-            let data = try encoder.encode(body)
-            var req = URLRequest(url: URL(string: "https://bestfriendstock.com/api/paper/account")!)
-            req.httpMethod = "POST"
-            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            req.httpBody = data
-            req.timeoutInterval = 15
-            let (respData, _) = try await URLSession.shared.data(for: req)
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            account = try decoder.decode(PaperAccount.self, from: respData)
+            // Refusals (HTTP 4xx) carry the server's reason, which beats "the data couldn't be read"
+            account = try await postTrade(path: "/paper/account", body: PaperAccountBody(deviceId: deviceID))
         } catch {
             self.error = error.localizedDescription
         }
@@ -200,21 +189,14 @@ final class PaperTradingViewModel: ObservableObject {
 
     func resetAccount() async {
         do {
-            let encoder = JSONEncoder()
-            encoder.keyEncodingStrategy = .convertToSnakeCase
-            let body = PaperAccountBody(deviceId: deviceID)
-            let data = try encoder.encode(body)
-            var req = URLRequest(url: URL(string: "https://bestfriendstock.com/api/paper/reset")!)
-            req.httpMethod = "POST"
-            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            req.httpBody = data
-            req.timeoutInterval = 15
-            _ = try await URLSession.shared.data(for: req)
+            let _: ResetReply = try await postTrade(path: "/paper/reset", body: PaperAccountBody(deviceId: deviceID))
             await loadAccount()
         } catch {
             self.error = error.localizedDescription
         }
     }
+
+    private struct ResetReply: Decodable {}
 
     private func postTrade<B: Encodable, T: Decodable>(path: String, body: B) async throws -> T {
         let encoder = JSONEncoder()

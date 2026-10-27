@@ -42,26 +42,32 @@ struct DynamicKey: CodingKey {
 }
 
 extension KeyedDecodingContainer where K == DynamicKey {
-    /// Reads `base`, or `base_<lang>` when the app language has a backend translation.
+    /// Reads `base_<lang>` when the app language has a backend translation, English when this text was
+    /// not translated into it (as the website does), then `base`; English again when there is no `base`.
     func localized(_ base: String) throws -> String {
-        if let suffix = Lang.contentSuffix,
-           let v = try? decodeIfPresent(String.self, forKey: DynamicKey(stringValue: "\(base)\(suffix.prefix(1).uppercased())\(suffix.dropFirst())")),
-           !v.isEmpty {
-            return v
+        guard let v = localizedIfPresent(base) else {
+            throw DecodingError.keyNotFound(DynamicKey(stringValue: base),
+                                            .init(codingPath: codingPath, debugDescription: "No \(base) in any language"))
         }
-        let v = try decode(String.self, forKey: DynamicKey(stringValue: base))
-        // Curriculum titles are stored as "中文 / English"; Chinese UI shows the Chinese half.
-        if base == "title", Lang.code == "zh", let zh = v.components(separatedBy: " / ").first, zh != v { return zh }
         return v
     }
 
     func localizedIfPresent(_ base: String) -> String? {
-        if let suffix = Lang.contentSuffix,
-           let v = try? decodeIfPresent(String.self, forKey: DynamicKey(stringValue: "\(base)\(suffix.prefix(1).uppercased())\(suffix.dropFirst())")),
-           !v.isEmpty {
+        if let suffix = Lang.contentSuffix {
+            if let v = text("\(base)\(suffix.prefix(1).uppercased())\(suffix.dropFirst())") { return v }
+            if suffix != "en", let v = text("\(base)En") { return v }
+        }
+        if let v = text(base) {
+            // Curriculum titles are stored as "中文 / English"; Chinese UI shows the Chinese half.
+            if base == "title", Lang.code == "zh", let zh = v.components(separatedBy: " / ").first, zh != v { return zh }
             return v
         }
-        return try? decodeIfPresent(String.self, forKey: DynamicKey(stringValue: base))
+        return text("\(base)En")
+    }
+
+    private func text(_ key: String) -> String? {
+        guard let v = try? decodeIfPresent(String.self, forKey: DynamicKey(stringValue: key)), !v.isEmpty else { return nil }
+        return v
     }
 }
 
@@ -79,6 +85,12 @@ struct TopicSummary: Decodable, Identifiable {
         estimatedTime = try c.decodeIfPresent(String.self, forKey: DynamicKey(stringValue: "estimatedTime"))
         sectionCount = try c.decodeIfPresent(Int.self, forKey: DynamicKey(stringValue: "sectionCount"))
     }
+}
+
+/// The backend's "30 min" in the app's language.
+func studyMinutes(_ raw: String) -> String {
+    guard let n = raw.split(separator: " ").first.flatMap({ Int($0) }) else { return raw }
+    return L("%lld 分钟", n)
 }
 
 // Full topic detail
@@ -108,7 +120,7 @@ struct TopicSection: Decodable, Identifiable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: DynamicKey.self)
         heading = try c.localized("heading")
-        body = try c.localized("body")
+        body = c.localizedIfPresent("body") ?? ""     // one missing text must not lose the whole topic
         // Key terms exist in zh and en only; any non-Chinese UI gets the English list when present.
         let zhTerms = try c.decodeIfPresent([String].self, forKey: DynamicKey(stringValue: "keyTerms"))
         let enTerms = (try? c.decodeIfPresent([String].self, forKey: DynamicKey(stringValue: "keyTermsEn"))) ?? nil

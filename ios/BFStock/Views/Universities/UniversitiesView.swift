@@ -366,7 +366,7 @@ struct UniversityDetailView: View {
         var status: (String, Color)? = nil
         if let d = ug.deadlineDate {
             let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: d).day ?? 0
-            rows.append((L("截止日期"), d.formatted(date: .abbreviated, time: .omitted)))
+            rows.append((L("截止日期"), d.formatted(.dateTime.year().month(.abbreviated).day().locale(Lang.locale))))
             status = days < 0 ? (L("已截止"), .secondary) : (L("还有 %lld 天", days), days <= 30 ? .red : .green)
         }
         return VStack(alignment: .leading, spacing: 8) {

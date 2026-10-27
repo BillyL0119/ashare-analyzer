@@ -187,7 +187,9 @@ struct USMarketSection: View {
     // MARK: Earnings
 
     private var earningsByDay: [(String, [EarningsEvent])] {
+        // Report dates are New York dates: in Asia the evening's US reports are already "yesterday" locally
         let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "America/New_York")
         let today = f.string(from: Date())
         let end = f.string(from: Date().addingTimeInterval(7 * 86400))
         let week = earnings.filter { $0.date >= today && $0.date <= end }
@@ -197,7 +199,7 @@ struct USMarketSection: View {
     private func dayLabel(_ iso: String) -> String {
         let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.locale = Locale(identifier: "en_US_POSIX")
         guard let d = f.date(from: iso) else { return iso }
-        return d.formatted(.dateTime.month(.abbreviated).day().weekday(.abbreviated))
+        return d.formatted(.dateTime.month(.abbreviated).day().weekday(.abbreviated).locale(Lang.locale))
     }
 
     private var earningsSection: some View {

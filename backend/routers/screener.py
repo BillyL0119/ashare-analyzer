@@ -32,6 +32,14 @@ _HEADERS = {
 _SYM_OK = re.compile(r"^[A-Z]{1,5}(\.[A-Z])?$")          # drops warrants/preferreds (ABR^D, XYZ/WS)
 _NOT_COMMON = re.compile(r"\b(warrants?|rights?|units?|depositary shares? representing a fraction|preferred|notes? due|debentures?)\b", re.I)
 _NAME_TAIL = re.compile(r"\s+(Class [A-C] )?(Common Stock|Ordinary Shares|American Depositary Shares|Common Shares|Capital Stock|Shares of Beneficial Interest)\b.*$", re.I)
+_THE_TAIL = re.compile(r"^(.+?),?\s*\(The\)(.*)$")
+
+
+def tidy_company_name(name: str) -> str:
+    """Nasdaq files "Coca-Cola Company (The)"; people write "The Coca-Cola Company"."""
+    name = (name or "").strip()
+    m = _THE_TAIL.match(name)
+    return f"The {m.group(1)}{m.group(2)}".strip() if m else name
 
 _UNIVERSE_TTL = 900
 def _enrich_ttl() -> float:
@@ -77,7 +85,7 @@ def _fetch_universe() -> list[dict]:
         ipo = _num(x.get("ipoyear"))
         out.append({
             "symbol": sym,
-            "name": _NAME_TAIL.sub("", name).strip(" ,.") or name,
+            "name": tidy_company_name(_NAME_TAIL.sub("", name).strip(" ,.") or name),
             "price": price,
             "change_pct": _num(x.get("pctchange")),
             "volume": _num(x.get("volume")),

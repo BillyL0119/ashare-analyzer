@@ -46,20 +46,44 @@ def _group(rows: list[dict], key: str) -> list[dict]:
         wcap = sum(i["market_cap"] for i in moved)
         chg = sum(i["market_cap"] * i["change_pct"] for i in moved) / wcap if wcap else None
         items.sort(key=lambda i: -i["market_cap"])
-        out.append({"name": name, "market_cap": cap, "change_pct": round(chg, 2) if chg is not None else None,
+        out.append({"name": name, "market_cap": cap, "change_pct": (round(chg, 2) or 0.0) if chg is not None else None,
                     "stocks": items})
     out.sort(key=lambda g: -g["market_cap"])
     return out
 
 
+_GICS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "us_gics_sectors.json")
+_gics: dict = {}
+# Nasdaq's sector words for the companies outside the GICS list, renamed to the GICS ones;
+# "Technology" stays short so it fits a tile header
+_SECTOR_NAMES = {"Information Technology": "Technology", "Finance": "Financials",
+                 "Telecommunications": "Communication Services", "Basic Materials": "Materials",
+                 "Miscellaneous": "Other"}
+# A second listing of a company already on the map: Berkshire's A shares, Comcast's exchangeable notes
+_US_SKIP = {"BRK.A", "CCZ"}
+
+
+def _us_sector(r: dict) -> str:
+    """GICS sector (tools/build_us_gics.py); Nasdaq's own puts Visa under Consumer Discretionary."""
+    if not _gics:
+        try:
+            with open(_GICS_PATH, encoding="utf-8") as f:
+                _gics.update(json.load(f)["sectors"])
+        except Exception as e:
+            logger.warning(f"heatmap: no GICS sectors ({e})")
+    s = _gics.get(r["symbol"]) or r.get("sector") or "Other"
+    return _SECTOR_NAMES.get(s, s)
+
+
 def _us(limit: int) -> dict:
     from routers.screener import _universe, _state
-    rows = [r for r in _universe() if r.get("market_cap") and r.get("change_pct") is not None]
+    rows = [r for r in _universe()
+            if r.get("market_cap") and r.get("change_pct") is not None and r["symbol"] not in _US_SKIP]
     rows.sort(key=lambda r: -r["market_cap"])
     tiles = [{
         "symbol": r["symbol"], "name": r["name"], "market_cap": r["market_cap"],
         "change_pct": round(r["change_pct"], 2), "price": r.get("price"),
-        "sector": r.get("sector") or "Other", "industry": r.get("industry"),
+        "sector": _us_sector(r), "industry": r.get("industry"),
     } for r in rows[:limit]]
     return {"market": "us", "count": len(tiles), "sectors": _group(tiles, "sector"),
             "updated": _state.get("enrich_ts") or _state.get("ts")}

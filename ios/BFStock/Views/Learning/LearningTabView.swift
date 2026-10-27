@@ -210,7 +210,7 @@ private struct TopicRow: View {
             }
             Spacer(minLength: 8)
             if let time = topic.estimatedTime {
-                Text(time)
+                Text(studyMinutes(time))
                     .font(.system(.caption2, design: .rounded).weight(.medium))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)

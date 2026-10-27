@@ -1039,6 +1039,12 @@ export const STR = {
   "%lld일",
   "%lld j"
  ],
+ "%lld 分钟": [
+  "%lld min",
+  "%lld分",
+  "%lld분",
+  "%lld min"
+ ],
  "市盈率": [
   "P/E",
   "PER",

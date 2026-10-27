@@ -62,7 +62,7 @@ struct PerformanceSection: View {
                         .background((ahead ? DS.accent : Color.orange).opacity(0.14), in: Capsule())
                     Spacer()
                     if let s = perf.since, let d = perf.points.first?.day {
-                        Text(L("自 %@ 起", d.formatted(.dateTime.month(.abbreviated).day())))
+                        Text(L("自 %@ 起", d.formatted(.dateTime.month(.abbreviated).day().locale(Lang.locale))))
                             .font(.caption).foregroundStyle(.secondary)
                             .accessibilityHint(s)
                     }
