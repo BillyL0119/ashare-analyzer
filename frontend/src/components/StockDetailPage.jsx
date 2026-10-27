@@ -99,7 +99,6 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
   const [quote,   setQuote]   = useState(null)
   const [similar, setSimilar] = useState(null)
   const [news,    setNews]    = useState(null)
-  const [analysis,setAnalysis]= useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -108,7 +107,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
 
     const us = market === 'us'
     const ok = (r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status))))
-    setQuote(null); setSimilar(null); setNews(null); setAnalysis(null)
+    setQuote(null); setSimilar(null); setNews(null)
     Promise.allSettled([
       fetch(us ? `/api/us/stock/${symbol}/realtime` : `/api/stocks/${symbol}/realtime`).then(ok),
       fetch(us ? `/api/us/similar/${symbol}` : `/api/similar/${symbol}`).then(ok),
@@ -118,14 +117,6 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
       if (simRes.status === 'fulfilled')   setSimilar(simRes.value)
       if (newsRes.status === 'fulfilled')  setNews(newsRes.value)
     }).finally(() => setLoading(false))
-
-    // Analysis is slow — load separately (A-shares only; there is no US equivalent)
-    if (!us) {
-      fetch(`/api/stocks/${symbol}/analyze`)
-        .then((r) => r.ok ? r.json() : null)
-        .then((d) => d && setAnalysis(d))
-        .catch(() => {})
-    }
   }, [symbol, market, lang])
 
   const q = quote
@@ -267,21 +258,6 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                     {newsItems.map((item, i) => <MiniNewsRow key={i} item={item} t={t} lang={lang} />)}
                   </div>
                 )}
-              </div>
-            </div>
-          )}
-
-          {/* ── 5. AI Analysis summary ── */}
-          {analysis && (
-            <div style={{
-              background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)',
-              borderRadius: 10, padding: '14px 18px', marginBottom: 20,
-            }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#818cf8', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
-                {t.sdAI}
-              </div>
-              <div style={{ fontSize: 13, color: '#c7d2fe', lineHeight: 1.6 }}>
-                {analysis.summary ?? analysis.insight ?? analysis.analysis ?? t.sdAnalyzing}
               </div>
             </div>
           )}

@@ -400,7 +400,6 @@ export const T = {
     sd52High: '52周高', sd52Low: '52周低', sdLoading: '加载数据中...',
     sdSimilar: '相似走势 TOP5', sdNoData: '暂无数据',
     sdNews: '新闻舆情（最新3条）', sdNoNews: '暂无新闻',
-    sdAI: 'AI 智能分析摘要', sdAnalyzing: '分析中...',
     sdFullAnalysis: '查看完整分析 →',
     sdSentPos: '正面', sdSentNeg: '负面', sdSentNeu: '中性',
     // Calendar Panel
@@ -898,7 +897,6 @@ export const T = {
     sd52High: '52W High', sd52Low: '52W Low', sdLoading: 'Loading...',
     sdSimilar: 'Similar Stocks TOP5', sdNoData: 'No data',
     sdNews: 'Latest News (Top 3)', sdNoNews: 'No news',
-    sdAI: 'AI Analysis Summary', sdAnalyzing: 'Analyzing...',
     sdFullAnalysis: 'Full Analysis →',
     sdSentPos: 'Positive', sdSentNeg: 'Negative', sdSentNeu: 'Neutral',
     // Calendar Panel
@@ -1396,7 +1394,6 @@ export const T = {
     sd52High: '52週高値', sd52Low: '52週安値', sdLoading: '読み込み中...',
     sdSimilar: '類似銘柄 TOP5', sdNoData: 'データなし',
     sdNews: '最新ニュース（3件）', sdNoNews: 'ニュースなし',
-    sdAI: 'AI分析サマリー', sdAnalyzing: '分析中...',
     sdFullAnalysis: '詳細分析 →',
     sdSentPos: 'ポジティブ', sdSentNeg: 'ネガティブ', sdSentNeu: '中立',
     // Calendar Panel
@@ -1894,7 +1891,6 @@ export const T = {
     sd52High: '52주 고가', sd52Low: '52주 저가', sdLoading: '로딩 중...',
     sdSimilar: '유사종목 TOP5', sdNoData: '데이터 없음',
     sdNews: '최신뉴스 (3개)', sdNoNews: '뉴스 없음',
-    sdAI: 'AI 분석 요약', sdAnalyzing: '분석 중...',
     sdFullAnalysis: '전체 분석 →',
     sdSentPos: '긍정', sdSentNeg: '부정', sdSentNeu: '중립',
     // Calendar Panel
@@ -2392,7 +2388,6 @@ export const T = {
     sd52High: '52s Haut', sd52Low: '52s Bas', sdLoading: 'Chargement...',
     sdSimilar: 'Actions similaires TOP5', sdNoData: 'Pas de données',
     sdNews: 'Actualités récentes (3)', sdNoNews: 'Aucune actualité',
-    sdAI: 'Résumé analyse AI', sdAnalyzing: 'Analyse...',
     sdFullAnalysis: 'Analyse complète →',
     sdSentPos: 'Positif', sdSentNeg: 'Négatif', sdSentNeu: 'Neutre',
     // Calendar Panel
