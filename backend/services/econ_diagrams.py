@@ -17,7 +17,7 @@ from services.econ_concepts import CONCEPTS
 
 logger = logging.getLogger("econ_diagrams")
 
-VERSION = 1
+VERSION = 2
 
 # preset id -> (diagram id, what it means; shown to the model)
 PRESETS = {
@@ -118,6 +118,9 @@ def _prompt(concepts: list) -> str:
         "describes (for example oil prices falling because supply rises is supply_increase, not supply_decrease). "
         "If the story is about something else (company results, a forecast with no change yet, politics, a "
         "market that the presets do not cover) or the direction is unclear, answer null. Prefer null to a guess.\n"
+        "Rules: government borrowing costs, bond yields, share prices and exchange-rate forecasts are not supply "
+        "shocks. A product review or buying advice is not a change in demand. If what happened to the price "
+        "contradicts the preset (for example output rose but prices rose too), answer null.\n"
         "Presets:\n" + (options or "(none)") + "\n\n"
         "For an fx_ preset, also give the ISO code of the currency whose market is drawn (the one that "
         "appreciates or depreciates) if it is one of " + ", ".join(CURRENCIES) + ", else null.\n"
