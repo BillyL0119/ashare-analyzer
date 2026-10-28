@@ -429,12 +429,12 @@ function tariffBuild(st, { S }) {
     if (!prohibitive) areas.push(area('rev', rect(q2, PW, q3, pt), 'c'))
     areas.push(area('dwl', [[q3, PW], [q4, PW], [q3, pt]], 'd'))
     // both import brackets sit under the world price, where no curve runs
-    if (q3 - q2 > 1.2) brackets.push({ from: [q2, PW - 1.4], to: [q3, PW - 1.4], label: L.importsTariff })
+    if (q3 - q2 > 1.2) brackets.push({ from: [q2, PW - 1.6], to: [q3, PW - 1.6], label: L.importsTariff })
   } else {
     lines[2].drag = undefined
     lines.push({ pts: seg([PW + 0.001, 0]), label: '', kind: 'hit', drag: { key: 't', axis: 'y', min: 0, max: 3.6, aria: L.dragLine } })
   }
-  brackets.push({ from: [q1, PW - 0.55], to: [q4, PW - 0.55], label: L.importsFree })
+  brackets.push({ from: [q1, PW - 0.8], to: [q4, PW - 0.8], label: L.importsFree })
   const text = t <= 0.05 ? [L.ex.none] : prohibitive ? [L.ex.prohibitive] : st.removed ? [L.ex.removed] : [L.ex.imposed, L.ex.areas]
   const xt = t > 0.05 ? [{ v: q1, label: 'Q_1' }, { v: q2, label: 'Q_2' }, { v: q3, label: 'Q_3' }, { v: q4, label: 'Q_4' }] : [{ v: q1, label: 'Q_1' }, { v: q4, label: 'Q_4' }]
   return {
