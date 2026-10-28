@@ -30,6 +30,7 @@ from routers.export import router as export_router
 from routers.calendar import router as calendar_router
 from routers.paper_trading import router as paper_router
 from routers.time_machine import router as time_machine_router
+from routers.governor import router as governor_router
 from routers.econ_cases import router as cases_router
 from routers.classes import router as classes_router
 from routers.move_reasons import router as moves_router
@@ -179,6 +180,12 @@ async def sitemap():
     <loc>https://bestfriendstock.com/diagrams</loc>
     <lastmod>{today}</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestfriendstock.com/governor</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
@@ -475,6 +482,7 @@ app.include_router(export_router, prefix="/api/export", tags=["export"])
 app.include_router(calendar_router, prefix="/api/calendar", tags=["calendar"])
 app.include_router(paper_router, prefix="/api/paper", tags=["paper_trading"])
 app.include_router(time_machine_router, prefix="/api/time-machine", tags=["time_machine"])
+app.include_router(governor_router, prefix="/api/governor", tags=["governor"])
 app.include_router(cases_router, prefix="/api/cases", tags=["econ_cases"])
 app.include_router(classes_router, prefix="/api/classes", tags=["classes"])
 app.include_router(moves_router, prefix="/api/moves", tags=["move_reasons"])

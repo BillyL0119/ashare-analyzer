@@ -20,6 +20,7 @@ const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
 const TimeMachinePage    = lazy(() => import('./components/timemachine/TimeMachinePage'))
 const CasesPage          = lazy(() => import('./components/cases/CasesPage'))
 const DiagramLab         = lazy(() => import('./components/diagrams/DiagramLab'))
+const GovernorPage       = lazy(() => import('./components/governor/GovernorPage'))
 const ClassPage          = lazy(() => import('./components/classes/ClassPage'))
 const StudyCenter        = lazy(() => import('./components/StudyCenter'))
 const AITeacherFloat     = lazy(() => import('./components/AITeacherFloat'))
@@ -36,6 +37,7 @@ const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import tmStrings from './components/timemachine/tmStrings'
 import casesStrings from './components/cases/casesStrings'
 import diagramNav from './components/diagrams/diagramNav'
+import governorStrings from './components/governor/governorStrings'
 import classStrings from './components/classes/classStrings'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
@@ -72,6 +74,7 @@ const TAB_PATHS = {
   time_machine: '/time-machine',
   cases:        '/cases',
   diagrams:     '/diagrams',
+  governor:     '/governor',
   class:        '/class',
   study:        '/study',
   universities: '/universities',
@@ -231,6 +234,7 @@ export default function App() {
       time_machine: 'BestFriendStock | 历史穿越交易 - 回到2008金融危机、2020疫情暴跌、2015股灾做投资决定',
       cases:        'BestFriendStock | 经济学案例库 - IB、A-Level、AP 论文可用的真实新闻案例',
       diagrams:     'BestFriendStock | 经济学图表实验室 - 可拖动的供求、AD-AS、外部性、汇率、关税图',
+      governor:     'BestFriendStock | 当一次美联储主席 - 回到2021通胀、1979沃尔克、2007金融危机决定利率',
       class:        'BestFriendStock | 班级 - 老师布置作业、查看全班模拟交易与学习进度',
       study:        'BestFriendStock | 经济学学习中心 - A-Level IB AP IGCSE 与美股入门',
       universities: 'BestFriendStock | 全球商学院指南 - 100+顶尖商学院数据库',
@@ -249,6 +253,7 @@ export default function App() {
       time_machine: 'Best Friend Stock | History Time Machine: Trade Through 2008, 2020 and 2022',
       cases:        'Best Friend Stock | Economics Case Library: Real-World Examples for IB, A-Level and AP Essays',
       diagrams:     'Best Friend Stock | Economics Diagram Lab: Interactive Supply and Demand, AD-AS and More',
+      governor:     'Best Friend Stock | Be the Fed Chair: Set Interest Rates Through 2021, 1979 and 2007',
       class:        'Best Friend Stock | Classes: Assignments and Progress for Economics Teachers',
       study:        'Best Friend Stock | Economics Study Center: A-Level, IB, AP, IGCSE',
       universities: 'Best Friend Stock | Business School Guide',
@@ -318,6 +323,7 @@ export default function App() {
     else if (tab === 'time_machine') trackFeature('time_machine')
     else if (tab === 'cases') trackFeature('cases')
     else if (tab === 'diagrams') trackFeature('diagrams')
+    else if (tab === 'governor') trackFeature('governor')
     else if (tab === 'class') trackFeature('class')
     else if (tab === 'study') trackFeature('study')
     else if (tab === 'universities') trackFeature('universities')
@@ -792,6 +798,7 @@ export default function App() {
           { key: 'bank_views',   label: t.tabBankViews },
           { key: 'paper',        label: t.tabPaper },
           { key: 'time_machine', label: tmStrings(lang).nav },
+          { key: 'governor',     label: governorStrings(lang).nav },
           { key: 'study',        label: t.tabStudy },
           { key: 'cases',        label: casesStrings(lang).nav },
           { key: 'diagrams',     label: diagramNav(lang).nav },
@@ -836,6 +843,8 @@ export default function App() {
             <CasesPage lang={lang} />
           ) : appTab === 'diagrams' ? (
             <DiagramLab lang={lang} />
+          ) : appTab === 'governor' ? (
+            <GovernorPage lang={lang} />
           ) : appTab === 'class' ? (
             <ClassPage lang={lang} code={classRouteMatch?.[1]} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'universities' ? (

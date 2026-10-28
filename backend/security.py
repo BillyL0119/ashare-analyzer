@@ -41,6 +41,7 @@ RATE_RULES = [
     ("/api/paper/games/join", "POST", 120, 3600),
     ("/api/paper",           "POST", 120, 60),
     ("/api/time-machine",    "POST", 240, 60),   # a day per click when moving through a scenario
+    ("/api/governor",        "POST", 120, 60),   # one quarter per decision
     ("/api/classes/create",  "POST", 10, 3600),
     ("/api/classes",         "POST", 120, 60),
     ("/api/moves",           "POST", 30, 60),    # AI explanation of a price move

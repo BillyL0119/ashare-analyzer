@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import casesStrings from '../../components/cases/casesStrings'
 import diagramNav, { STUDY_DIAGRAM_LINKS } from '../../components/diagrams/diagramNav'
+import governorStrings from '../../components/governor/governorStrings'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import useLangStore from '../../store/langStore'
 import { useT } from '../i18n'
@@ -66,6 +67,14 @@ function List() {
         <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
           <b style={{ fontSize: 15 }}>{diagramNav(lang).title}</b>
           <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{diagramNav(lang).card}</span>
+        </span>
+        <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
+      </button>
+      <button className="m-card" onClick={() => nav('/governor')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
+        <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>🏛</span>
+        <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
+          <b style={{ fontSize: 15 }}>{governorStrings(lang).title}</b>
+          <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{governorStrings(lang).card}</span>
         </span>
         <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
       </button>

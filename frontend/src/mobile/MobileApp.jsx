@@ -16,6 +16,7 @@ const Paper = lazy(() => import('./tabs/Paper'))
 const TimeMachine = lazy(() => import('./tabs/TimeMachine'))
 const Cases = lazy(() => import('./tabs/Cases'))
 const Diagrams = lazy(() => import('./tabs/Diagrams'))
+const Governor = lazy(() => import('./tabs/Governor'))
 const Classes = lazy(() => import('./tabs/Classes'))
 
 // Tab titles, the same wording as the desktop site (a stock page sets its own)
@@ -28,6 +29,7 @@ const TITLES = {
     time_machine: 'BestFriendStock | 历史穿越交易 - 回到2008金融危机、2020疫情暴跌、2015股灾做投资决定',
     cases: 'BestFriendStock | 经济学案例库 - IB、A-Level、AP 论文可用的真实新闻案例',
     diagrams: 'BestFriendStock | 经济学图表实验室 - 可拖动的供求、AD-AS、外部性、汇率、关税图',
+    governor: 'BestFriendStock | 当一次美联储主席 - 回到2021通胀、1979沃尔克、2007金融危机决定利率',
     class: 'BestFriendStock | 班级 - 老师布置作业、查看全班模拟交易与学习进度',
   },
   en: {
@@ -38,6 +40,7 @@ const TITLES = {
     time_machine: 'Best Friend Stock | History Time Machine: Trade Through 2008, 2020 and 2022',
     cases: 'Best Friend Stock | Economics Case Library: Real-World Examples for IB, A-Level and AP Essays',
     diagrams: 'Best Friend Stock | Economics Diagram Lab: Interactive Supply and Demand, AD-AS and More',
+    governor: 'Best Friend Stock | Be the Fed Chair: Set Interest Rates Through 2021, 1979 and 2007',
     class: 'Best Friend Stock | Classes: Assignments and Progress for Economics Teachers',
   },
 }
@@ -78,7 +81,7 @@ export default function MobileApp() {
   }, [])
 
   // Same feature names the desktop site reports, so both UIs show up in one usage chart.
-  const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/time-machine' ? 'time_machine' : loc.pathname === '/cases' ? 'cases' : loc.pathname === '/diagrams' ? 'diagrams' : loc.pathname.startsWith('/class') ? 'class' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
+  const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/time-machine' ? 'time_machine' : loc.pathname === '/cases' ? 'cases' : loc.pathname === '/diagrams' ? 'diagrams' : loc.pathname === '/governor' ? 'governor' : loc.pathname.startsWith('/class') ? 'class' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
   useEffect(() => { if (section) trackFeature(section) }, [section])
   const lang = useLangStore((st) => st.lang)
   useEffect(() => {
@@ -97,6 +100,7 @@ export default function MobileApp() {
           <Route path="/time-machine" element={<Page><TimeMachine /></Page>} />
           <Route path="/cases" element={<Page><Cases /></Page>} />
           <Route path="/diagrams" element={<Page><Diagrams /></Page>} />
+          <Route path="/governor" element={<Page><Governor /></Page>} />
           <Route path="/class" element={<Page><Classes /></Page>} />
           <Route path="/class/:code" element={<Page><Classes /></Page>} />
           <Route path="*" element={<Navigate to="/" replace />} />
