@@ -76,6 +76,10 @@ struct LearningTabView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 22) {
                 DailyKnowledgeCard()
+                VStack(spacing: 10) {
+                    featureLink(icon: "chart.xyaxis.line", title: DL("title"), subtitle: DL("cardApp")) { DiagramLabView() }
+                    featureLink(icon: "building.columns.fill", title: GV("title"), subtitle: GV("card")) { GovernorView() }
+                }
                 progressCard(curriculum)
                 if let papers = curriculum.papers, !papers.isEmpty {
                     ForEach(papers) { paper in
@@ -139,6 +143,31 @@ struct LearningTabView: View {
             .padding(.top, 4)
             .padding(.bottom, 24)
         }
+    }
+
+    /// The diagram lab and the Fed chair game
+    private func featureLink<D: View>(icon: String, title: String, subtitle: String, @ViewBuilder destination: () -> D) -> some View {
+        NavigationLink(destination: destination()) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.title3).foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .background(DS.accentGradient, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                    Text(subtitle)
+                        .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 4)
+                Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous).strokeBorder(DS.stroke))
+        }
+        .buttonStyle(.plain)
     }
 
     private func progressCard(_ curriculum: Curriculum) -> some View {

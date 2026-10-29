@@ -705,27 +705,22 @@ private func tmTicks(_ n: Int) -> [Int] {
 }
 
 /// Tap a day, or press and drag along the line, to read it off the chart. Unlike chartXSelection,
-/// a quick swipe that starts on the chart still scrolls the page.
-private struct TMScrub: ViewModifier {
+/// a quick swipe that starts on the chart still scrolls the page. Also used by the Fed chair game.
+struct TMScrub: ViewModifier {
     @Binding var pick: Int?
     let count: Int
 
     func body(content: Content) -> some View {
         content.chartOverlay { proxy in
             GeometryReader { geo in
-                Rectangle().fill(.clear).contentShape(Rectangle())
-                    .onTapGesture { loc in
+                TMScrubLayer(
+                    onTap: { loc in
                         let i = index(at: loc, proxy, geo)
                         pick = i == pick ? nil : i
-                    }
-                    .gesture(
-                        LongPressGesture(minimumDuration: 0.25)
-                            .sequenced(before: DragGesture(minimumDistance: 0))
-                            .onChanged { value in
-                                if case .second(true, let drag?) = value { pick = index(at: drag.location, proxy, geo) }
-                            }
-                            .onEnded { _ in pick = nil }
-                    )
+                    },
+                    onScrub: { loc in pick = index(at: loc, proxy, geo) },
+                    onEnd: { pick = nil }
+                )
             }
         }
     }
@@ -734,6 +729,45 @@ private struct TMScrub: ViewModifier {
         guard count > 0, let frame = proxy.plotFrame,
               let v = proxy.value(atX: point.x - geo[frame].origin.x, as: Double.self) else { return nil }
         return min(max(Int(v.rounded()), 0), count - 1)
+    }
+}
+
+/// UIKit tap and long press for TMScrub. The long press fails as soon as the finger moves, so the scroll
+/// view behind it takes a swipe; SwiftUI's long-press-then-drag kept hold of the touch and the page did
+/// not scroll.
+private struct TMScrubLayer: UIViewRepresentable {
+    let onTap: (CGPoint) -> Void
+    let onScrub: (CGPoint) -> Void
+    let onEnd: () -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    func makeUIView(context: Context) -> UIView {
+        let v = UIView()
+        v.backgroundColor = .clear
+        let press = UILongPressGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.press(_:)))
+        press.minimumPressDuration = 0.25
+        let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.tap(_:)))
+        v.addGestureRecognizer(press)
+        v.addGestureRecognizer(tap)
+        return v
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) { context.coordinator.parent = self }
+
+    final class Coordinator: NSObject {
+        var parent: TMScrubLayer
+        init(_ parent: TMScrubLayer) { self.parent = parent }
+
+        @objc func tap(_ g: UITapGestureRecognizer) { parent.onTap(g.location(in: g.view)) }
+
+        @objc func press(_ g: UILongPressGestureRecognizer) {
+            switch g.state {
+            case .began, .changed: parent.onScrub(g.location(in: g.view))
+            case .ended, .cancelled, .failed: parent.onEnd()
+            default: break
+            }
+        }
     }
 }
 

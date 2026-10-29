@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F7BCE50A8B534EE7A7E4BB9D /* GovernorGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD2C296D81440CBBB897AA8 /* GovernorGameView.swift */; };
+		98895A21A0CF41FE880E2F78 /* GovernorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3598A3FCB14EBF90667C26 /* GovernorView.swift */; };
+		FAB3E8EB353B4E3986AFA351 /* DiagramLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78084B8BD2A24593B96745AB /* DiagramLabView.swift */; };
+		DD58B8D9DB704C4EB794126E /* DiagramCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBB6E18FE44D6D80CB244D /* DiagramCanvas.swift */; };
+		04F0A7DA54CC4F05881BF316 /* GovernorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3AEBF7B2FD463A977886D5 /* GovernorViewModel.swift */; };
+		11D130111F1547F987679960 /* GovernorModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FF92DEAF664A54A1A587FB /* GovernorModels.swift */; };
+		6484E7BDE11544FCB45259E3 /* DiagramModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A708281BD19D4529827934D4 /* DiagramModels.swift */; };
 		A26D2F8A1E62437D83C38CB6 /* ClassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BB0B289E41440D9614E927 /* ClassesView.swift */; };
 		65A93F482E364CFCA97385EB /* ClassesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5312955FD3140D7A89DBD01 /* ClassesViewModel.swift */; };
 		25FC9E7FFD364461AE788543 /* ClassModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE171F3C8CA94C68BDA120F8 /* ClassModels.swift */; };
@@ -74,6 +81,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3FD2C296D81440CBBB897AA8 /* GovernorGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernorGameView.swift; sourceTree = "<group>"; };
+		5D3598A3FCB14EBF90667C26 /* GovernorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernorView.swift; sourceTree = "<group>"; };
+		78084B8BD2A24593B96745AB /* DiagramLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramLabView.swift; sourceTree = "<group>"; };
+		AFDBB6E18FE44D6D80CB244D /* DiagramCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramCanvas.swift; sourceTree = "<group>"; };
+		1D3AEBF7B2FD463A977886D5 /* GovernorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernorViewModel.swift; sourceTree = "<group>"; };
+		51FF92DEAF664A54A1A587FB /* GovernorModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernorModels.swift; sourceTree = "<group>"; };
+		A708281BD19D4529827934D4 /* DiagramModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramModels.swift; sourceTree = "<group>"; };
 		C8D1EA774E8D45E0AAB2D440 /* BFStock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BFStock.entitlements; sourceTree = "<group>"; };
 		D0BB0B289E41440D9614E927 /* ClassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesView.swift; sourceTree = "<group>"; };
 		B5312955FD3140D7A89DBD01 /* ClassesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesViewModel.swift; sourceTree = "<group>"; };
@@ -143,6 +157,24 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		1EAF01327A9943CB81AC8D9C /* Governor */ = {
+			isa = PBXGroup;
+			children = (
+				5D3598A3FCB14EBF90667C26 /* GovernorView.swift */,
+				3FD2C296D81440CBBB897AA8 /* GovernorGameView.swift */,
+			);
+			path = Governor;
+			sourceTree = "<group>";
+		};
+		E7630FB5C59A43169E0E3E12 /* Diagrams */ = {
+			isa = PBXGroup;
+			children = (
+				AFDBB6E18FE44D6D80CB244D /* DiagramCanvas.swift */,
+				78084B8BD2A24593B96745AB /* DiagramLabView.swift */,
+			);
+			path = Diagrams;
+			sourceTree = "<group>";
+		};
 		B187F66975F9407BB78DDDE9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -222,6 +254,8 @@
 				909940DE369348CDACC7F077 /* ExtraFeatureModels.swift */,
 				168A17E1D21749D5BB43AB43 /* TimeMachineModels.swift */,
 				FE171F3C8CA94C68BDA120F8 /* ClassModels.swift */,
+				A708281BD19D4529827934D4 /* DiagramModels.swift */,
+				51FF92DEAF664A54A1A587FB /* GovernorModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -285,6 +319,8 @@
 				3ED2A7A101604B6D88734109 /* Career */,
 				13F7EF4FB1CE4BBC86F406F8 /* TimeMachine */,
 				B187F66975F9407BB78DDDE9 /* Classes */,
+				E7630FB5C59A43169E0E3E12 /* Diagrams */,
+				1EAF01327A9943CB81AC8D9C /* Governor */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -302,6 +338,7 @@
 				FFC78DAD6F9F47839C0DE2D5 /* ExtraFeatureViewModels.swift */,
 				C6030318D8744BCEB590BD49 /* TimeMachineViewModel.swift */,
 				B5312955FD3140D7A89DBD01 /* ClassesViewModel.swift */,
+				1D3AEBF7B2FD463A977886D5 /* GovernorViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -431,6 +468,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7BCE50A8B534EE7A7E4BB9D /* GovernorGameView.swift in Sources */,
+				98895A21A0CF41FE880E2F78 /* GovernorView.swift in Sources */,
+				FAB3E8EB353B4E3986AFA351 /* DiagramLabView.swift in Sources */,
+				DD58B8D9DB704C4EB794126E /* DiagramCanvas.swift in Sources */,
+				04F0A7DA54CC4F05881BF316 /* GovernorViewModel.swift in Sources */,
+				11D130111F1547F987679960 /* GovernorModels.swift in Sources */,
+				6484E7BDE11544FCB45259E3 /* DiagramModels.swift in Sources */,
 				42AEFDCA2C4E45FD96E7D90A /* TimeMachineGameView.swift in Sources */,
 				25C61EE405D04A389DF434E6 /* TimeMachineView.swift in Sources */,
 				A26D2F8A1E62437D83C38CB6 /* ClassesView.swift in Sources */,
