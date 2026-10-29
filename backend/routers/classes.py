@@ -3,9 +3,9 @@ Classroom mode — /api/classes
 
 A signed-in teacher creates a class and shares its join code. Students (paper-trading accounts:
 signed in or a device) join with a nickname. The teacher sees each student's learning-mission
-progress, trades, returns and time-machine results, and sets assignments that complete on their
-own (a learning mission, or finishing a time-machine scenario). Students see their classes, their
-assignments and a class leaderboard, and can leave at any time.
+progress, trades, returns, time-machine and Fed-chair results, and sets assignments that complete on
+their own (a learning mission, or finishing a time-machine or "Be the Fed chair" scenario). Students
+see their classes, their assignments and a class leaderboard, and can leave at any time.
 
 The teacher never sees a student's account key (for a guest it is the only credential of the
 account): roster rows carry a one-way id instead.
@@ -26,6 +26,7 @@ from routers.paper_trading import _auth_header, _capture_auth, _owner, _safe_id,
 from services import paper_missions
 from services.paper_engine import INITIAL, MARKETS, PREFIX
 from services.time_machine_scenarios import BY_ID as TM_SCENARIOS
+from services.governor_scenarios import BY_ID as GOV_SCENARIOS
 
 router = APIRouter(dependencies=[Depends(_capture_auth)])
 
@@ -37,6 +38,9 @@ _ID_RE = re.compile(r"[0-9a-f]{12}")
 _MAX_CLASSES, _MAX_STUDENTS, _MAX_ASSIGNMENTS = 20, 200, 60
 _LANGS = ("zh", "en", "ja", "ko", "fr")
 _MISSIONS = {mid: text for mid, _, text in paper_missions.MISSIONS}
+_TYPES = {"mission": _MISSIONS, "time_machine": TM_SCENARIOS, "governor": GOV_SCENARIOS}
+_GOV_TITLE = {"zh": "当一次美联储主席：", "en": "Be the Fed chair: ", "ja": "FRB議長になってみよう：",
+              "ko": "연준 의장이 되어 보자: ", "fr": "Prenez la tête de la Fed : "}
 
 
 # ── Storage ───────────────────────────────────────────────────────────────────
@@ -103,6 +107,38 @@ def _tm_runs(key: str) -> dict:
         return {}
 
 
+_fed_miss: dict = {}
+
+
+def _governor(key: str) -> dict:
+    """Each "Be the Fed chair" scenario this account has played: how far it got and, once it has
+    finished one, its best score (`miss`, smaller is better) next to the real Fed's over the same
+    quarters. A restarted run keeps its best, so a finished scenario stays finished."""
+    try:
+        from routers.governor import _load_runs, _scenario, _n_decisions
+        from services import governor_model as gm
+        runs = _load_runs(key)
+    except Exception:
+        return {}
+    out = {}
+    for sid, run in runs.items():
+        if sid not in GOV_SCENARIOS or not isinstance(run, dict):
+            continue
+        try:
+            _, d = _scenario(sid)
+        except Exception:
+            continue
+        n = _n_decisions(d)
+        if sid not in _fed_miss:                 # the real Fed's record, scored as the game scores it
+            s = d["lead"]
+            _fed_miss[sid] = round(gm.miss(d["quarters"][s + 1: s + n + 1]), 2)
+        best = run.get("best")
+        out[sid] = {"finished": len(run.get("rates") or []) >= n or best is not None,
+                    "decision": min(len(run.get("rates") or []), n), "of": n,
+                    "miss": best, "fed_miss": _fed_miss[sid]}
+    return out
+
+
 def _progress(key: str, values: dict) -> dict:
     acc = _load_account(key)
     done = paper_missions.progress(acc) if acc else {}
@@ -121,7 +157,7 @@ def _progress(key: str, values: dict) -> dict:
                        "return_pct": round((run["values"][-1] / sc_cash - 1) * 100, 2) if run.get("values") else None,
                        "bench_return_pct": (run.get("result") or {}).get("bench_return_pct")}
     return {"missions": [k for k, v in done.items() if v], "trades": trades, "last_trade": last,
-            "returns": returns, "time_machine": tm}
+            "returns": returns, "time_machine": tm, "governor": _governor(key)}
 
 
 def _values() -> dict:
@@ -135,6 +171,13 @@ def _assignment_view(a: dict, lang: str) -> dict:
         text = _MISSIONS.get(a["ref"], {})
         t = text.get(lang if lang in text else "en", ("", ""))
         title, detail = t[0], t[1]
+    elif a["type"] == "governor":
+        sc = GOV_SCENARIOS.get(a["ref"], {})
+        name = (sc.get("title") or {}).get("zh" if zh else "en", a["ref"])
+        title = _GOV_TITLE.get(lang, _GOV_TITLE["en"]) + name
+        detail = (sc.get("tagline") or {}).get("zh" if zh else "en", "")
+        return {"id": a["id"], "type": a["type"], "ref": a["ref"], "due": a.get("due"), "title": title, "detail": detail,
+                "short": re.split(r"[：:]", name)[0].strip()}
     else:
         sc = TM_SCENARIOS.get(a["ref"], {})
         name = (sc.get("title") or {}).get("zh" if zh else "en", a["ref"])
@@ -146,6 +189,8 @@ def _assignment_view(a: dict, lang: str) -> dict:
 def _done(a: dict, prog: dict) -> bool:
     if a["type"] == "mission":
         return a["ref"] in prog["missions"]
+    if a["type"] == "governor":
+        return bool((prog["governor"].get(a["ref"]) or {}).get("finished"))
     return bool((prog["time_machine"].get(a["ref"]) or {}).get("finished"))
 
 
@@ -208,7 +253,8 @@ def dashboard(cid: str, lang: Optional[str] = Query(None)):
     return {"class": {k: c[k] for k in ("id", "code", "name", "created")} | {"teacher_name": c.get("teacher_name", "")},
             "students": roster, "assignments": assignments,
             "options": {"missions": [{"id": mid, "title": text.get(lang if lang in text else "en")[0]} for mid, text in _MISSIONS.items()],
-                        "time_machine": [{"id": sid, "title": sc["title"]["zh" if lang == "zh" else "en"]} for sid, sc in TM_SCENARIOS.items()]}}
+                        "time_machine": [{"id": sid, "title": sc["title"]["zh" if lang == "zh" else "en"]} for sid, sc in TM_SCENARIOS.items()],
+                        "governor": [{"id": sid, "title": sc["title"]["zh" if lang == "zh" else "en"]} for sid, sc in GOV_SCENARIOS.items()]}}
 
 
 class AssignBody(BaseModel):
@@ -221,8 +267,7 @@ class AssignBody(BaseModel):
 def assign(cid: str, body: AssignBody):
     with _lock:
         c = _own(cid)
-        if body.type == "mission" and body.ref not in _MISSIONS or body.type == "time_machine" and body.ref not in TM_SCENARIOS \
-                or body.type not in ("mission", "time_machine"):
+        if body.ref not in _TYPES.get(body.type, {}):
             raise HTTPException(400, "Unknown assignment")
         if body.due and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", body.due):
             raise HTTPException(400, "Due date: YYYY-MM-DD")
@@ -359,6 +404,8 @@ def student(body: StudentBody):
                        key=lambda r: (-r["done"], -r["missions"], -(r["return_pct"] or -1e9)))
         out.append({"id": c["id"], "code": c["code"], "name": c["name"], "teacher_name": c.get("teacher_name", ""),
                     "nickname": c["students"][key]["nickname"],
-                    "assignments": [{**_assignment_view(a, lang), "done": _done(a, me)} for a in c["assignments"]],
+                    "assignments": [{**_assignment_view(a, lang), "done": _done(a, me),
+                                     **({"result": me["governor"].get(a["ref"])} if a["type"] == "governor" else {})}
+                                    for a in c["assignments"]],
                     "leaderboard": board[:50]})
     return {"classes": out}

@@ -2,10 +2,10 @@
 
 const zh = {
   title: '班级', nav: '班级',
-  subtitle: '老师创建班级，学生用班级码加入。老师可以布置会自动完成的作业，并看到全班的学习任务、模拟交易和历史穿越进度。',
+  subtitle: '老师创建班级，学生用班级码加入。老师可以布置会自动完成的作业，并看到全班的学习任务、模拟交易、历史穿越和“当美联储主席”的进度。',
   joinTitle: '加入班级', joinCode: '班级码', joinCodePh: '例如 PR96RQ', find: '查找',
   joinAs: '你在班上的昵称', joinNickPh: '老师能认出你的名字，2–16 个字', join: '加入班级',
-  joinNote: '加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩。老师看不到你的邮箱，你可以随时退出。',
+  joinNote: '加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩和“当美联储主席”的成绩。老师看不到你的邮箱，你可以随时退出。',
   teacherBy: (n) => `老师：${n}`, studentsN: (n) => `${n} 名学生`, noClass: '没有找到这个班级码，请向老师确认。',
   myClasses: '我加入的班级', myClassesEmpty: '你还没有加入班级。向老师要班级码，或打开老师发给你的链接。',
   assignments: '作业', noAssignments: '老师还没有布置作业。', done: '已完成', todo: '未完成', due: (d) => `截止 ${d}`,
@@ -22,14 +22,17 @@ const zh = {
   add: '布置', completed: (a, b) => `${a}/${b} 人完成`, unassign: '删除', exportCsv: '导出 CSV',
   settings: '设置', rename: '保存', deleteClass: '删除班级', deleteConfirm: '删除班级后学生名单和作业都会清除，学生的个人账户不受影响。确定吗？',
   joined: '已加入', err: '出错了，请稍后再试', missionsOf: (n) => `${n}/10`, tmDone: (n) => `完成 ${n} 段`,
+  typeGov: '当美联储主席', govScore: (me, fed) => `平均偏离目标 ${me}（真实的美联储 ${fed}）`, vsFed: (v) => `美联储 ${v}`,
+  govProgress: (a, b) => `进行中 ${a}/${b} 季度`,
+  govNote: '“当美联储主席”的成绩是平均偏离目标：每个季度通胀离 2% 有多远、失业率离自然失业率有多远，合起来取平均，越小越好。第一个数是学生的最好成绩，后面是真实的美联储同一时期的成绩；绿色表示比真实的美联储更接近目标，红色表示更远。',
 }
 
 const en = {
   title: 'Classes', nav: 'Classes',
-  subtitle: 'Teachers create a class and students join with its code. Teachers set assignments that complete themselves and see the whole class\'s missions, paper trading and time-machine progress.',
+  subtitle: 'Teachers create a class and students join with its code. Teachers set assignments that complete themselves and see the whole class\'s missions, paper trading, time-machine and Fed chair game progress.',
   joinTitle: 'Join a class', joinCode: 'Class code', joinCodePh: 'e.g. PR96RQ', find: 'Find',
   joinAs: 'Your name in this class', joinNickPh: 'A name your teacher will recognise, 2–16 characters', join: 'Join class',
-  joinNote: 'When you join, your teacher can see your nickname, learning missions, number of trades and returns, and time-machine results. Your teacher cannot see your email, and you can leave at any time.',
+  joinNote: 'When you join, your teacher can see your nickname, learning missions, number of trades and returns, time-machine results and Fed chair game scores. Your teacher cannot see your email, and you can leave at any time.',
   teacherBy: (n) => `Teacher: ${n}`, studentsN: (n) => `${n} student${n === 1 ? '' : 's'}`, noClass: 'No class with that code. Check it with your teacher.',
   myClasses: 'My classes', myClassesEmpty: 'You have not joined a class yet. Ask your teacher for the class code or open the link they sent.',
   assignments: 'Assignments', noAssignments: 'No assignments yet.', done: 'Done', todo: 'To do', due: (d) => `Due ${d}`,
@@ -46,15 +49,18 @@ const en = {
   add: 'Assign', completed: (a, b) => `${a}/${b} done`, unassign: 'Remove', exportCsv: 'Export CSV',
   settings: 'Settings', rename: 'Save', deleteClass: 'Delete class', deleteConfirm: 'Deleting the class clears its roster and assignments; students\' own accounts are not affected. Continue?',
   joined: 'Joined', err: 'Something went wrong, please try again', missionsOf: (n) => `${n}/10`, tmDone: (n) => `${n} finished`,
+  typeGov: 'Fed chair game', govScore: (me, fed) => `Average miss ${me} (real Fed ${fed})`, vsFed: (v) => `Fed ${v}`,
+  govProgress: (a, b) => `In progress: ${a}/${b} quarters`,
+  govNote: 'The Fed chair game score is the average miss: each quarter, how far inflation was from 2% and unemployment from its natural rate, combined and averaged. Smaller is better. The first number is the student\'s best score, the second the real Fed\'s over the same quarters; green means closer to the goals than the real Fed, red means further.',
 }
 
 const ja = {
   ...en,
   title: 'クラス', nav: 'クラス',
-  subtitle: '先生がクラスを作り、生徒はクラスコードで参加します。自動で完了判定される課題を出し、クラス全体のミッション・模擬取引・タイムマシンの進み具合を確認できます。',
+  subtitle: '先生がクラスを作り、生徒はクラスコードで参加します。自動で完了判定される課題を出し、クラス全体のミッション・模擬取引・タイムマシン・FRB議長ゲームの進み具合を確認できます。',
   joinTitle: 'クラスに参加', joinCode: 'クラスコード', joinCodePh: '例：PR96RQ', find: '検索',
   joinAs: 'クラスでのニックネーム', joinNickPh: '先生がわかる名前（2〜16文字）', join: '参加する',
-  joinNote: '参加すると、先生はあなたのニックネーム、学習ミッション、取引回数と収益、タイムマシンの結果を見られます。メールアドレスは見えません。いつでも退出できます。',
+  joinNote: '参加すると、先生はあなたのニックネーム、学習ミッション、取引回数と収益、タイムマシンの結果、FRB議長ゲームの成績を見られます。メールアドレスは見えません。いつでも退出できます。',
   teacherBy: (n) => `先生：${n}`, studentsN: (n) => `生徒 ${n}人`, noClass: 'そのコードのクラスはありません。先生に確認してください。',
   myClasses: '参加しているクラス', myClassesEmpty: 'まだクラスに参加していません。先生からクラスコードをもらうか、送られたリンクを開いてください。',
   assignments: '課題', noAssignments: 'まだ課題はありません。', done: '完了', todo: '未完了', due: (d) => `締切 ${d}`,
@@ -70,15 +76,18 @@ const ja = {
   add: '出す', completed: (a, b) => `${b}人中${a}人完了`, unassign: '削除', exportCsv: 'CSV を書き出す',
   settings: '設定', rename: '保存', deleteClass: 'クラスを削除', deleteConfirm: 'クラスを削除すると名簿と課題が消えます。生徒の口座には影響しません。よろしいですか？',
   joined: '参加済み', err: 'エラーが発生しました', tmDone: (n) => `${n} 件完了`,
+  typeGov: 'FRB議長ゲーム', govScore: (me, fed) => `目標からの平均のずれ ${me}（本物のFRB ${fed}）`, vsFed: (v) => `FRB ${v}`,
+  govProgress: (a, b) => `進行中 ${a}/${b} 四半期`,
+  govNote: 'FRB議長ゲームの成績は目標からの平均のずれです。各四半期のインフレ率と2%の差、失業率と自然失業率の差を合わせて平均したもので、小さいほど良い成績です。最初の数字は生徒のベスト、次は同じ期間の本物のFRBの成績です。緑は本物のFRBより目標に近かったこと、赤は遠かったことを表します。',
 }
 
 const ko = {
   ...en,
   title: '클래스', nav: '클래스',
-  subtitle: '선생님이 클래스를 만들고 학생은 클래스 코드로 참여합니다. 자동으로 완료되는 과제를 내고 반 전체의 미션, 모의 투자, 타임머신 진행 상황을 볼 수 있습니다.',
+  subtitle: '선생님이 클래스를 만들고 학생은 클래스 코드로 참여합니다. 자동으로 완료되는 과제를 내고 반 전체의 미션, 모의 투자, 타임머신, 연준 의장 게임 진행 상황을 볼 수 있습니다.',
   joinTitle: '클래스 참여', joinCode: '클래스 코드', joinCodePh: '예: PR96RQ', find: '찾기',
   joinAs: '클래스에서 쓸 닉네임', joinNickPh: '선생님이 알아볼 이름 (2–16자)', join: '참여하기',
-  joinNote: '참여하면 선생님은 닉네임, 학습 미션, 거래 횟수와 수익률, 타임머신 결과를 볼 수 있습니다. 이메일은 보이지 않으며 언제든지 나갈 수 있습니다.',
+  joinNote: '참여하면 선생님은 닉네임, 학습 미션, 거래 횟수와 수익률, 타임머신 결과, 연준 의장 게임 성적을 볼 수 있습니다. 이메일은 보이지 않으며 언제든지 나갈 수 있습니다.',
   teacherBy: (n) => `선생님: ${n}`, studentsN: (n) => `학생 ${n}명`, noClass: '해당 코드의 클래스가 없습니다. 선생님께 확인하세요.',
   myClasses: '내 클래스', myClassesEmpty: '아직 참여한 클래스가 없습니다. 선생님께 코드를 받거나 받은 링크를 여세요.',
   assignments: '과제', noAssignments: '아직 과제가 없습니다.', done: '완료', todo: '미완료', due: (d) => `마감 ${d}`,
@@ -94,15 +103,18 @@ const ko = {
   add: '내기', completed: (a, b) => `${b}명 중 ${a}명 완료`, unassign: '삭제', exportCsv: 'CSV 내보내기',
   settings: '설정', rename: '저장', deleteClass: '클래스 삭제', deleteConfirm: '클래스를 삭제하면 명단과 과제가 지워집니다. 학생 계정에는 영향이 없습니다. 계속할까요?',
   joined: '참여함', err: '오류가 발생했습니다', tmDone: (n) => `${n}개 완료`,
+  typeGov: '연준 의장 게임', govScore: (me, fed) => `목표와의 평균 편차 ${me} (진짜 연준 ${fed})`, vsFed: (v) => `연준 ${v}`,
+  govProgress: (a, b) => `진행 중 ${a}/${b}분기`,
+  govNote: '연준 의장 게임 성적은 목표와의 평균 편차입니다. 분기마다 물가상승률이 2%에서, 실업률이 자연실업률에서 얼마나 벗어났는지를 합쳐 평균한 값으로, 작을수록 좋습니다. 첫 번째 숫자는 학생의 최고 성적, 두 번째는 같은 기간 진짜 연준의 성적입니다. 초록색은 진짜 연준보다 목표에 가까웠다는 뜻, 빨간색은 멀었다는 뜻입니다.',
 }
 
 const fr = {
   ...en,
   title: 'Classes', nav: 'Classes',
-  subtitle: "L'enseignant crée une classe, les élèves la rejoignent avec son code. L'enseignant donne des devoirs validés automatiquement et suit les missions, le trading fictif et la machine à remonter le temps de toute la classe.",
+  subtitle: "L'enseignant crée une classe, les élèves la rejoignent avec son code. L'enseignant donne des devoirs validés automatiquement et suit les missions, le trading fictif, la machine à remonter le temps et le jeu de la Fed de toute la classe.",
   joinTitle: 'Rejoindre une classe', joinCode: 'Code de la classe', joinCodePh: 'ex. PR96RQ', find: 'Chercher',
   joinAs: 'Votre nom dans cette classe', joinNickPh: 'Un nom que votre enseignant reconnaîtra, 2 à 16 caractères', join: 'Rejoindre',
-  joinNote: "En rejoignant, votre enseignant voit votre pseudo, vos missions, le nombre d'ordres et vos performances, et vos résultats de la machine à remonter le temps. Il ne voit pas votre e-mail ; vous pouvez partir à tout moment.",
+  joinNote: "En rejoignant, votre enseignant voit votre pseudo, vos missions, le nombre d'ordres et vos performances, vos résultats de la machine à remonter le temps et vos scores au jeu de la Fed. Il ne voit pas votre e-mail ; vous pouvez partir à tout moment.",
   teacherBy: (n) => `Enseignant : ${n}`, studentsN: (n) => `${n} élève${n > 1 ? 's' : ''}`, noClass: 'Aucune classe avec ce code. Vérifiez auprès de votre enseignant.',
   myClasses: 'Mes classes', myClassesEmpty: "Vous n'avez rejoint aucune classe. Demandez le code à votre enseignant ou ouvrez le lien reçu.",
   assignments: 'Devoirs', noAssignments: 'Pas encore de devoirs.', done: 'Fait', todo: 'À faire', due: (d) => `Pour le ${d}`,
@@ -118,6 +130,9 @@ const fr = {
   add: 'Donner', completed: (a, b) => `${a}/${b} ont terminé`, unassign: 'Retirer', exportCsv: 'Exporter en CSV',
   settings: 'Réglages', rename: 'Enregistrer', deleteClass: 'Supprimer la classe', deleteConfirm: "Supprimer la classe efface la liste et les devoirs ; les comptes des élèves ne sont pas touchés. Continuer ?",
   joined: 'Inscrit', err: 'Une erreur est survenue', tmDone: (n) => `${n} terminé${n > 1 ? 's' : ''}`,
+  typeGov: 'Jeu de la Fed', govScore: (me, fed) => `Écart moyen ${me} (vraie Fed ${fed})`, vsFed: (v) => `Fed ${v}`,
+  govProgress: (a, b) => `En cours : ${a}/${b} trimestres`,
+  govNote: "Le score du jeu de la Fed est l'écart moyen : chaque trimestre, l'écart de l'inflation à 2 % et du chômage à son taux naturel, combinés puis moyennés. Plus c'est petit, mieux c'est. Le premier nombre est le meilleur score de l'élève, le second celui de la vraie Fed sur les mêmes trimestres ; vert signifie plus proche des objectifs que la vraie Fed, rouge plus loin.",
 }
 
 const ALL = { zh, en, ja, ko, fr }

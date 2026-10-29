@@ -42,7 +42,16 @@ async function api(path, { body, method } = {}) {
 const pct = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${Number(v).toFixed(2)}%`)
 const pcol = (v, cn) => (!v ? undefined : (v > 0) === !cn ? UP : DOWN)
 const day = (iso) => (iso || '').slice(0, 10)
-const assignmentHref = (a) => (a.type === 'time_machine' ? `/time-machine?s=${a.ref}` : '/paper')
+const assignmentHref = (a) => (a.type === 'time_machine' ? `/time-machine?s=${a.ref}` : a.type === 'governor' ? `/governor?s=${a.ref}` : '/paper')
+// A Fed-chair score against the real Fed's, with the game's own thresholds for better / worse
+const govColor = (g) => (g.miss <= g.fed_miss - 0.1 ? UP : g.miss >= g.fed_miss + 0.1 ? DOWN : undefined)
+const typeLabel = (s, t) => ({ mission: s.typeMission, time_machine: s.typeTm, governor: s.typeGov })[t]
+
+function GovCell({ s, g }) {
+  if (!g) return '—'
+  if (g.miss == null) return <span className="cl-muted">{s.govProgress(g.decision, g.of)}</span>
+  return <span><b style={{ color: govColor(g) }}>{g.miss.toFixed(2)}</b> <span className="cl-muted" style={{ fontSize: 11.5 }}>{s.vsFed(g.fed_miss.toFixed(2))}</span></span>
+}
 
 // ── Student side ──────────────────────────────────────────────────────────────
 
@@ -115,7 +124,10 @@ function StudentClasses({ s, classes, onLeave }) {
                   <span aria-label={a.done ? s.done : s.todo} style={{ flex: 'none', width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 12, color: '#fff', background: a.done ? UP : 'transparent', border: a.done ? 'none' : '2px solid var(--border-primary)' }}>{a.done ? '✓' : ''}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 650 }}>{a.title}</div>
-                    <div className="cl-muted" style={{ fontSize: 12 }}>{a.due ? s.due(a.due) : ''}</div>
+                    <div className="cl-muted" style={{ fontSize: 12 }}>
+                      {[a.due ? s.due(a.due) : '', a.result?.miss != null ? s.govScore(a.result.miss.toFixed(2), a.result.fed_miss.toFixed(2))
+                        : a.result?.decision ? s.govProgress(a.result.decision, a.result.of) : ''].filter(Boolean).join(' · ')}
+                    </div>
                   </div>
                   {!a.done && <Link className="cl-btn" to={assignmentHref(a)} style={{ padding: '6px 12px' }}>{s.goDo}</Link>}
                 </div>
@@ -161,15 +173,19 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
   if (!d) return <div className="cl-card">{err ? <span style={{ color: DOWN }}>{err}</span> : <div className="skeleton" style={{ height: 200 }} />}</div>
   const c = d.class
   const url = `${window.location.origin}/class/${c.code}`
-  const options = type === 'mission' ? d.options.missions : d.options.time_machine
+  const options = (type === 'mission' ? d.options.missions : d.options[type]) || []
+  const govA = d.assignments.filter((a) => a.type === 'governor')
   const run = async (path, body, confirmText) => {
     if (confirmText && !window.confirm(confirmText)) return
     try { await api(`${id}/${path}`, { body: body || {} }); setErr(''); load() } catch (e) { setErr(e.message) }
   }
   const csv = () => {
-    const head = [s.colName, s.colJoined, s.colMissions, s.colTrades, s.colReturnUs, s.colReturnCn, s.colTm, ...d.assignments.map((a) => a.title)]
+    const head = [s.colName, s.colJoined, s.colMissions, s.colTrades, s.colReturnUs, s.colReturnCn, s.colTm,
+      ...govA.map((a) => `${s.typeGov} ${a.short}`), ...d.assignments.map((a) => a.title)]
     const rows = d.students.map((r) => [r.nickname, day(r.joined), r.missions.length, r.trades, r.returns.us ?? '', r.returns.cn ?? '',
-      Object.values(r.time_machine).filter((t) => t.finished).length, ...d.assignments.map((a) => (r.done.includes(a.id) ? '✓' : ''))])
+      Object.values(r.time_machine).filter((t) => t.finished).length,
+      ...govA.map((a) => { const g = r.governor?.[a.ref]; return !g ? '' : g.miss != null ? g.miss : `${g.decision}/${g.of}` }),
+      ...d.assignments.map((a) => (r.done.includes(a.id) ? '✓' : ''))])
     const esc = (v) => `"${String(v).replace(/"/g, '""')}"`
     const blob = new Blob(['﻿' + [head, ...rows].map((r) => r.map(esc).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' })
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${c.name}.csv`; a.click(); URL.revokeObjectURL(a.href)
@@ -201,7 +217,7 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
           <div key={a.id} style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <div style={{ flex: '1 1 240px', minWidth: 0 }}>
               <div style={{ fontWeight: 650, fontSize: 14 }}>{a.title}</div>
-              <div className="cl-muted" style={{ fontSize: 12 }}>{a.type === 'mission' ? s.typeMission : s.typeTm}{a.due ? ` · ${s.due(a.due)}` : ''}</div>
+              <div className="cl-muted" style={{ fontSize: 12 }}>{typeLabel(s, a.type)}{a.due ? ` · ${s.due(a.due)}` : ''}</div>
             </div>
             <div style={{ flex: '0 1 220px', display: 'grid', gap: 4 }}>
               <span className="cl-muted" style={{ fontSize: 12 }}>{s.completed(a.completed, d.students.length)}</span>
@@ -213,7 +229,7 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
         <div className="cl-row" style={{ paddingTop: 10, borderTop: '1px solid var(--border-primary)' }}>
           <label className="cl-label">{s.type}
             <select className="cl-input" value={type} onChange={(e) => { setType(e.target.value); setRef('') }}>
-              <option value="mission">{s.typeMission}</option><option value="time_machine">{s.typeTm}</option>
+              <option value="mission">{s.typeMission}</option><option value="time_machine">{s.typeTm}</option><option value="governor">{s.typeGov}</option>
             </select>
           </label>
           <label className="cl-label" style={{ flex: '1 1 220px' }}>{s.item}
@@ -236,7 +252,9 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
           <div className="cl-scroll"><table className="cl-table">
             <thead><tr>
               <th>{s.colName}</th><th>{s.colDone}</th><th>{s.colMissions}</th><th style={{ textAlign: 'right' }}>{s.colTrades}</th>
-              <th style={{ textAlign: 'right' }}>{s.colReturnUs}</th><th style={{ textAlign: 'right' }}>{s.colReturnCn}</th><th>{s.colTm}</th><th>{s.colLast}</th><th>{s.colJoined}</th><th />
+              <th style={{ textAlign: 'right' }}>{s.colReturnUs}</th><th style={{ textAlign: 'right' }}>{s.colReturnCn}</th><th>{s.colTm}</th>
+              {govA.map((a) => <th key={a.id} title={a.title}>🏛 {a.short}</th>)}
+              <th>{s.colLast}</th><th>{s.colJoined}</th><th />
             </tr></thead>
             <tbody>{d.students.map((r) => {
               const tmDone = Object.values(r.time_machine).filter((t) => t.finished).length
@@ -249,6 +267,7 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
                   <td style={{ textAlign: 'right', color: pcol(r.returns.us) }}>{pct(r.returns.us)}</td>
                   <td style={{ textAlign: 'right', color: pcol(r.returns.cn, true) }}>{pct(r.returns.cn)}</td>
                   <td>{tmDone ? s.tmDone(tmDone) : '—'}</td>
+                  {govA.map((a) => <td key={a.id}><GovCell s={s} g={r.governor?.[a.ref]} /></td>)}
                   <td>{r.last_trade || '—'}</td>
                   <td>{day(r.joined)}</td>
                   <td><button className="cl-btn danger" style={{ padding: '3px 8px', fontSize: 11.5 }} onClick={() => run('remove', { id: r.sid }, s.removeConfirm(r.nickname))}>{s.remove}</button></td>
@@ -257,6 +276,7 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
             })}</tbody>
           </table></div>
         )}
+        {d.students.length > 0 && govA.length > 0 && <p className="cl-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.6 }}>🏛 {s.govNote}</p>}
       </section>
 
       <section className="cl-card">
