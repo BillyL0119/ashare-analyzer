@@ -30,17 +30,30 @@ struct StudentClass: Decodable, Identifiable, Equatable {
     let leaderboard: [ClassBoardRow]
 }
 
-/// Completes on its own: a learning mission done in the paper account, or a time-machine scenario finished.
+/// Completes on its own: a learning mission done in the paper account, or a time-machine or
+/// "Be the Fed chair" scenario finished.
 struct ClassAssignment: Decodable, Identifiable, Equatable {
     let id: String
-    let type: String           // "mission" or "time_machine"
-    let ref: String            // learning mission id or time-machine scenario id
+    let type: String           // "mission", "time_machine" or "governor"
+    let ref: String            // learning mission id, time-machine scenario id or Fed chair scenario id
     let due: String?           // yyyy-MM-dd
     let title: String
     let detail: String?
     let done: Bool
+    let result: GovernorClassResult?   // governor only; nil until this account has played the scenario
 
     var isTimeMachine: Bool { type == "time_machine" }
+    var isGovernor: Bool { type == "governor" }
+}
+
+/// This account's run of a Fed chair scenario. `miss` (smaller is better) is the best finished score,
+/// next to the real Fed's over the same quarters.
+struct GovernorClassResult: Decodable, Equatable {
+    let finished: Bool
+    let decision: Int          // decisions made in the current run
+    let of: Int
+    let miss: Double?
+    let fedMiss: Double
 }
 
 struct ClassBoardRow: Decodable, Equatable {

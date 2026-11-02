@@ -41,7 +41,9 @@ struct ClassesView: View {
 
     @StateObject private var vm = ClassesViewModel()
     @StateObject private var tm = TimeMachineViewModel()
+    @StateObject private var gv = GovernorViewModel()
     @State private var scenarioID: String?
+    @State private var governorID: String?
     @State private var leaving: StudentClass?
     @State private var code = ""
 
@@ -49,7 +51,7 @@ struct ClassesView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    Text(L("用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易和历史穿越自动完成。"))
+                    Text(L("用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易、历史穿越和“当美联储主席”自动完成。"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -97,12 +99,18 @@ struct ClassesView: View {
         .navigationTitle(L("班级"))
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await vm.load() }
-        .task { await vm.load() }      // also picks up assignments finished in a time-machine run
+        .task { await vm.load() }      // also picks up assignments finished in a time-machine or Fed chair run
         .navigationDestination(item: $scenarioID) { id in
             TimeMachineGameView(vm: tm, scenarioID: id)
         }
         .onChange(of: scenarioID) { _, id in
             if id == nil { tm.close() }
+        }
+        .navigationDestination(item: $governorID) { id in
+            GovernorGameView(vm: gv, scenarioID: id)
+        }
+        .onChange(of: governorID) { _, id in
+            if id == nil { gv.close() }
         }
         .alert(leaving.map { "\(L("退出班级")) · \($0.name)" } ?? "",
                isPresented: Binding(get: { leaving != nil }, set: { if !$0 { leaving = nil } }),
@@ -118,6 +126,9 @@ struct ClassesView: View {
         if a.isTimeMachine {
             Task { await tm.open(a.ref, fresh: false) }     // resumes a run in progress
             scenarioID = a.ref
+        } else if a.isGovernor {
+            Task { await gv.open(a.ref, fresh: false) }
+            governorID = a.ref
         } else {
             onMission(a.ref)
         }
@@ -165,6 +176,13 @@ private struct ClassCard: View {
                 ForEach(c.assignments) { a in
                     assignment(a)
                 }
+                if c.assignments.contains(where: { $0.isGovernor && !$0.done }) {
+                    // Runs belong to the device id that played them, like the class membership
+                    Text(L("“当美联储主席”的作业要在 App 里玩才算数。网页上玩的成绩只算进在网页上加入班级的账户。"))
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
 
             if c.leaderboard.count >= 2 { leaderboard }
@@ -203,6 +221,19 @@ private struct ClassCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                 if !a.done, let d = a.detail, !d.isEmpty {
                     Text(d).font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                }
+                if let g = a.result {
+                    if let miss = g.miss {
+                        Text(L("平均偏离目标 %@（真实的美联储 %@）", GVFmt.points(miss), GVFmt.points(g.fedMiss)))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    } else if g.decision > 0 {
+                        Text(L("进行中 %lld/%lld 季度", g.decision, g.of))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
                 }
                 if let due = a.due {
                     Label(L("截止 %@", due), systemImage: "calendar")
@@ -377,7 +408,7 @@ private struct JoinClassCard: View {
                         .background(DS.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .onChange(of: nick) { _, v in if v.count > 16 { nick = String(v.prefix(16)) } }
                 }
-                Text(L("加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩。老师看不到你的邮箱，你可以随时退出。"))
+                Text(L("加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩和“当美联储主席”的成绩。老师看不到你的邮箱，你可以随时退出。"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
