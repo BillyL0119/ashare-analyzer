@@ -42,7 +42,7 @@ def simulate(rows: list, start: int, rates: list) -> list:
     included). rates[j] is the student's rate for quarter start+j. Each quarter: the student's
     u, pce4, pceq, exp and gap, plus the real ones for comparison."""
     out = []
-    du = dexp = 0.0
+    du = dexp = dexp_prev = 0.0
     dqs = []
     last = min(len(rows) - 1, start + len(rates))
     for t in range(start, last + 1):

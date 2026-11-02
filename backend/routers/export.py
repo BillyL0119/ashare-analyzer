@@ -4,7 +4,7 @@ PDF export — /api/export/pdf/{symbol}
 Generates a PDF analysis report using reportlab + matplotlib.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 import akshare as ak
 import io
@@ -89,7 +89,6 @@ def _build_pdf(symbol: str, name: str, df) -> bytes:
     from reportlab.lib.styles import ParagraphStyle
 
     BLUE   = colors.HexColor("#8ab4f8")
-    PURPLE = colors.HexColor("#c084fc")
     TEXT   = colors.HexColor("#e8eaed")
     DIM    = colors.HexColor("#9aa0a6")
     ROW1   = colors.HexColor("#0d1117")
@@ -99,7 +98,6 @@ def _build_pdf(symbol: str, name: str, df) -> bytes:
     title_s   = ParagraphStyle("t",  fontName="Helvetica-Bold",   fontSize=22, textColor=BLUE,   spaceAfter=4,  leading=28)
     sub_s     = ParagraphStyle("s",  fontName="Helvetica",        fontSize=12, textColor=DIM,    spaceAfter=2)
     section_s = ParagraphStyle("h",  fontName="Helvetica-Bold",   fontSize=13, textColor=BLUE,   spaceBefore=10, spaceAfter=6)
-    body_s    = ParagraphStyle("b",  fontName="Helvetica",        fontSize=10, textColor=TEXT,   leading=14)
     disc_s    = ParagraphStyle("d",  fontName="Helvetica-Oblique",fontSize=8,  textColor=DIM,    leading=11)
 
     buf = io.BytesIO()
@@ -185,7 +183,7 @@ def export_pdf(symbol: str):
     df   = _fetch_history(symbol)
     try:
         pdf_bytes = _build_pdf(symbol, name, df)
-    except Exception as e:
+    except Exception:
         logger.exception("PDF build failed for %s", symbol)
         from security import internal_error
         raise internal_error()

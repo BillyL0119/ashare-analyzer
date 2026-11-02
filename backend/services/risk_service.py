@@ -152,17 +152,11 @@ def calc_stress_tests(returns: np.ndarray, current_price: float) -> list:
     ]
 
     sigma = float(returns.std())
-    mu = float(returns.mean())
     results = []
 
     for s in scenarios:
         shock = s["shock"]
         stressed_price = current_price * (1 + shock)
-        # Days to reach shock level at historical drift
-        if mu != 0 and mu * shock > 0:
-            days = round(abs(shock) / abs(mu))
-        else:
-            days = None
         # Probability under normal distribution (1-day VaR comparison)
         z_score = round(shock / sigma, 2) if sigma > 0 else None
         prob = round(float(stats.norm.cdf(shock / sigma) if shock < 0 else 1 - stats.norm.cdf(shock / sigma)) * 100, 2) if sigma > 0 else None

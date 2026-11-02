@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from typing import List
 
 
 # ── Regime classification ─────────────────────────────────────────────────────
@@ -50,9 +49,6 @@ def detect_regimes(df: pd.DataFrame, window: int = 20) -> dict:
         return {"error": "Insufficient data for regime detection"}
 
     log_rets = np.diff(np.log(closes))
-    # Pad so lengths match
-    log_rets_padded = np.concatenate([[np.nan], log_rets])
-
     # Rolling metrics (centered at bar i, lookback = window)
     roll_ret = np.full(n, np.nan)
     roll_vol = np.full(n, np.nan)

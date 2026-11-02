@@ -220,7 +220,6 @@ def _fetch_cn_board_hist(row) -> dict | None:
         import akshare as ak
         name = str(row["板块名称"])
         today_pct = _safe_float(row.get("涨跌幅", 0))
-        today_vol  = _safe_float(row.get("成交额", 0))   # 亿元
         leader     = str(row.get("领涨股票", ""))
 
         end_date   = datetime.now().strftime("%Y%m%d")
@@ -481,7 +480,7 @@ def _build_us() -> dict:
 
 @router.get("/rotation")
 def sector_rotation(market: str = Query("cn", pattern="^(cn|us)$")):
-    global _cn_ts, _cn_data, _us_ts, _us_data
+    global _us_ts, _us_data
 
     now = time.time()
 

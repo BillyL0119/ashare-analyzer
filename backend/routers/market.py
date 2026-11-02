@@ -805,7 +805,6 @@ def warmup_sentiment():
 
 @router.get("/sentiment")
 async def market_sentiment(background_tasks: BackgroundTasks):
-    global _sentiment_ts, _sentiment_data
     now = time.time()
 
     # Cache is considered valid only if it is fresh AND has real scores (not defaults)

@@ -114,7 +114,6 @@ def market_session(now: datetime | None = None) -> dict:
     """pre (04:00-09:30 ET) / regular / post (16:00-20:00 ET) / closed, plus the next regular open."""
     now = (now or datetime.now(timezone.utc)).astimezone(_ET)
     today = now.date()
-    t = now.time()
     pre, op = datetime.combine(today, datetime.min.time(), _ET).replace(hour=4), now.replace(hour=9, minute=30, second=0, microsecond=0)
     close_h = 13 if _early_close(today) else 16
     cl = now.replace(hour=close_h, minute=0, second=0, microsecond=0)

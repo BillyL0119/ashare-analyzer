@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Query
-from typing import List, Optional
 from datetime import datetime, timedelta
 import time
 import requests as _req
@@ -7,7 +6,6 @@ from concurrent.futures import ThreadPoolExecutor
 import akshare as ak
 
 from models.schemas import (
-    StockInfo,
     StockHistoryResponse,
     Candle,
     MAIndicator,

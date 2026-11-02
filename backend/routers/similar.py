@@ -83,8 +83,6 @@ def _load_name_map():
     Source 2: Tencent batch quotes for every code in industry_map.json
     (Eastmoney's spot list is skipped: it redirects our server to a bot check.)
     """
-    import requests as _requests
-
     # ── Source 0: local stock_names.json (always available) ───────────────────
     try:
         _local_path = os.path.join(os.path.dirname(__file__), "../data/stock_names.json")

@@ -15,7 +15,7 @@ Data sources:
   A-shares   — AkShare (price history) + Tencent quotes (PE/PB)
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 import numpy as np
 import math
 import time
@@ -283,7 +283,7 @@ def _tech(closes: list) -> tuple:
     # Trend (10)
     if len(arr) >= 60:
         if last > ma20 and last > ma60:
-            s = 10; zh = f"价格在MA20({ma20:.2f})和MA60({ma60:.2f})上方，趋势强劲"; en = f"Price above MA20 & MA60, strong uptrend"
+            s = 10; zh = f"价格在MA20({ma20:.2f})和MA60({ma60:.2f})上方，趋势强劲"; en = "Price above MA20 & MA60, strong uptrend"
         elif last > ma20 or last > ma60:
             s = 6;  zh = "价格在均线附近，趋势中性"; en = "Price near MAs, neutral trend"
         else:
@@ -379,7 +379,7 @@ def _fundamental_us(symbol: str) -> tuple:
         else:
             s = 2;  zh = f"PE={pe:.1f}，显著高于行业均值（{sector_pe:.0f}），估值偏贵"; en = f"PE={pe:.1f}, well above sector avg ({sector_pe:.0f}), expensive"
     elif pe and pe < 0:
-        s = 2; zh = f"PE负值（公司暂时亏损）"; en = "Negative PE, company currently loss-making"
+        s = 2; zh = "PE负值（公司暂时亏损）"; en = "Negative PE, company currently loss-making"
     else:
         s = 6; zh = "PE数据暂不可用，给予中性分"; en = "PE data unavailable, neutral score"
     total += s
@@ -680,7 +680,7 @@ def get_score(symbol: str):
         _cache[symbol] = (now, result)
         logger.info("Score %s: %d (%s)", symbol, result["total"], result["grade"])
         return result
-    except Exception as exc:
+    except Exception:
         logger.exception("Score error %s", symbol)
         from security import internal_error
         raise internal_error()

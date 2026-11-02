@@ -423,7 +423,6 @@ def _fetch_company_info(sym: str) -> dict:
     if not res:
         return {}
 
-    branding = res.get("branding", {})
     info = {
         "name":         res.get("name", sym),
         "sector":       res.get("sic_description", ""),
@@ -475,7 +474,7 @@ def get_us_realtime(symbol: str):
     sym = symbol.upper()
     live = None
     try:
-        from routers.us_market import us_quotes, market_session, _cached, _ttl
+        from routers.us_market import us_quotes, _cached, _ttl
         live = _cached("rt:" + sym, _ttl(), lambda: us_quotes([sym]).get(sym))
     except Exception:
         live = None

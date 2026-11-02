@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from scipy import stats
-import akshare as ak
 from concurrent.futures import ThreadPoolExecutor
 
 RISK_FREE_ANNUAL = 0.025   # ~2.5% China 1-yr deposit rate proxy
@@ -161,7 +160,6 @@ def analyze_factors(df: pd.DataFrame) -> dict:
     stk_ann_ret  = float(np.mean(stk_aligned) * TRADING_DAYS)
     stk_ann_vol  = float(np.std(stk_aligned) * np.sqrt(TRADING_DAYS))
     mkt_ann_ret  = float(np.mean(mkt_aligned) * TRADING_DAYS)
-    rf_daily     = RISK_FREE_ANNUAL / TRADING_DAYS
 
     treynor = round((stk_ann_ret - RISK_FREE_ANNUAL) / beta, 4) if beta != 0 else None
     tracking_error = float(np.std(stk_aligned - mkt_aligned) * np.sqrt(TRADING_DAYS))

@@ -11,7 +11,6 @@ server-side admin list), so hiding the page in the UI is a convenience and not t
 
 import re
 from datetime import datetime, timedelta
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
