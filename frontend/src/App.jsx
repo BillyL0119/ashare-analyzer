@@ -34,11 +34,8 @@ const HeatmapPage        = lazy(() => import('./components/HeatmapPage'))
 const MacroCalendarPage  = lazy(() => import('./components/MacroCalendarPage'))
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
-import tmStrings from './components/timemachine/tmStrings'
-import casesStrings from './components/cases/casesStrings'
-import diagramNav from './components/diagrams/diagramNav'
-import governorStrings from './components/governor/governorStrings'
-import classStrings from './components/classes/classStrings'
+import SiteNav from './components/nav/SiteNav'
+import StartHere from './components/nav/StartHere'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -331,6 +328,7 @@ export default function App() {
     else if (tab === 'class') trackFeature('class')
     else if (tab === 'study') trackFeature('study')
     else if (tab === 'universities') trackFeature('universities')
+    else if (tab === 'ai_teacher') trackFeature('ai_tutor')   // the phone site's name for this page
     else trackFeature('analysis')
   }
 
@@ -779,59 +777,9 @@ export default function App() {
         height: 1,
         background: 'linear-gradient(90deg, transparent, var(--border-primary) 20%, var(--border-glow) 50%, var(--border-primary) 80%, transparent)',
       }} />
-      {/* Secondary tab nav */}
-      <div
-        style={{
-          background: scrolled ? 'var(--nav-bg)' : 'var(--nav-bg-dim)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          padding: isMobile ? '0 12px' : '0 24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-          borderBottom: '1px solid var(--border-primary)',
-          overflowX: 'auto',
-        }}
-      >
-        {[
-          { key: 'analysis',     label: t.tabAnalysis },
-          { key: 'screener',     label: t.tabScreener },
-          { key: 'heatmap',      label: t.tabHeatmap },
-          { key: 'news',         label: t.tabNews },
-          { key: 'macro',        label: t.tabMacro },
-          { key: 'bank_views',   label: t.tabBankViews },
-          { key: 'paper',        label: t.tabPaper },
-          { key: 'time_machine', label: tmStrings(lang).nav },
-          { key: 'governor',     label: governorStrings(lang).nav },
-          { key: 'study',        label: t.tabStudy },
-          { key: 'cases',        label: casesStrings(lang).nav },
-          { key: 'diagrams',     label: diagramNav(lang).nav },
-          { key: 'class',        label: classStrings(lang).nav },
-          { key: 'universities', label: t.tabUniversities },
-          { key: 'career',       label: t.tabCareer },
-        ].map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => handleTabChange(key)}
-            className={`bfs-nav-tab${appTab === key ? ' is-active' : ''}`}
-            style={{
-              padding: '8px 14px', border: 'none', borderBottom: appTab === key ? '2px solid #0ea5e9' : '2px solid transparent',
-              cursor: 'pointer', fontSize: 12, fontWeight: appTab === key ? 600 : 400,
-              background: 'transparent',
-              color: appTab === key ? '#0ea5e9' : 'var(--text-secondary)',
-              transition: 'color 0.15s ease, border-color 0.15s ease',
-              whiteSpace: 'nowrap', flexShrink: 0,
-            }}
-          >
-            {label}
-          </button>
-        ))}
-        {!isMobile && (
-          <div style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 11, letterSpacing: '0.3px', flexShrink: 0, paddingLeft: 16 }}>
-            {t.dataSource}
-          </div>
-        )}
-      </div>
+      {/* Secondary nav: five sections with menus (components/nav) */}
+      <SiteNav appTab={appTab} lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange}
+        isMobile={isMobile} scrolled={scrolled} dataSource={t.dataSource} />
       </div>{/* end sticky nav wrapper */}
 
       <main style={{ padding: isMobile ? '2px 12px' : '2px 24px', flex: 1 }}>
@@ -871,6 +819,9 @@ export default function App() {
             <AITeacherPage lang={lang} />
           ) : (
             <>
+              {selectedSymbols.length === 0 && (
+                <div className="bfs-enter-1"><StartHere lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange} /></div>
+              )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
               )}
