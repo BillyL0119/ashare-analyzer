@@ -1,0 +1,181 @@
+{
+  "src/components/AnalysisPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/BankViewsPage.jsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 1
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/DailyNewsPage.jsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 2
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/FactorPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/FundamentalsPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/GlobalNewsPanel.jsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 1
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/HeatmapPage.jsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 8
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/IntlMarketPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/KLineSelectionWrapper.jsx": {
+    "react-hooks/refs": {
+      "count": 1
+    }
+  },
+  "src/components/KnowledgeCard.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/MacroCalendarPage.jsx": {
+    "react-hooks/purity": {
+      "count": 1
+    }
+  },
+  "src/components/MonteCarloPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/NewsPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/PaperTradingPanel.jsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 1
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/RadarPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/RegimePanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/RiskPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/ScorePanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/SectorRotation.jsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 13
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/SimilarPanel.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/SplashScreen.jsx": {
+    "react-refresh/only-export-components": {
+      "count": 1
+    }
+  },
+  "src/components/StockDetailPage.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/StudyCenter.jsx": {
+    "react-hooks/immutability": {
+      "count": 1
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/components/UniversitiesPage.jsx": {
+    "react-hooks/immutability": {
+      "count": 1
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/WelcomeModal.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/paper/OrderTicket.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/paper/ui.jsx": {
+    "react-refresh/only-export-components": {
+      "count": 8
+    }
+  },
+  "src/hooks/useSymbolSuggest.js": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/mobile/MacroEvents.jsx": {
+    "react-hooks/purity": {
+      "count": 1
+    }
+  },
+  "src/mobile/MarketMap.jsx": {
+    "react-hooks/preserve-manual-memoization": {
+      "count": 1
+    }
+  },
+  "src/mobile/tabs/Paper.jsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  }
+}

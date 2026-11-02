@@ -206,7 +206,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 return u
               })
             }
-          } catch (_) {}
+          } catch { /* not JSON: skip the line */ }
         }
       }
     } catch (e) {
@@ -228,8 +228,6 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
   const handleKey = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
   }
-
-  const cat = CATEGORIES[activeCat]
 
   return (
     <div style={{

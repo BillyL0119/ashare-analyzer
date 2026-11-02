@@ -13,10 +13,6 @@ const CATEGORY_COLOR = {
   '投资理念': '#66bb6a',
 }
 
-function todayStr() {
-  return new Date().toISOString().slice(0, 10)
-}
-
 function CardPanel({ item, lang }) {
   if (!item) return null
   const topic   = lang === 'zh' ? item.topic_zh   : item.topic_en

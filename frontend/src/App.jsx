@@ -134,9 +134,13 @@ export default function App() {
   const [showLangDropdown, setShowLangDropdown] = useState(false)
   const [toast,          setToast]          = useState(null)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
-  // Phones: search lives behind an icon so the sticky header stays one row tall
+  // Phones: search lives behind an icon so the sticky header stays one row tall; a new page closes it
   const [showMobileSearch, setShowMobileSearch] = useState(false)
-  useEffect(() => { setShowMobileSearch(false) }, [location.pathname])
+  const [searchPage, setSearchPage] = useState(location.pathname)
+  if (searchPage !== location.pathname) {
+    setSearchPage(location.pathname)
+    setShowMobileSearch(false)
+  }
   useEffect(() => {
     if (!isMobile) return
     document.querySelector('.bfs-nav-tab.is-active')?.scrollIntoView({ inline: 'center', block: 'nearest' })

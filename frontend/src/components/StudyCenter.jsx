@@ -833,7 +833,7 @@ function EventTimeline({ zh }) {
             width: 2, background: 'rgba(6,182,212,0.15)', borderRadius: 1,
           }} />
 
-          {events.map((ev, i) => {
+          {events.map((ev) => {
             const isActive = ev.id === activeId
             return (
               <div

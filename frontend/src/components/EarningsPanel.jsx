@@ -13,7 +13,7 @@ function getLang(cfg, lang) {
   return cfg[lang] || cfg.en
 }
 
-function EarningsRow({ item, lang, t, onStockClick }) {
+function EarningsRow({ item, t, onStockClick }) {
   const [hover, setHover] = useState(false)
   const mkt = MARKET_CFG[item.market] || MARKET_CFG.us
   const hasEps = item.eps_estimate !== null && item.eps_estimate !== undefined
@@ -223,7 +223,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
               key={m}
               onClick={() => setMarket(m)}
               style={{
-                padding: '5px 18px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                padding: '5px 18px', borderRadius: 20, cursor: 'pointer',
                 fontSize: 13, fontWeight: active ? 700 : 400,
                 background: active ? cfg.bg : 'rgba(255,255,255,0.05)',
                 color: active ? cfg.color : MUTED,

@@ -172,7 +172,7 @@ export default function WelcomeModal({ onLangSelect }) {
           gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
           gap: 12,
         }}>
-          {LANG_OPTIONS.map(({ code, nativeLabel, subLabel, Flag }) => (
+          {LANG_OPTIONS.map(({ code, nativeLabel, subLabel }) => (
             <button
               key={code}
               onClick={() => handleLangSelect(code)}

@@ -61,11 +61,11 @@ function ScoreRing({ score, grade }) {
 
 function RadarChart({ dimensions }) {
   const isCN = useLangStore((s) => s.lang) === 'zh'
-  const indicators = Object.entries(DIM_LABEL).map(([k, v]) => ({
+  const indicators = Object.values(DIM_LABEL).map((v) => ({
     name: isCN ? v.zh : v.en,
     max: 100,
   }))
-  const data = Object.entries(dimensions).map(([k, d]) =>
+  const data = Object.values(dimensions).map((d) =>
     Math.round(d.score / d.max * 100)
   )
   const option = {
@@ -150,13 +150,12 @@ export default function ScorePanel({ stocks }) {
   const isCN = lang === 'zh'
   const [dataMap, setDataMap] = useState({})
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
 
   const key = useMemo(() => stocks?.map((s) => s.code).join(',') ?? '', [stocks])
 
   useEffect(() => {
     if (!stocks?.length) return
-    setLoading(true); setError(null)
+    setLoading(true)
     Promise.all(
       stocks.map((s) =>
         getStockScore(s.code)

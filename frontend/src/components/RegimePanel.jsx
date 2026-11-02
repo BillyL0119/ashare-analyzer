@@ -54,7 +54,7 @@ function RegimeBadge({ regime, duration, lang, t }) {
 
 // ── Regime breakdown donut-style bars ─────────────────────────────────────────
 
-function RegimeBreakdown({ stats, lang, t }) {
+function RegimeBreakdown({ stats, lang }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {REGIME_KEYS.map(key => {

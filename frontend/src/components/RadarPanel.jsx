@@ -57,7 +57,7 @@ export default function RadarPanel({ stocks }) {
 
   const validStocks = stocks.filter((s) => dataMap[s.code]?.scores)
 
-  const radarSeries = validStocks.map((s, i) => ({
+  const radarSeries = validStocks.map((s) => ({
     name: `${s.code} ${dataMap[s.code]?.name || s.name}`,
     value: indicators.map((ind) => dataMap[s.code].scores[ind.key] ?? 50),
   }))

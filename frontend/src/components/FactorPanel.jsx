@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import ReactECharts from '../lib/echarts'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'

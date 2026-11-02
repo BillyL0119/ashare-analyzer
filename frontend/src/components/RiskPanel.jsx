@@ -85,7 +85,7 @@ function VaRTable({ varCvar, t }) {
 
 // ── Drawdown chart ────────────────────────────────────────────────────────────
 
-function DrawdownChart({ series, t }) {
+function DrawdownChart({ series }) {
   const option = {
     backgroundColor: THEME.gridBg,
     tooltip: {
@@ -123,7 +123,7 @@ function DrawdownChart({ series, t }) {
 
 // ── Return distribution ───────────────────────────────────────────────────────
 
-function DistributionChart({ distribution, t }) {
+function DistributionChart({ distribution }) {
   const { centers, counts } = distribution
   const colors = centers.map(c => c >= 0 ? 'rgba(239,83,80,0.7)' : 'rgba(38,166,154,0.7)')
   const option = {

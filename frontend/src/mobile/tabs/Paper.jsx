@@ -52,7 +52,7 @@ function useQuote(symbol, market) {
   const [q, setQ] = useState(null)   // null = nothing to show, {name, price} or {missing: true}
   useEffect(() => {
     const sym = symbol.trim().toUpperCase()
-    const ok = { us: /^[A-Z0-9.\-]{1,10}$/, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }[market]
+    const ok = { us: /^[A-Z0-9.-]{1,10}$/, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }[market]
     if (!sym || !ok.test(sym)) { setQ(null); return }
     let alive = true
     const id = setTimeout(() => {

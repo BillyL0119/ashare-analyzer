@@ -79,7 +79,6 @@ function buildSummary(sectors, period, zh) {
 const labelColor = (fill) => ([GREEN_LIGHT, RED_LIGHT].includes(fill) ? '#0f172a' : '#fff')
 
 function Treemap({ sectors, period, lang, cn }) {
-  const t = T[lang] || T.en
   const zh = lang === 'zh'
   const theme = useThemeStore((s) => s.theme)
 
@@ -344,7 +343,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                 { key: '20d',  label: t.sr20Day },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setPeriod(key)} style={{
-                  padding: '4px 12px', borderRadius: 20, border: 'none',
+                  padding: '4px 12px', borderRadius: 20,
                   cursor: 'pointer', fontSize: 11, fontWeight: period === key ? 700 : 400,
                   background: period === key ? 'rgba(139,92,246,0.15)' : 'var(--bg-tertiary)',
                   color: period === key ? ACCENT2 : 'var(--text-muted)',

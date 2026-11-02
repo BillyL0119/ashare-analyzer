@@ -362,7 +362,7 @@ export function buildRSIOption(rsiData) {
   }
 }
 
-export function buildOverlayOption(symbolsData, lang = 'zh') {
+export function buildOverlayOption(symbolsData) {
   const T      = getChartTheme()
   const colors = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
   const allDates = [...new Set(

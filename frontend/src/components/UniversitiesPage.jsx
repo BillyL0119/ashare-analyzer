@@ -92,7 +92,7 @@ function schoolGradient(name) {
 }
 
 function initials(name) {
-  const words = name.split(/[\s\-]+/).filter(w => w.length > 2)
+  const words = name.split(/[\s-]+/).filter(w => w.length > 2)
   return words.slice(0, 2).map(w => w[0].toUpperCase()).join('')
 }
 
@@ -1074,7 +1074,7 @@ async function streamSSE(url, payload, onChunk, onDone, onError) {
           if (obj.done) { onDone(); return }
           if (obj.text) onChunk(obj.text)
           if (obj.error) { onError(obj.error); return }
-        } catch (_) {}
+        } catch { /* not JSON: skip the line */ }
       }
     }
     onDone()
@@ -1363,7 +1363,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
             key={val}
             onClick={() => set('lang')(val)}
             style={{
-              padding: '5px 14px', borderRadius: 20, border: 'none',
+              padding: '5px 14px', borderRadius: 20,
               border: `1px solid ${profile.lang === val ? BLUE : 'var(--border-primary)'}`,
               background: profile.lang === val ? `${BLUE}22` : 'transparent',
               color: profile.lang === val ? BLUE : 'var(--text-muted)',
@@ -1796,8 +1796,7 @@ function InterviewModal({ unis, lang, onClose }) {
 }
 
 // ── Interview: entry card ─────────────────────────────────────────────────────
-function InterviewEntryCard({ lang, onOpen }) {
-  const t = lang === 'zh'
+function InterviewEntryCard({ onOpen }) {
   const [hov, setHov] = useState(false)
   return (
     <div
@@ -1982,7 +1981,7 @@ const BM_REGION = {
 const BM_REGIONS = [...REGIONS.filter(r => r.key !== 'mea'), { key: 'other', label: 'Latin America & other', label_cn: '拉美及其他' }]
 const BM_PAGE = 50
 
-function GapChip({ entry, zh }) {
+function GapChip({ entry }) {
   if (!entry.overall_num) {
     return (
       <span className="bm-gap" style={{ color: PURPLE, background: `${PURPLE}18`, borderColor: `${PURPLE}40` }}>
@@ -2181,8 +2180,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
 }
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
-function Hero({ lang, stats }) {
-  const t = lang === 'zh'
+function Hero({ stats }) {
   return (
     <div style={{
       textAlign: 'center',
@@ -2252,7 +2250,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
   const hasFilters = filters.region || filters.language || filters.specialty || filters.search || filters.ug
 
   const pill = (active) => ({
-    padding: '5px 14px', borderRadius: 20, border: 'none',
+    padding: '5px 14px', borderRadius: 20,
     border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
     background: active ? `${BLUE}22` : 'transparent',
     color: active ? BLUE : 'var(--text-muted)',

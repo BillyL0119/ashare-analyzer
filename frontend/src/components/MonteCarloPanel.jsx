@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import ReactECharts from '../lib/echarts'
 import { useStockData } from '../hooks/useStockData'
 import useCompareStore from '../store/compareStore'

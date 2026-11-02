@@ -27,7 +27,7 @@ function getDeviceId() {
   return id
 }
 
-function Bubble({ msg, accent }) {
+function Bubble({ msg }) {
   const isUser = msg.role === 'user'
   return (
     <div style={{
@@ -152,7 +152,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                 return u
               })
             }
-          } catch (_) {}
+          } catch { /* not JSON: skip the line */ }
         }
       }
     } catch (e) {

@@ -76,7 +76,7 @@ function OverlayView({ lang }) {
         </div>
       ) : (
         <ReactECharts
-          option={buildOverlayOption(symbolsData, lang)}
+          option={buildOverlayOption(symbolsData)}
           style={{ height: 480, width: '100%' }}
           opts={{ renderer: 'canvas' }}
           notMerge={true}
