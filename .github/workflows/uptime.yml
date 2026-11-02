@@ -1,0 +1,31 @@
+# Checks the live site every 15 minutes with read-only GETs (tools/uptime_check.py). While anything
+# fails, one issue labelled "uptime" stays open: it is opened on the first failure, gets a comment
+# when the failing checks change and closes itself once everything passes. GitHub emails the repo
+# owner about each of these. Run it by hand: Actions → Uptime check → Run workflow.
+name: Uptime check
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"   # every 15 min, off the top of the hour; GitHub may start these late
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:            # one run at a time, so two runs never open two issues
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Check bestfriendstock.com
+        run: python3 tools/uptime_check.py --github-issue
+        env:
+          GH_TOKEN: ${{ github.token }}

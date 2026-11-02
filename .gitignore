@@ -30,3 +30,4 @@ backend/data/governor_runs/
 backend/data/econ_cases.json
 backend/data/classes/
 backend/data/move_reasons.json
+.pytest_cache/

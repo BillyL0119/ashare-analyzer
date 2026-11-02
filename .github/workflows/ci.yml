@@ -1,0 +1,56 @@
+# Lint, test and build on every push and pull request. It deploys nothing: production is still
+# git pull + npm run build on the server, so a red run here means "fix before the next deploy".
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}   # every commit on main keeps its result
+
+jobs:
+  backend:
+    name: Backend (pyflakes, pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - run: pip install pyflakes==4.1.0 pytest==9.2.0
+      - name: pyflakes
+        run: python -m pyflakes backend tools
+      - name: pytest (pure logic, no network)
+        run: python -m pytest -q -p no:cacheprovider backend/tests
+
+  frontend:
+    name: Frontend (eslint, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: eslint
+        # frontend/eslint-suppressions.json holds the errors that predate CI; any new one fails.
+        # After fixing an old one, `npx eslint src --prune-suppressions` tidies the file.
+        run: npx eslint src --pass-on-unpruned-suppressions
+      - name: build (vite build + the per-page HTML, as on the server)
+        run: npm run build
