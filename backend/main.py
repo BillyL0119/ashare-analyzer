@@ -121,6 +121,8 @@ async def warmup_caches():
     loop.run_in_executor(None, _warm_calendar)   # A-share events (cninfo + IPO table)
     from services import econ_cases as _cases
     _cases.start()                               # essay-example library: new cases every 90 min
+    from services import case_pages as _case_pages
+    _case_pages.start()                          # frontend/dist/cases/<id>.html, rewritten after every build
 
 from security import SecurityMiddleware, allowed_origins
 
@@ -137,7 +139,16 @@ app.add_middleware(SecurityMiddleware)
 @app.get("/sitemap.xml", response_class=Response)
 async def sitemap():
     from datetime import date
+    from services import case_pages
     today = date.today().isoformat()
+    # Every case in the essay-example library has its own page (services/case_pages.py)
+    cases = "".join(f"""
+  <url>
+    <loc>{loc}</loc>
+    <lastmod>{day}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>""" for loc, day in case_pages.sitemap_entries())
     content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -331,7 +342,7 @@ async def sitemap():
     <lastmod>{today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
-  </url>
+  </url>{cases}
 </urlset>"""
     return Response(content=content, media_type="application/xml")
 

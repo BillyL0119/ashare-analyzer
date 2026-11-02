@@ -81,12 +81,13 @@ export default function MobileApp() {
   }, [])
 
   // Same feature names the desktop site reports, so both UIs show up in one usage chart.
-  const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/time-machine' ? 'time_machine' : loc.pathname === '/cases' ? 'cases' : loc.pathname === '/diagrams' ? 'diagrams' : loc.pathname === '/governor' ? 'governor' : loc.pathname.startsWith('/class') ? 'class' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
+  const section = loc.pathname === '/' ? 'analysis' : loc.pathname.startsWith('/study') ? 'study' : loc.pathname === '/paper' ? 'paper_trading' : loc.pathname === '/time-machine' ? 'time_machine' : loc.pathname.startsWith('/cases') ? 'cases' : loc.pathname === '/diagrams' ? 'diagrams' : loc.pathname === '/governor' ? 'governor' : loc.pathname.startsWith('/class') ? 'class' : loc.pathname === '/ai-teacher' ? 'ai_tutor' : null
   useEffect(() => { if (section) trackFeature(section) }, [section])
   const lang = useLangStore((st) => st.lang)
+  const casePage = /^\/cases\/./.test(loc.pathname)   // a case's own page sets its title (CasesPage)
   useEffect(() => {
-    if (section) document.title = (lang === 'zh' ? TITLES.zh : TITLES.en)[section]
-  }, [section, lang])
+    if (section && !casePage) document.title = (lang === 'zh' ? TITLES.zh : TITLES.en)[section]
+  }, [section, lang, casePage])
 
   return (
     <div className="m-app">
@@ -99,6 +100,7 @@ export default function MobileApp() {
           <Route path="/paper" element={<Page><Paper /></Page>} />
           <Route path="/time-machine" element={<Page><TimeMachine /></Page>} />
           <Route path="/cases" element={<Page><Cases /></Page>} />
+          <Route path="/cases/:id" element={<Page><Cases /></Page>} />
           <Route path="/diagrams" element={<Page><Diagrams /></Page>} />
           <Route path="/governor" element={<Page><Governor /></Page>} />
           <Route path="/class" element={<Page><Classes /></Page>} />

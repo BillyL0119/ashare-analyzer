@@ -260,7 +260,7 @@ export default function DiagramLab({ lang, studyHref = defaultStudyHref }) {
                 )}
                 <span className="dl-muted" style={{ fontSize: 12, lineHeight: 1.5 }}>{caseMatches && !kase.diagram?.preset ? S.pickShift : S.figuresNote}</span>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  <Link className="dl-act" to={`/cases?q=${encodeURIComponent(kase.title.slice(0, 40))}`}>{S.readCase}</Link>
+                  <Link className="dl-act" to={`/cases/${kase.id}`}>{S.readCase}</Link>
                   <a className="dl-act" href={kase.url} target="_blank" rel="noopener noreferrer">{S.readSource} ↗</a>
                 </div>
               </div>

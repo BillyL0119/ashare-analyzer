@@ -3,6 +3,8 @@
 // page as a copy of the home page. The app itself is unchanged: same scripts, same SPA routing.
 // nginx picks these up with `try_files $uri $uri.html /index.html;` in `location /`. (Not
 // dist/<route>/index.html: a directory makes nginx redirect /heatmap to /heatmap/.)
+// dist/cases/<id>.html, one page per economics case, is written by the backend instead
+// (backend/services/case_pages.py), which rewrites them whenever this build replaces index.html.
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'

@@ -8,7 +8,7 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
-from services import econ_cases
+from services import case_pages, econ_cases
 from services.econ_concepts import BOARDS, CONCEPTS, concept_view
 from services.econ_diagrams import diagram_view
 
@@ -77,6 +77,15 @@ def one_case(case_id: str, lang: Optional[str] = Query(None)):
     c = next((c for c in econ_cases.cases() if c["id"] == case_id), None)
     if not c:
         raise HTTPException(404, "Case not found")
-    out = _view(c, _lang(lang))
-    out["concept_details"] = [concept_view(k, _lang(lang)) for k in c["concepts"] if k in CONCEPTS]
+    lang = _lang(lang)
+    out = _view(c, lang)
+    out["concept_details"] = [concept_view(k, lang) for k in c["concepts"] if k in CONCEPTS]
+    # The case's own page (/cases/<id>) also shows it in the other language, as its static HTML does:
+    # English wording for a Chinese reader's essay. ja/ko/fr readers already get the English text.
+    other = {"zh": "en", "en": "zh"}.get(lang)
+    part = (c.get(other) or {}) if other else {}
+    out["other"] = {"lang": other, **{k: part.get(k) for k in ("what", "angle", "evaluate", "question")},
+                    "data": part.get("data") or []} if part else None
+    out["related"] = [{"id": r["id"], "title": r["title"], "date": (r.get("published_at") or "")[:10]}
+                      for r in case_pages.related(c)]
     return out

@@ -253,6 +253,9 @@ def run_once(limit: int = _PER_RUN) -> int:
             _save()
         except Exception as e:
             logger.warning("case library write failed: %s", e)
+    if added or tagged:
+        from services import case_pages
+        case_pages.refresh()                   # pages for the new cases, and new links on the others
     _status.update(last_run=datetime.utcnow().isoformat() + "Z", added=added)
     logger.info("case library: %d new cases (%d calls today)", added, _calls["n"])
     return added

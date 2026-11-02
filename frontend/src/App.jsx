@@ -117,9 +117,11 @@ export default function App() {
   const stockRouteMatch = location.pathname.match(/^\/stock\/(\w+)\/(.+)$/)
   const studyRouteMatch = location.pathname.match(/^\/study\/(\w+)$/)
   const classRouteMatch = location.pathname.match(/^\/class\/([A-Za-z0-9]{6})$/)   // an invite link
+  const caseRouteMatch = location.pathname.match(/^\/cases\/([A-Za-z0-9_-]+)\/?$/)   // one case's own page
   const appTab = stockRouteMatch ? 'analysis'
     : studyRouteMatch ? 'study'
     : classRouteMatch ? 'class'
+    : caseRouteMatch ? 'cases'
     : (PATH_TABS[location.pathname.replace(/(.)\/+$/, '$1')] || 'analysis')   // '/heatmap/' is '/heatmap'
   const [showStats,        setShowStats]        = useState(false)
   const [scrolled,         setScrolled]         = useState(false)
@@ -268,7 +270,7 @@ export default function App() {
     }
     // Crawlers always get Chinese (see langStore), so the indexed titles do not change
     const set = lang === 'zh' ? titles : titlesEn
-    document.title = set[appTab] || set.analysis
+    if (!caseRouteMatch) document.title = set[appTab] || set.analysis   // a case's page sets its own (CasesPage)
     const robots = document.querySelector('meta[name="robots"]')
     if (robots) robots.setAttribute('content', appTab === 'admin' ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large')
     let canonical = document.querySelector('link[rel="canonical"]')
@@ -792,7 +794,7 @@ export default function App() {
           ) : appTab === 'time_machine' ? (
             <TimeMachinePage lang={lang} />
           ) : appTab === 'cases' ? (
-            <CasesPage lang={lang} />
+            <CasesPage lang={lang} caseId={caseRouteMatch?.[1]} />
           ) : appTab === 'diagrams' ? (
             <DiagramLab lang={lang} />
           ) : appTab === 'governor' ? (

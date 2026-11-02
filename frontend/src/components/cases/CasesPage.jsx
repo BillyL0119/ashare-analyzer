@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import casesStrings from './casesStrings'
 import diagramNav, { diagramHref } from '../diagrams/diagramNav'
 
 // Economics case library: real news turned into essay examples (concept, figures to quote,
 // evaluation, practice question), filterable by exam board, concept and keyword.
+// Each case also has its own page at /cases/<id>; the backend writes its static HTML for search
+// engines (backend/services/case_pages.py) and the app opens the case there.
 
 const ACCENT = '#0ea5e9'
 const BOARDS = ['ib', 'alevel', 'ap_macro', 'ap_micro', 'igcse']
@@ -30,7 +32,9 @@ const CSS = `
 .cs-act { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
 .cs-act:hover { background: var(--bg-tertiary); }
 .cs-input { width: 100%; min-width: 0; background: var(--bg-secondary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 10px; padding: 9px 12px; font-size: 14px; }
-.cs-pill:focus-visible, .cs-concept:focus-visible, .cs-tag:focus-visible, .cs-act:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
+.cs-link { color: var(--text-primary); text-decoration: none; }
+.cs-link:hover { color: ${ACCENT}; }
+.cs-pill:focus-visible, .cs-concept:focus-visible, .cs-tag:focus-visible, .cs-act:focus-visible, .cs-link:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 @media (max-width: 860px) {
   .cs-layout { grid-template-columns: minmax(0, 1fr); }
   .cs-side { position: static; max-height: none; display: flex; overflow-x: auto; gap: 6px; scrollbar-width: none; }
@@ -43,7 +47,38 @@ function loadSaved() {
   try { return JSON.parse(localStorage.getItem(SAVE_KEY) || '[]') } catch { return [] }
 }
 
-function CaseCard({ c, s, board, studyHref, saved, onToggleSave, onConcept, conceptTopics, drawLabel }) {
+// Saved cases live on this device only
+function useSaved() {
+  const [saved, setSaved] = useState(loadSaved)
+  const savedIds = new Set(saved.map((c) => c.id))
+  const toggleSave = (c) => {
+    const card = { ...c }
+    delete card.concept_details; delete card.other; delete card.related   // extras of a case's own page
+    const next = savedIds.has(c.id) ? saved.filter((x) => x.id !== c.id) : [card, ...saved].slice(0, 200)
+    setSaved(next)
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(next)) } catch { /* storage full or blocked */ }
+  }
+  return { saved, savedIds, toggleSave }
+}
+
+// What happened, the economics, figures, evaluation and the practice question
+function CaseText({ c, s }) {
+  return (
+    <>
+      <div><div className="cs-h">{s.what}</div><div className="cs-body">{c.what}</div></div>
+      <div><div className="cs-h">{s.angle}</div><div className="cs-body">{c.angle}</div></div>
+      {c.data?.length > 0 && (
+        <div><div className="cs-h">{s.data}</div>
+          <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 2 }} className="cs-body">{c.data.map((d) => <li key={d} style={{ fontVariantNumeric: 'tabular-nums' }}>{d}</li>)}</ul>
+        </div>
+      )}
+      {c.evaluate && <div><div className="cs-h">{s.evaluate}</div><div className="cs-body">{c.evaluate}</div></div>}
+      <div className="cs-q"><div className="cs-h" style={{ color: '#b45309' }}>✍️ {s.question}</div>{c.question}</div>
+    </>
+  )
+}
+
+function CaseCard({ c, s, board, studyHref, saved, onToggleSave, onConcept, conceptTopics, drawLabel, own }) {
   const [copied, setCopied] = useState(false)
   const cite = `${c.source}, "${c.title}", ${c.date}. ${c.url}`
   const copy = async () => {
@@ -64,40 +99,123 @@ function CaseCard({ c, s, board, studyHref, saved, onToggleSave, onConcept, conc
           {c.concepts.map((k) => <button key={k.id} className="cs-tag" onClick={() => onConcept(k.id)}>{k.name}</button>)}
         </span>
       </div>
-      <h2 style={{ margin: 0, fontSize: 17, lineHeight: 1.45 }}>
-        <a href={c.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>{c.title} <span style={{ color: ACCENT, fontSize: 13 }}>↗</span></a>
-      </h2>
-      <div><div className="cs-h">{s.what}</div><div className="cs-body">{c.what}</div></div>
-      <div><div className="cs-h">{s.angle}</div><div className="cs-body">{c.angle}</div></div>
-      {c.data?.length > 0 && (
-        <div><div className="cs-h">{s.data}</div>
-          <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 2 }} className="cs-body">{c.data.map((d) => <li key={d} style={{ fontVariantNumeric: 'tabular-nums' }}>{d}</li>)}</ul>
-        </div>
+      {own ? (
+        // The case's own page: its headline is the page's heading
+        <h1 style={{ margin: 0, fontSize: 22, lineHeight: 1.35 }}>{c.title}</h1>
+      ) : (
+        <h2 style={{ margin: 0, fontSize: 17, lineHeight: 1.45 }}>
+          <a href={c.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>{c.title} <span style={{ color: ACCENT, fontSize: 13 }}>↗</span></a>
+        </h2>
       )}
-      {c.evaluate && <div><div className="cs-h">{s.evaluate}</div><div className="cs-body">{c.evaluate}</div></div>}
-      <div className="cs-q"><div className="cs-h" style={{ color: '#b45309' }}>✍️ {s.question}</div>{c.question}</div>
+      <CaseText c={c} s={s} />
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <a className="cs-act" href={c.url} target="_blank" rel="noopener noreferrer">{s.readSource} ↗</a>
         <button className="cs-act" onClick={copy}>{copied ? `✓ ${s.copied}` : `⧉ ${s.copy}`}</button>
         <button className="cs-act" onClick={() => onToggleSave(c)} aria-pressed={saved}>{saved ? `★ ${s.unsave}` : `☆ ${s.save}`}</button>
         {study && <Link className="cs-act" to={study}>📘 {s.study}</Link>}
         {diagramHref(c) && <Link className="cs-act" to={diagramHref(c)}>📐 {drawLabel}</Link>}
+        {!own && <Link className="cs-act" to={`/cases/${c.id}`}>🔗 {s.open}</Link>}
       </div>
     </article>
   )
 }
 
+function HowTo({ s }) {
+  return (
+    <div className="cs-card" style={{ display: 'grid', gap: 4, padding: '12px 16px' }}>
+      <b style={{ fontSize: 13 }}>{s.how}</b>
+      <span className="cs-muted" style={{ fontSize: 13, lineHeight: 1.6 }}>{s.howText}</span>
+      <span className="cs-muted" style={{ fontSize: 11.5, lineHeight: 1.6, marginTop: 4 }}>{s.note}</span>
+    </div>
+  )
+}
+
 const defaultStudyHref = (board, topic) => `/study/${board}?topic=${topic}`
 
-export default function CasesPage({ lang, studyHref = defaultStudyHref }) {
+export default function CasesPage({ caseId, ...props }) {
+  return caseId ? <OneCase key={caseId} caseId={caseId} {...props} /> : <Library {...props} />
+}
+
+// One case at /cases/<id>, with the same case in the other language and more cases on its concept
+function OneCase({ lang, caseId, studyHref = defaultStudyHref }) {
+  const s = casesStrings(lang)
+  const navigate = useNavigate()
+  const { savedIds, toggleSave } = useSaved()
+  const [kase, setKase] = useState(null)   // the case, or { missing } when it cannot be shown
+
+  useEffect(() => { window.scrollTo(0, 0) }, [])
+
+  useEffect(() => {
+    let alive = true
+    fetch(`/api/cases/item/${encodeURIComponent(caseId)}?lang=${lang}`)
+      .then((r) => (r.ok ? r.json() : { missing: r.status === 404 ? 'gone' : 'failed' }))
+      .then((d) => { if (alive) setKase(d) })
+      .catch(() => { if (alive) setKase({ missing: 'failed' }) })
+    return () => { alive = false }
+  }, [caseId, lang])
+
+  // Same wording as the page's static <title> (case_pages.title), in the reader's language
+  useEffect(() => {
+    if (!kase?.title) return
+    const name = kase.concepts?.[0]?.name
+    document.title = !name ? `${kase.title} | BestFriendStock`
+      : lang === 'zh' ? `${kase.title} - ${name}案例 | BestFriendStock` : `${kase.title} – ${name} example | BestFriendStock`
+  }, [kase, lang])
+
+  // A case that has left the library should drop out of search results, not stay as an empty page
+  useEffect(() => {
+    if (kase?.missing !== 'gone') return undefined
+    const robots = document.querySelector('meta[name="robots"]')
+    const before = robots?.getAttribute('content')
+    robots?.setAttribute('content', 'noindex')
+    return () => { if (before) robots.setAttribute('content', before) }
+  }, [kase])
+
+  const conceptTopics = Object.fromEntries((kase?.concept_details || []).map((c) => [c.id, c.topics]))
+  const other = kase?.other ? casesStrings(kase.other.lang) : null
+  return (
+    <div className="cs">
+      <style>{CSS}</style>
+      <Link className="cs-act" to="/cases" style={{ justifySelf: 'start' }}>← {s.title}</Link>
+      {!kase && <div className="cs-card skeleton" style={{ height: 320 }} />}
+      {kase?.missing && <div className="cs-card cs-muted" style={{ fontSize: 14, lineHeight: 1.6 }}>{kase.missing === 'gone' ? s.notFound : s.failed}</div>}
+      {kase?.title && (
+        <>
+          <CaseCard c={kase} s={s} own studyHref={studyHref} saved={savedIds.has(kase.id)} onToggleSave={toggleSave}
+            onConcept={(id) => navigate(`/cases?concept=${id}`)} conceptTopics={conceptTopics} drawLabel={diagramNav(lang).drawLink} />
+          {other && (
+            <details className="cs-card" lang={kase.other.lang === 'zh' ? 'zh-CN' : 'en'}>
+              <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>{s.otherLang}</summary>
+              <div style={{ display: 'grid', gap: 12, marginTop: 12 }}><CaseText c={kase.other} s={other} /></div>
+            </details>
+          )}
+          {kase.related?.length > 0 && (
+            <nav className="cs-card" style={{ display: 'grid', gap: 8 }}>
+              <div className="cs-h">{s.related(kase.concepts[0]?.name || '')}</div>
+              <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 6 }} className="cs-body">
+                {kase.related.map((r) => (
+                  <li key={r.id}><Link className="cs-link" to={`/cases/${r.id}`}>{r.title}</Link> <span className="cs-muted" style={{ fontSize: 12 }}>{r.date}</span></li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </>
+      )}
+      <HowTo s={s} />
+    </div>
+  )
+}
+
+function Library({ lang, studyHref = defaultStudyHref }) {
   const s = casesStrings(lang)
   const [board, setBoard] = useState('')
-  const [concept, setConcept] = useState('')
-  // ?q= comes from links elsewhere on the site (the diagram lab's "read the full case")
+  // ?concept= comes from a case's page (its concept tags and "more cases" links)
+  const [concept, setConcept] = useState(() => new URLSearchParams(window.location.search).get('concept') || '')
+  // ?q= comes from links elsewhere on the site
   const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get('q') || '')
   const [query, setQuery] = useState(q)
   const [showSaved, setShowSaved] = useState(false)
-  const [saved, setSaved] = useState(loadSaved)
+  const { saved, savedIds, toggleSave } = useSaved()
   const [concepts, setConcepts] = useState([])
   const [data, setData] = useState(null)
   const [limit, setLimit] = useState(PAGE)
@@ -124,12 +242,6 @@ export default function CasesPage({ lang, studyHref = defaultStudyHref }) {
   const conceptTopics = useMemo(() => Object.fromEntries(concepts.map((c) => [c.id, c.topics])), [concepts])
   // Concepts that have cases (and the one selected); the rest would only be empty filters
   const visibleConcepts = concepts.filter((c) => (!board || c.topics?.[board]?.length) && ((data?.counts?.[c.id] ?? 0) > 0 || c.id === concept))
-  const savedIds = new Set(saved.map((c) => c.id))
-  const toggleSave = (c) => {
-    const next = savedIds.has(c.id) ? saved.filter((x) => x.id !== c.id) : [c, ...saved].slice(0, 200)
-    setSaved(next)
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify(next)) } catch { /* storage full or blocked */ }
-  }
   const pickConcept = (id) => { setConcept(id === concept ? '' : id); setShowSaved(false); setLimit(PAGE); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const active = concepts.find((c) => c.id === concept)
   const list = showSaved ? saved : data?.cases || []
@@ -183,11 +295,7 @@ export default function CasesPage({ lang, studyHref = defaultStudyHref }) {
           {!showSaved && data && data.cases.length < data.total && (
             <button className="cs-pill" style={{ justifySelf: 'center' }} onClick={() => setLimit(limit + PAGE)}>{s.more}</button>
           )}
-          <div className="cs-card" style={{ display: 'grid', gap: 4, padding: '12px 16px' }}>
-            <b style={{ fontSize: 13 }}>{s.how}</b>
-            <span className="cs-muted" style={{ fontSize: 13, lineHeight: 1.6 }}>{s.howText}</span>
-            <span className="cs-muted" style={{ fontSize: 11.5, lineHeight: 1.6, marginTop: 4 }}>{s.note}</span>
-          </div>
+          <HowTo s={s} />
         </div>
       </div>
     </div>

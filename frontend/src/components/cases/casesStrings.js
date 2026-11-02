@@ -1,6 +1,9 @@
 // Wording for the essay-example library (cases). Case text comes from the server: Chinese for zh,
 // English for the other languages.
 
+// 'Supply shocks' -> 'supply shocks' mid-sentence
+const lower = (name) => (/^[A-Z][a-z]/.test(name) ? name[0].toLowerCase() + name.slice(1) : name)
+
 const zh = {
   title: '经济学案例库', nav: '案例库',
   subtitle: '每天从真实新闻里挑出能写进经济学论文的案例：对应考纲知识点、可以引用的数据、评估角度和一道练习题。',
@@ -14,6 +17,8 @@ const zh = {
   how: '怎么用', howText: '写论文时，先说明知识点和机制（经济学角度），再用真实数据支撑，最后给出评估。考官最看重“真实案例 + 评估”。',
   note: '案例由 AI 根据新闻标题和导语撰写，只使用原文中的事实；引用的数据都出自原文。引用前请阅读原文核实。',
   sourceLang: { cn: '中文来源', en: '英文来源' },
+  open: '打开案例页', otherLang: '英文版（写英文论文时可以参考它的表述）', related: (name) => `更多「${name}」案例`,
+  notFound: '没有找到这个案例，它可能已经从案例库中移除。', failed: '加载失败，请稍后再试。',
 }
 
 const en = {
@@ -29,6 +34,8 @@ const en = {
   how: 'How to use it', howText: 'In an essay, name the concept and explain the mechanism, back it with real figures, then evaluate. Examiners reward a real example plus evaluation.',
   note: 'Cases are written by AI from the article headline and lead, using only facts from the article; every quoted figure comes from it. Read the original before citing.',
   sourceLang: { cn: 'Chinese source', en: 'English source' },
+  open: 'Open case page', otherLang: 'Chinese version (中文版)', related: (name) => `More cases on ${lower(name)}`,
+  notFound: 'This case is no longer in the library.', failed: 'Could not load this case. Try again later.',
 }
 
 const ja = {
@@ -45,6 +52,8 @@ const ja = {
   how: '使い方', howText: '論述では概念とメカニズムを説明し、実際の数字で裏付け、最後に評価を加えます。',
   note: 'ケースは記事の見出しとリードをもとにAIが作成し、記事中の事実だけを使っています。引用前に元記事を確認してください。（本文は英語で表示されます）',
   sourceLang: { cn: '中国語の記事', en: '英語の記事' },
+  open: 'ケースのページを開く', related: (name) => `「${name}」の他のケース`,
+  notFound: 'このケースはライブラリにありません。', failed: '読み込めませんでした。しばらくしてからもう一度お試しください。',
 }
 
 const ko = {
@@ -61,6 +70,8 @@ const ko = {
   how: '활용법', howText: '에세이에서는 개념과 작동 원리를 설명하고, 실제 수치로 뒷받침한 뒤 평가로 마무리하세요.',
   note: '사례는 기사 제목과 도입부를 바탕으로 AI가 작성했으며 기사 속 사실만 사용합니다. 인용 전에 원문을 확인하세요. (본문은 영어로 표시됩니다)',
   sourceLang: { cn: '중국어 기사', en: '영어 기사' },
+  open: '사례 페이지 열기', related: (name) => `'${name}' 관련 사례 더 보기`,
+  notFound: '이 사례는 라이브러리에 없습니다.', failed: '불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
 }
 
 const fr = {
@@ -77,6 +88,8 @@ const fr = {
   how: 'Mode d\'emploi', howText: 'Dans une dissertation, nommez la notion, expliquez le mécanisme, appuyez-vous sur des chiffres réels, puis évaluez.',
   note: "Les cas sont rédigés par une IA à partir du titre et du chapeau de l'article, avec uniquement les faits de l'article. Lisez l'original avant de citer. (Texte affiché en anglais)",
   sourceLang: { cn: 'Source chinoise', en: 'Source anglaise' },
+  open: 'Ouvrir la page du cas', related: (name) => `Autres cas : ${name}`,
+  notFound: "Ce cas n'est plus dans la bibliothèque.", failed: 'Impossible de charger ce cas. Réessayez plus tard.',
 }
 
 const ALL = { zh, en, ja, ko, fr }

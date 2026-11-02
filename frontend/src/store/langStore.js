@@ -3,9 +3,13 @@ import { create } from 'zustand'
 const SUPPORTED = ['zh', 'en', 'ja', 'ko', 'fr']
 
 // First visit: follow the browser language instead of blocking the page with a picker.
-// Crawlers keep the Chinese default so the indexed page language does not change.
+// Crawlers keep the language the page's HTML is written in, so the indexed language does not
+// change: Chinese for the site, English for a case page from an English source
+// (backend/services/case_pages.py writes its <html lang>).
 function detectLang() {
-  if (/bot|crawl|spider|slurp|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return 'zh'
+  if (/bot|crawl|spider|slurp|facebookexternalhit|preview/i.test(navigator.userAgent || '')) {
+    return document.documentElement.lang?.startsWith('en') ? 'en' : 'zh'
+  }
   for (const l of navigator.languages || [navigator.language || '']) {
     const code = String(l).toLowerCase().split('-')[0]
     if (SUPPORTED.includes(code)) return code

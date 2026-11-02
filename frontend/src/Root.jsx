@@ -9,8 +9,13 @@ const App = lazy(() => import('./App.jsx'))
 const ui = currentUI()
 document.documentElement.dataset.ui = ui
 
+// A case page arrives with the case already in #root (backend/services/case_pages.py): keep it on
+// screen while the app's chunk loads, instead of a blank page
+const prerendered = document.getElementById('root')?.innerHTML.trim()
+const fallback = prerendered ? <div dangerouslySetInnerHTML={{ __html: prerendered }} /> : null
+
 export default function Root() {
   return ui === 'mobile'
-    ? <Suspense fallback={null}><MobileApp /></Suspense>
-    : <><Suspense fallback={null}><App /></Suspense><SwitchToMobile /></>
+    ? <Suspense fallback={fallback}><MobileApp /></Suspense>
+    : <><Suspense fallback={fallback}><App /></Suspense><SwitchToMobile /></>
 }

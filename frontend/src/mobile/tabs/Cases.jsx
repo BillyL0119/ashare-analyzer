@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom'
 import useLangStore from '../../store/langStore'
 import CasesPage from '../../components/cases/CasesPage'
 
@@ -11,5 +12,6 @@ const phoneStudy = (board, topic) => `/study/${board}/${topic}`
 
 export default function Cases() {
   const lang = useLangStore((st) => st.lang)
-  return <div style={PHONE_THEME}><CasesPage lang={lang} studyHref={phoneStudy} /></div>
+  const { id } = useParams()   // /cases/<id>: one case's own page
+  return <div style={PHONE_THEME}><CasesPage lang={lang} studyHref={phoneStudy} caseId={id} /></div>
 }
