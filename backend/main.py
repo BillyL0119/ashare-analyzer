@@ -11,6 +11,10 @@ _os.environ.setdefault("TQDM_DISABLE", "1")
 import socket as _socket
 _socket.setdefaulttimeout(30)
 
+import threading
+import time
+from collections import OrderedDict, deque
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, JSONResponse
@@ -353,13 +357,44 @@ Allow: /
 Sitemap: https://bestfriendstock.com/sitemap.xml"""
     return Response(content=content, media_type="text/plain")
 
-_SEO_CACHE: dict = {}
+_SEO_CACHE: "OrderedDict[str, tuple]" = OrderedDict()   # ticker -> (time, quote or None), newest last
+_SEO_LOOKUPS: deque = deque()                             # times of quote lookups in the last minute
+_SEO_LOOKUPS_PER_MIN = 120                                # site-wide, so made-up tickers cannot flood the quote feed
+_seo_lock = threading.Lock()
 
-@app.api_route("/seo/stock/us/{symbol}", methods=["GET", "HEAD"], response_class=Response)
-async def seo_us_stock(symbol: str):
-    """index.html with per-stock title/description/canonical (nginx routes /stock/us/<TICKER> here)."""
-    import html as _html, re as _re, time as _time, os as _os
+
+def _seo_quote(sym: str):
+    """The quote for a ticker page's title: 2 minutes for a real ticker, an hour for an unknown one. Past
+    the lookup budget, the last known quote (or none) is used and the page is the plain app shell."""
     from routers.us_market import us_quotes
+    now = time.time()
+    with _seo_lock:
+        hit = _SEO_CACHE.get(sym)
+        if hit and now - hit[0] < (120 if hit[1] else 3600):
+            _SEO_CACHE.move_to_end(sym)
+            return hit[1]
+        while _SEO_LOOKUPS and now - _SEO_LOOKUPS[0] > 60:
+            _SEO_LOOKUPS.popleft()
+        if len(_SEO_LOOKUPS) >= _SEO_LOOKUPS_PER_MIN:
+            return hit[1] if hit else None
+        _SEO_LOOKUPS.append(now)
+    try:
+        q = us_quotes([sym]).get(sym)
+    except Exception:
+        q = hit[1] if hit else None
+    with _seo_lock:
+        _SEO_CACHE[sym] = (now, q)
+        _SEO_CACHE.move_to_end(sym)
+        while len(_SEO_CACHE) > 3000:
+            _SEO_CACHE.popitem(last=False)
+    return q
+
+
+# A plain function, so FastAPI runs it in its thread pool: the quote lookup must not hold up the event loop
+@app.api_route("/seo/stock/us/{symbol}", methods=["GET", "HEAD"], response_class=Response)
+def seo_us_stock(symbol: str):
+    """index.html with per-stock title/description/canonical (nginx routes /stock/us/<TICKER> here)."""
+    import html as _html, re as _re, os as _os
     sym = symbol.upper()
     if not _re.fullmatch(r"[A-Z0-9.\-]{1,10}", sym):
         return Response(status_code=404)
@@ -368,17 +403,7 @@ async def seo_us_stock(symbol: str):
         page = open(path, encoding="utf-8").read()
     except OSError:
         return Response(status_code=404)
-    hit = _SEO_CACHE.get(sym)
-    if hit and _time.time() - hit[0] < 120:
-        q = hit[1]
-    else:
-        try:
-            q = us_quotes([sym]).get(sym)
-        except Exception:
-            q = None
-        _SEO_CACHE[sym] = (_time.time(), q)
-        if len(_SEO_CACHE) > 500:
-            _SEO_CACHE.clear()
+    q = _seo_quote(sym)
     if not q:  # unknown ticker: serve the plain SPA shell
         return Response(content=page, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-cache"})
     e = _html.escape

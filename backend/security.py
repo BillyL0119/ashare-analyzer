@@ -51,6 +51,21 @@ RATE_RULES = [
     ("/api/",                "*",   900, 60),    # everything else
 ]
 
+# Site-wide budgets, counted over every caller together: a flood from many addresses still cannot run
+# up the AI bill or keep the server busy exporting. Every matching rule must have room.
+GLOBAL_RULES = [
+    ("/api/ai/chat",                "POST", 60, 60),
+    ("/api/ai/chat",                "POST", 3000, 86400),
+    ("/api/career/mock-interview",  "POST", 30, 60),
+    ("/api/career/mock-interview",  "POST", 1000, 86400),
+    ("/api/universities/interview", "POST", 30, 60),
+    ("/api/universities/interview", "POST", 1000, 86400),
+    ("/api/analysis/kline-segment", "POST", 30, 60),
+    ("/api/analysis/kline-segment", "POST", 1500, 86400),
+    ("/api/moves",                  "POST", 60, 60),
+    ("/api/export",                 "*",    40, 60),
+]
+
 # Paths no legitimate client requests: hitting them marks the IP as a scanner.
 HONEYPOT_FRAGMENTS = (
     "/.env", "/.git", "/wp-admin", "/wp-login", "/wp-content", "/xmlrpc.php", "/phpmyadmin",
@@ -63,6 +78,7 @@ BAN_SECONDS = 3600
 # ── State (single process) ───────────────────────────────────────────────────
 
 _hits: dict[tuple, deque] = defaultdict(deque)
+_global_hits: dict[tuple, deque] = defaultdict(deque)
 _strikes: dict[str, int] = defaultdict(int)
 _banned_until: dict[str, float] = {}
 _last_sweep = 0.0
@@ -109,6 +125,23 @@ def check_rate(ip: str, path: str, method: str) -> int:
     if len(dq) >= limit:
         return max(1, int(window - (now - dq[0])))
     dq.append(now)
+    return 0
+
+
+def check_global(path: str, method: str) -> int:
+    """Site-wide budget (GLOBAL_RULES): 0 if allowed, otherwise seconds until there is room."""
+    rules = [r for r in GLOBAL_RULES if path.startswith(r[0]) and (r[1] == "*" or r[1] == method)]
+    if not rules:
+        return 0
+    now = time.time()
+    for prefix, m, limit, window in rules:
+        dq = _global_hits[(prefix, m, window)]
+        while dq and now - dq[0] > window:
+            dq.popleft()
+        if len(dq) >= limit:
+            return max(1, int(window - (now - dq[0])))
+    for prefix, m, _, window in rules:
+        _global_hits[(prefix, m, window)].append(now)
     return 0
 
 
@@ -177,6 +210,15 @@ class SecurityMiddleware:
             return await _send_json(
                 send, 429, {"detail": "Too many requests. Please slow down."},
                 [(b"retry-after", str(wait).encode())],
+            )
+
+        # 5. site-wide budgets (AI, exports): busy for everyone rather than an unbounded bill
+        wait = check_global(path, method)
+        if wait:
+            logger.warning("site-wide budget reached for %s %s", method, path[:60])
+            return await _send_json(
+                send, 503, {"detail": "This feature is busy right now. Please try again in a little while."},
+                [(b"retry-after", str(min(wait, 3600)).encode())],
             )
 
         started = False

@@ -32,6 +32,20 @@ _ai_cache: dict = {}       # md5(title) -> (ts, ai_dict)
 _name_cache: dict = {}     # code -> stock_name
 _RESULT_TTL = 1800         # 30 min
 _AI_TTL = 7200             # 2 hours
+_AI_PER_HOUR = 400         # AI calls per hour from news pages, site-wide (each new stock or headline costs one)
+_ai_calls: list = []
+_ai_calls_lock = threading.Lock()
+
+
+def _ai_budget_ok() -> bool:
+    """Whether a news page may make another AI call this hour; past the cap it shows the keyword result."""
+    now = time.time()
+    with _ai_calls_lock:
+        _ai_calls[:] = [t for t in _ai_calls if now - t < 3600]
+        if len(_ai_calls) >= _AI_PER_HOUR:
+            return False
+        _ai_calls.append(now)
+        return True
 
 # ── Sentiment keywords ────────────────────────────────────────────────────────
 _POS_KW = [
@@ -85,6 +99,8 @@ def _ai_sentiment(title: str, content: str = "") -> dict:
             return result
 
     fallback = {"sentiment": "neutral", "impact": "low", "summary": "", "reason": ""}
+    if not _ai_budget_ok():
+        return fallback
     try:
         import anthropic
         client = anthropic.Anthropic()
@@ -141,6 +157,8 @@ def _ai_overall_summary(stock_name: str, headlines: list[str], lang: str = "zh")
     key = os.environ.get("DEEPSEEK_API_KEY", "")
     if not key or not headlines:
         logger.warning("AI summary skipped: key set=%s headlines=%d", bool(key), len(headlines))
+        return ""
+    if not _ai_budget_ok():
         return ""
     try:
         from openai import OpenAI
