@@ -106,13 +106,19 @@ def simulate(r: np.ndarray, days: int, n: int, market: str, code: str = "", seed
     mu = drift(r, fit["var_lr"], market)
     lim = daily_limit(market, code)
     rng = np.random.default_rng(seed)
-    z, alpha, gamma, beta, omega = fit["z"], fit["alpha"], fit["gamma"], fit["beta"], fit["omega"]
+    alpha, gamma, beta, omega = fit["alpha"], fit["gamma"], fit["beta"], fit["omega"]
+    # Paths come in pairs: where one draws the k-th smallest past shock, its partner draws the k-th
+    # largest. Each path is still an ordinary draw from the stock's past shocks, but a pair's luck
+    # partly cancels, which halves the run-to-run noise in the median and the chance of a gain.
+    z = np.sort(fit["z"])
+    m, half = len(z), (n + 1) // 2
     v = np.full(n, fit["var_next"])
     logp = np.zeros(n)
     pct = np.empty((days, len(PERCENTILES)))
     up = np.empty(days)
     for t in range(days):
-        eps = np.sqrt(v) * z[rng.integers(0, len(z), n)]
+        i = rng.integers(0, m, half)
+        eps = np.sqrt(v) * np.concatenate([z[i], z[m - 1 - i]])[:n]
         step = mu + eps
         if lim is not None:
             step = np.clip(step, -lim, lim)
@@ -130,18 +136,18 @@ def simulate(r: np.ndarray, days: int, n: int, market: str, code: str = "", seed
 BACKTEST: dict = {
     "all": {"stocks": 111, "years": "2006–2025", "h": {
         "5": {"cov50": 51, "cov80": 81, "cov90": 90, "n": 20837}, "21": {"cov50": 51, "cov80": 81, "cov90": 90, "n": 20837},
-        "63": {"cov50": 52, "cov80": 81, "cov90": 90, "n": 20837}, "126": {"cov50": 52, "cov80": 81, "cov90": 90, "n": 20837},
+        "63": {"cov50": 52, "cov80": 81, "cov90": 91, "n": 20837}, "126": {"cov50": 52, "cov80": 81, "cov90": 90, "n": 20837},
         "252": {"cov50": 52, "cov80": 80, "cov90": 89, "n": 20837}}},
     "cn": {"stocks": 45, "years": "2007–2025", "h": {
-        "5": {"cov50": 51, "cov80": 81, "cov90": 90, "n": 7907}, "21": {"cov50": 51, "cov80": 80, "cov90": 90, "n": 7907},
+        "5": {"cov50": 51, "cov80": 81, "cov90": 90, "n": 7907}, "21": {"cov50": 51, "cov80": 81, "cov90": 90, "n": 7907},
         "63": {"cov50": 52, "cov80": 80, "cov90": 89, "n": 7907}, "126": {"cov50": 51, "cov80": 80, "cov90": 89, "n": 7907},
-        "252": {"cov50": 50, "cov80": 78, "cov90": 87, "n": 7907}}},
+        "252": {"cov50": 51, "cov80": 78, "cov90": 87, "n": 7907}}},
     "hk": {"stocks": 20, "years": "2006–2025", "h": {
         "5": {"cov50": 49, "cov80": 78, "cov90": 88, "n": 4429}, "21": {"cov50": 50, "cov80": 80, "cov90": 89, "n": 4429},
-        "63": {"cov50": 50, "cov80": 80, "cov90": 89, "n": 4429}, "126": {"cov50": 48, "cov80": 77, "cov90": 88, "n": 4429},
-        "252": {"cov50": 50, "cov80": 78, "cov90": 87, "n": 4429}}},
+        "63": {"cov50": 50, "cov80": 79, "cov90": 88, "n": 4429}, "126": {"cov50": 48, "cov80": 78, "cov90": 88, "n": 4429},
+        "252": {"cov50": 50, "cov80": 78, "cov90": 88, "n": 4429}}},
     "us": {"stocks": 46, "years": "2006–2025", "h": {
-        "5": {"cov50": 51, "cov80": 81, "cov90": 91, "n": 8501}, "21": {"cov50": 51, "cov80": 82, "cov90": 91, "n": 8501},
-        "63": {"cov50": 52, "cov80": 83, "cov90": 92, "n": 8501}, "126": {"cov50": 55, "cov80": 84, "cov90": 92, "n": 8501},
-        "252": {"cov50": 55, "cov80": 83, "cov90": 91, "n": 8501}}},
+        "5": {"cov50": 51, "cov80": 81, "cov90": 91, "n": 8501}, "21": {"cov50": 51, "cov80": 81, "cov90": 91, "n": 8501},
+        "63": {"cov50": 52, "cov80": 84, "cov90": 93, "n": 8501}, "126": {"cov50": 55, "cov80": 84, "cov90": 92, "n": 8501},
+        "252": {"cov50": 55, "cov80": 84, "cov90": 92, "n": 8501}}},
 }
