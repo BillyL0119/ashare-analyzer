@@ -355,6 +355,9 @@ def _tencent_history(sym: str, days: int = 365) -> list:
     return []
 
 
+_hist_span: dict = {}     # (symbol, day) -> longest span in days fetched into that day's cache
+
+
 def _fetch_history_candles(sym: str, days: int = 365, stale_fallback_days: int = 30) -> list:
     """
     Fetch daily OHLCV: Tencent kline first, Polygon aggregates as the fallback.
@@ -364,14 +367,25 @@ def _fetch_history_candles(sym: str, days: int = 365, stale_fallback_days: int =
     """
     today = datetime.now().strftime("%Y-%m-%d")
     cache_key = f"{sym}_history_{today}"
+    want = max(days, 365)
     cached = read_cache(cache_key, max_age_hours=24)
     if cached:
-        return cached
+        # Today's copy may have been fetched for a shorter chart: a 1-year copy must not answer a
+        # 5-year request. It is long enough if it reaches back far enough, or if it was already
+        # fetched for this span (a young stock has no more history to give).
+        reach = (datetime.now() - timedelta(days=want - 7)).strftime("%Y-%m-%d")
+        if cached[0]["date"] <= reach or _hist_span.get((sym, today), 0) >= want:
+            return cached
 
-    tc = _tencent_history(sym, max(days, 365))
-    if tc:
+    tc = _tencent_history(sym, want)
+    if tc and (not cached or len(tc) >= len(cached)):
         write_cache(cache_key, tc)
+        for k in [k for k in _hist_span if k[1] != today]:
+            _hist_span.pop(k, None)
+        _hist_span[(sym, today)] = want
         return tc
+    if cached:
+        return cached
 
     to_date = datetime.now().strftime("%Y-%m-%d")
     from_date = (datetime.now() - timedelta(days=max(days, 365))).strftime("%Y-%m-%d")
