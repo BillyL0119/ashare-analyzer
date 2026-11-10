@@ -66,11 +66,6 @@
       "count": 1
     }
   },
-  "src/components/MonteCarloPanel.jsx": {
-    "react-hooks/set-state-in-effect": {
-      "count": 1
-    }
-  },
   "src/components/NewsPanel.jsx": {
     "react-hooks/set-state-in-effect": {
       "count": 1

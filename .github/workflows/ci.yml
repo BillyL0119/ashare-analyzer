@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
-      - run: pip install pyflakes==4.1.0 pytest==9.2.0
+      - run: pip install pyflakes==4.1.0 pytest==9.2.0 numpy==2.4.3
       - name: pyflakes
         run: python -m pyflakes backend tools
       - name: pytest (pure logic, no network)

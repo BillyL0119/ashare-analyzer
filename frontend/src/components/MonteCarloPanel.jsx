@@ -9,62 +9,31 @@ import useThemeStore from '../store/themeStore'
 
 const COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
 
-// Share of the drift taken from the stock's own history; the rest is a long-run equity
-// return. Same rule as the backend (/simulation) used by the app.
-const HIST_WEIGHT = 0.25
-const PRIOR_ANNUAL = { us: 0.08, cn: 0.06 }
-
-// Geometric Brownian Motion Monte Carlo simulation (pure JS, runs in browser)
-function runMonteCarlo(closes, nSims = 500, nDays = 252, market = 'us') {
-  const logReturns = []
-  for (let i = 1; i < closes.length; i++) {
-    logReturns.push(Math.log(closes[i] / closes[i - 1]))
+// The simulation runs on the server (/api/simulation, services/monte_carlo.py): GJR-GARCH volatility
+// that starts from today's level and drifts back to the stock's long-run one, shocks drawn from the
+// stock's own past, 3 years of total-return daily closes whatever period the chart shows. This maps
+// its answer to the fan chart's fields.
+function fromApi(d) {
+  const p = d.paths
+  return {
+    p5: p.p5, p25: p.p25, p50: p.p50, p75: p.p75, p95: p.p95,
+    lastPrice: d.current_price, nDays: d.days,
+    probProfit: (d.stats.prob_gain * 100).toFixed(1),
+    varPct: (d.stats.var_95_pct * 100).toFixed(2),
+    expectedReturn: (d.stats.expected_return * 100).toFixed(2),
+    volNow: (d.vol_now_annual * 100).toFixed(1),
+    volLong: (d.vol_longrun_annual * 100).toFixed(1),
+    priorPct: Math.round(d.prior_annual * 100),
+    backtest: d.backtest || null,
   }
-  if (logReturns.length < 5) return null
+}
 
-  const mean = logReturns.reduce((a, b) => a + b, 0) / logReturns.length
-  const variance = logReturns.reduce((a, b) => a + (b - mean) ** 2, 0) / logReturns.length
-  const sigma = Math.sqrt(variance)
-  // `mean` is already a mean *log* return, so it is the daily log drift as is. A trailing mean is a
-  // noisy estimate (a big run-up would project itself forward), so shrink it toward the prior.
-  const prior = (PRIOR_ANNUAL[market] ?? 0.08) / 252 - variance / 2
-  const drift = HIST_WEIGHT * mean + (1 - HIST_WEIGHT) * prior
-  const lastPrice = closes[closes.length - 1]
-
-  // Run simulations using Box-Muller transform for normal distribution
-  const finalPrices = []
-  const allPaths = []
-
-  for (let s = 0; s < nSims; s++) {
-    const path = [lastPrice]
-    for (let d = 0; d < nDays; d++) {
-      const u1 = Math.random()
-      const u2 = Math.random()
-      const z = Math.sqrt(-2 * Math.log(Math.max(u1, 1e-10))) * Math.cos(2 * Math.PI * u2)
-      path.push(path[path.length - 1] * Math.exp(drift + sigma * z))
-    }
-    allPaths.push(path)
-    finalPrices.push(path[nDays])
-  }
-
-  finalPrices.sort((a, b) => a - b)
-
-  // Compute percentile bands at each day
-  const p5 = [], p25 = [], p50 = [], p75 = [], p95 = []
-  for (let d = 0; d <= nDays; d++) {
-    const vals = allPaths.map(p => p[d]).sort((a, b) => a - b)
-    p5.push(+vals[Math.floor(nSims * 0.05)].toFixed(3))
-    p25.push(+vals[Math.floor(nSims * 0.25)].toFixed(3))
-    p50.push(+vals[Math.floor(nSims * 0.50)].toFixed(3))
-    p75.push(+vals[Math.floor(nSims * 0.75)].toFixed(3))
-    p95.push(+vals[Math.floor(nSims * 0.95)].toFixed(3))
-  }
-
-  const probProfit = (finalPrices.filter(p => p > lastPrice).length / nSims * 100).toFixed(1)
-  const varPct = ((finalPrices[Math.floor(nSims * 0.05)] - lastPrice) / lastPrice * 100).toFixed(2)
-  const expectedReturn = ((finalPrices.reduce((a, b) => a + b, 0) / nSims - lastPrice) / lastPrice * 100).toFixed(2)
-
-  return { p5, p25, p50, p75, p95, lastPrice, probProfit, varPct, expectedReturn, nDays, sigma: (sigma * Math.sqrt(252) * 100).toFixed(1) }
+// The backtest figure for the horizon closest to the one shown (keys are trading days)
+function backtestFor(bt, nDays) {
+  const hs = Object.keys(bt?.h || {}).map(Number)
+  if (!hs.length) return null
+  const h = hs.reduce((a, b) => (Math.abs(b - nDays) < Math.abs(a - nDays) ? b : a))
+  return { h, ...bt.h[String(h)], stocks: bt.stocks, years: bt.years }
 }
 
 function hexA(hex, alpha) {
@@ -154,15 +123,32 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
   const { period, startDate, endDate, adjust, market } = useCompareStore()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
+  // The chart's own candles only draw the history line; the simulation uses 3 years of daily data
   const { data, loading } = useStockData(stock.code, { period, startDate, endDate, adjust, market })
-  const [result, setResult] = useState(null)
+  const key = `${market}:${stock.code}:${nDays}:${nSims}:${trigger}`
+  const [res, setRes] = useState(null)
 
   useEffect(() => {
-    if (!data || !data.candles || data.candles.length < 30) return
-    const closes = data.candles.map((c) => c.close)
-    const mc = runMonteCarlo(closes, nSims, nDays, market)
-    setResult(mc)
-  }, [data, nSims, nDays, trigger, market])
+    let alive = true
+    fetch(`/api/simulation/${encodeURIComponent(stock.code)}?market=${market}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ days: nDays, simulations: nSims, seed: 42 + trigger }),   // "run again" draws new paths
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((d) => { if (alive) setRes({ key, result: fromApi(d) }) })
+      .catch(() => { if (alive) setRes({ key, error: true }) })
+    return () => { alive = false }
+  }, [key, stock.code, market, nDays, nSims, trigger])
+  const current = res?.key === key ? res : null
+  const result = current?.result
+
+  if (current?.error) {
+    return (
+      <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+        {lang === 'zh' ? '暂时无法模拟这只股票，请稍后再试。' : 'This stock cannot be simulated right now. Please try again later.'}
+      </div>
+    )
+  }
 
   if (loading) {
     return (
@@ -193,7 +179,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
         {stock.name !== stock.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>}
         <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
           {t.mcCurrentPrice}: {result.lastPrice.toFixed(2)} &nbsp;|&nbsp;
-          {lang === 'zh' ? '年化波动率' : 'Ann. Vol'}: {result.sigma}%
+          {lang === 'zh' ? `年化波动率：现在 ${result.volNow}% · 长期 ${result.volLong}%` : `Ann. vol: now ${result.volNow}% · long-run ${result.volLong}%`}
         </span>
       </div>
 
@@ -224,15 +210,26 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 
       {/* Chart */}
       <ReactECharts
-        option={buildMCOption(result, stock.name, color, data.candles.map((c) => c.close), t, lang)}
+        option={buildMCOption(result, stock.name, color, (data?.candles || []).map((c) => c.close), t, lang)}
         notMerge
         style={{ height: 340, width: '100%' }}
         opts={{ renderer: 'canvas' }}
       />
       <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6, marginTop: 8 }}>
         {lang === 'zh'
-          ? `趋势假设：25% 取自该股历史收益，75% 取长期股市平均回报（约 ${market === 'cn' ? 6 : 8}%/年）；波动率取自历史。模拟只展示可能的范围，不是预测。`
-          : `Drift: 25% from this stock's past returns, 75% from a long-run market average (about ${market === 'cn' ? 6 : 8}%/yr); volatility from history. The fan shows a range of outcomes, not a forecast.`}
+          ? `模型：波动率从现在的水平出发，逐渐回到这只股票的长期水平；如果它历史上下跌后波动更大，模型也会照做（GJR-GARCH）。每天的涨跌从它过去 3 年真实的涨跌里抽取，保留了暴涨暴跌。趋势 25% 取自该股历史收益，75% 取长期股市平均回报（约 ${result.priorPct}%/年）。模拟只展示可能的范围，不能预测涨跌方向。`
+          : `Model: volatility starts at today's level and drifts back to this stock's long-run level, and rises more after falls where its history shows that (GJR-GARCH). Each day's move is drawn from its real moves of the past 3 years, crashes and jumps included. Drift: 25% from its past returns, 75% from a long-run market average (about ${result.priorPct}%/yr). The fan shows a range of outcomes; it cannot predict the direction.`}
+        {(() => {
+          const b = backtestFor(result.backtest, nDays)
+          if (!b) return null
+          return (
+            <div style={{ marginTop: 4 }}>
+              {lang === 'zh'
+                ? `回测：用 ${b.stocks} 只股票和指数 ${b.years} 年的真实价格，每月做一次预测（共 ${b.n.toLocaleString()} 次）。${b.h} 个交易日后，真实价格有 ${b.cov90}% 落在 90% 区间内（理想 90%），${b.cov50}% 落在 50% 区间内（理想 50%）。`
+                : `Backtest: a forecast every month on real prices for ${b.stocks} stocks and indices over ${b.years} (${b.n.toLocaleString()} forecasts). ${b.h} trading days later the real price was inside the 90% band ${b.cov90}% of the time (ideal 90%) and inside the 50% band ${b.cov50}% of the time (ideal 50%).`}
+            </div>
+          )
+        })()}
       </div>
     </div>
   )
@@ -242,7 +239,7 @@ export default function MonteCarloPanel({ stocks }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
-  const [nSims, setNSims] = useState(500)
+  const [nSims, setNSims] = useState(10000)
   const [nDays, setNDays] = useState(252)
   const [trigger, setTrigger] = useState(0)
   const [running, setRunning] = useState(false)
@@ -281,8 +278,8 @@ export default function MonteCarloPanel({ stocks }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.mcSims}:</span>
-          {[100, 500, 1000].map((n) => (
-            <button key={n} style={btnStyle(nSims === n)} onClick={() => setNSims(n)}>{n}</button>
+          {[5000, 10000, 20000].map((n) => (
+            <button key={n} style={btnStyle(nSims === n)} onClick={() => setNSims(n)}>{n.toLocaleString()}</button>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

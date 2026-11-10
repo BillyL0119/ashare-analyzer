@@ -48,6 +48,7 @@ RATE_RULES = [
     ("/api/comments",        "POST", 60, 3600),
     ("/api/export",          "*",    20, 60),    # PDF/Excel generation is CPU heavy
     ("/api/backtest",        "*",    40, 60),
+    ("/api/simulation",      "POST", 30, 60),    # Monte Carlo: CPU work per call
     ("/api/",                "*",   900, 60),    # everything else
 ]
 
