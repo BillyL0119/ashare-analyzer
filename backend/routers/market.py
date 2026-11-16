@@ -5,7 +5,7 @@ Returns A-share market overview: main indices, advance/decline, total volume,
 northbound flow, and sector performance. Data cached 5 minutes.
 """
 
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 import akshare as ak
 import pandas as pd
 import json
@@ -16,7 +16,7 @@ import logging
 import requests
 import threading
 from datetime import datetime, timezone, timedelta
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, wait
 from services.js_runtime import v8_call
 
 router = APIRouter()
@@ -366,17 +366,19 @@ def market_sectors():
 
 # ── Global Market Sentiment ──────────────────────────────────────────────────
 
-_SENTIMENT_TTL = 1800  # 30 minutes
+# _sentiment_data is either a real result (both sides have at least one component) or None: never
+# placeholder numbers. A daemon loop refreshes it, so nobody waits on a visit to bring it up to date.
+_SENTIMENT_TTL = 1800       # a request seeing data older than this also kicks a refresh (the loop's safety net)
+_REFRESH_EVERY = 900        # the loop's pace, 15 minutes
+_RETRY_SOON = 90            # ... when nothing was published, or the A-share breadth was still loading
+_FETCH_WATCHDOG = 120       # a fetch running longer than this no longer blocks a new one
+_SOURCES_WAIT = 30          # the index sources get this long, then whatever finished is used
 _sentiment_ts: float = 0
 _sentiment_data: dict | None = None
 _sentiment_fetching: bool = False
-
-_DEFAULT_SENTIMENT = {
-    "us_sentiment": {"score": 50.0, "label_zh": "中性", "label_en": "Neutral", "vix": None},
-    "cn_sentiment": {"score": 50.0, "label_zh": "中性", "label_en": "Neutral"},
-    "indices": [],
-    "updated_at": None,
-}
+_sentiment_fetch_started: float = 0
+_sentiment_retry_soon: bool = True
+_sentiment_lock = threading.Lock()
 
 _GLOBAL_INDEX_META: dict = {
     "^GSPC":  {"name": "S&P 500",    "name_zh": "标普500",  "region": "us"},
@@ -603,197 +605,257 @@ def _finite(obj):
     return obj
 
 
-def _do_fetch_sentiment() -> dict:
-    """Blocking fetch of all sentiment data. Writes to globals when done."""
-    global _sentiment_ts, _sentiment_data, _sentiment_fetching
-    if _sentiment_fetching:
-        return _sentiment_data or _DEFAULT_SENTIMENT
-    _sentiment_fetching = True
+def _run_bounded(tasks: dict, timeout: float) -> dict:
+    """Run the callables in tasks ({key: fn}) at once and return {key: result} for those that finished
+    OK within timeout seconds. A slow or stuck one is dropped (its thread is left to the request
+    timeouts), never waited for: the pool is not joined."""
+    pool = ThreadPoolExecutor(max_workers=max(1, len(tasks)))
+    futures = {pool.submit(fn): key for key, fn in tasks.items()}
     try:
-        # ── Fetch all indices concurrently ───────────────────────────────────
-        raw: dict = {}
-        with ThreadPoolExecutor(max_workers=8) as pool:
-            futures: dict = {}
-            # US indices via index_us_stock_sina (252 days — needed for RSI)
-            for yf_sym, sina_sym in _AK_SINA_MAP.items():
-                futures[pool.submit(_ak_us_index, sina_sym)] = yf_sym
-            # Global indices via index_global_hist_sina (10 days — change_pct only)
-            for yf_sym, zh_name in _AK_GLOBAL_SINA_MAP.items():
-                futures[pool.submit(_ak_global_index, zh_name)] = yf_sym
-            futures[pool.submit(_tencent_hsi)] = "^HSI"
-            for fut in as_completed(futures, timeout=30):
-                yf_sym = futures[fut]
-                try:
-                    raw[yf_sym] = fut.result(timeout=12)
-                    if raw[yf_sym]:
-                        logger.info("fetched %s ok close=%.2f", yf_sym, raw[yf_sym]["close"])
-                except Exception as e:
-                    raw[yf_sym] = {}
-                    logger.debug("fetch %s failed: %s", yf_sym, e)
-        # ── US score: S&P 500 RSI + distance from its 52-week range + VIX ───
+        done, pending = wait(futures, timeout=timeout)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+    if pending:
+        logger.warning("sentiment: gave up on %s after %ss", sorted(str(futures[f]) for f in pending), timeout)
+    out: dict = {}
+    for fut in done:
         try:
-            vix_d = _cboe_vix()
+            out[futures[fut]] = fut.result()
         except Exception as e:
-            logger.warning("VIX (CBOE) failed: %s", e)
-            vix_d = {}
-        us_hist = None
-        for sym in ("^GSPC", "^DJI", "^IXIC"):
-            h = raw.get(sym, {}).get("hist")
-            if h is not None and len(h) >= 16:
-                us_hist = h
-                logger.info("us sentiment using %s hist", sym)
-                break
+            logger.debug("fetch %s failed: %s", futures[fut], e)
+    return out
 
-        us_parts = []          # each part scores 0 (fear) .. 100 (greed)
-        if us_hist is not None:
-            us_parts.append({"key": "rsi", "score": _calc_rsi(us_hist)})
-            us_parts.append({"key": "range52w", "score": _dist_score(us_hist)})
-        if vix_d.get("close"):
-            us_parts.append({"key": "vix", "value": vix_d["close"], "score": _vix_score(vix_d["close"])})
-        if us_parts:
-            us_score = round(sum(p["score"] for p in us_parts) / len(us_parts), 1)
-            logger.info("us score: %s → %.1f", us_parts, us_score)
-        else:
-            us_score = 50.0
-            logger.warning("us score: no data available, using 50.0")
 
-        # ── CN score: breadth + Shanghai RSI, each optional ─────────────────
-        cn_components = []
-        cn_parts = []
+def _build_sentiment() -> dict:
+    """Fetch every source and score it. A side with no data comes back with score None and no
+    components; _complete decides what to do with that."""
+    # ── Fetch all indices concurrently ───────────────────────────────────────
+    tasks: dict = {}
+    # US indices via index_us_stock_sina (252 days — needed for RSI)
+    for yf_sym, sina_sym in _AK_SINA_MAP.items():
+        tasks[yf_sym] = lambda s=sina_sym: _ak_us_index(s)
+    # Global indices via index_global_hist_sina (10 days — change_pct only)
+    for yf_sym, zh_name in _AK_GLOBAL_SINA_MAP.items():
+        tasks[yf_sym] = lambda z=zh_name: _ak_global_index(z)
+    tasks["^HSI"] = _tencent_hsi
+    tasks["_vix"] = _cboe_vix
+    raw = _run_bounded(tasks, _SOURCES_WAIT)
+    vix_d = raw.pop("_vix", None) or {}
+    for yf_sym, d in raw.items():
+        if d:
+            logger.info("fetched %s ok close=%.2f", yf_sym, d["close"])
 
-        # Breadth from the cached A-share spot snapshot the market overview uses (Eastmoney's
-        # spot API is unreachable from the server, so calling it here always failed).
+    # ── US score: S&P 500 RSI + distance from its 52-week range + VIX ───────
+    us_hist = None
+    for sym in ("^GSPC", "^DJI", "^IXIC"):
+        h = (raw.get(sym) or {}).get("hist")
+        if h is not None and len(h) >= 16:
+            us_hist = h
+            logger.info("us sentiment using %s hist", sym)
+            break
+
+    us_parts = []          # each part scores 0 (fear) .. 100 (greed)
+    if us_hist is not None:
+        us_parts.append({"key": "rsi", "score": _calc_rsi(us_hist)})
+        us_parts.append({"key": "range52w", "score": _dist_score(us_hist)})
+    if vix_d.get("close"):
+        us_parts.append({"key": "vix", "value": vix_d["close"], "score": _vix_score(vix_d["close"])})
+    us_score = None
+    if us_parts:
+        us_score = round(sum(p["score"] for p in us_parts) / len(us_parts), 1)
+        logger.info("us score: %s → %.1f", us_parts, us_score)
+    else:
+        logger.warning("us score: no data available")
+
+    # ── CN score: breadth + Shanghai RSI, each optional ─────────────────────
+    cn_components = []
+    cn_parts = []
+
+    # Breadth from the cached A-share spot snapshot the market overview uses (Eastmoney's
+    # spot API is unreachable from the server, so calling it here always failed).
+    try:
+        spot_df = _get_spot_df()
+        if spot_df is None:
+            raise RuntimeError("spot snapshot not ready")
+        pct_col = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
+        adv = int((pct_col > 0).sum())
+        dec = int((pct_col < 0).sum())
+        b = _breadth_score(adv, dec)
+        cn_components.append(b)
+        cn_parts.append({"key": "breadth", "score": b, "advance": adv, "decline": dec})
+        logger.info("cn breadth: adv=%d dec=%d → %.1f", adv, dec, b)
+    except Exception as e:
+        logger.warning("cn breadth failed: %s", e)
+
+    # Shanghai RSI: from batch (000001.SS already fetched) → akshare daily fallback
+    sh_hist = (raw.get("000001.SS") or {}).get("hist")
+    if sh_hist is not None and len(sh_hist) >= 16:
+        logger.info("cn rsi using 000001.SS from batch")
+    else:
+        sh_hist = None
+    if sh_hist is None:
         try:
-            spot_df = _get_spot_df()
-            if spot_df is None:
-                raise RuntimeError("spot snapshot not ready")
-            pct_col = pd.to_numeric(spot_df["涨跌幅"], errors="coerce")
-            adv = int((pct_col > 0).sum())
-            dec = int((pct_col < 0).sum())
-            b = _breadth_score(adv, dec)
-            cn_components.append(b)
-            cn_parts.append({"key": "breadth", "score": b, "advance": adv, "decline": dec})
-            logger.info("cn breadth: adv=%d dec=%d → %.1f", adv, dec, b)
+            got = _run_bounded({"sh": lambda: v8_call(ak.stock_zh_index_daily, "sh000001")}, 10)
+            if "sh" not in got:
+                raise TimeoutError("no answer in 10s")
+            sh_df = got["sh"].rename(columns={"close": "Close"}).tail(60)
+            if len(sh_df) >= 16:
+                sh_hist = sh_df
+                logger.info("cn rsi using akshare daily sh000001")
         except Exception as e:
-            logger.warning("cn breadth failed: %s", e)
+            logger.warning("cn shanghai daily akshare: %s", e)
 
-        # Shanghai RSI: from batch (000001.SS already fetched) → akshare daily fallback
-        sh_hist = raw.get("000001.SS", {}).get("hist")
-        if sh_hist is not None and len(sh_hist) >= 16:
-            logger.info("cn rsi using 000001.SS from batch")
-        else:
-            sh_hist = None
-        if sh_hist is None:
-            try:
-                with ThreadPoolExecutor(max_workers=1) as _sh_ex:
-                    sh_df = _sh_ex.submit(v8_call, ak.stock_zh_index_daily, "sh000001").result(timeout=10)
-                sh_df = sh_df.rename(columns={"close": "Close"}).tail(60)
-                if len(sh_df) >= 16:
-                    sh_hist = sh_df
-                    logger.info("cn rsi using akshare daily sh000001")
-            except Exception as e:
-                logger.warning("cn shanghai daily akshare: %s", e)
+    if sh_hist is not None:
+        sh_rsi = _calc_rsi(sh_hist)
+        cn_components.append(sh_rsi)
+        cn_parts.append({"key": "rsi", "score": sh_rsi})
+        logger.info("cn rsi=%.1f", sh_rsi)
 
-        if sh_hist is not None:
-            sh_rsi = _calc_rsi(sh_hist)
-            cn_components.append(sh_rsi)
-            cn_parts.append({"key": "rsi", "score": sh_rsi})
-            logger.info("cn rsi=%.1f", sh_rsi)
+    cn_score = round(sum(cn_components) / len(cn_components), 1) if cn_components else None
+    logger.info("cn score: components=%s → %s", cn_components, cn_score)
 
-        cn_score = round(sum(cn_components) / len(cn_components), 1) if cn_components else 50.0
-        logger.info("cn score: components=%s → %.1f", cn_components, cn_score)
+    # ── Global indices list ──────────────────────────────────────────────────
+    indices = []
+    for sym, meta in _GLOBAL_INDEX_META.items():
+        d = raw.get(sym) or {}
+        indices.append({
+            "symbol":     sym,
+            "name":       meta["name"],
+            "name_zh":    meta["name_zh"],
+            "region":     meta["region"],
+            "close":      d.get("close"),
+            "change_pct": d.get("change_pct"),
+        })
 
-        # ── Global indices list ──────────────────────────────────────────────
-        indices = []
-        for sym, meta in _GLOBAL_INDEX_META.items():
-            d = raw.get(sym, {})
+    # CN indices: Tencent quotes (Eastmoney redirects our server), Sina below as the fallback
+    cn_added = False
+    try:
+        names = {"shanghai_index": "上证指数", "shenzhen_index": "深证成指", "chinext_index": "创业板指"}
+        for key, q in _fetch_indices_tencent().items():
+            nm = names[key]
             indices.append({
-                "symbol":     sym,
-                "name":       meta["name"],
-                "name_zh":    meta["name_zh"],
-                "region":     meta["region"],
-                "close":      d.get("close"),
-                "change_pct": d.get("change_pct"),
+                "symbol":     _CN_INDEX_SYMBOLS.get(nm, "—"),
+                "name":       nm,
+                "name_zh":    nm,
+                "region":     "cn",
+                "close":      round(q["value"], 2),
+                "change_pct": round(q["change_pct"] * 100, 2),
             })
+            cn_added = True
+    except Exception as e:
+        logger.warning("cn indices tencent: %s", e)
 
-        # CN indices: Tencent quotes (Eastmoney redirects our server), Sina below as the fallback
-        cn_added = False
+    if not cn_added:
         try:
-            names = {"shanghai_index": "上证指数", "shenzhen_index": "深证成指", "chinext_index": "创业板指"}
-            for key, q in _fetch_indices_tencent().items():
-                nm = names[key]
-                indices.append({
-                    "symbol":     _CN_INDEX_SYMBOLS.get(nm, "—"),
-                    "name":       nm,
-                    "name_zh":    nm,
-                    "region":     "cn",
-                    "close":      round(q["value"], 2),
-                    "change_pct": round(q["change_pct"] * 100, 2),
-                })
-                cn_added = True
+            df = ak.stock_zh_index_spot_sina()
+            # Match by exact symbol code — avoids substring false-positives
+            sina_targets = {
+                "sh000001": "上证指数",
+                "sz399001": "深证成指",
+                "sz399006": "创业板指",
+            }
+            for _, row in df.iterrows():
+                code = str(row.get("代码", "")).lower().strip()
+                display = sina_targets.get(code)
+                if display:
+                    # Sina uses different column names — try both variants
+                    close_val = row.get("最新价") or row.get("price") or 0
+                    pct_val   = row.get("涨跌幅") or row.get("percent") or 0
+                    indices.append({
+                        "symbol":     code,
+                        "name":       display,
+                        "name_zh":    display,
+                        "region":     "cn",
+                        "close":      round(_safe_float(close_val), 2),
+                        "change_pct": round(_safe_float(pct_val), 2),
+                    })
+            sina_cn = sum(1 for i in indices if i["region"] == "cn")
+            logger.info("cn indices via sina fallback: added %d", sina_cn)
         except Exception as e:
-            logger.warning("cn indices tencent: %s", e)
+            logger.warning("cn indices sina: %s", e)
 
-        if not cn_added:
-            try:
-                df = ak.stock_zh_index_spot_sina()
-                # Match by exact symbol code — avoids substring false-positives
-                sina_targets = {
-                    "sh000001": "上证指数",
-                    "sz399001": "深证成指",
-                    "sz399006": "创业板指",
-                }
-                for _, row in df.iterrows():
-                    code = str(row.get("代码", "")).lower().strip()
-                    display = sina_targets.get(code)
-                    if display:
-                        # Sina uses different column names — try both variants
-                        close_val = row.get("最新价") or row.get("price") or 0
-                        pct_val   = row.get("涨跌幅") or row.get("percent") or 0
-                        indices.append({
-                            "symbol":     code,
-                            "name":       display,
-                            "name_zh":    display,
-                            "region":     "cn",
-                            "close":      round(_safe_float(close_val), 2),
-                            "change_pct": round(_safe_float(pct_val), 2),
-                        })
-                sina_cn = sum(1 for i in indices if i["region"] == "cn")
-                logger.info("cn indices via sina fallback: added %d", sina_cn)
-            except Exception as e:
-                logger.warning("cn indices sina: %s", e)
+    now_iso = datetime.now().isoformat()
+    us_lbl = _score_label(us_score) if us_score is not None else (None, None)
+    cn_lbl = _score_label(cn_score) if cn_score is not None else (None, None)
+    return {
+        "us_sentiment": {
+            "score":    us_score,
+            "label_zh": us_lbl[0],
+            "label_en": us_lbl[1],
+            "vix":      vix_d.get("close"),
+            "components": us_parts,
+            "updated_at": now_iso,
+        },
+        "cn_sentiment": {
+            "score":    cn_score,
+            "label_zh": cn_lbl[0],
+            "label_en": cn_lbl[1],
+            "components": cn_parts,
+            "updated_at": now_iso,
+        },
+        "indices":    indices,
+        "updated_at": now_iso,
+    }
 
-        us_lbl = _score_label(us_score)
-        cn_lbl = _score_label(cn_score)
-        result = {
-            "us_sentiment": {
-                "score":    us_score,
-                "label_zh": us_lbl[0],
-                "label_en": us_lbl[1],
-                "vix":      vix_d.get("close"),
-                "components": us_parts,
-            },
-            "cn_sentiment": {
-                "score":    cn_score,
-                "label_zh": cn_lbl[0],
-                "label_en": cn_lbl[1],
-                "components": cn_parts,
-            },
-            "indices":    indices,
-            "updated_at": datetime.now().isoformat(),
-        }
-        # Right after a restart the A-share spot snapshot (breadth) is still loading: try again soon
-        _sentiment_ts   = time.time() if any(p["key"] == "breadth" for p in cn_parts) else time.time() - _SENTIMENT_TTL + 120
-        # A NaN anywhere (a feed returning an empty close) made every cached response a 500:
-        # JSON cannot encode NaN. Replace non-finite numbers before caching.
-        _sentiment_data = result = _finite(result)
+
+def _complete(new: dict, prev: dict | None) -> dict | None:
+    """new if both sides scored something. A side with no components is taken over from prev (the last
+    real result, its own updated_at kept); with no prev either, nothing real exists: None."""
+    out = dict(new)
+    for side in ("us_sentiment", "cn_sentiment"):
+        if new[side].get("components"):
+            continue
+        if prev and prev[side].get("components"):
+            logger.warning("sentiment: %s has no data this time, keeping the one from %s",
+                           side, prev[side].get("updated_at"))
+            out[side] = prev[side]
+        else:
+            logger.warning("sentiment: %s has no data and no earlier result: publishing nothing", side)
+            return None
+    return out
+
+
+def _begin_fetch() -> bool:
+    """Claim the one fetch slot. A fetch older than the watchdog is presumed stuck and does not hold it."""
+    global _sentiment_fetching, _sentiment_fetch_started
+    with _sentiment_lock:
+        now = time.time()
+        if _sentiment_fetching and now - _sentiment_fetch_started < _FETCH_WATCHDOG:
+            return False
+        _sentiment_fetching, _sentiment_fetch_started = True, now
+        return True
+
+
+def _do_fetch_sentiment() -> dict | None:
+    """Blocking fetch of all sentiment data. Publishes to the globals when the result is real."""
+    global _sentiment_ts, _sentiment_data, _sentiment_fetching, _sentiment_retry_soon
+    if not _begin_fetch():
+        return _sentiment_data
+    started = _sentiment_fetch_started
+    try:
+        result = _complete(_build_sentiment(), _sentiment_data)
+        with _sentiment_lock:
+            if result is None:
+                _sentiment_retry_soon = True
+                return _sentiment_data
+            if started < _sentiment_ts:
+                # a fetch the watchdog gave up on, ending after a newer one published: that one is fresher
+                return _sentiment_data
+            # A NaN anywhere (a feed returning an empty close) made every cached response a 500:
+            # JSON cannot encode NaN. Replace non-finite numbers before publishing.
+            _sentiment_data = result = _finite(result)
+            _sentiment_ts = time.time()
+            # Right after a restart the A-share spot snapshot (breadth) is still loading: try again soon
+            _sentiment_retry_soon = not any(p["key"] == "breadth" for p in result["cn_sentiment"]["components"])
         return result
     except Exception as e:
         logger.error("sentiment fetch failed: %s", e)
-        _sentiment_ts = time.time()  # prevent immediate hammering on next request
-        return _sentiment_data or _DEFAULT_SENTIMENT
+        _sentiment_retry_soon = True
+        return _sentiment_data
     finally:
-        _sentiment_fetching = False
+        with _sentiment_lock:
+            if _sentiment_fetch_started == started:     # not a newer fetch's claim
+                _sentiment_fetching = False
 
 
 def warmup_sentiment():
@@ -803,25 +865,31 @@ def warmup_sentiment():
     logger.info("Sentiment cache warmed up.")
 
 
+def _sentiment_loop():
+    """Refresh every _REFRESH_EVERY whether or not anyone asks, so the first visitor after a quiet
+    night does not get hours-old numbers. Each fetch runs in its own thread: a hung one cannot stop the loop."""
+    while True:
+        t0 = time.time()
+        try:
+            worker = threading.Thread(target=_do_fetch_sentiment, daemon=True, name="sentiment-fetch")
+            worker.start()
+            worker.join(_FETCH_WATCHDOG)
+        except Exception as e:
+            logger.error("sentiment loop: %s", e)
+        gap = _RETRY_SOON if _sentiment_retry_soon else _REFRESH_EVERY
+        time.sleep(max(1.0, gap - (time.time() - t0)))
+
+
 @router.get("/sentiment")
 async def market_sentiment(background_tasks: BackgroundTasks):
+    data = _sentiment_data
     now = time.time()
-
-    # Cache is considered valid only if it is fresh AND has real scores (not defaults)
-    def _cache_is_real(d: dict) -> bool:
-        us = d.get("us_sentiment", {}).get("score", 50.0)
-        cn = d.get("cn_sentiment", {}).get("score", 50.0)
-        return not (us == 50.0 and cn == 50.0)
-
-    if (_sentiment_data is not None
-            and now - _sentiment_ts < _SENTIMENT_TTL
-            and _cache_is_real(_sentiment_data)):
-        return _sentiment_data
-
-    # Stale, missing, or default (score=50) — kick off background refresh
-    if not _sentiment_fetching:
-        background_tasks.add_task(_do_fetch_sentiment)
-    return _sentiment_data or _DEFAULT_SENTIMENT
+    if data is None or now - _sentiment_ts > _SENTIMENT_TTL:
+        background_tasks.add_task(_do_fetch_sentiment)    # the loop normally keeps it fresh; this is its safety net
+    if data is None:
+        # the iOS app keeps its last good copy on an error; placeholder numbers would replace it
+        raise HTTPException(status_code=503, detail="warming up")
+    return {**data, "age_seconds": int(now - _sentiment_ts)}
 
 
 # ── Daily Market Report ───────────────────────────────────────────────────────
@@ -861,14 +929,14 @@ def _generate_daily_report(today: str) -> dict:
             us_data[key] = {"name_en": name_en, "name_zh": name_zh,
                             "close": d["close"], "change_pct": d["change_pct"]}
 
-    # Sentiment from cache
-    sentiment = _sentiment_data or _DEFAULT_SENTIMENT
-    cn_score = sentiment.get("cn_sentiment", {}).get("score", 50)
-    cn_label_zh = sentiment.get("cn_sentiment", {}).get("label_zh", "中性")
-    cn_label_en = sentiment.get("cn_sentiment", {}).get("label_en", "Neutral")
-    us_score = sentiment.get("us_sentiment", {}).get("score", 50)
-    us_label_zh = sentiment.get("us_sentiment", {}).get("label_zh", "中性")
-    us_label_en = sentiment.get("us_sentiment", {}).get("label_en", "Neutral")
+    # Sentiment from the cache; None until a real result exists, then the mood sentence and block are left out
+    sentiment = _sentiment_data
+    us = (sentiment or {}).get("us_sentiment") or {}
+    cn = (sentiment or {}).get("cn_sentiment") or {}
+    mood_zh = mood_en = ""
+    if us.get("score") is not None:
+        mood_zh = f"美股情绪：{us['label_zh']}（{us['score']:.0f}分）"
+        mood_en = f"Market mood today: {us['label_en']} ({us['score']:.0f})"
 
     # Build one-line summary (US score drives the mood headline)
     sh = cn_data.get("sh")
@@ -881,35 +949,36 @@ def _generate_daily_report(today: str) -> dict:
     if sh and sp:
         summary_zh = (f"今日A股{'上涨' if sh['change_pct']>=0 else '下跌'}，"
                       f"上证{fmt_pct(sh['change_pct'])}；"
-                      f"昨夜美股标普{'收涨' if sp['change_pct']>=0 else '收跌'}{fmt_pct(sp['change_pct'])}。"
-                      f"美股情绪：{us_label_zh}（{us_score:.0f}分）")
+                      f"昨夜美股标普{'收涨' if sp['change_pct']>=0 else '收跌'}{fmt_pct(sp['change_pct'])}。")
         summary_en = (f"A-shares {'up' if sh['change_pct']>=0 else 'down'} today, "
                       f"SSE {fmt_pct(sh['change_pct'])}; "
-                      f"US S&P 500 {'gained' if sp['change_pct']>=0 else 'fell'} {fmt_pct(sp['change_pct'])} overnight. "
-                      f"Market mood today: {us_label_en} ({us_score:.0f})")
+                      f"US S&P 500 {'gained' if sp['change_pct']>=0 else 'fell'} {fmt_pct(sp['change_pct'])} overnight.")
     elif sh:
-        summary_zh = f"今日A股上证{fmt_pct(sh['change_pct'])}，美股情绪{us_label_zh}（{us_score:.0f}分）"
-        summary_en = f"A-shares SSE {fmt_pct(sh['change_pct'])} today. Market mood today: {us_label_en} ({us_score:.0f})"
+        summary_zh = f"今日A股上证{fmt_pct(sh['change_pct'])}。"
+        summary_en = f"A-shares SSE {fmt_pct(sh['change_pct'])} today."
     else:
-        summary_zh = f"今日市场情绪：{us_label_zh}（{us_score:.0f}分）"
-        summary_en = f"Market mood today: {us_label_en} ({us_score:.0f})"
+        summary_zh = summary_en = ""
+    summary_zh = (summary_zh + mood_zh).strip()
+    summary_en = (summary_en + (" " if summary_en and mood_en else "") + mood_en).strip()
 
-    return {
+    report = {
         "date": today,
         "summary_zh": summary_zh,
         "summary_en": summary_en,
         "cn_indices": cn_data,
         "us_indices": us_data,
-        "sentiment": {
-            "us_score": us_score,
-            "us_label_zh": us_label_zh,
-            "us_label_en": us_label_en,
-            "cn_score": cn_score,
-            "cn_label_zh": cn_label_zh,
-            "cn_label_en": cn_label_en,
-        },
         "generated_at": datetime.now(_BEIJING_TZ).isoformat(),
     }
+    if sentiment is not None:
+        report["sentiment"] = {
+            "us_score": us["score"],
+            "us_label_zh": us["label_zh"],
+            "us_label_en": us["label_en"],
+            "cn_score": cn["score"],
+            "cn_label_zh": cn["label_zh"],
+            "cn_label_en": cn["label_en"],
+        }
+    return report
 
 
 _partial_report: tuple | None = None
@@ -924,7 +993,7 @@ def _build_report(today: str) -> dict:
     global _partial_report
     with _report_lock:
         report = _generate_daily_report(today)
-        if not report["cn_indices"] or not report["us_indices"]:
+        if not report["cn_indices"] or not report["us_indices"] or "sentiment" not in report:
             _partial_report = (time.time(), report)   # a source was down: serve it, retry in 10 minutes
             return report
         try:
@@ -961,5 +1030,7 @@ def daily_report():
     return _build_report(today)   # first run on this server: nothing saved yet
 
 
-# Warm up on startup, once every helper above is defined
-threading.Thread(target=_get_spot_df, daemon=True).start()
+# Warm up on startup, once every helper above is defined (BFS_NO_WARMUP: tests import this module without network)
+if not os.environ.get("BFS_NO_WARMUP"):
+    threading.Thread(target=_get_spot_df, daemon=True).start()
+    threading.Thread(target=_sentiment_loop, daemon=True, name="sentiment-loop").start()

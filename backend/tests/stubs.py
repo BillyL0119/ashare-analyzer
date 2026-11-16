@@ -2,6 +2,7 @@
 so tests of routers/market.py, news.py and the like can run where CI installs only pytest and numpy.
 A module that is really installed is used as it is: stub() only fills in what is missing."""
 import importlib
+import os
 import sys
 import types
 
@@ -46,6 +47,10 @@ class JSONResponse:
 def _anything(name):
     """A module whose every attribute is a harmless callable returning another one."""
     class _Any:
+        def __or__(self, other):            # `pd.DataFrame | None` in an annotation
+            return self
+        __ror__ = __or__
+
         def __call__(self, *a, **kw):
             return _Any()
 
@@ -59,6 +64,7 @@ def _anything(name):
 
 
 def stub():
+    os.environ["BFS_NO_WARMUP"] = "1"        # routers/market.py starts background threads on import
     if _missing("requests"):
         class Timeout(Exception):
             pass
