@@ -6,7 +6,12 @@ request handlers (Sina daily/index history), holds this one lock, one call at a 
 Many of those akshare calls also download inside the lock, with no timeout of their own: a feed that
 stalls kept the lock (and every A-share chart behind it) for 10+ minutes on production. So the HTTP
 requests a thread makes while holding the lock share one time budget (_HOLD_BUDGET): past it they
-fail at once and the call gives the lock up."""
+fail at once and the call gives the lock up.
+
+Outside the lock the same hook gives a request with no timeout a default of (10, 30) seconds: akshare
+calls requests.get with none, requests then sets the socket timeout to None itself, so
+socket.setdefaulttimeout does not help and a stalled feed would block its thread for ever. A timeout
+the caller passed is left alone."""
 import logging
 import sys
 import threading
@@ -18,6 +23,7 @@ import requests.adapters
 logger = logging.getLogger("v8")
 
 _HOLD_BUDGET = 20.0       # seconds of network a single hold of the lock may spend
+_DEFAULT_TIMEOUT = (10, 30)   # (connect, read) for a request that passed none and holds no lock
 _FIRST_WAIT = 30.0        # how long v8_call_first waits for the lock before giving up
 _local = threading.local()
 
@@ -106,9 +112,13 @@ _send = requests.adapters.HTTPAdapter.send
 
 
 def _send_within_hold(self, request, *args, **kwargs):
-    """requests' transport, bounded by the hold's budget when this thread holds V8_LOCK."""
+    """requests' transport: bounded by the hold's budget when this thread holds V8_LOCK, and given a
+    default timeout when the caller passed none (requests would otherwise wait for ever)."""
     deadline = getattr(_local, "deadline", None)
-    if deadline is not None:
+    if deadline is None:
+        if kwargs.get("timeout") is None:
+            kwargs["timeout"] = _DEFAULT_TIMEOUT
+    else:
         left = deadline - time.monotonic()
         if left <= 0:
             raise requests.exceptions.Timeout(f"V8 lock held over {_HOLD_BUDGET:.0f}s, not fetching {request.url}")
