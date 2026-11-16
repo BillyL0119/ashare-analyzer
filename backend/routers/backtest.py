@@ -6,7 +6,7 @@ Query params:
   period   : 1y | 2y | 3y | 5y
 
 Returns equity curve, trades list, and key metrics.
-A-share: T+1 rule applied; fees buy 0.03% sell 0.13%.
+A-share: T+1 rule applied; fees buy 0.03% sell 0.13% (0.03% for an exchange-traded fund: no stamp duty).
 US stock: no T+1; fees 0.1% each side.
 Cache: 1 hour per (symbol, strategy, period).
 """
@@ -16,7 +16,7 @@ import numpy as np
 import time
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from services.stock_service import sina_a_daily, sina_index_daily
+from services.stock_service import sina_a_daily, sina_index_daily, get_stock_history, _is_fund
 
 router = APIRouter()
 logger = logging.getLogger("backtest")
@@ -117,12 +117,12 @@ def _sig_boll(closes: list, period: int = 20, k: float = 2.0) -> list:
 
 # ── Backtest engine ───────────────────────────────────────────────────────────
 
-def _run(dates, closes, signals, is_cn: bool) -> dict:
+def _run(dates, closes, signals, is_cn: bool, fund: bool = False) -> dict:
     n = len(closes)
     INIT = 1_000_000.0
     cash, shares = INIT, 0
     fee_buy = 0.0003 if is_cn else 0.001
-    fee_sell = 0.0013 if is_cn else 0.001
+    fee_sell = (0.0003 if fund else 0.0013) if is_cn else 0.001      # funds pay no stamp duty
     in_pos = False
     buy_price, buy_date, buy_idx = 0.0, "", 0
     just_bought = False         # for T+1
@@ -242,7 +242,18 @@ def backtest(
         pool = ThreadPoolExecutor(max_workers=1)      # the benchmark downloads alongside the prices
         bm_job = pool.submit(_benchmark_closes, is_cn, limit)
         pool.shutdown(wait=False)
-        if is_cn:
+        fund = is_cn and _is_fund(symbol)
+        if fund:
+            # Sina's stock feed has no ETFs (its share-count download fails: this was a 500). The fund feed
+            # the stock page uses gives unadjusted bars; T+1 is kept for every fund (cross-border ones are T+0).
+            start = time.strftime("%Y%m%d", time.localtime(time.time() - (limit * 1.6 + 30) * 86400))
+            df = get_stock_history(symbol, "daily", start, "20991231", "")
+            if df is None or df.empty:
+                raise HTTPException(status_code=404, detail="No price history found for this fund")
+            df = df.dropna(subset=["close"]).tail(limit)
+            dates = [str(d)[:10] for d in df["date"].tolist()]
+            closes = df["close"].tolist()
+        elif is_cn:
             df = sina_a_daily(_to_sina(symbol), adjust="qfq")
             df = df.sort_index().tail(limit)
             dates = [str(d)[:10] for d in df["date"].tolist()]
@@ -260,7 +271,7 @@ def backtest(
         sig_fn = {"ma": _sig_ma, "rsi": _sig_rsi, "macd": _sig_macd, "boll": _sig_boll}[strategy]
         signals = sig_fn(closes)
 
-        result = _run(dates, closes, signals, is_cn)
+        result = _run(dates, closes, signals, is_cn, fund)
 
         # ── Benchmark ────────────────────────────────────────────────────────
         bm_name_zh, bm_name_en = ("沪深300", "CSI 300") if is_cn else ("标普500", "S&P 500")

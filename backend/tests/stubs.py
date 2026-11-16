@@ -58,8 +58,12 @@ def _anything(name):
             if k.startswith("__"):
                 raise AttributeError(k)
             return _Any()
+    def attr(k):
+        if k.startswith("__"):                       # __path__, __spec__ ...: the import machinery asks
+            raise AttributeError(k)
+        return _Any()
     m = _module(name)
-    m.__getattr__ = lambda k: _Any()
+    m.__getattr__ = attr
     return m
 
 
@@ -82,6 +86,6 @@ def stub():
                 Header=lambda default=None, **kw: default, Response=object, Body=lambda default=None, **kw: default)
         _module("fastapi.responses", JSONResponse=JSONResponse, Response=object,
                 StreamingResponse=object, FileResponse=object)
-    for name in ("akshare", "pandas"):
+    for name in ("akshare", "pandas", "py_mini_racer"):
         if _missing(name):
             _anything(name)

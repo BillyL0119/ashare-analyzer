@@ -56,6 +56,10 @@ def _require_a_share(symbol: str) -> None:
     only burn ~20s of history fetches before failing."""
     if not re.fullmatch(r"\d{6}", symbol or ""):
         raise HTTPException(400, "A-share code required (6 digits); use /api/us/similar for US stocks")
+    # Funds (5xxxxx Shanghai, 1xxxxx Shenzhen) have no industry peers: the scan ran ~27 s and then
+    # ended in this same 422, so say it at once. No A-share stock code starts with 1 or 5.
+    if symbol[0] in "15":
+        raise HTTPException(422, f"{symbol} 是基金/ETF，暂不支持相似走势扫描 (funds and ETFs are not supported by the similar-trend scan)")
 
 
 # ── Related-industry mapping for cross-sector scan ────────────────────────────
@@ -137,7 +141,8 @@ _FALLBACK_PEERS = [
 ]
 
 # Started only now: the loader reads _INDUSTRY_MAP and _FALLBACK_PEERS defined just above
-threading.Thread(target=_load_name_map, daemon=True).start()
+if not os.environ.get("BFS_NO_WARMUP"):         # tests import this module without network
+    threading.Thread(target=_load_name_map, daemon=True).start()
 
 
 # ── Low-level helpers ─────────────────────────────────────────────────────────
