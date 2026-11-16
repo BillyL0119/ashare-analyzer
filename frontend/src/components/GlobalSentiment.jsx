@@ -425,25 +425,54 @@ function WorldMap({ indices, lang }) {
   )
 }
 
+const SENTIMENT_RETRIES = 5
+const SENTIMENT_RETRY_MS = 20000
+
 // ── Main export ───────────────────────────────────────────────────────────────
 export default function GlobalSentiment({ lang }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [attempt, setAttempt] = useState(0)    // failed loads so far; the panel retries up to RETRIES times
   const [collapsed, setCollapsed] = useState(false)
   const t = T[lang] || T.en
   const zh = lang === 'zh'
   const isMobile = useMobile()
 
   useEffect(() => {
-    fetch('/api/market/sentiment')
-      .then(r => r.json())
-      .then(setData)
-      .catch(console.error)
-      .finally(() => setLoading(false))
+    let cancelled = false
+    let timer
+    const load = (n) => {
+      fetch('/api/market/sentiment')
+        .then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`)   // 503 while the server warms up
+          return r.json()
+        })
+        .then(d => {
+          // both sides must carry a real score: a missing one is "unavailable", never a made-up 50
+          if (typeof d?.us_sentiment?.score !== 'number' || typeof d?.cn_sentiment?.score !== 'number') {
+            throw new Error('no sentiment')
+          }
+          if (cancelled) return
+          setData(d)
+          setAttempt(0)
+          setLoading(false)
+        })
+        .catch(() => {
+          if (cancelled) return
+          setLoading(false)
+          setAttempt(n + 1)
+          if (n < SENTIMENT_RETRIES) timer = setTimeout(() => load(n + 1), SENTIMENT_RETRY_MS)
+        })
+    }
+    load(0)
+    return () => { cancelled = true; clearTimeout(timer) }
   }, [])
 
-  const usScore = data?.us_sentiment?.score ?? 50
-  const cnScore = data?.cn_sentiment?.score ?? 50
+  const unavailable = !loading && !data       // nothing real to show yet (a refresh failing keeps the last good data)
+  const retrying = unavailable && attempt <= SENTIMENT_RETRIES
+  const usScore = data?.us_sentiment?.score
+  const cnScore = data?.cn_sentiment?.score
+  const dot = unavailable ? '#9ca3af' : loading ? '#fbbf24' : '#22c55e'
   const indices = data?.indices ?? []
   const updTime = data?.updated_at?.slice(11, 16) ?? ''
 
@@ -471,8 +500,8 @@ export default function GlobalSentiment({ lang }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
             width: 7, height: 7, borderRadius: '50%',
-            background: loading ? '#fbbf24' : '#22c55e',
-            boxShadow: `0 0 6px ${loading ? '#fbbf24' : '#22c55e'}`,
+            background: dot,
+            boxShadow: `0 0 6px ${dot}`,
             flexShrink: 0,
           }} />
           <span style={{
@@ -498,6 +527,15 @@ export default function GlobalSentiment({ lang }) {
         <div style={{ padding: '0 8px 4px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
           {loading ? (
             <LoadingSkeleton />
+          ) : unavailable ? (
+            <div style={{
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+              fontSize: 12, color: 'var(--text-muted)', padding: 16,
+            }}>
+              {retrying
+                ? (zh ? '数据暂时不可用，正在重试…' : 'Data unavailable, retrying…')
+                : (zh ? '数据暂时不可用，请稍后刷新页面。' : 'Data unavailable. Please reload the page in a moment.')}
+            </div>
           ) : (
             <div style={{ animation: 'fadeIn 0.5s ease both', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
               {/* Map + Gauges */}
