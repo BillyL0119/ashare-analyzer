@@ -368,6 +368,76 @@ def _resample(candles: list, period: str) -> list:
              "close": r["close"], "volume": r["volume"]} for _, r in out.iterrows()]
 
 
+# ── Japan's index ────────────────────────────────────────────────────────────
+# Fetched here (same Sina source as the sentiment code) so the Japan page does not depend on the
+# sentiment cache, which is empty after a restart or a failed refresh.
+
+_NIKKEI_TTL = 5 * 60
+_NIKKEI_FAIL_TTL = 60          # after a failure or a timeout, don't try (and wait) again for a minute
+_NIKKEI_LIMIT = 6              # seconds a request may wait for Sina
+_nikkei_cache: tuple = (0.0, None)      # (valid until, index dict or None)
+_nikkei_lock = threading.Lock()
+
+
+def _nikkei_fetch() -> Optional[dict]:
+    import akshare as ak
+    from services.js_runtime import v8_call_first      # Sina's history is decoded in V8, one call at a time
+    df = v8_call_first(ak.index_global_hist_sina, symbol="日经225指数")
+    # Sina appends today's unfinished session with close 0, which would read as a 100% fall.
+    df = df.dropna(subset=["close"])
+    df = df[df["close"] > 0].tail(2)
+    if len(df) < 2:
+        return None
+    last, prev = float(df["close"].iloc[-1]), float(df["close"].iloc[-2])
+    return {"symbol": "N225", "name_zh": "日经225", "name_en": "Nikkei 225",
+            "price": round(last, 2), "change_pct": round((last - prev) / prev * 100, 2)}
+
+
+def _nikkei() -> Optional[dict]:
+    """The Nikkei 225 tile, cached for 5 minutes; None when Sina fails or takes longer than the limit."""
+    global _nikkei_cache
+    until, value = _nikkei_cache
+    if time.time() < until:
+        return value
+    if not _nikkei_lock.acquire(blocking=False):      # someone is already waiting on Sina
+        return value
+    try:
+        box: dict = {}
+
+        def run():
+            try:
+                box["v"] = _nikkei_fetch()
+            except Exception as e:
+                logger.debug("nikkei fetch failed: %s", e)
+
+        t = threading.Thread(target=run, daemon=True)
+        t.start()
+        t.join(_NIKKEI_LIMIT)
+        if t.is_alive():
+            logger.warning("nikkei fetch still running after %ss; answering without it", _NIKKEI_LIMIT)
+        fresh = box.get("v")
+        value = fresh or value               # keep an older reading rather than lose the tile
+        _nikkei_cache = (time.time() + (_NIKKEI_TTL if fresh else _NIKKEI_FAIL_TTL), value)
+        return value
+    finally:
+        _nikkei_lock.release()
+
+
+def _jp_indices() -> list:
+    index = _nikkei()
+    if index:
+        return [index]
+    try:                                   # Sina failed: whatever the sentiment code last saw
+        from routers import market as _mk
+        for i in (_mk._sentiment_data or {}).get("indices") or []:
+            if i.get("symbol") == "^N225":
+                return [{"symbol": "N225", "name_zh": "日经225", "name_en": "Nikkei 225",
+                         "price": i.get("close"), "change_pct": i.get("change_pct")}]
+    except Exception as e:
+        logger.debug("jp indices failed: %s", e)
+    return []
+
+
 # ── Routes ───────────────────────────────────────────────────────────────────
 
 def _display_name(market: str, row: dict, q: dict | None = None) -> str:
@@ -514,14 +584,7 @@ def make_router(market: str) -> APIRouter:
             except Exception as e:
                 logger.debug("hk indices failed: %s", e)
         else:
-            try:
-                from routers import market as _mk
-                for i in (_mk._sentiment_data or {}).get("indices") or []:
-                    if i.get("symbol") == "^N225":
-                        indices.append({"symbol": "N225", "name_zh": "日经225", "name_en": "Nikkei 225",
-                                        "price": i.get("close"), "change_pct": i.get("change_pct")})
-            except Exception as e:
-                logger.debug("jp indices failed: %s", e)
+            indices = _jp_indices()
         return {"market": market, "currency": CURRENCY[market], "indices": indices, "hot": hot()}
 
     return router
