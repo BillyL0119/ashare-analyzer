@@ -1,0 +1,77 @@
+{
+ "data": {
+  "asof": null,
+  "rows": [
+   {
+    "title": "Apple (AAPL) Stock Rises After iPhone Demand Update",
+    "url": "/articles/apple-aapl-stock-rises-after-iphone-demand-update",
+    "created": "Nov 14, 2026",
+    "ago": "2 days ago",
+    "publisher": "Zacks",
+    "primarysymbol": "AAPL",
+    "primarycategory": "Stocks",
+    "related_symbols": [
+     "aapl|stocks",
+     "msft|stocks"
+    ],
+    "imagedomain": "https://www.nasdaq.com",
+    "image": "x.jpg"
+   },
+   {
+    "title": "Better Buy: This Chip Stock or That One?",
+    "url": "https://www.nasdaq.com/articles/better-buy-chip-stock",
+    "created": "Nov 16, 2026",
+    "ago": "3 hours ago",
+    "publisher": "Motley Fool",
+    "primarysymbol": "NVDA",
+    "related_symbols": [
+     "nvda|stocks",
+     "amd|stocks",
+     "aapl|stocks",
+     "intc|stocks",
+     "tsm|stocks"
+    ]
+   },
+   {
+    "title": "Wall Street Closes Mixed as Traders Weigh Fed Outlook",
+    "url": "/articles/wall-street-mixed",
+    "created": "Nov 16, 2026",
+    "ago": "45 minutes ago",
+    "publisher": "Nasdaq",
+    "primarysymbol": "",
+    "related_symbols": [
+     "spy|etf",
+     "qqq|etf",
+     "dia|etf",
+     "aapl|stocks"
+    ]
+   },
+   {
+    "title": "",
+    "url": "/articles/no-title",
+    "created": "Nov 10, 2026",
+    "ago": "6 days ago",
+    "publisher": "x",
+    "primarysymbol": "AAPL",
+    "related_symbols": []
+   },
+   {
+    "title": "Apple Supplier Foxconn Posts Record Quarter",
+    "url": "/articles/foxconn",
+    "created": "Nov 9, 2026",
+    "ago": "1 week ago",
+    "publisher": "RTTNews",
+    "primarysymbol": "",
+    "related_symbols": [
+     "aapl|stocks"
+    ]
+   }
+  ]
+ },
+ "message": null,
+ "status": {
+  "rCode": 200,
+  "bCodeMessage": null,
+  "developerMessage": null
+ }
+}

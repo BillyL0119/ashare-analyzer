@@ -1004,37 +1004,6 @@ def _keyword_sentiment_en(text: str) -> dict:
     return {"label": label, "score": score}
 
 
-def _fetch_yahoo_rss_us(symbol: str) -> list[dict]:
-    """Yahoo Finance RSS for US-listed ticker (no suffix needed)."""
-    url = (
-        f"https://feeds.finance.yahoo.com/rss/2.0/headline"
-        f"?s={symbol}&region=US&lang=en-US"
-    )
-    try:
-        r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
-        if r.status_code != 200:
-            return []
-        root = ET.fromstring(r.text)
-        items = root.findall(".//item")
-        rows = []
-        for item in items[:20]:
-            title = (item.findtext("title") or "").strip()
-            if not title:
-                continue
-            rows.append({
-                "title": title,
-                "content": (item.findtext("description") or "")[:300].strip(),
-                "source": "Yahoo Finance",
-                "time": (item.findtext("pubDate") or "").strip(),
-                "url": (item.findtext("link") or "").strip(),
-                "lang": "en",
-            })
-        return rows
-    except Exception as exc:
-        logger.debug("Yahoo RSS US failed for %s: %s", symbol, exc)
-        return []
-
-
 _NASDAQ_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
                   "(KHTML, like Gecko) Chrome/126 Safari/537.36",
@@ -1044,16 +1013,20 @@ _AGO_RE = re.compile(r"(\d+)\s+(minute|hour|day|week)s?\s+ago", re.I)
 
 
 def _fetch_nasdaq_symbol_news(symbol: str, limit: int = 40) -> list[dict]:
-    """Nasdaq.com articles tagged with `symbol` (rows carry related_symbols, relative 'ago' times)."""
+    """Nasdaq.com articles tagged with `symbol` (rows carry primarysymbol, related_symbols, relative 'ago'
+    times). The only per-stock US feed: Yahoo's RSS answers 400 now. Nasdaq takes 1-5 s from the server."""
     try:
         r = requests.get(
             "https://api.nasdaq.com/api/news/topic/articlebysymbol",
             params={"q": f"{symbol.lower()}|stocks", "offset": 0, "limit": limit, "fallback": "true"},
-            headers=_NASDAQ_HEADERS, timeout=10,
+            headers=_NASDAQ_HEADERS, timeout=(5, 15),
         )
+        if r.status_code != 200:
+            logger.warning("Nasdaq news for %s: HTTP %s", symbol, r.status_code)
+            return []
         rows = ((r.json() or {}).get("data") or {}).get("rows") or []
     except Exception as exc:
-        logger.debug("Nasdaq news failed for %s: %s", symbol, exc)
+        logger.warning("Nasdaq news failed for %s: %s", symbol, exc)
         return []
     now = datetime.now(timezone.utc)
     out = []
@@ -1080,6 +1053,7 @@ def _fetch_nasdaq_symbol_news(symbol: str, limit: int = 40) -> list[dict]:
             "url": url if url.startswith("http") else "https://www.nasdaq.com" + url,
             "lang": "en",
             "_related": [x.split("|")[0] for x in row.get("related_symbols") or []],
+            "_primary": re.sub(r"[^A-Z0-9]", "", (row.get("primarysymbol") or "").upper()),
         })
     return out
 
@@ -1119,7 +1093,10 @@ def _us_name_keywords(symbol: str) -> list[str]:
 
 
 def _relevance(item: dict, symbol: str, keywords: list[str]) -> int:
-    """3 = headline names the company, 2 = summary does, 1 = tagged with few tickers incl. this one."""
+    """3 = Nasdaq files it under this ticker, or the headline names the company; 2 = summary does;
+    1 = tagged with few tickers incl. this one."""
+    if item.get("_primary") and item["_primary"] == re.sub(r"[^A-Z0-9]", "", symbol.upper()):
+        return 3                                  # (BRK.B may be filed as BRK/B or BRK-B)
     pats = [re.compile(r"\b" + re.escape(symbol) + r"\b")] + [
         re.compile(r"\b" + re.escape(k) + r"(?:'s|’s)?\b", re.I) for k in keywords
     ]
@@ -1135,7 +1112,9 @@ def _relevance(item: dict, symbol: str, keywords: list[str]) -> int:
 
 _news_pool = ThreadPoolExecutor(max_workers=6, thread_name_prefix="us-news")
 _nasdaq_cache: dict = {}        # symbol -> (ts, rows)
-_NASDAQ_BUDGET = 2.0            # seconds the response waits for Nasdaq (it takes 1-5s)
+_NASDAQ_BUDGET = 14.0           # seconds the response waits for Nasdaq (it took 4.3 s on the server; a 2 s wait
+                                # answered "no news" for every ticker)
+_NAME_LOOKUP_WAIT = 4.0         # the company-name lookup only sharpens relevance: never wait long for it
 
 
 def _nasdaq_cached(symbol: str) -> list[dict]:
@@ -1149,19 +1128,21 @@ def _nasdaq_cached(symbol: str) -> list[dict]:
 
 
 def _us_symbol_news(symbol: str, want: int = 15) -> tuple[list[dict], bool]:
-    """Yahoo RSS + Nasdaq for one ticker, keeping only items that are actually about it.
-    Returns (items, complete). If Nasdaq misses its time budget the answer uses Yahoo alone
-    (complete=False); the Nasdaq fetch keeps running and lands in its own cache for next time."""
-    f_y = _news_pool.submit(_fetch_yahoo_rss_us, symbol)
+    """Nasdaq's articles for one ticker, keeping only items that are actually about it.
+    Returns (items, complete). If Nasdaq misses its time budget the answer is empty (complete=False);
+    the Nasdaq fetch keeps running and lands in its own cache for next time."""
     f_n = _news_pool.submit(_nasdaq_cached, symbol)
     f_k = _news_pool.submit(_us_name_keywords, symbol)
-    items = f_y.result() or []
-    keywords = f_k.result() or []
+    items: list[dict] = []
     complete = True
     try:
-        items += f_n.result(timeout=_NASDAQ_BUDGET) or []
+        items = list(f_n.result(timeout=_NASDAQ_BUDGET) or [])
     except Exception:
         complete = False
+    try:
+        keywords = f_k.result(timeout=_NAME_LOOKUP_WAIT) or []
+    except Exception:
+        keywords = list(_US_NAME_ALIASES.get(symbol, []))
 
     import email.utils as _eu
     def _ts(it):
@@ -1186,6 +1167,7 @@ def _us_symbol_news(symbol: str, want: int = 15) -> tuple[list[dict], bool]:
     for _, _, it in strong[:want]:
         it = dict(it)
         it.pop("_related", None)
+        it.pop("_primary", None)
         out.append(it)
     return out, complete
 
@@ -1221,8 +1203,8 @@ def _get_news_base(symbol: str, market: str):
         if market == "us":
             sym_upper = symbol.upper()
             news_raw, complete = _us_symbol_news(sym_upper)
-            # Partial (Nasdaq was late): cache for ~60s only, so the next request gets the merged list
-            cache_ts = now if complete else now - _RESULT_TTL + 60
+            # Partial (Nasdaq was late) or empty: cache for ~60s only, so a bad moment is not kept for 30 minutes
+            cache_ts = now if complete and news_raw else now - _RESULT_TTL + 60
             stock_name = sym_upper
 
             if not news_raw:
