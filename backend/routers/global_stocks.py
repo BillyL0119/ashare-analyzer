@@ -9,7 +9,8 @@ Sources (all reachable from the server, no keys):
     JPX data_j/data_e), refreshed daily; Tencent batch quotes add simplified Chinese names
     (HK), market caps (ranking) and board lots.
   - Quotes: Tencent qt.gtimg.cn (r_hk00700 realtime, jp7203).
-  - History: HK from Tencent's hkfqkline (forward-adjusted). Tencent has no Japanese history,
+  - History: HK from Tencent's unadjusted K-line, adjusted by ratio (services/total_return.py); its
+    forward-adjusted hkfqkline is only the fallback. Tencent has no Japanese history,
     so JP daily bars come from the FT markets chart API (symbol "7203:TYO" resolved to its xid).
 """
 import io
@@ -27,6 +28,7 @@ import requests
 from fastapi import APIRouter, HTTPException, Query
 
 from routers.us_stocks import _compute_ma, _compute_macd, _compute_rsi, _safe, _fmt_date
+from services import total_return
 
 logger = logging.getLogger(__name__)
 
@@ -295,14 +297,9 @@ def _ft_xid_for(code: str) -> Optional[str]:
 
 
 def _hk_history(code: str, days: int) -> list:
-    n = min(int(days * 0.7) + 30, 2000)
-    r = requests.get("https://web.ifzq.gtimg.cn/appstock/app/hkfqkline/get",
-                     params={"param": f"hk{code},day,,,{n},qfq"}, timeout=10)
-    node = ((r.json().get("data") or {}).get(f"hk{code}") or {})
-    rows = node.get("qfqday") or node.get("day") or []
-    # Tencent order: date, open, close, high, low, volume
-    return [{"date": x[0], "open": float(x[1]), "close": float(x[2]), "high": float(x[3]),
-             "low": float(x[4]), "volume": float(x[5])} for x in rows if len(x) >= 6]
+    # Ratio-adjusted (total-return) prices: Tencent's forward-adjusted feed subtracts dividends from
+    # old prices, which distorts returns, volatility and indicators. Falls back to it if needed.
+    return total_return.hk_history(code, int(days * 0.7) + 30)
 
 
 def _jp_history(code: str, days: int) -> list:

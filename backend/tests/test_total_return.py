@@ -88,3 +88,90 @@ def test_one_day_bad_price_is_dropped():
     out = tr.adjust(rows, "us")
     assert [c["date"] for c in out] == ["d1", "d3", "d4"]
     assert returns(out)[0] == pytest.approx(math.log(41.39 / 41.56))
+
+
+# ── volume and the history() entry point (requests is stubbed, no network) ──
+
+def test_volume_survives_and_is_not_rescaled():
+    rows = [row("d1", 100.0) + [1000.0], row("d2", 50.0, {"hgcgContent": "每1股拆分成2股"}) + [2500.0], row("d3", 51.0)]
+    out = tr.adjust(rows, "hk")
+    assert [c.get("volume") for c in out] == [1000.0, 2500.0, None]         # a row without one stays without
+    assert out[0]["close"] == pytest.approx(50.0)                           # prices are scaled, volume is not
+
+
+class _Resp:
+    def __init__(self, payload):
+        self._payload = payload
+
+    def json(self):
+        return self._payload
+
+
+class _Calls(list):
+    """The URLs asked for, with the `param` of each request in .params."""
+    params = None
+
+    def __init__(self):
+        super().__init__()
+        self.params = []
+
+
+def _stub_requests(monkeypatch, raw=None, qfq=None):
+    """Replace the lazily imported `requests`: RAW_URL answers `raw` (an exception is raised), QFQ_URL `qfq`."""
+    import sys
+    import types
+    calls = _Calls()
+
+    def get(url, params=None, timeout=None):
+        calls.append(url)
+        calls.params.append((params or {}).get("param"))
+        answer = raw if url == tr.RAW_URL else qfq
+        if isinstance(answer, Exception):
+            raise answer
+        return _Resp(answer)
+
+    monkeypatch.setitem(sys.modules, "requests", types.SimpleNamespace(get=get))
+    monkeypatch.setattr(tr.time, "sleep", lambda s: None)
+    return calls
+
+
+def _raw_payload(code, days):
+    return {"data": {code: {"day": days}}}
+
+
+def test_history_is_ratio_adjusted_with_volume_and_a_zero_gap_on_the_dividend_day(monkeypatch):
+    calls = _stub_requests(monkeypatch, raw=_raw_payload("hk00005", [
+        ["2024-01-02", "62.95", "62.95", "63.0", "62.5", "100", {}],
+        ["2024-01-03", "59.95", "59.95", "60.0", "59.5", "200", {"FHcontent": "末期息3港元"}],
+        ["2024-01-04", "60.5", "60.5", "60.9", "60.0", "300"],              # no notes element at all
+    ]))
+    out = tr.hk_history("00005", 3000)
+    assert calls == [tr.RAW_URL]
+    assert [c["volume"] for c in out] == [100.0, 200.0, 300.0]
+    assert set(out[0]) == {"date", "open", "high", "low", "close", "volume"}
+    assert out[-1]["close"] == 60.5                                          # the latest price is unchanged
+    assert math.log(out[1]["close"] / out[0]["close"]) == pytest.approx(0.0, abs=1e-12)
+    assert out[0]["close"] == pytest.approx(59.95)                           # not the 62.95 that was paid before the dividend
+
+
+def test_history_asks_for_at_most_2000_rows(monkeypatch):
+    calls = _stub_requests(monkeypatch, raw=_raw_payload("hk00005", [["d1", "1", "1", "1", "1", "5", {}]]))
+    tr.hk_history("00005", 5000)
+    assert calls.params == ["hk00005,day,,,2000"]
+
+
+@pytest.mark.parametrize("raw", [RuntimeError("blocked"), _raw_payload("hk00005", [])])
+def test_history_falls_back_to_the_forward_adjusted_feed(monkeypatch, raw):
+    qfq = {"data": {"hk00005": {"qfqday": [["2024-01-02", "45.54", "45.54", "45.7", "45.3", "100"],
+                                           ["2024-01-03", "46.0", "46.2", "46.3", "45.9", "150"]]}}}
+    calls = _stub_requests(monkeypatch, raw=raw, qfq=qfq)
+    out = tr.hk_history("00005", 3000)
+    assert tr.QFQ_URL in calls
+    assert out == [{"date": "2024-01-02", "open": 45.54, "close": 45.54, "high": 45.7, "low": 45.3, "volume": 100.0},
+                   {"date": "2024-01-03", "open": 46.0, "close": 46.2, "high": 46.3, "low": 45.9, "volume": 150.0}]
+
+
+def test_history_raises_when_both_feeds_fail(monkeypatch):
+    _stub_requests(monkeypatch, raw=RuntimeError("a"), qfq=RuntimeError("b"))
+    with pytest.raises(RuntimeError):
+        tr.hk_history("00005", 100)

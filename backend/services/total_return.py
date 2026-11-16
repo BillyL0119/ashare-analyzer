@@ -20,10 +20,14 @@ taken as a split; a one-day bad price that snaps back the next day is dropped.
 (Tencent's forward-adjusted US series is already by ratio and also covers spin-offs, so US stocks
 keep using it.)
 """
+import logging
 import re
 import time
 
+logger = logging.getLogger(__name__)
+
 RAW_URL = "https://web.ifzq.gtimg.cn/appstock/app/kline/kline"
+QFQ_URL = "https://web.ifzq.gtimg.cn/appstock/app/hkfqkline/get"
 
 _NUM = r"(\d+(?:\.\d+)?)"
 _SPLIT = re.compile(rf"每{_NUM}股(?:拆分成|拆细为|拆细成|分拆成|分拆为|拆为|拆成){_NUM}股")
@@ -102,8 +106,9 @@ def _unmarked_split(prev_close: float, open_: float, close: float):
 
 def adjust(rows: list, market: str) -> list:
     """rows, oldest first: [date, open, close, high, low, notes] with notes a dict that may hold
-    FHcontent (dividend), hgcgContent (split) and ggContent (rights). Returns candles {date, open,
-    high, low, close} scaled so that day-to-day changes are total returns; the latest prices are
+    FHcontent (dividend), hgcgContent (split) and ggContent (rights), and optionally a 7th element,
+    the volume. Returns candles {date, open, high, low, close} (plus volume when the row has one,
+    not rescaled) scaled so that day-to-day changes are total returns; the latest prices are
     unchanged. Days with a bad price are left out."""
     n = len(rows)
     out = [None] * n
@@ -114,9 +119,11 @@ def adjust(rows: list, market: str) -> list:
         if pc > 0 and c > 0 and not 0.75 < c / pc < 1.33 and 0.93 < nc / pc < 1.07 and not rows[i][5]:
             skip.add(i)
     for i in range(n - 1, -1, -1):
-        date, o, c, h, low, notes = rows[i]
+        date, o, c, h, low, notes = rows[i][:6]
         if i not in skip and c > 0:
             out[i] = {"date": date, "open": o * factor, "high": h * factor, "low": low * factor, "close": c * factor}
+            if len(rows[i]) > 6:
+                out[i]["volume"] = rows[i][6]
         j = i - 1
         while j in skip:
             j -= 1
@@ -153,7 +160,7 @@ def adjust(rows: list, market: str) -> list:
 
 def tencent_raw_rows(code: str, n: int, timeout: float = 10) -> list:
     """The last n unadjusted daily rows for a Tencent code ("hk00700"), oldest first, as adjust() takes
-    them. One request returns up to 2000 rows."""
+    them (the volume rides along as a 7th element). One request returns up to 2000 rows."""
     import requests
     last = None
     for attempt in range(2):
@@ -164,7 +171,8 @@ def tencent_raw_rows(code: str, n: int, timeout: float = 10) -> list:
             for x in node.get("day") or []:
                 notes = x[6] if len(x) > 6 and isinstance(x[6], dict) else {}
                 rows.append([x[0], float(x[1]), float(x[2]), float(x[3]), float(x[4]),
-                             {k: v for k, v in notes.items() if v and k in ("FHcontent", "hgcgContent", "ggContent")}])
+                             {k: v for k, v in notes.items() if v and k in ("FHcontent", "hgcgContent", "ggContent")},
+                             float(x[5]) if len(x) > 5 and x[5] not in (None, "") else 0.0])
             return rows
         except Exception as e:
             last = e
@@ -175,3 +183,33 @@ def tencent_raw_rows(code: str, n: int, timeout: float = 10) -> list:
 def hk_candles(code: str, n: int = 800) -> list:
     """Total-return daily candles for a Hong Kong stock (5-digit code), oldest first."""
     return adjust(tencent_raw_rows(f"hk{code}", n), "hk")
+
+
+def hk_qfq_candles(code: str, n: int, timeout: float = 10) -> list:
+    """Tencent's forward-adjusted Hong Kong candles (dividends subtracted, not scaled), oldest first,
+    with volume. Only the fallback for hk_history()."""
+    import requests
+    r = requests.get(QFQ_URL, params={"param": f"hk{code},day,,,{min(int(n), 2000)},qfq"}, timeout=timeout)
+    node = (r.json().get("data") or {}).get(f"hk{code}") or {}
+    rows = node.get("qfqday") or node.get("day") or []
+    # Tencent order: date, open, close, high, low, volume
+    return [{"date": x[0], "open": float(x[1]), "close": float(x[2]), "high": float(x[3]),
+             "low": float(x[4]), "volume": float(x[5])} for x in rows if len(x) >= 6]
+
+
+def hk_history(code: str, n: int) -> list:
+    """Daily candles {date, open, close, high, low, volume} for a Hong Kong stock, oldest first: total
+    return by ratio from the unadjusted feed, or, if that feed fails or is empty, Tencent's
+    forward-adjusted series, so a chart is never empty because of the better source."""
+    n = min(int(n), 2000)
+    try:
+        candles = hk_candles(code, n)
+        if candles:
+            logger.info("hk history %s: ratio-adjusted, %d rows", code, len(candles))
+            return candles
+        logger.warning("hk history %s: unadjusted feed was empty, using forward-adjusted", code)
+    except Exception as e:
+        logger.warning("hk history %s: unadjusted feed failed (%s), using forward-adjusted", code, e)
+    candles = hk_qfq_candles(code, n)
+    logger.info("hk history %s: forward-adjusted, %d rows", code, len(candles))
+    return candles
