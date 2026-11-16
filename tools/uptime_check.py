@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Uptime check for bestfriendstock.com, run every 15 minutes by .github/workflows/uptime.yml.
+"""Uptime check for bestfriendstock.com, run by .github/workflows/uptime.yml (scheduled every 15 minutes, but GitHub starts it only every 4-8 hours in practice).
 
 Read-only GETs against the public site. A check fails when the answer is not HTTP 200, takes longer
 than --timeout seconds, or is empty: an empty body, or no data in it (no candles, no rows, only a
-feed's neutral defaults). Each failed check is tried once more after --retry-delay seconds, so one
+feed's neutral defaults), or stale (the newest candle, case or sentiment reading is older than the
+check allows). Each failed check is tried once more after --retry-delay seconds, so one
 slow call or a restart does not raise an alarm.
 
     python3 tools/uptime_check.py                   # check the live site, print a report
@@ -30,9 +31,10 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Callable
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 BASE_URL = "https://bestfriendstock.com"
+BEIJING = timezone(timedelta(hours=8))                   # the server writes its timestamps in this zone, no offset
 UA = "bestfriendstock-uptime/1.0 (+https://github.com/BillyL0119/ashare-analyzer)"
 LABEL = "uptime"
 MARK = re.compile(r"<!-- uptime-failing: (.*?) -->")     # which checks an issue text reports
@@ -102,18 +104,55 @@ def app_files(body, site):
     return f"{len(paths)} files"
 
 
-def candles(key: str, max_age_days: int):
-    """At least 20 daily candles, the newest at most max_age_days old (long holidays included)."""
+def _age_days(day: str) -> int:
+    try:
+        return (datetime.now(timezone.utc).date() - date.fromisoformat(str(day)[:10])).days
+    except ValueError:
+        raise Bad(f"bad date {day!r}") from None
+
+
+def candles(key: str, max_age_days: int, min_rows: int = 20):
+    """At least min_rows daily candles, the newest at most max_age_days old (long holidays included)."""
     def check(body, _site):
         rows = _obj(body).get(key) or []
-        need(len(rows) >= 20, f"{len(rows)} candles")
+        need(len(rows) >= min_rows, f"{len(rows)} candles, need {min_rows}")
         last = str(rows[-1].get("date", ""))[:10]
-        try:
-            age = (datetime.now(timezone.utc).date() - date.fromisoformat(last)).days
-        except ValueError:
-            raise Bad(f"bad candle date {last!r}") from None
+        age = _age_days(last)
         need(age <= max_age_days, f"newest candle {last} is {age} days old")
         return f"{len(rows)} candles, newest {last}"
+    return check
+
+
+def sentiment(body, _site):
+    """The market page's indices. The feed once fell back to a default '50 Neutral' for hours and
+    kept answering 200, so the reading must carry real closes and a recent timestamp."""
+    d = _obj(body)
+    closes = [i for i in d.get("indices") or [] if isinstance(i.get("close"), (int, float)) and i["close"] > 0]
+    need(len(closes) >= 8, f"only {len(closes)} indices have a close, need 8")
+    stamp = d.get("updated_at") or ""
+    try:
+        age = datetime.now(BEIJING) - datetime.fromisoformat(stamp).replace(tzinfo=BEIJING)
+    except ValueError:
+        raise Bad(f"bad updated_at {stamp!r}") from None
+    need(age <= timedelta(hours=2), f"updated_at {stamp[:16]} is {age.total_seconds() / 3600:.1f} h old")
+    return f"{len(closes)} indices, updated {int(age.total_seconds() // 60)} min ago"
+
+
+def news(body, _site):
+    items = _obj(body).get("news") or []
+    need(items, "no news items")
+    return f"{len(items)} news items"
+
+
+def newest_case(max_age_days: int):
+    """The case library is written daily; an old newest case means the writer has stopped."""
+    def check(body, _site):
+        cases = _obj(body).get("cases") or []
+        need(cases, "no cases")
+        last = max(str(c.get("date", ""))[:10] for c in cases)
+        age = _age_days(last)
+        need(age <= max_age_days, f"newest case {last} is {age} days old")
+        return f"{len(cases)} cases, newest {last}"
     return check
 
 
@@ -200,17 +239,22 @@ CHECKS = [
     Check("App scripts and styles", "/", app_files),
     Check("HTTPS certificate", None, certificate),
     # A-shares (Sina, Tencent, AkShare)
-    Check("A-share K-line 600519", "/api/stocks/600519/history?count=60", candles("candles", 16)),
+    Check("A-share K-line 600519", "/api/stocks/600519/history", candles("candles", 12)),
     Check("A-share score 600519", "/api/stock/score/600519", score),
     Check("A-share financials 600519", "/api/financial/600519", financial),
     Check("A-share radar 600519", "/api/radar/600519", radar),
     # US stocks
     Check("US quote AAPL", "/api/us/stock/AAPL/realtime", us_quote),
-    Check("US K-line AAPL", "/api/us/stock/AAPL/history?count=60", candles("data", 10)),
+    Check("US 5-year K-line AAPL", "/api/us/stock/AAPL/history?period=5y", candles("data", 5, min_rows=1000)),
+    Check("US news AAPL", "/api/news/AAPL?market=us&lang=en", news),
+    # Market overviews: sentiment, Hong Kong, Japan
+    Check("Market sentiment", "/api/market/sentiment", sentiment),
+    Check("Hong Kong overview", "/api/hk/overview", listing("indices", "indices")),
+    Check("Japan overview", "/api/jp/overview", listing("indices", "indices")),
     Check("Heatmap (US)", "/api/heatmap?market=us&limit=100", heatmap),
     Check("Screener (US)", "/api/us/screener?sort=market_cap&order=desc&limit=50&offset=0", screener),
     # Learning
-    Check("Case library API", "/api/cases?lang=en&limit=3", listing("cases", "cases")),
+    Check("Case library API", "/api/cases?lang=en&limit=5", newest_case(7)),
     Check("Fed chair scenarios", "/api/governor/scenarios?lang=en", listing("scenarios", "scenarios")),
     Check("Time machine scenarios", "/api/time-machine/scenarios?lang=en", listing("scenarios", "scenarios")),
     Check("Sitemap", "/sitemap.xml", sitemap),
