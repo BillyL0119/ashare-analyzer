@@ -72,17 +72,17 @@ const PRESETS = [
 
 const money = (v) => (v == null ? '—' : v >= 1e12 ? `$${(v / 1e12).toFixed(2)}T` : v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : v >= 1e6 ? `$${(v / 1e6).toFixed(0)}M` : `$${v.toFixed(0)}`)
 const vol = (v) => (v == null ? '—' : v >= 1e9 ? `${(v / 1e9).toFixed(2)}B` : v >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : v >= 1e3 ? `${(v / 1e3).toFixed(0)}K` : String(v))
-const UP = '#26a69a', DOWN = '#ef5350', ACCENT = '#4588cc'
+const UP = '#00c853', DOWN = '#ff3b30', ACCENT = '#2f7bff'
 
 const CSS = `
 .sc-wrap { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }
-.sc-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; }
+.sc-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
 .sc-filters { padding: 14px; display: grid; gap: 14px; position: sticky; top: 112px; }
 .sc-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-.sc-in { width: 100%; box-sizing: border-box; padding: 7px 10px; border-radius: 6px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
+.sc-in { width: 100%; box-sizing: border-box; padding: 7px 10px; border-radius: 8px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
 .sc-in:focus { border-color: ${ACCENT}; }
 .sc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.sc-chip { padding: 6px 12px; border-radius: 6px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); white-space: nowrap; }
+.sc-chip { padding: 6px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); white-space: nowrap; }
 .sc-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
 .sc-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer; padding: 3px 0; }
 .sc-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
@@ -259,7 +259,7 @@ export default function ScreenerPage({ lang }) {
               </thead>
               <tbody>
                 {!data && !err && Array.from({ length: 10 }, (_, i) => (
-                  <tr key={i}><td colSpan={9}><div className="skeleton" style={{ height: 16, borderRadius: 4 }} /></td></tr>
+                  <tr key={i}><td colSpan={9}><div className="skeleton" style={{ height: 16, borderRadius: 6 }} /></td></tr>
                 ))}
                 {rows.map((r) => (
                   <tr key={r.symbol} className="row" tabIndex={0} onClick={() => open(r)} onKeyDown={(e) => e.key === 'Enter' && open(r)}>

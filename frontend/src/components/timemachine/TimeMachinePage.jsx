@@ -13,7 +13,7 @@ const longDate = (d, lang) => new Date(`${d}T12:00:00Z`).toLocaleDateString(LOCA
   { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', timeZone: 'UTC' })
 const shortDate = (d, lang) => new Date(`${d}T12:00:00Z`).toLocaleDateString(LOCALE[lang] || 'en-US',
   { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })
-const YEAR_TINT = { gfc_2008: '#ef4444', covid_2020: '#7f77c2', ashare_2015: '#f59e0b', rates_2022: '#4588cc' }
+const YEAR_TINT = { gfc_2008: '#ff3b30', covid_2020: '#7f77c2', ashare_2015: '#f59e0b', rates_2022: '#2f7bff' }
 
 async function api(path, body) {
   const r = await fetch(`/api/time-machine/${path}`, body
@@ -26,12 +26,12 @@ async function api(path, body) {
 
 const CSS = `
 .tm { display: grid; gap: 16px; max-width: 1240px; margin: 0 auto; width: 100%; padding-bottom: 40px; }
-.tm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px; min-width: 0; }
+.tm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px; min-width: 0; }
 .tm-h { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .2px; }
 .tm-muted { color: var(--text-secondary); }
-.tm-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 6px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.tm-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .tm-btn:disabled { opacity: .45; cursor: not-allowed; }
-.tm-btn.primary { background: #4588cc; border-color: transparent; color: #fff; }
+.tm-btn.primary { background: #2f7bff; border-color: transparent; color: #fff; }
 .tm-btn:focus-visible, .tm-row:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 .tm-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 .tm-pick { display: grid; gap: 10px; align-content: start; position: relative; overflow: hidden; }
@@ -39,14 +39,14 @@ const CSS = `
 .tm-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .tm-game { display: grid; grid-template-columns: 290px minmax(0, 1fr) 310px; gap: 14px; align-items: start; }
 .tm-side { display: grid; gap: 14px; min-width: 0; }
-.tm-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; border: 1px solid transparent; }
+.tm-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 9px; cursor: pointer; border: 1px solid transparent; }
 .tm-row:hover { background: var(--bg-tertiary); }
 .tm-row.on { border-color: ${ACCENT}88; background: ${ACCENT}14; }
 .tm-num { font-variant-numeric: tabular-nums; }
-.tm-input { width: 100%; min-width: 0; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 6px; padding: 8px 10px; font-size: 14px; }
+.tm-input { width: 100%; min-width: 0; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 9px; padding: 8px 10px; font-size: 14px; }
 .tm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
 .tm-news { display: grid; gap: 10px; max-height: 620px; overflow-y: auto; }
-.tm-ev { padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-primary); display: grid; gap: 4px; }
+.tm-ev { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-primary); display: grid; gap: 4px; }
 .tm-ev.new { border-color: #f59e0b88; background: #f59e0b12; }
 .tm-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .tm-table th { text-align: left; font-weight: 600; color: var(--text-secondary); padding: 6px 8px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; }
@@ -117,7 +117,7 @@ function LineChart({ series, height = 220, startIndex = 0, markers = [], fmtY, l
         {hover != null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} stroke="var(--text-muted)" />}
       </svg>
       {hover != null && (
-        <div style={{ position: 'absolute', top: 4, left: 8, fontSize: 12, padding: '4px 8px', borderRadius: 4, background: 'var(--bg-primary)', border: `1px solid ${BDR}`, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: 4, left: 8, fontSize: 12, padding: '4px 8px', borderRadius: 7, background: 'var(--bg-primary)', border: `1px solid ${BDR}`, pointerEvents: 'none' }}>
           <b className="tm-num">{labels?.[hover] ? shortDate(labels[hover], lang) : ''}</b>
           {series.map((s) => s.values[hover] != null && <span key={s.key} className="tm-num" style={{ marginLeft: 10, color: s.color }}>{s.label ? `${s.label} ` : ''}{fmtY(s.values[hover])}</span>)}
         </div>
@@ -289,7 +289,7 @@ function Game({ s, lang, run, busy, err, onAdvance, onTrade, onRestart, onBack, 
           {!run.finished && <button className="tm-muted" onClick={() => { if (window.confirm(s.restartConfirm)) onRestart() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }}>{s.restart}</button>}
         </div>
         {fresh.length > 0 && !run.finished && (
-          <div role="status" style={{ display: 'grid', gap: 4, padding: '10px 12px', borderRadius: 6, background: '#f59e0b14', border: '1px solid #f59e0b66' }}>
+          <div role="status" style={{ display: 'grid', gap: 4, padding: '10px 12px', borderRadius: 10, background: '#f59e0b14', border: '1px solid #f59e0b66' }}>
             {fresh.slice(0, 3).map((e) => <div key={e.text} style={{ fontSize: 13.5, lineHeight: 1.5 }}><b>{shortDate(e.date, lang)}</b> {e.text}</div>)}
           </div>
         )}

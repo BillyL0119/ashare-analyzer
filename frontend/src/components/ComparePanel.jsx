@@ -61,7 +61,7 @@ function OverlayView({ lang }) {
     : []
 
   return (
-    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 12 }}>
+    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 12 }}>
       {selectedSymbols.map((s) => (
         <OverlaySlot key={s.code} stock={s} onData={handleData} />
       ))}
@@ -119,8 +119,8 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             <button
               onClick={() => setViewMode('calendar')}
               style={{
-                padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                fontSize: 12, background: 'rgba(106,162,218,0.1)', color: '#6aa2da',
+                padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                fontSize: 12, background: 'rgba(92,155,255,0.1)', color: '#5c9bff',
               }}
             >
               {t.calendarTab}
@@ -129,7 +129,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           <button
             onClick={() => setViewMode('earnings')}
             style={{
-              padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
               fontSize: 12, background: 'rgba(95,115,184,0.12)', color: '#8f99dc',
             }}
           >
@@ -160,7 +160,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           overflowX: isMobile ? 'auto' : 'visible',
           background: 'var(--bg-secondary)',
           border: '1px solid var(--border-primary)',
-          borderRadius: 8,
+          borderRadius: 16,
           padding: '6px 10px',
         }}
       >
@@ -208,7 +208,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               aria-pressed={viewMode === key}
               style={{
                 padding: isMobile ? '4px 10px' : '5px 10px',
-                borderRadius: 8,
+                borderRadius: 20,
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: isMobile ? 11 : 12,
@@ -217,9 +217,9 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 background: 'transparent',
-                color: viewMode === key ? '#4588cc' : 'var(--text-secondary)',
+                color: viewMode === key ? '#2f7bff' : 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
-                boxShadow: viewMode === key ? 'inset 0 -2px 0 #4588cc' : 'none',
+                boxShadow: viewMode === key ? 'inset 0 -2px 0 #2f7bff' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
@@ -248,11 +248,11 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             onChange={(e) => setDateRange(e.target.value.replace(/-/g, ''), endDate)}
             style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-              borderRadius: 6, color: 'var(--text-primary)', padding: '4px 8px',
+              borderRadius: 8, color: 'var(--text-primary)', padding: '4px 8px',
               fontSize: 12, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#4588cc' }}
+            onFocus={(e) => { e.target.style.borderColor = '#2f7bff' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
           <span>{t.to}</span>
@@ -262,11 +262,11 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             onChange={(e) => setDateRange(startDate, e.target.value.replace(/-/g, ''))}
             style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-              borderRadius: 6, color: 'var(--text-primary)', padding: '4px 8px',
+              borderRadius: 8, color: 'var(--text-primary)', padding: '4px 8px',
               fontSize: 12, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#4588cc' }}
+            onFocus={(e) => { e.target.style.borderColor = '#2f7bff' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
         </div>

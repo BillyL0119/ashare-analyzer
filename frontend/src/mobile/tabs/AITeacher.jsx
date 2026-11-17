@@ -109,7 +109,7 @@ export default function AITeacher() {
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
           style={{ flex: 1, resize: 'none', maxHeight: 110, padding: '10px 14px', borderRadius: 20, border: '1px solid var(--stroke)', background: 'var(--surface)', color: 'var(--text)', font: 'inherit', fontSize: 16, outline: 0 }} />
         {busy ? (
-          <button onClick={() => ctrl.current?.abort()} aria-label={t('停止生成')} style={{ width: 40, height: 40, borderRadius: 20, background: '#ef4444', color: '#fff', display: 'grid', placeItems: 'center' }}><span style={{ width: 18, height: 18 }}>{Icon.stop}</span></button>
+          <button onClick={() => ctrl.current?.abort()} aria-label={t('停止生成')} style={{ width: 40, height: 40, borderRadius: 20, background: '#ff3b30', color: '#fff', display: 'grid', placeItems: 'center' }}><span style={{ width: 18, height: 18 }}>{Icon.stop}</span></button>
         ) : (
           <button onClick={() => send()} disabled={!input.trim()} aria-label={t('发送')} style={{ width: 40, height: 40, borderRadius: 20, color: '#fff', display: 'grid', placeItems: 'center', background: input.trim() ? 'var(--accent)' : 'var(--text-3)', opacity: input.trim() ? 1 : .5 }}><span style={{ width: 20, height: 20 }}>{Icon.up}</span></button>
         )}

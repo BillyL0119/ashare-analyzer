@@ -10,43 +10,43 @@ import casesStrings from '../cases/casesStrings'
 // topics and the news cases (services/econ_diagrams.py tags each case with a preset) that use it.
 // URL: /diagrams?d=<diagram>&p=<preset>&case=<case id>&cur=<currency>
 
-const ACCENT = '#4588cc'
+const ACCENT = '#2f7bff'
 const BOARD_KEY = 'bfs_dl_board'
 const BOARD_ORDER = ['ib', 'alevel', 'ap_micro', 'ap_macro', 'igcse']
 
 const CSS = `
 .dl { display: grid; gap: 16px; max-width: 1180px; margin: 0 auto; width: 100%; padding: 18px 0 40px; min-width: 0; }
-.dl-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px 18px; min-width: 0; }
+.dl-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px 18px; min-width: 0; }
 .dl-muted { color: var(--text-secondary); }
 .dl-h { font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 6px; }
 .dl-picker { display: grid; gap: 8px; }
 .dl-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .dl-group-name { font-size: 11.5px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .4px; min-width: 96px; }
-.dl-pill { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.dl-pill { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .dl-pill.on { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
-.dl-seg { display: inline-flex; border: 1px solid var(--border-primary); border-radius: 6px; overflow: hidden; flex-wrap: wrap; }
+.dl-seg { display: inline-flex; border: 1px solid var(--border-primary); border-radius: 10px; overflow: hidden; flex-wrap: wrap; }
 .dl-seg button { border: none; background: transparent; color: var(--text-secondary); padding: 6px 10px; font-size: 12.5px; font-weight: 650; cursor: pointer; }
 .dl-seg button.on { background: ${ACCENT}1f; color: ${ACCENT}; }
 .dl-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .dl-side { display: grid; gap: 14px; min-width: 0; }
-.dl-shock { display: block; width: 100%; text-align: left; border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 6px; padding: 8px 11px; font-size: 13.5px; cursor: pointer; line-height: 1.35; }
+.dl-shock { display: block; width: 100%; text-align: left; border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 10px; padding: 8px 11px; font-size: 13.5px; cursor: pointer; line-height: 1.35; }
 .dl-shock:hover { border-color: ${ACCENT}; }
 .dl-shock.on { border-color: ${ACCENT}; background: ${ACCENT}1a; }
 .dl-shocks { display: grid; gap: 6px; }
 .dl-body { font-size: 14px; line-height: 1.7; margin: 0; }
-.dl-act { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 6px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+.dl-act { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
 .dl-act:hover { background: var(--bg-tertiary); }
 .dl-act.primary { border-color: ${ACCENT}; color: ${ACCENT}; font-weight: 700; }
 .dl-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .dl-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--text-secondary); }
 .dl-sw { display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--border-primary); }
-.dl-case { border-left: 3px solid #f59e0b; background: #f59e0b12; border-radius: 6px; padding: 10px 12px; display: grid; gap: 6px; }
-.dl-topic { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 6px; padding: 4px 11px; }
+.dl-case { border-left: 3px solid #f59e0b; background: #f59e0b12; border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+.dl-topic { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 999px; padding: 4px 11px; }
 .dl-topic b { color: ${ACCENT}; font-size: 11.5px; }
 .dl-news { display: grid; gap: 2px; }
-.dl-news button { text-align: left; border: none; background: none; color: var(--text-primary); padding: 8px 6px; border-radius: 6px; cursor: pointer; display: grid; gap: 2px; font-size: 13.5px; line-height: 1.4; }
+.dl-news button { text-align: left; border: none; background: none; color: var(--text-primary); padding: 8px 6px; border-radius: 8px; cursor: pointer; display: grid; gap: 2px; font-size: 13.5px; line-height: 1.4; }
 .dl-news button:hover { background: var(--bg-tertiary); }
-.dl-select { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 6px; padding: 5px 8px; font-size: 12.5px; }
+.dl-select { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 5px 8px; font-size: 12.5px; }
 .dl-pill:focus-visible, .dl-shock:focus-visible, .dl-act:focus-visible, .dl-seg button:focus-visible, .dl-news button:focus-visible, .dl-topic:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 @media (max-width: 900px) {
   .dl-layout { grid-template-columns: minmax(0, 1fr); }
@@ -313,7 +313,7 @@ export default function DiagramLab({ lang, studyHref = defaultStudyHref }) {
           </div>
           <div className="dl-card">
             <div className="dl-h">{S.inNews}</div>
-            {news === null && <div className="skeleton" style={{ height: 80, borderRadius: 6 }} />}
+            {news === null && <div className="skeleton" style={{ height: 80, borderRadius: 8 }} />}
             {news && news.length === 0 && <p className="dl-muted" style={{ margin: 0, fontSize: 13.5 }}>{S.noNews}</p>}
             {news && news.length > 0 && (
               <div className="dl-news">

@@ -7,9 +7,9 @@ function IconChart({ size = 40 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: 'block' }}>
       <polyline points="2,17 8.5,10.5 13.5,15.5 22,7"
-        stroke="#34d399" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+        stroke="#30d158" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
       <polyline points="16,7 22,7 22,13"
-        stroke="#34d399" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+        stroke="#30d158" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
@@ -155,8 +155,8 @@ export default function WelcomeModal({ onLangSelect }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
-        background: '#161b2e', borderRadius: 8,
-        border: '1px solid rgba(69,136,204,0.3)',
+        background: '#161b2e', borderRadius: 16,
+        border: '1px solid rgba(47,123,255,0.3)',
         padding: '40px 32px', width: 480, maxWidth: '94vw',
         textAlign: 'center',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -177,9 +177,9 @@ export default function WelcomeModal({ onLangSelect }) {
               key={code}
               onClick={() => handleLangSelect(code)}
               style={{
-                padding: '16px 10px', borderRadius: 8,
-                background: 'rgba(69,136,204,0.06)',
-                border: '1px solid rgba(69,136,204,0.2)',
+                padding: '16px 10px', borderRadius: 12,
+                background: 'rgba(47,123,255,0.06)',
+                border: '1px solid rgba(47,123,255,0.2)',
                 cursor: 'pointer', color: '#e8eaf0',
                 transition: 'all 0.2s',
                 display: 'flex', flexDirection: 'column',
@@ -190,8 +190,8 @@ export default function WelcomeModal({ onLangSelect }) {
                 e.currentTarget.style.borderColor = 'rgba(95,115,184,0.5)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(69,136,204,0.06)'
-                e.currentTarget.style.borderColor = 'rgba(69,136,204,0.2)'
+                e.currentTarget.style.background = 'rgba(47,123,255,0.06)'
+                e.currentTarget.style.borderColor = 'rgba(47,123,255,0.2)'
               }}
             >
               <Flag height={22} />

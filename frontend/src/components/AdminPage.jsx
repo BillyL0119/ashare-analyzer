@@ -3,7 +3,7 @@ import ReactECharts from '../lib/echarts'
 import useAuthStore from '../store/authStore'
 import { THEME } from '../utils/chartHelpers'
 
-const ACCENT = '#4588cc', GREEN = '#34d399', VIOLET = '#9d97d3'
+const ACCENT = '#2f7bff', GREEN = '#30d158', VIOLET = '#9d97d3'
 const MUTED = 'var(--text-muted)'
 
 const TXT = {
@@ -40,7 +40,7 @@ const TXT = {
 // Class prefix is 'dash-', not 'ad-': ad blockers hide elements with ad-* classes.
 const CSS = `
 .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
-.dash-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px 18px; min-width: 0; }
+.dash-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px 18px; min-width: 0; }
 .dash-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
 .dash-num { font-family: var(--heading); font-size: 32px; font-weight: 500; color: var(--text-primary); margin-top: 6px; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.01em; }
 .dash-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
@@ -51,15 +51,15 @@ const CSS = `
 .dash-track { flex: 1; height: 5px; border-radius: 3px; background: var(--bg-tertiary); overflow: hidden; }
 .dash-fill { height: 100%; border-radius: 3px; background: ${GREEN}; }
 .dash-val { min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: 12px; }
-.dash-btn { padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.dash-btn { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
 .dash-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
 .dash-btn.pri { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
-.dash-in { flex: 1; min-width: 0; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
+.dash-in { flex: 1; min-width: 0; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; font-size: 13px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); outline: none; }
 .dash-in:focus { border-color: ${ACCENT}; }
 .dash-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-primary); font-size: 13px; color: var(--text-secondary); }
 .dash-row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.dash-pill { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 6px; color: ${ACCENT}; background: color-mix(in srgb, ${ACCENT} 14%, transparent); flex-shrink: 0; }
-.dash-chip { padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.dash-pill { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: ${ACCENT}; background: color-mix(in srgb, ${ACCENT} 14%, transparent); flex-shrink: 0; }
+.dash-chip { padding: 5px 12px; border-radius: 999px; font-size: 12px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
 .dash-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
 @media (max-width: 760px) { .dash-two { grid-template-columns: minmax(0, 1fr); } .dash-num { font-size: 24px; } }
 @media print {
@@ -153,14 +153,14 @@ export default function AdminPage({ lang, onOpenAuth }) {
     backgroundColor: 'transparent',
     grid: { top: 34, bottom: 30, left: 44, right: 40 },
     legend: { top: 0, textStyle: { color: '#8a94a6', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
-    tooltip: { trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(106,162,218,0.12)', textStyle: { color: THEME.tooltipText, fontSize: 12 } },
-    xAxis: { type: 'category', data: series.map((d) => d.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10, interval: Math.max(0, Math.floor(series.length / 8) - 1) }, axisLine: { lineStyle: { color: 'rgba(106,162,218,0.15)' } } },
+    tooltip: { trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(92,155,255,0.12)', textStyle: { color: THEME.tooltipText, fontSize: 12 } },
+    xAxis: { type: 'category', data: series.map((d) => d.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10, interval: Math.max(0, Math.floor(series.length / 8) - 1) }, axisLine: { lineStyle: { color: 'rgba(92,155,255,0.15)' } } },
     yAxis: [
-      { type: 'value', minInterval: 1, axisLabel: { color: '#8a94a6', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(106,162,218,0.07)' } } },
+      { type: 'value', minInterval: 1, axisLabel: { color: '#8a94a6', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(92,155,255,0.07)' } } },
       { type: 'value', minInterval: 1, axisLabel: { color: '#8a94a6', fontSize: 10 }, splitLine: { show: false } },
     ],
     series: [
-      { name: `${t.visitsS} (${isZh ? '左轴' : 'left'})`, type: 'line', data: series.map((d) => d.visits), smooth: true, symbol: 'none', lineStyle: { width: 2, color: ACCENT }, areaStyle: { color: 'rgba(69,136,204,0.10)' } },
+      { name: `${t.visitsS} (${isZh ? '左轴' : 'left'})`, type: 'line', data: series.map((d) => d.visits), smooth: true, symbol: 'none', lineStyle: { width: 2, color: ACCENT }, areaStyle: { color: 'rgba(47,123,255,0.10)' } },
       { name: `${t.activeUsers} (${isZh ? '右轴' : 'right'})`, type: 'line', yAxisIndex: 1, data: series.map((d) => d.active_users), smooth: true, symbol: 'none', lineStyle: { width: 2, color: GREEN } },
       { name: `${t.newUsers} (${isZh ? '右轴' : 'right'})`, type: 'bar', yAxisIndex: 1, data: series.map((d) => d.new_users), barMaxWidth: 10, itemStyle: { color: VIOLET, borderRadius: [3, 3, 0, 0] } },
     ],
@@ -297,7 +297,7 @@ export default function AdminPage({ lang, onOpenAuth }) {
           <input id="dash-email" className="dash-in" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.email} autoComplete="off" />
           <button className="dash-btn pri" type="submit">{t.grant}</button>
         </form>
-        {memberErr && <div style={{ color: '#ef5350', fontSize: 12.5, marginTop: 8 }}>{memberErr}</div>}
+        {memberErr && <div style={{ color: '#ff3b30', fontSize: 12.5, marginTop: 8 }}>{memberErr}</div>}
         <div style={{ marginTop: 12 }}>
           {(members?.admins || []).map((e) => <div className="dash-row" key={e}><span>{e}</span><span className="dash-pill">{t.roleAdmin}</span></div>)}
           {(members?.members || []).map((m) => (

@@ -16,7 +16,7 @@ if (typeof window !== 'undefined' && !window.__bfsWheelGuard) {
 }
 
 // A-shares are red-up / green-down; US, Hong Kong and Japan use green-up / red-down.
-const RISE_CN = '#ef5350', FALL_CN = '#26a69a'
+const RISE_CN = '#ff3b30', FALL_CN = '#00c853'
 export const riseColor = (market) => (market !== 'cn' ? FALL_CN : RISE_CN)
 export const fallColor = (market) => (market !== 'cn' ? RISE_CN : FALL_CN)
 
@@ -27,26 +27,26 @@ export function getChartTheme() {
     typeof document !== 'undefined' &&
     document.documentElement.getAttribute('data-theme') === 'light'
   return {
-    bg:         isLight ? '#ffffff'              : '#0e1013',
-    gridBg:     isLight ? '#f8fafc'              : '#14171b',
+    bg:         isLight ? '#ffffff'              : '#000000',
+    gridBg:     isLight ? '#f8fafc'              : '#111214',
     text:       isLight ? '#475569'              : '#94a3b8',
-    border:     isLight ? '#e2e8f0'              : '#262b33',
-    tooltipBg:  isLight ? 'rgba(255,255,255,0.97)' : 'rgba(14,16,19,0.95)',
+    border:     isLight ? '#e2e8f0'              : '#26292d',
+    tooltipBg:  isLight ? 'rgba(255,255,255,0.97)' : 'rgba(0,0,0,0.95)',
     tooltipText:isLight ? '#0f172a'              : '#94a3b8',
     up:      riseColor(market),
     down:    fallColor(market),
     ma5:     '#f0e68c',
-    ma10:    '#6aa2da',
+    ma10:    '#5c9bff',
     ma20:    '#ff9800',
     ma60:    '#a99ad6',
     dif:        isLight ? '#374151'              : '#e8eaed',
     dea:     '#ff9800',
     macdUp:  riseColor(market),
     macdDown:fallColor(market),
-    rsi6:    '#6aa2da',
+    rsi6:    '#5c9bff',
     rsi12:   '#ff9800',
     rsi24:   '#a99ad6',
-    volume:  '#6aa2da',
+    volume:  '#5c9bff',
   }
 }
 
@@ -343,7 +343,7 @@ export function buildRSIOption(rsiData) {
         lineStyle: { width: 1.5, color: T.rsi6 }, itemStyle: { color: T.rsi6 },
         markLine: {
           silent: true, symbol: 'none',
-          lineStyle: { color: 'rgba(239,83,80,0.4)', type: 'dashed' },
+          lineStyle: { color: 'rgba(255,59,48,0.4)', type: 'dashed' },
           data: [{ yAxis: 70 }, { yAxis: 30 }],
           label: { color: T.text, fontSize: 9 },
         },

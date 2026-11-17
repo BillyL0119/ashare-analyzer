@@ -49,10 +49,10 @@ function Pill({ active, onClick, children }) {
     <button
       onClick={onClick}
       style={{
-        padding: '4px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+        padding: '4px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
-        background: active ? 'rgba(69,136,204,0.18)' : 'var(--bg-tertiary)',
-        color: active ? '#4588cc' : 'var(--text-secondary)',
+        background: active ? 'rgba(47,123,255,0.18)' : 'var(--bg-tertiary)',
+        color: active ? '#2f7bff' : 'var(--text-secondary)',
         transition: 'all 0.18s',
       }}
     >
@@ -74,7 +74,7 @@ function NewsCard({ item, t }) {
         style={{
           background: 'var(--bg-secondary)',
           border: '1px solid var(--border-primary)',
-          borderRadius: 6,
+          borderRadius: 10,
           padding: '12px 14px',
           cursor: 'pointer',
           marginBottom: 8,
@@ -88,7 +88,7 @@ function NewsCard({ item, t }) {
               <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{relativeTime(item.published_at, t)}</span>
               <span style={{
-                fontSize: 10, padding: '1px 6px', borderRadius: 6,
+                fontSize: 10, padding: '1px 6px', borderRadius: 8,
                 background: item.lang === 'cn' ? 'rgba(232,50,30,0.12)' : 'rgba(14,100,233,0.12)',
                 color: item.lang === 'cn' ? '#e8321e' : '#5b9cf6',
                 fontWeight: 500,
@@ -175,7 +175,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onClick={() => fetchNews(filters)}
               style={{
                 marginLeft: 8, fontSize: 11, background: 'none', border: 'none',
-                color: '#4588cc', cursor: 'pointer', padding: 0,
+                color: '#2f7bff', cursor: 'pointer', padding: 0,
               }}
             >
               {t.gnRefresh}
@@ -217,7 +217,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onChange={e => applyFilter({ ...filters, source: e.target.value })}
               style={{
                 background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
-                borderRadius: 8, padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
+                borderRadius: 20, padding: '3px 10px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer',
               }}
             >
               <option value="all">{t.gnAllSources}</option>
@@ -232,7 +232,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[0, 1, 2, 3, 4].map(i => (
             <div key={i} style={{
-              height: 80, borderRadius: 6,
+              height: 80, borderRadius: 10,
               background: 'var(--bg-hover)',
               animation: 'pulse 1.5s ease-in-out infinite',
             }} />
@@ -253,7 +253,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               style={{
                 display: 'block', width: '100%', padding: '10px 0',
                 background: 'var(--bg-hover)', border: '1px solid var(--border-primary)',
-                borderRadius: 6, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
+                borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
                 marginTop: 4,
               }}
             >

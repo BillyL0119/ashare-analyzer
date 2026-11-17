@@ -3,7 +3,7 @@ import ReactECharts from '../lib/echarts'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartHelpers'
 
-const BDR   = 'rgba(106,162,218,0.12)'
+const BDR   = 'rgba(92,155,255,0.12)'
 const MUTED = 'var(--text-muted)'
 
 const FEATURE_LABELS = {
@@ -38,9 +38,9 @@ function SourceBlock({ stats, lang }) {
   if (!total) return null
   const L = lang === 'zh' ? 'zh' : 'en'
   return (
-    <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 8, padding: '16px 20px', marginBottom: 16 }}>
+    <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', marginBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12, flexWrap: 'wrap', gap: 6 }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: '#34d399' }}>{L === 'zh' ? '访问来源' : 'Traffic sources'}</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: '#30d158' }}>{L === 'zh' ? '访问来源' : 'Traffic sources'}</span>
         {uiTotal > 0 && (
           <span style={{ fontSize: 11, color: MUTED }}>
             {L === 'zh' ? '手机' : 'Mobile'} {Math.round(((ui.mobile || 0) / uiTotal) * 100)}% · {L === 'zh' ? '电脑' : 'Desktop'} {Math.round(((ui.desktop || 0) / uiTotal) * 100)}%
@@ -52,7 +52,7 @@ function SourceBlock({ stats, lang }) {
           <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 12, color: 'var(--text-primary)', minWidth: 96 }}>{SOURCE_LABELS[key]?.[L] ?? key}</span>
             <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-              <div style={{ width: `${(n / sources[0][1]) * 100}%`, height: '100%', background: '#34d399', borderRadius: 2 }} />
+              <div style={{ width: `${(n / sources[0][1]) * 100}%`, height: '100%', background: '#30d158', borderRadius: 2 }} />
             </div>
             <span style={{ fontSize: 11, color: MUTED, fontFamily: 'monospace', minWidth: 40, textAlign: 'right' }}>{n} · {Math.round((n / total) * 100)}%</span>
           </div>
@@ -67,7 +67,7 @@ function BigStatCard({ label, value, sub, exportMode }) {
     <div style={{
       background: 'var(--bg-tertiary)',
       border: `1px solid ${BDR}`,
-      borderRadius: 8,
+      borderRadius: 16,
       padding: exportMode ? '16px 20px' : '20px 24px',
       flex: 1,
       minWidth: 150,
@@ -134,7 +134,7 @@ export default function StatsDisplay({ lang, onClose }) {
       type: 'value',
       minInterval: 1,
       axisLabel: { color: MUTED, fontSize: 10 },
-      splitLine: { lineStyle: { color: 'rgba(106,162,218,0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(92,155,255,0.06)' } },
     },
     series: [{
       type: 'line',
@@ -142,13 +142,13 @@ export default function StatsDisplay({ lang, onClose }) {
       smooth: true,
       symbol: 'circle',
       symbolSize: 4,
-      lineStyle: { width: 2.5, color: '#4588cc' },
-      itemStyle: { color: '#4588cc' },
+      lineStyle: { width: 2.5, color: '#2f7bff' },
+      itemStyle: { color: '#2f7bff' },
       areaStyle: {
         color: {
           type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
           colorStops: [
-            { offset: 0, color: 'rgba(106,162,218,0.30)' },
+            { offset: 0, color: 'rgba(92,155,255,0.30)' },
             { offset: 1, color: 'rgba(169,154,214,0.04)' },
           ],
         },
@@ -157,7 +157,7 @@ export default function StatsDisplay({ lang, onClose }) {
   } : null
 
   // ── Pie chart: feature usage ─────────────────────────────────────────────
-  const PIE_COLORS = ['#6aa2da','#a99ad6','#34d399','#fbbf24','#f87171','#6aa2da','#9d97d3','#fb923c','#e879f9','#6aa2da']
+  const PIE_COLORS = ['#5c9bff','#a99ad6','#30d158','#fbbf24','#ff453a','#5c9bff','#9d97d3','#fb923c','#e879f9','#5c9bff']
 
   const pieOption = stats ? (() => {
     const fu = stats.feature_usage || {}
@@ -208,8 +208,8 @@ export default function StatsDisplay({ lang, onClose }) {
         ref={containerRef}
         style={{
           background: 'var(--bg-primary)',
-          border: '1px solid rgba(106,162,218,0.18)',
-          borderRadius: 8,
+          border: '1px solid rgba(92,155,255,0.18)',
+          borderRadius: 20,
           width: '100%',
           maxWidth: 920,
           maxHeight: exportMode ? 'none' : '92vh',
@@ -239,17 +239,17 @@ export default function StatsDisplay({ lang, onClose }) {
               <button onClick={() => setExportMode(true)} style={{
                 background: 'rgba(251,191,36,0.1)',
                 border: '1px solid rgba(251,191,36,0.25)',
-                borderRadius: 6, padding: '6px 14px',
+                borderRadius: 8, padding: '6px 14px',
                 color: '#fbbf24', fontSize: 12, fontWeight: 600, cursor: 'pointer',
               }}>
                 {t.stExport}
               </button>
             ) : (
               <button onClick={() => setExportMode(false)} style={{
-                background: 'rgba(52,211,153,0.1)',
-                border: '1px solid rgba(52,211,153,0.25)',
-                borderRadius: 6, padding: '6px 14px',
-                color: '#34d399', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: 'rgba(48,209,88,0.1)',
+                border: '1px solid rgba(48,209,88,0.25)',
+                borderRadius: 8, padding: '6px 14px',
+                color: '#30d158', fontSize: 12, fontWeight: 600, cursor: 'pointer',
               }}>
                 ✓ {t.stExitExport}
               </button>
@@ -269,7 +269,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {t.stLoading}
           </div>
         ) : !stats ? (
-          <div style={{ color: '#f87171', textAlign: 'center', padding: '40px 0' }}>
+          <div style={{ color: '#ff453a', textAlign: 'center', padding: '40px 0' }}>
             {t.stLoadFail}
           </div>
         ) : (
@@ -305,7 +305,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {/* ── 30-day chart ── */}
             <div style={{
               background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`,
-              borderRadius: 8, padding: '16px 12px', marginBottom: 16,
+              borderRadius: 12, padding: '16px 12px', marginBottom: 16,
             }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-blue)', marginBottom: 10 }}>
                 {t.stChartTitle}
@@ -321,7 +321,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {/* ── Bottom two columns ── */}
             <div style={{ display: 'grid', gridTemplateColumns: pieOption ? '1fr 1fr' : '1fr', gap: 16, marginBottom: 16 }}>
               {/* Top 5 stocks */}
-              <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 8, padding: '16px 20px' }}>
+              <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px' }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#fbbf24', marginBottom: 12 }}>
                   {t.stTop5}
                 </div>
@@ -342,7 +342,7 @@ export default function StatsDisplay({ lang, onClose }) {
                               {s.name}
                             </div>
                             <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                              <div style={{ width: `${(s.searches / maxS) * 100}%`, height: '100%', background: '#6aa2da', borderRadius: 2 }} />
+                              <div style={{ width: `${(s.searches / maxS) * 100}%`, height: '100%', background: '#5c9bff', borderRadius: 2 }} />
                             </div>
                           </div>
                           <span style={{ fontSize: 11, color: MUTED, fontFamily: 'monospace', minWidth: 28, textAlign: 'right' }}>
@@ -357,7 +357,7 @@ export default function StatsDisplay({ lang, onClose }) {
 
               {/* Feature usage pie */}
               {pieOption && (
-                <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 8, padding: '16px 12px' }}>
+                <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 12px' }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-purple)', marginBottom: 10 }}>
                     {t.stFeatureUsage}
                   </div>
@@ -370,9 +370,9 @@ export default function StatsDisplay({ lang, onClose }) {
             <div style={{
               marginTop: 8,
               padding: '14px 20px',
-              background: 'rgba(106,162,218,0.05)',
+              background: 'rgba(92,155,255,0.05)',
               border: `1px solid ${BDR}`,
-              borderRadius: 8,
+              borderRadius: 12,
               textAlign: 'center',
             }}>
               <div style={{

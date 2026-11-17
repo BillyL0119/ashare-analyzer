@@ -23,6 +23,13 @@ export const ICONS = {
   ai_teacher: 'tutor', class: 'users', universities: 'globe', career: 'briefcase',
 }
 
+// Flat colour behind each page's icon (the --chip-* tokens in index.css)
+export const TINTS = {
+  analysis: 'blue', screener: 'cyan', heatmap: 'orange', news: 'pink', macro: 'violet', bank_views: 'green',
+  paper: 'green', time_machine: 'orange', study: 'blue', cases: 'pink', diagrams: 'cyan', governor: 'violet',
+  ai_teacher: 'green', class: 'orange', universities: 'blue', career: 'red',
+}
+
 // Each page keeps the name it already has in its own strings
 export function itemLabel(key, lang) {
   const t = T[lang] || T.en

@@ -3,7 +3,7 @@ import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
 import Icon from './Icon'
 
-const ACCENT = '#4588cc'
+const ACCENT = '#2f7bff'
 const ACCENT2 = '#7f77c2'
 const BDR = 'var(--border-primary)'
 
@@ -46,9 +46,9 @@ function Bubble({ msg }) {
       <div style={{
         maxWidth: '82%',
         background: isUser
-          ? `rgba(69,136,204,0.18)`
+          ? `rgba(47,123,255,0.18)`
           : 'var(--bg-tertiary)',
-        border: `1px solid ${isUser ? 'rgba(69,136,204,0.25)' : 'var(--border-primary)'}`,
+        border: `1px solid ${isUser ? 'rgba(47,123,255,0.25)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
         padding: '9px 13px',
         fontSize: 13,
@@ -186,7 +186,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           width: 350, height: 480,
           background: '#0b0f1a',
           border: `1px solid ${BDR}`,
-          borderRadius: 8,
+          borderRadius: 16,
           boxShadow: 'var(--shadow-pop)',
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
@@ -195,7 +195,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '11px 14px',
-            background: 'rgba(69,136,204,0.04)',
+            background: 'rgba(47,123,255,0.04)',
             borderBottom: `1px solid ${BDR}`,
             flexShrink: 0,
           }}>
@@ -249,9 +249,9 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   onClick={() => send(p)}
                   disabled={busy}
                   style={{
-                    fontSize: 11, padding: '4px 9px', borderRadius: 6,
-                    background: 'rgba(69,136,204,0.08)',
-                    border: '1px solid rgba(69,136,204,0.18)',
+                    fontSize: 11, padding: '4px 9px', borderRadius: 10,
+                    background: 'rgba(47,123,255,0.08)',
+                    border: '1px solid rgba(47,123,255,0.18)',
                     color: ACCENT, cursor: 'pointer',
                     transition: 'all 0.15s',
                   }}
@@ -278,7 +278,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               disabled={busy}
               style={{
                 flex: 1, background: 'var(--bg-tertiary)',
-                border: `1px solid rgba(69,136,204,0.2)`, borderRadius: 6,
+                border: `1px solid rgba(47,123,255,0.2)`, borderRadius: 10,
                 color: 'var(--text-primary)', padding: '8px 11px', fontSize: 13,
                 resize: 'none', outline: 'none', lineHeight: 1.55,
                 fontFamily: 'inherit',
@@ -291,7 +291,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                 background: input.trim() && !busy
                   ? `${ACCENT}`
                   : 'var(--bg-hover)',
-                border: 'none', borderRadius: 6, padding: '0 14px',
+                border: 'none', borderRadius: 10, padding: '0 14px',
                 color: input.trim() && !busy ? '#fff' : 'var(--text-muted)',
                 fontSize: 18, cursor: input.trim() && !busy ? 'pointer' : 'default',
                 transition: 'all 0.2s', flexShrink: 0,

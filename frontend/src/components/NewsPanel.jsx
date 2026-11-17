@@ -8,13 +8,13 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
 const SENT_COLOR = {
-  positive: '#26a69a',
+  positive: '#00c853',
   neutral: '#7d8ca3',
-  negative: '#ef5350',
+  negative: '#ff3b30',
 }
 
 const IMPACT_STYLE = {
-  high:   { bg: 'rgba(239,83,80,0.14)',   color: '#ef5350' },
+  high:   { bg: 'rgba(255,59,48,0.14)',   color: '#ff3b30' },
   medium: { bg: 'rgba(255,167,38,0.14)',  color: '#ffa726' },
   low:    { bg: 'rgba(154,160,166,0.10)', color: 'var(--text-muted)' },
 }
@@ -30,7 +30,7 @@ function NewsSkeleton() {
           display: 'flex', flexDirection: 'column', gap: 7,
         }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <div className="skeleton" style={{ height: 18, width: 48, borderRadius: 6, flexShrink: 0 }} />
+            <div className="skeleton" style={{ height: 18, width: 48, borderRadius: 10, flexShrink: 0 }} />
             <div className="skeleton" style={{ height: 14, flex: 1 }} />
           </div>
           <div className="skeleton" style={{ height: 11, width: '72%', marginLeft: 56 }} />
@@ -135,7 +135,7 @@ function NewsItem({ item, t }) {
         borderBottom: `1px solid ${THEME.border}`,
         transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.04)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.04)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       {/* Main row */}
@@ -146,7 +146,7 @@ function NewsItem({ item, t }) {
           fontSize: 10,
           fontWeight: 700,
           padding: '2px 8px',
-          borderRadius: 6,
+          borderRadius: 10,
           background: `${borderColor}1a`,
           color: borderColor,
           border: `1px solid ${borderColor}40`,
@@ -178,7 +178,7 @@ function NewsItem({ item, t }) {
             <span>{sourceName(item.source, useLangStore.getState().lang)}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
-              <span style={{ color: '#4588cc', fontSize: 10, background: 'rgba(69,136,204,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
+              <span style={{ color: '#2f7bff', fontSize: 10, background: 'rgba(47,123,255,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
             )}
           </div>
         </div>
@@ -209,16 +209,16 @@ function NewsItem({ item, t }) {
         <div style={{
           marginTop: 10,
           padding: '10px 12px',
-          background: 'rgba(69,136,204,0.04)',
-          border: '1px solid rgba(69,136,204,0.10)',
-          borderRadius: 4,
+          background: 'rgba(47,123,255,0.04)',
+          border: '1px solid rgba(47,123,255,0.10)',
+          borderRadius: 6,
           fontSize: 12,
           color: 'var(--text-muted)',
           lineHeight: 1.6,
         }}>
           {ai.reason && (
             <div>
-              <span style={{ color: '#4588cc', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
+              <span style={{ color: '#2f7bff', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
               {ai.reason}
             </div>
           )}
@@ -233,7 +233,7 @@ function NewsItem({ item, t }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                style={{ color: '#4588cc', textDecoration: 'none', fontSize: 11 }}
+                style={{ color: '#2f7bff', textDecoration: 'none', fontSize: 11 }}
               >
                 {t.newsReadMore}
               </a>
@@ -252,15 +252,15 @@ function FilterPill({ active, color, onClick, children }) {
       onClick={onClick}
       style={{
         padding: '3px 11px',
-        borderRadius: 8,
+        borderRadius: 12,
         border: 'none',
         cursor: 'pointer',
         fontSize: 11,
         fontWeight: active ? 600 : 400,
         background: active
-          ? `${color || 'rgba(69,136,204,0.25)'}30`
+          ? `${color || 'rgba(47,123,255,0.25)'}30`
           : 'var(--bg-hover)',
-        color: active ? (color || '#4588cc') : 'var(--text-muted)',
+        color: active ? (color || '#2f7bff') : 'var(--text-muted)',
         transition: 'all 0.15s',
         letterSpacing: '0.2px',
       }}
@@ -312,7 +312,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
       style={{
         background: THEME.gridBg,
         border: `1px solid ${THEME.border}`,
-        borderRadius: 6,
+        borderRadius: 8,
         padding: 16,
       }}
     >
@@ -328,12 +328,12 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
         }}
       >
         <span style={{
-          background: 'rgba(69,136,204,0.08)',
-          border: '1px solid rgba(69,136,204,0.3)',
+          background: 'rgba(47,123,255,0.08)',
+          border: '1px solid rgba(47,123,255,0.3)',
           borderRadius: 4,
           padding: '2px 8px',
           fontSize: 12,
-          color: '#4588cc',
+          color: '#2f7bff',
           fontFamily: 'monospace',
         }}>
           {stock.code}
@@ -362,12 +362,12 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
       {/* Error */}
       {error && !loading && (
         <div style={{
-          color: '#f85149',
+          color: '#ff453a',
           fontSize: 13,
           padding: 12,
           background: '#f8514910',
           border: '1px solid #f8514930',
-          borderRadius: 4,
+          borderRadius: 6,
         }}>
           {error}
         </div>
@@ -379,9 +379,9 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           {/* ── Overview card ── */}
           {data.overall && (
             <div style={{
-              background: 'rgba(69,136,204,0.03)',
-              border: '1px solid rgba(69,136,204,0.10)',
-              borderRadius: 6,
+              background: 'rgba(47,123,255,0.03)',
+              border: '1px solid rgba(47,123,255,0.10)',
+              borderRadius: 8,
               padding: '14px 16px',
               marginBottom: 14,
               display: 'flex',

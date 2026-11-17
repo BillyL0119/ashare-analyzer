@@ -18,15 +18,15 @@ const newsDate = (s, lang) => {
 }
 
 const SENT_COLOR = {
-  positive: '#26a69a',
+  positive: '#00c853',
   neutral:  'var(--text-muted)',
-  negative: '#ef5350',
+  negative: '#ff3b30',
 }
 
 function MetricCard({ label, value }) {
   return (
     <div style={{
-      background: BG, border: `1px solid ${BDR}`, borderRadius: 6,
+      background: BG, border: `1px solid ${BDR}`, borderRadius: 8,
       padding: '10px 14px', minWidth: 100, flex: 1,
     }}>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
@@ -47,10 +47,10 @@ function MiniSimilarRow({ item, onStockClick }) {
         borderBottom: '1px solid var(--border-primary)',
         transition: 'background 0.12s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.07)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.07)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
-      <span style={{ fontSize: 11, color: '#4588cc', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
+      <span style={{ fontSize: 11, color: '#2f7bff', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
       <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.name}
       </span>
@@ -73,7 +73,7 @@ function MiniNewsRow({ item, t, lang }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
         <span style={{
-          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 6,
+          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 8,
           background: `${color}20`, color, border: `1px solid ${color}40`,
           flexShrink: 0, marginTop: 1,
         }}>
@@ -145,7 +145,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
     >
       <div style={{
         background: 'var(--bg-secondary)', border: `1px solid ${BDR}`,
-        borderRadius: 8, width: '100%', maxWidth: 880,
+        borderRadius: 16, width: '100%', maxWidth: 880,
         maxHeight: '90vh', overflowY: 'auto',
         position: 'relative',
       }}>
@@ -166,8 +166,8 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{
-                  background: 'rgba(69,136,204,0.1)', border: '1px solid rgba(69,136,204,0.3)',
-                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: '#4588cc', fontFamily: 'monospace',
+                  background: 'rgba(47,123,255,0.1)', border: '1px solid rgba(47,123,255,0.3)',
+                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: '#2f7bff', fontFamily: 'monospace',
                 }}>
                   {symbol}
                 </span>
@@ -215,7 +215,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
           {!loading && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
               {/* Left: similar stocks */}
-              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 6, overflow: 'hidden' }}>
+              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
                   fontSize: 13, fontWeight: 600, color: '#7f77c2' }}>
                   {t.sdSimilar}
@@ -244,7 +244,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
               </div>
 
               {/* Right: latest news */}
-              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 6, overflow: 'hidden' }}>
+              <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
                   fontSize: 13, fontWeight: 600, color: '#ffa726' }}>
                   {t.sdNews}
@@ -271,7 +271,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
               }}
               style={{
                 background: '#5f73b8',
-                color: '#fff', border: 'none', borderRadius: 6,
+                color: '#fff', border: 'none', borderRadius: 8,
                 padding: '10px 36px', cursor: 'pointer', fontSize: 14, fontWeight: 600,
               }}
             >

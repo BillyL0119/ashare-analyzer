@@ -191,7 +191,7 @@ function Fundamentals({ symbol, price }) {
     yAxis: { type: 'value', axisLabel: { color: css('--text-2'), fontSize: 10, formatter: (v) => `$${Math.round(v / 1e9)}B` }, splitLine: { lineStyle: { color: css('--stroke'), type: 'dashed' } } },
     series: [
       { name: t('营收'), type: 'bar', data: f.revenue, barMaxWidth: 22, itemStyle: { color: '#5B9CF6', borderRadius: [3, 3, 0, 0] } },
-      { name: t('净利润'), type: 'bar', data: f.net_income, barMaxWidth: 22, itemStyle: { color: '#26A69A', borderRadius: [3, 3, 0, 0] } },
+      { name: t('净利润'), type: 'bar', data: f.net_income, barMaxWidth: 22, itemStyle: { color: '#00c853', borderRadius: [3, 3, 0, 0] } },
     ],
   }
   const a = d.analysts

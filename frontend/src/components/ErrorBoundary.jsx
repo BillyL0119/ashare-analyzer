@@ -21,7 +21,7 @@ export default class ErrorBoundary extends Component {
     if (this.props.fallback !== undefined) return this.props.fallback
     return (
       <div role="alert" style={{
-        padding: '16px 20px', margin: '12px 0', borderRadius: 6,
+        padding: '16px 20px', margin: '12px 0', borderRadius: 10,
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
         color: 'var(--text-secondary)', fontSize: 13,
       }}>
@@ -29,7 +29,7 @@ export default class ErrorBoundary extends Component {
         <button
           onClick={() => window.location.reload()}
           style={{
-            padding: '4px 12px', borderRadius: 4, cursor: 'pointer',
+            padding: '4px 12px', borderRadius: 6, cursor: 'pointer',
             border: '1px solid var(--border-primary)', background: 'transparent', color: 'inherit',
           }}
         >

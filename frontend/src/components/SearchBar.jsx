@@ -158,7 +158,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
     right: 0,
     background: 'var(--bg-secondary)',
     border: '1px solid var(--border-primary)',
-    borderRadius: 8,
+    borderRadius: 12,
     zIndex: 1000,
     boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
     overflow: 'hidden',
@@ -193,8 +193,8 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
             width: '100%',
             padding: '8px 14px',
             background: 'var(--bg-secondary)',
-            border: `1px solid ${focused ? '#4588cc' : 'var(--border-primary)'}`,
-            borderRadius: 8,
+            border: `1px solid ${focused ? '#2f7bff' : 'var(--border-primary)'}`,
+            borderRadius: 24,
             color: 'var(--text-primary)',
             fontSize: 13,
             outline: 'none',
@@ -236,7 +236,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                       >
                         <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
                         {m !== 'cn' && (
-                          <span style={{ color: '#4588cc', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
+                          <span style={{ color: '#2f7bff', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
                         )}
                         <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                         <PctBadge val={s.change_pct} market={m} />
@@ -264,7 +264,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                 onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
               >
-                <span style={{ color: '#4588cc', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
+                <span style={{ color: '#2f7bff', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
                 <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                 <span style={{
                   fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 3, flexShrink: 0,

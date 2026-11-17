@@ -42,11 +42,11 @@ export default function Missions({ s, missions, onAction }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 'none', marginLeft: 'auto' }}>
           {next?.action && (
             <button onClick={() => onAction(next)} style={{
-              padding: '7px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', background: ACCENT, color: '#fff', fontSize: 12.5, fontWeight: 700,
+              padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', background: ACCENT, color: '#fff', fontSize: 12.5, fontWeight: 700,
             }}>{s.missions.go}</button>
           )}
           <button onClick={toggle} aria-expanded={open} style={{
-            padding: '7px 10px', borderRadius: 6, border: `1px solid ${BDR}`, background: 'transparent', color: MUTED, cursor: 'pointer', fontSize: 12.5,
+            padding: '7px 10px', borderRadius: 8, border: `1px solid ${BDR}`, background: 'transparent', color: MUTED, cursor: 'pointer', fontSize: 12.5,
           }}>{open ? s.missions.hide : s.missions.show} {open ? '▴' : '▾'}</button>
         </div>
       </div>

@@ -223,7 +223,7 @@ function Watchlist() {
       <div className="m-card flush">
         {list.map((it) => editing ? (
           <div className="m-row" key={it.code}>
-            <button aria-label={t('移出自选') + ' ' + it.name} onClick={() => remove(it.code)} style={{ color: '#ef4444', fontSize: 22, lineHeight: 1 }}>⊖</button>
+            <button aria-label={t('移出自选') + ' ' + it.name} onClick={() => remove(it.code)} style={{ color: '#ff3b30', fontSize: 22, lineHeight: 1 }}>⊖</button>
             <div className="m-grow"><div className="m-name">{it.name}</div><div className="m-sub">{it.code}</div></div>
           </div>
         ) : <WatchRow key={it.code} item={it} />)}

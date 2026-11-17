@@ -5,12 +5,12 @@ import { getStockScore } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const ACCENT = '#6aa2da'
+const ACCENT = '#5c9bff'
 const ACCENT2 = '#a99ad6'
 
 const GRADE_COLOR = {
-  'A+': '#00ff88', A: '#22c55e', 'B+': '#84cc16',
-  B: '#fbbf24', C: '#f97316', D: '#ef4444',
+  'A+': '#00ff88', A: '#00c853', 'B+': '#84cc16',
+  B: '#fbbf24', C: '#f97316', D: '#ff3b30',
 }
 
 // English labels for the backend's per-factor keys (it sends raw keys like "pe", "drawdown")
@@ -30,7 +30,7 @@ const DIM_LABEL = {
 }
 
 function ScoreRing({ score, grade }) {
-  const color = GRADE_COLOR[grade] || '#6aa2da'
+  const color = GRADE_COLOR[grade] || '#5c9bff'
   const r = 54, cx = 70, cy = 70
   const circ = 2 * Math.PI * r
   const dash = (score / 100) * circ
@@ -77,7 +77,7 @@ function RadarChart({ dimensions }) {
       splitNumber: 4,
       axisName: { color: THEME.text, fontSize: 12, fontWeight: 600 },
       splitLine: { lineStyle: { color: THEME.border } },
-      splitArea: { show: true, areaStyle: { color: ['transparent', 'rgba(106,162,218,0.05)'] } },
+      splitArea: { show: true, areaStyle: { color: ['transparent', 'rgba(92,155,255,0.05)'] } },
       axisLine: { lineStyle: { color: THEME.border } },
     },
     series: [{
@@ -89,7 +89,7 @@ function RadarChart({ dimensions }) {
         symbolSize: 5,
         lineStyle: { color: ACCENT, width: 2 },
         itemStyle: { color: ACCENT },
-        areaStyle: { color: 'rgba(106,162,218,0.25)' },
+        areaStyle: { color: 'rgba(92,155,255,0.25)' },
       }],
     }],
   }
@@ -99,11 +99,11 @@ function RadarChart({ dimensions }) {
 function DimCard({ dimKey, dim, isCN }) {
   const label = DIM_LABEL[dimKey]
   const pct = Math.round(dim.score / dim.max * 100)
-  const barColor = pct >= 70 ? '#22c55e' : pct >= 50 ? '#fbbf24' : '#ef4444'
+  const barColor = pct >= 70 ? '#00c853' : pct >= 50 ? '#fbbf24' : '#ff3b30'
   return (
     <div style={{
       background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-      borderRadius: 6, padding: '12px 14px',
+      borderRadius: 10, padding: '12px 14px',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -134,7 +134,7 @@ function DimCard({ dimKey, dim, isCN }) {
           </span>
           <span style={{
             fontSize: 11, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
-            color: d.score >= d.max * 0.7 ? '#22c55e' : d.score >= d.max * 0.4 ? '#fbbf24' : '#ef4444',
+            color: d.score >= d.max * 0.7 ? '#00c853' : d.score >= d.max * 0.4 ? '#fbbf24' : '#ff3b30',
           }}>
             {d.score}/{d.max}
           </span>
@@ -181,22 +181,22 @@ export default function ScorePanel({ stocks }) {
       {stocks.map((s) => (
         <div key={s.code} style={{
           background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-          borderRadius: 8, padding: '16px 20px',
+          borderRadius: 12, padding: '16px 20px',
         }}>
           {/* Header row */}
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}>
             <div className="skeleton" style={{ height: 16, width: 100 }} />
-            <div className="skeleton" style={{ height: 16, width: 52, marginLeft: 'auto', borderRadius: 8 }} />
+            <div className="skeleton" style={{ height: 16, width: 52, marginLeft: 'auto', borderRadius: 12 }} />
           </div>
           {/* Radar + score ring */}
           <div style={{ display: 'flex', gap: 20, marginBottom: 16, flexWrap: 'wrap' }}>
-            <div className="skeleton" style={{ flex: '1 1 200px', height: 200, borderRadius: 6 }} />
+            <div className="skeleton" style={{ flex: '1 1 200px', height: 200, borderRadius: 8 }} />
             <div className="skeleton" style={{ width: 140, height: 140, borderRadius: '50%', flexShrink: 0, alignSelf: 'center' }} />
           </div>
           {/* Dim cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
             {[0, 1, 2, 3].map(i => (
-              <div key={i} className="skeleton" style={{ height: 88, borderRadius: 6 }} />
+              <div key={i} className="skeleton" style={{ height: 88, borderRadius: 10 }} />
             ))}
           </div>
         </div>
@@ -215,7 +215,7 @@ export default function ScorePanel({ stocks }) {
         if (d.error) return (
           <div key={s.code} style={{
             background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-            borderRadius: 6, padding: 20, color: '#ef4444', fontSize: 13,
+            borderRadius: 10, padding: 20, color: '#ff3b30', fontSize: 13,
           }}>
             {s.code}: {d.error}
           </div>
@@ -224,7 +224,7 @@ export default function ScorePanel({ stocks }) {
         return (
           <div key={s.code} style={{
             background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-            borderRadius: 8, padding: '16px 20px',
+            borderRadius: 12, padding: '16px 20px',
           }}>
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
@@ -233,7 +233,7 @@ export default function ScorePanel({ stocks }) {
               <div style={{
                 marginLeft: 'auto', padding: '2px 12px',
                 background: `${gradeColor}22`, border: `1px solid ${gradeColor}55`,
-                borderRadius: 8, fontSize: 13, fontWeight: 700, color: gradeColor,
+                borderRadius: 20, fontSize: 13, fontWeight: 700, color: gradeColor,
               }}>
                 {d.grade}
               </div>
@@ -249,7 +249,7 @@ export default function ScorePanel({ stocks }) {
               </div>
               <div style={{
                 flex: '1 1 200px', minWidth: 0, fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)',
-                background: 'var(--bg-tertiary)', borderRadius: 6,
+                background: 'var(--bg-tertiary)', borderRadius: 8,
                 border: '1px solid var(--border-primary)', padding: '10px 14px', alignSelf: 'center',
               }}>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 600 }}>

@@ -5,7 +5,7 @@ import movesStrings from './movesStrings'
 // each day (market and sector moves, SEC filings, Fed decisions, headlines, cninfo announcements),
 // and an AI explanation from those facts on request.
 
-const UP = '#10b981', DOWN = '#ef4444', ACCENT = '#4588cc'
+const UP = '#00c853', DOWN = '#ff3b30', ACCENT = '#2f7bff'
 const KIND_COLOR = { market: '#7f77c2', sector: '#f59e0b', stock: ACCENT }
 
 // A-shares are red-up like the rest of the site; US green-up
@@ -14,15 +14,15 @@ const pct = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${Number(v).toFixed(
 
 const CSS = `
 .mv { display: grid; gap: 14px; }
-.mv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.mv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
 .mv-muted { color: var(--text-secondary); }
-.mv-chip { font-size: 12px; font-weight: 650; padding: 3px 9px; border-radius: 6px; background: var(--bg-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mv-chip { font-size: 12px; font-weight: 650; padding: 3px 9px; border-radius: 999px; background: var(--bg-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .mv-h { font-size: 11.5px; font-weight: 800; letter-spacing: .3px; color: var(--text-secondary); text-transform: uppercase; }
 .mv-link { color: var(--text-primary); text-decoration: none; font-size: 13px; line-height: 1.5; }
 .mv-link:hover { color: ${ACCENT}; }
-.mv-btn { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 6px; padding: 6px 12px; font-size: 12.5px; font-weight: 650; cursor: pointer; justify-self: start; }
+.mv-btn { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 12px; font-size: 12.5px; font-weight: 650; cursor: pointer; justify-self: start; }
 .mv-btn:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
-.mv-ai { border-left: 3px solid ${ACCENT}; background: ${ACCENT}10; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; line-height: 1.65; }
+.mv-ai { border-left: 3px solid ${ACCENT}; background: ${ACCENT}10; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; line-height: 1.65; }
 `
 
 function Day({ d, s, lang, market, symbol }) {

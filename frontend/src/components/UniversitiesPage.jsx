@@ -6,9 +6,9 @@ import Icon from './Icon'
 const API = import.meta.env.VITE_API_BASE || ''
 
 // ── palette ──────────────────────────────────────────────────────────────────
-const BLUE   = '#4588cc'
+const BLUE   = '#2f7bff'
 const PURPLE = '#7f77c2'
-const GREEN  = '#10b981'
+const GREEN  = '#00c853'
 const AMBER  = '#f59e0b'
 
 const REGIONS = [
@@ -42,10 +42,10 @@ function deadlineStatus(str) {
 function DeadlineTag({ str }) {
   const st = deadlineStatus(str)
   if (!st) return null
-  const style = { fontSize: 10.5, fontWeight: 700, padding: '1px 7px', borderRadius: 6, marginLeft: 6, whiteSpace: 'nowrap' }
+  const style = { fontSize: 10.5, fontWeight: 700, padding: '1px 7px', borderRadius: 999, marginLeft: 6, whiteSpace: 'nowrap' }
   if (st.passed) return <span style={{ ...style, color: 'var(--text-muted)', border: '1px solid var(--border-primary)' }}>{tx('已截止', 'Closed')}</span>
   const soon = st.days <= 30
-  const c = soon ? '#ef4444' : GREEN
+  const c = soon ? '#ff3b30' : GREEN
   return <span style={{ ...style, color: c, background: `${c}18`, border: `1px solid ${c}44` }}>
     {st.days === 0 ? tx('今天截止', 'Due today') : (txf('daysLeft', st.days) ?? (curLang() === 'zh' ? `还有 ${st.days} 天` : `${st.days} days left`))}
   </span>
@@ -71,10 +71,10 @@ const hasUG = (u) => u.undergrad && !u.undergrad.none
 const SPECIALTIES = ['Finance', 'Accounting', 'Economics', 'Consulting', 'Tech']
 
 const SPECIALTY_COLORS = {
-  Finance: '#4588cc', Accounting: '#7f77c2', Economics: '#10b981',
-  Marketing: '#f59e0b', Consulting: '#ef4444', Strategy: '#4a9cab',
+  Finance: '#2f7bff', Accounting: '#7f77c2', Economics: '#00c853',
+  Marketing: '#f59e0b', Consulting: '#ff3b30', Strategy: '#4a9cab',
   MBA: '#5f73b8', Undergraduate: '#84cc16', Tech: '#f97316',
-  Analytics: '#9d97d3', Entrepreneurship: '#34d399', STEM: '#fb923c',
+  Analytics: '#9d97d3', Entrepreneurship: '#30d158', STEM: '#fb923c',
 }
 
 function tagColor(tag) {
@@ -103,15 +103,15 @@ function SkeletonCard() {
     <div style={{
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
-      borderRadius: 8,
+      borderRadius: 14,
       padding: 20,
       display: 'flex',
       flexDirection: 'column',
       gap: 10,
     }}>
-      <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 6 }} />
+      <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 8 }} />
       {[85, 60, 95, 50].map((w, i) => (
-        <div key={i} className="skeleton" style={{ width: `${w}%`, height: i === 0 ? 16 : 12, borderRadius: 4 }} />
+        <div key={i} className="skeleton" style={{ width: `${w}%`, height: i === 0 ? 16 : 12, borderRadius: 6 }} />
       ))}
     </div>
   )
@@ -128,7 +128,7 @@ function RankBadge({ rank, label = 'QS' }) {
       position: 'absolute', top: 12, left: 12,
       background: `${color}22`,
       border: `1px solid ${color}66`,
-      borderRadius: 4,
+      borderRadius: 6,
       padding: '2px 8px',
       fontSize: 11, fontWeight: 700, color,
     }}>
@@ -153,7 +153,7 @@ function BusinessRankLine({ uni, zh }) {
       </span>
       {gap >= 10 && (
         <span style={{
-          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 4,
+          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 5,
           background: `${GREEN}1f`, color: GREEN, border: `1px solid ${GREEN}40`,
         }}>
           {zh ? `比综合排名高 ${gap} 位` : (txf('gapAbove', gap) ?? `${gap} places above overall`)}
@@ -167,7 +167,7 @@ function BusinessRankLine({ uni, zh }) {
 function SchoolLogo({ name, size = 44 }) {
   return (
     <div style={{
-      width: size, height: size, borderRadius: 6, flexShrink: 0,
+      width: size, height: size, borderRadius: 10, flexShrink: 0,
       background: schoolGradient(name),
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: size * 0.34, fontWeight: 800, color: 'rgba(255,255,255,0.9)',
@@ -184,7 +184,7 @@ function TagPill({ label }) {
   return (
     <span style={{
       fontSize: 11, fontWeight: 600,
-      padding: '2px 8px', borderRadius: 8,
+      padding: '2px 8px', borderRadius: 20,
       background: `${color}20`, color,
       border: `1px solid ${color}40`,
       whiteSpace: 'nowrap',
@@ -245,7 +245,7 @@ function UndergradTab({ uni, zh }) {
   }
   if (ug.none) {
     return (
-      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 6, padding: '16px 18px', fontSize: 14, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
+      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '16px 18px', fontSize: 14, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
         {zh ? ug.note_cn : ug.note_en}
       </div>
     )
@@ -253,7 +253,7 @@ function UndergradTab({ uni, zh }) {
   const dl = ug.deadline && deadlineStatus(ug.deadline)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 6, padding: '14px 16px' }}>
+      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '14px 16px' }}>
         <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>{ug.program}</div>
         {ug.length && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{ug.length}</div>}
         <div style={{ marginTop: 10 }}>
@@ -323,7 +323,7 @@ function UniModal({ uni, lang, onClose }) {
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 8,
+        borderRadius: 18,
         width: '100%', maxWidth: 800,
         maxHeight: '90vh',
         display: 'flex', flexDirection: 'column',
@@ -364,19 +364,19 @@ function UniModal({ uni, lang, onClose }) {
                   </span>
                 )}
                 {uni.qs_rank && (
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                     background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
                     {tx('QS 综合', 'QS overall')} #{uni.qs_rank}
                   </span>
                 )}
                 {uni.qs_bm_rank && (
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                     background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}44` }}>
                     {tx('QS 商科', 'QS Business')} #{uni.qs_bm_rank.replace('=', '')}
                   </span>
                 )}
                 <a href={uni.url} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 4,
+                  style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 6,
                     background: `${GREEN}18`, color: GREEN, border: `1px solid ${GREEN}44`,
                     textDecoration: 'none', marginLeft: 2 }}>
                   {tx('官网 →', 'Website →')}
@@ -385,7 +385,7 @@ function UniModal({ uni, lang, onClose }) {
             </div>
             <button onClick={onClose} style={{
               background: 'none', border: '1px solid var(--border-primary)',
-              color: 'var(--text-muted)', borderRadius: 6,
+              color: 'var(--text-muted)', borderRadius: 8,
               width: 32, height: 32, cursor: 'pointer', fontSize: 18, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
             }}
@@ -418,7 +418,7 @@ function UniModal({ uni, lang, onClose }) {
             <>
               <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75, margin: 0,
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 6, padding: '14px 16px' }}>
+                borderRadius: 10, padding: '14px 16px' }}>
                 {zh ? uni.description_cn : uni.description_en}
               </p>
 
@@ -426,7 +426,7 @@ function UniModal({ uni, lang, onClose }) {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {/* Tuition */}
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 6, padding: '14px 16px' }}>
+                  borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('学费参考', 'Tuition')}
@@ -439,7 +439,7 @@ function UniModal({ uni, lang, onClose }) {
                 {/* Acceptance rate when published, otherwise the next open deadline (never a blank "see website") */}
                 {req.acceptance_rate ? (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 6, padding: '14px 16px' }}>
+                  borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('录取率', 'Acceptance Rate')}
@@ -448,7 +448,7 @@ function UniModal({ uni, lang, onClose }) {
                 </div>
                 ) : nextDl && (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 6, padding: '14px 16px' }}>
+                  borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('下一个申请截止', 'Next deadline')}
@@ -464,7 +464,7 @@ function UniModal({ uni, lang, onClose }) {
 
                 {/* Specialties */}
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 6, padding: '14px 16px' }}>
+                  borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('强势专业', 'Specialties')}
@@ -477,7 +477,7 @@ function UniModal({ uni, lang, onClose }) {
                 {/* Employment (most schools publish no breakdown: an empty list used to leave a blank box) */}
                 {uni.employment?.length > 0 && (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 6, padding: '14px 16px' }}>
+                  borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('就业去向（MBA）', 'Top Employment (MBA)')}
@@ -506,16 +506,16 @@ function UniModal({ uni, lang, onClose }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {programs.length > 0 ? programs.map((p, i) => (
                 <div key={i} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 6, padding: '14px 16px' }}>
+                  borderRadius: 10, padding: '14px 16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 8 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{p.name}</div>
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
                         background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33` }}>
                         {p.duration}
                       </span>
                       {p.language && p.language !== 'English' && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
                           background: `${PURPLE}18`, color: PURPLE, border: `1px solid ${PURPLE}33` }}>
                           {p.language}
                         </span>
@@ -530,7 +530,7 @@ function UniModal({ uni, lang, onClose }) {
                 /* Fallback to simple programs list */
                 (uni.programs || []).map(p => (
                   <div key={p} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 6, padding: '12px 16px',
+                    borderRadius: 10, padding: '12px 16px',
                     fontSize: 14, fontWeight: 600, color: BLUE }}>
                     {p}
                   </div>
@@ -545,7 +545,7 @@ function UniModal({ uni, lang, onClose }) {
               {Object.keys(req).length > 0 ? (
                 <>
                   <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 6, padding: '14px 16px' }}>
+                    borderRadius: 10, padding: '14px 16px' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                       textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                       {tx('学术成绩', 'Academic')}
@@ -558,7 +558,7 @@ function UniModal({ uni, lang, onClose }) {
 
                   {(req.toefl || req.ielts) && (
                   <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 6, padding: '14px 16px' }}>
+                    borderRadius: 10, padding: '14px 16px' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                       textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                       {tx('语言要求', 'Language Requirements')}
@@ -570,7 +570,7 @@ function UniModal({ uni, lang, onClose }) {
 
                   {req.deadlines && (
                     <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 6, padding: '14px 16px' }}>
+                      borderRadius: 10, padding: '14px 16px' }}>
                       <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                         textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                         {tx('申请截止日期', 'Application Deadlines')}
@@ -603,7 +603,7 @@ function UniModal({ uni, lang, onClose }) {
                   /* Fallback: simple string list */
                   alumni.map(a => (
                     <div key={a} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 6, padding: '12px 16px',
+                      borderRadius: 10, padding: '12px 16px',
                       fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
                       {a}
                     </div>
@@ -612,10 +612,10 @@ function UniModal({ uni, lang, onClose }) {
                   /* Rich alumni_detail format */
                   alumni.map((a, i) => (
                     <div key={i} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 6, padding: '14px 16px',
+                      borderRadius: 10, padding: '14px 16px',
                       display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                       <div style={{
-                        width: 40, height: 40, borderRadius: 6, flexShrink: 0,
+                        width: 40, height: 40, borderRadius: 10, flexShrink: 0,
                         background: schoolGradient(a.name),
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 15, fontWeight: 800, color: 'rgba(255,255,255,0.9)',
@@ -703,7 +703,7 @@ function CompareModal({ schools, lang, onClose }) {
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 8, width: '100%', maxWidth: 960,
+        borderRadius: 18, width: '100%', maxWidth: 960,
         maxHeight: '90vh',
         display: 'flex', flexDirection: 'column',
         boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
@@ -721,7 +721,7 @@ function CompareModal({ schools, lang, onClose }) {
           </div>
           <button onClick={onClose} style={{
             background: 'none', border: '1px solid var(--border-primary)',
-            color: 'var(--text-muted)', borderRadius: 6,
+            color: 'var(--text-muted)', borderRadius: 8,
             width: 32, height: 32, cursor: 'pointer', fontSize: 18,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
@@ -751,14 +751,14 @@ function CompareModal({ schools, lang, onClose }) {
                 </div>
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
                   {u.qs_rank && (
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 4,
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                       background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
                       {tx('综合', 'QS')} #{u.qs_rank}
                     </span>
                   )}
                   {u.qs_bm_rank && (
                     <span style={{
-                      fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 4,
+                      fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                       background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33`,
                     }}>
                       {tx('商科', 'Business')} #{u.qs_bm_rank.replace('=', '')}
@@ -787,7 +787,7 @@ function CompareModal({ schools, lang, onClose }) {
                   <div key={u.id} style={{
                     fontSize: 13, color: 'var(--text-primary)', fontWeight: 500,
                     background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 6, padding: '8px 12px', minHeight: 38,
+                    borderRadius: 8, padding: '8px 12px', minHeight: 38,
                     display: 'flex', alignItems: 'center',
                   }}>
                     {key === 'specialties' ? (
@@ -814,7 +814,7 @@ function CompareModal({ schools, lang, onClose }) {
               {schools.map(u => (
                 <div key={u.id} style={{
                   background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 6, padding: '8px 12px',
+                  borderRadius: 8, padding: '8px 12px',
                 }}>
                   {(u.employment || []).slice(0, 4).map((e, i) => (
                     <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>• {e}</div>
@@ -830,7 +830,7 @@ function CompareModal({ schools, lang, onClose }) {
               {schools.map(u => (
                 <a key={u.id} href={u.url} target="_blank" rel="noopener noreferrer" style={{
                   display: 'block', textAlign: 'center', padding: '8px 0',
-                  borderRadius: 6, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
+                  borderRadius: 8, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
                   color: GREEN, fontSize: 13, fontWeight: 600, textDecoration: 'none',
                 }}>
                   {tx('官网 →', 'Website →')}
@@ -868,7 +868,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
           <div key={u.id} style={{
             display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0,
             background: `${BLUE}15`, border: `1px solid ${BLUE}33`,
-            borderRadius: 6, padding: '5px 8px',
+            borderRadius: 8, padding: '5px 8px',
           }}>
             <SchoolLogo name={u.name} size={22} />
             <span style={{
@@ -890,7 +890,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
           <div key={i} style={{
             width: 110, height: 34, flexShrink: 0,
             border: '1px dashed var(--border-primary)',
-            borderRadius: 6,
+            borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <span style={{ fontSize: 11, color: 'var(--border-primary)' }}>
@@ -904,12 +904,12 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
         <button
           onClick={onClear}
           style={{
-            padding: '7px 14px', borderRadius: 6,
+            padding: '7px 14px', borderRadius: 8,
             border: '1px solid var(--border-primary)',
             background: 'transparent', color: 'var(--text-muted)',
             fontSize: 12, cursor: 'pointer', transition: 'all 0.15s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = '#ff453a'; e.currentTarget.style.color = '#ff453a' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
           {tx('清除', 'Clear')}
@@ -918,7 +918,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
           onClick={onOpen}
           disabled={schools.length < 2}
           style={{
-            padding: '7px 18px', borderRadius: 6, border: 'none',
+            padding: '7px 18px', borderRadius: 8, border: 'none',
             background: schools.length >= 2
               ? `${BLUE}`
               : 'var(--border-primary)',
@@ -1113,7 +1113,7 @@ function RenderReport({ text, t }) {
           return (
             <div key={i} style={{
               background: `${AMBER}12`, border: `1px solid ${AMBER}35`,
-              borderRadius: 6, padding: '10px 14px',
+              borderRadius: 8, padding: '10px 14px',
               fontSize: 12, color: `${AMBER}dd`, lineHeight: 1.65, margin: '6px 0',
             }}>
               <MdLine text={line} />
@@ -1137,7 +1137,7 @@ function RenderReport({ text, t }) {
           return (
             <div key={i} style={{
               background: `${AMBER}18`, border: `1px solid ${AMBER}44`,
-              borderRadius: 6, padding: '14px 18px', margin: '8px 0',
+              borderRadius: 10, padding: '14px 18px', margin: '8px 0',
               fontSize: 18, fontWeight: 800, color: AMBER, letterSpacing: '0.5px',
             }}>
               <MdLine text={line} />
@@ -1172,7 +1172,7 @@ function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, 
           rows={rows}
           style={{
             background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-            borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
+            borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
             fontSize: 13, outline: 'none', resize: 'vertical', fontFamily: 'inherit',
           }}
           onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1185,7 +1185,7 @@ function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, 
           placeholder={placeholder}
           style={{
             background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-            borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
+            borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
             fontSize: 13, outline: 'none',
           }}
           onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1206,7 +1206,7 @@ function IvSelect({ label, value, onChange, options, labelOf = (o) => o }) {
         onChange={e => onChange(e.target.value)}
         style={{
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-          borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
+          borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
           fontSize: 13, outline: 'none', cursor: 'pointer',
         }}
         onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1238,7 +1238,7 @@ function SchoolInput({ value, onChange, unis, t }) {
         placeholder={t.schoolPh}
         style={{
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-          borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
+          borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
           fontSize: 13, outline: 'none',
         }}
         onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1248,7 +1248,7 @@ function SchoolInput({ value, onChange, unis, t }) {
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,
           background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-          borderRadius: 6, boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          borderRadius: 8, boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
           overflow: 'hidden', marginTop: 4,
         }}>
           {suggestions.map(u => (
@@ -1282,7 +1282,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{
         background: `${BLUE}10`, border: `1px solid ${BLUE}30`,
-        borderRadius: 6, padding: '12px 16px',
+        borderRadius: 10, padding: '12px 16px',
         fontSize: 12, color: `${BLUE}cc`, lineHeight: 1.65,
       }}>
         {t.intro}
@@ -1316,7 +1316,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
               onChange={e => set('test_type')(e.target.value)}
               style={{
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 6, color: 'var(--text-primary)', padding: '8px 10px',
+                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 10px',
                 fontSize: 13, outline: 'none', cursor: 'pointer', width: 90,
               }}
             >
@@ -1328,7 +1328,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
               placeholder={t.scorePh}
               style={{
                 flex: 1, background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 6, color: 'var(--text-primary)', padding: '8px 10px', fontSize: 13, outline: 'none',
+                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 10px', fontSize: 13, outline: 'none',
               }}
             />
           </div>
@@ -1360,7 +1360,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
             key={val}
             onClick={() => set('lang')(val)}
             style={{
-              padding: '5px 14px', borderRadius: 8,
+              padding: '5px 14px', borderRadius: 20,
               border: `1px solid ${profile.lang === val ? BLUE : 'var(--border-primary)'}`,
               background: profile.lang === val ? `${BLUE}22` : 'transparent',
               color: profile.lang === val ? BLUE : 'var(--text-muted)',
@@ -1377,7 +1377,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
         onClick={onStart}
         disabled={!canStart}
         style={{
-          padding: '12px 0', borderRadius: 6, border: 'none',
+          padding: '12px 0', borderRadius: 10, border: 'none',
           background: canStart
             ? `${BLUE}`
             : 'var(--border-primary)',
@@ -1459,11 +1459,11 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
       {/* Interviewer persona header */}
       <div style={{
         padding: '10px 16px', marginBottom: 8, flexShrink: 0,
-        background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 6,
+        background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10,
         display: 'flex', alignItems: 'center', gap: 12,
       }}>
         <div style={{
-          width: 36, height: 36, borderRadius: 6, flexShrink: 0,
+          width: 36, height: 36, borderRadius: 10, flexShrink: 0,
           background: `${BLUE}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 16,
@@ -1521,8 +1521,8 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
           </div>
         )}
         {error && (
-          <div style={{ fontSize: 12, color: '#f87171', padding: '8px 12px',
-            background: 'rgba(248,113,113,0.1)', borderRadius: 6 }}>
+          <div style={{ fontSize: 12, color: '#ff453a', padding: '8px 12px',
+            background: 'rgba(255,69,58,0.1)', borderRadius: 8 }}>
             {error}
           </div>
         )}
@@ -1541,7 +1541,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
             rows={2}
             style={{
               flex: 1, background: 'var(--bg-tertiary)', border: `1px solid ${BLUE}55`,
-              borderRadius: 6, color: 'var(--text-primary)', padding: '10px 14px',
+              borderRadius: 10, color: 'var(--text-primary)', padding: '10px 14px',
               fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit',
               opacity: isBusy ? 0.5 : 1,
             }}
@@ -1550,7 +1550,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
             onClick={handleSend}
             disabled={isBusy || !userInput.trim()}
             style={{
-              width: 44, borderRadius: 6, border: 'none', flexShrink: 0,
+              width: 44, borderRadius: 10, border: 'none', flexShrink: 0,
               background: (isBusy || !userInput.trim()) ? 'var(--border-primary)' : BLUE,
               color: '#fff', cursor: (isBusy || !userInput.trim()) ? 'not-allowed' : 'pointer',
               fontSize: 18, transition: 'background 0.15s',
@@ -1562,7 +1562,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
           <button
             onClick={onGenerateReport}
             style={{
-              padding: '10px 0', borderRadius: 6, border: 'none',
+              padding: '10px 0', borderRadius: 10, border: 'none',
               background: `${GREEN}`,
               color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
               transition: 'opacity 0.15s',
@@ -1601,7 +1601,7 @@ function ReportView({ profile, chatHistory, onReset, t }) {
       {/* Disclaimer banner */}
       <div style={{
         background: `${AMBER}12`, border: `1px solid ${AMBER}40`,
-        borderRadius: 6, padding: '12px 16px',
+        borderRadius: 10, padding: '12px 16px',
         fontSize: 12, color: `${AMBER}cc`, lineHeight: 1.65,
       }}>
         <strong>{t.discTitle}</strong> <strong>{t.discStrong}</strong> {t.discRest}
@@ -1611,7 +1611,7 @@ function ReportView({ profile, chatHistory, onReset, t }) {
       {report ? (
         <div style={{
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-          borderRadius: 8, padding: '16px 20px',
+          borderRadius: 12, padding: '16px 20px',
         }}>
           <RenderReport text={report} t={t} />
           {!isReady && (
@@ -1633,8 +1633,8 @@ function ReportView({ profile, chatHistory, onReset, t }) {
       ) : null}
 
       {error && (
-        <div style={{ color: '#f87171', fontSize: 13, padding: '12px 16px',
-          background: 'rgba(248,113,113,0.1)', borderRadius: 6 }}>
+        <div style={{ color: '#ff453a', fontSize: 13, padding: '12px 16px',
+          background: 'rgba(255,69,58,0.1)', borderRadius: 8 }}>
           {error}
         </div>
       )}
@@ -1643,7 +1643,7 @@ function ReportView({ profile, chatHistory, onReset, t }) {
         <button
           onClick={onReset}
           style={{
-            padding: '10px 0', borderRadius: 6, border: `1px solid var(--border-primary)`,
+            padding: '10px 0', borderRadius: 10, border: `1px solid var(--border-primary)`,
             background: 'transparent', color: 'var(--text-muted)',
             fontSize: 13, cursor: 'pointer', transition: 'all 0.15s', marginTop: 4,
           }}
@@ -1691,7 +1691,7 @@ function InterviewModal({ unis, lang, onClose }) {
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 8, width: '100%', maxWidth: 680,
+        borderRadius: 18, width: '100%', maxWidth: 680,
         maxHeight: '92vh',
         display: 'flex', flexDirection: 'column',
         boxShadow: 'var(--shadow-pop)',
@@ -1716,7 +1716,7 @@ function InterviewModal({ unis, lang, onClose }) {
               onClick={onClose}
               style={{
                 background: 'none', border: '1px solid var(--border-primary)',
-                color: 'var(--text-muted)', borderRadius: 6,
+                color: 'var(--text-muted)', borderRadius: 8,
                 width: 32, height: 32, cursor: 'pointer', fontSize: 18,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
@@ -1804,13 +1804,13 @@ function InterviewEntryCard({ onOpen }) {
         marginBottom: 24,
         background: hov ? 'var(--bg-hover)' : 'var(--bg-secondary)',
         border: `1px solid ${hov ? 'var(--border-glow)' : 'var(--border-primary)'}`,
-        borderRadius: 8, padding: '16px 20px',
+        borderRadius: 14, padding: '16px 20px',
         cursor: 'pointer',
         display: 'flex', alignItems: 'center', gap: 18,
       }}
     >
       <div style={{
-        width: 40, height: 40, borderRadius: 6, flexShrink: 0,
+        width: 40, height: 40, borderRadius: 12, flexShrink: 0,
         background: 'var(--bg-tertiary)', color: 'var(--text-secondary)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}><Icon name="tutor" size={22} /></div>
@@ -1867,7 +1867,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
         position: 'relative',
         background: 'var(--bg-secondary)',
         border: `1px solid ${isCompared ? BLUE : hovered ? 'var(--border-glow)' : 'var(--border-primary)'}`,
-        borderRadius: 8,
+        borderRadius: 14,
         padding: '44px 16px 16px',
         cursor: 'pointer',
         display: 'flex',
@@ -1886,7 +1886,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
           onClick={e => { e.stopPropagation(); onToggleCompare(uni.id) }}
           style={{
             position: 'absolute', top: 12, right: 12,
-            width: 24, height: 24, borderRadius: 4,
+            width: 24, height: 24, borderRadius: 6,
             border: `1px solid ${isCompared ? BLUE + '99' : 'var(--border-primary)'}`,
             background: isCompared ? `${BLUE}25` : 'transparent',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -2023,7 +2023,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
   const aboveOverall = data ? data.entries.filter(e => e.rank_num <= 50 && (!e.overall_num || e.overall_num - e.rank_num >= 10)).length : 0
 
   const pill = (active) => ({
-    padding: '5px 12px', borderRadius: 8,
+    padding: '5px 12px', borderRadius: 20,
     border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
     background: active ? `${BLUE}22` : 'transparent',
     color: active ? BLUE : 'var(--text-secondary)',
@@ -2042,7 +2042,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
       <div style={{
         display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap',
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-        borderRadius: 8, padding: '16px 18px', marginBottom: 16,
+        borderRadius: 14, padding: '16px 18px', marginBottom: 16,
       }}>
         <div style={{ flex: '1 1 420px', minWidth: 0 }}>
           <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>
@@ -2088,7 +2088,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
           <span role="columnheader" className="bm-col-gap">{tx('对比综合', 'vs overall')}</span>
         </div>
         {!data ? (
-          Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 52, margin: '6px 0', borderRadius: 6 }} />)
+          Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 52, margin: '6px 0', borderRadius: 8 }} />)
         ) : rows.slice(0, limit).map(e => {
           const profile = e.school_ids.map(id => byId[id]).filter(Boolean)
           const main = profile[0]
@@ -2122,7 +2122,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
         <button
           onClick={() => setLimit(l => l + BM_PAGE)}
           style={{
-            display: 'block', width: '100%', marginTop: 10, padding: '11px 0', borderRadius: 6,
+            display: 'block', width: '100%', marginTop: 10, padding: '11px 0', borderRadius: 10,
             border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)',
             color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
           }}
@@ -2142,7 +2142,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
       )}
 
       <style>{`
-        .bm-table { border: 1px solid var(--border-primary); border-radius: 8px; overflow: hidden; background: var(--bg-secondary); }
+        .bm-table { border: 1px solid var(--border-primary); border-radius: 14px; overflow: hidden; background: var(--bg-secondary); }
         .bm-row { display: grid; grid-template-columns: 64px minmax(0,1fr) 110px 130px; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid var(--border-primary); }
         .bm-head { border-top: none; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 12px; padding-bottom: 8px; }
         .bm-link { cursor: pointer; transition: background 0.15s; }
@@ -2156,7 +2156,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
           .bm-link:hover .bm-more, .bm-link:focus-visible .bm-more { display: inline; }
         }
         .bm-overall { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-        .bm-gap { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; border: 1px solid; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .bm-gap { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; border: 1px solid; white-space: nowrap; font-variant-numeric: tabular-nums; }
         @media (max-width: 640px) {
           .bm-row { grid-template-columns: 44px minmax(0,1fr) auto; padding: 10px 12px; }
           .bm-col-overall { display: none; }
@@ -2222,7 +2222,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
   const hasFilters = filters.region || filters.language || filters.specialty || filters.search || filters.ug
 
   const pill = (active) => ({
-    padding: '5px 14px', borderRadius: 8,
+    padding: '5px 14px', borderRadius: 20,
     border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
     background: active ? `${BLUE}22` : 'transparent',
     color: active ? BLUE : 'var(--text-muted)',
@@ -2249,7 +2249,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
             onChange={e => onChange({ ...filters, search: e.target.value })}
             placeholder={tx('搜索学校（中英文）...', 'Search schools...')}
             style={{
-              background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 6,
+              background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
               color: 'var(--text-primary)', padding: '7px 12px 7px 32px', fontSize: 13,
               outline: 'none', width: 180,
             }}
@@ -2296,7 +2296,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           onChange={e => onChange({ ...filters, specialty: e.target.value })}
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 6, color: filters.specialty ? 'var(--text-primary)' : 'var(--text-muted)',
+            borderRadius: 8, color: filters.specialty ? 'var(--text-primary)' : 'var(--text-muted)',
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
@@ -2311,7 +2311,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           onChange={e => onChange({ ...filters, sort: e.target.value })}
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 6, color: 'var(--text-muted)',
+            borderRadius: 8, color: 'var(--text-muted)',
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
@@ -2331,11 +2331,11 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
             <button
               onClick={() => onChange({ region: '', language: '', specialty: '', search: '', sort: filters.sort, ug: false })}
               style={{
-                padding: '4px 12px', borderRadius: 8, border: `1px solid var(--border-primary)`,
+                padding: '4px 12px', borderRadius: 20, border: `1px solid var(--border-primary)`,
                 background: 'transparent', color: 'var(--text-muted)',
                 fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#ff453a'; e.currentTarget.style.color = '#ff453a' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-primary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
             >
               {tx('清除筛选', 'Clear')}
@@ -2446,7 +2446,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         {/* View switch: school directory vs business-school leaderboard */}
         <div role="tablist" style={{
           display: 'flex', gap: 4, padding: 4, marginBottom: 18, width: 'fit-content', maxWidth: '100%',
-          background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
+          background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12,
         }}>
           {[
             { key: 'schools',  label: t ? `院校库 · ${allUnis.length || ''}` : (txf('directory', allUnis.length || '') ?? `School directory · ${allUnis.length || ''}`) },
@@ -2458,7 +2458,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
               aria-selected={view === v.key}
               onClick={() => setView(v.key)}
               style={{
-                padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: 700, flex: '1 1 auto', minWidth: 0, lineHeight: 1.3,
                 background: view === v.key ? `${BLUE}` : 'transparent',
                 color: view === v.key ? '#fff' : 'var(--text-secondary)',

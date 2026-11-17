@@ -7,7 +7,7 @@ import classStrings from '../classes/classStrings'
 import Chevron from './Chevron'
 import Icon from '../Icon'
 import navStrings from './navStrings'
-import { ICONS } from './navItems'
+import { ICONS, TINTS } from './navItems'
 import './nav.css'
 
 const KEY = 'bfs_start_here'
@@ -59,7 +59,7 @@ export default function StartHere({ lang, paths, onTabChange }) {
             {picks.map((p) => (
               <li key={p.tab}>
                 <a href={paths[p.tab]} onClick={(e) => go(e, p.tab)}>
-                  <Icon name={ICONS[p.tab]} size={20} className="bfs-start-icon" />
+                  <span className="bfs-chip" style={{ background: `var(--chip-${TINTS[p.tab]})` }}><Icon name={ICONS[p.tab]} size={22} strokeWidth={2} /></span>
                   <span>
                     <b>{p.title}</b>
                     <span className="bfs-start-text">{p.text}</span>

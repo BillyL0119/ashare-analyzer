@@ -19,7 +19,7 @@ function Table({ head, children, empty, emptyText }) {
   )
 }
 
-const small = (color) => ({ border: `1px solid ${color}55`, background: `${color}14`, color, borderRadius: 4, padding: '3px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer' })
+const small = (color) => ({ border: `1px solid ${color}55`, background: `${color}14`, color, borderRadius: 7, padding: '3px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer' })
 
 export function Positions({ s, view, market, onAction }) {
   const longs = Object.entries(view?.portfolio || {}).sort(([, a], [, b]) => b.market_value - a.market_value)
@@ -165,7 +165,7 @@ export function Leaderboard({ s, rows, market }) {
       <th style={th}>#</th><th style={th}>{s.cols.trader}</th><th style={thr}>{s.cols.ret}</th><th style={thr}>{s.cols.value}</th>
     </>}>
       {(rows || []).map((r) => (
-        <tr key={r.rank} style={r.is_me ? { background: 'rgba(69,136,204,0.08)' } : undefined}>
+        <tr key={r.rank} style={r.is_me ? { background: 'rgba(47,123,255,0.08)' } : undefined}>
           <td style={{ ...td, fontWeight: 800, color: r.rank <= 3 ? '#f59e0b' : MUTED }}>{r.rank}</td>
           <td style={{ ...td, fontWeight: r.is_me ? 800 : 500 }}>{r.nickname}{r.is_me ? s.you : ''}</td>
           <td style={{ ...num, color: plColor(r.return_pct, market), fontWeight: 700 }}>{pct(r.return_pct)}</td>

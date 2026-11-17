@@ -75,7 +75,7 @@ export function Sparkline({ values, color, width = 64, height = 32 }) {
   )
 }
 
-const GAUGE_COLORS = ['#EF5350', '#F28B3C', '#E8C54A', '#8FCB5A', '#2FB86A']
+const GAUGE_COLORS = ['#ff3b30', '#F28B3C', '#E8C54A', '#8FCB5A', '#00c853']
 function gaugeTint(s) { return s < 30 ? GAUGE_COLORS[0] : s < 45 ? GAUGE_COLORS[1] : s < 55 ? GAUGE_COLORS[2] : s < 70 ? GAUGE_COLORS[3] : GAUGE_COLORS[4] }
 
 /** Fear/greed half dial: the gradient is fixed to the arc, the score only reveals more of it. */

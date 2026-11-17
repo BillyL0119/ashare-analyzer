@@ -6,25 +6,25 @@ const LS_KEY = 'bfs_knowledge_date'
 const CATEGORY_COLOR = {
   '宏观经济': '#a99ad6',
   '微观经济': '#9d97d3',
-  '估值':    '#6aa2da',
-  '技术分析': '#26a69a',
+  '估值':    '#5c9bff',
+  '技术分析': '#00c853',
   '基本面':  '#ffa726',
   'A股特色': '#f06292',
-  '投资理念': '#66bb6a',
+  '投资理念': '#30d158',
 }
 
 function CardPanel({ item, lang }) {
   if (!item) return null
   const topic   = lang === 'zh' ? item.topic_zh   : item.topic_en
   const content = lang === 'zh' ? item.content_zh : item.content_en
-  const color   = CATEGORY_COLOR[item.category] || '#6aa2da'
+  const color   = CATEGORY_COLOR[item.category] || '#5c9bff'
 
   return (
     <div style={{ marginBottom: 14 }}>
       {/* Category + difficulty */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         <span style={{
-          fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
+          fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
           background: `${color}20`, color, border: `1px solid ${color}40`,
         }}>
           {item.category}
@@ -47,11 +47,11 @@ function CardPanel({ item, lang }) {
       {/* Formula */}
       {item.key_formula && (
         <div style={{
-          background: 'rgba(106,162,218,0.07)',
-          border: '1px solid rgba(106,162,218,0.18)',
-          borderRadius: 4, padding: '6px 10px', marginBottom: 8,
+          background: 'rgba(92,155,255,0.07)',
+          border: '1px solid rgba(92,155,255,0.18)',
+          borderRadius: 6, padding: '6px 10px', marginBottom: 8,
         }}>
-          <div style={{ fontSize: 10, color: '#6aa2da', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 10, color: '#5c9bff', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Formula
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'monospace', lineHeight: 1.5 }}>
@@ -63,7 +63,7 @@ function CardPanel({ item, lang }) {
       {/* Example */}
       {item.example && (
         <div style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 10, color: '#26a69a', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 10, color: '#00c853', fontWeight: 700, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Example
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.55 }}>
@@ -80,7 +80,7 @@ function CardPanel({ item, lang }) {
               fontSize: 10, color: 'var(--text-muted)',
               background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 4, padding: '2px 6px',
+              borderRadius: 5, padding: '2px 6px',
             }}>
               #{tag}
             </span>
@@ -121,13 +121,13 @@ export default function KnowledgeCard({ lang, open, onClose }) {
       width: 320,
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
-      borderRadius: 8,
+      borderRadius: 14,
       boxShadow: 'var(--shadow-pop)',
       overflow: 'hidden',
     }}>
       {/* Header */}
       <div style={{
-        background: 'rgba(69,136,204,0.12)',
+        background: 'rgba(47,123,255,0.12)',
         borderBottom: '1px solid var(--border-primary)',
         padding: '10px 14px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -152,9 +152,9 @@ export default function KnowledgeCard({ lang, open, onClose }) {
             style={{
               flex: 1, padding: '7px 0', fontSize: 12, fontWeight: tab === key ? 700 : 400,
               border: 'none', cursor: 'pointer',
-              background: tab === key ? 'rgba(69,136,204,0.08)' : 'transparent',
-              color: tab === key ? '#4588cc' : 'var(--text-muted)',
-              borderBottom: tab === key ? '2px solid #4588cc' : '2px solid transparent',
+              background: tab === key ? 'rgba(47,123,255,0.08)' : 'transparent',
+              color: tab === key ? '#2f7bff' : 'var(--text-muted)',
+              borderBottom: tab === key ? '2px solid #2f7bff' : '2px solid transparent',
               transition: 'all 0.15s',
             }}
           >

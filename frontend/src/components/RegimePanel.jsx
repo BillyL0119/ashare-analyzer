@@ -10,8 +10,8 @@ import useThemeStore from '../store/themeStore'
 const STOCK_COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
 
 const REGIME_COLORS = {
-  bull:     '#ef5350',
-  bear:     '#26a69a',
+  bull:     '#ff3b30',
+  bear:     '#00c853',
   sideways: '#ff9800',
   crisis:   '#ab47bc',
 }
@@ -37,7 +37,7 @@ function RegimeBadge({ regime, duration, lang, t }) {
       <div style={{
         background: color + '22',
         border: `2px solid ${color}`,
-        borderRadius: 6,
+        borderRadius: 8,
         padding: '8px 18px',
         textAlign: 'center',
       }}>
@@ -175,8 +175,8 @@ function RegimePriceChart({ series, lang, t }) {
         type: 'line',
         data: rollRet,
         showSymbol: false,
-        lineStyle: { width: 1.3, color: '#66bb6a' },
-        itemStyle: { color: '#66bb6a' },
+        lineStyle: { width: 1.3, color: '#30d158' },
+        itemStyle: { color: '#30d158' },
         xAxisIndex: 1, yAxisIndex: 1,
       },
       {
@@ -227,7 +227,7 @@ function TransitionTable({ transitions, lang, t }) {
                   </span>
                 </td>
                 <td style={{ padding: '6px 10px', color: THEME.text }}>{tr.duration}{lang === 'zh' ? '天' : 'd'}</td>
-                <td style={{ padding: '6px 10px', color: tr.return_pct >= 0 ? '#ef5350' : '#26a69a', fontWeight: 600 }}>
+                <td style={{ padding: '6px 10px', color: tr.return_pct >= 0 ? '#ff3b30' : '#00c853', fontWeight: 600 }}>
                   {tr.return_pct > 0 ? '+' : ''}{tr.return_pct.toFixed(2)}%
                 </td>
               </tr>
@@ -253,7 +253,7 @@ function Interpretation({ text }) {
               : part
           )
         return (
-          <div key={i} style={{ background: 'var(--bg-tertiary)', border: `1px solid ${THEME.border}`, borderRadius: 4, padding: '9px 13px', color: 'var(--text-primary)', fontSize: 13, lineHeight: 1.7 }}>
+          <div key={i} style={{ background: 'var(--bg-tertiary)', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '9px 13px', color: 'var(--text-primary)', fontSize: 13, lineHeight: 1.7 }}>
             {renderBold(s)}
           </div>
         )
@@ -278,7 +278,7 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
   }, [stock.code, period, startDate, endDate, adjust, win])
 
   return (
-    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 16 }}>
+    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
@@ -291,31 +291,31 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
       </div>
 
       {loading && <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>{t.regimeLoading}</div>}
-      {error && <div style={{ color: '#ef5350', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
 
       {data && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Current regime + breakdown side by side */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 24, alignItems: 'start', background: 'var(--bg-tertiary)', borderRadius: 4, padding: '14px 18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 24, alignItems: 'start', background: 'var(--bg-tertiary)', borderRadius: 6, padding: '14px 18px' }}>
             <RegimeBadge regime={data.current_regime} duration={data.current_duration_days} lang={lang} t={t} />
             <RegimeBreakdown stats={data.regime_stats} lang={lang} t={t} />
           </div>
 
           {/* Price + regime chart */}
           <div>
-            <div style={{ color: '#4588cc', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
+            <div style={{ color: '#2f7bff', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimePriceChart}</div>
             <RegimePriceChart series={data.series} lang={lang} t={t} />
           </div>
 
           {/* Transition history */}
           <div>
-            <div style={{ color: '#4588cc', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
+            <div style={{ color: '#2f7bff', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeHistory}</div>
             <TransitionTable transitions={data.transitions} lang={lang} t={t} />
           </div>
 
           {/* Interpretation */}
           <div>
-            <div style={{ color: '#4588cc', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
+            <div style={{ color: '#2f7bff', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t.regimeInterpret}</div>
             <Interpretation text={data.interpretation[lang]} />
           </div>
         </div>
@@ -334,14 +334,14 @@ export default function RegimePanel({ stocks }) {
   const [win, setWin] = useState(20)
 
   const btnStyle = (active) => ({
-    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#4588cc' : THEME.border}`,
-    background: active ? 'rgba(69,136,204,0.12)' : 'var(--bg-hover)', color: active ? '#4588cc' : THEME.text, cursor: 'pointer',
+    padding: '4px 10px', borderRadius: 4, fontSize: 12, border: `1px solid ${active ? '#2f7bff' : THEME.border}`,
+    background: active ? 'rgba(47,123,255,0.12)' : 'var(--bg-hover)', color: active ? '#2f7bff' : THEME.text, cursor: 'pointer',
   })
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '10px 16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: '10px 16px' }}>
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.regimeWindow}:</span>
         {[10, 20, 40, 60].map(w => (
           <button key={w} style={btnStyle(win === w)} onClick={() => setWin(w)}>{w}{lang === 'zh' ? '天' : 'd'}</button>

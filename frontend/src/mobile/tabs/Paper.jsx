@@ -79,7 +79,7 @@ const TYPE_HELP = {
 const CORP_LABEL = { dividend: '分红', split: '拆股', bonus: '送转' }
 const CORP_BADGE = { dividend: '息', split: '拆', bonus: '送' }
 const STATUS_LABEL = { open: '未成交', filled: '已成交', cancelled: '已撤销', expired: '已过期', rejected: '被拒' }
-const STATUS_COLOR = { open: 'var(--accent)', filled: '#22C55E', cancelled: 'var(--text-3)', expired: 'var(--text-3)', rejected: '#ef4444' }
+const STATUS_COLOR = { open: 'var(--accent)', filled: '#00c853', cancelled: 'var(--text-3)', expired: 'var(--text-3)', rejected: '#ff3b30' }
 const SHORT_MARGIN = 0.5   // extra margin the server holds on a short, as a share of its value
 
 function Row({ k, v, color, strong }) {
@@ -176,7 +176,7 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
             <div style={{ minHeight: 18, fontSize: 13, marginTop: 4 }}>
               {quote?.price ? <span><b>{quote.name}</b> <span className="m-muted m-num">· {money(quote.price, cur)}</span>
                 <button onClick={() => nav(`/stock/${market}/${encodeURIComponent(sym)}`)} className="m-link" style={{ marginLeft: 10, fontSize: 13 }}>{t('查看走势')} ›</button></span>
-                : quote?.missing && !showSuggest ? <span style={{ color: '#ef4444' }}>{t('没有找到这只股票')}</span> : null}
+                : quote?.missing && !showSuggest ? <span style={{ color: '#ff3b30' }}>{t('没有找到这只股票')}</span> : null}
             </div>
             {showSuggest && (
               <div style={{ margin: '8px -16px -4px', width: 'calc(100% + 32px)' }}>
@@ -270,10 +270,10 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
             {side === 'cover' && <Row k={t('预计花费')} v={money(amount + fee, cur)} strong />}
             {fee > 0.005 && <Row k={market === 'hk' ? t('印花税及交易所费用') : t('手续费')} v={money(fee, cur)} />}
             {pl != null && <Row k={t('预计盈亏')} v={(pl >= 0 ? '+' : '-') + money(Math.abs(pl), cur)} color={changeColor(pl, market)} />}
-            {opening && <Row k={t('可用购买力')} v={money(bp, cur)} color={overBp ? '#ef4444' : undefined} />}
+            {opening && <Row k={t('可用购买力')} v={money(bp, cur)} color={overBp ? '#ff3b30' : undefined} />}
           </div>
         )}
-        {err && <div style={{ color: '#ef4444', fontSize: 13, textAlign: 'center' }}>{err}</div>}
+        {err && <div style={{ color: '#ff3b30', fontSize: 13, textAlign: 'center' }}>{err}</div>}
         <button className="m-btn" disabled={!valid || busy} onClick={go} style={{ background: tint }}>
           {type === 'market' && side === 'buy' ? t('确认买入 %lld 股', shares) : type === 'market' && side === 'sell' ? t('确认卖出 %lld 股', shares) : `${t('提交委托')} · ${t(SIDE_LABEL[side])} ${shares}`}
         </button>
@@ -336,8 +336,8 @@ function MissionsCard({ missions, onAction }) {
   )
 }
 
-const CHECK_LEVEL = { warn: ['!', '#f59e0b'], info: ['i', '#4588cc'], good: ['✓', '#10b981'] }
-const CHECK_PALETTE = ['#4588cc', '#7f77c2', '#f59e0b', '#10b981', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
+const CHECK_LEVEL = { warn: ['!', '#f59e0b'], info: ['i', '#2f7bff'], good: ['✓', '#00c853'] }
+const CHECK_PALETTE = ['#2f7bff', '#7f77c2', '#f59e0b', '#00c853', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
 
 // Portfolio check-up: where the money sits plus plain findings, worked out by the server
 function CheckupCard({ market, gameId, refreshKey }) {
@@ -436,7 +436,7 @@ function NickSheet({ nickname, onClose, onDone }) {
         <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('你的昵称')}</div>
         <input value={nick} onChange={(e) => setNick(e.target.value.slice(0, 16))} autoFocus
           style={{ width: '100%', minWidth: 0, background: 'var(--surface-hi)', border: 0, outline: 0, borderRadius: 12, padding: '12px 14px', fontSize: 16, color: 'var(--text)' }} />
-        {err && <div style={{ color: '#ef4444', fontSize: 13, textAlign: 'center' }}>{err}</div>}
+        {err && <div style={{ color: '#ff3b30', fontSize: 13, textAlign: 'center' }}>{err}</div>}
         <button className="m-btn" disabled={nick.trim().length < 2} onClick={save}>{t('保存')}</button>
         <button className="m-btn ghost" onClick={onClose}>{t('取消')}</button>
       </div>
@@ -485,7 +485,7 @@ function GameSheet({ nickname, onClose, onJoined }) {
           </>)}
           <label style={{ display: 'grid', gap: 6 }}><span className="m-label">{t('你的昵称')}</span><input value={nick} onChange={(e) => setNick(e.target.value.slice(0, 16))} style={field} /></label>
         </div>
-        {err && <div style={{ color: '#ef4444', fontSize: 13, textAlign: 'center' }}>{err}</div>}
+        {err && <div style={{ color: '#ff3b30', fontSize: 13, textAlign: 'center' }}>{err}</div>}
         <button className="m-btn" disabled={busy || (mode === 'join' ? code.length !== 6 : name.trim().length < 2)} onClick={submit}>{mode === 'join' ? t('加入比赛') : t('创建比赛')}</button>
         <button className="m-btn ghost" onClick={onClose}>{t('取消')}</button>
       </div>
@@ -682,7 +682,7 @@ export default function Paper() {
         <div className="m-card" style={{ display: 'grid', gap: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
             <b style={{ fontSize: 16, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</b>
-            <span className="m-chip" style={{ flex: 'none', color: ended ? 'var(--text-3)' : '#22C55E', background: ended ? 'var(--surface-hi)' : 'color-mix(in srgb, #22C55E 14%, transparent)' }}>
+            <span className="m-chip" style={{ flex: 'none', color: ended ? 'var(--text-3)' : '#00c853', background: ended ? 'var(--surface-hi)' : 'color-mix(in srgb, #00c853 14%, transparent)' }}>
               {ended ? t('已结束') : game.status === 'upcoming' ? t('未开始') : t('进行中')}</span>
           </div>
           <div className="m-label m-num">{t(chipLabel(game.market))} · {t('%lld 人参加', game.members)} · {ended ? game.end_date : t('%lld 天后结束', daysLeft(game.end_date))}</div>
@@ -690,7 +690,7 @@ export default function Paper() {
             <span className="m-num" style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontWeight: 800, letterSpacing: 3, fontSize: 18 }}>{game.code}</span>
             <span className="m-grow" />
             <button onClick={copyInvite} style={{ padding: '7px 12px', borderRadius: 999, background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)', fontSize: 13, fontWeight: 650 }}>{t('复制邀请')}</button>
-            <button onClick={leaveGame} style={{ padding: '7px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#ef4444', fontSize: 13, fontWeight: 650 }}>{game.is_owner ? t('删除比赛') : t('退出比赛')}</button>
+            <button onClick={leaveGame} style={{ padding: '7px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#ff3b30', fontSize: 13, fontWeight: 650 }}>{game.is_owner ? t('删除比赛') : t('退出比赛')}</button>
           </div>
         </div>
       )}
@@ -772,7 +772,7 @@ export default function Paper() {
                   <div className="m-name">{o.symbol} · {o.shares}</div>
                   <div className="m-label m-num" style={{ whiteSpace: 'normal' }}>{t(TYPE_LABEL[o.type])}{o.type !== 'market' ? ` · ${o.tif === 'gtc' ? t('撤单前有效') : t('当日有效')}` : ''}{orderTerms(o, t, cur) ? ` · ${orderTerms(o, t, cur)}` : ''}</div>
                 </div>
-                <button onClick={() => cancel(o)} style={{ flex: 'none', padding: '6px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#ef4444', fontSize: 13, fontWeight: 650 }}>{t('撤单')}</button>
+                <button onClick={() => cancel(o)} style={{ flex: 'none', padding: '6px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#ff3b30', fontSize: 13, fontWeight: 650 }}>{t('撤单')}</button>
               </div>
             ))}
           </div>
@@ -841,7 +841,7 @@ export default function Paper() {
             {view.txs.map((x, i) => CORP_LABEL[x.type] ? (
               // Dividend / split / bonus shares, applied on the ex-date
               <div className="m-row" key={i}>
-                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: '#4588cc' }}>{t(CORP_BADGE[x.type])}</span>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: '#2f7bff' }}>{t(CORP_BADGE[x.type])}</span>
                 <div className="m-grow"><div className="m-name">{t(CORP_LABEL[x.type])} · {x.name || x.symbol}</div>
                   <div className="m-label m-num">{x.type === 'dividend' ? t('每股 %@', cur + num(x.price)) : `${x.ratio || ''} · ${x.shares > 0 ? '+' : ''}${t('%lld股', x.shares)}`}</div></div>
                 <div style={{ textAlign: 'right' }}>{x.amount ? <div className="m-num" style={{ fontWeight: 650, color: changeColor(x.amount, market) }}>{x.amount > 0 ? '+' : '-'}{money(Math.abs(x.amount), cur)}</div> : null}<div className="m-label">{x.date}</div></div>
@@ -880,7 +880,7 @@ export default function Paper() {
           <div className="m-stack" style={{ gap: 14, textAlign: 'center' }}>
             <b style={{ fontSize: 17 }}>{t('确认重置账户')}</b>
             <p className="m-muted" style={{ margin: 0, fontSize: 14 }}>{t('所有持仓和交易记录将清除，四个账户恢复初始资金：美股 $10万、A股 100万元、港股 HK$100万、日股 ¥1000万。')}</p>
-            <button className="m-btn" style={{ background: '#ef4444' }} onClick={async () => { try { await post('/reset', {}); done(t('重置')) } catch (e) { setToast(e.message) } }}>{t('重置')}</button>
+            <button className="m-btn" style={{ background: '#ff3b30' }} onClick={async () => { try { await post('/reset', {}); done(t('重置')) } catch (e) { setToast(e.message) } }}>{t('重置')}</button>
             <button className="m-btn ghost" onClick={() => setSheet(null)}>{t('取消')}</button>
           </div>
         </Sheet>

@@ -16,9 +16,9 @@ const COUNTRY_KEY = { 'United States': 'us', China: 'cn', 'Euro Zone': 'eu', Jap
 const FLAG = { us: '🇺🇸', cn: '🇨🇳', eu: '🇪🇺', jp: '🇯🇵', uk: '🇬🇧' }
 
 const CSS = `
-.mc-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; }
-.mc-chip { padding: 6px 12px; border-radius: 6px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
-.mc-chip.on { background: color-mix(in srgb, #4588cc 14%, transparent); border-color: color-mix(in srgb, #4588cc 55%, transparent); color: #4588cc; font-weight: 600; }
+.mc-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
+.mc-chip { padding: 6px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.mc-chip.on { background: color-mix(in srgb, #2f7bff 14%, transparent); border-color: color-mix(in srgb, #2f7bff 55%, transparent); color: #2f7bff; font-weight: 600; }
 .mc-day { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); padding: 14px 16px 6px; display: flex; gap: 8px; align-items: center; }
 .mc-row { display: grid; grid-template-columns: 56px 34px minmax(0, 1fr) 92px 92px 92px; gap: 10px; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-primary); font-size: 13px; color: var(--text-secondary); cursor: default; }
 .mc-row.click { cursor: pointer; }
@@ -27,8 +27,8 @@ const CSS = `
 .mc-head { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); border-top: none; padding-top: 2px; padding-bottom: 4px; }
 .mc-name { color: var(--text-primary); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mc-name.big { font-weight: 700; }
-.mc-tag { font-size: 10px; padding: 1px 6px; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-muted); margin-left: 6px; font-weight: 500; }
-.mc-why { grid-column: 3 / -1; font-size: 12.5px; line-height: 1.65; color: var(--text-secondary); background: var(--bg-tertiary); border-radius: 6px; padding: 10px 12px; margin-top: 2px; }
+.mc-tag { font-size: 10px; padding: 1px 6px; border-radius: 6px; background: var(--bg-tertiary); color: var(--text-muted); margin-left: 6px; font-weight: 500; }
+.mc-why { grid-column: 3 / -1; font-size: 12.5px; line-height: 1.65; color: var(--text-secondary); background: var(--bg-tertiary); border-radius: 8px; padding: 10px 12px; margin-top: 2px; }
 .mc-dots { display: flex; gap: 2px; }
 .mc-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--border-primary); display: block; }
 .mc-dots i.on { background: #f59e0b; }
@@ -84,7 +84,7 @@ export default function MacroCalendarPage({ lang }) {
     <div style={{ maxWidth: 1100, margin: '0 auto', paddingTop: 22, paddingBottom: 48 }}>
       <style>{CSS}</style>
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4588cc' }}>{t.eyebrow}</div>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#2f7bff' }}>{t.eyebrow}</div>
         <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
         <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 720, lineHeight: 1.6 }}>{t.sub}</p>
       </div>
@@ -142,7 +142,7 @@ export default function MacroCalendarPage({ lang }) {
               <div key={g.key}>
                 <div className="mc-day">
                   {g.label}
-                  {g.key === todayKey && <span style={{ fontSize: 10, padding: '1px 7px', borderRadius: 6, background: '#4588cc', color: '#fff', letterSpacing: 0 }}>{t.today}</span>}
+                  {g.key === todayKey && <span style={{ fontSize: 10, padding: '1px 7px', borderRadius: 999, background: '#2f7bff', color: '#fff', letterSpacing: 0 }}>{t.today}</span>}
                 </div>
                 {g.events.map((e, i) => {
                   const id = `${g.key}-${i}`
@@ -164,7 +164,7 @@ export default function MacroCalendarPage({ lang }) {
                         </span>
                         {eventName(e.name, lang)}
                         {e.period && <span className="mc-tag">{t[e.period]}</span>}
-                        {e.explain && <span style={{ marginLeft: 6, fontSize: 11, color: '#4588cc' }}>{open === id ? '▴' : '▾'}</span>}
+                        {e.explain && <span style={{ marginLeft: 6, fontSize: 11, color: '#2f7bff' }}>{open === id ? '▴' : '▾'}</span>}
                       </span>
                       <span className="num" style={{ color: e.released ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: e.released ? 700 : 400 }} title={e.surprise ? t[e.surprise] : undefined}>
                         {e.actual || '—'}{e.surprise && <span style={{ marginLeft: 4, fontSize: 10, color: '#f59e0b' }}>{e.surprise === 'above' ? '▲' : '▼'}</span>}

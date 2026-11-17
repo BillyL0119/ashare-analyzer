@@ -7,13 +7,13 @@ import { T } from '../i18n/translations'
 const API = import.meta.env.VITE_API_BASE || ''
 
 const GREEN_DARK  = '#16a34a'
-const GREEN_MID   = '#22c55e'
+const GREEN_MID   = '#00c853'
 const GREEN_LIGHT = '#86efac'
 const RED_LIGHT   = '#fca5a5'
-const RED_MID     = '#ef4444'
+const RED_MID     = '#ff3b30'
 const RED_DARK    = '#b91c1c'
 const NEUTRAL     = '#64748b'
-const ACCENT      = '#4588cc'
+const ACCENT      = '#2f7bff'
 const ACCENT2     = '#7f77c2'
 
 // Map pct to color (red-neutral-green spectrum)
@@ -30,7 +30,7 @@ function pctColor(pct, cn = false) {
 }
 
 function pctTextColor(pct, cn = false) {
-  const up = cn ? '#ef4444' : '#22c55e', down = cn ? '#22c55e' : '#ef4444'
+  const up = cn ? '#ff3b30' : '#00c853', down = cn ? '#00c853' : '#ff3b30'
   return pct >= 0 ? up : down
 }
 
@@ -266,7 +266,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
   // ── Layout ──
 
   const pillBtn = (active) => ({
-    padding: '4px 14px', borderRadius: 8, border: 'none',
+    padding: '4px 14px', borderRadius: 20, border: 'none',
     cursor: 'pointer', fontSize: 12, fontWeight: active ? 700 : 400,
     background: active ? `${ACCENT}` : 'var(--bg-tertiary)',
     color: active ? '#fff' : 'var(--text-muted)',
@@ -312,7 +312,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
       )}
 
       {error && !loading && (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: '#ef4444', fontSize: 13 }}>
+        <div style={{ textAlign: 'center', padding: '40px 0', color: '#ff3b30', fontSize: 13 }}>
           {error}
         </div>
       )}
@@ -327,7 +327,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setView(key)} style={{
                 ...pillBtn(view === key),
-                background: view === key ? 'rgba(69,136,204,0.15)' : 'var(--bg-tertiary)',
+                background: view === key ? 'rgba(47,123,255,0.15)' : 'var(--bg-tertiary)',
                 color: view === key ? ACCENT : 'var(--text-muted)',
                 border: `1px solid ${view === key ? ACCENT + '55' : 'var(--border-primary)'}`,
               }}>
@@ -343,7 +343,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                 { key: '20d',  label: t.sr20Day },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setPeriod(key)} style={{
-                  padding: '4px 12px', borderRadius: 8,
+                  padding: '4px 12px', borderRadius: 20,
                   cursor: 'pointer', fontSize: 11, fontWeight: period === key ? 700 : 400,
                   background: period === key ? 'rgba(127,119,194,0.15)' : 'var(--bg-tertiary)',
                   color: period === key ? ACCENT2 : 'var(--text-muted)',
@@ -359,7 +359,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {/* ── Chart area ── */}
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, padding: '14px', marginBottom: 14, overflow: 'hidden',
+            borderRadius: 12, padding: '14px', marginBottom: 14, overflow: 'hidden',
           }}>
             {view === 'treemap' ? (
               <Treemap sectors={sectors} period={period} lang={lang} cn={market === 'cn'} />
@@ -391,7 +391,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {/* ── Sector table (quick stats) ── */}
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, overflow: 'hidden', marginBottom: 14,
+            borderRadius: 12, overflow: 'hidden', marginBottom: 14,
           }}>
             <div style={{
               display: 'grid',
@@ -426,7 +426,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                       gap: 0,
                       padding: '7px 14px',
                       borderBottom: i < sectors.length - 1 ? '1px solid var(--border-primary)' : 'none',
-                      background: i % 2 === 0 ? 'transparent' : 'rgba(106,162,218,0.02)',
+                      background: i % 2 === 0 ? 'transparent' : 'rgba(92,155,255,0.02)',
                       alignItems: 'center',
                     }}
                   >
@@ -461,7 +461,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {summary && (
             <div style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-              borderRadius: 6, padding: '10px 14px',
+              borderRadius: 10, padding: '10px 14px',
               fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7,
             }}>
               <span style={{ fontWeight: 700, color: ACCENT2 }}>

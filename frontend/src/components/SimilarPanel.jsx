@@ -25,7 +25,7 @@ function Sparkline({ data, width = 80, height = 32 }) {
       <polyline
         points={pts.join(' ')}
         fill="none"
-        stroke={up ? '#26a69a' : '#ef5350'}
+        stroke={up ? '#00c853' : '#ff3b30'}
         strokeWidth={1.5}
         strokeLinejoin="round"
         strokeLinecap="round"
@@ -36,7 +36,7 @@ function Sparkline({ data, width = 80, height = 32 }) {
 
 function CorrBar({ value }) {
   const pct = Math.round(((value + 1) / 2) * 100)
-  const color = value >= 0.8 ? '#26a69a' : value >= 0.5 ? '#f0e68c' : 'var(--text-muted)'
+  const color = value >= 0.8 ? '#00c853' : value >= 0.5 ? '#f0e68c' : 'var(--text-muted)'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       <div style={{ width: 60, height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
@@ -57,13 +57,13 @@ function IndustryPill({ label, type }) {
         fontSize: 10,
         fontWeight: 600,
         padding: '2px 6px',
-        borderRadius: 6,
+        borderRadius: 10,
         whiteSpace: 'nowrap',
         background: isSame
-          ? 'rgba(106,162,218,0.12)'
+          ? 'rgba(92,155,255,0.12)'
           : 'rgba(169,154,214,0.12)',
-        color: isSame ? '#6aa2da' : '#a99ad6',
-        border: `1px solid ${isSame ? 'rgba(106,162,218,0.25)' : 'rgba(169,154,214,0.25)'}`,
+        color: isSame ? '#5c9bff' : '#a99ad6',
+        border: `1px solid ${isSame ? 'rgba(92,155,255,0.25)' : 'rgba(169,154,214,0.25)'}`,
         letterSpacing: '0.02em',
       }}
     >
@@ -80,8 +80,8 @@ function ModeToggle({ mode, setMode, t }) {
       style={{
         display: 'flex',
         background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(106,162,218,0.12)',
-        borderRadius: 8,
+        border: '1px solid rgba(92,155,255,0.12)',
+        borderRadius: 20,
         padding: 3,
         gap: 2,
         flexShrink: 0,
@@ -96,13 +96,13 @@ function ModeToggle({ mode, setMode, t }) {
           onClick={() => setMode(key)}
           style={{
             padding: '4px 14px',
-            borderRadius: 8,
+            borderRadius: 16,
             border: 'none',
             cursor: 'pointer',
             fontSize: 12,
             fontWeight: mode === key ? 600 : 400,
             background: mode === key
-              ? '#6aa2da'
+              ? '#5c9bff'
               : 'transparent',
             color: mode === key ? '#fff' : 'var(--text-muted)',
             transition: 'all 0.2s ease',
@@ -159,7 +159,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       style={{
         background: THEME.gridBg,
         border: `1px solid ${THEME.border}`,
-        borderRadius: 6,
+        borderRadius: 8,
         padding: 16,
       }}
     >
@@ -177,12 +177,12 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       >
         <span
           style={{
-            background: 'rgba(106,162,218,0.08)',
-            border: '1px solid rgba(106,162,218,0.3)',
+            background: 'rgba(92,155,255,0.08)',
+            border: '1px solid rgba(92,155,255,0.3)',
             borderRadius: 4,
             padding: '2px 8px',
             fontSize: 12,
-            color: '#6aa2da',
+            color: '#5c9bff',
             fontFamily: 'monospace',
           }}
         >
@@ -229,12 +229,12 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       {error && !loading && (
         <div
           style={{
-            color: '#f85149',
+            color: '#ff453a',
             fontSize: 13,
             padding: 12,
             background: '#f8514910',
             border: '1px solid #f8514930',
-            borderRadius: 4,
+            borderRadius: 6,
           }}
         >
           {error}
@@ -254,9 +254,9 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     alignItems: 'center',
                     gap: 10,
                     padding: '8px 10px',
-                    background: 'rgba(106,162,218,0.04)',
+                    background: 'rgba(92,155,255,0.04)',
                     border: `1px solid ${THEME.border}`,
-                    borderRadius: 6,
+                    borderRadius: 8,
                   }}
                 >
                   <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, minWidth: 18 }}>
@@ -266,7 +266,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
                       <span
                         onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                        style={{ fontSize: 11, color: '#6aa2da', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                        style={{ fontSize: 11, color: '#5c9bff', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                       >
                         {item.code}
                       </span>
@@ -317,11 +317,11 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     gap: '0 12px',
                     alignItems: 'center',
                     padding: '8px 8px',
-                    borderRadius: 4,
+                    borderRadius: 6,
                     borderBottom: idx < data.results.length - 1 ? `1px solid ${THEME.border}` : 'none',
                     transition: 'background 0.1s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(106,162,218,0.06)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(92,155,255,0.06)' }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                 >
                   <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 700 }}>
@@ -329,7 +329,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                   </span>
                   <span
                     onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                    style={{ fontSize: 12, color: '#6aa2da', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                    style={{ fontSize: 12, color: '#5c9bff', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                   >
                     {item.code}
                   </span>

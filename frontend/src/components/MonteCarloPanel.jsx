@@ -172,7 +172,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
   const up = riseColor(market), down = fallColor(market)
 
   return (
-    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 14, marginBottom: 16 }}>
+    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 14, marginBottom: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
@@ -184,7 +184,7 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'flex', background: 'var(--bg-tertiary)', borderRadius: 4, padding: '12px 8px', marginBottom: 14 }}>
+      <div style={{ display: 'flex', background: 'var(--bg-tertiary)', borderRadius: 6, padding: '12px 8px', marginBottom: 14 }}>
         <div style={statStyle}>
           <div style={statLabel}>{t.mcProb}</div>
           <div style={statVal(parseFloat(result.probProfit) >= 50 ? up : down)}>{result.probProfit}%</div>
@@ -255,11 +255,11 @@ export default function MonteCarloPanel({ stocks }) {
   const btnStyle = (active) => ({
     padding: '4px 10px',
     borderRadius: 4,
-    border: `1px solid ${active ? '#4588cc' : THEME.border}`,
+    border: `1px solid ${active ? '#2f7bff' : THEME.border}`,
     cursor: 'pointer',
     fontSize: 12,
-    background: active ? 'rgba(69,136,204,0.12)' : 'var(--bg-hover)',
-    color: active ? '#4588cc' : THEME.text,
+    background: active ? 'rgba(47,123,255,0.12)' : 'var(--bg-hover)',
+    color: active ? '#2f7bff' : THEME.text,
     transition: 'all 0.15s',
   })
 
@@ -269,7 +269,7 @@ export default function MonteCarloPanel({ stocks }) {
       <div style={{
         background: THEME.gridBg,
         border: `1px solid ${THEME.border}`,
-        borderRadius: 6,
+        borderRadius: 8,
         padding: '12px 16px',
         display: 'flex',
         alignItems: 'center',
@@ -298,7 +298,7 @@ export default function MonteCarloPanel({ stocks }) {
             cursor: running ? 'wait' : 'pointer',
             fontSize: 13,
             fontWeight: 600,
-            background: running ? 'var(--bg-hover)' : '#4588cc',
+            background: running ? 'var(--bg-hover)' : '#2f7bff',
             color: running ? 'var(--text-muted)' : '#fff',
             transition: 'all 0.15s',
           }}

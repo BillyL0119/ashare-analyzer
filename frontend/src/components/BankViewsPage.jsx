@@ -27,10 +27,10 @@ function bankColor(name) {
 
 // ── Action type config ────────────────────────────────────────────────────────
 const ACTION_CONFIG = {
-  rating:   { zh: '评级变动', en: 'Rating Change', ja: '格付け変更', ko: '등급 변경',    fr: 'Changement de note', color: '#4588cc' },
+  rating:   { zh: '评级变动', en: 'Rating Change', ja: '格付け変更', ko: '등급 변경',    fr: 'Changement de note', color: '#2f7bff' },
   target:   { zh: '目标价',   en: 'Price Target',  ja: '目標株価',   ko: '목표 주가',    fr: 'Objectif de prix',   color: '#f59e0b' },
   macro:    { zh: '宏观展望', en: 'Macro',         ja: 'マクロ',     ko: '거시 전망',    fr: 'Macro',              color: '#9d97d3' },
-  strategy: { zh: '策略观点', en: 'Strategy',      ja: '戦略',       ko: '전략',         fr: 'Stratégie',          color: '#34d399' },
+  strategy: { zh: '策略观点', en: 'Strategy',      ja: '戦略',       ko: '전략',         fr: 'Stratégie',          color: '#30d158' },
   outlook:  { zh: '市场观点', en: 'Market Outlook',ja: '市場見通し', ko: '시장 전망',    fr: 'Perspectives',       color: '#fb923c' },
 }
 
@@ -44,7 +44,7 @@ function BankTag({ name }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 5,
-      fontSize: 11, padding: '1px 8px 1px 6px', borderRadius: 4, fontWeight: 600,
+      fontSize: 11, padding: '1px 8px 1px 6px', borderRadius: 6, fontWeight: 600,
       background: 'var(--bg-tertiary)', color: 'var(--text-primary)',
       border: '1px solid var(--border-primary)', flexShrink: 0,
     }}>
@@ -58,7 +58,7 @@ function ActionBadge({ type, lang }) {
   const cfg = ACTION_CONFIG[type] || ACTION_CONFIG.outlook
   return (
     <span style={{
-      fontSize: 10, padding: '1px 6px', borderRadius: 4, fontWeight: 500,
+      fontSize: 10, padding: '1px 6px', borderRadius: 5, fontWeight: 500,
       background: cfg.color + '22', color: cfg.color, flexShrink: 0,
     }}>
       {getActionLabel(cfg, lang)}
@@ -71,7 +71,7 @@ function Pill({ active, color, onClick, children }) {
     <button
       onClick={onClick}
       style={{
-        padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+        padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
@@ -128,7 +128,7 @@ function ViewRow({ item, t, lang, first }) {
 
 function SkeletonCard() {
   return (
-    <div className="skeleton" style={{ height: 84, borderRadius: 6, marginBottom: 8 }} />
+    <div className="skeleton" style={{ height: 84, borderRadius: 10, marginBottom: 8 }} />
   )
 }
 
@@ -241,9 +241,9 @@ export default function BankViewsPage({ lang = 'zh' }) {
             onClick={() => fetchData(bankFilter)}
             disabled={loading}
             style={{
-              padding: '6px 16px', borderRadius: 8, border: '1px solid rgba(69,136,204,0.4)',
-              background: loading ? 'rgba(69,136,204,0.05)' : 'rgba(69,136,204,0.1)',
-              color: '#4588cc', fontSize: 12, fontWeight: 600,
+              padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(47,123,255,0.4)',
+              background: loading ? 'rgba(47,123,255,0.05)' : 'rgba(47,123,255,0.1)',
+              color: '#2f7bff', fontSize: 12, fontWeight: 600,
               cursor: loading ? 'default' : 'pointer', transition: 'all 0.2s',
             }}
           >
@@ -262,11 +262,11 @@ export default function BankViewsPage({ lang = 'zh' }) {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12, alignItems: 'center' }}>
         {/* Bank filter pills */}
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          <Pill active={bankFilter === 'all'} color="#4588cc" onClick={() => selectBank('all')}>
+          <Pill active={bankFilter === 'all'} color="#2f7bff" onClick={() => selectBank('all')}>
             {t.bvAll}
           </Pill>
           {allBanks.map(b => (
-            <Pill key={b} active={bankFilter === b} color="#4588cc" onClick={() => selectBank(b)}>
+            <Pill key={b} active={bankFilter === b} color="#2f7bff" onClick={() => selectBank(b)}>
               {b}
             </Pill>
           ))}
@@ -282,7 +282,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
 
       {/* Action type filter */}
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 16 }}>
-        <Pill active={actionFilter === 'all'} color="#4588cc" onClick={() => selectAction('all')}>
+        <Pill active={actionFilter === 'all'} color="#2f7bff" onClick={() => selectAction('all')}>
           {t.bvAllTypes}
         </Pill>
         {Object.entries(ACTION_CONFIG).map(([k, cfg]) => (
@@ -303,7 +303,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
         <>
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, overflow: 'hidden', marginBottom: 8,
+            borderRadius: 12, overflow: 'hidden', marginBottom: 8,
           }}>
             {displayed.map((item, i) => (
               <ViewRow key={`${item.source}-${i}`} item={item} t={t} lang={lang} first={i === 0} />
@@ -315,7 +315,7 @@ export default function BankViewsPage({ lang = 'zh' }) {
               style={{
                 display: 'block', width: '100%', padding: '12px 0',
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 8, color: 'var(--text-secondary)', fontSize: 13,
+                borderRadius: 12, color: 'var(--text-secondary)', fontSize: 13,
                 cursor: 'pointer', marginTop: 4, transition: 'background 0.2s',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
@@ -330,8 +330,8 @@ export default function BankViewsPage({ lang = 'zh' }) {
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #6aa2da; }
-        .bfs-news-row:focus-visible { outline: 2px solid #6aa2da; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: #5c9bff; }
+        .bfs-news-row:focus-visible { outline: 2px solid #5c9bff; outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>

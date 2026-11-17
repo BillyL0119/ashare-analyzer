@@ -43,25 +43,25 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
     grid: { top: 30, bottom: 26, left: 64, right: 14 },
     legend: { top: 0, textStyle: { color: '#8a94a6', fontSize: 11 }, itemWidth: 14, itemHeight: 3 },
     tooltip: {
-      trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(106,162,218,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
+      trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(92,155,255,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
       valueFormatter: (v) => `${cur}${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
     },
-    xAxis: { type: 'category', data: points.map((p) => p.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(106,162,218,0.15)' } } },
+    xAxis: { type: 'category', data: points.map((p) => p.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(92,155,255,0.15)' } } },
     yAxis: {
       type: 'value', scale: true,
       axisLabel: { color: '#8a94a6', fontSize: 10, formatter: (v) => `${cur}${v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : (v / 1e3).toFixed(1) + 'K'}` },
-      splitLine: { lineStyle: { color: 'rgba(106,162,218,0.07)' } },
+      splitLine: { lineStyle: { color: 'rgba(92,155,255,0.07)' } },
     },
     series: [
-      { name: t.mine, type: 'line', data: points.map((p) => p.value), smooth: true, symbol: 'none', lineStyle: { width: 2.5, color: '#4588cc' }, areaStyle: { color: 'rgba(69,136,204,0.08)' } },
+      { name: t.mine, type: 'line', data: points.map((p) => p.value), smooth: true, symbol: 'none', lineStyle: { width: 2.5, color: '#2f7bff' }, areaStyle: { color: 'rgba(47,123,255,0.08)' } },
       { name: bench, type: 'line', data: points.map((p) => p.bench), smooth: true, symbol: 'none', lineStyle: { width: 1.8, color: '#8a94a6', type: 'dashed' } },
-      { name: '', type: 'line', data: points.map(() => data.initial), symbol: 'none', lineStyle: { width: 1, color: 'rgba(106,162,218,0.25)' }, tooltip: { show: false }, silent: true },
+      { name: '', type: 'line', data: points.map(() => data.initial), symbol: 'none', lineStyle: { width: 1, color: 'rgba(92,155,255,0.25)' }, tooltip: { show: false }, silent: true },
     ],
   }), [points, bench, cur, t, data])
 
   const ahead = (data?.excess_pct ?? 0) >= 0
   return (
-    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8, padding: '16px 18px' }}>
+    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12, padding: '16px 18px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
         <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{t.title}</span>
         {data?.since && <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{t.since(data.since)}</span>}
@@ -74,8 +74,8 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
             <Stat label={t.ret} value={pct(data.return_pct)} color={data.return_pct >= 0 ? riseColor(market) : fallColor(market)} />
             <Stat label={bench} value={pct(data.bench_return_pct)} />
             <Stat label={t.dd} value={pct(data.max_drawdown_pct)} />
-            <span style={{ alignSelf: 'center', fontSize: 12.5, fontWeight: 700, padding: '4px 10px', borderRadius: 6,
-              color: ahead ? '#4588cc' : '#f59e0b', background: ahead ? 'rgba(69,136,204,0.12)' : 'rgba(245,158,11,0.12)' }}>
+            <span style={{ alignSelf: 'center', fontSize: 12.5, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
+              color: ahead ? '#2f7bff' : '#f59e0b', background: ahead ? 'rgba(47,123,255,0.12)' : 'rgba(245,158,11,0.12)' }}>
               {ahead ? t.beat(pct(data.excess_pct).replace('+', '')) : t.lag(pct(data.excess_pct).replace('-', ''))}
             </span>
           </div>

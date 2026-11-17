@@ -28,7 +28,7 @@ function SourceBadge({ name }) {
   const letter = [...name].find(c => /[\w\u4e00-\u9fa5]/.test(c)) || '?'
   return (
     <div style={{
-      width: 28, height: 28, borderRadius: 6, flexShrink: 0, marginTop: 1,
+      width: 28, height: 28, borderRadius: 8, flexShrink: 0, marginTop: 1,
       background: color + '22', color, border: `1px solid ${color}44`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: 12, fontWeight: 700,
@@ -37,8 +37,8 @@ function SourceBadge({ name }) {
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #6aa2da; }
-        .bfs-news-row:focus-visible { outline: 2px solid #6aa2da; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: #5c9bff; }
+        .bfs-news-row:focus-visible { outline: 2px solid #5c9bff; outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>
@@ -47,12 +47,12 @@ function SourceBadge({ name }) {
 }
 
 const CAT_CONFIG = {
-  all:      { zh: '全部',   en: 'All',       ja: '全て',    ko: '전체',    fr: 'Tous',      color: '#4588cc' },
-  market:   { zh: '市场行情', en: 'Market',   ja: '市況',    ko: '시황',    fr: 'Marché',    color: '#6aa2da' },
+  all:      { zh: '全部',   en: 'All',       ja: '全て',    ko: '전체',    fr: 'Tous',      color: '#2f7bff' },
+  market:   { zh: '市场行情', en: 'Market',   ja: '市況',    ko: '시황',    fr: 'Marché',    color: '#5c9bff' },
   macro:    { zh: '宏观政策', en: 'Macro',    ja: 'マクロ',  ko: '거시',    fr: 'Macro',     color: '#9d97d3' },
-  company:  { zh: '公司动态', en: 'Company',  ja: '企業',    ko: '기업',    fr: 'Entreprise', color: '#34d399' },
+  company:  { zh: '公司动态', en: 'Company',  ja: '企業',    ko: '기업',    fr: 'Entreprise', color: '#30d158' },
   industry: { zh: '行业资讯', en: 'Industry', ja: '業界',    ko: '산업',    fr: 'Industrie', color: '#fb923c' },
-  breaking: { zh: '突发事件', en: 'Breaking', ja: '速報',    ko: '속보',    fr: 'Flash',     color: '#f87171' },
+  breaking: { zh: '突发事件', en: 'Breaking', ja: '速報',    ko: '속보',    fr: 'Flash',     color: '#ff453a' },
 }
 
 function getCatLabel(cfg, lang) {
@@ -69,7 +69,7 @@ function CategoryDot({ category, lang }) {
   const cfg = CAT_CONFIG[category] || CAT_CONFIG.market
   return (
     <span style={{
-      fontSize: 10, padding: '1px 7px', borderRadius: 6, fontWeight: 500,
+      fontSize: 10, padding: '1px 7px', borderRadius: 8, fontWeight: 500,
       background: cfg.color + '22', color: cfg.color, flexShrink: 0,
     }}>
       {getCatLabel(cfg, lang)}
@@ -82,7 +82,7 @@ function Pill({ active, color, onClick, children }) {
     <button
       onClick={onClick}
       style={{
-        padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+        padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
         background: active ? (color + '28') : 'var(--bg-tertiary)',
         color: active ? color : 'var(--text-secondary)',
@@ -134,7 +134,7 @@ function NewsRow({ item, lang, first }) {
 
 function SkeletonCard() {
   return (
-    <div className="skeleton" style={{ height: 64, borderRadius: 6, marginBottom: 8 }} />
+    <div className="skeleton" style={{ height: 64, borderRadius: 10, marginBottom: 8 }} />
   )
 }
 
@@ -242,9 +242,9 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             onClick={() => fetchNews(catFilter, langFilter)}
             disabled={loading}
             style={{
-              padding: '6px 16px', borderRadius: 8, border: '1px solid rgba(69,136,204,0.4)',
-              background: loading ? 'rgba(69,136,204,0.05)' : 'rgba(69,136,204,0.1)',
-              color: '#4588cc', fontSize: 12, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
+              padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(47,123,255,0.4)',
+              background: loading ? 'rgba(47,123,255,0.05)' : 'rgba(47,123,255,0.1)',
+              color: '#2f7bff', fontSize: 12, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
               transition: 'all 0.2s',
             }}
           >
@@ -284,7 +284,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             <Pill
               key={opt.key}
               active={langFilter === opt.key}
-              color="#4588cc"
+              color="#2f7bff"
               onClick={() => setLang(opt.key)}
             >
               {opt[lang] || opt.en}
@@ -314,7 +314,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
         <>
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, overflow: 'hidden', marginBottom: 8,
+            borderRadius: 12, overflow: 'hidden', marginBottom: 8,
           }}>
             {displayed.map((item, i) => (
               <NewsRow key={`${item.source}-${i}`} item={item} lang={lang} first={i === 0} />
@@ -326,7 +326,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
               style={{
                 display: 'block', width: '100%', padding: '12px 0',
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 8, color: 'var(--text-secondary)', fontSize: 13,
+                borderRadius: 12, color: 'var(--text-secondary)', fontSize: 13,
                 cursor: 'pointer', marginTop: 4,
                 transition: 'background 0.2s',
               }}
@@ -342,8 +342,8 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #6aa2da; }
-        .bfs-news-row:focus-visible { outline: 2px solid #6aa2da; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: #5c9bff; }
+        .bfs-news-row:focus-visible { outline: 2px solid #5c9bff; outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>

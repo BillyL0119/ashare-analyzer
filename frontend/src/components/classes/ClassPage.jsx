@@ -7,20 +7,20 @@ import classStrings from './classStrings'
 // Classroom mode: students join a teacher's class with a code; teachers set assignments that complete
 // on their own and follow the whole class's progress.
 
-const ACCENT = '#4588cc'
-const UP = '#10b981', DOWN = '#ef4444'
+const ACCENT = '#2f7bff'
+const UP = '#00c853', DOWN = '#ff3b30'
 
 const CSS = `
 .cl { display: grid; gap: 18px; max-width: 1180px; margin: 0 auto; width: 100%; padding: 18px 0 40px; }
-.cl-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px 18px; min-width: 0; display: grid; gap: 12px; }
+.cl-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px 18px; min-width: 0; display: grid; gap: 12px; }
 .cl-muted { color: var(--text-secondary); }
 .cl-h { margin: 0; font-size: 17px; }
-.cl-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 6px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-.cl-btn.primary { background: #4588cc; border-color: transparent; color: #fff; }
+.cl-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.cl-btn.primary { background: #2f7bff; border-color: transparent; color: #fff; }
 .cl-btn.danger { color: ${DOWN}; background: transparent; }
 .cl-btn:disabled { opacity: .5; cursor: not-allowed; }
 .cl-btn:focus-visible, .cl-input:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
-.cl-input { width: 100%; min-width: 0; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 6px; padding: 9px 12px; font-size: 14px; }
+.cl-input { width: 100%; min-width: 0; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 9px; padding: 9px 12px; font-size: 14px; }
 .cl-label { font-size: 12.5px; font-weight: 650; color: var(--text-secondary); display: grid; gap: 6px; }
 .cl-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
 .cl-scroll { overflow-x: auto; }
@@ -120,7 +120,7 @@ function StudentClasses({ s, classes, onLeave }) {
               </div>
               {c.assignments.length === 0 && <div className="cl-muted" style={{ fontSize: 13 }}>{s.noAssignments}</div>}
               {c.assignments.map((a) => (
-                <div key={a.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border-primary)', opacity: a.done ? 0.65 : 1 }}>
+                <div key={a.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 10px', borderRadius: 10, border: '1px solid var(--border-primary)', opacity: a.done ? 0.65 : 1 }}>
                   <span aria-label={a.done ? s.done : s.todo} style={{ flex: 'none', width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 12, color: '#fff', background: a.done ? UP : 'transparent', border: a.done ? 'none' : '2px solid var(--border-primary)' }}>{a.done ? '✓' : ''}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 650 }}>{a.title}</div>

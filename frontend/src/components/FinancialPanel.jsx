@@ -53,7 +53,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
       style={{
         background: 'rgba(255,255,255,0.04)',
         border: `1px solid ${THEME.border}`,
-        borderRadius: 6,
+        borderRadius: 8,
         padding: '14px 16px',
         display: 'flex',
         flexDirection: 'column',
@@ -82,7 +82,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
           <span style={{ color: 'var(--text-muted)' }}>{t.financialYoY}:</span>
           <span
             style={{
-              color: isPositive ? '#26a69a' : isNegative ? '#ef5350' : 'var(--text-muted)',
+              color: isPositive ? '#00c853' : isNegative ? '#ff3b30' : 'var(--text-muted)',
               fontWeight: 600,
             }}
           >
@@ -193,7 +193,7 @@ export default function FinancialPanel({ stocks }) {
             style={{
               background: THEME.gridBg,
               border: `1px solid ${THEME.border}`,
-              borderRadius: 6,
+              borderRadius: 8,
               padding: 16,
             }}
           >
@@ -210,12 +210,12 @@ export default function FinancialPanel({ stocks }) {
             >
               <span
                 style={{
-                  background: 'rgba(106,162,218,0.08)',
-                  border: '1px solid rgba(106,162,218,0.3)',
+                  background: 'rgba(92,155,255,0.08)',
+                  border: '1px solid rgba(92,155,255,0.3)',
                   borderRadius: 4,
                   padding: '2px 8px',
                   fontSize: 12,
-                  color: '#6aa2da',
+                  color: '#5c9bff',
                   fontFamily: 'monospace',
                 }}
               >
@@ -237,12 +237,12 @@ export default function FinancialPanel({ stocks }) {
             {error && !loading && (
               <div
                 style={{
-                  color: '#f85149',
+                  color: '#ff453a',
                   fontSize: 13,
                   padding: '16px',
                   background: '#f8514910',
                   border: '1px solid #f8514930',
-                  borderRadius: 4,
+                  borderRadius: 6,
                 }}
               >
                 {error}

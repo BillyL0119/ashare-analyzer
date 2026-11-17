@@ -49,7 +49,7 @@ function PageSkeleton() {
     <div style={{ padding: '20px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {[100, 60, 80, 60].map((h, i) => (
         <div key={i} style={{
-          height: h, borderRadius: 6,
+          height: h, borderRadius: 8,
           background: 'var(--bg-secondary)',
           animation: `bfsSkeletonPulse 1.6s ease-in-out ${i * 0.1}s infinite`,
         }} />
@@ -377,14 +377,14 @@ export default function App() {
             style={{ height: isMobile ? 32 : 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />
           {!isMobile && (
-            <span style={{ fontFamily: 'var(--heading)', fontSize: 19, fontWeight: 500, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            <span style={{ fontSize: 19, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
               Best Friend Stock
             </span>
           )}
         </div>
 
         {/* Market switch: a segmented control */}
-        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 4, padding: 2, gap: 1, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: 999, padding: 3, gap: 2, flexShrink: 0 }}>
           {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN },
             { key: 'hk', label: t.marketHK }, { key: 'jp', label: t.marketJP }].map(({ key, label }) => (
             <button
@@ -393,11 +393,10 @@ export default function App() {
               aria-pressed={market === key}
               style={{
                 padding: isMobile ? '4px 7px' : '5px 12px',
-                borderRadius: 4, border: 'none', cursor: 'pointer',
-                fontSize: isMobile ? 11 : 13, fontWeight: market === key ? 600 : 500,
-                background: market === key ? 'var(--bg-primary)' : 'transparent',
-                color: market === key ? 'var(--text-primary)' : 'var(--text-secondary)',
-                boxShadow: market === key ? 'inset 0 0 0 1px var(--border-glow)' : 'none',
+                borderRadius: 999, border: 'none', cursor: 'pointer',
+                fontSize: isMobile ? 11 : 13, fontWeight: 700,
+                background: market === key ? 'var(--accent-blue)' : 'transparent',
+                color: market === key ? '#fff' : 'var(--text-secondary)',
               }}
             >
               {isMobile && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
@@ -417,9 +416,9 @@ export default function App() {
                 onClick={() => setShowLangDropdown(v => !v)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '6px 10px', borderRadius: 4,
-                  border: '1px solid var(--border-primary)', background: 'transparent',
-                  cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                  padding: '7px 12px', borderRadius: 999,
+                  border: 'none', background: 'var(--bg-secondary)',
+                  cursor: 'pointer', fontSize: 12, fontWeight: 700,
                   color: 'var(--text-secondary)', whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
@@ -433,7 +432,7 @@ export default function App() {
                   style={{
                     position: 'absolute', top: 38, right: 0,
                     background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 6, minWidth: 120, zIndex: 9000,
+                    borderRadius: 10, minWidth: 120, zIndex: 9000,
                     boxShadow: 'var(--shadow-pop)', padding: '4px 0',
                   }}
                 >
@@ -475,7 +474,7 @@ export default function App() {
               title={theme === 'dark' ? t.lightMode : t.darkMode}
               aria-label={theme === 'dark' ? t.lightMode : t.darkMode}
               style={{
-                width: 32, height: 32, borderRadius: 4,
+                width: 34, height: 34, borderRadius: '50%',
                 border: 'none', background: 'transparent', color: 'var(--text-secondary)',
                 cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -484,7 +483,7 @@ export default function App() {
               onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
             >
-              <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
+              <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={19} strokeWidth={1.9} />
             </button>
           )}
 
@@ -494,7 +493,7 @@ export default function App() {
               aria-label={t.searchPlaceholder}
               aria-expanded={showMobileSearch}
               style={{
-                width: 32, height: 32, borderRadius: 4, flexShrink: 0, cursor: 'pointer',
+                width: 34, height: 34, borderRadius: '50%', flexShrink: 0, cursor: 'pointer',
                 border: 'none',
                 background: showMobileSearch ? 'var(--bg-hover)' : 'transparent',
                 color: showMobileSearch ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -520,7 +519,7 @@ export default function App() {
                 aria-label={title}
                 aria-pressed={active}
                 style={{
-                  width: 32, height: 32, borderRadius: 4,
+                  width: 34, height: 34, borderRadius: '50%',
                   border: 'none',
                   background: active ? 'var(--bg-hover)' : 'transparent',
                   color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -530,7 +529,7 @@ export default function App() {
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = active ? 'var(--bg-hover)' : 'transparent' }}
               >
-                <Icon name={icon} />
+                <Icon name={icon} size={19} strokeWidth={1.9} />
               </button>
               {badge != null && (
                 <div style={{
@@ -556,7 +555,7 @@ export default function App() {
               <button
                 onClick={() => setShowMobileMenu(v => !v)}
                 style={{
-                  width: 32, height: 32, borderRadius: 4,
+                  width: 34, height: 34, borderRadius: '50%',
                   border: 'none', color: 'var(--text-secondary)',
                   background: showMobileMenu ? 'var(--bg-hover)' : 'transparent',
                   cursor: 'pointer', fontSize: 18, letterSpacing: '-2px',
@@ -572,7 +571,7 @@ export default function App() {
                   style={{
                     position: 'absolute', top: 40, right: 0,
                     background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 6, minWidth: 190, zIndex: 9000,
+                    borderRadius: 12, minWidth: 190, zIndex: 9000,
                     boxShadow: 'var(--shadow-pop)', padding: '8px 0',
                   }}
                 >
@@ -594,7 +593,7 @@ export default function App() {
                             }
                           }}
                           style={{
-                            padding: '4px 8px', borderRadius: 4, fontSize: 11,
+                            padding: '4px 8px', borderRadius: 6, fontSize: 11,
                             background: lang === code ? 'var(--accent-blue-soft)' : 'var(--bg-tertiary)',
                             border: `1px solid ${lang === code ? 'var(--accent-blue)' : 'var(--border-primary)'}`,
                             cursor: 'pointer', fontWeight: lang === code ? 700 : 400,
@@ -663,7 +662,7 @@ export default function App() {
                     style={{
                       position: 'absolute', top: 40, right: 0,
                       background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 6, minWidth: 200, zIndex: 9000,
+                      borderRadius: 10, minWidth: 200, zIndex: 9000,
                       boxShadow: 'var(--shadow-pop)', padding: '8px 0',
                     }}
                   >
@@ -674,7 +673,7 @@ export default function App() {
                       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {t.signedIn}
                         {role !== 'user' && (
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 4, color: role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-gold)', border: '1px solid currentColor' }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 999, color: role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-gold)', border: '1px solid currentColor' }}>
                             {(ROLE_LABELS[role] || ROLE_LABELS.admin)[lang] || (ROLE_LABELS[role] || ROLE_LABELS.admin).en}
                           </span>
                         )}
@@ -707,8 +706,8 @@ export default function App() {
                 aria-label={t.signIn}
                 title={t.signIn}
                 style={{
-                  width: 32, height: 32, borderRadius: 4, cursor: 'pointer',
-                  border: '1px solid var(--border-glow)', background: 'transparent', color: 'var(--text-primary)',
+                  width: 34, height: 34, borderRadius: '50%', cursor: 'pointer',
+                  border: 'none', background: 'var(--text-primary)', color: 'var(--bg-primary)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
@@ -718,13 +717,13 @@ export default function App() {
               <button
                 onClick={() => setShowAuth(true)}
                 style={{
-                  padding: '6px 14px', borderRadius: 4, border: '1px solid var(--border-glow)',
-                  background: 'transparent',
-                  cursor: 'pointer', fontSize: 12.5, fontWeight: 600, color: 'var(--text-primary)',
+                  padding: '8px 18px', borderRadius: 999, border: 'none',
+                  background: 'var(--text-primary)',
+                  cursor: 'pointer', fontSize: 13, fontWeight: 700, color: 'var(--bg-primary)',
                   whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.85' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
               >
                 {t.signIn}
               </button>
@@ -803,12 +802,12 @@ export default function App() {
         <div style={{
           position: 'fixed', bottom: 80, right: 24, zIndex: 9998,
           background: 'var(--bg-secondary)', border: '1px solid var(--border-glow)',
-          borderRadius: 4, padding: '8px 14px', fontSize: 13,
+          borderRadius: 8, padding: '8px 14px', fontSize: 13,
           color: 'var(--text-primary)', boxShadow: 'var(--shadow-pop)',
           display: 'flex', alignItems: 'center', gap: 8,
           pointerEvents: 'none',
         }}>
-          <span style={{ color: '#34d399', fontSize: 15, lineHeight: 1 }}>✓</span>
+          <span style={{ color: '#30d158', fontSize: 15, lineHeight: 1 }}>✓</span>
           {toast}
         </div>
       )}

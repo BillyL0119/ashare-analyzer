@@ -5,7 +5,7 @@ import useThemeStore from '../store/themeStore'
 import { buildKLineOption } from '../utils/chartHelpers'
 
 const US_UP = '#4caf50'
-const US_DOWN = '#ef5350'
+const US_DOWN = '#ff3b30'
 
 const KLineChart = forwardRef(function KLineChart({ candles, ma, groupId, market = 'cn' }, ref) {
   const lang = useLangStore((s) => s.lang)

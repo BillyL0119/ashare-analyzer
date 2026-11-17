@@ -1,54 +1,58 @@
 /* Best Friend Stock: site-wide tokens.
-   Look: a research desk, not a neon dashboard. Flat graphite surfaces, hairline borders, one ink-blue
-   accent. Colour is kept for data (up, down, warnings). No gradients, glows or glass. */
+   Look: a trading app for students. True black (or white) pages, one loud blue, vivid red and green
+   for prices, heavy sans headings and big numbers, round buttons. Colour is flat: no gradients,
+   glows, glass or background decoration. */
 
 /* ── Dark theme (default) ────────────────────────────────── */
 :root,
 :root[data-theme="dark"] {
-  --bg-primary:      #0e1013;
-  --bg-secondary:    #14171b;
-  --bg-tertiary:     #1a1e23;
-  --bg-hover:        #22272e;
-  --border-primary:  #262b33;
-  --border-glow:     #3a414c;   /* the stronger border (hover, focus rows); the name is historical */
-  --text-primary:    #e6e8eb;
-  --text-secondary:  #a1a8b3;
-  --text-muted:      #7c8591;
-  --card-bg:         #14171b;
-  --nav-bg:          #0e1013;
-  --nav-bg-dim:      #0e1013;
-  --map-ocean:       #12161b;
-  --map-sphere:      #0e1013;
-  --map-border:      #343b46;
-  --map-graticule:   #1a1e23;
-  --map-land:        #20252c;
-  --skeleton-base:   #1a1e23;
-  --skeleton-shine:  #262b33;
-  --chart-bg:        #14171b;
-  --chart-text:      #a1a8b3;
-  --chart-border:    #262b33;
-  --chart-tooltip:   rgba(14,16,19,0.96);
+  --bg-primary:      #000000;
+  --bg-secondary:    #111214;
+  --bg-tertiary:     #1a1c1f;
+  --bg-hover:        #25282c;
+  --border-primary:  #26292d;
+  --border-glow:     #3d4147;   /* the stronger border (hover, focus rows); the name is historical */
+  --text-primary:    #ffffff;
+  --text-secondary:  #b1b6be;
+  --text-muted:      #838993;
+  --card-bg:         #111214;
+  --nav-bg:          #000000;
+  --nav-bg-dim:      #000000;
+  --map-ocean:       #0b0c0e;
+  --map-sphere:      #000000;
+  --map-border:      #3d4147;
+  --map-graticule:   #1a1c1f;
+  --map-land:        #1f2226;
+  --skeleton-base:   #1a1c1f;
+  --skeleton-shine:  #26292d;
+  --chart-bg:        #111214;
+  --chart-text:      #b1b6be;
+  --chart-border:    #26292d;
+  --chart-tooltip:   rgba(17,18,20,0.97);
 
   /* ── accent / signal colours */
-  --accent-blue:   #4588cc;
-  --accent-blue-soft: rgba(69,136,204,0.14);
-  --accent-purple: #7f77c2;
-  --accent-cyan:   #4a9cab;
-  --accent-gold:   #d99a2b;
-  --green-bright:  #10b981;
-  --red-bright:    #ef4444;
+  --accent-blue:   #2f7bff;
+  --accent-blue-soft: rgba(47,123,255,0.16);
+  --accent-purple: #8f7bff;
+  --accent-cyan:   #19c2d8;
+  --accent-gold:   #ffb020;
+  --green-bright:  #00c853;
+  --red-bright:    #ff3b30;
   --on-accent:     #ffffff;
-  --shadow-pop:    0 8px 24px rgba(0,0,0,0.45);   /* menus and dialogs only */
-  --radius-card: 8px; --radius-ctl: 6px; --radius-chip: 4px;
+  --shadow-pop:    0 12px 32px rgba(0,0,0,0.6);   /* menus and dialogs only */
+  /* icon chips: one flat colour per kind of page */
+  --chip-blue: #2f7bff; --chip-green: #00b34a; --chip-orange: #f07800; --chip-pink: #f0407c;
+  --chip-violet: #7b63f5; --chip-cyan: #0fa8bd; --chip-red: #f03a2f;
   color-scheme: dark;
 }
 
 :root {
-  /* Type: system UI faces for the interface (native on every device, nothing to download), an
-     editorial serif for headings and headline numbers (Source Serif 4, CJK serifs as fallbacks). */
+  /* Type: the system UI face everywhere (native on every device, nothing to download), set heavy
+     and tight for headings and headline numbers. --heading and --serif keep their names because
+     components refer to them. */
   --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-  --heading: 'Source Serif 4', 'Noto Serif SC', 'Songti SC', 'Hiragino Mincho ProN', 'Yu Mincho', 'AppleMyungjo', 'Nanum Myeongjo', Georgia, serif;
-  --serif: var(--heading);
+  --heading: var(--sans);
+  --serif: var(--sans);
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   font: 18px/150% var(--sans);
@@ -81,38 +85,38 @@ body {
 
 /* ── Light theme ─────────────────────────────────────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #f5f6f7;
-  --bg-secondary:    #ffffff;
-  --bg-tertiary:     #eef0f2;
-  --bg-hover:        #e4e7eb;
-  --border-primary:  #d9dde2;
-  --border-glow:     #b6bdc7;
-  --text-primary:    #14181d;
-  --text-secondary:  #48515e;
-  --text-muted:      #68717d;
-  --card-bg:         #ffffff;
+  --bg-primary:      #ffffff;
+  --bg-secondary:    #f6f7f8;
+  --bg-tertiary:     #eceef1;
+  --bg-hover:        #e2e5e9;
+  --border-primary:  #e1e4e8;
+  --border-glow:     #b9bfc8;
+  --text-primary:    #000000;
+  --text-secondary:  #454b54;
+  --text-muted:      #6a717b;
+  --card-bg:         #f6f7f8;
   --nav-bg:          #ffffff;
   --nav-bg-dim:      #ffffff;
-  --map-ocean:       #dfe6ee;
-  --map-sphere:      #d3dce6;
+  --map-ocean:       #e6edf5;
+  --map-sphere:      #dae3ee;
   --map-border:      #9aa7b6;
-  --map-graticule:   #e9eef3;
-  --map-land:        #e6e9ed;
-  --skeleton-base:   #e4e7eb;
-  --skeleton-shine:  #f5f6f7;
+  --map-graticule:   #eef2f6;
+  --map-land:        #eceef1;
+  --skeleton-base:   #eceef1;
+  --skeleton-shine:  #f6f7f8;
   --chart-bg:        #ffffff;
-  --chart-text:      #48515e;
-  --chart-border:    #e4e7eb;
+  --chart-text:      #454b54;
+  --chart-border:    #e1e4e8;
   --chart-tooltip:   rgba(255,255,255,0.98);
 
-  --accent-blue:   #1d5fa6;
-  --accent-blue-soft: rgba(29,95,166,0.10);
-  --accent-purple: #5b53a6;
-  --accent-cyan:   #2b7f8f;
-  --accent-gold:   #a86a00;
-  --green-bright:  #0a7a43;
-  --red-bright:    #c62a1c;
-  --shadow-pop:    0 8px 24px rgba(20,24,29,0.14);
+  --accent-blue:   #0b5cff;
+  --accent-blue-soft: rgba(11,92,255,0.10);
+  --accent-purple: #6a4dff;
+  --accent-cyan:   #008fa3;
+  --accent-gold:   #b86e00;
+  --green-bright:  #00a344;
+  --red-bright:    #e5281c;
+  --shadow-pop:    0 12px 32px rgba(0,0,0,0.16);
   color-scheme: light;
 }
 
@@ -223,24 +227,21 @@ h2,
 h3,
 .serif {
   font-family: var(--heading);
-  font-optical-sizing: auto;
   text-wrap: balance;
 }
 h1, h2 { color: var(--text-primary); }
-/* Page titles: larger, so the serif has room to breathe */
-html:not([data-ui="mobile"]) h1 { font-size: clamp(26px, 2.4vw, 34px) !important; line-height: 1.15 !important; }
-/* Headline numbers (scores, account value, index levels) set in the serif with lining figures */
+/* Page titles: large and heavy */
+html:not([data-ui="mobile"]) h1 { font-size: clamp(28px, 2.8vw, 40px) !important; line-height: 1.1 !important; }
+/* Headline numbers (scores, account value, index levels): heavy, tight, tabular */
 .serif-num {
-  font-family: var(--heading) !important;
-  font-weight: 500 !important;
+  font-family: var(--sans) !important;
+  font-weight: 700 !important;
   font-variant-numeric: lining-nums tabular-nums;
-  font-optical-sizing: auto;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.025em;
 }
-/* Serif headings read best at a medium weight; components set heavier inline weights for the old sans */
 /* Desktop UI only: the phone UI (data-ui="mobile") sizes its own titles in mobile.css */
-html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
-html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 600 !important; letter-spacing: -0.005em !important; }
+html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 800 !important; letter-spacing: -0.03em !important; }
+html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 700 !important; letter-spacing: -0.02em !important; }
 
 h1 {
   font-size: 56px;

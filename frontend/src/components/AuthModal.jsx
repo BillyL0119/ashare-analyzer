@@ -31,11 +31,11 @@ function Field({ label, type, value, onChange, placeholder }) {
         placeholder={placeholder}
         style={{
           width: '100%', padding: '10px 14px', boxSizing: 'border-box',
-          borderRadius: 6, border: '1px solid var(--border-primary)',
+          borderRadius: 8, border: '1px solid var(--border-primary)',
           background: 'var(--bg-tertiary)', color: 'var(--text-primary)',
           fontSize: 14, outline: 'none', transition: 'border-color 0.15s',
         }}
-        onFocus={e  => { e.target.style.borderColor = '#4588cc' }}
+        onFocus={e  => { e.target.style.borderColor = '#2f7bff' }}
         onBlur={e   => { e.target.style.borderColor = 'var(--border-primary)' }}
       />
     </div>
@@ -115,7 +115,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 8, width: '100%', maxWidth: 420,
+        borderRadius: 16, width: '100%', maxWidth: 420,
         position: 'relative',
         boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         animation: 'bfsPageFadeIn 0.2s ease both',
@@ -141,7 +141,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
 
           {/* Sign In / Sign Up tab switcher */}
           {mode !== RESET && (
-            <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg-tertiary)', borderRadius: 6, padding: 3 }}>
+            <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg-tertiary)', borderRadius: 8, padding: 3 }}>
               {[
                 { k: SIGNIN, label: t.authSignIn },
                 { k: SIGNUP, label: t.authSignUp },
@@ -150,7 +150,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                   key={k}
                   onClick={() => switchMode(k)}
                   style={{
-                    flex: 1, padding: '7px 0', borderRadius: 4, border: 'none', cursor: 'pointer',
+                    flex: 1, padding: '7px 0', borderRadius: 6, border: 'none', cursor: 'pointer',
                     fontSize: 13, fontWeight: 600,
                     background: mode === k ? 'var(--bg-secondary)' : 'transparent',
                     color: mode === k ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -171,7 +171,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                 onClick={handleGoogle}
                 style={{
                   width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                  padding: '10px 0', borderRadius: 6,
+                  padding: '10px 0', borderRadius: 8,
                   background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                   cursor: 'pointer', fontSize: 14, fontWeight: 500, color: 'var(--text-primary)',
                   marginBottom: 16, transition: 'background 0.15s',
@@ -217,7 +217,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                 <button
                   type="button"
                   onClick={() => switchMode(RESET)}
-                  style={{ fontSize: 12, color: '#4588cc', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  style={{ fontSize: 12, color: '#2f7bff', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
                   {t.authForgotPw}
                 </button>
@@ -226,12 +226,12 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
 
             {/* Feedback messages */}
             {error && (
-              <div style={{ fontSize: 12, color: '#ef5350', marginBottom: 12, padding: '8px 12px', background: 'rgba(239,83,80,0.08)', borderRadius: 4, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: '#ff3b30', marginBottom: 12, padding: '8px 12px', background: 'rgba(255,59,48,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {error}
               </div>
             )}
             {message && (
-              <div style={{ fontSize: 12, color: '#26a69a', marginBottom: 12, padding: '8px 12px', background: 'rgba(38,166,154,0.08)', borderRadius: 4, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: '#00c853', marginBottom: 12, padding: '8px 12px', background: 'rgba(0,200,83,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {message}
               </div>
             )}
@@ -241,8 +241,8 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
               type="submit"
               disabled={loading}
               style={{
-                width: '100%', padding: '11px 0', borderRadius: 6, border: 'none',
-                background: loading ? 'rgba(69,136,204,0.4)' : '#4588cc',
+                width: '100%', padding: '11px 0', borderRadius: 8, border: 'none',
+                background: loading ? 'rgba(47,123,255,0.4)' : '#2f7bff',
                 color: '#fff', fontSize: 14, fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 transition: 'opacity 0.15s',

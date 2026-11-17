@@ -67,7 +67,7 @@ LABELS.fr = { ...LABELS.en, overview: 'Présentation', keyStats: 'Chiffres clés
   assets: 'Total actif', holders: 'Principaux actionnaires institutionnels', holder: 'Institution', shares: 'Actions', value: 'Valeur', change: 'Variation',
   source: 'Source : Nasdaq · USD · exercices tels que publiés', loading: 'Chargement des données…', error: 'Données fondamentales indisponibles pour le moment' }
 
-const BLUE = '#5b9cf6', TEAL = '#26a69a', AMBER = '#f5a524', RED = '#ef5350', GREEN = '#26a69a'
+const BLUE = '#5b9cf6', TEAL = '#00c853', AMBER = '#f5a524', RED = '#ff3b30', GREEN = '#00c853'
 
 const money = (v, d = 1) => {
   if (v == null || Number.isNaN(v)) return '—'
@@ -89,10 +89,10 @@ const fmtDate = (iso, lang) => {
 }
 
 const CSS = `
-.fu-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px; min-width: 0; }
+.fu-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px; min-width: 0; }
 .fu-h { margin: 0 0 12px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
 .fu-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
-.fu-tile { background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 6px; padding: 11px 12px; min-width: 0; }
+.fu-tile { background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 10px; padding: 11px 12px; min-width: 0; }
 .fu-tile .l { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fu-tile .v { font-size: 17px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fu-tile .s { font-size: 11px; color: var(--text-muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -103,8 +103,8 @@ const CSS = `
 .fu-table td { padding: 7px 8px; text-align: right; color: var(--text-secondary); border-bottom: 1px solid var(--border-primary); white-space: nowrap; }
 .fu-table tr:last-child td { border-bottom: none; }
 .fu-table td.k { color: var(--text-primary); font-weight: 600; }
-.fu-seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 6px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); }
-.fu-seg button { border: none; background: transparent; color: var(--text-secondary); font-size: 12px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+.fu-seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); }
+.fu-seg button { border: none; background: transparent; color: var(--text-secondary); font-size: 12px; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
 .fu-seg button.on { background: var(--bg-secondary); color: var(--text-primary); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
 @media (max-width: 1100px) { .fu-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .fu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fu-two { grid-template-columns: minmax(0, 1fr); } }
@@ -143,9 +143,9 @@ function CompanyFundamentals({ code, t, lang }) {
   if (!data) {
     return (
       <div style={{ display: 'grid', gap: 12 }}>
-        <div className="skeleton" style={{ height: 110, borderRadius: 8 }} />
-        <div className="skeleton" style={{ height: 150, borderRadius: 8 }} />
-        <div className="skeleton" style={{ height: 300, borderRadius: 8 }} />
+        <div className="skeleton" style={{ height: 110, borderRadius: 12 }} />
+        <div className="skeleton" style={{ height: 150, borderRadius: 12 }} />
+        <div className="skeleton" style={{ height: 300, borderRadius: 12 }} />
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.loading}</div>
       </div>
     )
@@ -349,7 +349,7 @@ function Earnings({ rows, t }) {
           const beat = r.surprise_pct == null ? null : r.surprise_pct >= 0
           const c = beat == null ? 'var(--text-muted)' : beat ? GREEN : RED
           return (
-            <div key={r.quarter} style={{ textAlign: 'center', fontSize: 11, padding: '6px 4px', borderRadius: 6, background: 'var(--bg-tertiary)' }}>
+            <div key={r.quarter} style={{ textAlign: 'center', fontSize: 11, padding: '6px 4px', borderRadius: 8, background: 'var(--bg-tertiary)' }}>
               <div style={{ color: c, fontWeight: 700 }}>{signPct(r.surprise_pct)}</div>
               <div style={{ color: 'var(--text-muted)', marginTop: 2 }}>{beat == null ? '' : beat ? t.beat : t.miss}</div>
             </div>
@@ -371,7 +371,7 @@ function Analysts({ a, price, t }) {
       <h4 className="fu-h">{t.analysts}</h4>
       {total > 0 && (
         <>
-          <div style={{ display: 'flex', height: 10, borderRadius: 4, overflow: 'hidden', background: 'var(--border-primary)' }}>
+          <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden', background: 'var(--border-primary)' }}>
             {parts.map(([k, n, c]) => n > 0 && <span key={k} style={{ flex: n, background: c }} />)}
           </div>
           <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 12, flexWrap: 'wrap' }}>
@@ -397,7 +397,7 @@ function Analysts({ a, price, t }) {
               <div key={k}>
                 <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{k}</div>
                 <div style={{ color: k === t.avg ? BLUE : 'var(--text-primary)', fontWeight: 700, marginTop: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
-                  {k === t.current && <span style={{ width: 9, height: 9, borderRadius: 4, border: '2px solid var(--text-primary)', boxSizing: 'border-box' }} />}{v != null ? `$${v.toFixed(2)}` : '—'}</div>
+                  {k === t.current && <span style={{ width: 9, height: 9, borderRadius: 5, border: '2px solid var(--text-primary)', boxSizing: 'border-box' }} />}{v != null ? `$${v.toFixed(2)}` : '—'}</div>
               </div>
             ))}
           </div>

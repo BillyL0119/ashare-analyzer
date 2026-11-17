@@ -3,7 +3,7 @@ import { T } from '../i18n/translations'
 
 const TYPE_CONFIG = {
   earnings: { zh: '财报', en: 'Earnings', ja: '決算', ko: '실적', fr: 'Résultats', color: '#4a90e2', bg: 'rgba(74,144,226,0.15)' },
-  dividend: { zh: '分红', en: 'Dividend', ja: '配当', ko: '배당', fr: 'Dividende', color: '#26a69a', bg: 'rgba(38,166,154,0.15)' },
+  dividend: { zh: '分红', en: 'Dividend', ja: '配当', ko: '배당', fr: 'Dividende', color: '#00c853', bg: 'rgba(0,200,83,0.15)' },
   ipo:      { zh: '新股', en: 'IPO',      ja: 'IPO',  ko: 'IPO',  fr: 'IPO',       color: '#ffa726', bg: 'rgba(255,167,38,0.15)' },
   holiday:  { zh: '假期', en: 'Holiday',  ja: '休日', ko: '휴일', fr: 'Férié',     color: 'var(--text-muted)', bg: 'rgba(154,160,166,0.12)' },
 }
@@ -19,7 +19,7 @@ function TypeTag({ type, lang }) {
       fontSize: 10,
       fontWeight: 700,
       padding: '2px 7px',
-      borderRadius: 6,
+      borderRadius: 10,
       background: cfg.bg,
       color: cfg.color,
       border: `1px solid ${cfg.color}40`,
@@ -40,10 +40,10 @@ function EventRow({ event, lang, t, onStockClick }) {
       alignItems: 'center',
       gap: 10,
       padding: '8px 12px',
-      borderBottom: '1px solid rgba(69,136,204,0.07)',
+      borderBottom: '1px solid rgba(47,123,255,0.07)',
       transition: 'background 0.12s',
     }}
-    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.04)' }}
+    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.04)' }}
     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <TypeTag type={event.type} lang={lang} />
@@ -55,7 +55,7 @@ function EventRow({ event, lang, t, onStockClick }) {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: '#4588cc',
+            color: '#2f7bff',
             fontFamily: 'monospace',
             fontSize: 12,
             padding: 0,
@@ -92,18 +92,18 @@ function DateGroup({ dateStr, events, lang, t, onStockClick }) {
         alignItems: 'center',
         gap: 10,
         padding: '6px 12px',
-        background: 'rgba(69,136,204,0.06)',
+        background: 'rgba(47,123,255,0.06)',
         borderRadius: '8px 8px 0 0',
-        borderBottom: '1px solid rgba(69,136,204,0.12)',
+        borderBottom: '1px solid rgba(47,123,255,0.12)',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#4588cc', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#2f7bff', fontFamily: 'monospace' }}>
           {dateStr}
         </span>
         <span style={{
           fontSize: 11,
           color: diff <= 1 ? '#ffa726' : 'var(--text-muted)',
           background: diff <= 1 ? 'rgba(255,167,38,0.12)' : 'transparent',
-          borderRadius: 4,
+          borderRadius: 6,
           padding: diff <= 1 ? '1px 6px' : 0,
           fontWeight: diff <= 1 ? 600 : 400,
         }}>
@@ -113,7 +113,7 @@ function DateGroup({ dateStr, events, lang, t, onStockClick }) {
           {events.length} {t.calEventsUnit}
         </span>
       </div>
-      <div style={{ background: 'var(--bg-secondary)', borderRadius: '0 0 8px 8px', border: '1px solid rgba(69,136,204,0.08)', borderTop: 'none' }}>
+      <div style={{ background: 'var(--bg-secondary)', borderRadius: '0 0 8px 8px', border: '1px solid rgba(47,123,255,0.08)', borderTop: 'none' }}>
         {events.map((ev, i) => (
           <EventRow key={i} event={ev} lang={lang} t={t} onStockClick={onStockClick} />
         ))}
@@ -177,16 +177,16 @@ export default function CalendarPanel({ lang, onStockSelect }) {
               onClick={() => setFilter(type)}
               style={{
                 padding: '4px 12px',
-                borderRadius: 8,
+                borderRadius: 12,
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 12,
                 fontWeight: active ? 700 : 400,
                 background: active
-                  ? (cfg ? cfg.bg : 'rgba(69,136,204,0.15)')
+                  ? (cfg ? cfg.bg : 'rgba(47,123,255,0.15)')
                   : 'var(--bg-hover)',
                 color: active
-                  ? (cfg ? cfg.color : '#4588cc')
+                  ? (cfg ? cfg.color : '#2f7bff')
                   : 'var(--text-muted)',
                 transition: 'all 0.15s',
               }}

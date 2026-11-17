@@ -11,8 +11,8 @@ import Icon from '../Icon'
 // server sends only the quarters already played, and reveals the real Fed's rate for a quarter
 // after the student has set theirs (routers/governor.py).
 
-const ACCENT = '#4588cc', TARGET = '#10b981', HOT = '#ef4444'
-const TINT = { inflation_2021: '#4588cc', volcker_1979: '#f59e0b', crisis_2007: '#ef4444' }
+const ACCENT = '#2f7bff', TARGET = '#00c853', HOT = '#ff3b30'
+const TINT = { inflation_2021: '#2f7bff', volcker_1979: '#f59e0b', crisis_2007: '#ff3b30' }
 const MAX_RATE = 20
 const STUDY = [['ib', 'ib_6'], ['alevel', 'macro_3'], ['ap_macro', 'ap_4'], ['igcse', 'igcse_7']]
 
@@ -43,35 +43,35 @@ function qRange(a, b) {
 
 const CSS = `
 .gv { display: grid; gap: 16px; max-width: 1240px; margin: 0 auto; width: 100%; padding: 18px 0 40px; min-width: 0; }
-.gv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px; min-width: 0; }
+.gv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px; min-width: 0; }
 .gv-muted { color: var(--text-secondary); }
 .gv-h { margin: 0; font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); }
 .gv-num { font-variant-numeric: tabular-nums; }
-.gv-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 6px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.gv-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .gv-btn:disabled { opacity: .45; cursor: not-allowed; }
-.gv-btn.primary { background: #4588cc; border-color: transparent; color: #fff; }
+.gv-btn.primary { background: #2f7bff; border-color: transparent; color: #fff; }
 .gv-btn:focus-visible, .gv-chip:focus-visible, .gv-step:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 .gv-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .gv-pick { display: grid; gap: 10px; align-content: start; }
 .gv-years { font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
 .gv-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .gv-stats { display: flex; flex-wrap: wrap; gap: 6px; }
-.gv-stat { font-size: 12px; padding: 4px 9px; border-radius: 6px; background: var(--bg-tertiary); font-variant-numeric: tabular-nums; }
+.gv-stat { font-size: 12px; padding: 4px 9px; border-radius: 999px; background: var(--bg-tertiary); font-variant-numeric: tabular-nums; }
 .gv-game { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; align-items: start; }
 .gv-side { display: grid; gap: 14px; min-width: 0; }
 .gv-charts { display: grid; gap: 14px; }
 .gv-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text-secondary); }
 .gv-sw { display: inline-block; width: 16px; height: 0; border-top: 2.5px solid; margin-right: 6px; vertical-align: middle; }
 .gv-data { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.gv-datum { display: grid; gap: 2px; padding: 9px 10px; border-radius: 6px; background: var(--bg-tertiary); min-width: 0; }
+.gv-datum { display: grid; gap: 2px; padding: 9px 10px; border-radius: 10px; background: var(--bg-tertiary); min-width: 0; }
 .gv-datum b { font-size: 20px; font-variant-numeric: tabular-nums; }
 .gv-rate { font-size: 40px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; line-height: 1; }
 .gv-step { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); font-size: 20px; font-weight: 700; cursor: pointer; flex: none; }
 .gv-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.gv-chip { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 6px; padding: 5px 11px; font-size: 12.5px; font-weight: 650; cursor: pointer; font-variant-numeric: tabular-nums; }
+.gv-chip { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 650; cursor: pointer; font-variant-numeric: tabular-nums; }
 .gv-chip.on { border-color: ${ACCENT}; background: ${ACCENT}1f; color: ${ACCENT}; }
 .gv-range { width: 100%; accent-color: ${ACCENT}; }
-.gv-ev { padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-primary); display: grid; gap: 4px; }
+.gv-ev { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-primary); display: grid; gap: 4px; }
 .gv-ev.new { border-color: #f59e0b88; background: #f59e0b12; }
 .gv-news { display: grid; gap: 8px; max-height: 520px; overflow-y: auto; }
 .gv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -79,7 +79,7 @@ const CSS = `
 .gv-table th:first-child, .gv-table td:first-child { text-align: left; white-space: normal; }
 .gv-table td { text-align: right; padding: 7px 8px; border-bottom: 1px solid var(--border-primary); font-variant-numeric: tabular-nums; }
 .gv-scroll { overflow-x: auto; }
-.gv-topic { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 6px; padding: 5px 11px; }
+.gv-topic { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 999px; padding: 5px 11px; }
 .gv-topic b { color: ${ACCENT}; font-size: 11.5px; }
 /* One column: the latest figures and the rate control come before the charts, so a phone needs no scrolling per quarter */
 @media (max-width: 980px) {
@@ -164,7 +164,7 @@ function QChart({ title, labels, series, startIndex, s, height = 170 }) {
         {hover != null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={height - P.b} stroke="var(--text-secondary)" opacity="0.6" />}
       </svg>
       {hover != null && (
-        <div style={{ position: 'absolute', top: 26, left: P.l + 6, fontSize: 12, padding: '4px 8px', borderRadius: 4, background: 'var(--bg-primary)', border: '1px solid var(--border-primary)', pointerEvents: 'none', display: 'flex', gap: 10, flexWrap: 'wrap', maxWidth: 'calc(100% - 50px)' }}>
+        <div style={{ position: 'absolute', top: 26, left: P.l + 6, fontSize: 12, padding: '4px 8px', borderRadius: 7, background: 'var(--bg-primary)', border: '1px solid var(--border-primary)', pointerEvents: 'none', display: 'flex', gap: 10, flexWrap: 'wrap', maxWidth: 'calc(100% - 50px)' }}>
           <b>{s.quarter(labels[hover])}</b>
           {series.map((sr) => sr.values[hover] != null && sr.label && <span key={sr.key} className="gv-num" style={{ color: sr.color }}>{sr.label} {pct(sr.values[hover])}</span>)}
         </div>

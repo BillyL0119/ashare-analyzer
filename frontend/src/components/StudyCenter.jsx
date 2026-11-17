@@ -13,19 +13,19 @@ const SIDEBAR_BG  = 'var(--bg-tertiary)'
 const CONTENT_BG  = 'var(--bg-primary)'
 const BDR         = 'var(--border-primary)'
 const MUTED       = 'var(--text-muted)'
-const GREEN       = '#34d399'
+const GREEN       = '#30d158'
 const PROGRESS_BG = 'var(--bg-hover)'
 
 const EXAMS = [
   { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '美股与股票入门', title_en: 'US Stocks & Investing Basics', color: '#ec4899', board: 'US market · Fundamentals · Investing' },
   { key: 'kline',  label: 'K线教学', label_en: 'Reading Charts', title: 'K线图入门', title_en: 'Reading Candlestick Charts', color: '#f472b6', board: 'Candlesticks' },
   { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#5f73b8', board: 'Cambridge 9708' },
-  { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#10b981', board: 'Cambridge 0455' },
+  { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#00c853', board: 'Cambridge 0455' },
   { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: '#f59e0b', board: 'College Board' },
-  { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#ef4444', board: 'College Board' },
+  { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#ff3b30', board: 'College Board' },
   { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#7f77c2', board: 'IB SL/HL'       },
   { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#4a9cab', board: 'Timeline' },
-  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#4588cc', board: 'DeepSeek' },
+  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#2f7bff', board: 'DeepSeek' },
 ]
 
 // Stock lessons store bilingual titles as "中文 / English"; show only the half for the reader.
@@ -57,7 +57,7 @@ function TopicRow({ topic, active, read, accentColor, lang, onClick }) {
       onMouseLeave={() => setHover(false)}
       style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        padding: '8px 12px', cursor: 'pointer', borderRadius: 6,
+        padding: '8px 12px', cursor: 'pointer', borderRadius: 8,
         background: active
           ? `rgba(${hexToRgb(accentColor)},0.12)`
           : hover ? 'var(--bg-hover)' : 'transparent',
@@ -137,7 +137,7 @@ function PaperGroup({ paper, activeId, progress, accentColor, lang, onSelect }) 
 function KeyTermPill({ term }) {
   return (
     <span style={{
-      fontSize: 11, padding: '3px 9px', borderRadius: 8,
+      fontSize: 11, padding: '3px 9px', borderRadius: 12,
       background: 'rgba(95,115,184,0.15)',
       color: '#8f99dc',
       border: '1px solid rgba(95,115,184,0.2)',
@@ -149,7 +149,7 @@ function KeyTermPill({ term }) {
 }
 
 // ── Economic Diagrams (AP Macro) ───────────────────────────────────────────────
-const DA = 'rgba(69,136,204,0.45)'   // axis
+const DA = 'rgba(47,123,255,0.45)'   // axis
 const DL = 'rgba(154,160,166,0.8)'    // axis label
 const DT = 'rgba(232,234,240,0.88)'   // text on diagram
 
@@ -158,7 +158,7 @@ function DiagramWrap({ title, caption, children }) {
     <div style={{
       background: 'rgba(245,158,11,0.04)',
       border: '1px solid rgba(245,158,11,0.18)',
-      borderRadius: 6, padding: '12px 14px 10px',
+      borderRadius: 10, padding: '12px 14px 10px',
       marginLeft: 15, marginBottom: 14,
     }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#f59e0b', letterSpacing: '0.08em', marginBottom: 8, textTransform: 'uppercase' }}>
@@ -209,10 +209,10 @@ function PPCDiagram() {
       <circle cx="260" cy="108" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="252" y="100" textAnchor="end" fill={DT} fontSize="10.5">A: Efficient</text>
       {/* B: Inefficient — inside PPC; (155/290)²+(70/180)²=0.44<1 ✓ */}
-      <circle cx="210" cy="165" r="5.5" fill="#6aa2da" stroke="#0f1117" strokeWidth="2"/>
+      <circle cx="210" cy="165" r="5.5" fill="#5c9bff" stroke="#0f1117" strokeWidth="2"/>
       <text x="220" y="160" fill={DT} fontSize="10.5">B: Inefficient</text>
       {/* C: outside PPC, inside PPC'; (250/290)²+(135/180)²=1.31>1, (250/362.5)²+(135/225)²=0.84<1 ✓ */}
-      <circle cx="305" cy="100" r="5.5" fill="#f87171" stroke="#0f1117" strokeWidth="2"/>
+      <circle cx="305" cy="100" r="5.5" fill="#ff453a" stroke="#0f1117" strokeWidth="2"/>
       <text x="315" y="95" fill={DT} fontSize="10.5">C: Unattainable</text>
       {/* Growth arrow: from PPC outward to PPC' at t≈30° */}
       <path d="M 310,143 Q 338,131 366,122" stroke="#f59e0b" strokeWidth="1.3" fill="none" opacity="0.5"/>
@@ -233,19 +233,19 @@ function ASModelDiagram() {
       <text x="262" y="254" fill="#9d97d3" fontSize="10">Yf</text>
       <line x1="75" y1="55" x2="390" y2="228" stroke="#f59e0b" strokeWidth="1.8" opacity="0.72"/>
       <text x="73" y="51" fill="#f59e0b" fontSize="10.5" fontWeight="700">AD</text>
-      <line x1="68" y1="228" x2="385" y2="52" stroke="#34d399" strokeWidth="2.2"/>
-      <text x="388" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS₁</text>
-      <line x1="68" y1="188" x2="345" y2="42" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="348" y="38" fill="#34d399" fontSize="10" opacity="0.62">SRAS₂</text>
+      <line x1="68" y1="228" x2="385" y2="52" stroke="#30d158" strokeWidth="2.2"/>
+      <text x="388" y="48" fill="#30d158" fontSize="10.5" fontWeight="700">SRAS₁</text>
+      <line x1="68" y1="188" x2="345" y2="42" stroke="#30d158" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="348" y="38" fill="#30d158" fontSize="10" opacity="0.62">SRAS₂</text>
       <circle cx="228" cy="139" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="236" y="134" fill={DT} fontSize="10">E₁</text>
-      <circle cx="195" cy="121" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
-      <text x="190" y="110" textAnchor="end" fill="#f87171" fontSize="10">E₂ (stagflation)</text>
-      <path d="M 224,136 L 198,122" stroke="rgba(248,113,113,0.55)" strokeWidth="1.3" strokeDasharray="3,3"/>
+      <circle cx="195" cy="121" r="4.5" fill="#ff453a" stroke="#0f1117" strokeWidth="1.5"/>
+      <text x="190" y="110" textAnchor="end" fill="#ff453a" fontSize="10">E₂ (stagflation)</text>
+      <path d="M 224,136 L 198,122" stroke="rgba(255,69,58,0.55)" strokeWidth="1.3" strokeDasharray="3,3"/>
       <line x1="52" y1="139" x2="228" y2="139" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="36" y="143" fill="rgba(232,234,240,0.5)" fontSize="10">P₁</text>
-      <line x1="52" y1="121" x2="195" y2="121" stroke="rgba(248,113,113,0.14)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="36" y="125" fill="rgba(248,113,113,0.55)" fontSize="10">P₂↑</text>
+      <line x1="52" y1="121" x2="195" y2="121" stroke="rgba(255,69,58,0.14)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="36" y="125" fill="rgba(255,69,58,0.55)" fontSize="10">P₂↑</text>
     </DiagramWrap>
   )
 }
@@ -260,21 +260,21 @@ function ADASDiagram() {
       <line x1="285" y1="235" x2="285" y2="18" stroke="#9d97d3" strokeWidth="2.2" strokeDasharray="7,4"/>
       <text x="288" y="14" fill="#9d97d3" fontSize="10.5" fontWeight="700">LRAS</text>
       <text x="279" y="250" fill="#9d97d3" fontSize="10">Yf</text>
-      <line x1="68" y1="228" x2="390" y2="50" stroke="#34d399" strokeWidth="2"/>
-      <text x="393" y="47" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS</text>
-      <line x1="68" y1="52" x2="375" y2="228" stroke="#6aa2da" strokeWidth="2"/>
-      <text x="65" y="48" fill="#6aa2da" fontSize="10.5" fontWeight="700">AD₁</text>
-      <line x1="130" y1="52" x2="418" y2="215" stroke="#6aa2da" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="422" y="219" fill="#6aa2da" fontSize="10" opacity="0.62">AD₂</text>
-      <path d="M 224,141 L 257,124" stroke="#6aa2da" strokeWidth="1.3" fill="none" opacity="0.58"/>
-      <polygon points="251,118 259,124 251,130" fill="#6aa2da" opacity="0.58"/>
+      <line x1="68" y1="228" x2="390" y2="50" stroke="#30d158" strokeWidth="2"/>
+      <text x="393" y="47" fill="#30d158" fontSize="10.5" fontWeight="700">SRAS</text>
+      <line x1="68" y1="52" x2="375" y2="228" stroke="#5c9bff" strokeWidth="2"/>
+      <text x="65" y="48" fill="#5c9bff" fontSize="10.5" fontWeight="700">AD₁</text>
+      <line x1="130" y1="52" x2="418" y2="215" stroke="#5c9bff" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="422" y="219" fill="#5c9bff" fontSize="10" opacity="0.62">AD₂</text>
+      <path d="M 224,141 L 257,124" stroke="#5c9bff" strokeWidth="1.3" fill="none" opacity="0.58"/>
+      <polygon points="251,118 259,124 251,130" fill="#5c9bff" opacity="0.58"/>
       <circle cx="224" cy="141" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="232" y="136" fill={DT} fontSize="10">E₁</text>
       <line x1="224" y1="235" x2="224" y2="240" stroke={DA} strokeWidth="1.5"/>
-      <line x1="224" y1="242" x2="285" y2="242" stroke="rgba(248,113,113,0.58)" strokeWidth="1.5"/>
-      <polygon points="283,238 290,242 283,246" fill="rgba(248,113,113,0.58)"/>
+      <line x1="224" y1="242" x2="285" y2="242" stroke="rgba(255,69,58,0.58)" strokeWidth="1.5"/>
+      <polygon points="283,238 290,242 283,246" fill="rgba(255,69,58,0.58)"/>
       <text x="218" y="250" fill="rgba(232,234,240,0.52)" fontSize="10">Y₁</text>
-      <text x="254" y="250" fill="rgba(248,113,113,0.72)" textAnchor="middle" fontSize="9.5">gap</text>
+      <text x="254" y="250" fill="rgba(255,69,58,0.72)" textAnchor="middle" fontSize="9.5">gap</text>
       <line x1="55" y1="141" x2="224" y2="141" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="38" y="145" fill="rgba(232,234,240,0.52)" fontSize="10">P*</text>
     </DiagramWrap>
@@ -288,24 +288,24 @@ function MoneyMarketDiagram() {
       caption="Ms is vertical (Fed-controlled). Md slopes down: lower i → hold more money. Fed buys bonds (OMO) → Ms shifts right → i falls → investment rises → AD shifts right."
     >
       <ChartAxes xlabel="Quantity of Money →" ylabel="Nominal Interest Rate (i) →"/>
-      <line x1="225" y1="235" x2="225" y2="22" stroke="#34d399" strokeWidth="2.2"/>
-      <text x="228" y="18" fill="#34d399" fontSize="10.5" fontWeight="700">Ms₁</text>
+      <line x1="225" y1="235" x2="225" y2="22" stroke="#30d158" strokeWidth="2.2"/>
+      <text x="228" y="18" fill="#30d158" fontSize="10.5" fontWeight="700">Ms₁</text>
       <text x="219" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">M*</text>
-      <line x1="290" y1="235" x2="290" y2="22" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.48"/>
-      <text x="293" y="18" fill="#34d399" fontSize="10" opacity="0.52">Ms₂</text>
-      <line x1="72" y1="52" x2="398" y2="228" stroke="#6aa2da" strokeWidth="2.2"/>
-      <text x="70" y="48" fill="#6aa2da" fontSize="11" fontWeight="700">Md</text>
+      <line x1="290" y1="235" x2="290" y2="22" stroke="#30d158" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.48"/>
+      <text x="293" y="18" fill="#30d158" fontSize="10" opacity="0.52">Ms₂</text>
+      <line x1="72" y1="52" x2="398" y2="228" stroke="#5c9bff" strokeWidth="2.2"/>
+      <text x="70" y="48" fill="#5c9bff" fontSize="11" fontWeight="700">Md</text>
       <circle cx="225" cy="135" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="135" x2="225" y2="135" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="139" fill="rgba(232,234,240,0.62)" fontSize="10">i*</text>
-      <circle cx="290" cy="170" r="4.5" fill="#34d399" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
-      <line x1="55" y1="170" x2="290" y2="170" stroke="rgba(52,211,153,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="32" y="174" fill="rgba(52,211,153,0.62)" fontSize="10">i₂↓</text>
-      <path d="M 50,138 L 50,166" stroke="rgba(52,211,153,0.5)" strokeWidth="1.3"/>
-      <polygon points="46,163 50,170 54,163" fill="rgba(52,211,153,0.5)"/>
-      <text x="308" y="152" fill="rgba(52,211,153,0.65)" fontSize="10">Fed buys</text>
-      <text x="308" y="164" fill="rgba(52,211,153,0.65)" fontSize="10">bonds →</text>
-      <text x="308" y="176" fill="rgba(52,211,153,0.65)" fontSize="10">i falls</text>
+      <circle cx="290" cy="170" r="4.5" fill="#30d158" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
+      <line x1="55" y1="170" x2="290" y2="170" stroke="rgba(48,209,88,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="32" y="174" fill="rgba(48,209,88,0.62)" fontSize="10">i₂↓</text>
+      <path d="M 50,138 L 50,166" stroke="rgba(48,209,88,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,163 50,170 54,163" fill="rgba(48,209,88,0.5)"/>
+      <text x="308" y="152" fill="rgba(48,209,88,0.65)" fontSize="10">Fed buys</text>
+      <text x="308" y="164" fill="rgba(48,209,88,0.65)" fontSize="10">bonds →</text>
+      <text x="308" y="176" fill="rgba(48,209,88,0.65)" fontSize="10">i falls</text>
     </DiagramWrap>
   )
 }
@@ -317,24 +317,24 @@ function LoanableFundsDiagram() {
       caption="S_LF = household saving + capital inflows. D_LF = private investment + gov't borrowing. Gov't deficit shifts D right → r rises → private investment is crowded out."
     >
       <ChartAxes xlabel="Quantity of Loanable Funds →" ylabel="Real Interest Rate (r) →"/>
-      <line x1="68" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
-      <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_LF</text>
-      <line x1="68" y1="52" x2="392" y2="228" stroke="#6aa2da" strokeWidth="2.2"/>
-      <text x="65" y="48" fill="#6aa2da" fontSize="10.5" fontWeight="700">D_LF</text>
-      <line x1="130" y1="52" x2="418" y2="210" stroke="#6aa2da" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="422" y="214" fill="#6aa2da" fontSize="10" opacity="0.62">D₂</text>
+      <line x1="68" y1="228" x2="392" y2="52" stroke="#30d158" strokeWidth="2.2"/>
+      <text x="394" y="48" fill="#30d158" fontSize="10.5" fontWeight="700">S_LF</text>
+      <line x1="68" y1="52" x2="392" y2="228" stroke="#5c9bff" strokeWidth="2.2"/>
+      <text x="65" y="48" fill="#5c9bff" fontSize="10.5" fontWeight="700">D_LF</text>
+      <line x1="130" y1="52" x2="418" y2="210" stroke="#5c9bff" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="422" y="214" fill="#5c9bff" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="230" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="230" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">r*</text>
-      <circle cx="260" cy="124" r="4.5" fill="#f87171" stroke="#0f1117" strokeWidth="1.5"/>
-      <line x1="55" y1="124" x2="260" y2="124" stroke="rgba(248,113,113,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="32" y="128" fill="rgba(248,113,113,0.65)" fontSize="10">r₂↑</text>
-      <text x="275" y="138" fill="#f87171" fontSize="10">Crowding</text>
-      <text x="275" y="150" fill="#f87171" fontSize="10">out ↑r</text>
-      <path d="M 50,137 L 50,127" stroke="rgba(248,113,113,0.5)" strokeWidth="1.3"/>
-      <polygon points="46,130 50,123 54,130" fill="rgba(248,113,113,0.5)"/>
-      <path d="M 228,137 L 257,122" stroke="#6aa2da" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="255,118 262,124 254,130" fill="#6aa2da" opacity="0.52"/>
+      <circle cx="260" cy="124" r="4.5" fill="#ff453a" stroke="#0f1117" strokeWidth="1.5"/>
+      <line x1="55" y1="124" x2="260" y2="124" stroke="rgba(255,69,58,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="32" y="128" fill="rgba(255,69,58,0.65)" fontSize="10">r₂↑</text>
+      <text x="275" y="138" fill="#ff453a" fontSize="10">Crowding</text>
+      <text x="275" y="150" fill="#ff453a" fontSize="10">out ↑r</text>
+      <path d="M 50,137 L 50,127" stroke="rgba(255,69,58,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,130 50,123 54,130" fill="rgba(255,69,58,0.5)"/>
+      <path d="M 228,137 L 257,122" stroke="#5c9bff" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="255,118 262,124 254,130" fill="#5c9bff" opacity="0.52"/>
     </DiagramWrap>
   )
 }
@@ -353,10 +353,10 @@ function PhillipsDiagram() {
       <text x="92" y="48" fill="#f59e0b" fontSize="10.5" fontWeight="700">SRPC₁</text>
       <path d="M 158,52 Q 265,130 420,208" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
       <text x="424" y="212" fill="#f59e0b" fontSize="10" opacity="0.62">SRPC₂</text>
-      <path d="M 262,130 L 300,130" stroke="#f87171" strokeWidth="1.3" fill="none"/>
-      <polygon points="299,126 306,130 299,134" fill="#f87171"/>
-      <text x="308" y="118" fill="#f87171" fontSize="10">Stagflation /</text>
-      <text x="308" y="130" fill="#f87171" fontSize="10">↑ expectations</text>
+      <path d="M 262,130 L 300,130" stroke="#ff453a" strokeWidth="1.3" fill="none"/>
+      <polygon points="299,126 306,130 299,134" fill="#ff453a"/>
+      <text x="308" y="118" fill="#ff453a" fontSize="10">Stagflation /</text>
+      <text x="308" y="130" fill="#ff453a" fontSize="10">↑ expectations</text>
       <circle cx="148" cy="88" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="156" y="84" fill={DT} fontSize="10.5">A (low u, high π)</text>
       <circle cx="320" cy="186" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
@@ -374,25 +374,25 @@ function ForexDiagram() {
       caption="D_USD from foreigners buying US goods/assets. S_USD from Americans buying foreign goods/assets. Fed raises rates → D shifts right → USD appreciates (e rises) → NX falls → AD shifts left."
     >
       <ChartAxes xlabel="Quantity of USD →" ylabel="Exchange Rate (e = $/USD) →"/>
-      <line x1="72" y1="52" x2="392" y2="228" stroke="#6aa2da" strokeWidth="2.2"/>
-      <text x="68" y="48" fill="#6aa2da" fontSize="10.5" fontWeight="700">D_USD</text>
-      <line x1="72" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
-      <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_USD</text>
-      <line x1="138" y1="52" x2="416" y2="210" stroke="#6aa2da" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="420" y="214" fill="#6aa2da" fontSize="10" opacity="0.62">D₂</text>
+      <line x1="72" y1="52" x2="392" y2="228" stroke="#5c9bff" strokeWidth="2.2"/>
+      <text x="68" y="48" fill="#5c9bff" fontSize="10.5" fontWeight="700">D_USD</text>
+      <line x1="72" y1="228" x2="392" y2="52" stroke="#30d158" strokeWidth="2.2"/>
+      <text x="394" y="48" fill="#30d158" fontSize="10.5" fontWeight="700">S_USD</text>
+      <line x1="138" y1="52" x2="416" y2="210" stroke="#5c9bff" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="420" y="214" fill="#5c9bff" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="232" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="232" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="31" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">e*</text>
       <text x="226" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">Q*</text>
-      <circle cx="263" cy="123" r="4.5" fill="#6aa2da" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
-      <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(106,162,218,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="28" y="127" fill="rgba(106,162,218,0.65)" fontSize="10">e₂↑</text>
-      <text x="282" y="136" fill="rgba(106,162,218,0.72)" fontSize="10">USD</text>
-      <text x="282" y="148" fill="rgba(106,162,218,0.72)" fontSize="10">appreciates</text>
-      <path d="M 50,137 L 50,126" stroke="rgba(106,162,218,0.5)" strokeWidth="1.3"/>
-      <polygon points="46,129 50,122 54,129" fill="rgba(106,162,218,0.5)"/>
-      <path d="M 228,137 L 260,121" stroke="#6aa2da" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="258,117 265,123 257,129" fill="#6aa2da" opacity="0.52"/>
+      <circle cx="263" cy="123" r="4.5" fill="#5c9bff" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
+      <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(92,155,255,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="28" y="127" fill="rgba(92,155,255,0.65)" fontSize="10">e₂↑</text>
+      <text x="282" y="136" fill="rgba(92,155,255,0.72)" fontSize="10">USD</text>
+      <text x="282" y="148" fill="rgba(92,155,255,0.72)" fontSize="10">appreciates</text>
+      <path d="M 50,137 L 50,126" stroke="rgba(92,155,255,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,129 50,122 54,129" fill="rgba(92,155,255,0.5)"/>
+      <path d="M 228,137 L 260,121" stroke="#5c9bff" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="258,117 265,123 257,129" fill="#5c9bff" opacity="0.52"/>
     </DiagramWrap>
   )
 }
@@ -442,7 +442,7 @@ function SectionBlock({ section, index, total, lang, exam }) {
       {section.diagram_type && <EconDiagram type={section.diagram_type} />}
       {STUDY_DIAGRAM_LINKS[section.diagram_type] && (
         <a href={STUDY_DIAGRAM_LINKS[section.diagram_type]} onClick={(e) => { e.preventDefault(); navigate(STUDY_DIAGRAM_LINKS[section.diagram_type]) }}
-          style={{ display: 'inline-flex', gap: 6, alignItems: 'center', margin: '-4px 0 14px 15px', fontSize: 13, fontWeight: 650, color: '#4588cc', textDecoration: 'none' }}>
+          style={{ display: 'inline-flex', gap: 6, alignItems: 'center', margin: '-4px 0 14px 15px', fontSize: 13, fontWeight: 650, color: '#2f7bff', textDecoration: 'none' }}>
           {diagramNav(lang).openLab} →
         </a>
       )}
@@ -563,7 +563,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
   const handleKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }
 
   return (
-    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(69,136,204,0.10)' }}>
+    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(47,123,255,0.10)' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
         <div>
@@ -614,8 +614,8 @@ function AITutor({ topicId, exam, lang, accentColor }) {
       {/* Loading */}
       {loading && (
         <div style={{
-          borderLeft: '3px solid rgba(69,136,204,0.4)',
-          background: 'rgba(69,136,204,0.04)',
+          borderLeft: '3px solid rgba(47,123,255,0.4)',
+          background: 'rgba(47,123,255,0.04)',
           borderRadius: '0 10px 10px 0',
           padding: '12px 16px',
           marginBottom: 16,
@@ -638,7 +638,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
             flex: 1,
             background: 'var(--bg-hover)',
             border: `1px solid rgba(${hexToRgb(accentColor)},0.25)`,
-            borderRadius: 6,
+            borderRadius: 10,
             color: 'var(--text-primary)',
             padding: '10px 14px',
             fontSize: 13,
@@ -657,7 +657,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
               ? `${accentColor}`
               : 'var(--bg-hover)',
             border: 'none',
-            borderRadius: 6,
+            borderRadius: 10,
             padding: '0 18px',
             color: input.trim() && !loading ? '#fff' : 'var(--text-muted)',
             fontSize: 18,
@@ -714,7 +714,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       tooltip: {
         trigger: 'axis',
         backgroundColor: '#1a2035',
-        borderColor: 'rgba(69,136,204,0.2)',
+        borderColor: 'rgba(47,123,255,0.2)',
         textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (params) => {
           let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
@@ -735,7 +735,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       grid: { left: 48, right: 24, top: 40, bottom: 36 },
       xAxis: {
         type: 'time',
-        axisLine: { lineStyle: { color: 'rgba(69,136,204,0.15)' } },
+        axisLine: { lineStyle: { color: 'rgba(47,123,255,0.15)' } },
         axisLabel: { color: THEME.text, fontSize: 10 },
         splitLine: { show: false },
       },
@@ -745,7 +745,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
         nameTextStyle: { color: THEME.text, fontSize: 10 },
         axisLine: { show: false },
         axisLabel: { color: THEME.text, fontSize: 10 },
-        splitLine: { lineStyle: { color: 'rgba(69,136,204,0.07)' } },
+        splitLine: { lineStyle: { color: 'rgba(47,123,255,0.07)' } },
       },
       series,
     }
@@ -838,7 +838,7 @@ function EventTimeline({ zh }) {
                   display: 'flex', alignItems: 'flex-start', gap: 10,
                   padding: '10px 12px 10px 0', cursor: 'pointer',
                   position: 'relative',
-                  borderRadius: 6,
+                  borderRadius: 8,
                   background: isActive ? 'rgba(74,156,171,0.08)' : 'transparent',
                   marginBottom: 4,
                   transition: 'background 0.15s',
@@ -882,7 +882,7 @@ function EventTimeline({ zh }) {
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 6 }}>
                 <span style={{
-                  fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 8,
+                  fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 12,
                   background: 'rgba(74,156,171,0.12)', color: ACCENT,
                   border: '1px solid rgba(74,156,171,0.2)',
                 }}>
@@ -897,8 +897,8 @@ function EventTimeline({ zh }) {
               </p>
               {TIME_MACHINE[active.id] && (
                 <button onClick={() => navigate(`/time-machine?s=${TIME_MACHINE[active.id]}`)} style={{
-                  marginTop: 12, padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700,
-                  color: '#fff', background: '#4588cc',
+                  marginTop: 12, padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                  color: '#fff', background: '#2f7bff',
                 }}>{zh ? '穿越回去，亲自交易这段历史' : 'Go back and trade through it yourself'}</button>
               )}
             </div>
@@ -907,7 +907,7 @@ function EventTimeline({ zh }) {
             <div style={{
               background: 'var(--bg-primary)',
               border: `1px solid ${BDR}`,
-              borderRadius: 8,
+              borderRadius: 12,
               padding: '16px 20px',
               marginBottom: 24,
             }}>
@@ -921,7 +921,7 @@ function EventTimeline({ zh }) {
             <div style={{
               background: 'var(--bg-primary)',
               border: `1px solid ${BDR}`,
-              borderRadius: 8,
+              borderRadius: 12,
               padding: '16px 20px',
             }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#fbbf24', marginBottom: 14, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
@@ -931,11 +931,11 @@ function EventTimeline({ zh }) {
                 <div key={i} style={{
                   display: 'flex', gap: 12, marginBottom: i < active.exam_points.length - 1 ? 14 : 0,
                   paddingBottom: i < active.exam_points.length - 1 ? 14 : 0,
-                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(69,136,204,0.07)' : 'none',
+                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(47,123,255,0.07)' : 'none',
                 }}>
                   <span style={{
                     flexShrink: 0, fontSize: 11, fontWeight: 700,
-                    padding: '3px 10px', borderRadius: 6, height: 'fit-content',
+                    padding: '3px 10px', borderRadius: 10, height: 'fit-content',
                     background: 'rgba(251,191,36,0.1)', color: '#fbbf24',
                     border: '1px solid rgba(251,191,36,0.2)',
                     whiteSpace: 'nowrap',
@@ -1056,7 +1056,7 @@ export default function StudyCenter({ lang }) {
     <div style={{
       display: 'flex', flexDirection: 'column',
       height: 'calc(100vh - 60px)',
-      background: 'var(--bg-primary)', borderRadius: 8,
+      background: 'var(--bg-primary)', borderRadius: 12,
       border: `1px solid ${BDR}`, overflow: 'hidden',
     }}>
 
@@ -1206,11 +1206,11 @@ export default function StudyCenter({ lang }) {
           ) : loadingTopic ? (
             <div className="skeleton-appear" style={{ padding: '28px 36px 40px', maxWidth: 780, display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Title */}
-              <div className="skeleton" style={{ height: 26, width: '60%', borderRadius: 4 }} />
+              <div className="skeleton" style={{ height: 26, width: '60%', borderRadius: 6 }} />
               <div className="skeleton" style={{ height: 12, width: '35%' }} />
               {/* Section blocks */}
               {[0, 1, 2].map(i => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(69,136,204,0.07)` : 'none' }}>
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(47,123,255,0.07)` : 'none' }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <div className="skeleton" style={{ width: 3, height: 20, borderRadius: 2, flexShrink: 0 }} />
                     <div className="skeleton" style={{ height: 18, width: `${[55, 45, 60][i]}%` }} />
@@ -1231,9 +1231,9 @@ export default function StudyCenter({ lang }) {
                   </h1>
                   {isRead && (
                     <span style={{
-                      fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 8,
-                      background: 'rgba(52,211,153,0.15)', color: GREEN,
-                      border: '1px solid rgba(52,211,153,0.25)',
+                      fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 12,
+                      background: 'rgba(48,209,88,0.15)', color: GREEN,
+                      border: '1px solid rgba(48,209,88,0.25)',
                     }}>
                       ✓ {t.read || 'Read'}
                     </span>
@@ -1268,10 +1268,10 @@ export default function StudyCenter({ lang }) {
                     setActiveExam('ai_teacher')
                   }}
                   style={{
-                    background: 'rgba(69,136,204,0.08)',
-                    border: '1px solid rgba(69,136,204,0.20)',
-                    borderRadius: 6, padding: '5px 14px', fontSize: 12,
-                    color: '#4588cc', cursor: 'pointer',
+                    background: 'rgba(47,123,255,0.08)',
+                    border: '1px solid rgba(47,123,255,0.20)',
+                    borderRadius: 8, padding: '5px 14px', fontSize: 12,
+                    color: '#2f7bff', cursor: 'pointer',
                   }}
                 >
                   {t.discussWithAI || 'Discuss with AI Tutor →'}
@@ -1293,11 +1293,11 @@ export default function StudyCenter({ lang }) {
                   disabled={isRead}
                   style={{
                     background: isRead
-                      ? 'rgba(52,211,153,0.1)'
+                      ? 'rgba(48,209,88,0.1)'
                       : `${accentColor}`,
                     color: isRead ? GREEN : '#fff',
-                    border: isRead ? `1px solid rgba(52,211,153,0.25)` : 'none',
-                    borderRadius: 6, padding: '11px 28px',
+                    border: isRead ? `1px solid rgba(48,209,88,0.25)` : 'none',
+                    borderRadius: 10, padding: '11px 28px',
                     fontSize: 14, fontWeight: 700,
                     cursor: isRead ? 'default' : 'pointer',
                     transition: 'all 0.2s',
@@ -1323,7 +1323,7 @@ export default function StudyCenter({ lang }) {
                         background: `rgba(${hexToRgb(accentColor)},0.1)`,
                         color: accentColor,
                         border: `1px solid rgba(${hexToRgb(accentColor)},0.2)`,
-                        borderRadius: 6, padding: '11px 22px',
+                        borderRadius: 10, padding: '11px 22px',
                         fontSize: 14, fontWeight: 600, cursor: 'pointer',
                       }}
                     >

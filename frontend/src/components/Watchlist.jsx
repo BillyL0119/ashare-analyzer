@@ -6,7 +6,7 @@ import { T } from '../i18n/translations'
 import { riseColor, fallColor } from '../utils/chartHelpers'
 import { CUR, MARKET_TINT, guessMarket } from '../utils/markets'
 
-const ACCENT_BLUE = '#6aa2da'
+const ACCENT_BLUE = '#5c9bff'
 
 function WatchlistItem({ stock, t, onRemove, onClick }) {
   const [quote, setQuote] = useState(null)
@@ -32,7 +32,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
         padding: '9px 12px', borderBottom: '1px solid var(--border-primary)',
         cursor: 'pointer', transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(106,162,218,0.06)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(92,155,255,0.06)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -68,7 +68,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
           color: 'var(--text-muted)', fontSize: 16, lineHeight: 1,
           padding: '2px 4px', borderRadius: 4, transition: 'color 0.15s', flexShrink: 0,
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = '#ef5350' }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = '#ff3b30' }}
         onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
       >
         ×
@@ -112,7 +112,7 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
         position: 'absolute', right: 0, top: 42, zIndex: 499,
         width: 290, maxHeight: 420,
         background: 'var(--bg-secondary)',
-        border: '1px solid var(--border-primary)', borderRadius: 8,
+        border: '1px solid var(--border-primary)', borderRadius: 14,
         boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}

@@ -41,7 +41,7 @@ function List() {
       {topics.map((tp) => (
         <button key={tp.id} className="m-row" style={{ padding: '12px 16px' }} onClick={() => nav(`/study/${exam}/${tp.id}`)}>
           <span style={{ width: 22, height: 22, borderRadius: 11, flex: 'none', display: 'grid', placeItems: 'center',
-            ...(progress.has(exam, tp.id) ? { background: '#2FB86A', color: '#fff' } : { border: '2px solid var(--text-3)', opacity: .6 }) }}>
+            ...(progress.has(exam, tp.id) ? { background: '#00c853', color: '#fff' } : { border: '2px solid var(--text-3)', opacity: .6 }) }}>
             {progress.has(exam, tp.id) && <span style={{ width: 13, height: 13, display: 'block' }}>{Icon.check}</span>}
           </span>
           <div className="m-grow"><div style={{ fontWeight: 600, fontSize: 15 }}>{loc(tp, 'title', lang)}</div><div className="m-label" style={{ marginTop: 3 }}>{t('%lld 个章节', tp.section_count)}</div></div>
@@ -162,7 +162,7 @@ function Topic() {
               </div>
             )
           })}
-          <button className="m-btn" onClick={() => progress.toggle(exam, topic)} style={done ? { background: 'color-mix(in srgb, #2FB86A 16%, transparent)', color: '#2FB86A' } : undefined}>
+          <button className="m-btn" onClick={() => progress.toggle(exam, topic)} style={done ? { background: 'color-mix(in srgb, #00c853 16%, transparent)', color: '#00c853' } : undefined}>
             <span style={{ width: 20, height: 20, marginRight: 8, display: 'inline-block' }}>{Icon.check}</span>{done ? t('已学完') : t('标记为已学完')}
           </button>
           {nextTopic && (

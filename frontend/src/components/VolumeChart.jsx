@@ -4,7 +4,7 @@ import useThemeStore from '../store/themeStore'
 import { buildVolumeOption } from '../utils/chartHelpers'
 
 const US_UP = '#4caf50'
-const US_DOWN = '#ef5350'
+const US_DOWN = '#ff3b30'
 
 export default function VolumeChart({ candles, groupId, market = 'cn' }) {
   const lang = useLangStore((s) => s.lang)

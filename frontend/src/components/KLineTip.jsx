@@ -2,18 +2,18 @@ import { useEffect } from 'react'
 import { T } from '../i18n/translations'
 
 const MUTED  = 'var(--text-muted)'
-const GREEN  = '#34d399'
-const RED    = '#ef4444'
-const BLUE   = '#6aa2da'
+const GREEN  = '#30d158'
+const RED    = '#ff3b30'
+const BLUE   = '#5c9bff'
 const YELLOW = '#f59e0b'
-const BDR    = 'rgba(106,162,218,0.12)'
+const BDR    = 'rgba(92,155,255,0.12)'
 
 // ─── Tiny candle SVG helper ───────────────────────────────────────────────────
 // open, close, high, low are y-coords in a 70px-tall canvas
 function TinyCandle({ cx, w, open, close, high, low }) {
   const bullish = close < open
   const stroke  = bullish ? GREEN : RED
-  const fill    = bullish ? 'rgba(52,211,153,0.2)' : 'rgba(239,68,68,0.2)'
+  const fill    = bullish ? 'rgba(48,209,88,0.2)' : 'rgba(255,59,48,0.2)'
   const bTop    = Math.min(open, close)
   const bH      = Math.max(Math.abs(close - open), 2)
   const bw      = w * 0.6
@@ -40,7 +40,7 @@ function AnatomyMini({ zh }) {
 
       {/* Body */}
       <rect x={cx - bw/2} y={CY} width={bw} height={OY - CY}
-        fill="rgba(52,211,153,0.15)" stroke={GREEN} strokeWidth={1.5} rx={2} />
+        fill="rgba(48,209,88,0.15)" stroke={GREEN} strokeWidth={1.5} rx={2} />
 
       {/* Lower wick */}
       <line x1={cx} y1={OY} x2={cx} y2={LY} stroke={BLUE} strokeWidth={1.5} />
@@ -136,7 +136,7 @@ export default function KLineTip({ zh, lang, onClose }) {
         overflowY: 'auto',
         background: '#10141f',
         border: `1px solid ${BDR}`,
-        borderRadius: 8,
+        borderRadius: 14,
         boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
         padding: '18px 20px 24px',
       }}>
@@ -159,7 +159,7 @@ export default function KLineTip({ zh, lang, onClose }) {
         {/* Anatomy */}
         <div style={{
           background: 'rgba(255,255,255,0.025)', border: `1px solid ${BDR}`,
-          borderRadius: 6, padding: '12px 14px', marginBottom: 14,
+          borderRadius: 10, padding: '12px 14px', marginBottom: 14,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             {t.ktAnatomy}
@@ -178,7 +178,7 @@ export default function KLineTip({ zh, lang, onClose }) {
               <div key={pat.name_en} style={{
                 display: 'flex', alignItems: 'center', gap: 12,
                 background: 'rgba(255,255,255,0.025)', border: `1px solid ${BDR}`,
-                borderRadius: 6, padding: '8px 12px',
+                borderRadius: 8, padding: '8px 12px',
               }}>
                 <svg width={svgW} height={70} style={{ flexShrink: 0 }}>
                   {pat.candles.map((c, i) => <TinyCandle key={i} {...c} />)}
@@ -189,7 +189,7 @@ export default function KLineTip({ zh, lang, onClose }) {
                       {zh ? pat.name_zh : pat.name_en}
                     </span>
                     <span style={{
-                      fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 6,
+                      fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 10,
                       background: `${SIG_COLOR[pat.signal]}1a`, color: SIG_COLOR[pat.signal],
                     }}>
                       {pat.signal.toUpperCase()}
