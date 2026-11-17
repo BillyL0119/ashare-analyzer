@@ -19,13 +19,13 @@ const PROGRESS_BG = 'var(--bg-hover)'
 const EXAMS = [
   { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '美股与股票入门', title_en: 'US Stocks & Investing Basics', color: '#ec4899', board: 'US market · Fundamentals · Investing' },
   { key: 'kline',  label: 'K线教学', label_en: 'Reading Charts', title: 'K线图入门', title_en: 'Reading Candlestick Charts', color: '#f472b6', board: 'Candlesticks' },
-  { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#6366f1', board: 'Cambridge 9708' },
+  { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#5f73b8', board: 'Cambridge 9708' },
   { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#10b981', board: 'Cambridge 0455' },
   { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: '#f59e0b', board: 'College Board' },
   { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#ef4444', board: 'College Board' },
-  { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#8b5cf6', board: 'IB SL/HL'       },
-  { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#06b6d4', board: 'Timeline' },
-  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#0ea5e9', board: 'DeepSeek' },
+  { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#7f77c2', board: 'IB SL/HL'       },
+  { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#4a9cab', board: 'Timeline' },
+  { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#4588cc', board: 'DeepSeek' },
 ]
 
 // Stock lessons store bilingual titles as "中文 / English"; show only the half for the reader.
@@ -57,7 +57,7 @@ function TopicRow({ topic, active, read, accentColor, lang, onClick }) {
       onMouseLeave={() => setHover(false)}
       style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        padding: '8px 12px', cursor: 'pointer', borderRadius: 8,
+        padding: '8px 12px', cursor: 'pointer', borderRadius: 6,
         background: active
           ? `rgba(${hexToRgb(accentColor)},0.12)`
           : hover ? 'var(--bg-hover)' : 'transparent',
@@ -137,10 +137,10 @@ function PaperGroup({ paper, activeId, progress, accentColor, lang, onSelect }) 
 function KeyTermPill({ term }) {
   return (
     <span style={{
-      fontSize: 11, padding: '3px 9px', borderRadius: 12,
-      background: 'rgba(99,102,241,0.15)',
-      color: '#818cf8',
-      border: '1px solid rgba(99,102,241,0.2)',
+      fontSize: 11, padding: '3px 9px', borderRadius: 8,
+      background: 'rgba(95,115,184,0.15)',
+      color: '#8f99dc',
+      border: '1px solid rgba(95,115,184,0.2)',
       whiteSpace: 'nowrap',
     }}>
       {term}
@@ -149,7 +149,7 @@ function KeyTermPill({ term }) {
 }
 
 // ── Economic Diagrams (AP Macro) ───────────────────────────────────────────────
-const DA = 'rgba(14,165,233,0.45)'   // axis
+const DA = 'rgba(69,136,204,0.45)'   // axis
 const DL = 'rgba(154,160,166,0.8)'    // axis label
 const DT = 'rgba(232,234,240,0.88)'   // text on diagram
 
@@ -158,11 +158,11 @@ function DiagramWrap({ title, caption, children }) {
     <div style={{
       background: 'rgba(245,158,11,0.04)',
       border: '1px solid rgba(245,158,11,0.18)',
-      borderRadius: 10, padding: '12px 14px 10px',
+      borderRadius: 6, padding: '12px 14px 10px',
       marginLeft: 15, marginBottom: 14,
     }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#f59e0b', letterSpacing: '0.08em', marginBottom: 8, textTransform: 'uppercase' }}>
-        📊 {title}
+        {title}
       </div>
       <svg viewBox="0 0 500 295" overflow="visible" style={{ width: '100%', display: 'block', maxWidth: 520 }}>
         {children}
@@ -209,7 +209,7 @@ function PPCDiagram() {
       <circle cx="260" cy="108" r="5.5" fill="#f59e0b" stroke="#0f1117" strokeWidth="2"/>
       <text x="252" y="100" textAnchor="end" fill={DT} fontSize="10.5">A: Efficient</text>
       {/* B: Inefficient — inside PPC; (155/290)²+(70/180)²=0.44<1 ✓ */}
-      <circle cx="210" cy="165" r="5.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="2"/>
+      <circle cx="210" cy="165" r="5.5" fill="#6aa2da" stroke="#0f1117" strokeWidth="2"/>
       <text x="220" y="160" fill={DT} fontSize="10.5">B: Inefficient</text>
       {/* C: outside PPC, inside PPC'; (250/290)²+(135/180)²=1.31>1, (250/362.5)²+(135/225)²=0.84<1 ✓ */}
       <circle cx="305" cy="100" r="5.5" fill="#f87171" stroke="#0f1117" strokeWidth="2"/>
@@ -228,9 +228,9 @@ function ASModelDiagram() {
       caption="SRAS slopes up: sticky wages in short run. LRAS is vertical at Yf (potential output). A leftward SRAS shift (e.g. oil shock) causes stagflation: ↑P and ↓Y simultaneously."
     >
       <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
-      <line x1="268" y1="235" x2="268" y2="18" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="6,4"/>
-      <text x="271" y="14" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRAS</text>
-      <text x="262" y="254" fill="#a78bfa" fontSize="10">Yf</text>
+      <line x1="268" y1="235" x2="268" y2="18" stroke="#9d97d3" strokeWidth="2.2" strokeDasharray="6,4"/>
+      <text x="271" y="14" fill="#9d97d3" fontSize="10.5" fontWeight="700">LRAS</text>
+      <text x="262" y="254" fill="#9d97d3" fontSize="10">Yf</text>
       <line x1="75" y1="55" x2="390" y2="228" stroke="#f59e0b" strokeWidth="1.8" opacity="0.72"/>
       <text x="73" y="51" fill="#f59e0b" fontSize="10.5" fontWeight="700">AD</text>
       <line x1="68" y1="228" x2="385" y2="52" stroke="#34d399" strokeWidth="2.2"/>
@@ -257,17 +257,17 @@ function ADASDiagram() {
       caption="Y₁ < Yf → recessionary gap. Self-correction: excess unemployment → wages fall → SRAS shifts right → economy returns to Yf at lower P. Active policy: fiscal/monetary stimulus shifts AD₁→AD₂."
     >
       <ChartAxes xlabel="Real GDP →" ylabel="Price Level (P) →"/>
-      <line x1="285" y1="235" x2="285" y2="18" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
-      <text x="288" y="14" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRAS</text>
-      <text x="279" y="250" fill="#a78bfa" fontSize="10">Yf</text>
+      <line x1="285" y1="235" x2="285" y2="18" stroke="#9d97d3" strokeWidth="2.2" strokeDasharray="7,4"/>
+      <text x="288" y="14" fill="#9d97d3" fontSize="10.5" fontWeight="700">LRAS</text>
+      <text x="279" y="250" fill="#9d97d3" fontSize="10">Yf</text>
       <line x1="68" y1="228" x2="390" y2="50" stroke="#34d399" strokeWidth="2"/>
       <text x="393" y="47" fill="#34d399" fontSize="10.5" fontWeight="700">SRAS</text>
-      <line x1="68" y1="52" x2="375" y2="228" stroke="#60a5fa" strokeWidth="2"/>
-      <text x="65" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">AD₁</text>
-      <line x1="130" y1="52" x2="418" y2="215" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="422" y="219" fill="#60a5fa" fontSize="10" opacity="0.62">AD₂</text>
-      <path d="M 224,141 L 257,124" stroke="#60a5fa" strokeWidth="1.3" fill="none" opacity="0.58"/>
-      <polygon points="251,118 259,124 251,130" fill="#60a5fa" opacity="0.58"/>
+      <line x1="68" y1="52" x2="375" y2="228" stroke="#6aa2da" strokeWidth="2"/>
+      <text x="65" y="48" fill="#6aa2da" fontSize="10.5" fontWeight="700">AD₁</text>
+      <line x1="130" y1="52" x2="418" y2="215" stroke="#6aa2da" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="422" y="219" fill="#6aa2da" fontSize="10" opacity="0.62">AD₂</text>
+      <path d="M 224,141 L 257,124" stroke="#6aa2da" strokeWidth="1.3" fill="none" opacity="0.58"/>
+      <polygon points="251,118 259,124 251,130" fill="#6aa2da" opacity="0.58"/>
       <circle cx="224" cy="141" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <text x="232" y="136" fill={DT} fontSize="10">E₁</text>
       <line x1="224" y1="235" x2="224" y2="240" stroke={DA} strokeWidth="1.5"/>
@@ -293,8 +293,8 @@ function MoneyMarketDiagram() {
       <text x="219" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">M*</text>
       <line x1="290" y1="235" x2="290" y2="22" stroke="#34d399" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.48"/>
       <text x="293" y="18" fill="#34d399" fontSize="10" opacity="0.52">Ms₂</text>
-      <line x1="72" y1="52" x2="398" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
-      <text x="70" y="48" fill="#60a5fa" fontSize="11" fontWeight="700">Md</text>
+      <line x1="72" y1="52" x2="398" y2="228" stroke="#6aa2da" strokeWidth="2.2"/>
+      <text x="70" y="48" fill="#6aa2da" fontSize="11" fontWeight="700">Md</text>
       <circle cx="225" cy="135" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="135" x2="225" y2="135" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="139" fill="rgba(232,234,240,0.62)" fontSize="10">i*</text>
@@ -319,10 +319,10 @@ function LoanableFundsDiagram() {
       <ChartAxes xlabel="Quantity of Loanable Funds →" ylabel="Real Interest Rate (r) →"/>
       <line x1="68" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
       <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_LF</text>
-      <line x1="68" y1="52" x2="392" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
-      <text x="65" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">D_LF</text>
-      <line x1="130" y1="52" x2="418" y2="210" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="422" y="214" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
+      <line x1="68" y1="52" x2="392" y2="228" stroke="#6aa2da" strokeWidth="2.2"/>
+      <text x="65" y="48" fill="#6aa2da" fontSize="10.5" fontWeight="700">D_LF</text>
+      <line x1="130" y1="52" x2="418" y2="210" stroke="#6aa2da" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="422" y="214" fill="#6aa2da" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="230" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="230" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="32" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">r*</text>
@@ -333,8 +333,8 @@ function LoanableFundsDiagram() {
       <text x="275" y="150" fill="#f87171" fontSize="10">out ↑r</text>
       <path d="M 50,137 L 50,127" stroke="rgba(248,113,113,0.5)" strokeWidth="1.3"/>
       <polygon points="46,130 50,123 54,130" fill="rgba(248,113,113,0.5)"/>
-      <path d="M 228,137 L 257,122" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="255,118 262,124 254,130" fill="#60a5fa" opacity="0.52"/>
+      <path d="M 228,137 L 257,122" stroke="#6aa2da" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="255,118 262,124 254,130" fill="#6aa2da" opacity="0.52"/>
     </DiagramWrap>
   )
 }
@@ -346,9 +346,9 @@ function PhillipsDiagram() {
       caption="SRPC: short-run trade-off (↓ unemployment → ↑ inflation). LRPC: vertical at NAIRU — no long-run trade-off. Supply shock or rising expectations shifts SRPC right: stagflation."
     >
       <ChartAxes xlabel="Unemployment Rate (%) →" ylabel="Inflation Rate (%) →"/>
-      <line x1="232" y1="235" x2="232" y2="20" stroke="#a78bfa" strokeWidth="2.2" strokeDasharray="7,4"/>
-      <text x="236" y="16" fill="#a78bfa" fontSize="10.5" fontWeight="700">LRPC</text>
-      <text x="219" y="252" fill="#a78bfa" fontSize="10">NAIRU</text>
+      <line x1="232" y1="235" x2="232" y2="20" stroke="#9d97d3" strokeWidth="2.2" strokeDasharray="7,4"/>
+      <text x="236" y="16" fill="#9d97d3" fontSize="10.5" fontWeight="700">LRPC</text>
+      <text x="219" y="252" fill="#9d97d3" fontSize="10">NAIRU</text>
       <path d="M 95,52 Q 200,130 390,220" fill="none" stroke="#f59e0b" strokeWidth="2.2"/>
       <text x="92" y="48" fill="#f59e0b" fontSize="10.5" fontWeight="700">SRPC₁</text>
       <path d="M 158,52 Q 265,130 420,208" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
@@ -374,25 +374,25 @@ function ForexDiagram() {
       caption="D_USD from foreigners buying US goods/assets. S_USD from Americans buying foreign goods/assets. Fed raises rates → D shifts right → USD appreciates (e rises) → NX falls → AD shifts left."
     >
       <ChartAxes xlabel="Quantity of USD →" ylabel="Exchange Rate (e = $/USD) →"/>
-      <line x1="72" y1="52" x2="392" y2="228" stroke="#60a5fa" strokeWidth="2.2"/>
-      <text x="68" y="48" fill="#60a5fa" fontSize="10.5" fontWeight="700">D_USD</text>
+      <line x1="72" y1="52" x2="392" y2="228" stroke="#6aa2da" strokeWidth="2.2"/>
+      <text x="68" y="48" fill="#6aa2da" fontSize="10.5" fontWeight="700">D_USD</text>
       <line x1="72" y1="228" x2="392" y2="52" stroke="#34d399" strokeWidth="2.2"/>
       <text x="394" y="48" fill="#34d399" fontSize="10.5" fontWeight="700">S_USD</text>
-      <line x1="138" y1="52" x2="416" y2="210" stroke="#60a5fa" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
-      <text x="420" y="214" fill="#60a5fa" fontSize="10" opacity="0.62">D₂</text>
+      <line x1="138" y1="52" x2="416" y2="210" stroke="#6aa2da" strokeWidth="1.8" strokeDasharray="6,4" opacity="0.52"/>
+      <text x="420" y="214" fill="#6aa2da" fontSize="10" opacity="0.62">D₂</text>
       <circle cx="232" cy="140" r="5.5" fill="white" stroke="#0f1117" strokeWidth="2"/>
       <line x1="55" y1="140" x2="232" y2="140" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,3"/>
       <text x="31" y="144" fill="rgba(232,234,240,0.62)" fontSize="10">e*</text>
       <text x="226" y="254" fill="rgba(232,234,240,0.52)" fontSize="10">Q*</text>
-      <circle cx="263" cy="123" r="4.5" fill="#60a5fa" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
-      <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(96,165,250,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
-      <text x="28" y="127" fill="rgba(96,165,250,0.65)" fontSize="10">e₂↑</text>
-      <text x="282" y="136" fill="rgba(96,165,250,0.72)" fontSize="10">USD</text>
-      <text x="282" y="148" fill="rgba(96,165,250,0.72)" fontSize="10">appreciates</text>
-      <path d="M 50,137 L 50,126" stroke="rgba(96,165,250,0.5)" strokeWidth="1.3"/>
-      <polygon points="46,129 50,122 54,129" fill="rgba(96,165,250,0.5)"/>
-      <path d="M 228,137 L 260,121" stroke="#60a5fa" strokeWidth="1.2" fill="none" opacity="0.52"/>
-      <polygon points="258,117 265,123 257,129" fill="#60a5fa" opacity="0.52"/>
+      <circle cx="263" cy="123" r="4.5" fill="#6aa2da" stroke="#0f1117" strokeWidth="1.5" opacity="0.68"/>
+      <line x1="55" y1="123" x2="263" y2="123" stroke="rgba(106,162,218,0.16)" strokeWidth="1" strokeDasharray="4,3"/>
+      <text x="28" y="127" fill="rgba(106,162,218,0.65)" fontSize="10">e₂↑</text>
+      <text x="282" y="136" fill="rgba(106,162,218,0.72)" fontSize="10">USD</text>
+      <text x="282" y="148" fill="rgba(106,162,218,0.72)" fontSize="10">appreciates</text>
+      <path d="M 50,137 L 50,126" stroke="rgba(106,162,218,0.5)" strokeWidth="1.3"/>
+      <polygon points="46,129 50,122 54,129" fill="rgba(106,162,218,0.5)"/>
+      <path d="M 228,137 L 260,121" stroke="#6aa2da" strokeWidth="1.2" fill="none" opacity="0.52"/>
+      <polygon points="258,117 265,123 257,129" fill="#6aa2da" opacity="0.52"/>
     </DiagramWrap>
   )
 }
@@ -415,7 +415,7 @@ const REAL_WORLD_LABEL = { zh: '现实案例', en: 'REAL WORLD CONNECTION', ja: 
 const KEY_POINT_LABEL  = { zh: '要点', en: 'KEY POINT', ja: 'ポイント', ko: '핵심', fr: 'À RETENIR' }
 const EXAM_TIP_LABEL   = { zh: '考试要点', en: 'EXAM TIP', ja: '試験のポイント', ko: '시험 팁', fr: "CONSEIL D'EXAMEN" }
 
-function SectionBlock({ section, index, total, accentColor, lang, exam }) {
+function SectionBlock({ section, index, total, lang, exam }) {
   const navigate = useNavigate()
   const pick = (key) => {
     if (lang === 'zh') return section[key]
@@ -430,21 +430,20 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
   return (
     <div style={{ marginBottom: index < total - 1 ? 32 : 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-        <div style={{ width: 3, height: 22, background: accentColor, borderRadius: 2, flexShrink: 0 }} />
         <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
           {heading}
         </h3>
       </div>
 
-      <p style={{ fontSize: 14, lineHeight: 1.85, color: 'var(--text-secondary)', margin: '0 0 14px', paddingLeft: 15 }}>
+      <p style={{ fontSize: 14, lineHeight: 1.85, color: 'var(--text-secondary)', margin: '0 0 14px', }}>
         {body}
       </p>
 
       {section.diagram_type && <EconDiagram type={section.diagram_type} />}
       {STUDY_DIAGRAM_LINKS[section.diagram_type] && (
         <a href={STUDY_DIAGRAM_LINKS[section.diagram_type]} onClick={(e) => { e.preventDefault(); navigate(STUDY_DIAGRAM_LINKS[section.diagram_type]) }}
-          style={{ display: 'inline-flex', gap: 6, alignItems: 'center', margin: '-4px 0 14px 15px', fontSize: 13, fontWeight: 650, color: '#0ea5e9', textDecoration: 'none' }}>
-          📐 {diagramNav(lang).openLab} →
+          style={{ display: 'inline-flex', gap: 6, alignItems: 'center', margin: '-4px 0 14px 15px', fontSize: 13, fontWeight: 650, color: '#4588cc', textDecoration: 'none' }}>
+          {diagramNav(lang).openLab} →
         </a>
       )}
 
@@ -453,7 +452,7 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
           ? section.key_terms_en
           : section.key_terms
         return terms?.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, paddingLeft: 15, marginBottom: 14 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
             {terms.map((t) => <KeyTermPill key={t} term={t} />)}
           </div>
         ) : null
@@ -461,16 +460,15 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
 
       {realWorld && (
         <div style={{
-          borderLeft: '3px solid #f59e0b',
-          background: 'rgba(245,158,11,0.08)',
-          borderRadius: '0 8px 8px 0',
+          border: '1px solid var(--border-primary)',
+          borderRadius: 6,
           padding: '12px 16px',
-          marginLeft: 15, marginBottom: 12,
+          marginBottom: 12,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', marginBottom: 6, letterSpacing: '0.05em' }}>
-            🌍 {REAL_WORLD_LABEL[lang] || REAL_WORLD_LABEL.en}
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-gold)', marginBottom: 6, letterSpacing: '0.05em' }}>
+            {REAL_WORLD_LABEL[lang] || REAL_WORLD_LABEL.en}
           </div>
-          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
+          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
             {realWorld}
           </div>
         </div>
@@ -478,23 +476,22 @@ function SectionBlock({ section, index, total, accentColor, lang, exam }) {
 
       {examTip && (
         <div style={{
-          borderLeft: '3px solid #fbbf24',
-          background: 'rgba(251,191,36,0.08)',
-          borderRadius: '0 8px 8px 0',
+          border: '1px solid var(--border-primary)',
+          borderRadius: 6,
           padding: '12px 16px',
-          marginLeft: 15, marginBottom: 12,
+          marginBottom: 12,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#fbbf24', marginBottom: 6, letterSpacing: '0.05em' }}>
-            📝 {(exam === 'stocks' ? KEY_POINT_LABEL : EXAM_TIP_LABEL)[lang] || EXAM_TIP_LABEL.en}
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-gold)', marginBottom: 6, letterSpacing: '0.05em' }}>
+            {(exam === 'stocks' ? KEY_POINT_LABEL : EXAM_TIP_LABEL)[lang] || EXAM_TIP_LABEL.en}
           </div>
-          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.8)' }}>
+          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
             {examTip}
           </div>
         </div>
       )}
 
       {index < total - 1 && (
-        <div style={{ height: 1, background: 'rgba(14,165,233,0.08)', margin: '24px 0 0 15px' }} />
+        <div style={{ height: 1, background: 'var(--border-primary)', margin: '24px 0 0' }} />
       )}
     </div>
   )
@@ -566,10 +563,9 @@ function AITutor({ topicId, exam, lang, accentColor }) {
   const handleKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }
 
   return (
-    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(14,165,233,0.10)' }}>
+    <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid rgba(69,136,204,0.10)' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-        <span style={{ fontSize: 20 }}>🤖</span>
         <div>
           <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
             {zh ? 'AI 导师' : 'Ask AI Tutor'}
@@ -600,12 +596,11 @@ function AITutor({ topicId, exam, lang, accentColor }) {
           </div>
           {/* Answer */}
           <div style={{
-            borderLeft: '3px solid',
-            borderImage: 'linear-gradient(180deg,#0ea5e9,#8b5cf6) 1',
-            background: 'rgba(14,165,233,0.05)',
-            borderRadius: '0 10px 10px 0',
+            borderLeft: '2px solid var(--border-glow)',
+            background: 'transparent',
+            borderRadius: 0,
             padding: '12px 16px',
-            fontSize: 13, color: 'rgba(232,234,240,0.9)', lineHeight: 1.8,
+            fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.8,
             whiteSpace: 'pre-wrap',
           }}>
             {item.displayed}
@@ -619,8 +614,8 @@ function AITutor({ topicId, exam, lang, accentColor }) {
       {/* Loading */}
       {loading && (
         <div style={{
-          borderLeft: '3px solid rgba(14,165,233,0.4)',
-          background: 'rgba(14,165,233,0.04)',
+          borderLeft: '3px solid rgba(69,136,204,0.4)',
+          background: 'rgba(69,136,204,0.04)',
           borderRadius: '0 10px 10px 0',
           padding: '12px 16px',
           marginBottom: 16,
@@ -643,7 +638,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
             flex: 1,
             background: 'var(--bg-hover)',
             border: `1px solid rgba(${hexToRgb(accentColor)},0.25)`,
-            borderRadius: 10,
+            borderRadius: 6,
             color: 'var(--text-primary)',
             padding: '10px 14px',
             fontSize: 13,
@@ -659,10 +654,10 @@ function AITutor({ topicId, exam, lang, accentColor }) {
           disabled={loading || !input.trim()}
           style={{
             background: input.trim() && !loading
-              ? `linear-gradient(135deg, ${accentColor}, ${accentColor}99)`
+              ? `${accentColor}`
               : 'var(--bg-hover)',
             border: 'none',
-            borderRadius: 10,
+            borderRadius: 6,
             padding: '0 18px',
             color: input.trim() && !loading ? '#fff' : 'var(--text-muted)',
             fontSize: 18,
@@ -719,7 +714,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       tooltip: {
         trigger: 'axis',
         backgroundColor: '#1a2035',
-        borderColor: 'rgba(14,165,233,0.2)',
+        borderColor: 'rgba(69,136,204,0.2)',
         textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (params) => {
           let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
@@ -740,7 +735,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       grid: { left: 48, right: 24, top: 40, bottom: 36 },
       xAxis: {
         type: 'time',
-        axisLine: { lineStyle: { color: 'rgba(14,165,233,0.15)' } },
+        axisLine: { lineStyle: { color: 'rgba(69,136,204,0.15)' } },
         axisLabel: { color: THEME.text, fontSize: 10 },
         splitLine: { show: false },
       },
@@ -750,7 +745,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
         nameTextStyle: { color: THEME.text, fontSize: 10 },
         axisLine: { show: false },
         axisLabel: { color: THEME.text, fontSize: 10 },
-        splitLine: { lineStyle: { color: 'rgba(14,165,233,0.07)' } },
+        splitLine: { lineStyle: { color: 'rgba(69,136,204,0.07)' } },
       },
       series,
     }
@@ -788,7 +783,7 @@ function EventTimeline({ zh }) {
   const [events, setEvents]       = useState([])
   const [loading, setLoading]     = useState(false)
   const [activeId, setActiveId]   = useState(null)
-  const ACCENT = '#06b6d4'
+  const ACCENT = '#4a9cab'
 
   useEffect(() => {
     setLoading(true)
@@ -815,7 +810,7 @@ function EventTimeline({ zh }) {
         overflowY: 'auto',
         padding: '20px 0',
       }}>
-        <div style={{ padding: '0 16px 12px', fontSize: 11, fontWeight: 700, color: `rgba(6,182,212,0.7)`, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+        <div style={{ padding: '0 16px 12px', fontSize: 11, fontWeight: 700, color: `rgba(74,156,171,0.7)`, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           {zh ? '历史大事件' : 'Major Events'}
         </div>
 
@@ -830,7 +825,7 @@ function EventTimeline({ zh }) {
           {/* Vertical line */}
           <div style={{
             position: 'absolute', left: 28, top: 8, bottom: 8,
-            width: 2, background: 'rgba(6,182,212,0.15)', borderRadius: 1,
+            width: 2, background: 'rgba(74,156,171,0.15)', borderRadius: 1,
           }} />
 
           {events.map((ev) => {
@@ -843,8 +838,8 @@ function EventTimeline({ zh }) {
                   display: 'flex', alignItems: 'flex-start', gap: 10,
                   padding: '10px 12px 10px 0', cursor: 'pointer',
                   position: 'relative',
-                  borderRadius: 8,
-                  background: isActive ? 'rgba(6,182,212,0.08)' : 'transparent',
+                  borderRadius: 6,
+                  background: isActive ? 'rgba(74,156,171,0.08)' : 'transparent',
                   marginBottom: 4,
                   transition: 'background 0.15s',
                 }}
@@ -853,13 +848,12 @@ function EventTimeline({ zh }) {
                 <div style={{
                   width: 12, height: 12, borderRadius: '50%', flexShrink: 0,
                   marginTop: 3, zIndex: 1,
-                  background: isActive ? ACCENT : 'rgba(6,182,212,0.3)',
-                  border: isActive ? `2px solid ${ACCENT}` : '2px solid rgba(6,182,212,0.2)',
-                  boxShadow: isActive ? `0 0 8px ${ACCENT}60` : 'none',
+                  background: isActive ? ACCENT : 'rgba(74,156,171,0.3)',
+                  border: isActive ? `2px solid ${ACCENT}` : '2px solid rgba(74,156,171,0.2)',
                   transition: 'all 0.15s',
                 }} />
                 <div>
-                  <div style={{ fontSize: 11, color: isActive ? ACCENT : 'rgba(6,182,212,0.5)', fontWeight: 700, marginBottom: 2 }}>
+                  <div style={{ fontSize: 11, color: isActive ? ACCENT : 'rgba(74,156,171,0.5)', fontWeight: 700, marginBottom: 2 }}>
                     {ev.year}
                   </div>
                   <div style={{ fontSize: 12, color: isActive ? 'var(--text-primary)' : MUTED, lineHeight: 1.4, fontWeight: isActive ? 600 : 400 }}>
@@ -888,9 +882,9 @@ function EventTimeline({ zh }) {
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 6 }}>
                 <span style={{
-                  fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 12,
-                  background: 'rgba(6,182,212,0.12)', color: ACCENT,
-                  border: '1px solid rgba(6,182,212,0.2)',
+                  fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 8,
+                  background: 'rgba(74,156,171,0.12)', color: ACCENT,
+                  border: '1px solid rgba(74,156,171,0.2)',
                 }}>
                   {active.date_range}
                 </span>
@@ -903,9 +897,9 @@ function EventTimeline({ zh }) {
               </p>
               {TIME_MACHINE[active.id] && (
                 <button onClick={() => navigate(`/time-machine?s=${TIME_MACHINE[active.id]}`)} style={{
-                  marginTop: 12, padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700,
-                  color: '#fff', background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
-                }}>🕰 {zh ? '穿越回去，亲自交易这段历史' : 'Go back and trade through it yourself'}</button>
+                  marginTop: 12, padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                  color: '#fff', background: '#4588cc',
+                }}>{zh ? '穿越回去，亲自交易这段历史' : 'Go back and trade through it yourself'}</button>
               )}
             </div>
 
@@ -913,7 +907,7 @@ function EventTimeline({ zh }) {
             <div style={{
               background: 'var(--bg-primary)',
               border: `1px solid ${BDR}`,
-              borderRadius: 12,
+              borderRadius: 8,
               padding: '16px 20px',
               marginBottom: 24,
             }}>
@@ -927,28 +921,28 @@ function EventTimeline({ zh }) {
             <div style={{
               background: 'var(--bg-primary)',
               border: `1px solid ${BDR}`,
-              borderRadius: 12,
+              borderRadius: 8,
               padding: '16px 20px',
             }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#fbbf24', marginBottom: 14, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                📝 {zh ? '考试考点' : 'Exam Connection Points'}
+                {zh ? '考试考点' : 'Exam Connection Points'}
               </div>
               {(zh ? active.exam_points_zh : active.exam_points).map((ep, i) => (
                 <div key={i} style={{
                   display: 'flex', gap: 12, marginBottom: i < active.exam_points.length - 1 ? 14 : 0,
                   paddingBottom: i < active.exam_points.length - 1 ? 14 : 0,
-                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(14,165,233,0.07)' : 'none',
+                  borderBottom: i < active.exam_points.length - 1 ? '1px solid rgba(69,136,204,0.07)' : 'none',
                 }}>
                   <span style={{
                     flexShrink: 0, fontSize: 11, fontWeight: 700,
-                    padding: '3px 10px', borderRadius: 10, height: 'fit-content',
+                    padding: '3px 10px', borderRadius: 6, height: 'fit-content',
                     background: 'rgba(251,191,36,0.1)', color: '#fbbf24',
                     border: '1px solid rgba(251,191,36,0.2)',
                     whiteSpace: 'nowrap',
                   }}>
                     {ep.exam}
                   </span>
-                  <span style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(232,234,240,0.85)' }}>
+                  <span style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-primary)' }}>
                     {ep.point}
                   </span>
                 </div>
@@ -1062,7 +1056,7 @@ export default function StudyCenter({ lang }) {
     <div style={{
       display: 'flex', flexDirection: 'column',
       height: 'calc(100vh - 60px)',
-      background: 'var(--bg-primary)', borderRadius: 12,
+      background: 'var(--bg-primary)', borderRadius: 8,
       border: `1px solid ${BDR}`, overflow: 'hidden',
     }}>
 
@@ -1148,7 +1142,7 @@ export default function StudyCenter({ lang }) {
               <div style={{ height: 5, background: PROGRESS_BG, borderRadius: 3, overflow: 'hidden' }}>
                 <div style={{
                   height: '100%', width: `${progressPct}%`,
-                  background: `linear-gradient(90deg, ${GREEN}, #059669)`,
+                  background: `${GREEN}`,
                   borderRadius: 3, transition: 'width 0.4s ease',
                 }} />
               </div>
@@ -1212,11 +1206,11 @@ export default function StudyCenter({ lang }) {
           ) : loadingTopic ? (
             <div className="skeleton-appear" style={{ padding: '28px 36px 40px', maxWidth: 780, display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Title */}
-              <div className="skeleton" style={{ height: 26, width: '60%', borderRadius: 6 }} />
+              <div className="skeleton" style={{ height: 26, width: '60%', borderRadius: 4 }} />
               <div className="skeleton" style={{ height: 12, width: '35%' }} />
               {/* Section blocks */}
               {[0, 1, 2].map(i => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(14,165,233,0.07)` : 'none' }}>
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? `1px solid rgba(69,136,204,0.07)` : 'none' }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <div className="skeleton" style={{ width: 3, height: 20, borderRadius: 2, flexShrink: 0 }} />
                     <div className="skeleton" style={{ height: 18, width: `${[55, 45, 60][i]}%` }} />
@@ -1237,7 +1231,7 @@ export default function StudyCenter({ lang }) {
                   </h1>
                   {isRead && (
                     <span style={{
-                      fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 12,
+                      fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 8,
                       background: 'rgba(52,211,153,0.15)', color: GREEN,
                       border: '1px solid rgba(52,211,153,0.25)',
                     }}>
@@ -1274,13 +1268,13 @@ export default function StudyCenter({ lang }) {
                     setActiveExam('ai_teacher')
                   }}
                   style={{
-                    background: 'rgba(14,165,233,0.08)',
-                    border: '1px solid rgba(14,165,233,0.20)',
-                    borderRadius: 8, padding: '5px 14px', fontSize: 12,
-                    color: '#0ea5e9', cursor: 'pointer',
+                    background: 'rgba(69,136,204,0.08)',
+                    border: '1px solid rgba(69,136,204,0.20)',
+                    borderRadius: 6, padding: '5px 14px', fontSize: 12,
+                    color: '#4588cc', cursor: 'pointer',
                   }}
                 >
-                  🎓 {t.discussWithAI || 'Discuss with AI Tutor →'}
+                  {t.discussWithAI || 'Discuss with AI Tutor →'}
                 </button>
               </div>
 
@@ -1300,10 +1294,10 @@ export default function StudyCenter({ lang }) {
                   style={{
                     background: isRead
                       ? 'rgba(52,211,153,0.1)'
-                      : `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
+                      : `${accentColor}`,
                     color: isRead ? GREEN : '#fff',
                     border: isRead ? `1px solid rgba(52,211,153,0.25)` : 'none',
-                    borderRadius: 10, padding: '11px 28px',
+                    borderRadius: 6, padding: '11px 28px',
                     fontSize: 14, fontWeight: 700,
                     cursor: isRead ? 'default' : 'pointer',
                     transition: 'all 0.2s',
@@ -1329,7 +1323,7 @@ export default function StudyCenter({ lang }) {
                         background: `rgba(${hexToRgb(accentColor)},0.1)`,
                         color: accentColor,
                         border: `1px solid rgba(${hexToRgb(accentColor)},0.2)`,
-                        borderRadius: 10, padding: '11px 22px',
+                        borderRadius: 6, padding: '11px 22px',
                         fontSize: 14, fontWeight: 600, cursor: 'pointer',
                       }}
                     >

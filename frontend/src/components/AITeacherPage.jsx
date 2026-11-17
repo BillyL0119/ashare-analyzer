@@ -1,16 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
+import Icon from './Icon'
 
-const ACCENT  = '#0ea5e9'
-const ACCENT2 = '#8b5cf6'
+const ACCENT  = '#4588cc'
+const ACCENT2 = '#7f77c2'
 const BDR     = 'var(--border-primary)'
 const MUTED   = 'var(--text-muted)'
 
 // ── Topic categories ──────────────────────────────────────────────────────────
 const CATEGORIES = [
   {
-    icon: '📈', name_zh: '技术分析', name_en: 'Technical Analysis',
+    icon: 'chart', name_zh: '技术分析', name_en: 'Technical Analysis',
     topics: [
       { zh: 'MACD金叉死叉是什么信号？', en: 'What does MACD golden/death cross signal?' },
       { zh: 'RSI超买超卖怎么操作？', en: 'How to trade RSI overbought/oversold?' },
@@ -20,7 +21,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '🏦', name_zh: '基本面分析', name_en: 'Fundamental Analysis',
+    icon: 'landmark', name_zh: '基本面分析', name_en: 'Fundamental Analysis',
     topics: [
       { zh: 'PE估值多少算合理？', en: 'What P/E ratio is considered reasonable?' },
       { zh: 'PB市净率如何分析银行股？', en: 'How to use P/B for bank stocks?' },
@@ -30,7 +31,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '📚', name_zh: 'A-Level 经济学', name_en: 'A-Level Economics',
+    icon: 'book', name_zh: 'A-Level 经济学', name_en: 'A-Level Economics',
     topics: [
       { zh: 'AD-AS模型如何分析通货膨胀？', en: 'Analyse inflation using AD-AS model' },
       { zh: '货币政策如何影响股票市场？', en: 'How monetary policy affects stock markets?' },
@@ -40,7 +41,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '🎯', name_zh: 'AP 经济学', name_en: 'AP Economics',
+    icon: 'target', name_zh: 'AP 经济学', name_en: 'AP Economics',
     topics: [
       { zh: 'AP Macro: 财政政策乘数效应', en: 'AP Macro: fiscal multiplier effect' },
       { zh: 'AP Micro: 完全竞争 vs 垄断', en: 'AP Micro: perfect competition vs monopoly' },
@@ -50,7 +51,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '✏️', name_zh: '考试技巧', name_en: 'Exam Tips',
+    icon: 'pencil', name_zh: '考试技巧', name_en: 'Exam Tips',
     topics: [
       { zh: 'A-Level 9708大题答题框架', en: 'A-Level 9708 essay answer structure' },
       { zh: 'AP考试图表题技巧', en: 'AP exam diagram question techniques' },
@@ -60,7 +61,7 @@ const CATEGORIES = [
     ],
   },
   {
-    icon: '🌏', name_zh: '市场热点', name_en: 'Market Themes',
+    icon: 'globe', name_zh: '市场热点', name_en: 'Market Themes',
     topics: [
       { zh: '美联储加息为什么影响A股？', en: 'Why do Fed rate hikes affect A-shares?' },
       { zh: '人工智能板块怎么分析？', en: 'How to analyse the AI sector?' },
@@ -89,17 +90,17 @@ function Bubble({ msg }) {
     }}>
       {!isUser && (
         <div style={{
-          width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-          background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-        }}>🎓</div>
+          width: 30, height: 30, borderRadius: '50%', flexShrink: 0, marginTop: 2,
+          color: 'var(--text-secondary)', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}><Icon name="tutor" size={16} /></div>
       )}
       <div style={{
         maxWidth: '76%',
         background: isUser
-          ? `linear-gradient(135deg,rgba(14,165,233,0.16),rgba(139,92,246,0.13))`
+          ? `rgba(69,136,204,0.16)`
           : 'var(--bg-tertiary)',
-        border: `1px solid ${isUser ? 'rgba(14,165,233,0.22)' : 'var(--border-primary)'}`,
+        border: `1px solid ${isUser ? 'rgba(69,136,204,0.22)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '16px 16px 4px 16px' : '4px 16px 16px 16px',
         padding: '11px 15px',
         fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.75,
@@ -110,13 +111,6 @@ function Bubble({ msg }) {
           <span style={{ opacity: 0.5, marginLeft: 2, animation: 'blink 1s step-end infinite' }}>▋</span>
         )}
       </div>
-      {isUser && (
-        <div style={{
-          width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-          background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.2)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
-        }}>👤</div>
-      )}
     </div>
   )
 }
@@ -200,7 +194,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 const u = [...prev]
                 u[u.length - 1] = {
                   role: 'assistant',
-                  content: d.error ? `⚠️ ${d.error}` : full,
+                  content: d.error ? `${d.error}` : full,
                   streaming: false,
                 }
                 return u
@@ -214,7 +208,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
         const u = [...prev]
         u[u.length - 1] = {
           role: 'assistant',
-          content: `⚠️ ${t.atError(e.message)}`,
+          content: `${t.atError(e.message)}`,
           streaming: false,
         }
         return u
@@ -234,26 +228,25 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
       display: 'flex', flexDirection: 'column',
       height: embedded ? '100%' : 'calc(100vh - 60px)',
       background: 'var(--bg-primary)',
-      borderRadius: 12, border: `1px solid ${BDR}`,
+      borderRadius: 8, border: `1px solid ${BDR}`,
       overflow: 'hidden',
     }}>
       {/* ── Top banner ── */}
       <div style={{
         padding: '12px 20px', flexShrink: 0,
-        background: 'rgba(14,165,233,0.04)',
+        background: 'rgba(69,136,204,0.04)',
         borderBottom: `1px solid ${BDR}`,
         display: 'flex', alignItems: 'center', gap: 14,
       }}>
         <div style={{
-          width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-          background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
-        }}>🎓</div>
+          width: 36, height: 36, borderRadius: 6, flexShrink: 0,
+          color: 'var(--text-secondary)', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}><Icon name="tutor" size={20} /></div>
         <div>
           <div style={{
             fontSize: 16, fontWeight: 800,
-            background: `linear-gradient(90deg,${ACCENT},${ACCENT2})`,
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            color: 'var(--text-primary)',
           }}>
             {t.atTitle}
           </div>
@@ -267,7 +260,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           }, 50) }}
           style={{
             marginLeft: 'auto', background: 'var(--bg-tertiary)',
-            border: `1px solid ${BDR}`, borderRadius: 8,
+            border: `1px solid ${BDR}`, borderRadius: 6,
             padding: '5px 12px', color: MUTED, fontSize: 12, cursor: 'pointer',
           }}
         >
@@ -286,7 +279,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           display: 'flex', flexDirection: 'column',
           overflowY: 'auto',
         }}>
-          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 700, color: 'rgba(14,165,233,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 700, color: 'rgba(69,136,204,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             {t.atTopics}
           </div>
 
@@ -298,12 +291,12 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: '8px 12px', cursor: 'pointer',
-                  background: activeCat === i ? 'rgba(14,165,233,0.08)' : 'transparent',
+                  background: activeCat === i ? 'rgba(69,136,204,0.08)' : 'transparent',
                   borderLeft: activeCat === i ? `3px solid ${ACCENT}` : '3px solid transparent',
                   transition: 'all 0.12s',
                 }}
               >
-                <span style={{ fontSize: 15 }}>{c.icon}</span>
+                <Icon name={c.icon} size={15} style={{ color: activeCat === i ? ACCENT : MUTED }} />
                 <span style={{
                   fontSize: 12, fontWeight: activeCat === i ? 700 : 400,
                   color: activeCat === i ? 'var(--text-primary)' : MUTED,
@@ -321,17 +314,17 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                       onClick={() => send(zh ? t.zh : t.en)}
                       style={{
                         padding: '6px 10px 6px 28px', cursor: 'pointer',
-                        fontSize: 11, color: 'rgba(14,165,233,0.65)',
-                        borderRadius: 6, lineHeight: 1.4,
+                        fontSize: 11, color: 'rgba(69,136,204,0.65)',
+                        borderRadius: 4, lineHeight: 1.4,
                         transition: 'all 0.12s',
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(14,165,233,0.06)'
+                        e.currentTarget.style.background = 'rgba(69,136,204,0.06)'
                         e.currentTarget.style.color = ACCENT
                       }}
                       onMouseLeave={e => {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'rgba(14,165,233,0.65)'
+                        e.currentTarget.style.color = 'rgba(69,136,204,0.65)'
                       }}
                     >
                       {zh ? t.zh : t.en}
@@ -351,10 +344,10 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
             {busy && messages[messages.length - 1]?.streaming && messages[messages.length - 1]?.content === '' && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                 <div style={{
-                  width: 32, height: 32, borderRadius: '50%',
-                  background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-                }}>🎓</div>
+                  width: 30, height: 30, borderRadius: '50%',
+                  color: 'var(--text-secondary)', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}><Icon name="tutor" size={16} /></div>
                 <div style={{ display: 'flex', gap: 4 }}>
                   {[0, 1, 2].map(i => (
                     <div key={i} style={{
@@ -388,24 +381,24 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   flex: 1,
                   background: 'var(--bg-secondary)',
-                  border: `1px solid rgba(14,165,233,0.2)`,
-                  borderRadius: 12, color: 'var(--text-primary)',
+                  border: `1px solid rgba(69,136,204,0.2)`,
+                  borderRadius: 8, color: 'var(--text-primary)',
                   padding: '10px 14px', fontSize: 14,
                   resize: 'none', outline: 'none', lineHeight: 1.6,
                   fontFamily: 'inherit',
                   transition: 'border-color 0.2s',
                 }}
-                onFocus={e => e.target.style.borderColor = 'rgba(14,165,233,0.45)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(14,165,233,0.2)'}
+                onFocus={e => e.target.style.borderColor = 'rgba(69,136,204,0.45)'}
+                onBlur={e => e.target.style.borderColor = 'rgba(69,136,204,0.2)'}
               />
               <button
                 onClick={() => send()}
                 disabled={busy || !input.trim()}
                 style={{
                   background: input.trim() && !busy
-                    ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
+                    ? `${ACCENT}`
                     : 'var(--bg-tertiary)',
-                  border: 'none', borderRadius: 12,
+                  border: 'none', borderRadius: 8,
                   padding: '0 22px', fontSize: 20,
                   color: input.trim() && !busy ? '#fff' : '#4a5568',
                   cursor: input.trim() && !busy ? 'pointer' : 'default',

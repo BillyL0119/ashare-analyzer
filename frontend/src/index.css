@@ -1,69 +1,60 @@
+/* Best Friend Stock: site-wide tokens.
+   Look: a research desk, not a neon dashboard. Flat graphite surfaces, hairline borders, one ink-blue
+   accent. Colour is kept for data (up, down, warnings). No gradients, glows or glass. */
+
 /* ── Dark theme (default) ────────────────────────────────── */
 :root,
 :root[data-theme="dark"] {
-  --bg-primary:      #020813;
-  --bg-secondary:    #060f1e;
-  --bg-tertiary:     #0a1628;
-  --bg-hover:        #0f1f3d;
-  --border-primary:  #1a2f50;
-  --border-glow:     #2a4a7f;
-  --text-primary:    #e2e8f0;
-  --text-secondary:  #94a3b8;
-  --text-muted:      #73839a;
-  --card-bg:         #060f1e;
-  --nav-bg:          rgba(2, 8, 19, 0.95);
-  --nav-bg-dim:      rgba(2, 8, 19, 0.88);
-  --map-ocean:       #0a1628;
-  --map-sphere:      #050d1a;
-  --map-border:      #2a3a5c;
-  --map-graticule:   #0f1f3d;
-  --map-land:        #1a2035;
-  --skeleton-base:   #0a1628;
-  --skeleton-shine:  #1a2f50;
-  --chart-bg:        #060f1e;
-  --chart-text:      #94a3b8;
-  --chart-border:    #1a2f50;
-  --chart-tooltip:   rgba(2,8,19,0.95);
+  --bg-primary:      #0e1013;
+  --bg-secondary:    #14171b;
+  --bg-tertiary:     #1a1e23;
+  --bg-hover:        #22272e;
+  --border-primary:  #262b33;
+  --border-glow:     #3a414c;   /* the stronger border (hover, focus rows); the name is historical */
+  --text-primary:    #e6e8eb;
+  --text-secondary:  #a1a8b3;
+  --text-muted:      #7c8591;
+  --card-bg:         #14171b;
+  --nav-bg:          #0e1013;
+  --nav-bg-dim:      #0e1013;
+  --map-ocean:       #12161b;
+  --map-sphere:      #0e1013;
+  --map-border:      #343b46;
+  --map-graticule:   #1a1e23;
+  --map-land:        #20252c;
+  --skeleton-base:   #1a1e23;
+  --skeleton-shine:  #262b33;
+  --chart-bg:        #14171b;
+  --chart-text:      #a1a8b3;
+  --chart-border:    #262b33;
+  --chart-tooltip:   rgba(14,16,19,0.96);
 
-  /* ── accent / signal colours (shared) */
-  --accent-blue:   #0ea5e9;
-  --accent-purple: #8b5cf6;
-  --accent-cyan:   #06b6d4;
-  --accent-gold:   #f59e0b;
+  /* ── accent / signal colours */
+  --accent-blue:   #4588cc;
+  --accent-blue-soft: rgba(69,136,204,0.14);
+  --accent-purple: #7f77c2;
+  --accent-cyan:   #4a9cab;
+  --accent-gold:   #d99a2b;
   --green-bright:  #10b981;
   --red-bright:    #ef4444;
+  --on-accent:     #ffffff;
+  --shadow-pop:    0 8px 24px rgba(0,0,0,0.45);   /* menus and dialogs only */
+  --radius-card: 8px; --radius-ctl: 6px; --radius-chip: 4px;
+  color-scheme: dark;
 }
 
-
 :root {
-
-  /* ── Legacy vars (kept for App.css compat) ────────────── */
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  /* Typography: an editorial serif for headings (Source Serif 4, CJK serifs as fallbacks) over a
-     quiet sans for the interface (Inter with optical sizes). Data stays in the sans with tabular figures. */
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans', 'Noto Sans SC', sans-serif;
+  /* Type: system UI faces for the interface (native on every device, nothing to download), an
+     editorial serif for headings and headline numbers (Source Serif 4, CJK serifs as fallbacks). */
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
   --heading: 'Source Serif 4', 'Noto Serif SC', 'Songti SC', 'Hiragino Mincho ProN', 'Yu Mincho', 'AppleMyungjo', 'Nanum Myeongjo', Georgia, serif;
   --serif: var(--heading);
-  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   font: 18px/150% var(--sans);
   letter-spacing: 0;
-  font-optical-sizing: auto;
-  font-feature-settings: 'cv11' 0, 'ss03' 1;   /* Inter: rounder quotes and commas */
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  color: var(--text-primary);
+  background: var(--bg-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -74,105 +65,55 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ── Global theme transition ─────────────────────────────────────────────── */
-html {
-  transition: background-color 0.3s ease;
-}
-body,
-body * {
-  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease,
-              box-shadow 0.25s ease;
-}
-/* Exempt animations from the blanket transition */
-body *[style*="animation"],
-body *[class*="skeleton"] {
-  transition: none !important;
-}
-
 body {
   margin: 0;
   background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: var(--sans);
 }
 
-/* ── Light theme (Bloomberg terminal day mode) ───────────── */
+:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+/* ── Light theme ─────────────────────────────────────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #f0f4f8;
+  --bg-primary:      #f5f6f7;
   --bg-secondary:    #ffffff;
-  --bg-tertiary:     #e8edf2;
-  --bg-hover:        #dde3ea;
-  --border-primary:  #c8d0da;
-  --border-glow:     #a0b0c8;
-  --text-primary:    #0d1b2a;
-  --text-secondary:  #3d5166;
-  --text-muted:      #5b6e80;
+  --bg-tertiary:     #eef0f2;
+  --bg-hover:        #e4e7eb;
+  --border-primary:  #d9dde2;
+  --border-glow:     #b6bdc7;
+  --text-primary:    #14181d;
+  --text-secondary:  #48515e;
+  --text-muted:      #68717d;
   --card-bg:         #ffffff;
-  --nav-bg:          rgba(240, 244, 248, 0.97);
-  --nav-bg-dim:      rgba(240, 244, 248, 0.92);
-  --map-ocean:       #c8ddf0;
-  --map-sphere:      #b8d0e8;
-  --map-border:      #8aa8c8;
-  --map-graticule:   #d8e8f4;
-  --map-land:        #d8e4ee;
-  --skeleton-base:   #e2e8f0;
-  --skeleton-shine:  #f0f4f8;
+  --nav-bg:          #ffffff;
+  --nav-bg-dim:      #ffffff;
+  --map-ocean:       #dfe6ee;
+  --map-sphere:      #d3dce6;
+  --map-border:      #9aa7b6;
+  --map-graticule:   #e9eef3;
+  --map-land:        #e6e9ed;
+  --skeleton-base:   #e4e7eb;
+  --skeleton-shine:  #f5f6f7;
   --chart-bg:        #ffffff;
-  --chart-text:      #3d5166;
-  --chart-border:    #e8edf2;
+  --chart-text:      #48515e;
+  --chart-border:    #e4e7eb;
   --chart-tooltip:   rgba(255,255,255,0.98);
 
-  --accent-blue:   #0066cc;
-  --accent-purple: #6633cc;
-  --accent-cyan:   #0099aa;
-  --accent-gold:   #cc7700;
-  --green-bright:  #007a3d;
-  --red-bright:    #cc2200;
-}
-
-/* ── Structural overrides ─────────────────────────────────────────────────── */
-body {
-  color: var(--text-primary);
-}
-
-/* Light: nav solid + shadow, no glassmorphism */
-:root[data-theme="light"] header {
-  background: rgba(240, 244, 248, 0.98) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
-}
-/* Light: cards white + elevation */
-:root[data-theme="light"] .bfs-card {
-  background: var(--card-bg) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-:root[data-theme="light"] .bfs-card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
+  --accent-blue:   #1d5fa6;
+  --accent-blue-soft: rgba(29,95,166,0.10);
+  --accent-purple: #5b53a6;
+  --accent-cyan:   #2b7f8f;
+  --accent-gold:   #a86a00;
+  --green-bright:  #0a7a43;
+  --red-bright:    #c62a1c;
+  --shadow-pop:    0 8px 24px rgba(20,24,29,0.14);
+  color-scheme: light;
 }
 
 /* ── Skeleton shimmer ───────────────────────────────────────────────────── */
@@ -190,7 +131,6 @@ body {
   background-size: 200% 100%;
   animation: bfsSkeleton 1.5s ease-in-out infinite;
   border-radius: 4px;
-  transition: none !important;
 }
 .skeleton-appear {
   animation: bfsSkeletonFadeIn 0.3s ease both;
@@ -200,15 +140,9 @@ body {
   to   { opacity: 1; }
 }
 
-/* ── Page entrance stagger ──────────────────────────────────────────────── */
-@keyframes bfsSlideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.bfs-enter-1 { animation: bfsSlideUp 0.4s ease both; }
-.bfs-enter-2 { animation: bfsSlideUp 0.4s ease 0.12s both; }
-.bfs-enter-3 { animation: bfsSlideUp 0.4s ease 0.24s both; }
-.bfs-enter-4 { animation: bfsSlideUp 0.4s ease 0.36s both; }
+/* Page sections used to slide in one after another; they now simply appear. The class names stay
+   because pages still carry them. */
+.bfs-enter-1, .bfs-enter-2, .bfs-enter-3, .bfs-enter-4 { animation: none; }
 
 /* ── Cursor / typing animations ─────────────────────────────────────────── */
 @keyframes bfsCursorBlink {
@@ -223,44 +157,21 @@ body {
   40%            { transform: scale(1.0); opacity: 1; }
 }
 
-/* ── Card hover lift ────────────────────────────────────────────────────── */
-.bfs-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-.bfs-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.12);
-  border-color: var(--border-glow) !important;
-}
+/* ── Cards, rows and buttons: hover changes a border or a fill, nothing moves or glows ── */
+.bfs-card { transition: border-color 0.12s ease; }
+.bfs-card:hover { border-color: var(--border-glow) !important; }
 
-/* ── Ticker item hover ──────────────────────────────────────────────────── */
-.bfs-ticker-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: default;
-}
-.bfs-ticker-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.12);
-  z-index: 1;
-}
+.bfs-ticker-item { cursor: default; }
+.bfs-ticker-item:hover { background: var(--bg-hover) !important; }
 
-/* ── Button interactions ────────────────────────────────────────────────── */
-.bfs-btn {
-  transition: filter 0.2s ease, transform 0.2s ease !important;
-}
-.bfs-btn:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-.bfs-btn:active {
-  transform: scale(0.97) !important;
-  filter: brightness(0.9) !important;
-}
+.bfs-btn { transition: filter 0.12s ease; }
+.bfs-btn:hover { filter: brightness(1.08); }
+.bfs-btn:active { filter: brightness(0.92); }
 
 /* ── Chevron rotation ───────────────────────────────────────────────────── */
 .bfs-chevron {
   display: inline-block;
-  transition: transform 0.25s ease;
+  transition: transform 0.15s ease;
   font-style: normal;
 }
 .bfs-chevron.is-open {
@@ -279,320 +190,22 @@ body {
   left: 4px; right: 4px;
   height: 2px;
   background: transparent;
-  border-radius: 1px;
-  transition: background 0.2s ease;
 }
-.bfs-nav-tab.is-active::after {
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
-}
+.bfs-nav-tab.is-active::after { background: var(--accent-blue); }
 
-/* ── Card entrance ──────────────────────────────────────────────────────── */
 @keyframes bfsCardSlideIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes bfsSlideUp {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-/* ── Liquid / Gooey background ───────────────────────────────────────────── */
-/*
- * Two-layer model:
- *   Layer 1 (.bfs-blob)      – 3 large, very blurry ambient blobs; pure atmosphere.
- *   Layer 2 (.bfs-goo-layer) – 6 solid-colour blobs behind an SVG gooey filter.
- *     The SVG feGaussianBlur + feColorMatrix alpha-boost makes blobs that come
- *     within ~200 px of each other merge into a single liquid droplet shape and
- *     re-separate cleanly when they drift apart – the classic metaball effect.
- *
- * Stacking:
- *   .bfs-liquid-bg  position:fixed z-index:0  pointer-events:none
- *   App main wrapper position:relative z-index:1 background:transparent
- *   Cards / charts  opaque var(--bg-secondary) – blobs never bleed through.
- */
-
-/* ── Container ── */
-.bfs-liquid-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* screen mode: blobs only ADD light — they never obscure or darken content */
-  mix-blend-mode: screen;
-}
-
-/* ── SVG filter element (zero-size, invisible) ── */
-.bfs-svg-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-/* ═══════════════════════════════════════════════
-   LAYER 1 – Ambient blobs (soft atmospheric glow)
-   ═══════════════════════════════════════════════ */
-.bfs-blob {
-  position: absolute;
-  border-radius: 50%;
-  will-change: transform;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  animation-fill-mode: both;
-  transition: none !important;
-}
-
-/* Blue – top-left */
-.bfs-b1 {
-  width: 600px; height: 600px;
-  top: -220px; left: -140px;
-  background: radial-gradient(circle, rgba(14,165,233,0.16) 0%, transparent 68%);
-  filter: blur(90px);
-  animation-name: bfsAmb1;
-  animation-duration: 26s;
-}
-/* Violet – bottom-right */
-.bfs-b2 {
-  width: 540px; height: 540px;
-  bottom: -200px; right: -120px;
-  background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 68%);
-  filter: blur(100px);
-  animation-name: bfsAmb2;
-  animation-duration: 33s;
-  animation-delay: -11s;
-}
-/* Cyan – lower-left (moved away from center) */
-.bfs-b3 {
-  width: 380px; height: 380px;
-  bottom: -80px; left: -60px;
-  background: radial-gradient(circle, rgba(6,182,212,0.09) 0%, transparent 68%);
-  filter: blur(80px);
-  animation-name: bfsAmb3;
-  animation-duration: 24s;
-  animation-delay: -7s;
-}
-
-@keyframes bfsAmb1 {
-  from { transform: translate(0, 0)      scale(1);    }
-  to   { transform: translate(90px, 110px) scale(1.08); }
-}
-@keyframes bfsAmb2 {
-  from { transform: translate(0, 0)        scale(1);    }
-  to   { transform: translate(-80px,-95px) scale(0.93); }
-}
-@keyframes bfsAmb3 {
-  from { transform: translate(0, 0)        scale(0.94); }
-  to   { transform: translate(60px, -70px) scale(1.06); }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   LAYER 2 – Gooey metaball blobs
-   The filter on .bfs-goo-layer is applied to all children
-   simultaneously so their blurred halos interact → merging.
-   ═══════════════════════════════════════════════════════════ */
-
-.bfs-goo-layer {
-  position: absolute;
-  inset: 0;
-  /* SVG gooey filter (defined inline in LiquidBackground.jsx) */
-  filter: url(#bfs-goo);
-  /* Halved opacity — content always readable */
-  opacity: 0.12;
-  transition: none !important;
-}
-
-.bfs-gblob {
-  position: absolute;
-  will-change: transform;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  animation-fill-mode: both;
-  transition: none !important;
-}
-
-/*
- * Blob placement strategy (v2 — corner/edge only):
- *   All 6 blobs are anchored near the 4 corners or side edges.
- *   Page centre is intentionally kept free of blobs so content cards are
- *   never visually cluttered by background activity.
- *   Pair targets: (bg1↔bg2) upper-left, (bg3↔bg5) upper-right,
- *                 (bg4↔bg6) lower — left + right corners.
- *   Animation travel reduced to ≤65 px so blobs never drift to page centre.
- */
-
-/* bg1 – blue, upper-left corner  (centre ≈ 10%, 15%) */
-.bg1 {
-  width: 270px; height: 270px;
-  top: calc(15% - 135px); left: calc(10% - 135px);
-  background:
-    radial-gradient(ellipse at 36% 28%, rgba(255,255,255,0.42) 0%, transparent 46%),
-    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
-  animation: bfsGoo1 20s ease-in-out 0s infinite alternate both,
-             bfsMorph1 11s ease-in-out -2s infinite alternate both;
-}
-/* bg2 – violet, upper-left cluster  (centre ≈ 22%, 13%) — drifts toward bg1 */
-.bg2 {
-  width: 260px; height: 260px;
-  top: calc(13% - 130px); left: calc(22% - 130px);
-  background:
-    radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
-    radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
-  animation: bfsGoo2 25s ease-in-out -6s infinite alternate both,
-             bfsMorph2 13s ease-in-out -5s infinite alternate both;
-}
-/* bg3 – blue, upper-right corner  (centre ≈ 87%, 14%) — drifts toward bg5 */
-.bg3 {
-  width: 280px; height: 280px;
-  top: calc(14% - 140px); left: calc(87% - 140px);
-  background:
-    radial-gradient(ellipse at 33% 32%, rgba(255,255,255,0.40) 0%, transparent 46%),
-    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
-  animation: bfsGoo3 22s ease-in-out -11s infinite alternate both,
-             bfsMorph3 9s ease-in-out -8s infinite alternate both;
-}
-/* bg4 – cyan, lower-left corner  (centre ≈ 10%, 84%) — drifts toward bg6 */
-.bg4 {
-  width: 260px; height: 260px;
-  top: calc(84% - 130px); left: calc(10% - 130px);
-  background:
-    radial-gradient(ellipse at 38% 26%, rgba(255,255,255,0.38) 0%, transparent 44%),
-    radial-gradient(circle, rgba(6,182,212,1) 0%, transparent 76%);
-  animation: bfsGoo4 27s ease-in-out -4s infinite alternate both,
-             bfsMorph4 15s ease-in-out -3s infinite alternate both;
-}
-/* bg5 – violet, right edge  (centre ≈ 82%, 28%) — drifts toward bg3 */
-.bg5 {
-  width: 270px; height: 270px;
-  top: calc(28% - 135px); left: calc(82% - 135px);
-  background:
-    radial-gradient(ellipse at 38% 30%, rgba(255,255,255,0.35) 0%, transparent 44%),
-    radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 76%);
-  animation: bfsGoo5 19s ease-in-out -9s infinite alternate both,
-             bfsMorph5 10s ease-in-out -7s infinite alternate both;
-}
-/* bg6 – blue, lower-right corner  (centre ≈ 88%, 84%) — drifts toward bg4 */
-.bg6 {
-  width: 260px; height: 260px;
-  top: calc(84% - 130px); left: calc(88% - 130px);
-  background:
-    radial-gradient(ellipse at 34% 28%, rgba(255,255,255,0.40) 0%, transparent 46%),
-    radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 76%);
-  animation: bfsGoo6 23s ease-in-out -15s infinite alternate both,
-             bfsMorph6 12s ease-in-out -1s infinite alternate both;
-}
-
-/*
- * Keyframe vectors (v2 — short travel ≤65 px so blobs stay near corners):
- *   bg1 moves +55px right / +60px down  →  merges with bg2 in upper-left
- *   bg2 moves −45px left  / +55px down  →  merges with bg1
- *   bg3 moves −55px left  / +65px down  →  merges with bg5 on upper-right
- *   bg5 moves +35px right / −60px up    →  merges with bg3
- *   bg4 moves +60px right / −50px up    →  merges with bg6 at lower area
- *   bg6 moves −55px left  / −60px up    →  merges with bg4
- */
-@keyframes bfsGoo1 {
-  from { transform: translate(0,    0)    scale(1);    }
-  to   { transform: translate(55px, 60px) scale(1.06); }
-}
-@keyframes bfsGoo2 {
-  from { transform: translate(0,     0)    scale(1);    }
-  to   { transform: translate(-45px, 55px) scale(0.96); }
-}
-@keyframes bfsGoo3 {
-  from { transform: translate(0,     0)    scale(1);    }
-  to   { transform: translate(-55px, 65px) scale(1.05); }
-}
-@keyframes bfsGoo4 {
-  from { transform: translate(0,    0)     scale(1);    }
-  to   { transform: translate(60px, -50px) scale(1.04); }
-}
-@keyframes bfsGoo5 {
-  from { transform: translate(0,    0)     scale(0.95); }
-  to   { transform: translate(35px, -60px) scale(1.06); }
-}
-@keyframes bfsGoo6 {
-  from { transform: translate(0,     0)     scale(1);    }
-  to   { transform: translate(-55px, -60px) scale(0.97); }
-}
-
-/* ── Organic shape morphing keyframes ─────────────────────────────────────
-   Each blob has a unique 5-step border-radius cycle using the 8-value syntax
-   (horizontal / vertical radii per corner) for natural amoeba-like deformation.
-   Durations are 9–15 s, all different from the position animations, so the
-   shape change and movement are always out of phase → fully organic feel.
-   ────────────────────────────────────────────────────────────────────────── */
-@keyframes bfsMorph1 {
-  0%   { border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%; }
-  25%  { border-radius: 55% 45% 38% 62% / 60% 50% 45% 40%; }
-  50%  { border-radius: 35% 65% 50% 50% / 55% 45% 60% 40%; }
-  75%  { border-radius: 62% 38% 55% 45% / 40% 60% 42% 58%; }
-  100% { border-radius: 48% 52% 42% 58% / 38% 62% 52% 48%; }
-}
-@keyframes bfsMorph2 {
-  0%   { border-radius: 68% 32% 45% 55% / 35% 65% 50% 50%; }
-  25%  { border-radius: 40% 60% 55% 45% / 58% 42% 38% 62%; }
-  50%  { border-radius: 55% 45% 62% 38% / 48% 52% 45% 55%; }
-  75%  { border-radius: 38% 62% 42% 58% / 62% 38% 60% 40%; }
-  100% { border-radius: 52% 48% 35% 65% / 45% 55% 55% 45%; }
-}
-@keyframes bfsMorph3 {
-  0%   { border-radius: 35% 65% 50% 50% / 60% 40% 55% 45%; }
-  25%  { border-radius: 62% 38% 45% 55% / 42% 58% 65% 35%; }
-  50%  { border-radius: 48% 52% 58% 42% / 55% 45% 38% 62%; }
-  75%  { border-radius: 58% 42% 35% 65% / 38% 62% 50% 50%; }
-  100% { border-radius: 45% 55% 62% 38% / 60% 40% 45% 55%; }
-}
-@keyframes bfsMorph4 {
-  0%   { border-radius: 50% 50% 38% 62% / 55% 45% 60% 40%; }
-  25%  { border-radius: 38% 62% 55% 45% / 40% 60% 35% 65%; }
-  50%  { border-radius: 62% 38% 48% 52% / 58% 42% 52% 48%; }
-  75%  { border-radius: 45% 55% 65% 35% / 35% 65% 48% 52%; }
-  100% { border-radius: 58% 42% 42% 58% / 50% 50% 62% 38%; }
-}
-@keyframes bfsMorph5 {
-  0%   { border-radius: 60% 40% 55% 45% / 38% 62% 48% 52%; }
-  25%  { border-radius: 45% 55% 40% 60% / 62% 38% 55% 45%; }
-  50%  { border-radius: 58% 42% 62% 38% / 50% 50% 35% 65%; }
-  75%  { border-radius: 35% 65% 48% 52% / 42% 58% 60% 40%; }
-  100% { border-radius: 50% 50% 35% 65% / 58% 42% 45% 55%; }
-}
-@keyframes bfsMorph6 {
-  0%   { border-radius: 48% 52% 35% 65% / 60% 40% 58% 42%; }
-  25%  { border-radius: 65% 35% 58% 42% / 45% 55% 40% 60%; }
-  50%  { border-radius: 40% 60% 52% 48% / 35% 65% 55% 45%; }
-  75%  { border-radius: 55% 45% 42% 58% / 62% 38% 48% 52%; }
-  100% { border-radius: 38% 62% 60% 40% / 50% 50% 38% 62%; }
-}
-
-/* ── Mobile: lighter filter, fewer/smaller blobs ── */
-@media (max-width: 768px) {
-  /* Drop lower 3 goo blobs – keep only top 3 */
-  .bg4, .bg5, .bg6 { display: none; }
-  /* Switch to lighter mobile filter (stdDeviation 9 instead of 14) */
-  .bfs-goo-layer { filter: url(#bfs-goo-sm); opacity: 0.10; }
-  /* Shrink ambient blobs */
-  .bfs-b1 { width: 360px; height: 360px; filter: blur(55px); }
-  .bfs-b2 { width: 320px; height: 320px; filter: blur(60px); }
-  .bfs-b3 { width: 220px; height: 220px; filter: blur(45px); }
-  /* Smaller goo blobs – corner-anchored, safe distance from edges */
-  .bg1 { width: 190px; height: 190px; top: calc(15% - 95px); left: calc(10% - 95px); }
-  .bg2 { width: 190px; height: 190px; top: calc(13% - 95px); left: calc(22% - 95px); }
-  .bg3 { width: 190px; height: 190px; top: calc(14% - 95px); left: calc(87% - 95px); }
-}
-
-/* ── Light theme – tone down substantially ── */
-:root[data-theme="light"] .bfs-liquid-bg { opacity: 0.18; }
-
-/* ── Reduced motion ─────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  /* Freeze liquid background */
-  .bfs-blob,
-  .bfs-gblob { animation: none !important; will-change: auto; }
-  /* Page entrance / UI animations */
-  .bfs-enter-1, .bfs-enter-2, .bfs-enter-3, .bfs-enter-4 {
-    animation: none !important;
-  }
   .bfs-chevron { transition: none !important; }
   .bfs-card    { transition: none !important; }
+  .skeleton    { animation: none; }
 }
 
 #root {
@@ -613,7 +226,7 @@ h3,
   font-optical-sizing: auto;
   text-wrap: balance;
 }
-h1, h2 { color: var(--text-primary, var(--text-h)); }
+h1, h2 { color: var(--text-primary); }
 /* Page titles: larger, so the serif has room to breathe */
 html:not([data-ui="mobile"]) h1 { font-size: clamp(26px, 2.4vw, 34px) !important; line-height: 1.15 !important; }
 /* Headline numbers (scores, account value, index levels) set in the serif with lining figures */
@@ -656,14 +269,14 @@ code,
   font-family: var(--mono);
   display: inline-flex;
   border-radius: 4px;
-  color: var(--text-h);
+  color: var(--text-primary);
 }
 
 code {
   font-size: 15px;
   line-height: 135%;
   padding: 4px 8px;
-  background: var(--code-bg);
+  background: var(--bg-tertiary);
 }
 
 /* ── Mobile responsive ───────────────────────────────────────────────────── */

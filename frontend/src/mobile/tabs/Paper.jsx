@@ -16,6 +16,7 @@ import { estFee } from '../../components/paper/ui'
 import { paperKey, paperHeaders } from '../../utils/paperAuth'
 import useAuthStore from '../../store/authStore'
 import getDeviceId from '../../utils/deviceId'
+import LineIcon from '../../components/Icon'
 
 // Signed in: the user's account (shared with the desktop site); otherwise this browser's device id
 const deviceId = paperKey
@@ -68,7 +69,7 @@ function useQuote(symbol, market) {
 
 const SIDE_LABEL = { buy: '买入', sell: '卖出', short: '卖空', cover: '买入平仓' }
 const SIDE_BADGE = { buy: '买', sell: '卖', short: '空', cover: '平' }
-const SIDE_TINT = { buy: 'var(--accent)', sell: '#F28B3C', short: '#8B5CF6', cover: '#6366F1' }
+const SIDE_TINT = { buy: 'var(--accent)', sell: '#F28B3C', short: '#7f77c2', cover: '#5f73b8' }
 const TYPE_LABEL = { market: '市价单', limit: '限价单', stop: '止损单', stop_limit: '止损限价单', trailing_stop: '追踪止损' }
 const TYPE_HELP = {
   market: '市价单按当前价格立即成交（休市时排队到开盘）。', limit: '限价单只在达到你设定的价格或更好时成交。',
@@ -335,8 +336,8 @@ function MissionsCard({ missions, onAction }) {
   )
 }
 
-const CHECK_LEVEL = { warn: ['!', '#f59e0b'], info: ['i', '#0ea5e9'], good: ['✓', '#10b981'] }
-const CHECK_PALETTE = ['#0ea5e9', '#8b5cf6', '#f59e0b', '#10b981', '#ec4899', '#6366f1', '#14b8a6', '#f97316']
+const CHECK_LEVEL = { warn: ['!', '#f59e0b'], info: ['i', '#4588cc'], good: ['✓', '#10b981'] }
+const CHECK_PALETTE = ['#4588cc', '#7f77c2', '#f59e0b', '#10b981', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
 
 // Portfolio check-up: where the money sits plus plain findings, worked out by the server
 function CheckupCard({ market, gameId, refreshKey }) {
@@ -510,7 +511,7 @@ function Board({ market, onClose }) {
               {[1, 0, 2].filter((i) => rows[i]).map((i) => {
                 const r = rows[i]; const first = i === 0
                 return (
-                  <div key={i} className="m-card" style={{ flex: 1, textAlign: 'center', padding: first ? '20px 6px' : '14px 6px', borderColor: r.is_me ? 'var(--accent)' : `color-mix(in srgb, ${medal[i]} 40%, transparent)`, background: `linear-gradient(180deg, color-mix(in srgb, ${medal[i]} 22%, var(--surface)), var(--surface))` }}>
+                  <div key={i} className="m-card" style={{ flex: 1, textAlign: 'center', padding: first ? '20px 6px' : '14px 6px', borderColor: r.is_me ? 'var(--accent)' : `color-mix(in srgb, ${medal[i]} 40%, transparent)` }}>
                     <div style={{ color: medal[i], fontWeight: 800, fontSize: first ? 30 : 24 }} className="m-num">{r.rank}</div>
                     <div style={{ fontSize: 12, fontWeight: 650, margin: '6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.nickname}{r.is_me ? t('（我）') : ''}</div>
                     <Pill value={r.return_pct} market={market} minWidth={0} />
@@ -640,7 +641,6 @@ export default function Paper() {
   }, [raw])
 
   if (err && !acc) return <ErrorBox onRetry={load} />
-  const accent = view ? changeColor(view.ret, market) : 'var(--text-2)'
   const done = (msg) => { setSheet(null); setToast(msg); load() }
   const cancel = async (o) => {
     try { const r = await post('/order/cancel', { order_id: o.id, game_id: gameId, lang }); setToast(r.message || t('已撤销')); load() } catch (e) { setToast(e.message) }
@@ -662,7 +662,7 @@ export default function Paper() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <button className="m-iconbtn" onClick={() => setSheet('reset')} aria-label={t('重置账户')}>↺</button>
         <b>{t('模拟盘')}</b>
-        <button className="m-iconbtn" onClick={() => (gameId ? document.getElementById('pt-standings')?.scrollIntoView({ behavior: 'smooth' }) : setSheet('board'))} aria-label={t('收益排行榜')}>🏆</button>
+        <button className="m-iconbtn" onClick={() => (gameId ? document.getElementById('pt-standings')?.scrollIntoView({ behavior: 'smooth' }) : setSheet('board'))} aria-label={t('收益排行榜')}><LineIcon name="trophy" size={20} /></button>
       </div>
       <PaperSearch only={gameId ? market : null} first={market} onTrade={(r) => { if (!gameId && r.market !== active) setActive(r.market); setSheet({ side: 'buy', symbol: r.code }) }} />
       {/* The switch drives the whole page (account card, positions, trades), so it sits on top */}
@@ -672,7 +672,7 @@ export default function Paper() {
           {(acc?.games || []).map((x) => (
             <button key={x.id} onClick={() => setActive('g:' + x.id)} aria-pressed={active === 'g:' + x.id}
               style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 650, whiteSpace: 'nowrap', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis',
-                background: active === 'g:' + x.id ? 'var(--accent)' : 'var(--surface-hi)', color: active === 'g:' + x.id ? '#fff' : 'var(--text)' }}>🏆 {x.name}</button>
+                background: active === 'g:' + x.id ? 'var(--accent)' : 'var(--surface-hi)', color: active === 'g:' + x.id ? '#fff' : 'var(--text)' }}>{x.name}</button>
           ))}
           <button onClick={() => setSheet('games')} style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 650, whiteSpace: 'nowrap', border: '1px dashed var(--stroke)', color: 'var(--accent)' }}>+ {t('比赛')}</button>
         </div>
@@ -696,11 +696,11 @@ export default function Paper() {
       )}
 
       {!view ? <Skeleton h={220} r={24} /> : (
-        <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, background: `linear-gradient(135deg, color-mix(in srgb, ${view.ret === 0 ? 'var(--accent)' : accent} 20%, var(--surface)), var(--surface) 60%)` }}>
+        <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="m-muted" style={{ fontWeight: 650, fontSize: 14 }}>{game ? game.name : t(ACCOUNT_LABEL[market])}</span>
             {view.rank > 0 && (
-              <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>🏆 #{view.rank}</span>
+              <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>#{view.rank}</span>
             )}
           </div>
           <div>
@@ -741,7 +741,7 @@ export default function Paper() {
 
       {!gameId && (
         <button className="m-card" onClick={() => nav('/time-machine')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
-          <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>🕰</span>
+          <LineIcon name="clock" size={24} style={{ color: 'var(--accent)' }} />
           <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
             <b style={{ fontSize: 15 }}>{tmStrings(lang).title}</b>
             <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{tmStrings(lang).how[0][1]}</span>
@@ -751,7 +751,7 @@ export default function Paper() {
       )}
       {!gameId && (
         <button className="m-card" onClick={() => nav('/class')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
-          <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>🏫</span>
+          <LineIcon name="users" size={24} style={{ color: 'var(--accent)' }} />
           <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
             <b style={{ fontSize: 15 }}>{classStrings(lang).title}</b>
             <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{classStrings(lang).myClassesEmpty}</span>
@@ -841,7 +841,7 @@ export default function Paper() {
             {view.txs.map((x, i) => CORP_LABEL[x.type] ? (
               // Dividend / split / bonus shares, applied on the ex-date
               <div className="m-row" key={i}>
-                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: '#0EA5E9' }}>{t(CORP_BADGE[x.type])}</span>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: '#4588cc' }}>{t(CORP_BADGE[x.type])}</span>
                 <div className="m-grow"><div className="m-name">{t(CORP_LABEL[x.type])} · {x.name || x.symbol}</div>
                   <div className="m-label m-num">{x.type === 'dividend' ? t('每股 %@', cur + num(x.price)) : `${x.ratio || ''} · ${x.shares > 0 ? '+' : ''}${t('%lld股', x.shares)}`}</div></div>
                 <div style={{ textAlign: 'right' }}>{x.amount ? <div className="m-num" style={{ fontWeight: 650, color: changeColor(x.amount, market) }}>{x.amount > 0 ? '+' : '-'}{money(Math.abs(x.amount), cur)}</div> : null}<div className="m-label">{x.date}</div></div>
@@ -868,7 +868,7 @@ export default function Paper() {
 
       {!ended && (
         <button onClick={() => setSheet({ side: 'buy' })} aria-label={t('买入')} style={{ position: 'fixed', right: 20, bottom: 'calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 16px)', width: 56, height: 56, borderRadius: 28, color: '#fff', fontSize: 30, lineHeight: 1,
-          background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', boxShadow: '0 8px 22px color-mix(in srgb, var(--accent) 45%, transparent)', zIndex: 15 }}>+</button>
+          background: 'var(--accent)', zIndex: 15 }}>+</button>
       )}
 
       {sheet?.side && view && <TradeSheet key={`${active}-${sheet.side}-${sheet.symbol || ''}`} market={market} view={raw} init={sheet} gameId={gameId} onClose={() => setSheet(null)} onDone={done} />}

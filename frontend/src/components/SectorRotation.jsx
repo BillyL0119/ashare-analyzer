@@ -13,8 +13,8 @@ const RED_LIGHT   = '#fca5a5'
 const RED_MID     = '#ef4444'
 const RED_DARK    = '#b91c1c'
 const NEUTRAL     = '#64748b'
-const ACCENT      = '#0ea5e9'
-const ACCENT2     = '#8b5cf6'
+const ACCENT      = '#4588cc'
+const ACCENT2     = '#7f77c2'
 
 // Map pct to color (red-neutral-green spectrum)
 function pctColor(pct, cn = false) {
@@ -266,9 +266,9 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
   // ── Layout ──
 
   const pillBtn = (active) => ({
-    padding: '4px 14px', borderRadius: 20, border: 'none',
+    padding: '4px 14px', borderRadius: 8, border: 'none',
     cursor: 'pointer', fontSize: 12, fontWeight: active ? 700 : 400,
-    background: active ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'var(--bg-tertiary)',
+    background: active ? `${ACCENT}` : 'var(--bg-tertiary)',
     color: active ? '#fff' : 'var(--text-muted)',
     transition: 'all 0.15s',
   })
@@ -327,7 +327,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setView(key)} style={{
                 ...pillBtn(view === key),
-                background: view === key ? 'rgba(14,165,233,0.15)' : 'var(--bg-tertiary)',
+                background: view === key ? 'rgba(69,136,204,0.15)' : 'var(--bg-tertiary)',
                 color: view === key ? ACCENT : 'var(--text-muted)',
                 border: `1px solid ${view === key ? ACCENT + '55' : 'var(--border-primary)'}`,
               }}>
@@ -343,9 +343,9 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                 { key: '20d',  label: t.sr20Day },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setPeriod(key)} style={{
-                  padding: '4px 12px', borderRadius: 20,
+                  padding: '4px 12px', borderRadius: 8,
                   cursor: 'pointer', fontSize: 11, fontWeight: period === key ? 700 : 400,
-                  background: period === key ? 'rgba(139,92,246,0.15)' : 'var(--bg-tertiary)',
+                  background: period === key ? 'rgba(127,119,194,0.15)' : 'var(--bg-tertiary)',
                   color: period === key ? ACCENT2 : 'var(--text-muted)',
                   border: `1px solid ${period === key ? ACCENT2 + '55' : 'var(--border-primary)'}`,
                   transition: 'all 0.15s',
@@ -359,7 +359,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {/* ── Chart area ── */}
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 12, padding: '14px', marginBottom: 14, overflow: 'hidden',
+            borderRadius: 8, padding: '14px', marginBottom: 14, overflow: 'hidden',
           }}>
             {view === 'treemap' ? (
               <Treemap sectors={sectors} period={period} lang={lang} cn={market === 'cn'} />
@@ -391,7 +391,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {/* ── Sector table (quick stats) ── */}
           <div style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 12, overflow: 'hidden', marginBottom: 14,
+            borderRadius: 8, overflow: 'hidden', marginBottom: 14,
           }}>
             <div style={{
               display: 'grid',
@@ -426,7 +426,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                       gap: 0,
                       padding: '7px 14px',
                       borderBottom: i < sectors.length - 1 ? '1px solid var(--border-primary)' : 'none',
-                      background: i % 2 === 0 ? 'transparent' : 'rgba(138,180,248,0.02)',
+                      background: i % 2 === 0 ? 'transparent' : 'rgba(106,162,218,0.02)',
                       alignItems: 'center',
                     }}
                   >
@@ -461,8 +461,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
           {summary && (
             <div style={{
               background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-              borderLeft: `3px solid ${ACCENT2}`,
-              borderRadius: 10, padding: '10px 14px',
+              borderRadius: 6, padding: '10px 14px',
               fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7,
             }}>
               <span style={{ fontWeight: 700, color: ACCENT2 }}>

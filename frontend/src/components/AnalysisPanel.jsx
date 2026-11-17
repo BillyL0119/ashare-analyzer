@@ -61,8 +61,8 @@ function InterpretationBlock({ text }) {
               : part
           )
         return (
-          <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${THEME.border}`, borderRadius: 6, padding: '10px 14px' }}>
-            <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{title}</div>
+          <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${THEME.border}`, borderRadius: 4, padding: '10px 14px' }}>
+            <div style={{ color: '#6aa2da', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{title}</div>
             <div style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.7 }}>{renderBold(body)}</div>
           </div>
         )
@@ -120,7 +120,7 @@ export default function AnalysisPanel({ stocks }) {
         const colorB = COLORS[stocks.findIndex((s) => s.code === b.code) % COLORS.length]
 
         return (
-          <div key={idx} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
+          <div key={idx} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               <span style={{ color: colorA, fontWeight: 700, fontSize: 15 }}>{a.name}</span>
               {a.name !== a.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{a.code}</span>}
@@ -138,7 +138,7 @@ export default function AnalysisPanel({ stocks }) {
 
             {data && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '14px 18px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 4, padding: '14px 18px' }}>
                   <GaugeBar value={data.correlation} label={t.returnCorr} color="#64b5f6" />
                   <GaugeBar value={data.price_similarity} label={t.priceSim} color="#66bb6a" />
                 </div>
@@ -174,7 +174,7 @@ export default function AnalysisPanel({ stocks }) {
                 </div>
 
                 <div>
-                  <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{t.summary}</div>
+                  <div style={{ color: '#6aa2da', fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{t.summary}</div>
                   <InterpretationBlock text={data.interpretation} />
                 </div>
               </div>

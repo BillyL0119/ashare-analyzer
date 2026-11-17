@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
 
 const MUTED = 'var(--text-muted)'
-const BDR = 'rgba(138,180,248,0.10)'
+const BDR = 'rgba(106,162,218,0.10)'
 
 const MARKET_CFG = {
-  us: { color: '#6366f1', bg: 'rgba(99,102,241,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
+  us: { color: '#5f73b8', bg: 'rgba(95,115,184,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
   cn: { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', zh: 'A股',  en: 'A-Shares',  ja: 'A株',   ko: 'A주식',  fr: 'A-Share' },
 }
 
@@ -33,8 +33,8 @@ function EarningsRow({ item, t, onStockClick }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '9px 14px',
-        borderBottom: '1px solid rgba(138,180,248,0.06)',
-        background: hover ? 'rgba(138,180,248,0.04)' : 'transparent',
+        borderBottom: '1px solid rgba(106,162,218,0.06)',
+        background: hover ? 'rgba(106,162,218,0.04)' : 'transparent',
         transition: 'background 0.12s',
         cursor: onStockClick ? 'pointer' : 'default',
       }}
@@ -59,7 +59,7 @@ function EarningsRow({ item, t, onStockClick }) {
       {/* Report type badge (A-share) */}
       {item.timing && (
         <span style={{
-          fontSize: 10, padding: '2px 7px', borderRadius: 10, flexShrink: 0,
+          fontSize: 10, padding: '2px 7px', borderRadius: 6, flexShrink: 0,
           background: mkt.bg, color: mkt.color,
           border: `1px solid ${mkt.color}40`,
           fontWeight: 600,
@@ -133,15 +133,15 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '6px 14px',
-        background: 'rgba(138,180,248,0.06)',
+        background: 'rgba(106,162,218,0.06)',
         borderRadius: '8px 8px 0 0',
-        borderBottom: '1px solid rgba(138,180,248,0.12)',
+        borderBottom: '1px solid rgba(106,162,218,0.12)',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#8ab4f8', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#6aa2da', fontFamily: 'monospace' }}>
           {dateStr}
         </span>
         <span style={{
-          fontSize: 11, borderRadius: 6,
+          fontSize: 11, borderRadius: 4,
           color: diff <= 1 ? '#ffa726' : 'var(--text-muted)',
           background: diff <= 1 ? 'rgba(255,167,38,0.12)' : 'transparent',
           padding: diff <= 1 ? '1px 6px' : 0,
@@ -156,7 +156,7 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
       <div style={{
         background: 'rgba(255,255,255,0.015)',
         borderRadius: '0 0 8px 8px',
-        border: '1px solid rgba(138,180,248,0.08)',
+        border: '1px solid rgba(106,162,218,0.08)',
         borderTop: 'none',
       }}>
         {items.map((item, i) => (
@@ -201,8 +201,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div style={{
           fontSize: 16, fontWeight: 600,
-          background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          color: 'var(--text-primary)',
         }}>
           {t.earTitle}
         </div>
@@ -223,7 +222,7 @@ export default function EarningsPanel({ lang, onStockSelect }) {
               key={m}
               onClick={() => setMarket(m)}
               style={{
-                padding: '5px 18px', borderRadius: 20, cursor: 'pointer',
+                padding: '5px 18px', borderRadius: 8, cursor: 'pointer',
                 fontSize: 13, fontWeight: active ? 700 : 400,
                 background: active ? cfg.bg : 'rgba(255,255,255,0.05)',
                 color: active ? cfg.color : MUTED,

@@ -101,7 +101,7 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
   return (
     <div className="bfs-card" style={{
       background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-      borderRadius: 14, padding: '12px 10px 10px', textAlign: 'center', fontFamily: 'var(--sans)',
+      borderRadius: 8, padding: '12px 10px 10px', textAlign: 'center', fontFamily: 'var(--sans)',
     }}>
       <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
         {title}
@@ -116,7 +116,7 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
       </div>
       <div style={{ marginTop: 8 }}>
         <span style={{
-          display: 'inline-block', padding: '3px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 600, letterSpacing: '.01em',
+          display: 'inline-block', padding: '3px 11px', borderRadius: 6, fontSize: 12.5, fontWeight: 600, letterSpacing: '.01em',
           color, background: `color-mix(in srgb, ${color} 14%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 35%, transparent)`,
         }}>{label}</span>
       </div>
@@ -182,7 +182,7 @@ function TickerBar({ indices, zh }) {
           <div key={i} style={{
             flexShrink: 0, minWidth: 100,
             background: changePctBg(pct), border: `1px solid ${changePctBorder(pct)}`,
-            borderRadius: 8, padding: '4px 10px', textAlign: 'center',
+            borderRadius: 6, padding: '4px 10px', textAlign: 'center',
           }}>
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2, whiteSpace: 'nowrap' }}>
               {zh ? (idx.name_zh || idx.name) : (CN_INDEX_EN[idx.name] || idx.name)}
@@ -211,15 +211,15 @@ function LoadingSkeleton() {
         <div className="skeleton" style={{
           flex: isMobile ? 'none' : '1 1 0',
           height: isMobile ? 200 : '100%', minHeight: isMobile ? 200 : 240,
-          borderRadius: 8,
+          borderRadius: 6,
         }} />
         {/* Gauge cards */}
         <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8 }}>
           {[0, 1].map(i => (
-            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: '12px 10px', borderRadius: 10, border: '1px solid rgba(138,180,248,0.08)' }}>
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: '12px 10px', borderRadius: 6, border: '1px solid rgba(106,162,218,0.08)' }}>
               <div className="skeleton" style={{ height: 10, width: '60%', margin: '0 auto' }} />
               {/* Gauge arc placeholder */}
-              <div className="skeleton" style={{ height: 80, borderRadius: 8 }} />
+              <div className="skeleton" style={{ height: 80, borderRadius: 6 }} />
               <div className="skeleton" style={{ height: 10, width: '50%', margin: '0 auto' }} />
             </div>
           ))}
@@ -229,7 +229,7 @@ function LoadingSkeleton() {
       {/* Ticker bar placeholders */}
       <div style={{ display: 'flex', gap: 8, flexShrink: 0, overflow: 'hidden' }}>
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} style={{ flexShrink: 0, width: 100, borderRadius: 8, padding: '8px 10px', border: '1px solid rgba(138,180,248,0.07)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div key={i} style={{ flexShrink: 0, width: 100, borderRadius: 6, padding: '8px 10px', border: '1px solid rgba(106,162,218,0.07)', display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div className="skeleton" style={{ height: 9, width: '70%' }} />
             <div className="skeleton" style={{ height: 13, width: '55%' }} />
             <div className="skeleton" style={{ height: 9, width: '45%' }} />
@@ -262,7 +262,7 @@ function WorldMap({ indices, lang }) {
   const css = (v, fb) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fb
   const oceanColor     = css('--map-ocean', isLight ? '#c8ddf0' : 'var(--bg-tertiary)')
   const sphereStroke   = isLight ? 'var(--map-border)' : '#1a2a4a'
-  const graticuleColor = css('--map-graticule', isLight ? '#d8e8f4' : '#0f1f3d')
+  const graticuleColor = css('--map-graticule', isLight ? '#d8e8f4' : '#22272e')
   const landEmpty      = css('--map-land', isLight ? '#d8e4ee' : '#1a2035')
   const landBorder     = css('--map-border', isLight ? '#8aa8c8' : '#2a3a5c')
 
@@ -329,7 +329,7 @@ function WorldMap({ indices, lang }) {
     return createPortal(
       <div role="tooltip" style={{
         position: 'fixed', left, top, zIndex: 9999, width: W, boxSizing: 'border-box',
-        background: 'rgba(6,15,30,0.96)', border: `1px solid ${color}`, borderRadius: 8,
+        background: 'rgba(20,23,27,0.96)', border: `1px solid ${color}`, borderRadius: 6,
         padding: '9px 12px', pointerEvents: 'none', lineHeight: 1.3,
         boxShadow: '0 6px 24px rgba(0,0,0,0.55)',
       }}>
@@ -352,7 +352,7 @@ function WorldMap({ indices, lang }) {
   })()
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', background: oceanColor, borderRadius: 8, overflow: 'hidden', lineHeight: 0,
+    <div ref={wrapRef} style={{ position: 'relative', background: oceanColor, borderRadius: 6, overflow: 'hidden', lineHeight: 0,
       flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingBottom: 18 }}
       onClick={() => setTip((cur) => (cur?.pinned ? null : cur))}>
       <ComposableMap
@@ -480,13 +480,12 @@ export default function GlobalSentiment({ lang }) {
     <div style={{
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
-      borderRadius: 12,
+      borderRadius: 8,
       marginBottom: 10,
       height: 'calc(100vh - 130px)',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      backdropFilter: 'blur(8px)',
     }}>
       {/* ── Header ── */}
       <div
@@ -501,13 +500,11 @@ export default function GlobalSentiment({ lang }) {
           <div style={{
             width: 7, height: 7, borderRadius: '50%',
             background: dot,
-            boxShadow: `0 0 6px ${dot}`,
             flexShrink: 0,
           }} />
           <span style={{
             fontSize: 13, fontWeight: 700,
-            background: 'linear-gradient(90deg,#8ab4f8,#c084fc)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            color: 'var(--text-primary)',
           }}>
             {t.gsTitle}
           </span>
@@ -580,7 +577,7 @@ export default function GlobalSentiment({ lang }) {
                       fontSize: 10, lineHeight: 1.6, color: 'var(--text-muted)',
                       padding: '8px 10px',
                       background: 'var(--bg-secondary)',
-                      borderRadius: 8, border: '1px solid var(--border-primary)',
+                      borderRadius: 6, border: '1px solid var(--border-primary)',
                     }}>
                       {zh
                         ? '0 = 极度恐慌，100 = 极度贪婪。由 RSI、距 52 周高点、VIX 和涨跌家数合成，仅供学习。'

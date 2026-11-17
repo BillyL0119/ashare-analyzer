@@ -74,7 +74,7 @@ export default function AITeacher() {
         <div style={{ textAlign: 'center', fontWeight: 700, margin: '4px 0 14px' }}>{t('AI老师')}</div>
         {msgs.length === 0 ? (
           <div className="m-stack" style={{ gap: 20, alignItems: 'center', paddingTop: 18 }}>
-            <div style={{ width: 72, height: 72, borderRadius: 22, display: 'grid', placeItems: 'center', color: '#fff', background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', boxShadow: '0 10px 28px color-mix(in srgb, var(--accent) 35%, transparent)' }}>
+            <div style={{ width: 72, height: 72, borderRadius: 22, display: 'grid', placeItems: 'center', color: '#fff', background: 'var(--accent)', boxShadow: '0 10px 28px color-mix(in srgb, var(--accent) 35%, transparent)' }}>
               <span style={{ width: 34, height: 34 }}>{Icon.spark}</span>
             </div>
             <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 800 }}>{t('AI股票老师')}</div><div className="m-muted" style={{ marginTop: 5, fontSize: 14 }}>{t('股票、基金、经济学，有问必答')}</div></div>
@@ -94,7 +94,7 @@ export default function AITeacher() {
         ) : (
           <div style={{ display: 'grid', gap: 12 }}>
             {msgs.map((m, i) => m.role === 'user' ? (
-              <div key={i} style={{ justifySelf: 'end', maxWidth: '85%', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', color: '#fff', background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{m.content}</div>
+              <div key={i} style={{ justifySelf: 'end', maxWidth: '85%', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', color: '#fff', background: 'var(--accent)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{m.content}</div>
             ) : (
               <div key={i} style={{ justifySelf: 'start', maxWidth: '92%', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', background: 'var(--surface)', border: '1px solid var(--stroke)', fontSize: 15, lineHeight: 1.5 }}>
                 {m.content ? <Markdown text={m.content} /> : <span className="m-muted">● ● ●</span>}

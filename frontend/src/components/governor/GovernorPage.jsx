@@ -5,13 +5,14 @@ import getDeviceId from '../../utils/deviceId'
 import { paperHeaders } from '../../utils/paperAuth'
 import casesStrings from '../cases/casesStrings'
 import governorStrings from './governorStrings'
+import Icon from '../Icon'
 
 // "Be the Fed chair": set the US policy rate one quarter at a time through a real episode. The
 // server sends only the quarters already played, and reveals the real Fed's rate for a quarter
 // after the student has set theirs (routers/governor.py).
 
-const ACCENT = '#0ea5e9', TARGET = '#10b981', HOT = '#ef4444'
-const TINT = { inflation_2021: '#0ea5e9', volcker_1979: '#f59e0b', crisis_2007: '#ef4444' }
+const ACCENT = '#4588cc', TARGET = '#10b981', HOT = '#ef4444'
+const TINT = { inflation_2021: '#4588cc', volcker_1979: '#f59e0b', crisis_2007: '#ef4444' }
 const MAX_RATE = 20
 const STUDY = [['ib', 'ib_6'], ['alevel', 'macro_3'], ['ap_macro', 'ap_4'], ['igcse', 'igcse_7']]
 
@@ -42,35 +43,35 @@ function qRange(a, b) {
 
 const CSS = `
 .gv { display: grid; gap: 16px; max-width: 1240px; margin: 0 auto; width: 100%; padding: 18px 0 40px; min-width: 0; }
-.gv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px; min-width: 0; }
+.gv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px; min-width: 0; }
 .gv-muted { color: var(--text-secondary); }
 .gv-h { margin: 0; font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); }
 .gv-num { font-variant-numeric: tabular-nums; }
-.gv-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.gv-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 6px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .gv-btn:disabled { opacity: .45; cursor: not-allowed; }
-.gv-btn.primary { background: linear-gradient(135deg, #0ea5e9, #6366f1); border-color: transparent; color: #fff; }
+.gv-btn.primary { background: #4588cc; border-color: transparent; color: #fff; }
 .gv-btn:focus-visible, .gv-chip:focus-visible, .gv-step:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 .gv-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .gv-pick { display: grid; gap: 10px; align-content: start; }
 .gv-years { font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
 .gv-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .gv-stats { display: flex; flex-wrap: wrap; gap: 6px; }
-.gv-stat { font-size: 12px; padding: 4px 9px; border-radius: 999px; background: var(--bg-tertiary); font-variant-numeric: tabular-nums; }
+.gv-stat { font-size: 12px; padding: 4px 9px; border-radius: 6px; background: var(--bg-tertiary); font-variant-numeric: tabular-nums; }
 .gv-game { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; align-items: start; }
 .gv-side { display: grid; gap: 14px; min-width: 0; }
 .gv-charts { display: grid; gap: 14px; }
 .gv-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text-secondary); }
 .gv-sw { display: inline-block; width: 16px; height: 0; border-top: 2.5px solid; margin-right: 6px; vertical-align: middle; }
 .gv-data { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.gv-datum { display: grid; gap: 2px; padding: 9px 10px; border-radius: 10px; background: var(--bg-tertiary); min-width: 0; }
+.gv-datum { display: grid; gap: 2px; padding: 9px 10px; border-radius: 6px; background: var(--bg-tertiary); min-width: 0; }
 .gv-datum b { font-size: 20px; font-variant-numeric: tabular-nums; }
 .gv-rate { font-size: 40px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; line-height: 1; }
 .gv-step { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); font-size: 20px; font-weight: 700; cursor: pointer; flex: none; }
 .gv-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.gv-chip { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 650; cursor: pointer; font-variant-numeric: tabular-nums; }
+.gv-chip { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 6px; padding: 5px 11px; font-size: 12.5px; font-weight: 650; cursor: pointer; font-variant-numeric: tabular-nums; }
 .gv-chip.on { border-color: ${ACCENT}; background: ${ACCENT}1f; color: ${ACCENT}; }
 .gv-range { width: 100%; accent-color: ${ACCENT}; }
-.gv-ev { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-primary); display: grid; gap: 4px; }
+.gv-ev { padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-primary); display: grid; gap: 4px; }
 .gv-ev.new { border-color: #f59e0b88; background: #f59e0b12; }
 .gv-news { display: grid; gap: 8px; max-height: 520px; overflow-y: auto; }
 .gv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -78,7 +79,7 @@ const CSS = `
 .gv-table th:first-child, .gv-table td:first-child { text-align: left; white-space: normal; }
 .gv-table td { text-align: right; padding: 7px 8px; border-bottom: 1px solid var(--border-primary); font-variant-numeric: tabular-nums; }
 .gv-scroll { overflow-x: auto; }
-.gv-topic { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 999px; padding: 5px 11px; }
+.gv-topic { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-primary); border-radius: 6px; padding: 5px 11px; }
 .gv-topic b { color: ${ACCENT}; font-size: 11.5px; }
 /* One column: the latest figures and the rate control come before the charts, so a phone needs no scrolling per quarter */
 @media (max-width: 980px) {
@@ -163,7 +164,7 @@ function QChart({ title, labels, series, startIndex, s, height = 170 }) {
         {hover != null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={height - P.b} stroke="var(--text-secondary)" opacity="0.6" />}
       </svg>
       {hover != null && (
-        <div style={{ position: 'absolute', top: 26, left: P.l + 6, fontSize: 12, padding: '4px 8px', borderRadius: 7, background: 'var(--bg-primary)', border: '1px solid var(--border-primary)', pointerEvents: 'none', display: 'flex', gap: 10, flexWrap: 'wrap', maxWidth: 'calc(100% - 50px)' }}>
+        <div style={{ position: 'absolute', top: 26, left: P.l + 6, fontSize: 12, padding: '4px 8px', borderRadius: 4, background: 'var(--bg-primary)', border: '1px solid var(--border-primary)', pointerEvents: 'none', display: 'flex', gap: 10, flexWrap: 'wrap', maxWidth: 'calc(100% - 50px)' }}>
           <b>{s.quarter(labels[hover])}</b>
           {series.map((sr) => sr.values[hover] != null && sr.label && <span key={sr.key} className="gv-num" style={{ color: sr.color }}>{sr.label} {pct(sr.values[hover])}</span>)}
         </div>
@@ -178,13 +179,13 @@ function Picker({ s, list, onPick }) {
   return (
     <div className="gv">
       <div style={{ display: 'grid', gap: 6 }}>
-        <h1 style={{ margin: 0, fontSize: 28 }}>🏛 {s.title}</h1>
+        <h1 style={{ margin: 0, fontSize: 28 }}>{s.title}</h1>
         <p className="gv-muted" style={{ margin: 0, fontSize: 14, lineHeight: 1.65, maxWidth: 820 }}>{s.intro}</p>
       </div>
       <div className="gv-how">
         {s.how.map(([icon, h, t]) => (
           <div key={h} className="gv-card" style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-            <span aria-hidden="true" style={{ fontSize: 22 }}>{icon}</span>
+            <Icon name={icon} size={20} style={{ marginTop: 2, color: 'var(--text-muted)' }} />
             <span style={{ display: 'grid', gap: 3 }}><b style={{ fontSize: 14 }}>{h}</b><span className="gv-muted" style={{ fontSize: 13, lineHeight: 1.5 }}>{t}</span></span>
           </div>
         ))}
@@ -330,7 +331,7 @@ function Decision({ run, s, busy, onDecide }) {
       </button>
       <div style={{ borderTop: '1px solid var(--border-primary)', paddingTop: 10, display: 'grid', gap: 6 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 13, fontWeight: 650 }}>📐 {s.taylor}</span>
+          <span style={{ fontSize: 13, fontWeight: 650 }}>{s.taylor}</span>
           <button className="gv-chip" onClick={() => setShowTaylor(!showTaylor)} aria-expanded={showTaylor}>{showTaylor ? s.taylorHide : s.taylorShow}</button>
         </div>
         {showTaylor && <p className="gv-muted" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>{tv < 0 ? s.taylorNeg(pct(tv)) : s.taylorText(pct(tv))}</p>}
@@ -343,7 +344,7 @@ function News({ run, s }) {
   const newest = run.played.length ? run.played[run.played.length - 1].q : null
   return (
     <div className="gv-card gv-o4" style={{ display: 'grid', gap: 10 }}>
-      <h3 className="gv-h">📰 {newest ? s.revealed(s.quarter(newest)) : s.history}</h3>
+      <h3 className="gv-h">{newest ? s.revealed(s.quarter(newest)) : s.history}</h3>
       {newest && !run.events.some((e) => e.new) && <span className="gv-muted" style={{ fontSize: 13 }}>{s.newsEmpty}</span>}
       <div className="gv-news">
         {run.events.map((e, i) => (
@@ -389,16 +390,16 @@ function Result({ run, s, lang, board, studyHref, labHref, onReplay, onBack }) {
         <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.7 }}>{r.epilogue}</p>
       </div>
       <div className="gv-card gv-o4" style={{ display: 'grid', gap: 8 }}>
-        <h3 className="gv-h">📘 {s.learnMore}</h3>
+        <h3 className="gv-h">{s.learnMore}</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {STUDY.map(([b, t]) => <Link key={b} className="gv-topic" to={studyHref(b, t)}><b>{cs.boards[b]}</b>{s.studyLink}</Link>)}
-          <Link className="gv-topic" to={labHref('phillips')}>📐 {s.diagramLink}</Link>
-          <Link className="gv-topic" to={labHref('adas')}>📐 {s.adasLink}</Link>
+          <Link className="gv-topic" to={labHref('phillips')}>{s.diagramLink}</Link>
+          <Link className="gv-topic" to={labHref('adas')}>{s.adasLink}</Link>
         </div>
       </div>
       {board && (
         <div className="gv-card gv-o4" style={{ display: 'grid', gap: 8 }}>
-          <h3 className="gv-h">🏆 {s.board}</h3>
+          <h3 className="gv-h">{s.board}</h3>
           {board.rows.length === 0 && <span className="gv-muted" style={{ fontSize: 13 }}>{s.boardEmpty}</span>}
           {board.rows.map((row) => (
             <div key={`${row.rank}-${row.nickname}`} className="gv-num" style={{ display: 'flex', gap: 10, fontSize: 13, fontWeight: row.is_me ? 750 : 400 }}>
@@ -420,7 +421,7 @@ function Game({ s, lang, run, busy, err, board, studyHref, labHref, onDecide, on
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         <button className="gv-btn" onClick={onBack}>{s.back}</button>
         <div style={{ display: 'grid', gap: 2, minWidth: 0 }}>
-          <b style={{ fontSize: 18 }}>🏛 {sc.title}</b>
+          <b style={{ fontSize: 18 }}>{sc.title}</b>
           <span className="gv-muted gv-num" style={{ fontSize: 12.5 }}>
             {run.finished ? s.resultTitle : `${s.quarter(run.now.q)} · ${s.decisionN(run.decision + 1, sc.n_decisions)}`}
           </span>

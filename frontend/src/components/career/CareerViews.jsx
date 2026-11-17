@@ -13,17 +13,17 @@ const CSS = `
 .cg-table tr:last-child td { border-bottom: none; }
 .cg-row { cursor: pointer; transition: background .12s; }
 .cg-row:hover { background: var(--bg-hover); }
-.cg-row:focus-visible { outline: 2px solid var(--accent-blue, #0ea5e9); outline-offset: -2px; }
-.cg-row.is-active { background: color-mix(in srgb, #0ea5e9 9%, transparent); }
-.cg-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
+.cg-row:focus-visible { outline: 2px solid var(--accent-blue, #4588cc); outline-offset: -2px; }
+.cg-row.is-active { background: color-mix(in srgb, #4588cc 9%, transparent); }
+.cg-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; }
 .cg-h { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 10px; }
-.cg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12px;
+.cg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 6px; font-size: 12px;
   border: 1px solid var(--border-primary); background: transparent; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
-.cg-chip.is-on { background: color-mix(in srgb, #0ea5e9 14%, transparent); border-color: color-mix(in srgb, #0ea5e9 55%, transparent); color: #0ea5e9; font-weight: 600; }
+.cg-chip.is-on { background: color-mix(in srgb, #4588cc 14%, transparent); border-color: color-mix(in srgb, #4588cc 55%, transparent); color: #4588cc; font-weight: 600; }
 .cg-chip .n { font-size: 11px; opacity: .7; }
-.cg-tick { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #0ea5e9;
-  background: none; border: 1px solid color-mix(in srgb, #0ea5e9 35%, transparent); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
-.cg-tick:hover { background: color-mix(in srgb, #0ea5e9 10%, transparent); }
+.cg-tick { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #4588cc;
+  background: none; border: 1px solid color-mix(in srgb, #4588cc 35%, transparent); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+.cg-tick:hover { background: color-mix(in srgb, #4588cc 10%, transparent); }
 .cg-profile { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; }
 .cg-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 @media (max-width: 900px) { .cg-profile { grid-template-columns: minmax(0, 1fr); } .cg-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -94,7 +94,7 @@ export function CareersView({ zh, onShowFirms }) {
 
 function Tile({ label, value, sub }) {
   return (
-    <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '12px 14px', minWidth: 0 }}>
+    <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 6, padding: '12px 14px', minWidth: 0 }}>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>{label}</div>
       <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.25 }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{sub}</div>}
@@ -136,7 +136,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
             <h3 className="cg-h">{zh ? '这份工作做什么' : 'What the job is'}</h3>
             <p style={{ margin: 0, fontSize: 14, lineHeight: 1.75, color: 'var(--text-secondary)' }}>{t('description', 'descriptionEn')}</p>
             {t('coreScenario', 'coreScenarioEn') && (
-              <p style={{ margin: '12px 0 0', fontSize: 13, lineHeight: 1.75, color: 'var(--text-secondary)', background: 'var(--bg-tertiary)', borderRadius: 8, padding: '10px 12px' }}>
+              <p style={{ margin: '12px 0 0', fontSize: 13, lineHeight: 1.75, color: 'var(--text-secondary)', background: 'var(--bg-tertiary)', borderRadius: 6, padding: '10px 12px' }}>
                 {t('coreScenario', 'coreScenarioEn')}
               </p>
             )}
@@ -210,7 +210,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
             <h3 className="cg-h">{zh ? '常见去向' : 'Exit opportunities'}</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {(zh ? m.exits.zh : m.exits.en).map((x) => (
-                <span key={x} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 999, background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>{x}</span>
+                <span key={x} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 6, background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>{x}</span>
               ))}
             </div>
           </section>
@@ -224,7 +224,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
                   const n = FIRMS.filter((x) => x.cat === c).length
                   return (
                     <button key={c} onClick={() => onShowFirms(c)} className="cg-row"
-                      style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border-primary)', background: 'transparent', color: 'var(--text-primary)', fontSize: 13, textAlign: 'left' }}>
+                      style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border-primary)', background: 'transparent', color: 'var(--text-primary)', fontSize: 13, textAlign: 'left' }}>
                       <span>{L(cat, zh)}</span>
                       <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{n} {zh ? '家' : 'firms'} →</span>
                     </button>
@@ -300,7 +300,7 @@ export function FirmsView({ zh, initialCat = 'all' }) {
         <input
           id="cg-firm-search" value={q} onChange={(e) => setQ(e.target.value)}
           placeholder={zh ? '搜索机构、城市、业务…' : 'Search firm, city, business…'}
-          style={{ marginLeft: 'auto', minWidth: 0, flex: '0 1 240px', padding: '7px 12px', borderRadius: 8, fontSize: 13, background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)', outline: 'none' }}
+          style={{ marginLeft: 'auto', minWidth: 0, flex: '0 1 240px', padding: '7px 12px', borderRadius: 6, fontSize: 13, background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)', outline: 'none' }}
         />
       </div>
 

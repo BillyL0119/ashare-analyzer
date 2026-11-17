@@ -4,9 +4,9 @@ import { T } from '../i18n/translations'
 const MUTED  = 'var(--text-muted)'
 const GREEN  = '#34d399'
 const RED    = '#ef4444'
-const BLUE   = '#8ab4f8'
+const BLUE   = '#6aa2da'
 const YELLOW = '#f59e0b'
-const BDR    = 'rgba(138,180,248,0.12)'
+const BDR    = 'rgba(106,162,218,0.12)'
 
 // ─── Tiny candle SVG helper ───────────────────────────────────────────────────
 // open, close, high, low are y-coords in a 70px-tall canvas
@@ -122,7 +122,7 @@ export default function KLineTip({ zh, lang, onClose }) {
         onClick={onClose}
         style={{
           position: 'fixed', inset: 0, zIndex: 1200,
-          background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(3px)',
+          background: 'rgba(0,0,0,0.55)',
         }}
       />
 
@@ -136,7 +136,7 @@ export default function KLineTip({ zh, lang, onClose }) {
         overflowY: 'auto',
         background: '#10141f',
         border: `1px solid ${BDR}`,
-        borderRadius: 14,
+        borderRadius: 8,
         boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
         padding: '18px 20px 24px',
       }}>
@@ -159,7 +159,7 @@ export default function KLineTip({ zh, lang, onClose }) {
         {/* Anatomy */}
         <div style={{
           background: 'rgba(255,255,255,0.025)', border: `1px solid ${BDR}`,
-          borderRadius: 10, padding: '12px 14px', marginBottom: 14,
+          borderRadius: 6, padding: '12px 14px', marginBottom: 14,
         }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             {t.ktAnatomy}
@@ -178,7 +178,7 @@ export default function KLineTip({ zh, lang, onClose }) {
               <div key={pat.name_en} style={{
                 display: 'flex', alignItems: 'center', gap: 12,
                 background: 'rgba(255,255,255,0.025)', border: `1px solid ${BDR}`,
-                borderRadius: 8, padding: '8px 12px',
+                borderRadius: 6, padding: '8px 12px',
               }}>
                 <svg width={svgW} height={70} style={{ flexShrink: 0 }}>
                   {pat.candles.map((c, i) => <TinyCandle key={i} {...c} />)}
@@ -189,7 +189,7 @@ export default function KLineTip({ zh, lang, onClose }) {
                       {zh ? pat.name_zh : pat.name_en}
                     </span>
                     <span style={{
-                      fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 10,
+                      fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 6,
                       background: `${SIG_COLOR[pat.signal]}1a`, color: SIG_COLOR[pat.signal],
                     }}>
                       {pat.signal.toUpperCase()}

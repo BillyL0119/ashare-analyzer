@@ -149,7 +149,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
   ]
   const portfolioOptions = [
     ...MARKETS.map((m) => ({ value: m, label: s.markets[m] })),
-    ...(account?.games || []).map((g) => ({ value: `g:${g.id}`, label: `🏆 ${g.name}` })),
+    ...(account?.games || []).map((g) => ({ value: `g:${g.id}`, label: `${g.name}` })),
   ]
   // Search result's Trade button: switch to that market's account and fill in the ticket
   const tradeFromSearch = (r) => {
@@ -169,7 +169,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
 
       {toast && (
         <div role="status" style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9998, maxWidth: '90vw', textAlign: 'center',
-          background: 'var(--bg-secondary)', border: `1px solid ${toast.ok ? UP : DOWN}66`, color: toast.ok ? UP : DOWN, borderRadius: 12, padding: '11px 20px', fontSize: 13.5, fontWeight: 650, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
+          background: 'var(--bg-secondary)', border: `1px solid ${toast.ok ? UP : DOWN}66`, color: toast.ok ? UP : DOWN, borderRadius: 8, padding: '11px 20px', fontSize: 13.5, fontWeight: 650, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
           {toast.text}
         </div>
       )}
@@ -181,13 +181,13 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', flex: '0 1 600px', justifyContent: 'flex-end', minWidth: 0 }}>
           <StockSearch s={s} lang={lang} first={market || 'us'} only={gameId ? market : null} onTrade={tradeFromSearch} />
-          <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>🏆 {s.newGame}</Button>
-          <Button ghost onClick={() => navigate('/time-machine')} style={{ fontSize: 13 }}>🕰 {tmStrings(lang).nav}</Button>
+          <Button ghost onClick={() => setModal('games')} style={{ fontSize: 13 }}>{s.newGame}</Button>
+          <Button ghost onClick={() => navigate('/time-machine')} style={{ fontSize: 13 }}>{tmStrings(lang).nav}</Button>
         </div>
       </div>
 
       {!user && (
-        <div style={{ background: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.2)', borderRadius: 10, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ background: 'rgba(69,136,204,0.06)', border: '1px solid rgba(69,136,204,0.2)', borderRadius: 6, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.45 }}>{s.guest}</div>
           {onOpenAuth && <Button onClick={onOpenAuth} style={{ padding: '6px 14px', fontSize: 12 }}>{s.signIn}</Button>}
         </div>
@@ -200,11 +200,11 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         </div>
         {game && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13 }}>
-            <b style={{ fontSize: 15 }}>🏆 {game.name}</b>
+            <b style={{ fontSize: 15 }}>{game.name}</b>
             <span style={{ color: game.status === 'ended' ? MUTED : UP, fontWeight: 700 }}>{s.game.status[game.status]}</span>
             <span style={{ color: MUTED }}>{s.game.members(game.members)} · {game.status === 'ended' ? s.game.endedOn(game.end_date) : s.game.ends(game.end_date)} · {s.game.organiser} {game.owner_nickname}</span>
             <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-              <code style={{ fontSize: 14, fontWeight: 800, letterSpacing: 2, padding: '3px 8px', borderRadius: 6, background: 'var(--bg-tertiary)' }}>{game.code}</code>
+              <code style={{ fontSize: 14, fontWeight: 800, letterSpacing: 2, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-tertiary)' }}>{game.code}</code>
               <Button ghost style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => { navigator.clipboard?.writeText(inviteText); setCopied(true); setTimeout(() => setCopied(false), 1500) }}>
                 {copied ? s.game.copied : s.game.copy}
               </Button>

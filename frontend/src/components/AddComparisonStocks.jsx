@@ -35,7 +35,7 @@ export default function AddComparisonStocks({ lang = 'zh' }) {
   return (
     <div style={{
       maxWidth: 520, margin: '32px auto', padding: '24px 26px', textAlign: 'center',
-      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 14,
+      background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
     }}>
       <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{c.title}</div>
       <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 16 }}>{c.body}</div>
@@ -46,8 +46,8 @@ export default function AddComparisonStocks({ lang = 'zh' }) {
             className="bfs-add-peer"
             onClick={() => addSymbol(s)}
             style={{
-              padding: '7px 14px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600,
-              background: 'rgba(14,165,233,0.10)', color: '#0ea5e9', border: '1px solid rgba(14,165,233,0.35)',
+              padding: '7px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600,
+              background: 'rgba(69,136,204,0.10)', color: '#4588cc', border: '1px solid rgba(69,136,204,0.35)',
             }}
           >
             + {market === 'us' ? s.code : s.name}
@@ -57,8 +57,8 @@ export default function AddComparisonStocks({ lang = 'zh' }) {
           </button>
         ))}
       </div>
-      <style>{`.bfs-add-peer:hover { background: rgba(14,165,233,0.18) !important; }
-        .bfs-add-peer:focus-visible { outline: 2px solid #0ea5e9; outline-offset: 2px; }`}</style>
+      <style>{`.bfs-add-peer:hover { background: rgba(69,136,204,0.18) !important; }
+        .bfs-add-peer:focus-visible { outline: 2px solid #4588cc; outline-offset: 2px; }`}</style>
     </div>
   )
 }

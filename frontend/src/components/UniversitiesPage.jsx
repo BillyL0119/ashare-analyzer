@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { tx, txEn, txf, lang as curLang } from './uniI18n'
 import { newDeviceId } from '../utils/deviceId'
+import Icon from './Icon'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
 // ── palette ──────────────────────────────────────────────────────────────────
-const BLUE   = '#0ea5e9'
-const PURPLE = '#8b5cf6'
+const BLUE   = '#4588cc'
+const PURPLE = '#7f77c2'
 const GREEN  = '#10b981'
 const AMBER  = '#f59e0b'
 
@@ -41,7 +42,7 @@ function deadlineStatus(str) {
 function DeadlineTag({ str }) {
   const st = deadlineStatus(str)
   if (!st) return null
-  const style = { fontSize: 10.5, fontWeight: 700, padding: '1px 7px', borderRadius: 999, marginLeft: 6, whiteSpace: 'nowrap' }
+  const style = { fontSize: 10.5, fontWeight: 700, padding: '1px 7px', borderRadius: 6, marginLeft: 6, whiteSpace: 'nowrap' }
   if (st.passed) return <span style={{ ...style, color: 'var(--text-muted)', border: '1px solid var(--border-primary)' }}>{tx('已截止', 'Closed')}</span>
   const soon = st.days <= 30
   const c = soon ? '#ef4444' : GREEN
@@ -70,10 +71,10 @@ const hasUG = (u) => u.undergrad && !u.undergrad.none
 const SPECIALTIES = ['Finance', 'Accounting', 'Economics', 'Consulting', 'Tech']
 
 const SPECIALTY_COLORS = {
-  Finance: '#0ea5e9', Accounting: '#8b5cf6', Economics: '#10b981',
-  Marketing: '#f59e0b', Consulting: '#ef4444', Strategy: '#06b6d4',
-  MBA: '#6366f1', Undergraduate: '#84cc16', Tech: '#f97316',
-  Analytics: '#a78bfa', Entrepreneurship: '#34d399', STEM: '#fb923c',
+  Finance: '#4588cc', Accounting: '#7f77c2', Economics: '#10b981',
+  Marketing: '#f59e0b', Consulting: '#ef4444', Strategy: '#4a9cab',
+  MBA: '#5f73b8', Undergraduate: '#84cc16', Tech: '#f97316',
+  Analytics: '#9d97d3', Entrepreneurship: '#34d399', STEM: '#fb923c',
 }
 
 function tagColor(tag) {
@@ -102,15 +103,15 @@ function SkeletonCard() {
     <div style={{
       background: 'var(--bg-secondary)',
       border: '1px solid var(--border-primary)',
-      borderRadius: 14,
+      borderRadius: 8,
       padding: 20,
       display: 'flex',
       flexDirection: 'column',
       gap: 10,
     }}>
-      <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 8 }} />
+      <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 6 }} />
       {[85, 60, 95, 50].map((w, i) => (
-        <div key={i} className="skeleton" style={{ width: `${w}%`, height: i === 0 ? 16 : 12, borderRadius: 6 }} />
+        <div key={i} className="skeleton" style={{ width: `${w}%`, height: i === 0 ? 16 : 12, borderRadius: 4 }} />
       ))}
     </div>
   )
@@ -127,7 +128,7 @@ function RankBadge({ rank, label = 'QS' }) {
       position: 'absolute', top: 12, left: 12,
       background: `${color}22`,
       border: `1px solid ${color}66`,
-      borderRadius: 6,
+      borderRadius: 4,
       padding: '2px 8px',
       fontSize: 11, fontWeight: 700, color,
     }}>
@@ -152,7 +153,7 @@ function BusinessRankLine({ uni, zh }) {
       </span>
       {gap >= 10 && (
         <span style={{
-          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 5,
+          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 4,
           background: `${GREEN}1f`, color: GREEN, border: `1px solid ${GREEN}40`,
         }}>
           {zh ? `比综合排名高 ${gap} 位` : (txf('gapAbove', gap) ?? `${gap} places above overall`)}
@@ -166,7 +167,7 @@ function BusinessRankLine({ uni, zh }) {
 function SchoolLogo({ name, size = 44 }) {
   return (
     <div style={{
-      width: size, height: size, borderRadius: 10, flexShrink: 0,
+      width: size, height: size, borderRadius: 6, flexShrink: 0,
       background: schoolGradient(name),
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: size * 0.34, fontWeight: 800, color: 'rgba(255,255,255,0.9)',
@@ -183,7 +184,7 @@ function TagPill({ label }) {
   return (
     <span style={{
       fontSize: 11, fontWeight: 600,
-      padding: '2px 8px', borderRadius: 20,
+      padding: '2px 8px', borderRadius: 8,
       background: `${color}20`, color,
       border: `1px solid ${color}40`,
       whiteSpace: 'nowrap',
@@ -244,7 +245,7 @@ function UndergradTab({ uni, zh }) {
   }
   if (ug.none) {
     return (
-      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '16px 18px', fontSize: 14, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
+      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 6, padding: '16px 18px', fontSize: 14, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
         {zh ? ug.note_cn : ug.note_en}
       </div>
     )
@@ -252,7 +253,7 @@ function UndergradTab({ uni, zh }) {
   const dl = ug.deadline && deadlineStatus(ug.deadline)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '14px 16px' }}>
+      <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 6, padding: '14px 16px' }}>
         <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>{ug.program}</div>
         {ug.length && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{ug.length}</div>}
         <div style={{ marginTop: 10 }}>
@@ -317,17 +318,16 @@ function UniModal({ uni, lang, onClose }) {
         background: 'rgba(0,0,0,0.75)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '16px',
-        backdropFilter: 'blur(4px)',
       }}
     >
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 18,
+        borderRadius: 8,
         width: '100%', maxWidth: 800,
         maxHeight: '90vh',
         display: 'flex', flexDirection: 'column',
-        boxShadow: '0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(14,165,233,0.1)',
+        boxShadow: 'var(--shadow-pop)',
         animation: 'bfsPageFadeIn 0.18s ease both',
       }}>
 
@@ -364,19 +364,19 @@ function UniModal({ uni, lang, onClose }) {
                   </span>
                 )}
                 {uni.qs_rank && (
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
                     background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
                     {tx('QS 综合', 'QS overall')} #{uni.qs_rank}
                   </span>
                 )}
                 {uni.qs_bm_rank && (
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
                     background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}44` }}>
                     {tx('QS 商科', 'QS Business')} #{uni.qs_bm_rank.replace('=', '')}
                   </span>
                 )}
                 <a href={uni.url} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 6,
+                  style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 4,
                     background: `${GREEN}18`, color: GREEN, border: `1px solid ${GREEN}44`,
                     textDecoration: 'none', marginLeft: 2 }}>
                   {tx('官网 →', 'Website →')}
@@ -385,7 +385,7 @@ function UniModal({ uni, lang, onClose }) {
             </div>
             <button onClick={onClose} style={{
               background: 'none', border: '1px solid var(--border-primary)',
-              color: 'var(--text-muted)', borderRadius: 8,
+              color: 'var(--text-muted)', borderRadius: 6,
               width: 32, height: 32, cursor: 'pointer', fontSize: 18, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
             }}
@@ -418,7 +418,7 @@ function UniModal({ uni, lang, onClose }) {
             <>
               <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75, margin: 0,
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 10, padding: '14px 16px' }}>
+                borderRadius: 6, padding: '14px 16px' }}>
                 {zh ? uni.description_cn : uni.description_en}
               </p>
 
@@ -426,7 +426,7 @@ function UniModal({ uni, lang, onClose }) {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {/* Tuition */}
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 10, padding: '14px 16px' }}>
+                  borderRadius: 6, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('学费参考', 'Tuition')}
@@ -439,7 +439,7 @@ function UniModal({ uni, lang, onClose }) {
                 {/* Acceptance rate when published, otherwise the next open deadline (never a blank "see website") */}
                 {req.acceptance_rate ? (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 10, padding: '14px 16px' }}>
+                  borderRadius: 6, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('录取率', 'Acceptance Rate')}
@@ -448,7 +448,7 @@ function UniModal({ uni, lang, onClose }) {
                 </div>
                 ) : nextDl && (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 10, padding: '14px 16px' }}>
+                  borderRadius: 6, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('下一个申请截止', 'Next deadline')}
@@ -464,7 +464,7 @@ function UniModal({ uni, lang, onClose }) {
 
                 {/* Specialties */}
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 10, padding: '14px 16px' }}>
+                  borderRadius: 6, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('强势专业', 'Specialties')}
@@ -477,7 +477,7 @@ function UniModal({ uni, lang, onClose }) {
                 {/* Employment (most schools publish no breakdown: an empty list used to leave a blank box) */}
                 {uni.employment?.length > 0 && (
                 <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 10, padding: '14px 16px' }}>
+                  borderRadius: 6, padding: '14px 16px' }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                     textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 8 }}>
                     {tx('就业去向（MBA）', 'Top Employment (MBA)')}
@@ -506,16 +506,16 @@ function UniModal({ uni, lang, onClose }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {programs.length > 0 ? programs.map((p, i) => (
                 <div key={i} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 10, padding: '14px 16px' }}>
+                  borderRadius: 6, padding: '14px 16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 8 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{p.name}</div>
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
                         background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33` }}>
                         {p.duration}
                       </span>
                       {p.language && p.language !== 'English' && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 5,
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
                           background: `${PURPLE}18`, color: PURPLE, border: `1px solid ${PURPLE}33` }}>
                           {p.language}
                         </span>
@@ -530,7 +530,7 @@ function UniModal({ uni, lang, onClose }) {
                 /* Fallback to simple programs list */
                 (uni.programs || []).map(p => (
                   <div key={p} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 10, padding: '12px 16px',
+                    borderRadius: 6, padding: '12px 16px',
                     fontSize: 14, fontWeight: 600, color: BLUE }}>
                     {p}
                   </div>
@@ -545,7 +545,7 @@ function UniModal({ uni, lang, onClose }) {
               {Object.keys(req).length > 0 ? (
                 <>
                   <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 10, padding: '14px 16px' }}>
+                    borderRadius: 6, padding: '14px 16px' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                       textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                       {tx('学术成绩', 'Academic')}
@@ -558,7 +558,7 @@ function UniModal({ uni, lang, onClose }) {
 
                   {(req.toefl || req.ielts) && (
                   <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 10, padding: '14px 16px' }}>
+                    borderRadius: 6, padding: '14px 16px' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                       textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                       {tx('语言要求', 'Language Requirements')}
@@ -570,7 +570,7 @@ function UniModal({ uni, lang, onClose }) {
 
                   {req.deadlines && (
                     <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 10, padding: '14px 16px' }}>
+                      borderRadius: 6, padding: '14px 16px' }}>
                       <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
                         textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
                         {tx('申请截止日期', 'Application Deadlines')}
@@ -603,7 +603,7 @@ function UniModal({ uni, lang, onClose }) {
                   /* Fallback: simple string list */
                   alumni.map(a => (
                     <div key={a} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 10, padding: '12px 16px',
+                      borderRadius: 6, padding: '12px 16px',
                       fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
                       {a}
                     </div>
@@ -612,10 +612,10 @@ function UniModal({ uni, lang, onClose }) {
                   /* Rich alumni_detail format */
                   alumni.map((a, i) => (
                     <div key={i} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 10, padding: '14px 16px',
+                      borderRadius: 6, padding: '14px 16px',
                       display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                       <div style={{
-                        width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                        width: 40, height: 40, borderRadius: 6, flexShrink: 0,
                         background: schoolGradient(a.name),
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 15, fontWeight: 800, color: 'rgba(255,255,255,0.9)',
@@ -697,13 +697,13 @@ function CompareModal({ schools, lang, onClose }) {
         position: 'fixed', inset: 0, zIndex: 9200,
         background: 'rgba(0,0,0,0.8)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 16, backdropFilter: 'blur(6px)',
+        padding: 16,
       }}
     >
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 18, width: '100%', maxWidth: 960,
+        borderRadius: 8, width: '100%', maxWidth: 960,
         maxHeight: '90vh',
         display: 'flex', flexDirection: 'column',
         boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
@@ -721,7 +721,7 @@ function CompareModal({ schools, lang, onClose }) {
           </div>
           <button onClick={onClose} style={{
             background: 'none', border: '1px solid var(--border-primary)',
-            color: 'var(--text-muted)', borderRadius: 8,
+            color: 'var(--text-muted)', borderRadius: 6,
             width: 32, height: 32, cursor: 'pointer', fontSize: 18,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
@@ -751,14 +751,14 @@ function CompareModal({ schools, lang, onClose }) {
                 </div>
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
                   {u.qs_rank && (
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 4,
                       background: `${AMBER}22`, color: AMBER, border: `1px solid ${AMBER}44` }}>
                       {tx('综合', 'QS')} #{u.qs_rank}
                     </span>
                   )}
                   {u.qs_bm_rank && (
                     <span style={{
-                      fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
+                      fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 4,
                       background: `${BLUE}18`, color: BLUE, border: `1px solid ${BLUE}33`,
                     }}>
                       {tx('商科', 'Business')} #{u.qs_bm_rank.replace('=', '')}
@@ -787,7 +787,7 @@ function CompareModal({ schools, lang, onClose }) {
                   <div key={u.id} style={{
                     fontSize: 13, color: 'var(--text-primary)', fontWeight: 500,
                     background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 8, padding: '8px 12px', minHeight: 38,
+                    borderRadius: 6, padding: '8px 12px', minHeight: 38,
                     display: 'flex', alignItems: 'center',
                   }}>
                     {key === 'specialties' ? (
@@ -814,7 +814,7 @@ function CompareModal({ schools, lang, onClose }) {
               {schools.map(u => (
                 <div key={u.id} style={{
                   background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                  borderRadius: 8, padding: '8px 12px',
+                  borderRadius: 6, padding: '8px 12px',
                 }}>
                   {(u.employment || []).slice(0, 4).map((e, i) => (
                     <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>• {e}</div>
@@ -830,7 +830,7 @@ function CompareModal({ schools, lang, onClose }) {
               {schools.map(u => (
                 <a key={u.id} href={u.url} target="_blank" rel="noopener noreferrer" style={{
                   display: 'block', textAlign: 'center', padding: '8px 0',
-                  borderRadius: 8, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
+                  borderRadius: 6, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
                   color: GREEN, fontSize: 13, fontWeight: 600, textDecoration: 'none',
                 }}>
                   {tx('官网 →', 'Website →')}
@@ -853,13 +853,10 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 8000,
-      background: 'rgba(2,8,19,0.96)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      borderTop: `1px solid ${BLUE}44`,
+      background: 'var(--bg-secondary)',
+      borderTop: '1px solid var(--border-glow)',
       padding: '12px 24px',
       display: 'flex', alignItems: 'center', gap: 14,
-      boxShadow: `0 -8px 40px rgba(14,165,233,0.12)`,
       animation: 'bfsPageFadeIn 0.15s ease both',
     }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: BLUE, flexShrink: 0 }}>
@@ -871,7 +868,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
           <div key={u.id} style={{
             display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0,
             background: `${BLUE}15`, border: `1px solid ${BLUE}33`,
-            borderRadius: 8, padding: '5px 8px',
+            borderRadius: 6, padding: '5px 8px',
           }}>
             <SchoolLogo name={u.name} size={22} />
             <span style={{
@@ -893,7 +890,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
           <div key={i} style={{
             width: 110, height: 34, flexShrink: 0,
             border: '1px dashed var(--border-primary)',
-            borderRadius: 8,
+            borderRadius: 6,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <span style={{ fontSize: 11, color: 'var(--border-primary)' }}>
@@ -907,7 +904,7 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
         <button
           onClick={onClear}
           style={{
-            padding: '7px 14px', borderRadius: 8,
+            padding: '7px 14px', borderRadius: 6,
             border: '1px solid var(--border-primary)',
             background: 'transparent', color: 'var(--text-muted)',
             fontSize: 12, cursor: 'pointer', transition: 'all 0.15s',
@@ -921,9 +918,9 @@ function CompareBar({ compared, allUnis, onRemove, onClear, onOpen, lang }) {
           onClick={onOpen}
           disabled={schools.length < 2}
           style={{
-            padding: '7px 18px', borderRadius: 8, border: 'none',
+            padding: '7px 18px', borderRadius: 6, border: 'none',
             background: schools.length >= 2
-              ? `linear-gradient(135deg, ${BLUE}, ${PURPLE})`
+              ? `${BLUE}`
               : 'var(--border-primary)',
             color: schools.length >= 2 ? '#fff' : 'var(--text-muted)',
             fontSize: 13, fontWeight: 700,
@@ -945,9 +942,9 @@ const IV_TESTS = ['SAT', 'ACT', 'A-Level', 'IB', 'GMAT', 'GRE', 'Gaokao', 'Other
 // ── Interview: texts (5 languages) ───────────────────────────────────────────
 const IV_T = {
   zh: {
-    title: '🎓 商学院模拟面试 & 录取评估', subtitle: 'AI严格模拟面试官 · 综合录取概率参考（粗略估算）',
+    title: '商学院模拟面试 & 录取评估', subtitle: 'AI严格模拟面试官 · 综合录取概率参考（粗略估算）',
     steps: ['填写背景', '模拟面试', '评估报告'],
-    intro: '🎓 填写你的背景信息，AI面试官将结合这些内容进行有针对性的追问。成绩为必填项，课外活动选填但建议填写以获得更准确的评估。',
+    intro: '填写你的背景信息，AI面试官将结合这些内容进行有针对性的追问。成绩为必填项，课外活动选填但建议填写以获得更准确的评估。',
     school: '目标学校 *', schoolPh: '输入学校名称（如 Harvard Business School）', programme: '申请项目',
     gpa: 'GPA / 学业成绩 *', gpaPh: '如 3.8/4.0 · A*AA · 40/45', gpaHint: '支持不同评分体系',
     test: '标化考试', scorePh: '分数',
@@ -955,7 +952,7 @@ const IV_T = {
     activities: '课外活动与经历（选填但强烈建议填写）', activitiesPh: '示例：\n• 商业计划大赛 全国季军，团队负责市场分析\n• 学生会财务官，管理年度预算$5000\n• 某机构3个月实习，协助整理财务报告', activitiesHint: 'AI面试官会针对这里的活动进行深度追问',
     ivLang: '面试语言：', start: '开始模拟面试 →',
     interviewer: (s) => `${s} 招生面试官`, persona: '严格但专业 · 会追问细节', round: (a, b) => `第 ${a}/${b} 轮`,
-    answerPh: '输入你的回答…（Enter 发送 · Shift+Enter 换行）', endBtn: '📊 面试结束，生成综合评估报告 →',
+    answerPh: '输入你的回答…（Enter 发送 · Shift+Enter 换行）', endBtn: '面试结束，生成综合评估报告 →',
     discTitle: '免责声明：', discStrong: '此评估基于公开录取数据的一般规律和AI分析，不代表官方立场，不构成录取保证，仅供申请策略参考。',
     discRest: '实际录取受文书质量、推荐信、面试表现、申请年份竞争情况等AI无法评估的因素影响——这些因素可能比成绩本身影响更大。概率区间为粗略估算，请以区间范围理解，而非精确数值。',
     generating: '生成中…', generatingReport: '正在生成综合评估报告…', reset: '↩ 重新评估', rangeNote: '粗略参考估算 · 非官方数据 · 仅供策略参考',
@@ -963,9 +960,9 @@ const IV_T = {
     gaokao: '高考', other: '其他',
   },
   en: {
-    title: '🎓 Business School Mock Interview & Admission Assessment', subtitle: 'A strict AI interviewer · rough admission odds',
+    title: 'Business School Mock Interview & Admission Assessment', subtitle: 'A strict AI interviewer · rough admission odds',
     steps: ['Your background', 'Mock interview', 'Assessment'],
-    intro: '🎓 Tell us about your background and the AI interviewer will ask follow-up questions about it. Grades are required; activities are optional but give a more accurate assessment.',
+    intro: 'Tell us about your background and the AI interviewer will ask follow-up questions about it. Grades are required; activities are optional but give a more accurate assessment.',
     school: 'Target school *', schoolPh: 'School name (e.g. Harvard Business School)', programme: 'Programme',
     gpa: 'GPA / grades *', gpaPh: 'e.g. 3.8/4.0 · A*AA · 40/45', gpaHint: 'Any grading system works',
     test: 'Standardised test', scorePh: 'Score',
@@ -973,7 +970,7 @@ const IV_T = {
     activities: 'Activities and experience (optional, strongly recommended)', activitiesPh: 'For example:\n• Business plan competition, national 3rd place, led market research\n• Student council treasurer, managed a $5,000 annual budget\n• 3-month internship, helped prepare financial reports', activitiesHint: 'The interviewer will dig into these',
     ivLang: 'Interview language:', start: 'Start the mock interview →',
     interviewer: (s) => `${s} admissions interviewer`, persona: 'Strict but professional · asks follow-ups', round: (a, b) => `Round ${a}/${b}`,
-    answerPh: 'Type your answer… (Enter to send · Shift+Enter for a new line)', endBtn: '📊 Finish and generate the assessment →',
+    answerPh: 'Type your answer… (Enter to send · Shift+Enter for a new line)', endBtn: 'Finish and generate the assessment →',
     discTitle: 'Disclaimer:', discStrong: 'This assessment is based on general patterns in public admissions data and AI analysis. It is not official, does not guarantee admission, and is only for planning your application.',
     discRest: 'Real decisions depend on essays, recommendation letters, interview performance and that year’s competition, which AI cannot assess and which can matter more than grades. Read the probability as a rough range, not a precise number.',
     generating: 'Writing…', generatingReport: 'Writing your assessment…', reset: '↩ New assessment', rangeNote: 'Rough estimate · not official data · for planning only',
@@ -981,9 +978,9 @@ const IV_T = {
     gaokao: 'Gaokao', other: 'Other',
   },
   ja: {
-    title: '🎓 ビジネススクール模擬面接 & 合格評価', subtitle: '厳格なAI面接官 · 合格可能性の目安（概算）',
+    title: 'ビジネススクール模擬面接 & 合格評価', subtitle: '厳格なAI面接官 · 合格可能性の目安（概算）',
     steps: ['経歴を入力', '模擬面接', '評価レポート'],
-    intro: '🎓 経歴を入力すると、AI面接官がそれに基づいて掘り下げた質問をします。成績は必須、課外活動は任意ですが、入力するとより正確に評価できます。',
+    intro: '経歴を入力すると、AI面接官がそれに基づいて掘り下げた質問をします。成績は必須、課外活動は任意ですが、入力するとより正確に評価できます。',
     school: '志望校 *', schoolPh: '学校名（例：Harvard Business School）', programme: '出願プログラム',
     gpa: 'GPA / 成績 *', gpaPh: '例：3.8/4.0 · A*AA · 40/45', gpaHint: 'どの評価方式でも可',
     test: '標準テスト', scorePh: 'スコア',
@@ -991,7 +988,7 @@ const IV_T = {
     activities: '課外活動・経験（任意・入力を強く推奨）', activitiesPh: '例：\n• ビジネスプランコンテスト 全国3位、市場分析を担当\n• 生徒会会計、年間予算5000ドルを管理\n• 3か月のインターン、財務報告の作成を補助', activitiesHint: 'AI面接官はここを深く質問します',
     ivLang: '面接の言語：', start: '模擬面接を始める →',
     interviewer: (s) => `${s} 入試面接官`, persona: '厳格だが丁寧 · 詳しく掘り下げます', round: (a, b) => `${a}/${b} ラウンド`,
-    answerPh: '回答を入力…（Enterで送信 · Shift+Enterで改行）', endBtn: '📊 面接を終えて評価レポートを作成 →',
+    answerPh: '回答を入力…（Enterで送信 · Shift+Enterで改行）', endBtn: '面接を終えて評価レポートを作成 →',
     discTitle: '免責事項：', discStrong: 'この評価は公開された入試データの一般的な傾向とAI分析に基づくもので、公式見解ではなく、合格を保証するものでもありません。出願戦略の参考としてご利用ください。',
     discRest: '実際の合否は、エッセイ、推薦状、面接の出来、その年の競争状況など、AIでは評価できない要素に左右され、成績以上に影響することもあります。確率は正確な数値ではなく、おおよその幅として捉えてください。',
     generating: '作成中…', generatingReport: '評価レポートを作成しています…', reset: '↩ もう一度評価する', rangeNote: '概算 · 非公式データ · 参考用',
@@ -999,9 +996,9 @@ const IV_T = {
     gaokao: '高考（中国）', other: 'その他',
   },
   ko: {
-    title: '🎓 경영대학 모의 면접 & 합격 평가', subtitle: '엄격한 AI 면접관 · 합격 가능성 참고(대략적 추정)',
+    title: '경영대학 모의 면접 & 합격 평가', subtitle: '엄격한 AI 면접관 · 합격 가능성 참고(대략적 추정)',
     steps: ['배경 입력', '모의 면접', '평가 보고서'],
-    intro: '🎓 배경 정보를 입력하면 AI 면접관이 이를 바탕으로 심층 질문을 합니다. 성적은 필수이며, 과외 활동은 선택이지만 입력하면 더 정확한 평가를 받을 수 있습니다.',
+    intro: '배경 정보를 입력하면 AI 면접관이 이를 바탕으로 심층 질문을 합니다. 성적은 필수이며, 과외 활동은 선택이지만 입력하면 더 정확한 평가를 받을 수 있습니다.',
     school: '목표 학교 *', schoolPh: '학교 이름 (예: Harvard Business School)', programme: '지원 프로그램',
     gpa: 'GPA / 성적 *', gpaPh: '예: 3.8/4.0 · A*AA · 40/45', gpaHint: '어떤 평가 체계든 가능',
     test: '표준화 시험', scorePh: '점수',
@@ -1009,7 +1006,7 @@ const IV_T = {
     activities: '과외 활동 및 경험 (선택, 입력 강력 권장)', activitiesPh: '예:\n• 비즈니스 플랜 대회 전국 3위, 시장 분석 담당\n• 학생회 재무, 연간 예산 5,000달러 관리\n• 3개월 인턴십, 재무 보고서 작성 지원', activitiesHint: 'AI 면접관이 이 내용을 깊이 질문합니다',
     ivLang: '면접 언어:', start: '모의 면접 시작 →',
     interviewer: (s) => `${s} 입학 면접관`, persona: '엄격하지만 전문적 · 세부 사항을 묻습니다', round: (a, b) => `${a}/${b} 라운드`,
-    answerPh: '답변 입력… (Enter 전송 · Shift+Enter 줄바꿈)', endBtn: '📊 면접 종료 후 평가 보고서 생성 →',
+    answerPh: '답변 입력… (Enter 전송 · Shift+Enter 줄바꿈)', endBtn: '면접 종료 후 평가 보고서 생성 →',
     discTitle: '면책 조항:', discStrong: '이 평가는 공개된 입학 데이터의 일반적인 경향과 AI 분석에 기반하며, 공식 입장이 아니고 합격을 보장하지 않습니다. 지원 전략 참고용입니다.',
     discRest: '실제 합격 여부는 에세이, 추천서, 면접 성과, 해당 연도 경쟁 등 AI가 평가할 수 없는 요소에 좌우되며 성적보다 더 큰 영향을 줄 수 있습니다. 확률은 정확한 수치가 아닌 대략적인 범위로 이해해 주세요.',
     generating: '작성 중…', generatingReport: '평가 보고서를 작성하는 중…', reset: '↩ 다시 평가하기', rangeNote: '대략적 추정 · 비공식 데이터 · 참고용',
@@ -1017,9 +1014,9 @@ const IV_T = {
     gaokao: '가오카오(중국)', other: '기타',
   },
   fr: {
-    title: "🎓 Entretien blanc d'école de commerce & évaluation d'admission", subtitle: "Un examinateur IA exigeant · estimation approximative des chances d'admission",
+    title: "Entretien blanc d'école de commerce & évaluation d'admission", subtitle: "Un examinateur IA exigeant · estimation approximative des chances d'admission",
     steps: ['Votre profil', 'Entretien blanc', 'Évaluation'],
-    intro: "🎓 Renseignez votre profil : l'examinateur IA vous posera des questions de suivi précises. Les notes sont obligatoires ; les activités sont facultatives mais rendent l'évaluation plus précise.",
+    intro: "Renseignez votre profil : l'examinateur IA vous posera des questions de suivi précises. Les notes sont obligatoires ; les activités sont facultatives mais rendent l'évaluation plus précise.",
     school: 'École visée *', schoolPh: "Nom de l'école (ex. Harvard Business School)", programme: 'Programme',
     gpa: 'GPA / notes *', gpaPh: 'ex. 3.8/4.0 · A*AA · 40/45', gpaHint: 'Tous les systèmes de notation sont acceptés',
     test: 'Test standardisé', scorePh: 'Score',
@@ -1027,7 +1024,7 @@ const IV_T = {
     activities: 'Activités et expériences (facultatif, fortement conseillé)', activitiesPh: "Exemple :\n• Concours de business plan, 3e national, responsable de l'étude de marché\n• Trésorier du conseil des élèves, budget annuel de 5 000 $\n• Stage de 3 mois, aide à la préparation de rapports financiers", activitiesHint: "L'examinateur vous interrogera en détail sur ce point",
     ivLang: "Langue de l'entretien :", start: "Commencer l'entretien →",
     interviewer: (s) => `Jury d'admission, ${s}`, persona: 'Exigeant mais professionnel · pose des questions de suivi', round: (a, b) => `Tour ${a}/${b}`,
-    answerPh: 'Votre réponse… (Entrée pour envoyer · Maj+Entrée pour aller à la ligne)', endBtn: "📊 Terminer et générer l'évaluation →",
+    answerPh: 'Votre réponse… (Entrée pour envoyer · Maj+Entrée pour aller à la ligne)', endBtn: "Terminer et générer l'évaluation →",
     discTitle: 'Avertissement :', discStrong: "Cette évaluation repose sur les tendances générales des données d'admission publiques et sur une analyse par IA. Elle n'est pas officielle, ne garantit pas l'admission et sert uniquement à préparer votre candidature.",
     discRest: "La décision réelle dépend des essais, des lettres de recommandation, de l'entretien et de la concurrence de l'année, que l'IA ne peut pas évaluer et qui peuvent peser plus que les notes. Lisez la probabilité comme une fourchette approximative, pas comme un chiffre précis.",
     generating: 'Rédaction…', generatingReport: 'Rédaction de votre évaluation…', reset: '↩ Nouvelle évaluation', rangeNote: 'Estimation approximative · données non officielles · à titre indicatif',
@@ -1116,7 +1113,7 @@ function RenderReport({ text, t }) {
           return (
             <div key={i} style={{
               background: `${AMBER}12`, border: `1px solid ${AMBER}35`,
-              borderRadius: 8, padding: '10px 14px',
+              borderRadius: 6, padding: '10px 14px',
               fontSize: 12, color: `${AMBER}dd`, lineHeight: 1.65, margin: '6px 0',
             }}>
               <MdLine text={line} />
@@ -1140,7 +1137,7 @@ function RenderReport({ text, t }) {
           return (
             <div key={i} style={{
               background: `${AMBER}18`, border: `1px solid ${AMBER}44`,
-              borderRadius: 10, padding: '14px 18px', margin: '8px 0',
+              borderRadius: 6, padding: '14px 18px', margin: '8px 0',
               fontSize: 18, fontWeight: 800, color: AMBER, letterSpacing: '0.5px',
             }}>
               <MdLine text={line} />
@@ -1175,7 +1172,7 @@ function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, 
           rows={rows}
           style={{
             background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+            borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
             fontSize: 13, outline: 'none', resize: 'vertical', fontFamily: 'inherit',
           }}
           onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1188,7 +1185,7 @@ function IvInput({ label, value, onChange, placeholder, as = 'input', rows = 3, 
           placeholder={placeholder}
           style={{
             background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+            borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
             fontSize: 13, outline: 'none',
           }}
           onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1209,7 +1206,7 @@ function IvSelect({ label, value, onChange, options, labelOf = (o) => o }) {
         onChange={e => onChange(e.target.value)}
         style={{
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-          borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+          borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
           fontSize: 13, outline: 'none', cursor: 'pointer',
         }}
         onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1241,7 +1238,7 @@ function SchoolInput({ value, onChange, unis, t }) {
         placeholder={t.schoolPh}
         style={{
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-          borderRadius: 8, color: 'var(--text-primary)', padding: '8px 12px',
+          borderRadius: 6, color: 'var(--text-primary)', padding: '8px 12px',
           fontSize: 13, outline: 'none',
         }}
         onFocus={e => { e.target.style.borderColor = BLUE }}
@@ -1251,7 +1248,7 @@ function SchoolInput({ value, onChange, unis, t }) {
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,
           background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-          borderRadius: 8, boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          borderRadius: 6, boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
           overflow: 'hidden', marginTop: 4,
         }}>
           {suggestions.map(u => (
@@ -1285,7 +1282,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{
         background: `${BLUE}10`, border: `1px solid ${BLUE}30`,
-        borderRadius: 10, padding: '12px 16px',
+        borderRadius: 6, padding: '12px 16px',
         fontSize: 12, color: `${BLUE}cc`, lineHeight: 1.65,
       }}>
         {t.intro}
@@ -1319,7 +1316,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
               onChange={e => set('test_type')(e.target.value)}
               style={{
                 background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 10px',
+                borderRadius: 6, color: 'var(--text-primary)', padding: '8px 10px',
                 fontSize: 13, outline: 'none', cursor: 'pointer', width: 90,
               }}
             >
@@ -1331,7 +1328,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
               placeholder={t.scorePh}
               style={{
                 flex: 1, background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-                borderRadius: 8, color: 'var(--text-primary)', padding: '8px 10px', fontSize: 13, outline: 'none',
+                borderRadius: 6, color: 'var(--text-primary)', padding: '8px 10px', fontSize: 13, outline: 'none',
               }}
             />
           </div>
@@ -1363,7 +1360,7 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
             key={val}
             onClick={() => set('lang')(val)}
             style={{
-              padding: '5px 14px', borderRadius: 20,
+              padding: '5px 14px', borderRadius: 8,
               border: `1px solid ${profile.lang === val ? BLUE : 'var(--border-primary)'}`,
               background: profile.lang === val ? `${BLUE}22` : 'transparent',
               color: profile.lang === val ? BLUE : 'var(--text-muted)',
@@ -1380,9 +1377,9 @@ function ProfileForm({ unis, profile, setProfile, onStart, t }) {
         onClick={onStart}
         disabled={!canStart}
         style={{
-          padding: '12px 0', borderRadius: 10, border: 'none',
+          padding: '12px 0', borderRadius: 6, border: 'none',
           background: canStart
-            ? `linear-gradient(135deg, ${BLUE}, ${PURPLE})`
+            ? `${BLUE}`
             : 'var(--border-primary)',
           color: canStart ? '#fff' : 'var(--text-muted)',
           fontSize: 14, fontWeight: 700, cursor: canStart ? 'pointer' : 'not-allowed',
@@ -1448,7 +1445,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
   }
   const bubbleUser = {
     maxWidth: '80%',
-    background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.27)',
+    background: 'rgba(127,119,194,0.1)', border: '1px solid rgba(127,119,194,0.27)',
     borderRadius: '14px 4px 14px 14px', padding: '10px 14px',
     fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap',
   }
@@ -1462,15 +1459,15 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
       {/* Interviewer persona header */}
       <div style={{
         padding: '10px 16px', marginBottom: 8, flexShrink: 0,
-        background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10,
+        background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 6,
         display: 'flex', alignItems: 'center', gap: 12,
       }}>
         <div style={{
-          width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-          background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
+          width: 36, height: 36, borderRadius: 6, flexShrink: 0,
+          background: `${BLUE}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 16,
-        }}>🎓</div>
+        }}><Icon name="tutor" size={16} /></div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
             {t.interviewer(profile.school)}
@@ -1497,10 +1494,10 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
           }}>
             <div style={{
               ...avatarBase,
-              background: m.role === 'user' ? 'rgba(139,92,246,0.2)' : `${BLUE}22`,
-              border: `1px solid ${m.role === 'user' ? 'rgba(139,92,246,0.4)' : `${BLUE}44`}`,
+              background: m.role === 'user' ? 'rgba(127,119,194,0.2)' : `${BLUE}22`,
+              border: `1px solid ${m.role === 'user' ? 'rgba(127,119,194,0.4)' : `${BLUE}44`}`,
             }}>
-              {m.role === 'user' ? '👤' : '🎓'}
+              <Icon name={m.role === 'user' ? 'user' : 'tutor'} size={15} />
             </div>
             <div style={m.role === 'assistant' ? bubbleAI : bubbleUser}>
               {m.content}
@@ -1509,7 +1506,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
         ))}
         {streaming && (
           <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}>🎓</div>
+            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}><Icon name="tutor" size={16} /></div>
             <div style={{ ...bubbleAI }}>
               {streaming}
               <span style={{ display: 'inline-block', width: 8, height: 14, background: BLUE,
@@ -1519,14 +1516,14 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
         )}
         {isBusy && !streaming && (
           <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}>🎓</div>
+            <div style={{ ...avatarBase, background: `${BLUE}22`, border: `1px solid ${BLUE}44` }}><Icon name="tutor" size={16} /></div>
             <div style={{ ...bubbleAI, opacity: 0.5 }}>…</div>
           </div>
         )}
         {error && (
           <div style={{ fontSize: 12, color: '#f87171', padding: '8px 12px',
-            background: 'rgba(248,113,113,0.1)', borderRadius: 8 }}>
-            ⚠️ {error}
+            background: 'rgba(248,113,113,0.1)', borderRadius: 6 }}>
+            {error}
           </div>
         )}
         <div ref={chatEndRef} />
@@ -1544,7 +1541,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
             rows={2}
             style={{
               flex: 1, background: 'var(--bg-tertiary)', border: `1px solid ${BLUE}55`,
-              borderRadius: 10, color: 'var(--text-primary)', padding: '10px 14px',
+              borderRadius: 6, color: 'var(--text-primary)', padding: '10px 14px',
               fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit',
               opacity: isBusy ? 0.5 : 1,
             }}
@@ -1553,7 +1550,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
             onClick={handleSend}
             disabled={isBusy || !userInput.trim()}
             style={{
-              width: 44, borderRadius: 10, border: 'none', flexShrink: 0,
+              width: 44, borderRadius: 6, border: 'none', flexShrink: 0,
               background: (isBusy || !userInput.trim()) ? 'var(--border-primary)' : BLUE,
               color: '#fff', cursor: (isBusy || !userInput.trim()) ? 'not-allowed' : 'pointer',
               fontSize: 18, transition: 'background 0.15s',
@@ -1565,8 +1562,8 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
           <button
             onClick={onGenerateReport}
             style={{
-              padding: '10px 0', borderRadius: 10, border: 'none',
-              background: `linear-gradient(135deg, ${GREEN}, ${BLUE})`,
+              padding: '10px 0', borderRadius: 6, border: 'none',
+              background: `${GREEN}`,
               color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
               transition: 'opacity 0.15s',
             }}
@@ -1604,17 +1601,17 @@ function ReportView({ profile, chatHistory, onReset, t }) {
       {/* Disclaimer banner */}
       <div style={{
         background: `${AMBER}12`, border: `1px solid ${AMBER}40`,
-        borderRadius: 10, padding: '12px 16px',
+        borderRadius: 6, padding: '12px 16px',
         fontSize: 12, color: `${AMBER}cc`, lineHeight: 1.65,
       }}>
-        ⚠️ <strong>{t.discTitle}</strong> <strong>{t.discStrong}</strong> {t.discRest}
+        <strong>{t.discTitle}</strong> <strong>{t.discStrong}</strong> {t.discRest}
       </div>
 
       {/* Report body */}
       {report ? (
         <div style={{
           background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
-          borderRadius: 12, padding: '16px 20px',
+          borderRadius: 8, padding: '16px 20px',
         }}>
           <RenderReport text={report} t={t} />
           {!isReady && (
@@ -1637,8 +1634,8 @@ function ReportView({ profile, chatHistory, onReset, t }) {
 
       {error && (
         <div style={{ color: '#f87171', fontSize: 13, padding: '12px 16px',
-          background: 'rgba(248,113,113,0.1)', borderRadius: 8 }}>
-          ⚠️ {error}
+          background: 'rgba(248,113,113,0.1)', borderRadius: 6 }}>
+          {error}
         </div>
       )}
 
@@ -1646,7 +1643,7 @@ function ReportView({ profile, chatHistory, onReset, t }) {
         <button
           onClick={onReset}
           style={{
-            padding: '10px 0', borderRadius: 10, border: `1px solid var(--border-primary)`,
+            padding: '10px 0', borderRadius: 6, border: `1px solid var(--border-primary)`,
             background: 'transparent', color: 'var(--text-muted)',
             fontSize: 13, cursor: 'pointer', transition: 'all 0.15s', marginTop: 4,
           }}
@@ -1688,16 +1685,16 @@ function InterviewModal({ unis, lang, onClose }) {
         position: 'fixed', inset: 0, zIndex: 9100,
         background: 'rgba(0,0,0,0.8)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 16, backdropFilter: 'blur(6px)',
+        padding: 16,
       }}
     >
       <div style={{
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 18, width: '100%', maxWidth: 680,
+        borderRadius: 8, width: '100%', maxWidth: 680,
         maxHeight: '92vh',
         display: 'flex', flexDirection: 'column',
-        boxShadow: `0 24px 80px rgba(0,0,0,0.7), 0 0 40px ${PURPLE}18`,
+        boxShadow: 'var(--shadow-pop)',
         animation: 'bfsPageFadeIn 0.18s ease both',
       }}>
 
@@ -1719,7 +1716,7 @@ function InterviewModal({ unis, lang, onClose }) {
               onClick={onClose}
               style={{
                 background: 'none', border: '1px solid var(--border-primary)',
-                color: 'var(--text-muted)', borderRadius: 8,
+                color: 'var(--text-muted)', borderRadius: 6,
                 width: 32, height: 32, cursor: 'pointer', fontSize: 18,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
@@ -1805,22 +1802,18 @@ function InterviewEntryCard({ onOpen }) {
       onMouseLeave={() => setHov(false)}
       style={{
         marginBottom: 24,
-        background: hov
-          ? `linear-gradient(135deg, ${PURPLE}22, ${BLUE}18)`
-          : `linear-gradient(135deg, ${PURPLE}14, ${BLUE}10)`,
-        border: `1px solid ${hov ? PURPLE + '66' : PURPLE + '33'}`,
-        borderRadius: 14, padding: '18px 24px',
-        cursor: 'pointer', transition: 'all 0.18s',
-        boxShadow: hov ? `0 4px 24px ${PURPLE}25` : 'none',
+        background: hov ? 'var(--bg-hover)' : 'var(--bg-secondary)',
+        border: `1px solid ${hov ? 'var(--border-glow)' : 'var(--border-primary)'}`,
+        borderRadius: 8, padding: '16px 20px',
+        cursor: 'pointer',
         display: 'flex', alignItems: 'center', gap: 18,
       }}
     >
       <div style={{
-        width: 48, height: 48, borderRadius: 12, flexShrink: 0,
-        background: `linear-gradient(135deg, ${PURPLE}, ${BLUE})`,
+        width: 40, height: 40, borderRadius: 6, flexShrink: 0,
+        background: 'var(--bg-tertiary)', color: 'var(--text-secondary)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 22,
-      }}>🎓</div>
+      }}><Icon name="tutor" size={22} /></div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>
           {tx('商学院模拟面试 & 录取概率评估', 'Business School Mock Interview & Admission Assessment')}
@@ -1873,15 +1866,10 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
       style={{
         position: 'relative',
         background: 'var(--bg-secondary)',
-        border: `1px solid ${isCompared ? BLUE + '66' : hovered ? BLUE + '44' : 'var(--border-primary)'}`,
-        borderRadius: 14,
+        border: `1px solid ${isCompared ? BLUE : hovered ? 'var(--border-glow)' : 'var(--border-primary)'}`,
+        borderRadius: 8,
         padding: '44px 16px 16px',
         cursor: 'pointer',
-        transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.15s',
-        boxShadow: isCompared
-          ? `0 0 28px rgba(14,165,233,0.2), 0 4px 20px rgba(0,0,0,0.3)`
-          : hovered ? `0 0 28px rgba(14,165,233,0.12), 0 4px 20px rgba(0,0,0,0.3)` : '0 2px 8px rgba(0,0,0,0.2)',
-        transform: hovered ? 'translateY(-2px)' : 'none',
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
@@ -1898,7 +1886,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
           onClick={e => { e.stopPropagation(); onToggleCompare(uni.id) }}
           style={{
             position: 'absolute', top: 12, right: 12,
-            width: 24, height: 24, borderRadius: 6,
+            width: 24, height: 24, borderRadius: 4,
             border: `1px solid ${isCompared ? BLUE + '99' : 'var(--border-primary)'}`,
             background: isCompared ? `${BLUE}25` : 'transparent',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -2035,7 +2023,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
   const aboveOverall = data ? data.entries.filter(e => e.rank_num <= 50 && (!e.overall_num || e.overall_num - e.rank_num >= 10)).length : 0
 
   const pill = (active) => ({
-    padding: '5px 12px', borderRadius: 20,
+    padding: '5px 12px', borderRadius: 8,
     border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
     background: active ? `${BLUE}22` : 'transparent',
     color: active ? BLUE : 'var(--text-secondary)',
@@ -2054,7 +2042,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
       <div style={{
         display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap',
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-        borderRadius: 14, padding: '16px 18px', marginBottom: 16,
+        borderRadius: 8, padding: '16px 18px', marginBottom: 16,
       }}>
         <div style={{ flex: '1 1 420px', minWidth: 0 }}>
           <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>
@@ -2100,7 +2088,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
           <span role="columnheader" className="bm-col-gap">{tx('对比综合', 'vs overall')}</span>
         </div>
         {!data ? (
-          Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 52, margin: '6px 0', borderRadius: 8 }} />)
+          Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 52, margin: '6px 0', borderRadius: 6 }} />)
         ) : rows.slice(0, limit).map(e => {
           const profile = e.school_ids.map(id => byId[id]).filter(Boolean)
           const main = profile[0]
@@ -2134,7 +2122,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
         <button
           onClick={() => setLimit(l => l + BM_PAGE)}
           style={{
-            display: 'block', width: '100%', marginTop: 10, padding: '11px 0', borderRadius: 10,
+            display: 'block', width: '100%', marginTop: 10, padding: '11px 0', borderRadius: 6,
             border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)',
             color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer',
           }}
@@ -2154,7 +2142,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
       )}
 
       <style>{`
-        .bm-table { border: 1px solid var(--border-primary); border-radius: 14px; overflow: hidden; background: var(--bg-secondary); }
+        .bm-table { border: 1px solid var(--border-primary); border-radius: 8px; overflow: hidden; background: var(--bg-secondary); }
         .bm-row { display: grid; grid-template-columns: 64px minmax(0,1fr) 110px 130px; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid var(--border-primary); }
         .bm-head { border-top: none; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 12px; padding-bottom: 8px; }
         .bm-link { cursor: pointer; transition: background 0.15s; }
@@ -2168,7 +2156,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
           .bm-link:hover .bm-more, .bm-link:focus-visible .bm-more { display: inline; }
         }
         .bm-overall { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-        .bm-gap { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; border: 1px solid; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .bm-gap { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; border: 1px solid; white-space: nowrap; font-variant-numeric: tabular-nums; }
         @media (max-width: 640px) {
           .bm-row { grid-template-columns: 44px minmax(0,1fr) auto; padding: 10px 12px; }
           .bm-col-overall { display: none; }
@@ -2183,24 +2171,10 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
 function Hero({ stats }) {
   return (
     <div style={{
-      textAlign: 'center',
-      padding: '40px 0 32px',
-      position: 'relative',
+      padding: '28px 0 24px',
     }}>
-      {/* Background glow */}
       <div style={{
-        position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-        width: 500, height: 200,
-        background: `radial-gradient(ellipse, rgba(14,165,233,0.08) 0%, transparent 70%)`,
-        pointerEvents: 'none',
-      }} />
-
-      <div style={{
-        display: 'inline-block',
-        fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
-        color: BLUE, textTransform: 'uppercase',
-        background: `${BLUE}15`, border: `1px solid ${BLUE}30`,
-        borderRadius: 20, padding: '4px 14px', marginBottom: 16,
+        fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 10,
       }}>
         {tx('QS 综合排名 2027 · QS 商科排名 2026', 'QS overall 2027 · QS business & management 2026')}
       </div>
@@ -2208,8 +2182,7 @@ function Hero({ stats }) {
       <h1 style={{
         fontSize: 'clamp(24px,4vw,38px)', fontWeight: 900,
         margin: '0 0 12px',
-        background: `linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%)`,
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        color: 'var(--text-primary)',
         lineHeight: 1.15,
       }}>
         {tx('全球顶尖商学院指南', 'Global Business School Guide')}
@@ -2221,17 +2194,16 @@ function Hero({ stats }) {
 
       {/* Stats row */}
       {stats && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 32, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 40, flexWrap: 'wrap' }}>
           {[
             { val: stats.total,     label: tx('所学校', 'Schools') },
             { val: stats.countries, label: tx('个国家/地区', 'Countries') },
             { val: stats.undergrad, label: tx('所学校含本科申请要求', 'with undergrad entry data') },
           ].map(({ val, label }) => (
-            <div key={label} style={{ textAlign: 'center' }}>
+            <div key={label}>
               <div className="serif-num" style={{
                 fontSize: 32,
-                background: `linear-gradient(135deg, ${BLUE}, ${PURPLE})`,
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                color: 'var(--text-primary)',
               }}>
                 {val}
               </div>
@@ -2250,7 +2222,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
   const hasFilters = filters.region || filters.language || filters.specialty || filters.search || filters.ug
 
   const pill = (active) => ({
-    padding: '5px 14px', borderRadius: 20,
+    padding: '5px 14px', borderRadius: 8,
     border: `1px solid ${active ? BLUE : 'var(--border-primary)'}`,
     background: active ? `${BLUE}22` : 'transparent',
     color: active ? BLUE : 'var(--text-muted)',
@@ -2261,9 +2233,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
   return (
     <div style={{
       position: 'sticky', top: 54, zIndex: 99,
-      background: 'var(--nav-bg, rgba(2,8,19,0.9))',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
+      background: 'var(--bg-primary)',
       borderBottom: '1px solid var(--border-primary)',
       padding: '12px 0',
       marginBottom: 24,
@@ -2272,14 +2242,14 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
         {/* Search */}
         <div style={{ position: 'relative', flexShrink: 0 }}>
           <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 13, pointerEvents: 'none' }}>
-            🔍
+            <Icon name="search" size={14} />
           </span>
           <input
             value={filters.search}
             onChange={e => onChange({ ...filters, search: e.target.value })}
             placeholder={tx('搜索学校（中英文）...', 'Search schools...')}
             style={{
-              background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
+              background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 6,
               color: 'var(--text-primary)', padding: '7px 12px 7px 32px', fontSize: 13,
               outline: 'none', width: 180,
             }}
@@ -2303,7 +2273,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
 
         {/* Schools with verified undergraduate entry data */}
         <button onClick={() => onChange({ ...filters, ug: !filters.ug })} style={pill(filters.ug)} aria-pressed={!!filters.ug}>
-          🎓 {tx('有本科申请数据', 'Undergrad entry data')}
+          {tx('有本科申请数据', 'Undergrad entry data')}
         </button>
 
         {/* Language */}
@@ -2326,7 +2296,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           onChange={e => onChange({ ...filters, specialty: e.target.value })}
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, color: filters.specialty ? 'var(--text-primary)' : 'var(--text-muted)',
+            borderRadius: 6, color: filters.specialty ? 'var(--text-primary)' : 'var(--text-muted)',
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
@@ -2341,7 +2311,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
           onChange={e => onChange({ ...filters, sort: e.target.value })}
           style={{
             background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-            borderRadius: 8, color: 'var(--text-muted)',
+            borderRadius: 6, color: 'var(--text-muted)',
             padding: '7px 12px', fontSize: 12, outline: 'none', cursor: 'pointer',
           }}
         >
@@ -2361,7 +2331,7 @@ function StickyFilters({ lang, filters, onChange, totalCount, shownCount }) {
             <button
               onClick={() => onChange({ region: '', language: '', specialty: '', search: '', sort: filters.sort, ug: false })}
               style={{
-                padding: '4px 12px', borderRadius: 20, border: `1px solid var(--border-primary)`,
+                padding: '4px 12px', borderRadius: 8, border: `1px solid var(--border-primary)`,
                 background: 'transparent', color: 'var(--text-muted)',
                 fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s',
               }}
@@ -2476,7 +2446,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         {/* View switch: school directory vs business-school leaderboard */}
         <div role="tablist" style={{
           display: 'flex', gap: 4, padding: 4, marginBottom: 18, width: 'fit-content', maxWidth: '100%',
-          background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12,
+          background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8,
         }}>
           {[
             { key: 'schools',  label: t ? `院校库 · ${allUnis.length || ''}` : (txf('directory', allUnis.length || '') ?? `School directory · ${allUnis.length || ''}`) },
@@ -2488,9 +2458,9 @@ export default function UniversitiesPage({ lang = 'zh' }) {
               aria-selected={view === v.key}
               onClick={() => setView(v.key)}
               style={{
-                padding: '8px 16px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: 700, flex: '1 1 auto', minWidth: 0, lineHeight: 1.3,
-                background: view === v.key ? `linear-gradient(135deg, ${BLUE}, ${PURPLE})` : 'transparent',
+                background: view === v.key ? `${BLUE}` : 'transparent',
                 color: view === v.key ? '#fff' : 'var(--text-secondary)',
               }}
             >

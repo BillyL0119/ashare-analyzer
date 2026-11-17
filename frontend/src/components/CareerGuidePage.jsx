@@ -9,6 +9,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import useThemeStore from '../store/themeStore'
 import { CareersView, FirmsView } from './career/CareerViews'
 import { FIRMS } from './career/firms'
+import Icon from './Icon'
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
@@ -228,13 +229,13 @@ const QUESTIONS = [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const ACCENT = '#0ea5e9'
-const PURPLE = '#8b5cf6'
+const ACCENT = '#4588cc'
+const PURPLE = '#7f77c2'
 
 const cardStyle = {
   background: 'var(--bg-secondary)',
   border: '1px solid var(--border-primary)',
-  borderRadius: 10,
+  borderRadius: 6,
   padding: '16px 18px',
 }
 
@@ -242,7 +243,7 @@ const cardStyle = {
 
 const TYPE_LABELS_ZH = { technical: '技术面试', behavioral: '行为面试', case: '案例分析' }
 const TYPE_LABELS_EN = { technical: 'Technical', behavioral: 'Behavioral', case: 'Case Analysis' }
-const TYPE_COLORS = { technical: '#0ea5e9', behavioral: '#8b5cf6', case: '#26a69a' }
+const TYPE_COLORS = { technical: '#4588cc', behavioral: '#7f77c2', case: '#26a69a' }
 
 function QuestionCard({ q, zh }) {
   const [showFramework, setShowFramework] = useState(false)
@@ -269,9 +270,9 @@ function QuestionCard({ q, zh }) {
         onClick={() => setShowFramework(v => !v)}
         style={{
           alignSelf: 'flex-start',
-          padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer',
+          padding: '4px 10px', borderRadius: 4, border: 'none', cursor: 'pointer',
           fontSize: 11, fontWeight: 600,
-          background: showFramework ? 'rgba(14,165,233,0.15)' : 'var(--bg-tertiary)',
+          background: showFramework ? 'rgba(69,136,204,0.15)' : 'var(--bg-tertiary)',
           color: showFramework ? ACCENT : 'var(--text-muted)',
           transition: 'all 0.15s',
         }}
@@ -283,9 +284,9 @@ function QuestionCard({ q, zh }) {
 
       {showFramework && (
         <div style={{
-          background: 'rgba(14,165,233,0.04)',
-          border: '1px solid rgba(14,165,233,0.2)',
-          borderRadius: 6, padding: '10px 12px',
+          background: 'rgba(69,136,204,0.04)',
+          border: '1px solid rgba(69,136,204,0.2)',
+          borderRadius: 4, padding: '10px 12px',
           fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.75,
         }}>
           {(zh ? q.framework : q.frameworkEn).split('；').map((part, i, arr) => (
@@ -308,9 +309,9 @@ function QuestionBank({ zh }) {
   })
 
   const filterBtnStyle = (active) => ({
-    padding: '4px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
+    padding: '4px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
     fontSize: 11, fontWeight: active ? 600 : 400,
-    background: active ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'var(--bg-tertiary)',
+    background: active ? '#4588cc' : 'var(--bg-tertiary)',
     color: active ? '#fff' : 'var(--text-muted)',
     transition: 'all 0.15s',
   })
@@ -404,25 +405,25 @@ function ChatBubble({ role: msgRole, content, streaming }) {
         width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 14,
-        background: isUser ? 'rgba(139,92,246,0.2)' : 'rgba(14,165,233,0.2)',
-        border: `1px solid ${isUser ? '#8b5cf6' : ACCENT}44`,
+        background: isUser ? 'rgba(127,119,194,0.2)' : 'rgba(69,136,204,0.2)',
+        border: `1px solid ${isUser ? '#7f77c2' : ACCENT}44`,
       }}>
-        {isUser ? '👤' : '🎯'}
+        <Icon name={isUser ? 'user' : 'briefcase'} size={14} />
       </div>
       <div style={{
         maxWidth: '80%',
-        background: isUser ? 'rgba(139,92,246,0.1)' : 'rgba(14,165,233,0.07)',
+        background: isUser ? 'rgba(127,119,194,0.1)' : 'rgba(69,136,204,0.07)',
         border: `1px solid ${isUser ? '#8b5cf688' : `${ACCENT}44`}`,
-        borderRadius: 8, padding: '10px 14px',
+        borderRadius: 6, padding: '10px 14px',
         color: 'var(--text-primary)',
       }}>
         {renderText(preText)}
         {feedbackText && (
           <div style={{
             marginTop: 12,
-            background: 'rgba(14,165,233,0.08)',
+            background: 'rgba(69,136,204,0.08)',
             border: `1px solid ${ACCENT}55`,
-            borderRadius: 6, padding: '10px 12px',
+            borderRadius: 4, padding: '10px 12px',
           }}>
             <div style={{ fontSize: 11, color: ACCENT, fontWeight: 700, marginBottom: 6 }}>
               面试反馈
@@ -560,10 +561,10 @@ function MockInterview({ zh, lang }) {
                   key={opt.value}
                   onClick={() => setSelectedRole(opt.value)}
                   style={{
-                    padding: '5px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                    padding: '5px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
                     fontSize: 12, fontWeight: selectedRole === opt.value ? 600 : 400,
                     background: selectedRole === opt.value
-                      ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)'
+                      ? '#4588cc'
                       : 'var(--bg-hover)',
                     color: selectedRole === opt.value ? '#fff' : 'var(--text-secondary)',
                     transition: 'all 0.15s',
@@ -585,10 +586,10 @@ function MockInterview({ zh, lang }) {
                   key={opt.value}
                   onClick={() => setSelectedType(opt.value)}
                   style={{
-                    padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                    padding: '5px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
                     fontSize: 12, fontWeight: selectedType === opt.value ? 600 : 400,
                     background: selectedType === opt.value
-                      ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)'
+                      ? '#4588cc'
                       : 'var(--bg-hover)',
                     color: selectedType === opt.value ? '#fff' : 'var(--text-secondary)',
                     transition: 'all 0.15s',
@@ -606,10 +607,10 @@ function MockInterview({ zh, lang }) {
             style={{
               padding: '11px 0',
               background: selectedRole && selectedType
-                ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'
+                ? '#4588cc'
                 : 'var(--bg-hover)',
               color: selectedRole && selectedType ? '#fff' : 'var(--text-muted)',
-              border: 'none', borderRadius: 8, cursor: selectedRole && selectedType ? 'pointer' : 'not-allowed',
+              border: 'none', borderRadius: 6, cursor: selectedRole && selectedType ? 'pointer' : 'not-allowed',
               fontSize: 14, fontWeight: 600,
               transition: 'opacity 0.15s',
             }}
@@ -642,7 +643,7 @@ function MockInterview({ zh, lang }) {
         <button
           onClick={handleReset}
           style={{
-            padding: '4px 10px', borderRadius: 6, border: '1px solid var(--border-primary)',
+            padding: '4px 10px', borderRadius: 4, border: '1px solid var(--border-primary)',
             background: 'transparent', cursor: 'pointer',
             fontSize: 11, color: 'var(--text-muted)',
           }}
@@ -670,8 +671,8 @@ function MockInterview({ zh, lang }) {
           <ChatBubble role="assistant" content="" streaming={true} />
         )}
         {error && (
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', padding: '6px 10px', border: '1px solid var(--border-primary)', borderRadius: 5 }}>
-            ⚠ {error}
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', padding: '6px 10px', border: '1px solid var(--border-primary)', borderRadius: 4 }}>
+            {error}
           </div>
         )}
         <div ref={bottomRef} />
@@ -696,7 +697,7 @@ function MockInterview({ zh, lang }) {
               padding: '10px 12px',
               background: 'var(--bg-secondary)',
               border: '1px solid var(--border-primary)',
-              borderRadius: 6,
+              borderRadius: 4,
               color: 'var(--text-primary)',
               fontSize: 13,
               resize: 'none',
@@ -711,10 +712,10 @@ function MockInterview({ zh, lang }) {
             style={{
               padding: '0 18px',
               background: !streaming && input.trim()
-                ? 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)'
+                ? '#4588cc'
                 : 'var(--bg-tertiary)',
               color: !streaming && input.trim() ? '#fff' : 'var(--text-muted)',
-              border: 'none', borderRadius: 8,
+              border: 'none', borderRadius: 6,
               cursor: !streaming && input.trim() ? 'pointer' : 'not-allowed',
               fontSize: 13, fontWeight: 600, flexShrink: 0,
             }}
@@ -729,8 +730,8 @@ function MockInterview({ zh, lang }) {
           onClick={handleReset}
           style={{
             padding: '10px',
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)',
-            color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer',
+            background: '#4588cc',
+            color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer',
             fontSize: 13, fontWeight: 600,
           }}
         >
@@ -767,7 +768,7 @@ export default function CareerGuidePage({ lang }) {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 18 }}>
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#0ea5e9' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4588cc' }}>
             {zh ? '求职指南' : 'Career Guide'}
           </div>
           <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
@@ -803,7 +804,7 @@ export default function CareerGuidePage({ lang }) {
                 padding: '10px 16px', border: 'none', cursor: 'pointer', background: 'transparent', whiteSpace: 'nowrap',
                 fontSize: 14, fontWeight: on ? 700 : 500,
                 color: on ? 'var(--text-primary)' : 'var(--text-muted)',
-                borderBottom: `2px solid ${on ? '#0ea5e9' : 'transparent'}`, marginBottom: -1,
+                borderBottom: `2px solid ${on ? '#4588cc' : 'transparent'}`, marginBottom: -1,
                 transition: 'color 0.15s',
               }}
             >
@@ -825,7 +826,7 @@ export default function CareerGuidePage({ lang }) {
         padding: '10px 14px',
         background: 'var(--bg-primary)',
         border: '1px solid var(--border-primary)',
-        borderRadius: 6,
+        borderRadius: 4,
         fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.7,
       }}>
         {zh

@@ -16,11 +16,11 @@ export const SECTIONS = [
   { key: 'future',   items: ['universities', 'career'] },
 ]
 
-// Same pictures as the phone cards where a feature has one (🕰 📰 📐 🏛 🏫) and the header's 🎓 for the AI teacher
+// Line icon for each page (components/Icon.jsx)
 export const ICONS = {
-  analysis: '📈', screener: '🔎', heatmap: '🗺️', news: '🗞️', macro: '📅', bank_views: '🏦',
-  paper: '💵', time_machine: '🕰', study: '📚', cases: '📰', diagrams: '📐', governor: '🏛',
-  ai_teacher: '🎓', class: '🏫', universities: '🌍', career: '💼',
+  analysis: 'chart', screener: 'filter', heatmap: 'grid', news: 'news', macro: 'calendar', bank_views: 'quote',
+  paper: 'cash', time_machine: 'clock', study: 'book', cases: 'file', diagrams: 'curves', governor: 'landmark',
+  ai_teacher: 'tutor', class: 'users', universities: 'globe', career: 'briefcase',
 }
 
 // Each page keeps the name it already has in its own strings

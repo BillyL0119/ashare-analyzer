@@ -2,6 +2,7 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import classStrings from '../classes/classStrings'
 import Chevron from './Chevron'
+import Icon from '../Icon'
 import navStrings from './navStrings'
 import { ICONS, SECTIONS, itemLabel, sectionOf } from './navItems'
 import './nav.css'
@@ -182,7 +183,7 @@ export default function SiteNav({ appTab, lang, paths, onTabChange, isMobile, sc
                   {items.map((tab) => (
                     <li key={tab}>
                       <a href={paths[tab]} aria-current={appTab === tab ? 'page' : undefined} onClick={(e) => go(e, tab, key)}>
-                        <span className="bfs-site-nav-icon" aria-hidden="true">{ICONS[tab]}</span>
+                        <Icon name={ICONS[tab]} size={16} className="bfs-site-nav-icon" />
                         {itemLabel(tab, lang)}
                       </a>
                     </li>

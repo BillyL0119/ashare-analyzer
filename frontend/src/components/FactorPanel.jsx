@@ -7,7 +7,7 @@ import { getStockFactor } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const COLORS = ['#8ab4f8', '#f78166', '#3fb950', '#d2a8ff']
+const COLORS = ['#6aa2da', '#f78166', '#3fb950', '#d2a8ff']
 
 function bold(text) {
   if (!text) return []
@@ -71,10 +71,10 @@ function RollingBetaChart({ rolling, t }) {
         type: 'line',
         data: betas,
         smooth: true,
-        lineStyle: { color: '#8ab4f8', width: 2 },
+        lineStyle: { color: '#6aa2da', width: 2 },
         areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{ offset: 0, color: 'rgba(138,180,248,0.3)' },
-                       { offset: 1, color: 'rgba(138,180,248,0)' }] } },
+          colorStops: [{ offset: 0, color: 'rgba(106,162,218,0.3)' },
+                       { offset: 1, color: 'rgba(106,162,218,0)' }] } },
         symbol: 'none',
       },
       {
@@ -89,7 +89,7 @@ function RollingBetaChart({ rolling, t }) {
 
   return (
     <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-      borderRadius: 8, padding: 12, marginBottom: 12 }}>
+      borderRadius: 6, padding: 12, marginBottom: 12 }}>
       <div style={{ color: THEME.text, fontSize: 13, marginBottom: 8 }}>{t.factorRollingBeta}</div>
       <ReactECharts option={option} style={{ height: 200, width: '100%' }}
         opts={{ renderer: 'canvas' }} notMerge={true} />
@@ -104,13 +104,13 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
         <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.factorSysRisk}: {pctSys}%</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.factorIdioRisk}: {pctIdio}%</span>
       </div>
-      <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden',
+      <div style={{ display: 'flex', height: 10, borderRadius: 4, overflow: 'hidden',
         background: THEME.border }}>
-        <div style={{ width: `${pctSys}%`, background: '#8ab4f8', transition: 'width 0.5s' }} />
+        <div style={{ width: `${pctSys}%`, background: '#6aa2da', transition: 'width 0.5s' }} />
         <div style={{ width: `${pctIdio}%`, background: '#3fb950', transition: 'width 0.5s' }} />
       </div>
       <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
-        <span style={{ color: '#8ab4f8', fontSize: 11 }}>■ Systematic</span>
+        <span style={{ color: '#6aa2da', fontSize: 11 }}>■ Systematic</span>
         <span style={{ color: '#3fb950', fontSize: 11 }}>■ Idiosyncratic</span>
       </div>
     </div>
@@ -126,7 +126,7 @@ function CorrelationBars({ correlations, t }) {
 
   return (
     <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-      borderRadius: 8, padding: 12, marginBottom: 12 }}>
+      borderRadius: 6, padding: 12, marginBottom: 12 }}>
       <div style={{ color: THEME.text, fontSize: 13, marginBottom: 10 }}>{t.factorCorrelations}</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto auto', gap: '6px 12px',
         alignItems: 'center' }}>
@@ -140,10 +140,10 @@ function CorrelationBars({ correlations, t }) {
             <div key={`b-${sym}`} style={{ position: 'relative', height: 8, borderRadius: 4,
               background: THEME.border, overflow: 'hidden' }}>
               <div style={{ position: 'absolute', left: 0, top: 0, height: '100%',
-                width: `${pct}%`, background: isPos ? '#8ab4f8' : '#f85149',
+                width: `${pct}%`, background: isPos ? '#6aa2da' : '#f85149',
                 borderRadius: 4, transition: 'width 0.5s' }} />
             </div>,
-            <span key={`c-${sym}`} style={{ color: isPos ? '#8ab4f8' : '#f85149',
+            <span key={`c-${sym}`} style={{ color: isPos ? '#6aa2da' : '#f85149',
               fontSize: 12, fontWeight: 600 }}>
               {v.correlation.toFixed(3)}
             </span>,
@@ -176,7 +176,7 @@ function StockFactor({ stock, color, t, lang, params }) {
   const cardStyle = {
     background: 'rgba(255,255,255,0.04)',
     border: `1px solid ${THEME.border}`,
-    borderRadius: 10,
+    borderRadius: 6,
     padding: 16,
     flex: '1 1 400px',
     minWidth: 320,
@@ -196,7 +196,7 @@ function StockFactor({ stock, color, t, lang, params }) {
     </div>
   )
 
-  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#8ab4f8'
+  const betaColor = data.beta > 1.2 ? '#f85149' : data.beta < 0.8 ? '#3fb950' : '#6aa2da'
   const alphaColor = data.alpha_annual_pct >= 0 ? '#ef5350' : '#26a69a'
 
   return (
@@ -217,7 +217,7 @@ function StockFactor({ stock, color, t, lang, params }) {
           { label: t.factorTreynor, val: data.treynor_ratio !== null ? data.treynor_ratio.toFixed(2) : 'N/A', color: THEME.text },
         ].map(({ label, val, color: c }) => (
           <div key={label} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-            borderRadius: 6, padding: '8px 10px', textAlign: 'center' }}>
+            borderRadius: 4, padding: '8px 10px', textAlign: 'center' }}>
             <div style={{ color: 'var(--text-muted)', fontSize: 11, marginBottom: 3 }}>{label}</div>
             <div style={{ color: c, fontWeight: 700, fontSize: 16 }}>{val}</div>
           </div>
@@ -226,7 +226,7 @@ function StockFactor({ stock, color, t, lang, params }) {
 
       {/* Secondary metrics */}
       <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-        borderRadius: 8, padding: '4px 12px', marginBottom: 12 }}>
+        borderRadius: 6, padding: '4px 12px', marginBottom: 12 }}>
         <MetricRow label={t.factorAnnReturn}
           value={`${data.ann_return_pct > 0 ? '+' : ''}${data.ann_return_pct.toFixed(1)}%`}
           color={data.ann_return_pct >= 0 ? '#ef5350' : '#26a69a'} />
@@ -251,7 +251,7 @@ function StockFactor({ stock, color, t, lang, params }) {
 
       {/* Interpretation */}
       <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-        borderRadius: 8, padding: 12 }}>
+        borderRadius: 6, padding: 12 }}>
         <div style={{ color: THEME.text, fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
           {t.factorInterpret}
         </div>

@@ -16,9 +16,9 @@ const L = {
 }
 
 const CSS = `
-.hm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
-.hm-chip { padding: 6px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
-.hm-chip.on { background: color-mix(in srgb, #0ea5e9 14%, transparent); border-color: color-mix(in srgb, #0ea5e9 55%, transparent); color: #0ea5e9; font-weight: 600; }
+.hm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; }
+.hm-chip { padding: 6px 12px; border-radius: 6px; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary); }
+.hm-chip.on { background: color-mix(in srgb, #4588cc 14%, transparent); border-color: color-mix(in srgb, #4588cc 55%, transparent); color: #4588cc; font-weight: 600; }
 .hm-sec { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 12.5px; padding: 5px 0; color: var(--text-secondary); }
 .hm-sec span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hm-axis { position: relative; height: 6px; background: var(--bg-tertiary); border-radius: 3px; }
@@ -70,7 +70,7 @@ export default function HeatmapPage({ lang }) {
     const area = w * h * 0.85                      // minus sector headers and gaps
     return {
       tooltip: {
-        backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(138,180,248,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
+        backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(106,162,218,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
         formatter: (p) => {
           const d = p.data || {}
           if (d.sector) return `<b>${d.name}</b>${d.sym && d.sym !== d.name ? ` · ${d.sym}` : ''}<br/>${t.change}: <b>${pct(d.chg)}</b><br/>${t.price}: ${d.price ?? '—'}<br/>${t.cap}: ${money(d.value, market)}`
@@ -135,7 +135,7 @@ export default function HeatmapPage({ lang }) {
       <style>{CSS}</style>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#0ea5e9' }}>{t.eyebrow}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4588cc' }}>{t.eyebrow}</div>
           <h1 style={{ margin: '4px 0 6px', fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>{t.title}</h1>
           <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 720, lineHeight: 1.6 }}>
             {market === 'us' ? t.subUs(data?.count || limit) : market === 'hk' ? t.subHk(data?.count || Math.min(limit, 300))

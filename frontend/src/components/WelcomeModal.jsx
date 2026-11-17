@@ -151,12 +151,12 @@ export default function WelcomeModal({ onLangSelect }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
+      background: 'rgba(0,0,0,0.75)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
-        background: '#161b2e', borderRadius: 16,
-        border: '1px solid rgba(14,165,233,0.3)',
+        background: '#161b2e', borderRadius: 8,
+        border: '1px solid rgba(69,136,204,0.3)',
         padding: '40px 32px', width: 480, maxWidth: '94vw',
         textAlign: 'center',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -164,7 +164,7 @@ export default function WelcomeModal({ onLangSelect }) {
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
           <IconChart size={40} />
         </div>
-        <p style={{ color: 'rgba(232,234,240,0.7)', fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
           请选择您的语言 · Please select your language
         </p>
         <div style={{
@@ -177,30 +177,30 @@ export default function WelcomeModal({ onLangSelect }) {
               key={code}
               onClick={() => handleLangSelect(code)}
               style={{
-                padding: '16px 10px', borderRadius: 12,
-                background: 'rgba(14,165,233,0.06)',
-                border: '1px solid rgba(14,165,233,0.2)',
+                padding: '16px 10px', borderRadius: 8,
+                background: 'rgba(69,136,204,0.06)',
+                border: '1px solid rgba(69,136,204,0.2)',
                 cursor: 'pointer', color: '#e8eaf0',
                 transition: 'all 0.2s',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', gap: 8,
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(99,102,241,0.2)'
-                e.currentTarget.style.borderColor = 'rgba(99,102,241,0.5)'
+                e.currentTarget.style.background = 'rgba(95,115,184,0.2)'
+                e.currentTarget.style.borderColor = 'rgba(95,115,184,0.5)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(14,165,233,0.06)'
-                e.currentTarget.style.borderColor = 'rgba(14,165,233,0.2)'
+                e.currentTarget.style.background = 'rgba(69,136,204,0.06)'
+                e.currentTarget.style.borderColor = 'rgba(69,136,204,0.2)'
               }}
             >
               <Flag height={22} />
               <div style={{ fontSize: 14, fontWeight: 600 }}>{nativeLabel}</div>
-              <div style={{ fontSize: 11, color: 'rgba(232,234,240,0.4)' }}>{subLabel}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{subLabel}</div>
             </button>
           ))}
         </div>
-        <p style={{ fontSize: 11, color: 'rgba(232,234,240,0.3)', marginTop: 20, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 20, lineHeight: 1.6 }}>
           此网站仅供股票学习用途 · For stock learning purposes only
         </p>
       </div>

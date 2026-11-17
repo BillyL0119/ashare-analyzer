@@ -20,6 +20,7 @@ import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 import KLineTip from './KLineTip'
 import { CUR, localName } from '../utils/markets'
+import Icon from './Icon'
 
 export default function StockCard({ stock }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -73,19 +74,10 @@ export default function StockCard({ stock }) {
       style={{
         background: THEME.gridBg,
         border: `1px solid ${THEME.border}`,
-        borderRadius: 8,
+        borderRadius: 6,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = '#2a4a7f'
-        e.currentTarget.style.boxShadow = '0 0 20px rgba(14,165,233,0.10)'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = THEME.border
-        e.currentTarget.style.boxShadow = 'none'
       }}
     >
       <div
@@ -93,7 +85,6 @@ export default function StockCard({ stock }) {
           padding: '8px 12px',
           paddingLeft: 12,
           borderBottom: `1px solid ${THEME.border}`,
-          borderLeft: '3px solid #0ea5e9',
           display: 'flex',
           alignItems: 'center',
           gap: isMobile ? 6 : 12,
@@ -128,18 +119,18 @@ export default function StockCard({ stock }) {
             style={{
               padding: '3px 9px',
               borderRadius: 4,
-              border: '1px solid rgba(14,165,233,0.35)',
+              border: '1px solid rgba(69,136,204,0.35)',
               cursor: 'pointer',
               fontSize: 11,
-              background: 'rgba(14,165,233,0.08)',
-              color: '#0ea5e9',
+              background: 'rgba(69,136,204,0.08)',
+              color: '#4588cc',
               transition: 'all 0.15s',
               whiteSpace: 'nowrap',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)'; e.currentTarget.style.borderColor = '#0ea5e9' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)'; e.currentTarget.style.borderColor = 'rgba(14,165,233,0.35)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.2)'; e.currentTarget.style.borderColor = '#4588cc' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.08)'; e.currentTarget.style.borderColor = 'rgba(69,136,204,0.35)' }}
           >
-            📖 {t.klineBtn}
+            {t.klineBtn}
           </button>
 
           {Object.entries(periodLabels).map(([key, label]) => (
@@ -152,7 +143,7 @@ export default function StockCard({ stock }) {
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 12,
-                background: period === key ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'var(--bg-hover)',
+                background: period === key ? '#4588cc' : 'var(--bg-hover)',
                 color: period === key ? '#fff' : THEME.text,
                 transition: 'background 0.15s',
               }}
@@ -174,7 +165,7 @@ export default function StockCard({ stock }) {
                   border: 'none',
                   cursor: 'pointer',
                   fontSize: 11,
-                  background: adjust === key ? 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' : 'var(--bg-hover)',
+                  background: adjust === key ? '#4588cc' : 'var(--bg-hover)',
                   color: adjust === key ? '#fff' : THEME.text,
                   transition: 'background 0.15s',
                 }}
@@ -192,14 +183,14 @@ export default function StockCard({ stock }) {
           style={{
             padding: '3px 8px',
             borderRadius: 4,
-            border: '1px solid rgba(14,165,233,0.18)',
+            border: '1px solid rgba(69,136,204,0.18)',
             cursor: 'pointer',
             fontSize: 11,
             background: 'transparent',
             color: 'var(--text-muted)',
             transition: 'all 0.15s',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.12)'; e.currentTarget.style.color = '#0ea5e9' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.12)'; e.currentTarget.style.color = '#4588cc' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
           {t.exportBtn}
@@ -251,16 +242,16 @@ export default function StockCard({ stock }) {
           title={t.copyLink}
           style={{
             padding: '3px 8px', borderRadius: 4,
-            border: '1px solid rgba(14,165,233,0.25)',
+            border: '1px solid rgba(69,136,204,0.25)',
             cursor: 'pointer', fontSize: 12,
             background: copied ? 'rgba(52,211,153,0.12)' : 'transparent',
             color: copied ? '#34d399' : 'var(--text-muted)',
             transition: 'all 0.15s', whiteSpace: 'nowrap',
           }}
-          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(14,165,233,0.1)'; e.currentTarget.style.color = '#0ea5e9' } }}
+          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(69,136,204,0.1)'; e.currentTarget.style.color = '#4588cc' } }}
           onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' } }}
         >
-          {copied ? '✓' : '🔗'}
+          {copied ? '✓' : <Icon name="link" size={13} />}
         </button>
 
         <button
@@ -326,9 +317,9 @@ export default function StockCard({ stock }) {
               <button
                 onClick={refetch}
                 style={{
-                  padding: '5px 18px', borderRadius: 16, border: 'none', cursor: 'pointer',
+                  padding: '5px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
                   fontSize: 12, fontWeight: 600,
-                  background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
+                  background: '#4588cc',
                   color: '#fff',
                 }}
               >

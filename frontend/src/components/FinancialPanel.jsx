@@ -53,7 +53,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
       style={{
         background: 'rgba(255,255,255,0.04)',
         border: `1px solid ${THEME.border}`,
-        borderRadius: 8,
+        borderRadius: 6,
         padding: '14px 16px',
         display: 'flex',
         flexDirection: 'column',
@@ -193,7 +193,7 @@ export default function FinancialPanel({ stocks }) {
             style={{
               background: THEME.gridBg,
               border: `1px solid ${THEME.border}`,
-              borderRadius: 8,
+              borderRadius: 6,
               padding: 16,
             }}
           >
@@ -210,12 +210,12 @@ export default function FinancialPanel({ stocks }) {
             >
               <span
                 style={{
-                  background: 'rgba(138,180,248,0.08)',
-                  border: '1px solid rgba(138,180,248,0.3)',
+                  background: 'rgba(106,162,218,0.08)',
+                  border: '1px solid rgba(106,162,218,0.3)',
                   borderRadius: 4,
                   padding: '2px 8px',
                   fontSize: 12,
-                  color: '#8ab4f8',
+                  color: '#6aa2da',
                   fontFamily: 'monospace',
                 }}
               >
@@ -242,7 +242,7 @@ export default function FinancialPanel({ stocks }) {
                   padding: '16px',
                   background: '#f8514910',
                   border: '1px solid #f8514930',
-                  borderRadius: 6,
+                  borderRadius: 4,
                 }}
               >
                 {error}

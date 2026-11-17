@@ -57,13 +57,13 @@ function IndustryPill({ label, type }) {
         fontSize: 10,
         fontWeight: 600,
         padding: '2px 6px',
-        borderRadius: 10,
+        borderRadius: 6,
         whiteSpace: 'nowrap',
         background: isSame
-          ? 'rgba(138,180,248,0.12)'
-          : 'rgba(192,132,252,0.12)',
-        color: isSame ? '#8ab4f8' : '#c084fc',
-        border: `1px solid ${isSame ? 'rgba(138,180,248,0.25)' : 'rgba(192,132,252,0.25)'}`,
+          ? 'rgba(106,162,218,0.12)'
+          : 'rgba(169,154,214,0.12)',
+        color: isSame ? '#6aa2da' : '#a99ad6',
+        border: `1px solid ${isSame ? 'rgba(106,162,218,0.25)' : 'rgba(169,154,214,0.25)'}`,
         letterSpacing: '0.02em',
       }}
     >
@@ -80,8 +80,8 @@ function ModeToggle({ mode, setMode, t }) {
       style={{
         display: 'flex',
         background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(138,180,248,0.12)',
-        borderRadius: 20,
+        border: '1px solid rgba(106,162,218,0.12)',
+        borderRadius: 8,
         padding: 3,
         gap: 2,
         flexShrink: 0,
@@ -96,13 +96,13 @@ function ModeToggle({ mode, setMode, t }) {
           onClick={() => setMode(key)}
           style={{
             padding: '4px 14px',
-            borderRadius: 16,
+            borderRadius: 8,
             border: 'none',
             cursor: 'pointer',
             fontSize: 12,
             fontWeight: mode === key ? 600 : 400,
             background: mode === key
-              ? 'linear-gradient(135deg, #8ab4f8, #c084fc)'
+              ? '#6aa2da'
               : 'transparent',
             color: mode === key ? '#fff' : 'var(--text-muted)',
             transition: 'all 0.2s ease',
@@ -159,7 +159,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       style={{
         background: THEME.gridBg,
         border: `1px solid ${THEME.border}`,
-        borderRadius: 8,
+        borderRadius: 6,
         padding: 16,
       }}
     >
@@ -177,12 +177,12 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       >
         <span
           style={{
-            background: 'rgba(138,180,248,0.08)',
-            border: '1px solid rgba(138,180,248,0.3)',
+            background: 'rgba(106,162,218,0.08)',
+            border: '1px solid rgba(106,162,218,0.3)',
             borderRadius: 4,
             padding: '2px 8px',
             fontSize: 12,
-            color: '#8ab4f8',
+            color: '#6aa2da',
             fontFamily: 'monospace',
           }}
         >
@@ -234,7 +234,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
             padding: 12,
             background: '#f8514910',
             border: '1px solid #f8514930',
-            borderRadius: 6,
+            borderRadius: 4,
           }}
         >
           {error}
@@ -254,9 +254,9 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     alignItems: 'center',
                     gap: 10,
                     padding: '8px 10px',
-                    background: 'rgba(138,180,248,0.04)',
+                    background: 'rgba(106,162,218,0.04)',
                     border: `1px solid ${THEME.border}`,
-                    borderRadius: 8,
+                    borderRadius: 6,
                   }}
                 >
                   <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, minWidth: 18 }}>
@@ -266,7 +266,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
                       <span
                         onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                        style={{ fontSize: 11, color: '#8ab4f8', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                        style={{ fontSize: 11, color: '#6aa2da', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                       >
                         {item.code}
                       </span>
@@ -317,11 +317,11 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                     gap: '0 12px',
                     alignItems: 'center',
                     padding: '8px 8px',
-                    borderRadius: 6,
+                    borderRadius: 4,
                     borderBottom: idx < data.results.length - 1 ? `1px solid ${THEME.border}` : 'none',
                     transition: 'background 0.1s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(106,162,218,0.06)' }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                 >
                   <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 700 }}>
@@ -329,7 +329,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
                   </span>
                   <span
                     onClick={() => onOpenDetail && onOpenDetail(item.code, item.name)}
-                    style={{ fontSize: 12, color: '#8ab4f8', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
+                    style={{ fontSize: 12, color: '#6aa2da', fontFamily: 'monospace', cursor: onOpenDetail ? 'pointer' : 'default', textDecoration: onOpenDetail ? 'underline dotted' : 'none' }}
                   >
                     {item.code}
                   </span>

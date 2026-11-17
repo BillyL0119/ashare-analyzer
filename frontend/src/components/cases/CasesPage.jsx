@@ -8,30 +8,30 @@ import diagramNav, { diagramHref } from '../diagrams/diagramNav'
 // Each case also has its own page at /cases/<id>; the backend writes its static HTML for search
 // engines (backend/services/case_pages.py) and the app opens the case there.
 
-const ACCENT = '#0ea5e9'
+const ACCENT = '#4588cc'
 const BOARDS = ['ib', 'alevel', 'ap_macro', 'ap_micro', 'igcse']
 const SAVE_KEY = 'bfs_saved_cases'
 const PAGE = 20
 
 const CSS = `
 .cs { display: grid; gap: 16px; max-width: 1180px; margin: 0 auto; width: 100%; padding: 18px 0 40px; }
-.cs-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+.cs-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px 18px; min-width: 0; }
 .cs-muted { color: var(--text-secondary); }
 .cs-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 16px; align-items: start; }
 .cs-side { display: grid; gap: 4px; position: sticky; top: 110px; max-height: calc(100vh - 130px); overflow-y: auto; }
-.cs-pill { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-secondary); border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.cs-pill { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-secondary); border-radius: 6px; padding: 6px 12px; font-size: 12.5px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .cs-pill.on { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
-.cs-concept { display: flex; justify-content: space-between; gap: 8px; text-align: left; width: 100%; border: none; background: none; color: var(--text-primary); padding: 7px 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.cs-concept { display: flex; justify-content: space-between; gap: 8px; text-align: left; width: 100%; border: none; background: none; color: var(--text-primary); padding: 7px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
 .cs-concept:hover { background: var(--bg-tertiary); }
 .cs-concept.on { background: ${ACCENT}1f; color: ${ACCENT}; font-weight: 700; }
 .cs-concept:disabled { opacity: .45; cursor: default; }
-.cs-tag { border: none; cursor: pointer; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: ${ACCENT}1f; color: ${ACCENT}; }
+.cs-tag { border: none; cursor: pointer; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: ${ACCENT}1f; color: ${ACCENT}; }
 .cs-h { font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 3px; }
 .cs-body { font-size: 14px; line-height: 1.7; }
-.cs-q { border-left: 3px solid #f59e0b; background: #f59e0b12; border-radius: 8px; padding: 10px 12px; font-size: 14px; line-height: 1.6; }
-.cs-act { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+.cs-q { border-left: 3px solid #f59e0b; background: #f59e0b12; border-radius: 6px; padding: 10px 12px; font-size: 14px; line-height: 1.6; }
+.cs-act { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 6px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
 .cs-act:hover { background: var(--bg-tertiary); }
-.cs-input { width: 100%; min-width: 0; background: var(--bg-secondary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 10px; padding: 9px 12px; font-size: 14px; }
+.cs-input { width: 100%; min-width: 0; background: var(--bg-secondary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 6px; padding: 9px 12px; font-size: 14px; }
 .cs-link { color: var(--text-primary); text-decoration: none; }
 .cs-link:hover { color: ${ACCENT}; }
 .cs-pill:focus-visible, .cs-concept:focus-visible, .cs-tag:focus-visible, .cs-act:focus-visible, .cs-link:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
@@ -73,7 +73,7 @@ function CaseText({ c, s }) {
         </div>
       )}
       {c.evaluate && <div><div className="cs-h">{s.evaluate}</div><div className="cs-body">{c.evaluate}</div></div>}
-      <div className="cs-q"><div className="cs-h" style={{ color: '#b45309' }}>✍️ {s.question}</div>{c.question}</div>
+      <div className="cs-q"><div className="cs-h" style={{ color: '#b45309' }}>{s.question}</div>{c.question}</div>
     </>
   )
 }
@@ -112,9 +112,9 @@ function CaseCard({ c, s, board, studyHref, saved, onToggleSave, onConcept, conc
         <a className="cs-act" href={c.url} target="_blank" rel="noopener noreferrer">{s.readSource} ↗</a>
         <button className="cs-act" onClick={copy}>{copied ? `✓ ${s.copied}` : `⧉ ${s.copy}`}</button>
         <button className="cs-act" onClick={() => onToggleSave(c)} aria-pressed={saved}>{saved ? `★ ${s.unsave}` : `☆ ${s.save}`}</button>
-        {study && <Link className="cs-act" to={study}>📘 {s.study}</Link>}
-        {diagramHref(c) && <Link className="cs-act" to={diagramHref(c)}>📐 {drawLabel}</Link>}
-        {!own && <Link className="cs-act" to={`/cases/${c.id}`}>🔗 {s.open}</Link>}
+        {study && <Link className="cs-act" to={study}>{s.study}</Link>}
+        {diagramHref(c) && <Link className="cs-act" to={diagramHref(c)}>{drawLabel}</Link>}
+        {!own && <Link className="cs-act" to={`/cases/${c.id}`}>{s.open}</Link>}
       </div>
     </article>
   )
@@ -252,7 +252,7 @@ function Library({ lang, studyHref = defaultStudyHref }) {
     <div className="cs">
       <style>{CSS}</style>
       <div style={{ display: 'grid', gap: 6 }}>
-        <h1 style={{ margin: 0, fontSize: 28 }}>📰 {s.title}</h1>
+        <h1 style={{ margin: 0, fontSize: 28 }}>{s.title}</h1>
         <p className="cs-muted" style={{ margin: 0, fontSize: 14, lineHeight: 1.6, maxWidth: 760 }}>{s.subtitle}</p>
       </div>
 

@@ -6,8 +6,8 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import useCompareStore from '../store/compareStore'
 
-const ACCENT = '#0ea5e9'
-const ACCENT2 = '#8b5cf6'
+const ACCENT = '#4588cc'
+const ACCENT2 = '#7f77c2'
 
 const STRATEGIES = [
   { key: 'ma',   zh: '双均线 (MA5/MA20)', en: 'MA Crossover (MA5/MA20)' },
@@ -33,8 +33,8 @@ const STRATEGY_DESC = {
 function MetricCard({ label, value, sub, color }) {
   return (
     <div style={{
-      background: 'var(--bg-tertiary)', border: '1px solid rgba(14,165,233,0.1)',
-      borderRadius: 10, padding: '12px 16px', textAlign: 'center',
+      background: 'var(--bg-tertiary)', border: '1px solid rgba(69,136,204,0.1)',
+      borderRadius: 6, padding: '12px 16px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: 22, fontWeight: 800, color: color || 'var(--text-primary)', lineHeight: 1.2 }}>{value}</div>
@@ -64,7 +64,7 @@ function EquityChart({ data, isCN, us }) {
       lineStyle: { color: ACCENT, width: 2 },
       itemStyle: { color: ACCENT },
       showSymbol: false,
-      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(14,165,233,0.15)' }, { offset: 1, color: 'rgba(14,165,233,0.01)' }] } },
+      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(69,136,204,0.15)' }, { offset: 1, color: 'rgba(69,136,204,0.01)' }] } },
     },
   ]
 
@@ -84,8 +84,8 @@ function EquityChart({ data, isCN, us }) {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(5,10,22,0.95)',
-      borderColor: 'rgba(14,165,233,0.3)',
+      backgroundColor: 'rgba(14,16,19,0.95)',
+      borderColor: 'rgba(69,136,204,0.3)',
       textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const date = params[0]?.axisValue || ''
@@ -105,7 +105,7 @@ function EquityChart({ data, isCN, us }) {
     xAxis: {
       type: 'category',
       data: dates,
-      axisLine: { lineStyle: { color: 'rgba(14,165,233,0.1)' } },
+      axisLine: { lineStyle: { color: 'rgba(69,136,204,0.1)' } },
       axisLabel: { color: THEME.text, fontSize: 10,
         formatter: (v) => v?.slice(0, 7) || v,
         interval: Math.floor(dates.length / 6),
@@ -115,7 +115,7 @@ function EquityChart({ data, isCN, us }) {
       type: 'value',
       scale: true,  // fit the curves instead of starting at $0
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: 'rgba(14,165,233,0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(69,136,204,0.06)' } },
       axisLabel: { color: THEME.text, fontSize: 10,
         formatter: (v) => money(v, us),
       },
@@ -162,7 +162,7 @@ function TradeTable({ trades, isCN }) {
             {paged.map((t, i) => {
               const color = t.win ? '#22c55e' : '#ef4444'
               return (
-                <tr key={i} style={{ borderTop: '1px solid rgba(14,165,233,0.06)' }}>
+                <tr key={i} style={{ borderTop: '1px solid rgba(69,136,204,0.06)' }}>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.buy_date}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-primary)', fontFamily: 'monospace' }}>{t.buy_price}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.sell_date}</td>
@@ -183,8 +183,8 @@ function TradeTable({ trades, isCN }) {
         <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 10 }}>
           {Array.from({ length: total }, (_, i) => (
             <button key={i} onClick={() => setPage(i)} style={{
-              padding: '3px 9px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 11,
-              background: page === i ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'var(--bg-hover)',
+              padding: '3px 9px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 11,
+              background: page === i ? `${ACCENT}` : 'var(--bg-hover)',
               color: page === i ? '#fff' : 'var(--text-muted)',
             }}>{i + 1}</button>
           ))}
@@ -232,9 +232,9 @@ export default function BacktestPanel({ stocks }) {
   )
 
   const btnStyle = (active) => ({
-    padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
+    padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
     fontSize: 12, fontWeight: active ? 600 : 400,
-    background: active ? `linear-gradient(135deg,${ACCENT},${ACCENT2})` : 'var(--bg-hover)',
+    background: active ? `${ACCENT}` : 'var(--bg-hover)',
     color: active ? '#fff' : 'var(--text-secondary)', transition: 'all 0.2s',
     whiteSpace: 'nowrap',
   })
@@ -247,7 +247,7 @@ export default function BacktestPanel({ stocks }) {
       {/* Config panel */}
       <div style={{
         background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-        borderRadius: 12, padding: '14px 18px',
+        borderRadius: 8, padding: '14px 18px',
       }}>
         {/* Stock selector (if multiple stocks) */}
         {stocks.length === 1 && (
@@ -288,7 +288,7 @@ export default function BacktestPanel({ stocks }) {
         <div style={{
           fontSize: 11, color: 'var(--text-muted)', marginBottom: 10,
           padding: '6px 10px', background: 'var(--bg-primary)',
-          borderRadius: 6, border: '1px solid rgba(14,165,233,0.07)',
+          borderRadius: 4, border: '1px solid rgba(69,136,204,0.07)',
         }}>
           {isCN ? STRATEGY_DESC[strategy].zh : STRATEGY_DESC[strategy].en}
         </div>
@@ -311,11 +311,10 @@ export default function BacktestPanel({ stocks }) {
           onClick={run}
           disabled={loading}
           style={{
-            padding: '8px 28px', borderRadius: 20, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+            padding: '8px 28px', borderRadius: 8, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 13, fontWeight: 700,
-            background: loading ? 'rgba(14,165,233,0.15)' : `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
+            background: loading ? 'rgba(69,136,204,0.15)' : `${ACCENT}`,
             color: loading ? 'var(--text-muted)' : '#fff',
-            boxShadow: loading ? 'none' : '0 2px 12px rgba(14,165,233,0.3)',
             transition: 'all 0.2s',
           }}
         >
@@ -329,7 +328,7 @@ export default function BacktestPanel({ stocks }) {
       {/* Error */}
       {error && (
         <div style={{ color: '#ef4444', fontSize: 13, padding: '10px 16px',
-          background: 'rgba(239,68,68,0.08)', borderRadius: 8, border: '1px solid rgba(239,68,68,0.2)' }}>
+          background: 'rgba(239,68,68,0.08)', borderRadius: 6, border: '1px solid rgba(239,68,68,0.2)' }}>
           {error}
         </div>
       )}
@@ -375,7 +374,7 @@ export default function BacktestPanel({ stocks }) {
           </div>
 
           {/* Equity curve */}
-          <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: '14px 16px' }}>
+          <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: '14px 16px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
               {isCN ? `资金曲线（初始 100 万${us ? '美元' : '元'}）` : `Equity Curve (initial ${us ? '$1M' : '¥1M'})`}
             </div>
@@ -383,7 +382,7 @@ export default function BacktestPanel({ stocks }) {
           </div>
 
           {/* Trade log */}
-          <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: '14px 16px' }}>
+          <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: '14px 16px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
               {isCN ? `交易记录（共 ${result.total_trades} 笔）` : `Trade Log (${result.total_trades} total)`}
             </div>

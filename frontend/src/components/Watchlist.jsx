@@ -6,7 +6,7 @@ import { T } from '../i18n/translations'
 import { riseColor, fallColor } from '../utils/chartHelpers'
 import { CUR, MARKET_TINT, guessMarket } from '../utils/markets'
 
-const ACCENT_BLUE = '#8ab4f8'
+const ACCENT_BLUE = '#6aa2da'
 
 function WatchlistItem({ stock, t, onRemove, onClick }) {
   const [quote, setQuote] = useState(null)
@@ -32,7 +32,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
         padding: '9px 12px', borderBottom: '1px solid var(--border-primary)',
         cursor: 'pointer', transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(138,180,248,0.06)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(106,162,218,0.06)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -112,8 +112,7 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
         position: 'absolute', right: 0, top: 42, zIndex: 499,
         width: 290, maxHeight: 420,
         background: 'var(--bg-secondary)',
-        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-        border: '1px solid var(--border-primary)', borderRadius: 14,
+        border: '1px solid var(--border-primary)', borderRadius: 8,
         boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}
@@ -122,7 +121,7 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
         padding: '11px 14px', borderBottom: '1px solid var(--border-primary)',
         fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.2px',
       }}>
-        ⭐ {t.navWatchlist}
+        {t.navWatchlist}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto' }}>

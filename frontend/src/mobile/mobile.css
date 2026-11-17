@@ -1,8 +1,8 @@
 /* App-style phone UI. Tokens mirror the iOS app's design system (DS). Scoped under .m-app. */
 .m-app {
-  --bg: #090C13; --surface: #121721; --surface-hi: #1B2230;
+  --bg: #0E1013; --surface: #16191D; --surface-hi: #1F2329;
   --stroke: rgba(255,255,255,.07); --text: #F2F5FA; --text-2: #98A2B3; --text-3: #667085;
-  --accent: #6C8EFF; --accent-2: #8B6CFF; --shadow: none;
+  --accent: #5290D4; --accent-2: #5290D4; --shadow: none;
   --cn-up: #EF5350; --cn-down: #26A69A;
   --radius: 20px; --tile: 14px;
   --tabbar-h: 58px;
@@ -13,9 +13,9 @@
   overscroll-behavior: none;
 }
 :root[data-theme="light"] .m-app {
-  --bg: #F2F4F8; --surface: #FFFFFF; --surface-hi: #EAEEF5;
+  --bg: #F5F6F7; --surface: #FFFFFF; --surface-hi: #EEF0F2;
   --stroke: rgba(0,0,0,.06); --text: #0E1420; --text-2: #5B6678; --text-3: #8A94A6;
-  --accent: #2F5BEA; --accent-2: #6A4BE8; --shadow: 0 3px 10px rgba(0,0,0,.05);
+  --accent: #1D5FA6; --accent-2: #1D5FA6; --shadow: none;
 }
 .m-app *, .m-app *::before, .m-app *::after { box-sizing: border-box; }
 :where(.m-app) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -62,7 +62,7 @@
 .m-seg.full { display: flex; } .m-seg.full button { flex: 1; text-align: center; }
 .m-chip { display: inline-flex; padding: 3px 8px; border-radius: 999px; background: var(--surface-hi); color: var(--text-2); font-size: 11px; font-weight: 600; }
 .m-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; border-radius: 18px; color: #fff; font-weight: 700; font-size: 16px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+  background: var(--accent); }
 .m-btn[disabled] { opacity: .4; }
 .m-btn.ghost { background: var(--surface-hi); color: var(--text); }
 .m-link { color: var(--accent); font-weight: 600; }

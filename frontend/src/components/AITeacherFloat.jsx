@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
+import Icon from './Icon'
 
-const ACCENT = '#0ea5e9'
-const ACCENT2 = '#8b5cf6'
+const ACCENT = '#4588cc'
+const ACCENT2 = '#7f77c2'
 const BDR = 'var(--border-primary)'
 
 const QUICK_PROMPTS = {
@@ -38,16 +39,16 @@ function Bubble({ msg }) {
       {!isUser && (
         <div style={{
           width: 26, height: 26, borderRadius: '50%', flexShrink: 0, marginRight: 7, marginTop: 2,
-          background: `linear-gradient(135deg,${ACCENT},${ACCENT2})`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
-        }}>🎓</div>
+          color: 'var(--text-secondary)', background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}><Icon name="tutor" size={14} /></div>
       )}
       <div style={{
         maxWidth: '82%',
         background: isUser
-          ? `linear-gradient(135deg,rgba(14,165,233,0.18),rgba(139,92,246,0.15))`
+          ? `rgba(69,136,204,0.18)`
           : 'var(--bg-tertiary)',
-        border: `1px solid ${isUser ? 'rgba(14,165,233,0.25)' : 'var(--border-primary)'}`,
+        border: `1px solid ${isUser ? 'rgba(69,136,204,0.25)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
         padding: '9px 13px',
         fontSize: 13,
@@ -84,8 +85,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
       setMessages([{
         role: 'assistant',
         content: zh
-          ? '你好！我是 BestFriendStock 的 AI 老师 🎓\n我可以帮你解答股票分析和经济学问题，点击下方快捷问题或直接输入！'
-          : 'Hi! I\'m the BestFriendStock AI Tutor 🎓\nI can help with stock analysis and economics. Try the quick prompts below or type your question!',
+          ? '你好！我是 BestFriendStock 的 AI 老师\n我可以帮你解答股票分析和经济学问题，点击下方快捷问题或直接输入！'
+          : 'Hi! I\'m the BestFriendStock AI Tutor\nI can help with stock analysis and economics. Try the quick prompts below or type your question!',
       }])
     }
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -185,8 +186,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           width: 350, height: 480,
           background: '#0b0f1a',
           border: `1px solid ${BDR}`,
-          borderRadius: 16,
-          boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(14,165,233,0.08)',
+          borderRadius: 8,
+          boxShadow: 'var(--shadow-pop)',
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
         }}>
@@ -194,17 +195,16 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '11px 14px',
-            background: 'rgba(14,165,233,0.04)',
+            background: 'rgba(69,136,204,0.04)',
             borderBottom: `1px solid ${BDR}`,
             flexShrink: 0,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 18 }}>🎓</span>
+              <Icon name="tutor" size={18} style={{ color: 'var(--text-secondary)' }} />
               <div>
                 <div style={{
                   fontSize: 13, fontWeight: 700,
-                  background: `linear-gradient(90deg,${ACCENT},${ACCENT2})`,
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                  color: 'var(--text-primary)',
                 }}>
                   {t.atTitle}
                 </div>
@@ -219,7 +219,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontSize: 14, color: 'var(--text-muted)', padding: '2px 4px', borderRadius: 4,
                 }}
-              >🗑</button>
+              ><Icon name="trash" size={15} /></button>
               <button
                 onClick={onClose}
                 style={{
@@ -249,9 +249,9 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   onClick={() => send(p)}
                   disabled={busy}
                   style={{
-                    fontSize: 11, padding: '4px 9px', borderRadius: 10,
-                    background: 'rgba(14,165,233,0.08)',
-                    border: '1px solid rgba(14,165,233,0.18)',
+                    fontSize: 11, padding: '4px 9px', borderRadius: 6,
+                    background: 'rgba(69,136,204,0.08)',
+                    border: '1px solid rgba(69,136,204,0.18)',
                     color: ACCENT, cursor: 'pointer',
                     transition: 'all 0.15s',
                   }}
@@ -278,7 +278,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               disabled={busy}
               style={{
                 flex: 1, background: 'var(--bg-tertiary)',
-                border: `1px solid rgba(14,165,233,0.2)`, borderRadius: 10,
+                border: `1px solid rgba(69,136,204,0.2)`, borderRadius: 6,
                 color: 'var(--text-primary)', padding: '8px 11px', fontSize: 13,
                 resize: 'none', outline: 'none', lineHeight: 1.55,
                 fontFamily: 'inherit',
@@ -289,9 +289,9 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               disabled={busy || !input.trim()}
               style={{
                 background: input.trim() && !busy
-                  ? `linear-gradient(135deg,${ACCENT},${ACCENT2})`
+                  ? `${ACCENT}`
                   : 'var(--bg-hover)',
-                border: 'none', borderRadius: 10, padding: '0 14px',
+                border: 'none', borderRadius: 6, padding: '0 14px',
                 color: input.trim() && !busy ? '#fff' : 'var(--text-muted)',
                 fontSize: 18, cursor: input.trim() && !busy ? 'pointer' : 'default',
                 transition: 'all 0.2s', flexShrink: 0,

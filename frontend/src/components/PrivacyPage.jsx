@@ -48,7 +48,7 @@ export default function PrivacyPage() {
 
       <Section title="8. Contact">
         Questions? Email us at{' '}
-        <a href="mailto:billyl090119@gmail.com" style={{ color: '#38bdf8' }}>
+        <a href="mailto:billyl090119@gmail.com" style={{ color: '#6aa2da' }}>
           billyl090119@gmail.com
         </a>
       </Section>
@@ -95,7 +95,7 @@ export default function PrivacyPage() {
 
       <Section title="8. 联系我们">
         如有疑问，请发送邮件至{' '}
-        <a href="mailto:billyl090119@gmail.com" style={{ color: '#38bdf8' }}>
+        <a href="mailto:billyl090119@gmail.com" style={{ color: '#6aa2da' }}>
           billyl090119@gmail.com
         </a>
       </Section>

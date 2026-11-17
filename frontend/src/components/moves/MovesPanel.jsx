@@ -5,8 +5,8 @@ import movesStrings from './movesStrings'
 // each day (market and sector moves, SEC filings, Fed decisions, headlines, cninfo announcements),
 // and an AI explanation from those facts on request.
 
-const UP = '#10b981', DOWN = '#ef4444', ACCENT = '#0ea5e9'
-const KIND_COLOR = { market: '#8b5cf6', sector: '#f59e0b', stock: ACCENT }
+const UP = '#10b981', DOWN = '#ef4444', ACCENT = '#4588cc'
+const KIND_COLOR = { market: '#7f77c2', sector: '#f59e0b', stock: ACCENT }
 
 // A-shares are red-up like the rest of the site; US green-up
 const col = (v, market) => (!v ? 'var(--text-secondary)' : (v > 0) === (market !== 'cn') ? UP : DOWN)
@@ -14,15 +14,15 @@ const pct = (v) => (v == null ? '—' : `${v > 0 ? '+' : ''}${Number(v).toFixed(
 
 const CSS = `
 .mv { display: grid; gap: 14px; }
-.mv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.mv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
 .mv-muted { color: var(--text-secondary); }
-.mv-chip { font-size: 12px; font-weight: 650; padding: 3px 9px; border-radius: 999px; background: var(--bg-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mv-chip { font-size: 12px; font-weight: 650; padding: 3px 9px; border-radius: 6px; background: var(--bg-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .mv-h { font-size: 11.5px; font-weight: 800; letter-spacing: .3px; color: var(--text-secondary); text-transform: uppercase; }
 .mv-link { color: var(--text-primary); text-decoration: none; font-size: 13px; line-height: 1.5; }
 .mv-link:hover { color: ${ACCENT}; }
-.mv-btn { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 12px; font-size: 12.5px; font-weight: 650; cursor: pointer; justify-self: start; }
+.mv-btn { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 6px; padding: 6px 12px; font-size: 12.5px; font-weight: 650; cursor: pointer; justify-self: start; }
 .mv-btn:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
-.mv-ai { border-left: 3px solid ${ACCENT}; background: ${ACCENT}10; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; line-height: 1.65; }
+.mv-ai { border-left: 3px solid ${ACCENT}; background: ${ACCENT}10; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; line-height: 1.65; }
 `
 
 function Day({ d, s, lang, market, symbol }) {
@@ -49,13 +49,13 @@ function Day({ d, s, lang, market, symbol }) {
           {d.sector_pct != null && <span className="mv-chip">{s.sector(d.sector_etf)} <span style={{ color: col(d.sector_pct, market) }}>{pct(d.sector_pct)}</span></span>}
         </span>
       </div>
-      {f.fomc && <div style={{ fontSize: 13 }}>🏛 {s.fomc}</div>}
+      {f.fomc && <div style={{ fontSize: 13 }}>{s.fomc}</div>}
       {f.filings.length > 0 && (
         <div style={{ display: 'grid', gap: 4 }}>
           <span className="mv-h">{s.filings}</span>
           {f.filings.map((x) => (
             <a key={x.url} className="mv-link" href={x.url} target="_blank" rel="noopener noreferrer">
-              📄 <b>{x.form}</b>{x.labels.length ? ` · ${x.labels.join(' · ')}` : ''} <span className="mv-muted" style={{ fontSize: 12 }}>· {x.time} {s.et} ↗</span>
+              <b>{x.form}</b>{x.labels.length ? ` · ${x.labels.join(' · ')}` : ''} <span className="mv-muted" style={{ fontSize: 12 }}>· {x.time} {s.et} ↗</span>
             </a>
           ))}
         </div>
@@ -63,20 +63,20 @@ function Day({ d, s, lang, market, symbol }) {
       {f.announcements.length > 0 && (
         <div style={{ display: 'grid', gap: 4 }}>
           <span className="mv-h">{s.anns}</span>
-          {f.announcements.map((a) => <a key={a.url} className="mv-link" href={a.url} target="_blank" rel="noopener noreferrer">📄 {a.title} <span className="mv-muted" style={{ fontSize: 12 }}>· {a.date} ↗</span></a>)}
+          {f.announcements.map((a) => <a key={a.url} className="mv-link" href={a.url} target="_blank" rel="noopener noreferrer">{a.title} <span className="mv-muted" style={{ fontSize: 12 }}>· {a.date} ↗</span></a>)}
         </div>
       )}
       {f.news.length > 0 && (
         <div style={{ display: 'grid', gap: 4 }}>
           <span className="mv-h">{s.news}</span>
-          {f.news.map((n) => <a key={n.url} className="mv-link" href={n.url} target="_blank" rel="noopener noreferrer">📰 {n.title} <span className="mv-muted" style={{ fontSize: 12 }}>· {n.publisher || ''} {n.date} ↗</span></a>)}
+          {f.news.map((n) => <a key={n.url} className="mv-link" href={n.url} target="_blank" rel="noopener noreferrer">{n.title} <span className="mv-muted" style={{ fontSize: 12 }}>· {n.publisher || ''} {n.date} ↗</span></a>)}
         </div>
       )}
       {!hasFacts && d.kind === 'stock' && <div className="mv-muted" style={{ fontSize: 13, lineHeight: 1.55 }}>{s.noFacts}</div>}
-      {!ai && <button className="mv-btn" onClick={ask}>✨ {s.ai}</button>}
+      {!ai && <button className="mv-btn" onClick={ask}>{s.ai}</button>}
       {ai?.loading && <div className="mv-muted" style={{ fontSize: 13 }}>{s.aiLoading}</div>}
       {ai?.error && <div className="mv-muted" style={{ fontSize: 13 }}>{s.aiFail}</div>}
-      {ai?.text && <div className="mv-ai">✨ {ai.text}<div className="mv-muted" style={{ fontSize: 11.5, marginTop: 6 }}>{s.aiNote}</div></div>}
+      {ai?.text && <div className="mv-ai">{ai.text}<div className="mv-muted" style={{ fontSize: 11.5, marginTop: 6 }}>{s.aiNote}</div></div>}
     </article>
   )
 }
@@ -100,7 +100,7 @@ export default function MovesPanel({ symbol, market, lang }) {
     <section className="mv">
       <style>{CSS}</style>
       <div style={{ display: 'grid', gap: 4 }}>
-        <h3 style={{ margin: 0, fontSize: 17 }}>📉📈 {s.title} <span className="mv-muted" style={{ fontSize: 13, fontWeight: 500 }}>{symbol}</span></h3>
+        <h3 style={{ margin: 0, fontSize: 17 }}>{s.title} <span className="mv-muted" style={{ fontSize: 13, fontWeight: 500 }}>{symbol}</span></h3>
         <p className="mv-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.6, maxWidth: 820 }}>{s.intro}</p>
       </div>
       {!supported && <div className="mv-card mv-muted">{s.unsupported}</div>}

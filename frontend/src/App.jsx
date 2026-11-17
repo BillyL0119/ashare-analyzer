@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import LiquidBackground from './components/LiquidBackground'
-import SplashScreen, { shouldShowSplash } from './components/SplashScreen'
+import Icon from './components/Icon'
 import SearchBar from './components/SearchBar'
 import ComparePanel from './components/ComparePanel'
 import WelcomeModal from './components/WelcomeModal'
@@ -44,15 +43,13 @@ import { T } from './i18n/translations'
 import { useMobile } from './hooks/useMobile'
 import { trackVisit, trackFeature } from './utils/analytics'
 
-const ACCENT_BLUE = '#0ea5e9'
-
 // Skeleton placeholder shown while lazy page chunks are loading
 function PageSkeleton() {
   return (
     <div style={{ padding: '20px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {[100, 60, 80, 60].map((h, i) => (
         <div key={i} style={{
-          height: h, borderRadius: 8,
+          height: h, borderRadius: 6,
           background: 'var(--bg-secondary)',
           animation: `bfsSkeletonPulse 1.6s ease-in-out ${i * 0.1}s infinite`,
         }} />
@@ -153,11 +150,6 @@ export default function App() {
   const userMenuRef       = useRef(null)
   const mobileMenuRef     = useRef(null)
   const watchlistSyncRef  = useRef(null) // tracks last saved serialized value
-
-  // Splash screen — computed once at mount, stable for this session
-  const [hadSplash]      = useState(shouldShowSplash)
-  const [splashActive,   setSplashActive]   = useState(hadSplash)
-  const [contentVisible, setContentVisible] = useState(!hadSplash)
 
   // Initialize Supabase Auth listener once on mount
   useEffect(() => {
@@ -340,19 +332,6 @@ export default function App() {
 
   return (
     <>
-    {/* Liquid background — fixed layer, sits below all content (z-index:0) */}
-    <LiquidBackground />
-    {/* Splash screen — renders above everything, unmounts after animation */}
-    {splashActive && (
-      <SplashScreen
-        onContentVisible={() => setContentVisible(true)}
-        onDone={() => setSplashActive(false)}
-      />
-    )}
-    {/* WelcomeModal and KnowledgeCard stay outside the opacity wrapper
-        because they are position:fixed — wrapping them in an opacity<1 div
-        would break their viewport positioning. They are revealed naturally
-        as the splash overlay fades out. */}
     <WelcomeModal onLangSelect={(lang) => setLang(lang)} />
     <KnowledgeCard lang={lang} open={showInsight} onClose={() => setShowInsight(false)} />
     <AuthModal open={showAuth} onClose={() => setShowAuth(false)} lang={lang} />
@@ -361,32 +340,19 @@ export default function App() {
         position: 'relative',
         zIndex: 1,
         minHeight: '100vh',
-        background: 'transparent',
+        background: 'var(--bg-primary)',
         color: 'var(--text-primary)',
-        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        fontFamily: 'var(--sans)',
         display: 'flex',
         flexDirection: 'column',
-        letterSpacing: '0.15px',
-        // When splash plays: opacity transition for seamless cross-fade.
-        // Without splash: keep the original bfsPageFadeIn animation.
-        ...(hadSplash ? {
-          opacity: contentVisible ? 1 : 0,
-          transition: 'opacity 0.45s ease',
-        } : {
-          animation: 'bfsPageFadeIn 0.35s ease both',
-        }),
       }}
     >
       {/* Sticky nav wrapper — primary header + secondary tab bar scroll together */}
       <div style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0 }}>
-      {/* Glassmorphism header */}
       <header
         style={{
-          background: scrolled ? 'var(--nav-bg)' : 'var(--nav-bg-dim)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: 'none',
-          boxShadow: scrolled ? (theme === 'light' ? '0 1px 4px rgba(0,0,0,0.12)' : '0 1px 32px rgba(0,0,0,0.6)') : 'none',
+          background: 'var(--nav-bg)',
+          borderBottom: '1px solid var(--border-primary)',
           padding: isMobile ? '8px 10px' : '10px 24px',
           display: 'flex',
           alignItems: 'center',
@@ -394,7 +360,6 @@ export default function App() {
           columnGap: isMobile ? 8 : 18,
           // Phones: search drops to its own full-width row so the top row fits 360px screens
           flexWrap: isMobile ? 'wrap' : 'nowrap',
-          transition: 'background 0.3s ease, box-shadow 0.3s ease',
           position: 'relative',
           zIndex: 10,
         }}
@@ -418,8 +383,8 @@ export default function App() {
           )}
         </div>
 
-        {/* Market toggle — pill style */}
-        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 24, padding: 3, gap: 2, flexShrink: 0 }}>
+        {/* Market switch: a segmented control */}
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 4, padding: 2, gap: 1, flexShrink: 0 }}>
           {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN },
             { key: 'hk', label: t.marketHK }, { key: 'jp', label: t.marketJP }].map(({ key, label }) => (
             <button
@@ -428,12 +393,11 @@ export default function App() {
               aria-pressed={market === key}
               style={{
                 padding: isMobile ? '4px 7px' : '5px 12px',
-                borderRadius: 20, border: 'none', cursor: 'pointer',
-                fontSize: isMobile ? 11 : 13, fontWeight: 600, letterSpacing: '0.2px',
-                background: market === key ? 'linear-gradient(135deg, var(--accent-blue), #38bdf8)' : 'transparent',
-                color: market === key ? '#fff' : 'var(--text-secondary)',
-                transition: 'all 0.2s ease',
-                boxShadow: market === key ? '0 2px 12px rgba(14,165,233,0.3)' : 'none',
+                borderRadius: 4, border: 'none', cursor: 'pointer',
+                fontSize: isMobile ? 11 : 13, fontWeight: market === key ? 600 : 500,
+                background: market === key ? 'var(--bg-primary)' : 'transparent',
+                color: market === key ? 'var(--text-primary)' : 'var(--text-secondary)',
+                boxShadow: market === key ? 'inset 0 0 0 1px var(--border-glow)' : 'none',
               }}
             >
               {isMobile && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
@@ -453,10 +417,10 @@ export default function App() {
                 onClick={() => setShowLangDropdown(v => !v)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '5px 12px', borderRadius: 20,
-                  border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)',
+                  padding: '6px 10px', borderRadius: 4,
+                  border: '1px solid var(--border-primary)', background: 'transparent',
                   cursor: 'pointer', fontSize: 12, fontWeight: 600,
-                  color: 'var(--text-secondary)', transition: 'all 0.2s ease', whiteSpace: 'nowrap',
+                  color: 'var(--text-secondary)', whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
                 onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)' }}
@@ -469,9 +433,8 @@ export default function App() {
                   style={{
                     position: 'absolute', top: 38, right: 0,
                     background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 10, minWidth: 120, zIndex: 9000,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '4px 0',
-                    animation: 'bfsPageFadeIn 0.15s ease both',
+                    borderRadius: 6, minWidth: 120, zIndex: 9000,
+                    boxShadow: 'var(--shadow-pop)', padding: '4px 0',
                   }}
                 >
                   {LANG_OPTIONS.map(({ code, label }) => (
@@ -489,14 +452,13 @@ export default function App() {
                       }}
                       style={{
                         display: 'block', width: '100%', textAlign: 'left',
-                        padding: '8px 16px', background: lang === code ? 'rgba(14,165,233,0.1)' : 'none',
+                        padding: '8px 16px', background: 'none',
                         border: 'none', cursor: 'pointer', fontSize: 13,
                         fontWeight: lang === code ? 600 : 400,
-                        color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
-                        transition: 'background 0.12s',
+                        color: lang === code ? 'var(--accent-blue)' : 'var(--text-primary)',
                       }}
-                      onMouseEnter={e => { if (lang !== code) e.currentTarget.style.background = 'var(--bg-hover)' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = lang === code ? 'rgba(14,165,233,0.1)' : 'none' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
                     >
                       {label}
                     </button>
@@ -511,17 +473,18 @@ export default function App() {
             <button
               onClick={() => { const next = theme === 'dark' ? 'light' : 'dark'; toggleTheme(); if (user) { setThemePreference(next); showToast('Theme saved') } }}
               title={theme === 'dark' ? t.lightMode : t.darkMode}
+              aria-label={theme === 'dark' ? t.lightMode : t.darkMode}
               style={{
-                width: 34, height: 34, borderRadius: '50%',
-                border: '1px solid var(--border-primary)', background: 'transparent',
-                cursor: 'pointer', fontSize: 16,
+                width: 32, height: 32, borderRadius: 4,
+                border: 'none', background: 'transparent', color: 'var(--text-secondary)',
+                cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 0.2s ease', flexShrink: 0,
+                flexShrink: 0,
               }}
               onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
             >
-              {theme === 'dark' ? '☀️' : '🌙'}
+              <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
             </button>
           )}
 
@@ -531,10 +494,10 @@ export default function App() {
               aria-label={t.searchPlaceholder}
               aria-expanded={showMobileSearch}
               style={{
-                width: 34, height: 34, borderRadius: '50%', flexShrink: 0, cursor: 'pointer',
-                border: `1px solid ${showMobileSearch ? '#0ea5e9' : 'var(--border-primary)'}`,
-                background: showMobileSearch ? 'rgba(14,165,233,0.15)' : 'transparent',
-                color: showMobileSearch ? '#0ea5e9' : 'var(--text-secondary)',
+                width: 32, height: 32, borderRadius: 4, flexShrink: 0, cursor: 'pointer',
+                border: 'none',
+                background: showMobileSearch ? 'var(--bg-hover)' : 'transparent',
+                color: showMobileSearch ? 'var(--text-primary)' : 'var(--text-secondary)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
@@ -542,36 +505,37 @@ export default function App() {
             </button>
           )}
 
-          {/* 💡 Daily Insight + 🎓 AI Tutor (desktop only) + ⭐ Watchlist (always) */}
+          {/* Daily insight + AI tutor (desktop only) + watchlist (always) */}
           {[
             ...(isMobile ? [] : [
-              { key: 'insight',   icon: '💡', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: t.navInsight,   badge: null },
-              { key: 'ai',        icon: '🎓', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: t.navAITutor,   badge: null },
+              { key: 'insight',   icon: 'bulb', active: showInsight,   onClick: () => setShowInsight(v => !v),   title: t.navInsight,   badge: null },
+              { key: 'ai',        icon: 'tutor', active: showAIFloat,   onClick: () => setShowAIFloat(v => !v),   title: t.navAITutor,   badge: null },
             ]),
-            { key: 'watchlist', icon: '⭐', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: t.navWatchlist, badge: watchlistCount > 0 ? watchlistCount : null },
+            { key: 'watchlist', icon: 'star', active: showWatchlist, onClick: () => setShowWatchlist(v => !v), title: t.navWatchlist, badge: watchlistCount > 0 ? watchlistCount : null },
           ].map(({ key, icon, active, onClick, title, badge }) => (
             <div key={key} ref={key === 'watchlist' ? watchlistBtnRef : undefined} style={{ position: 'relative', flexShrink: 0 }}>
               <button
                 onClick={onClick}
                 title={title}
+                aria-label={title}
+                aria-pressed={active}
                 style={{
-                  width: 34, height: 34, borderRadius: '50%',
-                  border: `1px solid ${active ? '#0ea5e9' : 'var(--border-primary)'}`,
-                  background: active ? 'rgba(14,165,233,0.15)' : 'transparent',
-                  cursor: 'pointer', fontSize: 16,
+                  width: 32, height: 32, borderRadius: 4,
+                  border: 'none',
+                  background: active ? 'var(--bg-hover)' : 'transparent',
+                  color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.2s ease',
-                  boxShadow: active ? '0 0 10px rgba(14,165,233,0.25)' : 'none',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(14,165,233,0.5)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = active ? 'rgba(14,165,233,0.15)' : 'transparent'; e.currentTarget.style.boxShadow = active ? '0 0 10px rgba(14,165,233,0.25)' : 'none' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = active ? 'var(--bg-hover)' : 'transparent' }}
               >
-                {icon}
+                <Icon name={icon} />
               </button>
               {badge != null && (
                 <div style={{
-                  position: 'absolute', top: -4, right: -4,
-                  background: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)',
+                  position: 'absolute', top: -3, right: -3,
+                  background: 'var(--accent-blue)',
                   color: '#fff', fontSize: 9, fontWeight: 700,
                   width: 15, height: 15, borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -592,15 +556,14 @@ export default function App() {
               <button
                 onClick={() => setShowMobileMenu(v => !v)}
                 style={{
-                  width: 34, height: 34, borderRadius: '50%',
-                  border: `1px solid ${showMobileMenu ? '#0ea5e9' : 'var(--border-primary)'}`,
-                  background: showMobileMenu ? 'rgba(14,165,233,0.15)' : 'transparent',
+                  width: 32, height: 32, borderRadius: 4,
+                  border: 'none', color: 'var(--text-secondary)',
+                  background: showMobileMenu ? 'var(--bg-hover)' : 'transparent',
                   cursor: 'pointer', fontSize: 18, letterSpacing: '-2px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = showMobileMenu ? 'rgba(14,165,233,0.15)' : 'transparent' }}
+                onMouseLeave={e => { e.currentTarget.style.background = showMobileMenu ? 'var(--bg-hover)' : 'transparent' }}
               >
                 •••
               </button>
@@ -609,9 +572,8 @@ export default function App() {
                   style={{
                     position: 'absolute', top: 40, right: 0,
                     background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                    borderRadius: 12, minWidth: 190, zIndex: 9000,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.45)', padding: '8px 0',
-                    animation: 'bfsPageFadeIn 0.15s ease both',
+                    borderRadius: 6, minWidth: 190, zIndex: 9000,
+                    boxShadow: 'var(--shadow-pop)', padding: '8px 0',
                   }}
                 >
                   {/* Language chips */}
@@ -632,11 +594,11 @@ export default function App() {
                             }
                           }}
                           style={{
-                            padding: '4px 8px', borderRadius: 6, fontSize: 11,
-                            background: lang === code ? 'rgba(14,165,233,0.15)' : 'var(--bg-tertiary)',
-                            border: `1px solid ${lang === code ? 'rgba(14,165,233,0.4)' : 'var(--border-primary)'}`,
+                            padding: '4px 8px', borderRadius: 4, fontSize: 11,
+                            background: lang === code ? 'var(--accent-blue-soft)' : 'var(--bg-tertiary)',
+                            border: `1px solid ${lang === code ? 'var(--accent-blue)' : 'var(--border-primary)'}`,
                             cursor: 'pointer', fontWeight: lang === code ? 700 : 400,
-                            color: lang === code ? '#0ea5e9' : 'var(--text-primary)',
+                            color: lang === code ? 'var(--accent-blue)' : 'var(--text-primary)',
                           }}
                         >
                           {label}
@@ -651,7 +613,7 @@ export default function App() {
                     onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
                   >
-                    <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                    <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={16} />
                     <span>{theme === 'dark' ? t.lightMode : t.darkMode}</span>
                   </button>
                   {/* Daily Insight */}
@@ -661,7 +623,7 @@ export default function App() {
                     onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
                   >
-                    <span>💡</span><span>{t.navInsight}</span>
+                    <Icon name="bulb" size={16} /><span>{t.navInsight}</span>
                   </button>
                   {/* AI Tutor */}
                   <button
@@ -670,7 +632,7 @@ export default function App() {
                     onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
                   >
-                    <span>🎓</span><span>{t.navAITutor}</span>
+                    <Icon name="tutor" size={16} /><span>{t.navAITutor}</span>
                   </button>
                 </div>
               )}
@@ -685,15 +647,14 @@ export default function App() {
                   onClick={() => setShowUserMenu(v => !v)}
                   title={user.email}
                   style={{
-                    width: 34, height: 34, borderRadius: '50%',
-                    border: '1px solid rgba(14,165,233,0.4)',
-                    background: 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))',
-                    cursor: 'pointer', fontSize: 13, fontWeight: 700,
-                    color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'all 0.2s',
+                    width: 32, height: 32, borderRadius: '50%',
+                    border: '1px solid var(--border-glow)',
+                    background: 'var(--bg-tertiary)',
+                    cursor: 'pointer', fontSize: 13, fontWeight: 600,
+                    color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.2)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(99,102,241,0.2))' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-tertiary)' }}
                 >
                   {(user.email?.[0] ?? '?').toUpperCase()}
                 </button>
@@ -702,9 +663,8 @@ export default function App() {
                     style={{
                       position: 'absolute', top: 40, right: 0,
                       background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
-                      borderRadius: 10, minWidth: 200, zIndex: 9000,
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.4)', padding: '8px 0',
-                      animation: 'bfsPageFadeIn 0.15s ease both',
+                      borderRadius: 6, minWidth: 200, zIndex: 9000,
+                      boxShadow: 'var(--shadow-pop)', padding: '8px 0',
                     }}
                   >
                     <div style={{ padding: '8px 16px 10px', borderBottom: '1px solid var(--border-primary)' }}>
@@ -714,7 +674,7 @@ export default function App() {
                       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {t.signedIn}
                         {role !== 'user' && (
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 999, color: role === 'admin' ? '#0ea5e9' : '#fbbf24', background: role === 'admin' ? 'rgba(14,165,233,0.14)' : 'rgba(251,191,36,0.14)' }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 4, color: role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-gold)', border: '1px solid currentColor' }}>
                             {(ROLE_LABELS[role] || ROLE_LABELS.admin)[lang] || (ROLE_LABELS[role] || ROLE_LABELS.admin).en}
                           </span>
                         )}
@@ -732,7 +692,7 @@ export default function App() {
                     )}
                     <button
                       onClick={async () => { setShowUserMenu(false); document.cookie = 'bfs_lang_hint=; path=/; max-age=0; SameSite=Lax'; await signOut() }}
-                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#ef5350', transition: 'background 0.12s' }}
+                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--red-bright)' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
                     >
@@ -747,8 +707,8 @@ export default function App() {
                 aria-label={t.signIn}
                 title={t.signIn}
                 style={{
-                  width: 34, height: 34, borderRadius: '50%', cursor: 'pointer',
-                  border: '1px solid rgba(14,165,233,0.35)', background: 'rgba(14,165,233,0.08)', color: '#0ea5e9',
+                  width: 32, height: 32, borderRadius: 4, cursor: 'pointer',
+                  border: '1px solid var(--border-glow)', background: 'transparent', color: 'var(--text-primary)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
@@ -758,13 +718,13 @@ export default function App() {
               <button
                 onClick={() => setShowAuth(true)}
                 style={{
-                  padding: '5px 14px', borderRadius: 20, border: '1px solid rgba(14,165,233,0.35)',
-                  background: 'rgba(14,165,233,0.08)',
-                  cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#0ea5e9',
-                  whiteSpace: 'nowrap', transition: 'all 0.2s',
+                  padding: '6px 14px', borderRadius: 4, border: '1px solid var(--border-glow)',
+                  background: 'transparent',
+                  cursor: 'pointer', fontSize: 12.5, fontWeight: 600, color: 'var(--text-primary)',
+                  whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.18)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(14,165,233,0.08)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
               >
                 {t.signIn}
               </button>
@@ -774,11 +734,6 @@ export default function App() {
         </div>{/* end right-side controls */}
 
       </header>
-      {/* Gradient nav border line */}
-      <div style={{
-        height: 1,
-        background: 'linear-gradient(90deg, transparent, var(--border-primary) 20%, var(--border-glow) 50%, var(--border-primary) 80%, transparent)',
-      }} />
       {/* Secondary nav: five sections with menus (components/nav) */}
       <SiteNav appTab={appTab} lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange}
         isMobile={isMobile} scrolled={scrolled} dataSource={t.dataSource} />
@@ -847,11 +802,10 @@ export default function App() {
       {toast && (
         <div style={{
           position: 'fixed', bottom: 80, right: 24, zIndex: 9998,
-          background: 'var(--bg-secondary)', border: '1px solid rgba(52,211,153,0.35)',
-          borderRadius: 8, padding: '8px 14px', fontSize: 13,
-          color: 'var(--text-primary)', boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
+          background: 'var(--bg-secondary)', border: '1px solid var(--border-glow)',
+          borderRadius: 4, padding: '8px 14px', fontSize: 13,
+          color: 'var(--text-primary)', boxShadow: 'var(--shadow-pop)',
           display: 'flex', alignItems: 'center', gap: 8,
-          animation: 'bfsPageFadeIn 0.2s ease both',
           pointerEvents: 'none',
         }}>
           <span style={{ color: '#34d399', fontSize: 15, lineHeight: 1 }}>✓</span>
@@ -897,7 +851,7 @@ export default function App() {
           50%       { opacity: 0.7; }
         }
         @media (prefers-reduced-motion: reduce) {
-          [style*="bfsPageFadeIn"],
+          [style*="bfsPageFadeIn"] { animation: none !important; opacity: 1 !important; }
           [style*="bfsSkeletonPulse"] { animation: none !important; opacity: 0.5 !important; }
         }
       `}</style>

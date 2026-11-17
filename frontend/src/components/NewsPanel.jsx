@@ -30,7 +30,7 @@ function NewsSkeleton() {
           display: 'flex', flexDirection: 'column', gap: 7,
         }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <div className="skeleton" style={{ height: 18, width: 48, borderRadius: 10, flexShrink: 0 }} />
+            <div className="skeleton" style={{ height: 18, width: 48, borderRadius: 6, flexShrink: 0 }} />
             <div className="skeleton" style={{ height: 14, flex: 1 }} />
           </div>
           <div className="skeleton" style={{ height: 11, width: '72%', marginLeft: 56 }} />
@@ -135,7 +135,7 @@ function NewsItem({ item, t }) {
         borderBottom: `1px solid ${THEME.border}`,
         transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.04)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.04)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       {/* Main row */}
@@ -146,7 +146,7 @@ function NewsItem({ item, t }) {
           fontSize: 10,
           fontWeight: 700,
           padding: '2px 8px',
-          borderRadius: 10,
+          borderRadius: 6,
           background: `${borderColor}1a`,
           color: borderColor,
           border: `1px solid ${borderColor}40`,
@@ -178,7 +178,7 @@ function NewsItem({ item, t }) {
             <span>{sourceName(item.source, useLangStore.getState().lang)}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
-              <span style={{ color: '#0ea5e9', fontSize: 10, background: 'rgba(14,165,233,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
+              <span style={{ color: '#4588cc', fontSize: 10, background: 'rgba(69,136,204,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
             )}
           </div>
         </div>
@@ -209,16 +209,16 @@ function NewsItem({ item, t }) {
         <div style={{
           marginTop: 10,
           padding: '10px 12px',
-          background: 'rgba(14,165,233,0.04)',
-          border: '1px solid rgba(14,165,233,0.10)',
-          borderRadius: 6,
+          background: 'rgba(69,136,204,0.04)',
+          border: '1px solid rgba(69,136,204,0.10)',
+          borderRadius: 4,
           fontSize: 12,
           color: 'var(--text-muted)',
           lineHeight: 1.6,
         }}>
           {ai.reason && (
             <div>
-              <span style={{ color: '#0ea5e9', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
+              <span style={{ color: '#4588cc', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
               {ai.reason}
             </div>
           )}
@@ -233,7 +233,7 @@ function NewsItem({ item, t }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                style={{ color: '#0ea5e9', textDecoration: 'none', fontSize: 11 }}
+                style={{ color: '#4588cc', textDecoration: 'none', fontSize: 11 }}
               >
                 {t.newsReadMore}
               </a>
@@ -252,15 +252,15 @@ function FilterPill({ active, color, onClick, children }) {
       onClick={onClick}
       style={{
         padding: '3px 11px',
-        borderRadius: 12,
+        borderRadius: 8,
         border: 'none',
         cursor: 'pointer',
         fontSize: 11,
         fontWeight: active ? 600 : 400,
         background: active
-          ? `${color || 'rgba(14,165,233,0.25)'}30`
+          ? `${color || 'rgba(69,136,204,0.25)'}30`
           : 'var(--bg-hover)',
-        color: active ? (color || '#0ea5e9') : 'var(--text-muted)',
+        color: active ? (color || '#4588cc') : 'var(--text-muted)',
         transition: 'all 0.15s',
         letterSpacing: '0.2px',
       }}
@@ -312,7 +312,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
       style={{
         background: THEME.gridBg,
         border: `1px solid ${THEME.border}`,
-        borderRadius: 8,
+        borderRadius: 6,
         padding: 16,
       }}
     >
@@ -328,12 +328,12 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
         }}
       >
         <span style={{
-          background: 'rgba(14,165,233,0.08)',
-          border: '1px solid rgba(14,165,233,0.3)',
+          background: 'rgba(69,136,204,0.08)',
+          border: '1px solid rgba(69,136,204,0.3)',
           borderRadius: 4,
           padding: '2px 8px',
           fontSize: 12,
-          color: '#0ea5e9',
+          color: '#4588cc',
           fontFamily: 'monospace',
         }}>
           {stock.code}
@@ -367,7 +367,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           padding: 12,
           background: '#f8514910',
           border: '1px solid #f8514930',
-          borderRadius: 6,
+          borderRadius: 4,
         }}>
           {error}
         </div>
@@ -379,9 +379,9 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           {/* ── Overview card ── */}
           {data.overall && (
             <div style={{
-              background: 'rgba(14,165,233,0.03)',
-              border: '1px solid rgba(14,165,233,0.10)',
-              borderRadius: 8,
+              background: 'rgba(69,136,204,0.03)',
+              border: '1px solid rgba(69,136,204,0.10)',
+              borderRadius: 6,
               padding: '14px 16px',
               marginBottom: 14,
               display: 'flex',
@@ -402,7 +402,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
                   <div style={{
                     marginTop: 12,
                     fontSize: 13,
-                    color: '#8b5cf6',
+                    color: '#7f77c2',
                     lineHeight: 1.5,
                     paddingTop: 10,
                     borderTop: '1px solid var(--border-primary)',

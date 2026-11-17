@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { MUTED, BDR } from './ui'
 import { paperHeaders } from '../../utils/paperAuth'
 
-const PALETTE = ['#0ea5e9', '#8b5cf6', '#f59e0b', '#10b981', '#ec4899', '#6366f1', '#14b8a6', '#f97316']
-const LEVEL = { warn: { icon: '!', color: '#f59e0b' }, info: { icon: 'i', color: '#0ea5e9' }, good: { icon: '✓', color: '#10b981' } }
+const PALETTE = ['#4588cc', '#7f77c2', '#f59e0b', '#10b981', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
+const LEVEL = { warn: { icon: '!', color: '#f59e0b' }, info: { icon: 'i', color: '#4588cc' }, good: { icon: '✓', color: '#10b981' } }
 
 // Portfolio check-up: where the money sits and plain findings, worked out by the server
 export default function Checkup({ accountKey, market, gameId, lang, refreshKey }) {
@@ -22,7 +22,7 @@ export default function Checkup({ accountKey, market, gameId, lang, refreshKey }
     <div style={{ display: 'grid', gap: 16 }}>
       {colored.length > 0 && (
         <div style={{ display: 'grid', gap: 10 }}>
-          <div style={{ display: 'flex', height: 14, borderRadius: 7, overflow: 'hidden', background: 'var(--bg-tertiary)' }}>
+          <div style={{ display: 'flex', height: 14, borderRadius: 4, overflow: 'hidden', background: 'var(--bg-tertiary)' }}>
             {colored.map((a) => <div key={a.name} title={`${a.name} ${a.pct}%`} style={{ width: `${a.pct}%`, background: a.color }} />)}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px' }}>

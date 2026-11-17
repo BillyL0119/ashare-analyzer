@@ -4,7 +4,7 @@ import { CUR } from '../../utils/markets'
 import { BDR, MUTED, UP, DOWN, ACCENT, Card, Seg, Field, inputStyle, Button, fmt, money, estFee, StockLink } from './ui'
 import { paperHeaders } from '../../utils/paperAuth'
 
-const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#6366f1' }
+const SIDE_COLOR = { buy: UP, sell: DOWN, short: '#f59e0b', cover: '#5f73b8' }
 const PH = { us: 'AAPL / Apple', cn: '600519 / 茅台', hk: '00700 / 腾讯', jp: '7203 / Toyota' }
 const CODE_OK = { us: /^[A-Z0-9.-]{1,10}$/i, cn: /^\d{6}$/, hk: /^\d{1,5}$/, jp: /^(\d{4}|\d{3}[A-Z])$/ }
 
@@ -137,7 +137,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
             onFocus={() => setSuggestOpen(true)} onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
             placeholder={PH[market]} autoComplete="off" style={{ ...inputStyle, fontWeight: 700 }} id="pt-order-symbol" />
           {showSuggest && (
-            <div role="listbox" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 30, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden' }}>
+            <div role="listbox" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 30, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 6, boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden' }}>
               {suggestions.map((x) => (
                 <div key={x.symbol} role="option" onMouseDown={(e) => { e.preventDefault(); setSymbol(x.symbol); setSuggestOpen(false) }}
                   style={{ display: 'flex', gap: 10, padding: '8px 12px', cursor: 'pointer', fontSize: 12.5 }}
@@ -201,7 +201,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         )}
       </div>
 
-      <p style={{ margin: 0, fontSize: 12, lineHeight: 1.6, color: MUTED, background: 'var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px' }}>
+      <p style={{ margin: 0, fontSize: 12, lineHeight: 1.6, color: MUTED, background: 'var(--bg-tertiary)', borderRadius: 6, padding: '9px 12px' }}>
         {side === 'short' ? s.help.short : s.help[type]}
       </p>
 

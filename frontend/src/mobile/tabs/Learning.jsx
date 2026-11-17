@@ -9,6 +9,7 @@ import { useAPI } from '../data'
 import { loc } from '../helpers'
 import { Icon } from '../icons'
 import { ErrorBox, Section, Skeleton, SkeletonRows } from '../ui'
+import LineIcon from '../../components/Icon'
 
 const EXAM_ORDER = ['stocks', 'alevel', 'igcse', 'ap_macro', 'ap_micro', 'ib']
 const EXAM_LABEL = { alevel: 'A-Level', igcse: 'IGCSE', ap_macro: 'AP Macro', ap_micro: 'AP Micro', ib: 'IB', stocks: '股票入门' }
@@ -55,7 +56,7 @@ function List() {
     <div className="m-stack" style={{ gap: 18 }}>
       <h1 className="m-title" style={{ marginBottom: 0 }}>{t('学习中心')}</h1>
       <button className="m-card" onClick={() => nav('/cases')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
-        <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>📰</span>
+        <LineIcon name="file" size={24} style={{ color: 'var(--accent)' }} />
         <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
           <b style={{ fontSize: 15 }}>{casesStrings(lang).title}</b>
           <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{casesStrings(lang).subtitle}</span>
@@ -63,7 +64,7 @@ function List() {
         <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
       </button>
       <button className="m-card" onClick={() => nav('/diagrams')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
-        <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>📐</span>
+        <LineIcon name="curves" size={24} style={{ color: 'var(--accent)' }} />
         <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
           <b style={{ fontSize: 15 }}>{diagramNav(lang).title}</b>
           <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{diagramNav(lang).card}</span>
@@ -71,7 +72,7 @@ function List() {
         <span className="m-muted" aria-hidden="true" style={{ marginLeft: 'auto', flex: 'none' }}>›</span>
       </button>
       <button className="m-card" onClick={() => nav('/governor')} style={{ display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', width: '100%' }}>
-        <span aria-hidden="true" style={{ fontSize: 26, flex: 'none' }}>🏛</span>
+        <LineIcon name="landmark" size={24} style={{ color: 'var(--accent)' }} />
         <span style={{ display: 'grid', gap: 3, minWidth: 0 }}>
           <b style={{ fontSize: 15 }}>{governorStrings(lang).title}</b>
           <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{governorStrings(lang).card}</span>
@@ -91,7 +92,7 @@ function List() {
               <b style={{ fontSize: 14 }}>{t('学习进度')}</b><span className="m-num m-muted" style={{ fontSize: 12, fontWeight: 650 }}>{t('%lld/%lld 已学完', done, all.length)}</span>
             </div>
             <div style={{ height: 8, borderRadius: 4, background: 'var(--surface-hi)', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${all.length ? (done / all.length) * 100 : 0}%`, minWidth: done ? 8 : 0, borderRadius: 4, background: 'linear-gradient(90deg,var(--accent),var(--accent-2))', transition: 'width .4s' }} />
+              <div style={{ height: '100%', width: `${all.length ? (done / all.length) * 100 : 0}%`, minWidth: done ? 8 : 0, borderRadius: 4, background: 'var(--accent)', transition: 'width .4s' }} />
             </div>
           </div>
           {cur.papers?.length ? cur.papers.map((p) => (
@@ -147,15 +148,15 @@ function Topic() {
                     <p style={{ margin: 0, lineHeight: 1.65, fontSize: 15.5, whiteSpace: 'pre-wrap' }}>{loc(s, 'body', lang)}</p>
                     {STUDY_DIAGRAM_LINKS[s.diagram_type] && (
                       <button onClick={() => nav(STUDY_DIAGRAM_LINKS[s.diagram_type])} style={{ display: 'flex', gap: 8, alignItems: 'center', textAlign: 'left', padding: '10px 12px', borderRadius: 14, fontWeight: 650, fontSize: 14, color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 10%, transparent)' }}>
-                        <span aria-hidden="true">📐</span>{diagramNav(lang).openLab}<span aria-hidden="true" style={{ marginLeft: 'auto' }}>›</span>
+                        <LineIcon name="curves" size={18} />{diagramNav(lang).openLab}<span aria-hidden="true" style={{ marginLeft: 'auto' }}>›</span>
                       </button>
                     )}
                     {terms(s).length > 0 && (
                       <div><div className="m-label" style={{ marginBottom: 8, fontWeight: 650 }}>{t('关键术语')}</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{terms(s).map((k) => <span key={k} className="m-chip" style={{ fontSize: 12.5, padding: '5px 10px', color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>{k}</span>)}</div></div>
                     )}
-                    {loc(s, 'real_world', lang) && <Callout icon="🌐" title={t('真实案例')} color="var(--accent)" text={loc(s, 'real_world', lang)} />}
-                    {loc(s, 'exam_tip', lang) && <Callout icon="💡" title={t('考试技巧')} color="#F28B3C" text={loc(s, 'exam_tip', lang)} />}
+                    {loc(s, 'real_world', lang) && <Callout title={t('真实案例')} color="var(--accent)" text={loc(s, 'real_world', lang)} />}
+                    {loc(s, 'exam_tip', lang) && <Callout title={t('考试技巧')} color="#F28B3C" text={loc(s, 'exam_tip', lang)} />}
                   </>
                 )}
               </div>
@@ -182,10 +183,10 @@ function Topic() {
   )
 }
 
-function Callout({ icon, title, color, text }) {
+function Callout({ title, color, text }) {
   return (
     <div style={{ padding: 12, borderRadius: 14, background: `color-mix(in srgb, ${color} 10%, transparent)` }}>
-      <div style={{ fontSize: 12, fontWeight: 800, color, marginBottom: 6 }}>{icon} {title}</div>
+      <div style={{ fontSize: 12, fontWeight: 800, color, marginBottom: 6 }}>{title}</div>
       <div style={{ fontSize: 14.5, lineHeight: 1.55 }}>{text}</div>
     </div>
   )

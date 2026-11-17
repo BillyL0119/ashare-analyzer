@@ -19,7 +19,7 @@ function TypeTag({ type, lang }) {
       fontSize: 10,
       fontWeight: 700,
       padding: '2px 7px',
-      borderRadius: 10,
+      borderRadius: 6,
       background: cfg.bg,
       color: cfg.color,
       border: `1px solid ${cfg.color}40`,
@@ -40,10 +40,10 @@ function EventRow({ event, lang, t, onStockClick }) {
       alignItems: 'center',
       gap: 10,
       padding: '8px 12px',
-      borderBottom: '1px solid rgba(14,165,233,0.07)',
+      borderBottom: '1px solid rgba(69,136,204,0.07)',
       transition: 'background 0.12s',
     }}
-    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(14,165,233,0.04)' }}
+    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(69,136,204,0.04)' }}
     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <TypeTag type={event.type} lang={lang} />
@@ -55,7 +55,7 @@ function EventRow({ event, lang, t, onStockClick }) {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            color: '#0ea5e9',
+            color: '#4588cc',
             fontFamily: 'monospace',
             fontSize: 12,
             padding: 0,
@@ -92,18 +92,18 @@ function DateGroup({ dateStr, events, lang, t, onStockClick }) {
         alignItems: 'center',
         gap: 10,
         padding: '6px 12px',
-        background: 'rgba(14,165,233,0.06)',
+        background: 'rgba(69,136,204,0.06)',
         borderRadius: '8px 8px 0 0',
-        borderBottom: '1px solid rgba(14,165,233,0.12)',
+        borderBottom: '1px solid rgba(69,136,204,0.12)',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#0ea5e9', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#4588cc', fontFamily: 'monospace' }}>
           {dateStr}
         </span>
         <span style={{
           fontSize: 11,
           color: diff <= 1 ? '#ffa726' : 'var(--text-muted)',
           background: diff <= 1 ? 'rgba(255,167,38,0.12)' : 'transparent',
-          borderRadius: 6,
+          borderRadius: 4,
           padding: diff <= 1 ? '1px 6px' : 0,
           fontWeight: diff <= 1 ? 600 : 400,
         }}>
@@ -113,7 +113,7 @@ function DateGroup({ dateStr, events, lang, t, onStockClick }) {
           {events.length} {t.calEventsUnit}
         </span>
       </div>
-      <div style={{ background: 'var(--bg-secondary)', borderRadius: '0 0 8px 8px', border: '1px solid rgba(14,165,233,0.08)', borderTop: 'none' }}>
+      <div style={{ background: 'var(--bg-secondary)', borderRadius: '0 0 8px 8px', border: '1px solid rgba(69,136,204,0.08)', borderTop: 'none' }}>
         {events.map((ev, i) => (
           <EventRow key={i} event={ev} lang={lang} t={t} onStockClick={onStockClick} />
         ))}
@@ -161,7 +161,7 @@ export default function CalendarPanel({ lang, onStockSelect }) {
     <div style={{ maxWidth: 760, margin: '0 auto', width: '100%' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-        <div style={{ fontSize: 16, fontWeight: 600, background: 'linear-gradient(90deg,#0ea5e9,#8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', }}>
           {t.calTitle}
         </div>
       </div>
@@ -177,16 +177,16 @@ export default function CalendarPanel({ lang, onStockSelect }) {
               onClick={() => setFilter(type)}
               style={{
                 padding: '4px 12px',
-                borderRadius: 12,
+                borderRadius: 8,
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 12,
                 fontWeight: active ? 700 : 400,
                 background: active
-                  ? (cfg ? cfg.bg : 'rgba(14,165,233,0.15)')
+                  ? (cfg ? cfg.bg : 'rgba(69,136,204,0.15)')
                   : 'var(--bg-hover)',
                 color: active
-                  ? (cfg ? cfg.color : '#0ea5e9')
+                  ? (cfg ? cfg.color : '#4588cc')
                   : 'var(--text-muted)',
                 transition: 'all 0.15s',
               }}

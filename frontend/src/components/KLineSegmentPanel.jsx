@@ -17,7 +17,7 @@ function StatCard({ label, value, color }) {
       flex: 1, minWidth: 72,
       background: 'rgba(255,255,255,0.04)',
       border: `1px solid ${THEME.border}`,
-      borderRadius: 6, padding: '7px 10px', textAlign: 'center',
+      borderRadius: 4, padding: '7px 10px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 3 }}>{label}</div>
       <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: color || 'var(--text-primary)' }}>
@@ -36,7 +36,7 @@ function AIText({ text }) {
         // Section header: **Title**
         if (/^\*\*[^*]+\*\*$/.test(line.trim())) {
           return (
-            <div key={i} style={{ color: '#8ab4f8', fontWeight: 700, fontSize: 13, marginTop: 12, marginBottom: 3 }}>
+            <div key={i} style={{ color: '#6aa2da', fontWeight: 700, fontSize: 13, marginTop: 12, marginBottom: 3 }}>
               {line.trim().slice(2, -2)}
             </div>
           )
@@ -96,12 +96,12 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
     <div style={{
       margin: '0 0 4px 0',
       borderTop: `1px solid ${THEME.border}`,
-      background: 'rgba(14,165,233,0.03)',
+      background: 'rgba(69,136,204,0.03)',
       padding: '12px 14px',
     }}>
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <span style={{ fontSize: 12, color: '#8ab4f8', fontWeight: 700 }}>
+        <span style={{ fontSize: 12, color: '#6aa2da', fontWeight: 700 }}>
           {t.ksTitle}
         </span>
         <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
@@ -144,9 +144,9 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           fontSize: 12, padding: '6px 10px', marginBottom: 6,
           background: 'rgba(255,255,255,0.04)',
           border: `1px solid ${THEME.border}`,
-          borderRadius: 5, color: 'var(--text-muted)',
+          borderRadius: 4, color: 'var(--text-muted)',
         }}>
-          ⚠ {error}
+          {error}
         </div>
       )}
 
@@ -157,7 +157,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           <div style={{
             background: 'rgba(255,255,255,0.03)',
             border: `1px solid ${THEME.border}`,
-            borderRadius: 6, padding: '8px 12px', fontSize: 12,
+            borderRadius: 4, padding: '8px 12px', fontSize: 12,
           }}>
             <div style={{ color: 'var(--text-muted)', marginBottom: 2 }}>
               MACD:&nbsp;<span style={{ color: 'var(--text-primary)' }}>{result.tech?.macd}</span>
@@ -204,9 +204,9 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
 
           {/* AI text */}
           <div style={{
-            background: 'rgba(138,180,248,0.05)',
-            border: `1px solid rgba(138,180,248,0.2)`,
-            borderRadius: 6, padding: '10px 14px',
+            background: 'rgba(106,162,218,0.05)',
+            border: `1px solid rgba(106,162,218,0.2)`,
+            borderRadius: 4, padding: '10px 14px',
           }}>
             <AIText text={result.ai_analysis} />
           </div>
@@ -223,7 +223,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
             style={{
               padding: '5px', background: 'transparent',
               color: 'var(--text-muted)', border: `1px solid ${THEME.border}`,
-              borderRadius: 5, cursor: 'pointer', fontSize: 11,
+              borderRadius: 4, cursor: 'pointer', fontSize: 11,
             }}
           >
             {t.ksReanalyze}
@@ -239,9 +239,9 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           style={{
             display: 'block', width: '100%', padding: '10px 0',
             background: loading
-              ? 'rgba(138,180,248,0.15)'
-              : 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)',
-            color: '#fff', border: 'none', borderRadius: 6,
+              ? 'rgba(106,162,218,0.15)'
+              : '#4588cc',
+            color: '#fff', border: 'none', borderRadius: 4,
             cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 14, fontWeight: 600, letterSpacing: '0.3px',
             transition: 'opacity 0.15s',

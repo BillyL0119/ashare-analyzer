@@ -7,20 +7,20 @@ import classStrings from './classStrings'
 // Classroom mode: students join a teacher's class with a code; teachers set assignments that complete
 // on their own and follow the whole class's progress.
 
-const ACCENT = '#0ea5e9'
+const ACCENT = '#4588cc'
 const UP = '#10b981', DOWN = '#ef4444'
 
 const CSS = `
 .cl { display: grid; gap: 18px; max-width: 1180px; margin: 0 auto; width: 100%; padding: 18px 0 40px; }
-.cl-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px 18px; min-width: 0; display: grid; gap: 12px; }
+.cl-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 16px 18px; min-width: 0; display: grid; gap: 12px; }
 .cl-muted { color: var(--text-secondary); }
 .cl-h { margin: 0; font-size: 17px; }
-.cl-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-.cl-btn.primary { background: linear-gradient(135deg, #0ea5e9, #6366f1); border-color: transparent; color: #fff; }
+.cl-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 6px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.cl-btn.primary { background: #4588cc; border-color: transparent; color: #fff; }
 .cl-btn.danger { color: ${DOWN}; background: transparent; }
 .cl-btn:disabled { opacity: .5; cursor: not-allowed; }
 .cl-btn:focus-visible, .cl-input:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
-.cl-input { width: 100%; min-width: 0; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 9px; padding: 9px 12px; font-size: 14px; }
+.cl-input { width: 100%; min-width: 0; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-primary); border-radius: 6px; padding: 9px 12px; font-size: 14px; }
 .cl-label { font-size: 12.5px; font-weight: 650; color: var(--text-secondary); display: grid; gap: 6px; }
 .cl-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
 .cl-scroll { overflow-x: auto; }
@@ -120,7 +120,7 @@ function StudentClasses({ s, classes, onLeave }) {
               </div>
               {c.assignments.length === 0 && <div className="cl-muted" style={{ fontSize: 13 }}>{s.noAssignments}</div>}
               {c.assignments.map((a) => (
-                <div key={a.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 10px', borderRadius: 10, border: '1px solid var(--border-primary)', opacity: a.done ? 0.65 : 1 }}>
+                <div key={a.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border-primary)', opacity: a.done ? 0.65 : 1 }}>
                   <span aria-label={a.done ? s.done : s.todo} style={{ flex: 'none', width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 12, color: '#fff', background: a.done ? UP : 'transparent', border: a.done ? 'none' : '2px solid var(--border-primary)' }}>{a.done ? '✓' : ''}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 650 }}>{a.title}</div>
@@ -204,7 +204,7 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
             <span className="cl-code">{c.code}</span>
           </div>
           <button className="cl-btn primary" onClick={async () => { try { await navigator.clipboard.writeText(s.inviteText(c.name, c.code, url)); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* blocked */ } }}>
-            {copied ? `✓ ${s.copied}` : `🔗 ${s.copyLink}`}
+            {copied ? `✓ ${s.copied}` : `${s.copyLink}`}
           </button>
         </div>
         {err && <div style={{ color: DOWN, fontSize: 13 }}>{err}</div>}
@@ -246,14 +246,14 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
       <section className="cl-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <h3 className="cl-h">{s.students}</h3>
-          {d.students.length > 0 && <button className="cl-btn" style={{ marginLeft: 'auto', padding: '5px 10px', fontSize: 12 }} onClick={csv}>⬇ {s.exportCsv}</button>}
+          {d.students.length > 0 && <button className="cl-btn" style={{ marginLeft: 'auto', padding: '5px 10px', fontSize: 12 }} onClick={csv}>{s.exportCsv}</button>}
         </div>
         {d.students.length === 0 ? <div className="cl-muted" style={{ fontSize: 13 }}>{s.noStudents}</div> : (
           <div className="cl-scroll"><table className="cl-table">
             <thead><tr>
               <th>{s.colName}</th><th>{s.colDone}</th><th>{s.colMissions}</th><th style={{ textAlign: 'right' }}>{s.colTrades}</th>
               <th style={{ textAlign: 'right' }}>{s.colReturnUs}</th><th style={{ textAlign: 'right' }}>{s.colReturnCn}</th><th>{s.colTm}</th>
-              {govA.map((a) => <th key={a.id} title={a.title}>🏛 {a.short}</th>)}
+              {govA.map((a) => <th key={a.id} title={a.title}>{a.short}</th>)}
               <th>{s.colLast}</th><th>{s.colJoined}</th><th />
             </tr></thead>
             <tbody>{d.students.map((r) => {
@@ -276,7 +276,7 @@ function Dashboard({ s, lang, id, onBack, onDeleted }) {
             })}</tbody>
           </table></div>
         )}
-        {d.students.length > 0 && govA.length > 0 && <p className="cl-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.6 }}>🏛 {s.govNote}</p>}
+        {d.students.length > 0 && govA.length > 0 && <p className="cl-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.6 }}>{s.govNote}</p>}
       </section>
 
       <section className="cl-card">
@@ -304,7 +304,7 @@ function TeacherClasses({ s, lang, onOpenAuth, phone }) {
   if (!user) {
     return (
       <section className="cl-card">
-        <h2 className="cl-h">🏫 {s.teach}</h2>
+        <h2 className="cl-h">{s.teach}</h2>
         <div className="cl-muted" style={{ fontSize: 13.5 }}>{phone ? s.teachSignInPhone : s.teachSignIn}</div>
         {onOpenAuth && <div><button className="cl-btn primary" onClick={onOpenAuth}>{s.signIn}</button></div>}
       </section>
@@ -317,7 +317,7 @@ function TeacherClasses({ s, lang, onOpenAuth, phone }) {
   }
   return (
     <section style={{ display: 'grid', gap: 12 }}>
-      <h2 className="cl-h">🏫 {s.teach}</h2>
+      <h2 className="cl-h">{s.teach}</h2>
       {list && list.length > 0 && (
         <div className="cl-grid">
           {list.map((c) => (
@@ -358,7 +358,7 @@ export default function ClassPage({ lang, code, onOpenAuth, phone = false }) {
     <div className="cl">
       <style>{CSS}</style>
       <div style={{ display: 'grid', gap: 6 }}>
-        <h1 style={{ margin: 0, fontSize: 28 }}>🏫 {s.title}</h1>
+        <h1 style={{ margin: 0, fontSize: 28 }}>{s.title}</h1>
         <p className="cl-muted" style={{ margin: 0, fontSize: 14, lineHeight: 1.6, maxWidth: 780 }}>{s.subtitle}</p>
       </div>
       {!joinedCode && <JoinCard s={s} initialCode={code} onJoined={() => { loadMine(); if (code) navigate('/class', { replace: true }) }} />}

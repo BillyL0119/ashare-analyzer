@@ -36,7 +36,7 @@ const UP = 'var(--green-bright)', DOWN = 'var(--red-bright)'
 const col = (p) => (p > 0 ? UP : p < 0 ? DOWN : 'var(--text-secondary)')
 const pct = (p) => (p == null ? '—' : `${p > 0 ? '+' : ''}${p.toFixed(2)}%`)
 const num = (v, d = 2) => (v == null ? '—' : v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }))
-const card = { background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12 }
+const card = { background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8 }
 
 export default function IntlMarketPanel({ lang, market }) {
   const t = L[lang] || L.en
@@ -62,20 +62,20 @@ export default function IntlMarketPanel({ lang, market }) {
   return (
     <div style={{ ...card, padding: 16, marginBottom: 10, display: 'grid', gap: 16 }}>
       <style>{`.imp-tile { transition: background .15s, border-color .15s, transform .15s; }
-.imp-tile:hover { border-color: var(--border-glow) !important; transform: translateY(-1px); }
+.imp-tile:hover { border-color: var(--border-glow) !important; }
 .imp-tile:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .imp-tile { transition: none; } .imp-tile:hover { transform: none; } }`}</style>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <span style={{ width: 7, height: 7, borderRadius: 4, background: s.state === 'open' ? UP : s.state === 'lunch' ? 'var(--accent-gold)' : 'var(--text-muted)' }} />
         <strong style={{ fontSize: 14 }}>{t[market]}</strong>
-        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 10, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{t[s.state]}</span>
+        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 6, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{t[s.state]}</span>
         <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)' }}>{s.time} {t.local[market]} · {t.delayed}</span>
       </div>
 
       {d.indices.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
           {d.indices.map((i) => (
-            <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 10, padding: '10px 12px' }}>
+            <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 6, padding: '10px 12px' }}>
               <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{lang === 'zh' || lang === 'ja' ? i.name_zh : i.name_en}</div>
               <div className="serif-num" style={{ fontSize: 27, margin: '2px 0' }}>{num(i.price)}</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: col(i.change_pct), fontVariantNumeric: 'tabular-nums' }}>
@@ -91,7 +91,7 @@ export default function IntlMarketPanel({ lang, market }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 }}>
           {d.hot.map((q) => (
             <button key={q.symbol} className="imp-tile" onClick={() => open(q)}
-              style={{ minWidth: 0, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 10, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
+              style={{ minWidth: 0, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 6, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, minWidth: 0 }}>
                 <span style={{ fontWeight: 700, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{localName(q, lang, market)}</span>
               </div>

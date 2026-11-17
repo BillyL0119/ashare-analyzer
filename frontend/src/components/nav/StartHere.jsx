@@ -5,6 +5,7 @@ import casesStrings from '../cases/casesStrings'
 import governorStrings from '../governor/governorStrings'
 import classStrings from '../classes/classStrings'
 import Chevron from './Chevron'
+import Icon from '../Icon'
 import navStrings from './navStrings'
 import { ICONS } from './navItems'
 import './nav.css'
@@ -37,7 +38,6 @@ export default function StartHere({ lang, paths, onTabChange }) {
   if (folded) {
     return (
       <button type="button" className="bfs-start-fold" aria-expanded="false" onClick={() => fold(false)}>
-        <span aria-hidden="true">🧭</span>
         {s.startTitle}
         <Chevron />
       </button>
@@ -59,7 +59,7 @@ export default function StartHere({ lang, paths, onTabChange }) {
             {picks.map((p) => (
               <li key={p.tab}>
                 <a href={paths[p.tab]} onClick={(e) => go(e, p.tab)}>
-                  <span className="bfs-start-icon" aria-hidden="true">{ICONS[p.tab]}</span>
+                  <Icon name={ICONS[p.tab]} size={20} className="bfs-start-icon" />
                   <span>
                     <b>{p.title}</b>
                     <span className="bfs-start-text">{p.text}</span>
@@ -77,7 +77,6 @@ export default function StartHere({ lang, paths, onTabChange }) {
           <h3>{s.teachers}</h3>
           <p>{cs.subtitle}</p>
           <a className="bfs-start-cta" href={paths.class} onClick={(e) => go(e, 'class')}>
-            <span aria-hidden="true">{ICONS.class}</span>
             {cs.create} →
           </a>
           <p className="bfs-start-note">{cs.teachSignIn}</p>

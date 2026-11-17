@@ -37,7 +37,7 @@ function MetricRow({ label, value, suffix = '', decimals = 2, invert = false, hi
 
 function SectionTitle({ children }) {
   return (
-    <div style={{ color: '#8ab4f8', fontSize: 13, fontWeight: 600, margin: '16px 0 8px', letterSpacing: 0.3 }}>
+    <div style={{ color: '#6aa2da', fontSize: 13, fontWeight: 600, margin: '16px 0 8px', letterSpacing: 0.3 }}>
       {children}
     </div>
   )
@@ -208,7 +208,7 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
   }, [stock.code, period, startDate, endDate, adjust])
 
   return (
-    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
+    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
@@ -222,7 +222,7 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
       {data && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {/* Top summary strip */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '12px 8px', marginBottom: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, background: 'rgba(255,255,255,0.03)', borderRadius: 4, padding: '12px 8px', marginBottom: 8 }}>
             {[
               { label: t.riskAnnReturn, v: data.tail_metrics.ann_return, s: '%' },
               { label: t.riskAnnVol, v: data.tail_metrics.ann_volatility, s: '%', invert: true },
