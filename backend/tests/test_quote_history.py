@@ -150,16 +150,16 @@ def test_nvda_split_has_no_jump_in_real_data():
 def test_route(monkeypatch):
     monkeypatch.setattr(nq, "clean_symbol", nq.clean_symbol)
     monkeypatch.setattr(nq, "daily_history", lambda s: DAILY if s == "XYZ" else [])
-    monkeypatch.setattr(nq, "dividends", lambda s: [{"ex_date": "2026-01-12", "amount": 0.7}])
-    monkeypatch.setattr(nq, "asset_class", lambda s: "etf" if s == "SPY" else "stocks")
+    monkeypatch.setattr(nq, "dividends", lambda s: [] if s == "TSLA" else [{"ex_date": "2026-01-12", "amount": 0.7, "source": "Tencent"}])
     monkeypatch.setattr(qh, "datetime", type("D", (), {"now": staticmethod(lambda tz=None: __import__("datetime").datetime(2026, 3, 1, tzinfo=tz))}))
     r = qh.history("xyz", "1y", "1d")
     assert r["symbol"] == "XYZ" and r["adjusted"] is True and r["source"] == "Nasdaq" and len(r["rows"]) == 8
     assert r["dividends"] == [{"date": "2026-01-12", "amount": 0.7}] and r["dividend_data"] is True
     monkeypatch.setattr(nq, "daily_history", lambda s: DAILY)
-    spy = qh.history("SPY", "ytd", "1d")
-    assert spy["adjusted"] is False and spy["dividends"] == []
-    assert all(x["adj_close"] == x["close"] for x in spy["rows"])
+    assert r["dividend_source"] == "Tencent"
+    tsla = qh.history("TSLA", "ytd", "1d")                              # pays no dividends: adj close = close
+    assert tsla["dividend_data"] is False and tsla["dividends"] == [] and tsla["dividend_source"] is None
+    assert all(x["adj_close"] == x["close"] for x in tsla["rows"])
     for bad in [lambda: qh.history("!!", "1y", "1d"), lambda: qh.history("XYZ", "7y", "1d"),
                 lambda: qh.history("XYZ", "1y", "1h")]:
         with pytest.raises(HTTPException) as e:
@@ -169,35 +169,3 @@ def test_route(monkeypatch):
     with pytest.raises(HTTPException) as e:
         qh.history("NOPE", "1y", "1d")
     assert e.value.status_code == 404
-
-
-# ── dividends restated for splits (Nasdaq lists them as paid, prices already split-adjusted) ──
-
-def _d(*amounts):
-    return [{"ex_date": f"2020-{i + 1:02d}-10", "amount": a} for i, a in enumerate(amounts)]
-
-
-def test_split_adjust_aapl_four_for_one():
-    out = [d["amount"] for d in qh.split_adjust_dividends(_d(0.77, 0.82, 0.82, 0.205, 0.205, 0.22))]
-    assert out == pytest.approx([0.1925, 0.205, 0.205, 0.205, 0.205, 0.22])
-
-
-def test_split_adjust_with_a_raise_at_the_split_and_two_splits():
-    assert [d["amount"] for d in qh.split_adjust_dividends(_d(0.57, 0.57, 0.2075, 0.2075))] == pytest.approx(
-        [0.19, 0.19, 0.2075, 0.2075])                                    # WMT 3-for-1 with a raise: ratio 2.75
-    out = [d["amount"] for d in qh.split_adjust_dividends(_d(1.6, 1.6, 0.4, 0.4, 0.04))]
-    assert out == pytest.approx([0.04, 0.04, 0.04, 0.04, 0.04])           # 4-for-1 then 10-for-1
-
-
-def test_split_adjust_leaves_real_changes_and_specials_alone():
-    assert [d["amount"] for d in qh.split_adjust_dividends(_d(0.5, 0.5, 0.6, 0.7))] == [0.5, 0.5, 0.6, 0.7]
-    assert [d["amount"] for d in qh.split_adjust_dividends(_d(0.5, 0.45, 0.2, 0.2))] == [0.5, 0.45, 0.2, 0.2]   # 2.25x cut
-    special = [d["amount"] for d in qh.split_adjust_dividends(_d(0.8, 0.8, 8.0, 0.82))]                       # one-off special
-    assert special == [0.8, 0.8, 8.0, 0.82]
-    assert qh.split_adjust_dividends([]) == []
-
-
-def test_aapl_fixture_has_the_2020_split_restated():
-    divs = [{"ex_date": nq.parse_date(r["exOrEffDate"]), "amount": nq.num(r["amount"])}
-            for r in reversed(fixture("dividends")["dividends"]["rows"])]
-    assert all(d["amount"] < 0.3 for d in qh.split_adjust_dividends(divs) if d["ex_date"] > "2016-01-01")

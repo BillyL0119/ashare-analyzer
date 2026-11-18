@@ -139,10 +139,13 @@ def _pct(a, b):
     return round(a / b * 100, 2) if a is not None and b else None
 
 
-def _first_forecast_year_eps(forecast_rows, last_fy_end):
-    """Consensus EPS of the first fiscal year that ends after the last reported fiscal year."""
+def _first_forecast_year_eps(forecast_rows, last_fy_end, today=None):
+    """Consensus EPS of the next fiscal year: the first one that ends after the last reported fiscal year and
+    at least six months from today. A year that is almost over is mostly reported already (TSLA in November
+    is six weeks from its December year end), so its estimate is not a forward view."""
     if not last_fy_end:
         return None
+    today = today or datetime.now(nq.ET).date()
     last = (int(last_fy_end[:4]), int(last_fy_end[5:7]))
     best = None
     for r in forecast_rows or []:
@@ -150,7 +153,8 @@ def _first_forecast_year_eps(forecast_rows, last_fy_end):
         if len(parts) != 2 or parts[0] not in _MONTHS or not parts[1].isdigit():
             continue
         key = (int(parts[1]), _MONTHS[parts[0]])
-        if key > last and (best is None or key < best[0]):
+        months_ahead = (key[0] - today.year) * 12 + key[1] - today.month
+        if key > last and months_ahead >= 6 and (best is None or key < best[0]):
             best = (key, nq.num(r.get("consensusEPSForecast")))
     return best[1] if best else None
 
@@ -243,7 +247,7 @@ def compute(ctx, price, summ, today=None):
     # valuation
     ev = mc + debt - cash if mc is not None and debt is not None and cash is not None else None
     eps = ctx.get("eps_ttm")
-    fwd_eps = _first_forecast_year_eps(ctx.get("forecast"), ctx.get("last_fy_end"))
+    fwd_eps = _first_forecast_year_eps(ctx.get("forecast"), ctx.get("last_fy_end"), today)
     put("market_cap", mc)
     put("enterprise_value", round(ev) if ev is not None else None)
     put("pe_ttm", nq.pe_ttm(price, eps))

@@ -153,7 +153,6 @@ export default function QuoteHistory({ stocks, lang }) {
               {data.interval === '1wk' && ` ${S.weekly}`}
               {data.interval === '1mo' && ` ${S.monthly}`}
             </p>
-            {!data.adjusted && <p className="qh-meta">{S.notAdjusted}</p>}
             {data.adjusted && !data.dividend_data && <p className="qh-meta">{S.noDivData}</p>}
             <HistoryTable key={`${data.symbol}-${data.range}-${data.interval}`} data={data} lang={lang} S={S} />
             <div className="qh-foot">

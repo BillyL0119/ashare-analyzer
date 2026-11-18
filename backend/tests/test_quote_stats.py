@@ -236,3 +236,13 @@ def test_symbol_validation(monkeypatch):
     with pytest.raises(HTTPException) as e:
         qs.stats("ZZZZZ")
     assert e.value.status_code == 404
+
+
+def test_forward_eps_skips_a_year_that_is_almost_over():
+    rows = [{"fiscalEnd": "Dec 2026", "consensusEPSForecast": 0.7}, {"fiscalEnd": "Dec 2027", "consensusEPSForecast": 2.4}]
+    nov = date(2026, 11, 18)
+    assert qs._first_forecast_year_eps(rows, "2025-12-31", nov) == 2.4        # TSLA in November: use 2027
+    assert qs._first_forecast_year_eps(rows, "2025-12-31", date(2026, 3, 2)) == 0.7
+    aapl = [{"fiscalEnd": "Sep 2027", "consensusEPSForecast": 9.45}, {"fiscalEnd": "Sep 2028", "consensusEPSForecast": 10.39}]
+    assert qs._first_forecast_year_eps(aapl, "2026-09-26", nov) == 9.45
+    assert qs._first_forecast_year_eps(rows[:1], "2025-12-31", nov) is None   # nothing far enough ahead

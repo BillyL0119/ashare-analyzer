@@ -1,12 +1,13 @@
 """
 Quote pages, Historical data tab: /api/us/quote/{symbol}/history
 
-Daily bars come from Nasdaq (split-adjusted already), dividends from Nasdaq's dividend table. We add the
-adjusted close ourselves, aggregate to weeks and months, and cut the range. Pure functions first (tested
+Daily bars come from Nasdaq (split-adjusted already). Dividends come from services/nasdaq.dividends: Nasdaq's
+table, or Tencent's ex-date notes when Nasdaq lists none (NYSE listings, ETFs), already divided by the splits
+since (Tencent's split records), so they compare with the split-adjusted prices. We add the adjusted close
+ourselves, aggregate to weeks and months, and cut the range. Pure functions first (tested
 without network), the route at the bottom.
 """
 
-import time
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 
@@ -19,43 +20,6 @@ router = APIRouter()
 RANGES = ("1m", "3m", "6m", "ytd", "1y", "2y", "5y", "10y")
 INTERVALS = ("1d", "1wk", "1mo")
 _MONTHS = {"1m": 1, "3m": 3, "6m": 6, "1y": 12, "2y": 24, "5y": 60, "10y": 120}
-
-
-# ── Dividends on the same split basis as the prices ───────────────────────────
-
-# Nasdaq rewrites old PRICES on a split but lists dividends as they were paid (AAPL: 0.82 before the 2020
-# 4-for-1 split, 0.205 after). Mixing the two would adjust old closes by a four times too large yield, and there
-# is no per-ticker split list in the sources we may use. So we recognise a split in the dividend series itself:
-# one step down by about the split ratio, between two payments that are otherwise steady. A company that also
-# raised its dividend at the split lands a little under the ratio (WMT 3-for-1: 0.57 -> 0.2075, ratio 2.75).
-_SPLITS = (2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 20, 25, 30, 40, 50)
-
-
-def _split_ratio(before: float, after: float):
-    """The split ratio S if `before` -> `after` looks like an S-for-1 split, else None."""
-    r = before / after
-    if r < 1.9:
-        return None
-    s = min(_SPLITS, key=lambda s: abs(r / s - 1))
-    lo, hi = (1.96, 2.04) if s == 2 else (0.88 * s, 1.04 * s)     # halving is also a common real cut: be strict
-    return s if lo <= r <= hi else None
-
-
-def split_adjust_dividends(divs: list) -> list:
-    """Copies of `divs` (oldest first) with "amount" restated for every later split.
-    The step must be preceded by a payment within 20 % of the one before the step, so a one-off special
-    dividend followed by the regular one (a big drop that is not a split) is not mistaken for a split."""
-    pos = [d for d in divs if d.get("amount") and d["amount"] > 0]
-    out, factor = [], 1.0
-    for i in range(len(pos) - 1, -1, -1):
-        d = pos[i]
-        out.append({**d, "amount": d["amount"] / factor})
-        if i > 0:
-            s = _split_ratio(pos[i - 1]["amount"], d["amount"])
-            if s and (i < 2 or 0.8 <= pos[i - 2]["amount"] / pos[i - 1]["amount"] <= 1.25):
-                factor *= s
-    out.reverse()
-    return out
 
 
 # ── Adjusted close ────────────────────────────────────────────────────────────
@@ -164,19 +128,6 @@ def build_history(daily: list, divs: list, rng: str, interval: str, today: date,
 
 # ── Route ─────────────────────────────────────────────────────────────────────
 
-_NO_DIVS = {}      # symbol -> until when to skip asking: nasdaq.dividends never caches "none", and for a
-                   # ticker without dividends each ask costs seconds, which every range / interval click repeats
-
-
-def _dividends(sym: str) -> list:
-    if _NO_DIVS.get(sym, 0) > time.time():
-        return []
-    divs = nasdaq.dividends(sym)
-    if not divs:
-        _NO_DIVS[sym] = time.time() + 1800
-    return divs
-
-
 @router.get("/{symbol}/history")
 def history(symbol: str, range: str = Query("1y"), interval: str = Query("1d")):
     sym = nasdaq.clean_symbol(symbol)
@@ -187,12 +138,12 @@ def history(symbol: str, range: str = Query("1y"), interval: str = Query("1d")):
     daily = nasdaq.daily_history(sym)
     if not daily:
         raise HTTPException(404, "No price history for this ticker")
-    etf = nasdaq.asset_class(sym) == "etf"
-    divs = [] if etf else split_adjust_dividends(_dividends(sym))
+    divs = nasdaq.dividends(sym)
     today = datetime.now(nasdaq.ET).date()
-    body = build_history(daily, divs, range, interval, today, adjusted=not etf)
+    body = build_history(daily, divs, range, interval, today)
     return {
         "symbol": sym, "currency": "USD", "range": range, "interval": interval, **body,
-        "adjusted": not etf, "dividend_data": bool(divs), "source": "Nasdaq",
+        "adjusted": True, "dividend_data": bool(divs), "source": "Nasdaq",
+        "dividend_source": divs[-1]["source"] if divs and divs[-1].get("source") else None,
         "as_of": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
