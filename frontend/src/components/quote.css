@@ -2,7 +2,7 @@
    A large pull quote in the display face on its own panel; the opening mark hangs in the margin. */
 .bfs-quote {
   margin: 20px 0 8px;
-  padding: 28px 40px 28px 56px;
+  padding: 24px 36px 24px 52px;
   border-radius: 16px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
@@ -14,22 +14,22 @@
 .bfs-quote blockquote {
   position: relative;
   margin: 0;
-  max-width: 34ch;
+  max-width: 38ch;
   font-family: var(--display);
-  font-size: clamp(26px, 3vw, 40px);
+  font-size: clamp(22px, 2.3vw, 32px);
   font-weight: 500;
   line-height: 1.18;
   letter-spacing: -0.02em;
   color: var(--text-primary);
   text-wrap: balance;
 }
-.bfs-quote blockquote.is-long { max-width: 46ch; font-size: clamp(22px, 2.3vw, 30px); line-height: 1.25; }
+.bfs-quote blockquote.is-long { max-width: 46ch; font-size: clamp(20px, 1.9vw, 26px); line-height: 1.25; }
 .bfs-quote .mark {
   position: absolute; left: -0.62em; top: -0.05em;
   color: var(--accent-blue); font-size: 1.6em; line-height: 1;
 }
 .bfs-quote .mark-end { color: var(--accent-blue); }
-.bfs-quote-who { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+.bfs-quote-who { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
 .bfs-quote-who .avatar {
   display: grid; place-items: center; flex: none;
   width: 40px; height: 40px; border-radius: 50%;
@@ -41,11 +41,11 @@
 
 @media (max-width: 700px) {
   .bfs-quote { padding: 20px 20px 20px 36px; }
-  .bfs-quote blockquote, .bfs-quote blockquote.is-long { font-size: 22px; }
+  .bfs-quote blockquote, .bfs-quote blockquote.is-long { font-size: 20px; }
 }
 
 /* Phone UI: same quote on the phone's surface, a little smaller */
 .m-quote .bfs-quote { margin: 0 0 16px; padding: 18px 18px 18px 34px; border-radius: var(--radius, 20px); background: var(--surface); border-color: var(--stroke); }
-.m-quote .bfs-quote blockquote, .m-quote .bfs-quote blockquote.is-long { font-size: 21px; line-height: 1.25; }
+.m-quote .bfs-quote blockquote, .m-quote .bfs-quote blockquote.is-long { font-size: 18px; line-height: 1.3; }
 .m-quote .bfs-quote-who { margin-top: 16px; }
 .m-quote .bfs-quote-who .avatar { width: 34px; height: 34px; font-size: 12px; }
