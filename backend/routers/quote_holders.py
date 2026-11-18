@@ -255,7 +255,8 @@ def build_analysts(sym):
 
 def _live_price(sym):
     d = nq.info(sym) or {}
-    return nq.num((d.get("primaryData") or {}).get("lastSalePrice"))
+    reg, _ = nq.regular_and_extended(d)        # the close after hours, as on the Summary tab
+    return nq.num(reg.get("lastSalePrice"))
 
 
 def _symbol_and_class(symbol):

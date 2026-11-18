@@ -432,7 +432,8 @@ def _context(sym, ac):
 
 def _live_price(sym):
     i = nq.info(sym) or {}
-    return nq.num((i.get("primaryData") or {}).get("lastSalePrice"))
+    reg, _ = nq.regular_and_extended(i)        # the close after hours, as on the Summary tab
+    return nq.num(reg.get("lastSalePrice"))
 
 
 @router.get("/{symbol}/stats")

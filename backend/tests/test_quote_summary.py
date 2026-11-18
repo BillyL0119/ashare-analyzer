@@ -33,13 +33,35 @@ def test_tidy_name_and_pair():
     assert qs._pair("N/A") == (None, None)
 
 
-def test_extended_hours():
-    info = {"secondaryData": {"lastSalePrice": "$351.20", "netChange": "-0.46", "percentageChange": "-0.13%",
-                              "lastTradeTimestamp": "Nov 17, 2026 7:59 PM ET"}}
-    e = qs._extended(info, "closed")
-    assert e["session"] == "post" and e["price"] == 351.2 and e["change_pct"] == -0.13
-    assert qs._extended({"secondaryData": None}, "open") is None
-    assert qs._extended({"secondaryData": {"lastSalePrice": "N/A"}}, "post") is None
+# Nasdaq's answer at 6:05 PM ET on 2026-11-18: the after-hours trade in primaryData, the close in secondaryData
+AFTER_HOURS = {
+    "marketStatus": "After-Hours",
+    "primaryData": {"lastSalePrice": "$352.70", "netChange": "+0.25", "percentageChange": "+0.07%",
+                    "lastTradeTimestamp": "Nov 18, 2026 6:05 PM ET", "bidPrice": "$351.80", "askPrice": "$352.76",
+                    "bidSize": "40", "askSize": "450", "volume": "34,073,280.676810"},
+    "secondaryData": {"lastSalePrice": "$352.45", "netChange": "+0.54", "percentageChange": "+0.15%",
+                      "lastTradeTimestamp": "Closed at Nov 18, 2026 4:00 PM ET"},
+}
+
+
+def test_extended_hours_reads_the_close_as_the_price():
+    reg, ext = nq.regular_and_extended(AFTER_HOURS)
+    assert nq.num(reg["lastSalePrice"]) == 352.45 and nq.num(ext["lastSalePrice"]) == 352.70
+    e = qs._extended(AFTER_HOURS, "post")
+    assert e == {"session": "post", "price": 352.70, "change": 0.25, "change_pct": 0.07, "as_of_text": "Nov 18, 2026 6:05 PM ET"}
+    assert qs._extended(AFTER_HOURS, "pre")["session"] == "pre"
+    during = {"primaryData": {"lastSalePrice": "$351.65"}, "secondaryData": None}
+    assert nq.regular_and_extended(during)[1] is None and qs._extended(during, "open") is None
+    assert qs._stamp(AFTER_HOURS["secondaryData"]["lastTradeTimestamp"])[:2] == ("2026-11-18", "4:00 PM ET")
+
+
+def test_live_after_hours(monkeypatch):
+    summ = json.loads((FIX / "nasdaq" / "summary.json").read_text())["data"]["summaryData"]
+    stub_nasdaq(monkeypatch, AFTER_HOURS, summ, eps=8.98)
+    d = qs.build_live("AAPL")
+    assert d["price"] == 352.45 and d["change_pct"] == 0.15 and d["market_status"] == "post"
+    assert d["trade_time"] == "4:00 PM ET" and d["extended"]["price"] == 352.70
+    assert d["bid"] == 351.80                                    # bid / ask keep the latest quote
 
 
 def test_minute_feed_fixture():

@@ -213,6 +213,27 @@ def info(sym: str):
     return cached(f"info_{sym}", live_ttl(), lambda: get(f"quote/{sym}/info", {"assetclass": ac}), stale=300)
 
 
+def regular_and_extended(info: dict):
+    """(regular, extended) blocks of a quote/{sym}/info answer. During the session primaryData is the price and
+    secondaryData is empty. Outside it Nasdaq moves the regular close to secondaryData ("Closed at Nov 18, 2026
+    4:00 PM ET") and puts the pre-market or after-hours trade in primaryData. Yahoo shows the close as the price
+    and the extended trade on its own line, so the quote pages read them that way round. `extended` is None
+    during the session."""
+    info = info or {}
+    p = info.get("primaryData") or {}
+    s = info.get("secondaryData")
+    if isinstance(s, dict) and num(s.get("lastSalePrice")) is not None \
+            and str(s.get("lastTradeTimestamp") or "").strip().lower().startswith("closed"):
+        return s, p
+    return p, None
+
+
+def regular_price(sym: str):
+    """The last regular-session price (the close outside the session); what P/E and targets are measured against."""
+    regular, _ = regular_and_extended(info(sym))
+    return num(regular.get("lastSalePrice"))
+
+
 def summary(sym: str):
     """quote/{sym}/summary summaryData: previous close, day and 52-week range, market cap, 1y target,
     dividend, ex-date. Values are {"label", "value"}: read them with val()."""

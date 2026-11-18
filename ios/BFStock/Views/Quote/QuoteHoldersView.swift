@@ -51,8 +51,7 @@ struct QuoteHoldersView: View {
             .padding(.vertical, 12)
         }
         .background(DS.bg.ignoresSafeArea())
-        .navigationTitle(text.s("tabs", "tabHolders"))
-        .navigationBarTitleDisplayMode(.inline)
+        .quoteScreenTitle(text.s("tabs", "tabHolders"), code: code)
         .task(id: Lang.code) { await QuoteText.shared.ensure(Lang.code) }
         .task { await vm.load() }
         .refreshable { await vm.load(force: true) }
@@ -122,16 +121,20 @@ private struct QuoteHoldersSection<Content: View>: View {
         self.content = content()
     }
     var body: some View {
+        // As on the stock page: the section title above, its explanation and content in one card
         VStack(alignment: .leading, spacing: 8) {
             SectionHeader(title)
-            if !how.isEmpty {
-                Text(how)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 4)
-                    .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 8) {
+                if !how.isEmpty {
+                    Text(how)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                content
             }
-            content
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .card(padding: 16)
         }
     }
 }
@@ -203,8 +206,9 @@ private struct QuoteHoldersPositions: View {
         ]
     }
 
+    // Bars compare the four kinds of change; the unchanged stake (most of the shares) would flatten them
     private var maxShares: Double {
-        let all: [Double] = items.map { $0.p?.shares ?? 0 }
+        let all: [Double] = items.filter { $0.sign != 0 }.map { $0.p?.shares ?? 0 }
         return max(all.max() ?? 0, 1)
     }
 
@@ -237,14 +241,16 @@ private struct QuoteHoldersPositions: View {
                     .monospacedDigit()
                     .frame(minWidth: 72, alignment: .trailing)
             }
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(DS.surfaceHi)
-                    Capsule().fill(it.color)
-                        .frame(width: shares > 0 ? max(3, geo.size.width * frac) : 0)
+            if it.sign != 0 {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(DS.surfaceHi)
+                        Capsule().fill(it.color)
+                            .frame(width: shares > 0 ? max(3, geo.size.width * frac) : 0)
+                    }
                 }
+                .frame(height: 4)
             }
-            .frame(height: 4)
         }
         .padding(.vertical, 10)
         .accessibilityElement(children: .combine)

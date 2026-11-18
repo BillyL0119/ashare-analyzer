@@ -136,8 +136,7 @@ struct QuoteHistoryView: View {
             .padding(.vertical, 12)
         }
         .background(DS.bg.ignoresSafeArea())
-        .navigationTitle(text.s("tabs", "tabHistory"))
-        .navigationBarTitleDisplayMode(.inline)
+        .quoteScreenTitle(text.s("tabs", "tabHistory"), code: code)
         .task(id: Lang.code) { await QuoteText.shared.ensure(Lang.code) }
         .task(id: range + "|" + interval) { await vm.load(range: range, interval: interval) }
         .refreshable { await vm.load(range: range, interval: interval) }
@@ -259,11 +258,15 @@ private struct HistoryTableView: View {
         return VStack(spacing: 12) {
             LazyVStack(spacing: 0) {
                 ForEach(Array(visible.enumerated()), id: \.element.id) { pair in
-                    if pair.offset > 0 { Rectangle().fill(DS.stroke).frame(height: 1) }
-                    barRow(pair.element)
-                    ForEach(divs[pair.offset] ?? []) { (d: QuoteHistory.Dividend) in
-                        Rectangle().fill(DS.stroke).frame(height: 1)
-                        dividendRow(d)
+                    // One lazy child per day, its dividend inside it: a dividend's id is its ex-date, the same as
+                    // that day's bar, and two siblings with one id left a blank gap in the LazyVStack
+                    VStack(spacing: 0) {
+                        if pair.offset > 0 { Rectangle().fill(DS.stroke).frame(height: 1) }
+                        barRow(pair.element)
+                        ForEach(divs[pair.offset] ?? []) { (d: QuoteHistory.Dividend) in
+                            Rectangle().fill(DS.stroke).frame(height: 1)
+                            dividendRow(d)
+                        }
                     }
                 }
             }

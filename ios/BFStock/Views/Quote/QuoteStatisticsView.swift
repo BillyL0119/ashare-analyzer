@@ -51,8 +51,7 @@ struct QuoteStatisticsView: View {
             .padding(.vertical, 12)
         }
         .background(DS.bg.ignoresSafeArea())
-        .navigationTitle(text.s("tabs", "tabStatistics"))
-        .navigationBarTitleDisplayMode(.inline)
+        .quoteScreenTitle(text.s("tabs", "tabStatistics"), code: code)
         .task(id: Lang.code) { await QuoteText.shared.ensure(Lang.code) }
         .task { await vm.load() }
         .refreshable { await vm.load(force: true) }

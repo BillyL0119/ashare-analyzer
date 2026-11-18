@@ -50,19 +50,28 @@ final class QuoteText: ObservableObject {
     @Published private(set) var lang: String = ""
     @Published private(set) var sections: [String: [String: TextValue]] = [:]
     @Published private(set) var glossary: [String: GlossaryEntry] = [:]
-    private var loading: String?
+    private var inflight: [String: Task<Void, Never>] = [:]
 
     /// Load the text in `lang` (the app's language) unless it is already there. Call from `.task(id: Lang.code)`.
+    /// The request belongs to this store, not to the calling view: SwiftUI cancels a view's task when another
+    /// screen is pushed over it (stock page, then Statistics at once), and a cancelled fetch used to leave every
+    /// screen without labels. Callers that arrive while it runs wait for the same request.
     func ensure(_ lang: String) async {
         if self.lang == lang && !sections.isEmpty { return }
-        if loading == lang { return }
-        loading = lang
-        defer { loading = nil }
-        let params = ["lang": lang]
-        if let data = APIClient.shared.cachedData("/us/quote/text", params: params) { apply(data, lang: lang) }
-        if let data = try? await APIClient.shared.getData("/us/quote/text", params: params, persist: true) {
-            apply(data, lang: lang)
+        if let running = inflight[lang] {
+            await running.value
+            return
         }
+        let task = Task { [weak self] in
+            let params = ["lang": lang]
+            if let data = APIClient.shared.cachedData("/us/quote/text", params: params) { self?.apply(data, lang: lang) }
+            if let data = try? await APIClient.shared.getData("/us/quote/text", params: params, persist: true) {
+                self?.apply(data, lang: lang)
+            }
+            self?.inflight[lang] = nil
+        }
+        inflight[lang] = task
+        await task.value
     }
 
     private func apply(_ data: Data, lang: String) {
@@ -255,5 +264,25 @@ enum QuoteFormat {
     static func changeColor(_ v: Double?) -> Color {
         guard let v, v != 0 else { return .secondary }
         return v > 0 ? DS.good : DS.bad
+    }
+}
+
+// MARK: - Title of a quote screen
+
+extension View {
+    /// The screen's name with the ticker under it, so Statistics or Holders always says whose figures they are
+    func quoteScreenTitle(_ title: String, code: String) -> some View {
+        self
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 1) {
+                        Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                        Text(code).font(.caption2.weight(.medium)).foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+            }
     }
 }

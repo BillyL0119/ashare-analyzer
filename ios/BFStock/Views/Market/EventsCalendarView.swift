@@ -104,6 +104,7 @@ struct EventsCalendarView: View {
     @State private var minImp: Int = 2
     @State private var openRow: String?
     @State private var showAll = false
+    @State private var stripDay: String?          // the day the week strip keeps in view (only that ScrollView moves)
 
     private let earningsLimit = 50
 
@@ -200,19 +201,22 @@ struct EventsCalendarView: View {
         let days: [String] = (0..<7).map { EventsCal.addDays(start, $0) }
         var counts: [String: EventsWeek.Counts] = [:]
         for wd in model.weeks[start]?.days ?? [] { counts[wd.date] = wd.counts }
-        return ScrollViewReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(days, id: \.self) { d in
-                        dayColumn(d, counts: counts[d]).id(d)
-                    }
+        // A ruled strip like the website's (no row of boxed tiles). scrollPosition moves only this horizontal
+        // ScrollView; ScrollViewReader.scrollTo also scrolled the page and hid the title under the bar.
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 0) {
+                ForEach(days, id: \.self) { d in
+                    dayColumn(d, counts: counts[d], first: d == days.first).id(d)
                 }
-                .padding(.vertical, 2)
             }
-            .onChange(of: date) { _, new in
-                withAnimation(.snappy(duration: 0.25)) { proxy.scrollTo(new, anchor: .center) }
-            }
-            .onAppear { proxy.scrollTo(date, anchor: .center) }
+            .scrollTargetLayout()
+        }
+        .scrollPosition(id: $stripDay, anchor: .center)
+        .overlay(alignment: .top) { Rectangle().fill(DS.stroke).frame(height: 1) }
+        .overlay(alignment: .bottom) { Rectangle().fill(DS.stroke).frame(height: 1) }
+        .onAppear { stripDay = date }
+        .onChange(of: date) { _, new in
+            withAnimation(.snappy(duration: 0.25)) { stripDay = new }
         }
     }
 
@@ -227,7 +231,7 @@ struct EventsCalendarView: View {
         }
     }
 
-    private func dayColumn(_ d: String, counts: EventsWeek.Counts?) -> some View {
+    private func dayColumn(_ d: String, counts: EventsWeek.Counts?, first: Bool) -> some View {
         let selected = d == date
         return Button {
             date = d
@@ -258,11 +262,13 @@ struct EventsCalendarView: View {
             }
             .padding(10)
             .frame(width: 104, alignment: .leading)
-            .background(selected ? DS.surfaceHi : Color.clear, in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(selected ? DS.accent : DS.stroke, lineWidth: selected ? 1.5 : 1)
-            )
+            .background(selected ? DS.surfaceHi : Color.clear)
+            .overlay(alignment: .bottom) {
+                Rectangle().fill(selected ? DS.accent : Color.clear).frame(height: 2)
+            }
+            .overlay(alignment: .leading) {
+                Rectangle().fill(first ? Color.clear : DS.stroke).frame(width: 1)
+            }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -271,16 +277,35 @@ struct EventsCalendarView: View {
 
     // MARK: Day card
 
+    /// Event types as chips that scroll sideways: five segments truncated "Economic" on a phone
+    private var typeChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(EventsCal.types, id: \.self) { k in
+                    let on = k == type
+                    Button {
+                        withAnimation(.snappy(duration: 0.2)) { type = k }
+                    } label: {
+                        Text(t("types", k))
+                            .font(.subheadline.weight(on ? .semibold : .regular))
+                            .foregroundStyle(on ? Color.primary : Color.secondary)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(on ? DS.raised : DS.surfaceHi, in: Capsule())
+                            .overlay(Capsule().strokeBorder(on ? DS.stroke : Color.clear))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
+            }
+        }
+    }
+
     private var dayLabel: String { EventsCal.text(date, "EEEEMMMd") }
 
     private var dayCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Picker(t("title"), selection: $type) {
-                ForEach(EventsCal.types, id: \.self) { k in
-                    Text(t("types", k)).tag(k)
-                }
-            }
-            .pickerStyle(.segmented)
+            typeChips
 
             Text(dayLabel).font(.headline)
             Text(t("hint", type)).font(.footnote).foregroundStyle(.secondary)

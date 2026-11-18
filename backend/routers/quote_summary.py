@@ -92,24 +92,17 @@ def _status(raw) -> str:
 
 
 def _extended(info, status):
-    sec = info.get("secondaryData")
-    if not isinstance(sec, dict):
+    """The pre-market / after-hours line: Nasdaq's extended trade (see nq.regular_and_extended), labelled by the
+    market status (pre-market before the open, after hours from the close until the next pre-market)."""
+    _, ext = nq.regular_and_extended(info)
+    if not isinstance(ext, dict):
         return None
-    price = nq.num(sec.get("lastSalePrice"))
+    price = nq.num(ext.get("lastSalePrice"))
     if price is None:
         return None
-    day, _, minutes = _stamp(sec.get("lastTradeTimestamp"))
-    if status in ("pre", "post"):
-        session = status
-    elif minutes is not None:
-        session = "post" if minutes >= 16 * 60 else "pre" if minutes < 9 * 60 + 30 else None
-    else:
-        session = None
-    if session is None:
-        return None
-    text = " ".join((sec.get("lastTradeTimestamp") or "").split()) or None
-    return {"session": session, "price": price, "change": nq.num(sec.get("netChange")),
-            "change_pct": nq.num(sec.get("percentageChange")), "as_of_text": text}
+    text = " ".join((ext.get("lastTradeTimestamp") or "").split()) or None
+    return {"session": "pre" if status == "pre" else "post", "price": price, "change": nq.num(ext.get("netChange")),
+            "change_pct": nq.num(ext.get("percentageChange")), "as_of_text": text}
 
 
 # ── live ──────────────────────────────────────────────────────────────────────
@@ -172,11 +165,12 @@ def build_live(sym: str) -> dict:
             log.warning("live %s %s failed: %s", sym, k, exc)
             got[k] = None
     summ = got["summary"] or {}
-    p = info.get("primaryData") or {}
-    price = nq.num(p.get("lastSalePrice"))
+    p = info.get("primaryData") or {}             # the latest trade: bid / ask / volume
+    reg, _ = nq.regular_and_extended(info)         # the regular-session price (the close after hours)
+    price = nq.num(reg.get("lastSalePrice"))
     status = _status(info.get("marketStatus"))
-    day, tm, _ = _stamp(p.get("lastTradeTimestamp"))
-    as_of_text = " ".join((p.get("lastTradeTimestamp") or "").split()) or None
+    day, tm, _ = _stamp(reg.get("lastTradeTimestamp"))
+    as_of_text = " ".join((reg.get("lastTradeTimestamp") or "").split()) or None
 
     day_high, day_low = _pair(nq.val(summ, "TodayHighLow"))
     wk_high, wk_low = _pair(nq.val(summ, "FiftTwoWeekHighLow"))
@@ -190,8 +184,8 @@ def build_live(sym: str) -> dict:
         "asset_class": "etf" if str(info.get("assetClass", "")).lower() == "etf" else "stocks",
         "currency": p.get("currency") or "USD",
         "price": price,
-        "change": nq.num(p.get("netChange")),
-        "change_pct": nq.num(p.get("percentageChange")),
+        "change": nq.num(reg.get("netChange")),
+        "change_pct": nq.num(reg.get("percentageChange")),
         "prev_close": nq.num(nq.val(summ, "PreviousClose")),
         "open": got["open"],
         "day_low": day_low, "day_high": day_high,
@@ -351,9 +345,9 @@ def info_open(info) -> bool:
 
 def _live_price(sym: str):
     info = nq.info(sym) or {}
-    p = info.get("primaryData") or {}
-    day, _, _ = _stamp(p.get("lastTradeTimestamp"))
-    return nq.num(p.get("lastSalePrice")), nq.num(p.get("percentageChange")), day, info
+    reg, _ = nq.regular_and_extended(info)          # ranges measure the regular session, not after hours
+    day, _, _ = _stamp(reg.get("lastTradeTimestamp"))
+    return nq.num(reg.get("lastSalePrice")), nq.num(reg.get("percentageChange")), day, info
 
 
 def _five_day_base(prior: list, tdays: list, latest: str):

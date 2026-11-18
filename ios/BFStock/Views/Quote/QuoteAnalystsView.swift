@@ -51,8 +51,7 @@ struct QuoteAnalystsView: View {
             .padding(.vertical, 12)
         }
         .background(DS.bg.ignoresSafeArea())
-        .navigationTitle(text.s("tabs", "tabAnalysts"))
-        .navigationBarTitleDisplayMode(.inline)
+        .quoteScreenTitle(text.s("tabs", "tabAnalysts"), code: code)
         .task(id: Lang.code) { await QuoteText.shared.ensure(Lang.code) }
         .task { await vm.load() }
         .refreshable { await vm.load(force: true) }
@@ -118,16 +117,20 @@ private struct QuoteAnalystsSection<Content: View>: View {
         self.content = content()
     }
     var body: some View {
+        // As on the stock page: the section title above, its explanation and content in one card
         VStack(alignment: .leading, spacing: 8) {
             SectionHeader(title)
-            if !how.isEmpty {
-                Text(how)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 4)
-                    .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 8) {
+                if !how.isEmpty {
+                    Text(how)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                content
             }
-            content
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .card(padding: 16)
         }
     }
 }
