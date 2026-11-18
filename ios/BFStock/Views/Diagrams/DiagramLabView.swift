@@ -259,7 +259,7 @@ struct DiagramDetailView: View {
                 .font(.footnote.weight(.semibold))
                 .padding(.horizontal, 12).padding(.vertical, 7)
                 .foregroundStyle(on ? Color.white : Color.primary)
-                .background(on ? DS.accent : DS.surfaceHi, in: Capsule())
+                .background(on ? DS.accentFill : DS.surfaceHi, in: Capsule())
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(on ? .isSelected : [])

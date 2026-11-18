@@ -247,7 +247,7 @@ private struct ClassCard: View {
                 Button { onStart(a) } label: {
                     Text(L("去完成")).font(.footnote.weight(.semibold))
                         .padding(.horizontal, 14).padding(.vertical, 7)
-                        .foregroundStyle(.white).background(DS.accent, in: Capsule())
+                        .foregroundStyle(.white).background(DS.accentFill, in: Capsule())
                 }
                 .buttonStyle(.plain)
             }
@@ -282,7 +282,7 @@ private struct ClassCard: View {
                                         .font(.caption2.weight(.semibold))
                                         .foregroundStyle(.white)
                                         .padding(.horizontal, 6).padding(.vertical, 2)
-                                        .background(DS.accent, in: Capsule())
+                                        .background(DS.accentFill, in: Capsule())
                                 }
                             }
                             Text(verbatim: "\(L("作业")) \(r.done)/\(c.assignments.count) · \(L("学习任务")) \(r.missions)/\(missionCount)")

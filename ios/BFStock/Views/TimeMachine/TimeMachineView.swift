@@ -164,7 +164,7 @@ struct TimeMachineView: View {
                         .monospacedDigit()
                         .foregroundStyle(.white)
                         .frame(width: 26, height: 26)
-                        .background(DS.accent, in: Circle())
+                        .background(DS.accentFill, in: Circle())
                     VStack(alignment: .leading, spacing: 2) {
                         Text(step.0).font(.subheadline.weight(.semibold))
                         Text(step.1).font(.caption).foregroundStyle(.secondary)

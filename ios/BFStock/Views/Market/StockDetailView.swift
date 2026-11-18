@@ -179,7 +179,7 @@ struct StockDetailView: View {
                             .font(.caption.weight(.semibold))
                             .padding(.horizontal, 12).padding(.vertical, 6)
                             .foregroundStyle(.white)
-                            .background(DS.accent, in: Capsule())
+                            .background(DS.accentFill, in: Capsule())
                     }
                     .buttonStyle(.plain)
                 }

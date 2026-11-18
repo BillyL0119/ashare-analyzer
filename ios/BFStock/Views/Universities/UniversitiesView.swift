@@ -72,7 +72,7 @@ struct UniversitiesView: View {
                             Text(L(label))
                                 .font(.subheadline.weight(on ? .semibold : .regular))
                                 .padding(.horizontal, 14).padding(.vertical, 7)
-                                .background(on ? DS.accent : DS.surfaceHi, in: Capsule())
+                                .background(on ? DS.accentFill : DS.surfaceHi, in: Capsule())
                                 .foregroundStyle(on ? Color.white : Color.primary)
                         }
                         .buttonStyle(.plain)
@@ -258,7 +258,7 @@ struct UniversityDetailView: View {
                         Label(L("访问官网"), systemImage: "safari")
                             .font(.subheadline.weight(.semibold))
                             .frame(maxWidth: .infinity).padding(.vertical, 12)
-                            .background(DS.accent, in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+                            .background(DS.accentFill, in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
                             .foregroundStyle(.white)
                     }
                 }

@@ -58,9 +58,15 @@ struct USMarketSection: View {
             }
             if let hero = ov.indices.first {
                 IndexTileUS(quote: hero, style: .hero)
-                HStack(spacing: 8) {
-                    ForEach(ov.indices.dropFirst()) { q in IndexTileUS(quote: q, style: .compact) }
+                // The other indices as one ruled strip: hairlines between columns, colour only on the numbers
+                HStack(spacing: 0) {
+                    ForEach(Array(ov.indices.dropFirst().enumerated()), id: \.element.id) { i, q in
+                        if i > 0 { Rectangle().fill(DS.stroke).frame(width: 1).padding(.vertical, 2) }
+                        IndexTileUS(quote: q, style: .compact).padding(.leading, i > 0 ? 12 : 0)
+                    }
                 }
+                .padding(.top, 12)
+                .overlay(alignment: .top) { Rectangle().fill(DS.stroke).frame(height: 1) }
             }
             breadth(ov.breadth)
         }
@@ -316,7 +322,6 @@ private struct IndexTileUS: View {
                         }
                     }
                 }
-                .padding(.horizontal, 16).padding(.vertical, 14)
             } else {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title).font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
@@ -327,14 +332,10 @@ private struct IndexTileUS: View {
                         .font(.system(.caption).weight(.semibold)).monospacedDigit()
                         .foregroundStyle(color)
                 }
-                .padding(.horizontal, 10).padding(.vertical, 9)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
-        .background(
-            color.opacity(0.10),
-            in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
     }
 }

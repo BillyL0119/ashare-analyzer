@@ -70,11 +70,11 @@ struct SectorRow: View {
                     HStack(spacing: 0) {
                         if sector.changePct >= 0 {
                             Spacer().frame(width: half)
-                            Capsule().fill(color.gradient).frame(width: max(len, 3))
+                            Capsule().fill(color).frame(width: max(len, 3))
                             Spacer(minLength: 0)
                         } else {
                             Spacer(minLength: 0)
-                            Capsule().fill(color.gradient).frame(width: max(len, 3))
+                            Capsule().fill(color).frame(width: max(len, 3))
                             Spacer().frame(width: half)
                         }
                     }

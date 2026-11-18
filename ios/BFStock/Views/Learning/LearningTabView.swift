@@ -58,7 +58,7 @@ struct LearningTabView: View {
                             .font(.subheadline.weight(isSelected ? .semibold : .regular))
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(isSelected ? DS.accent : DS.surfaceHi, in: Capsule())
+                            .background(isSelected ? DS.accentFill : DS.surfaceHi, in: Capsule())
                             .foregroundStyle(isSelected ? Color.white : Color.primary)
                     }
                     .buttonStyle(.plain)

@@ -6,12 +6,23 @@ enum OrderSide: String, CaseIterable, Identifiable {
     var opening: Bool { self == .buy || self == .short }
     var label: String { L(["buy": "买入", "sell": "卖出", "short": "卖空", "cover": "买入平仓"][rawValue] ?? "") }
     var badge: String { L(["buy": "买", "sell": "卖", "short": "空", "cover": "平"][rawValue] ?? "") }
+    /// The side's colour as text or an icon (darker on the light theme so it reads on white)
     var tint: Color {
         switch self {
         case .buy: return DS.accent
-        case .sell: return Color(r: 0xF2, g: 0x8B, b: 0x3C)
-        case .short: return Color(r: 0x8B, g: 0x5C, b: 0xF6)
-        case .cover: return Color(r: 0x63, g: 0x66, b: 0xF1)
+        case .sell: return DS.warn
+        case .short: return Color(light: Color(r: 0x6D, g: 0x28, b: 0xD9), dark: Color(r: 0xA7, g: 0x8B, b: 0xFA))
+        case .cover: return Color(light: Color(r: 0x43, g: 0x38, b: 0xCA), dark: Color(r: 0x81, g: 0x8C, b: 0xF8))
+        }
+    }
+
+    /// The side's colour as a solid fill under white text (4.5:1 or better in both themes)
+    var fill: Color {
+        switch self {
+        case .buy: return DS.accentFill
+        case .sell: return Color(r: 0xB4, g: 0x53, b: 0x09)
+        case .short: return Color(r: 0x6D, g: 0x28, b: 0xD9)
+        case .cover: return Color(r: 0x43, g: 0x38, b: 0xCA)
         }
     }
 }
@@ -431,7 +442,7 @@ struct TradeSheet: View {
                                 .font(.footnote.weight(.semibold))
                                 .padding(.horizontal, 12).padding(.vertical, 7)
                                 .foregroundStyle(kind == k ? Color.white : Color.primary)
-                                .background(kind == k ? side.tint : DS.surfaceHi, in: Capsule())
+                                .background(kind == k ? side.fill : DS.surfaceHi, in: Capsule())
                         }
                         .buttonStyle(.plain)
                     }
@@ -523,7 +534,7 @@ struct TradeSheet: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
                                 .foregroundStyle(shares == value ? Color.white : Color.primary)
-                                .background(shares == value ? side.tint : DS.surfaceHi, in: Capsule())
+                                .background(shares == value ? side.fill : DS.surfaceHi, in: Capsule())
                         }
                         .buttonStyle(.plain)
                     }
@@ -615,7 +626,7 @@ struct TradeSheet: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(side.tint.gradient, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .background(side.fill, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .opacity(isValid ? 1 : 0.4)
         }
         .disabled(!isValid)

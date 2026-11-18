@@ -498,7 +498,7 @@ T = {
     "保存": ("Save", "保存", "저장", "Enregistrer"),
     "去完成": ("Do it", "やってみる", "해보기", "Essayer"),
     "已完成 %lld/%lld": ("%lld of %lld done", "%lld/%lld 完了", "%lld/%lld 완료", "%lld sur %lld terminées"),
-    "全部完成！你已经掌握了模拟交易的基本功。": ("All done! You have the basics of trading down.", "すべて完了！取引の基本が身につきました。", "모두 완료! 거래의 기본을 익혔어요.", "Tout est fait ! Vous maîtrisez les bases du trading."),
+    "全部完成。你已经掌握了模拟交易的基本功。": ("All done. You have the basics of trading down.", "すべて完了。取引の基本が身につきました。", "모두 완료했어요. 거래의 기본을 익혔어요.", "Tout est fait. Vous maîtrisez les bases du trading."),
     "账户": ("Account", "アカウント", "계정", "Compte"),
     "退出登录": ("Sign out", "ログアウト", "로그아웃", "Se déconnecter"),
     "登录 / 注册": ("Sign in / Sign up", "ログイン / 新規登録", "로그인 / 회원가입", "Se connecter / S'inscrire"),

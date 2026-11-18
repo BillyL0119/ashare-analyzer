@@ -120,7 +120,7 @@ struct GovernorView: View {
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.white)
                         .frame(width: 26, height: 26)
-                        .background(DS.accent, in: Circle())
+                        .background(DS.accentFill, in: Circle())
                     VStack(alignment: .leading, spacing: 2) {
                         Text(GV("how.\(i).1")).font(.subheadline.weight(.semibold))
                         Text(GV("how.\(i).2")).font(.caption).foregroundStyle(.secondary)

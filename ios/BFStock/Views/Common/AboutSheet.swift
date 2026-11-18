@@ -23,7 +23,7 @@ struct AboutSheet: View {
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 10)
                                         .foregroundStyle(appearance == opt.rawValue ? Color.white : Color.primary)
-                                        .background(appearance == opt.rawValue ? DS.accent : DS.surfaceHi, in: Capsule())
+                                        .background(appearance == opt.rawValue ? DS.accentFill : DS.surfaceHi, in: Capsule())
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -45,7 +45,7 @@ struct AboutSheet: View {
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 10)
                                         .foregroundStyle(language == opt.rawValue ? Color.white : Color.primary)
-                                        .background(language == opt.rawValue ? DS.accent : DS.surfaceHi, in: Capsule())
+                                        .background(language == opt.rawValue ? DS.accentFill : DS.surfaceHi, in: Capsule())
                                 }
                                 .buttonStyle(.plain)
                             }

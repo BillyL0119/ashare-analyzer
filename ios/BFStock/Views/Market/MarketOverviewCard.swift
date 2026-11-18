@@ -32,12 +32,19 @@ struct MarketOverviewCard: View {
                 .padding(14)
                 .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
             } else {
-                VStack(spacing: 8) {
+                VStack(spacing: 12) {
                     if let sh = overview.shanghaiIndex { IndexTile(name: L("上证指数"), quote: sh, hero: true) }
-                    HStack(spacing: 8) {
+                    HStack(spacing: 0) {
                         if let sz = overview.shenzhenIndex { IndexTile(name: L("深证成指"), quote: sz) }
-                        if let cy = overview.chinextIndex { IndexTile(name: L("创业板指"), quote: cy) }
+                        if overview.shenzhenIndex != nil, overview.chinextIndex != nil {
+                            Rectangle().fill(DS.stroke).frame(width: 1).padding(.vertical, 2)
+                        }
+                        if let cy = overview.chinextIndex {
+                            IndexTile(name: L("创业板指"), quote: cy).padding(.leading, overview.shenzhenIndex != nil ? 12 : 0)
+                        }
                     }
+                    .padding(.top, 12)
+                    .overlay(alignment: .top) { Rectangle().fill(DS.stroke).frame(height: 1) }
                 }
             }
 
@@ -121,7 +128,6 @@ private struct IndexTile: View {
                             .foregroundStyle(color)
                     }
                 }
-                .padding(.horizontal, 16).padding(.vertical, 14)
             } else {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(name).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
@@ -132,13 +138,10 @@ private struct IndexTile: View {
                         .font(.system(.caption).weight(.semibold)).monospacedDigit()
                         .foregroundStyle(color)
                 }
-                .padding(.horizontal, 12).padding(.vertical, 10)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
-        .background(
-            color.opacity(0.10),
-            in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+
     }
 }

@@ -274,7 +274,7 @@ private struct GVDecisionCard: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                             .foregroundStyle(on ? Color.white : Color.primary)
-                            .background(on ? DS.accent : DS.surfaceHi, in: Capsule())
+                            .background(on ? DS.accentFill : DS.surfaceHi, in: Capsule())
                     }
                     .buttonStyle(.plain)
                     .disabled(busy || base + d < 0)

@@ -293,7 +293,9 @@ struct QuoteOfDayCard: View {
                 Text(Date.now.formatted(.dateTime.month(.wide).day().locale(Lang.locale)))
                     .font(.footnote).foregroundStyle(.secondary)
             }
-            Text(marked(text))
+            // Chinese fonts set curly quotes full-width, which leaves a gap inside the quote; the marks
+            // come from the serif instead so they sit against the text, as on the website
+            Text(marked(text, markFont: chinese ? .system(size: 22, weight: .regular, design: .serif) : nil))
                 .font(quoteFont(chinese: chinese, long: text.count > (chinese ? 60 : 140)))
                 .lineSpacing(chinese ? 6 : 3)
                 .foregroundStyle(.primary)
@@ -331,9 +333,10 @@ struct QuoteOfDayCard: View {
     }
 
     /// The quote between accent-coloured curly quotes
-    private func marked(_ text: String) -> AttributedString {
+    private func marked(_ text: String, markFont: Font?) -> AttributedString {
         var open = AttributedString("\u{201C}"); open.foregroundColor = DS.accent
         var close = AttributedString("\u{201D}"); close.foregroundColor = DS.accent
+        if let markFont { open.font = markFont; close.font = markFont }
         return open + AttributedString(text) + close
     }
 

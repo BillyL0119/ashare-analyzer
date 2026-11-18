@@ -138,7 +138,7 @@ private struct LeaderboardRow: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(DS.accent, in: Capsule())
+                            .background(DS.accentFill, in: Capsule())
                     }
                 }
                 Text(market.currencySymbol + entry.totalValue.formatted(.number.precision(.fractionLength(0))))

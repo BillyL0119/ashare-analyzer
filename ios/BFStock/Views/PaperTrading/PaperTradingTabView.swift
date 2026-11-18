@@ -278,7 +278,7 @@ struct PaperTradingTabView: View {
                                     } label: {
                                         Text(L("交易")).font(.footnote.weight(.semibold))
                                             .padding(.horizontal, 12).padding(.vertical, 6)
-                                            .foregroundStyle(.white).background(DS.accent, in: Capsule())
+                                            .foregroundStyle(.white).background(DS.accentFill, in: Capsule())
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -349,7 +349,7 @@ struct PaperTradingTabView: View {
                             .lineLimit(1)
                             .padding(.horizontal, 12).padding(.vertical, 7)
                             .foregroundStyle(on ? Color.white : Color.primary)
-                            .background(on ? DS.accent : DS.surfaceHi, in: Capsule())
+                            .background(on ? DS.accentFill : DS.surfaceHi, in: Capsule())
                     }
                     .buttonStyle(.plain)
                 }
@@ -404,7 +404,7 @@ struct PaperTradingTabView: View {
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(.white)
                             .frame(width: 28, height: 28)
-                            .background(side.tint, in: Circle())
+                            .background(side.fill, in: Circle())
                         VStack(alignment: .leading, spacing: 2) {
                             Text("\(o.symbol) · \(o.shares)").font(.subheadline.weight(.semibold))
                             Text(orderTerms(o)).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
@@ -466,7 +466,7 @@ struct PaperTradingTabView: View {
                                 Text("买入第一只股票")
                                     .font(.subheadline.weight(.semibold))
                                     .padding(.horizontal, 22).padding(.vertical, 10)
-                                    .background(DS.accent, in: Capsule())
+                                    .background(DS.accentFill, in: Capsule())
                                     .foregroundStyle(.white)
                             }
                             .buttonStyle(.plain)
@@ -512,7 +512,7 @@ struct PaperTradingTabView: View {
                         Text(OrderSide.short.badge)
                             .font(.caption2.weight(.semibold)).foregroundStyle(.white)
                             .frame(width: 28, height: 28)
-                            .background(OrderSide.short.tint, in: Circle())
+                            .background(OrderSide.short.fill, in: Circle())
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.key).font(.subheadline.weight(.semibold))
                             Text(L("%lld股 · 均价%@", -p.sharesInt, "\(cur)\(String(format: "%.2f", p.avgPrice))"))
@@ -636,13 +636,13 @@ private struct MissionsSection: View {
                             Button { onAction(next) } label: {
                                 Text(L("去完成")).font(.footnote.weight(.semibold))
                                     .padding(.horizontal, 14).padding(.vertical, 7)
-                                    .foregroundStyle(.white).background(DS.accent, in: Capsule())
+                                    .foregroundStyle(.white).background(DS.accentFill, in: Capsule())
                             }
                             .buttonStyle(.plain)
                         }
                     }
                 } else {
-                    Text(L("全部完成！你已经掌握了模拟交易的基本功。")).font(.footnote).foregroundStyle(.secondary)
+                    Text(L("全部完成。你已经掌握了模拟交易的基本功。")).font(.footnote).foregroundStyle(.secondary)
                 }
                 if open {
                     Divider()
@@ -980,7 +980,6 @@ private struct AccountCard: View {
     let cells: [(String, String, Color?)]
 
     var body: some View {
-        let color = returnPct == 0 ? DS.accent : plColor(returnPct, market: market)
         VStack(alignment: .leading, spacing: 18) {
             HStack {
                 Text(title)
@@ -1134,7 +1133,7 @@ private struct TransactionRow: View {
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white)
                 .frame(width: 28, height: 28)
-                .background(side == .sell ? Color.secondary.opacity(0.6) : side.tint, in: Circle())
+                .background(side == .sell ? Color.secondary.opacity(0.6) : side.fill, in: Circle())
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(tx.name.isEmpty ? tx.symbol : tx.name)

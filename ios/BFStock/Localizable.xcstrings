@@ -17349,31 +17349,31 @@
         }
       }
     },
-    "全部完成！你已经掌握了模拟交易的基本功。": {
+    "全部完成。你已经掌握了模拟交易的基本功。": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All done! You have the basics of trading down."
+            "value": "All done. You have the basics of trading down."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tout est fait ! Vous maîtrisez les bases du trading."
+            "value": "Tout est fait. Vous maîtrisez les bases du trading."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "すべて完了！取引の基本が身につきました。"
+            "value": "すべて完了。取引の基本が身につきました。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "모두 완료! 거래의 기본을 익혔어요."
+            "value": "모두 완료했어요. 거래의 기본을 익혔어요."
           }
         }
       }

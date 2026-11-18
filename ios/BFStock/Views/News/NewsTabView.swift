@@ -100,16 +100,6 @@ private struct NewsFeedRow: View {
         return f.localizedString(for: d, relativeTo: Date())
     }
 
-    private static let palette: [Color] = [
-        Color(r: 0x3B, g: 0x82, b: 0xF6), Color(r: 0xF5, g: 0x9E, b: 0x0B), Color(r: 0x10, g: 0xB9, b: 0x81),
-        Color(r: 0xEC, g: 0x48, b: 0x99), Color(r: 0x8B, g: 0x5C, b: 0xF6), Color(r: 0xEF, g: 0x44, b: 0x44),
-    ]
-
-    private var sourceTint: Color {
-        let h = item.source.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0xFFFF }
-        return Self.palette[h % Self.palette.count]
-    }
-
     var body: some View {
         Button { SafeURL.open(item.url) } label: {
             VStack(alignment: .leading, spacing: 6) {
@@ -123,18 +113,16 @@ private struct NewsFeedRow: View {
                         }
                     }
                 }
-                Text(item.title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                Text(item.title).font(.subheadline.weight(.medium)).foregroundStyle(.primary)
                     .multilineTextAlignment(.leading).lineLimit(3)
                 if let ai = item.aiSummary, !ai.isEmpty {
-                    (Text(L("AI 速读") + "  ").foregroundStyle(DS.accent).fontWeight(.semibold) + Text(ai).foregroundStyle(.secondary))
+                    (Text(L("AI 速读") + "  ").foregroundStyle(DS.accent).fontWeight(.medium) + Text(ai).foregroundStyle(.secondary))
                         .font(.caption).multilineTextAlignment(.leading).lineLimit(3)
                 }
                 HStack(spacing: 6) {
-                    Text(item.source).font(.caption2.weight(.semibold))
-                        .padding(.horizontal, 6).padding(.vertical, 2)
-                        .background(sourceTint.opacity(0.14), in: Capsule())
-                        .foregroundStyle(sourceTint)
-                    Text(time).font(.caption2).foregroundStyle(.secondary)
+                    // Source and time as quiet text, not a colour-coded tag per outlet
+                    Text(item.source).font(.caption2.weight(.medium)).foregroundStyle(.secondary)
+                    Text(time).font(.caption2).foregroundStyle(.tertiary)
                 }
                 .padding(.top, 2)
             }
@@ -158,11 +146,16 @@ private struct FeedSwitcher: View {
                     withAnimation(.snappy(duration: 0.25)) { selection = feed }
                 } label: {
                     Text(label)
-                        .font(.caption.weight(.semibold))
+                        .font(.caption.weight(.medium))
                         .padding(.horizontal, 14).padding(.vertical, 7)
-                        .foregroundStyle(selection == feed ? Color.white : Color.secondary)
+                        .foregroundStyle(selection == feed ? Color.primary : Color.secondary)
                         .background {
-                            if selection == feed { Capsule().fill(DS.accent).matchedGeometryEffect(id: "feed", in: ns) }
+                            if selection == feed {
+                                Capsule().fill(DS.raised)
+                                    .overlay(Capsule().strokeBorder(DS.stroke))
+                                    .shadow(color: Color(light: Color.black.opacity(0.06), dark: .clear), radius: 2, y: 1)
+                                    .matchedGeometryEffect(id: "feed", in: ns)
+                            }
                         }
                 }
                 .buttonStyle(.plain)

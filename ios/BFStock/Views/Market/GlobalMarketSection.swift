@@ -70,10 +70,7 @@ private struct IndexChip: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .frame(minWidth: 104, alignment: .leading)
-        .background(
-            color.opacity(0.10),
-            in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous)
-        )
+        .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
         .accessibilityElement(children: .combine)
     }
 }

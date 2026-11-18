@@ -78,8 +78,8 @@ struct AITeacherTabView: View {
 
     private var welcomeView: some View {
         VStack(spacing: 18) {
-            Image(systemName: "sparkles")
-                .font(.system(size: 30, weight: .semibold))
+            Image(systemName: "graduationcap")
+                .font(.system(size: 28, weight: .regular))
                 .foregroundStyle(DS.accent)
                 .frame(width: 72, height: 72)
                 .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
@@ -95,34 +95,40 @@ struct AITeacherTabView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 SectionHeader(L("快速提问"))
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                    ForEach(shortcuts, id: \.0) { text, icon in
+                // One list of questions in a single card, not a grid of identical boxes
+                VStack(spacing: 0) {
+                    ForEach(Array(shortcuts.enumerated()), id: \.offset) { i, item in
                         Button {
-                            vm.inputText = text
+                            vm.inputText = item.0
                             impactHaptic.impactOccurred()
                             vm.send()
                         } label: {
-                            VStack(alignment: .leading, spacing: 10) {
-                                Image(systemName: icon)
-                                    .font(.callout.weight(.semibold))
+                            HStack(spacing: 12) {
+                                Image(systemName: item.1)
+                                    .font(.body)
                                     .foregroundStyle(DS.accent)
+                                    .frame(width: 24)
                                 // Word joiners keep "P/E" from breaking after the slash.
-                                Text(text.replacingOccurrences(of: "P/E", with: "P\u{2060}/\u{2060}E"))
-                                    .font(.subheadline.weight(.medium))
+                                Text(item.0.replacingOccurrences(of: "P/E", with: "P\u{2060}/\u{2060}E"))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.primary)
                                     .multilineTextAlignment(.leading)
-                                    .lineLimit(2)
                                     .fixedSize(horizontal: false, vertical: true)
-                                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                                Spacer(minLength: 0)
+                                Spacer(minLength: 8)
+                                Image(systemName: "arrow.up.forward")
+                                    .font(.footnote)
+                                    .foregroundStyle(.tertiary)
                             }
-                            .padding(14)
-                            .frame(maxWidth: .infinity, minHeight: 100, maxHeight: .infinity, alignment: .topLeading)
-                            .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous))
-                            .overlay(RoundedRectangle(cornerRadius: DS.tileRadius + 2, style: .continuous).strokeBorder(DS.stroke))
+                            .padding(.horizontal, 16).padding(.vertical, 13)
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        if i < shortcuts.count - 1 {
+                            Rectangle().fill(DS.stroke).frame(height: 1).padding(.leading, 52)
+                        }
                     }
                 }
+                .card(padding: 0)
             }
             .padding(.top, 6)
 
@@ -198,11 +204,11 @@ struct ChatBubble: View {
             if isUser { Spacer(minLength: 48) }
 
             if !isUser {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.white)
+                Image(systemName: "graduationcap")
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundStyle(DS.accent)
                     .frame(width: 28, height: 28)
-                    .background(DS.accent.gradient, in: Circle())
+                    .background(DS.surfaceHi, in: Circle())
             }
 
             VStack(alignment: isUser ? .trailing : .leading, spacing: 4) {
