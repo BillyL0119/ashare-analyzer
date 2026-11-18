@@ -43,45 +43,33 @@ export default function StartHere({ lang, paths, onTabChange }) {
       </button>
     )
   }
+  // One compact panel: a title row with the class links, then four places to start in a single row
   return (
     <section className="bfs-start" aria-labelledby="bfs-start-title">
       <div className="bfs-start-head">
         <h2 id="bfs-start-title">{s.startTitle}</h2>
-        <button type="button" className="bfs-start-hide" aria-expanded="true" onClick={() => fold(true)}>
-          {s.hide}
-          <Chevron open />
-        </button>
-      </div>
-      <div className="bfs-start-grid">
-        <div className="bfs-start-col">
-          <h3>{s.students}</h3>
-          <ul className="bfs-start-cards" role="list">
-            {picks.map((p) => (
-              <li key={p.tab}>
-                <a href={paths[p.tab]} onClick={(e) => go(e, p.tab)}>
-                  <span className="bfs-chip" style={{ background: `var(--chip-${TINTS[p.tab]})` }}><Icon name={ICONS[p.tab]} size={22} strokeWidth={2} /></span>
-                  <span>
-                    <b>{p.title}</b>
-                    <span className="bfs-start-text">{p.text}</span>
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <p className="bfs-start-code">
-            {s.hasCode}
-            <a href={paths.class} onClick={(e) => go(e, 'class')}>{cs.joinTitle} →</a>
-          </p>
-        </div>
-        <div className="bfs-start-col is-teacher">
-          <h3>{s.teachers}</h3>
-          <p>{cs.subtitle}</p>
-          <a className="bfs-start-cta" href={paths.class} onClick={(e) => go(e, 'class')}>
-            {cs.create} →
-          </a>
-          <p className="bfs-start-note">{cs.teachSignIn}</p>
+        <div className="bfs-start-links">
+          <span>{s.hasCode} <a href={paths.class} onClick={(e) => go(e, 'class')}>{cs.joinTitle} →</a></span>
+          <span>{s.isTeacher} <a href={paths.class} onClick={(e) => go(e, 'class')} title={cs.subtitle}>{cs.create} →</a></span>
+          <button type="button" className="bfs-start-hide" aria-expanded="true" onClick={() => fold(true)}>
+            {s.hide}
+            <Chevron open />
+          </button>
         </div>
       </div>
+      <ul className="bfs-start-cards" role="list">
+        {picks.map((p) => (
+          <li key={p.tab}>
+            <a href={paths[p.tab]} onClick={(e) => go(e, p.tab)}>
+              <span className="bfs-chip is-md" style={{ background: `var(--chip-${TINTS[p.tab]})` }}><Icon name={ICONS[p.tab]} size={18} strokeWidth={2} /></span>
+              <span className="bfs-start-body">
+                <b>{p.title}</b>
+                <span className="bfs-start-text">{p.text}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }

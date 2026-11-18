@@ -10,6 +10,7 @@ const zh = {
   teachers: '老师：班级与作业',
   studyCard: '选你的考试（A-Level、IB、AP、IGCSE）或股票入门，从第一课学起，附考试技巧和真实案例。',
   hasCode: '老师给了你班级码？',
+  isTeacher: '是老师？',
   hide: '收起',
 }
 
@@ -21,6 +22,7 @@ const en = {
   teachers: 'Teachers: classes and assignments',
   studyCard: 'Pick your exam (A-Level, IB, AP or IGCSE) or stock-market basics and start from the first lesson, with exam tips and real-world examples.',
   hasCode: 'Got a class code from your teacher?',
+  isTeacher: 'Teacher?',
   hide: 'Hide',
 }
 
@@ -32,6 +34,7 @@ const ja = {
   teachers: '先生のみなさん：クラスと課題',
   studyCard: '試験（A-Level・IB・AP・IGCSE）か株式入門を選び、最初の単元から学べます。試験のコツと実例つきです。',
   hasCode: '先生からクラスコードをもらいましたか？',
+  isTeacher: '先生の方は',
   hide: '閉じる',
 }
 
@@ -43,6 +46,7 @@ const ko = {
   teachers: '선생님: 클래스와 과제',
   studyCard: '시험(A-Level, IB, AP, IGCSE)이나 주식 입문을 고르고 첫 단원부터 시작하세요. 시험 팁과 실제 사례가 함께 나옵니다.',
   hasCode: '선생님께 클래스 코드를 받았나요?',
+  isTeacher: '선생님이신가요?',
   hide: '접기',
 }
 
@@ -54,6 +58,7 @@ const fr = {
   teachers: 'Enseignants : classes et devoirs',
   studyCard: "Choisissez votre examen (A-Level, IB, AP ou IGCSE) ou l'initiation à la Bourse, puis commencez par la première leçon, avec des conseils d'examen et des exemples réels.",
   hasCode: 'Votre enseignant vous a donné un code de classe ?',
+  isTeacher: 'Enseignant ?',
   hide: 'Masquer',
 }
 
