@@ -1,0 +1,32 @@
+/* Statistics tab (prefix qt-). Shared building blocks (cards, label/value rows, skeletons) are in quotepage.css. */
+
+.qt-intro { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.qt-hint { margin: -6px 0 12px; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+
+/* Valuation measures: nine rows in three columns on wide screens */
+.qt-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; }
+@media (max-width: 1100px) { .qt-trio { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .qt-trio { grid-template-columns: minmax(0, 1fr); } }
+/* a hairline above a column that starts a new row */
+@media (max-width: 1100px) and (min-width: 641px) {
+  .qt-trio .qp-dl:nth-child(n+3) > dt:first-of-type, .qt-trio .qp-dl:nth-child(n+3) > dd:first-of-type { border-top: 1px solid var(--border-primary); }
+}
+@media (max-width: 640px) {
+  .qt-trio .qp-dl:nth-child(n+2) > dt:first-of-type, .qt-trio .qp-dl:nth-child(n+2) > dd:first-of-type { border-top: 1px solid var(--border-primary); }
+}
+
+/* One group of rows inside a column card: a quiet sub-heading, then the rows */
+.qt-group + .qt-group { margin-top: 18px; }
+.qt-sub { margin: 0 0 2px; font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+
+/* Period tag after a value (TTM, MRQ, settlement date) */
+.qt-tag { margin-left: 6px; font-size: 11px; font-weight: 400; color: var(--text-muted); }
+
+.qt-dim { color: var(--text-muted); }
+
+/* Abbreviation guide */
+.qt-abbr { display: grid; gap: 8px; margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); }
+.qt-abbr dt { font-weight: 600; color: var(--text-primary); }
+.qt-abbr dd { margin: 0 0 4px; }
+
+.qt-skel-row { height: 36px; margin-bottom: 4px; }
