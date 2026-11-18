@@ -56,10 +56,10 @@ struct PerformanceSection: View {
                     let ahead = (perf.excessPct ?? 0) >= 0
                     Text(ahead ? L("跑赢大盘 %@", pct(perf.excessPct, signed: false))
                                : L("跑输大盘 %@", pct(perf.excessPct.map { abs($0) }, signed: false)))
-                        .font(.caption.weight(.bold))
+                        .font(.caption.weight(.semibold))
                         .padding(.horizontal, 10).padding(.vertical, 5)
-                        .foregroundStyle(ahead ? DS.accent : Color.orange)
-                        .background((ahead ? DS.accent : Color.orange).opacity(0.14), in: Capsule())
+                        .foregroundStyle(ahead ? DS.accent : DS.warn)
+                        .background((ahead ? DS.accent : DS.warn).opacity(0.14), in: Capsule())
                     Spacer()
                     if let s = perf.since, let d = perf.points.first?.day {
                         Text(L("自 %@ 起", d.formatted(.dateTime.month(.abbreviated).day().locale(Lang.locale))))
@@ -111,7 +111,7 @@ struct PerformanceSection: View {
     private func tile(_ label: String, _ value: String, color: Color?) -> some View {
         VStack(spacing: 3) {
             Text(label).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
-            Text(value).font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+            Text(value).font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                 .foregroundStyle(color ?? .primary)
         }
         .frame(maxWidth: .infinity)

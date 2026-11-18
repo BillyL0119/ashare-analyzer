@@ -9,7 +9,7 @@ struct WatchlistTabView: View {
                     .font(.system(size: 48))
                     .foregroundStyle(.secondary)
                 Text("tab.watchlist")
-                    .font(.system(.title2, design: .serif).weight(.semibold))
+                    .font(.system(.title2).weight(.semibold))
                 Text("Coming in Step 5")
                     .font(.caption)
                     .foregroundStyle(.tertiary)

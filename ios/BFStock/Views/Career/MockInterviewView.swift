@@ -35,7 +35,7 @@ struct MockInterviewView: View {
         VStack(spacing: 18) {
             Spacer()
             Text(role.icon).font(.system(size: 44))
-            Text(role.displayTitle).font(.system(.title3, design: .serif).weight(.semibold)).multilineTextAlignment(.center)
+            Text(role.displayTitle).font(.system(.title3).weight(.semibold)).multilineTextAlignment(.center)
             Text(L("AI面试官会一次问一个问题，4-5轮后给出评分和改进建议"))
                 .font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center).padding(.horizontal, 32)
             Picker("", selection: $vm.interviewType) {
@@ -76,7 +76,7 @@ struct MockInterviewView: View {
                     .background(DS.surface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(DS.stroke))
                 Button { vm.send(); focused = false } label: {
-                    Image(systemName: "arrow.up").font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
+                    Image(systemName: "arrow.up").font(.system(size: 16, weight: .semibold)).foregroundStyle(.white)
                         .frame(width: 38, height: 38)
                         .background(vm.inputText.trimmingCharacters(in: .whitespaces).isEmpty || vm.isStreaming ? Color.gray.opacity(0.4) : role.tint, in: Circle())
                 }

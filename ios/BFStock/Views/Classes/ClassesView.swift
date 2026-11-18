@@ -5,13 +5,11 @@ import SwiftUI
 struct ClassesEntryCard: View {
     var body: some View {
         HStack(spacing: 14) {
-            Image(systemName: "person.3.fill")
-                .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 46, height: 46)
-                .background(LinearGradient(colors: [Color(r: 0x10, g: 0xB9, b: 0x81), Color(r: 0x0E, g: 0xA5, b: 0xE9)],
-                                           startPoint: .topLeading, endPoint: .bottomTrailing),
-                            in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+            Image(systemName: "person.3")
+                .font(.system(size: 17, weight: .regular))
+                .foregroundStyle(DS.accent)
+                .frame(width: 44, height: 44)
+                .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             VStack(alignment: .leading, spacing: 3) {
                 Text(L("班级")).font(.subheadline.weight(.semibold))
                 Text(L("加入老师的班级：作业根据你在 App 里的练习自动完成"))
@@ -167,7 +165,7 @@ private struct ClassCard: View {
                     if !c.assignments.isEmpty {
                         Text(verbatim: "\(done)/\(c.assignments.count)")
                             .font(.caption).foregroundStyle(.secondary).monospacedDigit()
-                        ProgressView(value: Double(done), total: Double(c.assignments.count)).tint(.green)
+                        ProgressView(value: Double(done), total: Double(c.assignments.count)).tint(DS.good)
                     }
                 }
                 if c.assignments.isEmpty {
@@ -190,7 +188,7 @@ private struct ClassCard: View {
             HStack(spacing: 8) {
                 Text(L("班级码")).font(.caption).foregroundStyle(.secondary)
                 Text(verbatim: c.code)
-                    .font(.system(.footnote, design: .monospaced).weight(.bold))
+                    .font(.system(.footnote, design: .monospaced).weight(.semibold))
                     .tracking(2)
                     .textSelection(.enabled)
                 Spacer()
@@ -198,7 +196,7 @@ private struct ClassCard: View {
                     Text(L("退出班级"))
                         .font(.footnote.weight(.semibold))
                         .padding(.horizontal, 12).padding(.vertical, 6)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(DS.bad)
                         .background(DS.surfaceHi, in: Capsule())
                 }
                 .buttonStyle(.plain)
@@ -212,7 +210,7 @@ private struct ClassCard: View {
         return HStack(alignment: .center, spacing: 12) {
             Image(systemName: a.done ? "checkmark.circle.fill" : "circle")
                 .font(.title3)
-                .foregroundStyle(a.done ? Color.green : Color.secondary)
+                .foregroundStyle(a.done ? DS.good : Color.secondary)
                 .accessibilityLabel(a.done ? L("已完成") : L("未完成"))
             VStack(alignment: .leading, spacing: 3) {
                 Text(a.title)
@@ -238,13 +236,13 @@ private struct ClassCard: View {
                 if let due = a.due {
                     Label(L("截止 %@", due), systemImage: "calendar")
                         .font(.caption2.weight(late ? .semibold : .regular))
-                        .foregroundStyle(late ? Color.orange : Color.secondary)
+                        .foregroundStyle(late ? DS.warn : Color.secondary)
                         .monospacedDigit()
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             if a.done {
-                Text(L("已完成")).font(.caption.weight(.semibold)).foregroundStyle(.green)
+                Text(L("已完成")).font(.caption.weight(.semibold)).foregroundStyle(DS.good)
             } else {
                 Button { onStart(a) } label: {
                     Text(L("去完成")).font(.footnote.weight(.semibold))
@@ -270,7 +268,7 @@ private struct ClassCard: View {
                 ForEach(rows, id: \.offset) { i, r in
                     HStack(spacing: 10) {
                         Text(verbatim: "\(i + 1)")
-                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                            .font(.system(.subheadline).weight(.semibold))
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
                             .frame(width: 24)
@@ -281,7 +279,7 @@ private struct ClassCard: View {
                                     .lineLimit(1)
                                 if r.me {
                                     Text("我")
-                                        .font(.caption2.weight(.bold))
+                                        .font(.caption2.weight(.semibold))
                                         .foregroundStyle(.white)
                                         .padding(.horizontal, 6).padding(.vertical, 2)
                                         .background(DS.accent, in: Capsule())
@@ -339,7 +337,7 @@ private struct JoinClassCard: View {
                 Text(L("班级码")).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                 HStack(spacing: 10) {
                     TextField(L("例如 PR96RQ"), text: $code)
-                        .font(.system(.title3, design: .monospaced).weight(.bold))
+                        .font(.system(.title3, design: .monospaced).weight(.semibold))
                         .tracking(code.isEmpty ? 0 : 3)      // not the placeholder
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
@@ -369,7 +367,7 @@ private struct JoinClassCard: View {
                 if let info = vm.found { found(info) }
 
                 if let err = vm.joinError {
-                    Text(err).font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                    Text(err).font(.footnote).foregroundStyle(DS.bad).fixedSize(horizontal: false, vertical: true)
                 }
 
                 Text(L("App 和网页版的模拟账户是分开的。如果你在网页上加入过这个班级，请在 App 里再加入一次，App 里的进度才会算进去。"))
@@ -396,7 +394,7 @@ private struct JoinClassCard: View {
             if joinedCodes.contains(info.code) {
                 Label(L("已加入"), systemImage: "checkmark.circle.fill")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(DS.good)
             } else {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(L("你在班上的昵称")).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
@@ -419,7 +417,7 @@ private struct JoinClassCard: View {
                     .font(.subheadline.weight(.semibold))
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .foregroundStyle(.white)
-                    .background(DS.accentGradient, in: Capsule())
+                    .background(DS.accentFill, in: Capsule())
                     .opacity(nickOK ? 1 : 0.45)
                 }
                 .buttonStyle(.plain)

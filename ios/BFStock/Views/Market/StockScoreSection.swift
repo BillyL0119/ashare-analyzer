@@ -42,7 +42,7 @@ struct StockScoreSection: View {
     }
 
     private func color(_ ratio: Double) -> Color {
-        ratio >= 0.7 ? Color(red: 0.18, green: 0.72, blue: 0.39) : ratio >= 0.4 ? .orange : Color(red: 0.93, green: 0.26, blue: 0.26)
+        ratio >= 0.7 ? DS.good : ratio >= 0.4 ? DS.warn : DS.bad
     }
 
     private func dimension(_ key: String, _ title: String, _ d: ScoreDimension) -> some View {
@@ -56,7 +56,7 @@ struct StockScoreSection: View {
                         Text(title).font(.subheadline.weight(.medium))
                         Spacer()
                         Text("\(Int(d.score))/\(Int(d.max))")
-                            .font(.system(.footnote, design: .rounded).weight(.semibold)).monospacedDigit()
+                            .font(.system(.footnote).weight(.semibold)).monospacedDigit()
                             .foregroundStyle(color(ratio))
                         Image(systemName: "chevron.down").font(.caption2).foregroundStyle(.tertiary)
                             .rotationEffect(.degrees(expanded == key ? 180 : 0))
@@ -103,15 +103,15 @@ private struct ScoreRing: View {
 
     var body: some View {
         let ratio = Swift.min(Swift.max(value / max, 0), 1)
-        let tint: Color = ratio >= 0.7 ? Color(red: 0.18, green: 0.72, blue: 0.39) : ratio >= 0.4 ? .orange : Color(red: 0.93, green: 0.26, blue: 0.26)
+        let tint: Color = ratio >= 0.7 ? DS.good : ratio >= 0.4 ? DS.warn : DS.bad
         ZStack {
             Circle().stroke(DS.surfaceHi, lineWidth: 9)
             Circle().trim(from: 0, to: ratio)
                 .stroke(tint, style: StrokeStyle(lineWidth: 9, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
-                Text("\(Int(value))").font(.system(size: 30, weight: .medium, design: .serif)).monospacedDigit()
-                Text(grade).font(.caption.weight(.bold)).foregroundStyle(tint)
+                Text("\(Int(value))").font(.system(size: 30, weight: .medium)).monospacedDigit()
+                Text(grade).font(.caption.weight(.semibold)).foregroundStyle(tint)
             }
         }
         .frame(width: 86, height: 86)

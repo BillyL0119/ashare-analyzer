@@ -267,7 +267,7 @@ struct ScreenerView: View {
     private func row(_ r: ScreenerRow) -> some View {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(r.symbol).font(.subheadline.weight(.bold).monospaced())
+                Text(r.symbol).font(.subheadline.weight(.semibold).monospaced())
                 Text(r.name).font(.caption).foregroundStyle(.secondary).lineLimit(1)
             }
             Spacer(minLength: 8)
@@ -291,11 +291,11 @@ struct ScreenerEntryCard: View {
     var body: some View {
         NavigationLink(destination: ScreenerView()) {
             HStack(spacing: 12) {
-                Image(systemName: "line.3.horizontal.decrease.circle.fill")
-                    .font(.system(size: 22, weight: .semibold))
+                Image(systemName: "line.3.horizontal.decrease")
+                    .font(.system(size: 20, weight: .regular))
                     .foregroundStyle(DS.accent)
                     .frame(width: 44, height: 44)
-                    .background(DS.accent.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 VStack(alignment: .leading, spacing: 3) {
                     Text(L("选股器")).font(.subheadline.weight(.semibold))
                     Text(L("按行业、市值、估值、涨跌筛选全部美股")).font(.caption).foregroundStyle(.secondary).lineLimit(2)

@@ -114,7 +114,7 @@ private struct TMGame: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(TMDate.long(run.date))
-                .font(.title3.weight(.bold))
+                .font(.title3.weight(.semibold))
             HStack(spacing: 10) {
                 Text(L("第 %lld / %lld 天", dayNo, run.scenario.nDays))
                     .font(.caption)
@@ -136,7 +136,7 @@ private struct TMGame: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Image(systemName: "newspaper.fill").foregroundStyle(TMFmt.news)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(TMDate.short(e.date)).font(.caption.weight(.bold))
+                                Text(TMDate.short(e.date)).font(.caption.weight(.semibold))
                                 Text(e.text).font(.footnote).fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -159,7 +159,7 @@ private struct TMGame: View {
             if let err = vm.error {
                 Label(err, systemImage: "exclamationmark.circle.fill")
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(DS.bad)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -174,10 +174,10 @@ private struct TMGame: View {
                         if vm.busy { ProgressView().tint(.white) } else { Image(systemName: "play.fill") }
                         Text(L("下一天")).lineLimit(1).minimumScaleFactor(0.8)
                     }
-                    .font(.subheadline.weight(.bold))
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, minHeight: 46)
-                    .background(DS.accentGradient, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .background(DS.accentFill, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 barButton(L("跳到结束"), icon: "forward.end.fill") { confirmEnd = true }
@@ -224,7 +224,7 @@ private struct TMGame: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).font(.caption).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
             Text(value)
-                .font(.system(.title3, design: .rounded).weight(.bold))
+                .font(.system(.title3).weight(.semibold))
                 .monospacedDigit()
                 .foregroundStyle(color ?? .primary)
                 .lineLimit(1)
@@ -293,7 +293,7 @@ private struct TMGame: View {
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(i.price.map { m.currencySymbol + TMFmt.price($0, m) } ?? "—")
-                        .font(.system(.title3, design: .rounded).weight(.bold))
+                        .font(.system(.title3).weight(.semibold))
                         .monospacedDigit()
                     Text(i.suspended ? L("停牌") : TMFmt.pct(i.changePct))
                         .font(.caption.weight(.semibold))
@@ -327,7 +327,7 @@ private struct TMGame: View {
                 TextField(L("股数"), text: $qty)
                     .keyboardType(.numberPad)
                     .focused($qtyFocused)
-                    .font(.system(.body, design: .rounded).weight(.bold))
+                    .font(.system(.body).weight(.semibold))
                     .monospacedDigit()
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
@@ -346,11 +346,11 @@ private struct TMGame: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 if i.suspended {
-                    Text(L("这只股票今天停牌，不能交易")).foregroundStyle(.orange)
+                    Text(L("这只股票今天停牌，不能交易")).foregroundStyle(DS.warn)
                 } else if lotBad {
-                    Text(L("A股按 %lld 股的整数倍买入。", lot)).foregroundStyle(.orange)
+                    Text(L("A股按 %lld 股的整数倍买入。", lot)).foregroundStyle(DS.warn)
                 } else if cashBad {
-                    Text(L("现金不足")).foregroundStyle(.orange)
+                    Text(L("现金不足")).foregroundStyle(DS.warn)
                 } else if n > 0, price > 0 {
                     Text(L("成交金额约 %@", TMFmt.money(Double(n) * price, m, decimals: 0))).monospacedDigit()
                 }
@@ -374,7 +374,7 @@ private struct TMGame: View {
     private func sideButton(_ title: String, tint: Color, enabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.subheadline.weight(.bold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 42)
                 .background(tint.opacity(enabled ? 1 : 0.35), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -482,7 +482,7 @@ private struct TMGame: View {
         return HStack(spacing: 8) {
             Text(TMDate.short(t.date)).foregroundStyle(.secondary)
             Text(buy ? L("买入") : L("卖出"))
-                .fontWeight(.bold)
+                .fontWeight(.semibold)
                 .foregroundStyle(buy ? OrderSide.buy.tint : OrderSide.sell.tint)
             Text(name(t.symbol)).lineLimit(1)
             Spacer(minLength: 6)
@@ -532,7 +532,7 @@ private struct TMGame: View {
             HStack(spacing: 6) {
                 if isNew {
                     Text(L("新"))
-                        .font(.caption2.weight(.bold))
+                        .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 5).padding(.vertical, 1)
                         .background(TMFmt.news, in: RoundedRectangle(cornerRadius: 4))
@@ -604,7 +604,7 @@ private struct TMResultCard: View {
                 section(L("对应的考试知识点")) {
                     ForEach(r.examPoints) { p in
                         HStack(alignment: .firstTextBaseline, spacing: 10) {
-                            Text(p.exam).font(.footnote.weight(.bold)).foregroundStyle(DS.accent)
+                            Text(p.exam).font(.footnote.weight(.semibold)).foregroundStyle(DS.accent)
                                 .frame(width: 74, alignment: .leading)
                             Text(p.point).font(.footnote).fixedSize(horizontal: false, vertical: true)
                         }
@@ -625,7 +625,7 @@ private struct TMResultCard: View {
                     Text(L("再玩一次")).font(.subheadline.weight(.semibold))
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .foregroundStyle(.white)
-                        .background(DS.accentGradient, in: Capsule())
+                        .background(DS.accentFill, in: Capsule())
                 }
                 .buttonStyle(.plain)
                 .disabled(busy)
@@ -646,7 +646,7 @@ private struct TMResultCard: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).font(.caption).foregroundStyle(.secondary).lineLimit(2, reservesSpace: true)
             Text(TMFmt.pct(value))
-                .font(.system(size: 28, weight: .heavy, design: .rounded))
+                .font(.system(size: 28, weight: .medium))
                 .monospacedDigit()
                 .foregroundStyle(TMFmt.color(value, m))
                 .lineLimit(1)
@@ -673,7 +673,7 @@ private struct TMResultCard: View {
 
     private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.subheadline.weight(.bold))
+            Text(title).font(.subheadline.weight(.semibold))
             content()
         }
     }
@@ -682,11 +682,11 @@ private struct TMResultCard: View {
         var nick = row.nickname ?? L("匿名同学")
         if Lang.code != "zh", nick.hasPrefix("用户#") { nick = "#" + nick.dropFirst(3) }
         return HStack(spacing: 10) {
-            Text("\(row.rank)").font(.footnote.weight(.heavy)).monospacedDigit().frame(width: 26, alignment: .leading)
+            Text("\(row.rank)").font(.footnote.weight(.semibold)).monospacedDigit().frame(width: 26, alignment: .leading)
             Text(nick + (row.isMe ? L("（我）") : "")).font(.footnote).lineLimit(1)
             Spacer()
             Text(TMFmt.pct(row.returnPct))
-                .font(.footnote.weight(.bold))
+                .font(.footnote.weight(.semibold))
                 .monospacedDigit()
                 .foregroundStyle(TMFmt.color(row.returnPct, m))
         }
@@ -777,7 +777,7 @@ private struct TMCallout: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text(TMDate.short(date)).fontWeight(.bold)
+            Text(TMDate.short(date)).fontWeight(.semibold)
             ForEach(Array(values.enumerated()), id: \.offset) { _, v in
                 Text(v.0).foregroundStyle(v.1)
             }

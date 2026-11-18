@@ -78,7 +78,7 @@ struct LearningTabView: View {
                 DailyKnowledgeCard()
                 VStack(spacing: 10) {
                     featureLink(icon: "chart.xyaxis.line", title: DL("title"), subtitle: DL("cardApp")) { DiagramLabView() }
-                    featureLink(icon: "building.columns.fill", title: GV("title"), subtitle: GV("card")) { GovernorView() }
+                    featureLink(icon: "building.columns", title: GV("title"), subtitle: GV("card")) { GovernorView() }
                 }
                 progressCard(curriculum)
                 if let papers = curriculum.papers, !papers.isEmpty {
@@ -86,7 +86,7 @@ struct LearningTabView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             SectionHeader(paper.title) {
                                 Text("\(progress.count(exam: curriculum.key, topics: paper.topics))/\(paper.topics.count)")
-                                    .font(.system(.caption, design: .rounded).weight(.semibold))
+                                    .font(.system(.caption).weight(.semibold))
                                     .monospacedDigit()
                                     .foregroundStyle(.secondary)
                             }
@@ -98,11 +98,10 @@ struct LearningTabView: View {
                 }
                 NavigationLink(destination: UniversitiesView()) {
                     HStack(spacing: 12) {
-                        Image(systemName: "graduationcap.fill")
-                            .font(.title3).foregroundStyle(.white)
+                        Image(systemName: "graduationcap")
+                            .font(.title3).foregroundStyle(DS.accent)
                             .frame(width: 44, height: 44)
-                            .background(LinearGradient(colors: [DS.accent, Color(r: 0x8B, g: 0x6C, b: 0xFF)], startPoint: .topLeading, endPoint: .bottomTrailing),
-                                        in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                         VStack(alignment: .leading, spacing: 2) {
                             Text("全球商学院指南").font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
                             Text("QS 商科排名前 150 + 100 多所商学院的学费与申请要求")
@@ -119,11 +118,10 @@ struct LearningTabView: View {
                 .buttonStyle(.plain)
                 NavigationLink(destination: CareerGuideView()) {
                     HStack(spacing: 12) {
-                        Image(systemName: "briefcase.fill")
-                            .font(.title3).foregroundStyle(.white)
+                        Image(systemName: "briefcase")
+                            .font(.title3).foregroundStyle(DS.accent)
                             .frame(width: 44, height: 44)
-                            .background(LinearGradient(colors: [DS.accent, Color(r: 0x8B, g: 0x6C, b: 0xFF)], startPoint: .topLeading, endPoint: .bottomTrailing),
-                                        in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                         VStack(alignment: .leading, spacing: 2) {
                             Text("求职指南").font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
                             Text("对比 8 条职业路径的薪酬与工时，查看 70 家机构，还能模拟面试")
@@ -150,9 +148,10 @@ struct LearningTabView: View {
         NavigationLink(destination: destination()) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.title3).foregroundStyle(.white)
+                    .font(.system(size: 20, weight: .regular))
+                    .foregroundStyle(DS.accent)
                     .frame(width: 44, height: 44)
-                    .background(DS.accentGradient, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
                     Text(subtitle)
@@ -181,7 +180,7 @@ struct LearningTabView: View {
                     .font(.subheadline.weight(.semibold))
                 Spacer()
                 Text("\(done)/\(all.count) 已学完")
-                    .font(.system(.caption, design: .rounded).weight(.semibold))
+                    .font(.system(.caption).weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
                     .contentTransition(.numericText(value: Double(done)))
@@ -189,7 +188,7 @@ struct LearningTabView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(DS.surfaceHi)
-                    Capsule().fill(DS.accentGradient)
+                    Capsule().fill(DS.accentFill)
                         .frame(width: max(geo.size.width * fraction, done > 0 ? 8 : 0))
                 }
             }
@@ -226,7 +225,7 @@ private struct TopicRow: View {
         HStack(spacing: 12) {
             Image(systemName: done ? "checkmark.circle.fill" : "circle")
                 .font(.title3)
-                .foregroundStyle(done ? Color(red: 0.18, green: 0.72, blue: 0.39) : Color.secondary.opacity(0.4))
+                .foregroundStyle(done ? DS.good : Color.secondary.opacity(0.4))
             VStack(alignment: .leading, spacing: 4) {
                 Text(topic.title)
                     .font(.subheadline.weight(.medium))
@@ -240,7 +239,7 @@ private struct TopicRow: View {
             Spacer(minLength: 8)
             if let time = topic.estimatedTime {
                 Text(studyMinutes(time))
-                    .font(.system(.caption2, design: .rounded).weight(.medium))
+                    .font(.system(.caption2).weight(.medium))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(DS.surfaceHi, in: Capsule())

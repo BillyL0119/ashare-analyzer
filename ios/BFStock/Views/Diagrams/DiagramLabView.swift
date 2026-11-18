@@ -115,7 +115,7 @@ struct DiagramDetailView: View {
                 shocksCard(proxy)
                 VStack(alignment: .leading, spacing: 8) {
                     Label(DL("examTip"), systemImage: "pencil.and.list.clipboard")
-                        .font(.footnote.weight(.bold))
+                        .font(.footnote.weight(.semibold))
                         .foregroundStyle(tipColor)
                     Text(def.tip).font(.subheadline).fixedSize(horizontal: false, vertical: true)
                 }

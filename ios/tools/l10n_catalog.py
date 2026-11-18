@@ -227,6 +227,7 @@ T = {
     "宏观": ("Macro", "マクロ", "거시", "Macro"),
     "策略": ("Strategy", "ストラテジー", "전략", "Stratégie"),
     "今日知识": ("Today's concept", "今日の知識", "오늘의 지식", "Notion du jour"),
+    "今日语录": ("Quote of the day", "今日の言葉", "오늘의 명언", "Citation du jour"),
     "全球商学院指南": ("Business school guide", "ビジネススクールガイド", "글로벌 비즈니스 스쿨 가이드", "Guide des business schools"),
     "搜索商学院": ("Search schools", "スクールを検索", "학교 검색", "Rechercher une école"),
     "全部": ("All", "すべて", "전체", "Tous"),

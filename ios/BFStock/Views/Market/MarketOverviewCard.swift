@@ -18,7 +18,7 @@ struct MarketOverviewCard: View {
                     .foregroundStyle(session.color)
                 }
                 Text("\(overview.date) \(overview.time) " + L("北京时间"))
-                    .font(.system(.caption, design: .rounded)).monospacedDigit().foregroundStyle(.secondary)
+                    .font(.system(.caption)).monospacedDigit().foregroundStyle(.secondary)
             }
 
             if overview.shanghaiIndex == nil && overview.shenzhenIndex == nil && overview.chinextIndex == nil {
@@ -57,9 +57,9 @@ struct MarketOverviewCard: View {
         guard f.string(from: now) == overview.date, !cal.isDateInWeekend(now) else { return closed }
         let m = cal.component(.hour, from: now) * 60 + cal.component(.minute, from: now)
         switch m {
-        case 555..<570: return (L("集合竞价"), Color.orange)
+        case 555..<570: return (L("集合竞价"), DS.warn)
         case 570..<690, 780..<900: return (L("交易中"), Theme.cnUp)
-        case 690..<780: return (L("午间休市"), Color.orange)
+        case 690..<780: return (L("午间休市"), DS.warn)
         default: return closed
         }
     }
@@ -91,7 +91,7 @@ struct MarketOverviewCard: View {
                 Spacer()
                 Text("\(overview.declineCount) 下跌").foregroundStyle(Theme.cnDown)
             }
-            .font(.system(.caption2, design: .rounded).weight(.medium))
+            .font(.system(.caption2).weight(.medium))
             .monospacedDigit()
         }
     }
@@ -110,14 +110,14 @@ private struct IndexTile: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(name).font(.footnote.weight(.medium)).foregroundStyle(.secondary)
                         Text(Formatters.price(quote.value))
-                            .font(.system(size: 36, weight: .medium, design: .serif)).monospacedDigit()
+                            .font(.system(size: 36, weight: .medium)).monospacedDigit()
                             .minimumScaleFactor(0.7).lineLimit(1)
                     }
                     Spacer()
                     VStack(alignment: .trailing, spacing: 4) {
                         PctPill(pct: quote.pct, market: .cn, fixedWidth: 84)
                         Text(Formatters.changeAbs(quote.change))
-                            .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                            .font(.system(.caption).weight(.semibold)).monospacedDigit()
                             .foregroundStyle(color)
                     }
                 }
@@ -126,10 +126,10 @@ private struct IndexTile: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(name).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
                     Text(Formatters.price(quote.value))
-                        .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                        .font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                         .minimumScaleFactor(0.6).lineLimit(1)
                     Text(Formatters.changePct(quote.pct))
-                        .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                        .font(.system(.caption).weight(.semibold)).monospacedDigit()
                         .foregroundStyle(color)
                 }
                 .padding(.horizontal, 12).padding(.vertical, 10)
@@ -138,7 +138,7 @@ private struct IndexTile: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .background(
-            LinearGradient(colors: [color.opacity(0.16), DS.surfaceHi.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing),
+            color.opacity(0.10),
             in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
     }
 }

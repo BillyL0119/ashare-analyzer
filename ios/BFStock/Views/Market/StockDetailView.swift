@@ -87,7 +87,7 @@ struct StockDetailView: View {
                             Text(Formatters.price(q.price))
                             Text(Formatters.changePct(q.pctChange))
                         }
-                        .font(.system(.caption2, design: .rounded).weight(.semibold))
+                        .font(.system(.caption2).weight(.semibold))
                         .monospacedDigit()
                         .foregroundStyle(Theme.changeColor(q.pctChange, market: market))
                     }
@@ -101,7 +101,7 @@ struct StockDetailView: View {
                     watchlist.toggle(code: code, name: name, market: market)
                 } label: {
                     Image(systemName: watched ? "star.fill" : "star")
-                        .foregroundStyle(watched ? .yellow : .secondary)
+                        .foregroundStyle(watched ? DS.warn : .secondary)
                 }
                 .accessibilityLabel(watched ? L("移出自选") : L("加入自选"))
             }
@@ -143,7 +143,7 @@ struct StockDetailView: View {
             } else if let q = vm.quote {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(Formatters.price(q.price))
-                        .font(.system(size: 44, weight: .medium, design: .serif))
+                        .font(.system(size: 44, weight: .medium))
                         .monospacedDigit()
                         .contentTransition(.numericText(value: q.price))
                         .animation(.snappy(duration: 0.5), value: q.price)
@@ -155,7 +155,7 @@ struct StockDetailView: View {
                         PctPill(pct: q.pctChange, market: market, minWidth: 0)
                             .fixedSize()
                         Text(Formatters.changeAbs(q.change))
-                            .font(.system(.caption, design: .rounded).weight(.medium))
+                            .font(.system(.caption).weight(.medium))
                             .monospacedDigit()
                             .foregroundStyle(Theme.changeColor(q.pctChange, market: market))
                             .padding(.leading, 4)
@@ -176,7 +176,7 @@ struct StockDetailView: View {
                     Spacer(minLength: 6)
                     Button { showPaperTrade = true } label: {
                         Text(L("模拟买入"))
-                            .font(.caption.weight(.bold))
+                            .font(.caption.weight(.semibold))
                             .padding(.horizontal, 12).padding(.vertical, 6)
                             .foregroundStyle(.white)
                             .background(DS.accent, in: Capsule())
@@ -410,7 +410,7 @@ struct StockDetailView: View {
                 VStack(spacing: 3) {
                     Text(item.0).font(.caption2).foregroundStyle(.secondary)
                     Text(item.1)
-                        .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                        .font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                         .minimumScaleFactor(0.7).lineLimit(1)
                 }
                 .frame(maxWidth: .infinity)
@@ -449,7 +449,7 @@ struct StockDetailView: View {
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                         Text(value)
-                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                            .font(.system(.subheadline).weight(.semibold))
                             .monospacedDigit()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -495,7 +495,7 @@ struct StockDetailView: View {
                     Spacer()
                     Text(Formatters.price(hi))
                 }
-                .font(.system(.caption, design: .rounded).weight(.semibold))
+                .font(.system(.caption).weight(.semibold))
                 .monospacedDigit()
             }
         }

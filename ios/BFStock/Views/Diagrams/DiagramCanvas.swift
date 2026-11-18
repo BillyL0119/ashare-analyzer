@@ -158,7 +158,7 @@ struct DiagramCanvas: View {
             ctx.fill(path(a.pts, box, close: true), with: .color(DLPalette.fill(a.kind)))
             if !thumbnail, let l = a.label, l.count <= 2 {
                 let cx = a.pts.map(\.x).reduce(0, +) / Double(a.pts.count), cy = a.pts.map(\.y).reduce(0, +) / Double(a.pts.count)
-                text(&ctx, l, X(cx), Y(cy) + 4, anchor: .center, size: 12.5, weight: .bold)
+                text(&ctx, l, X(cx), Y(cy) + 4, anchor: .center, size: 12.5, weight: .semibold)
             }
         }
         for v in p.vlines {
@@ -272,7 +272,7 @@ struct DiagramCanvas: View {
             let pick = options.first { o in !placed.contains { $0.intersects(boxOf(o)) } } ?? options[0]
             placed.append(boxOf(pick))
             let fadedLabel = pt.faded && !p.points[(i + 1)...].contains(where: same)
-            text(&ctx, label, pick.0, pick.1, anchor: pick.2 ? .leading : .trailing, size: 12, weight: .bold, opacity: fadedLabel ? 0.6 : 1)
+            text(&ctx, label, pick.0, pick.1, anchor: pick.2 ? .leading : .trailing, size: 12, weight: .semibold, opacity: fadedLabel ? 0.6 : 1)
         }
 
         // Curve labels at the curve's end, nudged apart when two land on each other. A curve that has
@@ -332,7 +332,7 @@ struct DiagramCanvas: View {
             }
         }
         for l in labels {
-            text(&ctx, l.text, l.x, l.y, anchor: l.anchor, size: 12.5, weight: .bold,
+            text(&ctx, l.text, l.x, l.y, anchor: l.anchor, size: 12.5, weight: .semibold,
                  color: l.line.kind == "hit" ? ink : DLPalette.curve(l.line.kind), opacity: l.line.faded ? 0.6 : 1)
         }
 

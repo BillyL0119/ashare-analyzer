@@ -144,7 +144,7 @@ struct MarketHeatmapSection: View {
                 VStack(spacing: 1) {
                     if rect.width > 30 && rect.height > 18 {
                         Text(market == .cn && Lang.code == "zh" ? s.name : s.symbol)
-                            .font(.system(size: big ? 13 : 10, weight: .bold))
+                            .font(.system(size: big ? 13 : 10, weight: .semibold))
                             .lineLimit(1).minimumScaleFactor(0.7)
                     }
                     if rect.width > 40 && rect.height > 34 {

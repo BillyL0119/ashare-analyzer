@@ -92,13 +92,12 @@ struct AboutSheet: View {
     private var hero: some View {
         VStack(spacing: 10) {
             Image(systemName: "chart.line.uptrend.xyaxis")
-                .font(.system(size: 30, weight: .bold))
-                .foregroundStyle(.white)
+                .font(.system(size: 30, weight: .medium))
+                .foregroundStyle(DS.accent)
                 .frame(width: 76, height: 76)
-                .background(DS.accentGradient, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .shadow(color: DS.accent.opacity(0.35), radius: 18, y: 8)
+                .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
             Text("BFStock")
-                .font(.system(.title2, design: .serif).weight(.semibold))
+                .font(.system(.title2).weight(.semibold))
             Text("Best Friend Stock · 版本 1.0")
                 .font(.caption)
                 .foregroundStyle(.secondary)

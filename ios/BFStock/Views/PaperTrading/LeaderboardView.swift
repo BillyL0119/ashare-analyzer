@@ -89,7 +89,7 @@ private struct PodiumCard: View {
                 .font(.system(size: isFirst ? 22 : 18, weight: .semibold))
                 .foregroundStyle(medal)
             Text("\(entry.rank)")
-                .font(.system(size: isFirst ? 30 : 24, weight: .bold, design: .rounded))
+                .font(.system(size: isFirst ? 30 : 24, weight: .semibold))
                 .foregroundStyle(medal)
             Text(entry.nickname + (entry.isMe ? L("（我）") : ""))
                 .font(.caption.weight(.semibold))
@@ -98,7 +98,7 @@ private struct PodiumCard: View {
             PctPill(pct: entry.returnPct, market: market, minWidth: 0)
                 .fixedSize()
             Text(market.currencySymbol + entry.totalValue.formatted(.number.precision(.fractionLength(0))))
-                .font(.system(.caption2, design: .rounded))
+                .font(.system(.caption2))
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
         }
@@ -107,8 +107,7 @@ private struct PodiumCard: View {
         .frame(maxWidth: .infinity)
         .background {
             RoundedRectangle(cornerRadius: DS.radius, style: .continuous)
-                .fill(LinearGradient(colors: [medal.opacity(0.22), DS.surface],
-                                     startPoint: .top, endPoint: .bottom))
+                .fill(DS.surface)
         }
         .overlay(
             RoundedRectangle(cornerRadius: DS.radius, style: .continuous)
@@ -124,7 +123,7 @@ private struct LeaderboardRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Text("\(entry.rank)")
-                .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                .font(.system(.subheadline).weight(.semibold))
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
                 .frame(width: 28)
@@ -135,7 +134,7 @@ private struct LeaderboardRow: View {
                         .font(.subheadline.weight(entry.isMe ? .semibold : .regular))
                     if entry.isMe {
                         Text("我")
-                            .font(.caption2.weight(.bold))
+                            .font(.caption2.weight(.semibold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)

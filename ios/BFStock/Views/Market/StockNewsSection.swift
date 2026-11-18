@@ -73,8 +73,8 @@ struct StockNewsSection: View {
             .foregroundStyle(color)
     }
 
-    private var upGreen: Color { Color(red: 0.18, green: 0.72, blue: 0.39) }
-    private var downRed: Color { Color(red: 0.93, green: 0.26, blue: 0.26) }
+    private var upGreen: Color { DS.good }
+    private var downRed: Color { DS.bad }
 }
 
 struct NewsRow: View {
@@ -118,8 +118,8 @@ struct NewsRow: View {
 
     private var sentColor: Color {
         switch item.finalSentiment {
-        case "positive": return Color(red: 0.18, green: 0.72, blue: 0.39)
-        case "negative": return Color(red: 0.93, green: 0.26, blue: 0.26)
+        case "positive": return DS.good
+        case "negative": return DS.bad
         default:         return .secondary
         }
     }

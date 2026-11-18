@@ -162,9 +162,9 @@ struct KLineChart: View {
         let pct = changePct(of: c)
         return VStack(spacing: 3) {
             HStack(spacing: 8) {
-                Text(c.date).font(.system(.caption2, design: .rounded).weight(.semibold))
+                Text(c.date).font(.system(.caption2).weight(.semibold))
                 Text(Formatters.changePct(pct))
-                    .font(.system(.caption2, design: .rounded).weight(.bold))
+                    .font(.system(.caption2).weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(Theme.changeColor(pct, market: market))
             }
@@ -174,7 +174,7 @@ struct KLineChart: View {
                         Text(label).foregroundStyle(.secondary)
                         Text(Formatters.price(v)).monospacedDigit()
                     }
-                    .font(.system(.caption2, design: .rounded))
+                    .font(.system(.caption2))
                 }
             }
         }

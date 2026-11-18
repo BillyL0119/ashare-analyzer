@@ -117,7 +117,7 @@ struct GovernorView: View {
             ForEach(0..<3, id: \.self) { i in
                 HStack(alignment: .top, spacing: 12) {
                     Image(systemName: icons[i])
-                        .font(.footnote.weight(.bold))
+                        .font(.footnote.weight(.semibold))
                         .foregroundStyle(.white)
                         .frame(width: 26, height: 26)
                         .background(DS.accent, in: Circle())
@@ -142,7 +142,7 @@ private struct GVScenarioCard: View {
         let tint = GVFmt.tint(sc.id)
         VStack(alignment: .leading, spacing: 10) {
             Text("\(sc.start.prefix(4))–\(sc.end.prefix(4))")
-                .font(.system(size: 38, weight: .heavy, design: .rounded))
+                .font(.system(size: 38, weight: .medium))
                 .monospacedDigit()
                 .foregroundStyle(tint)
             Text(sc.title).font(.headline)
@@ -206,7 +206,7 @@ private struct GVScenarioCard: View {
             Text(title).font(.subheadline.weight(.semibold))
                 .padding(.horizontal, 18).padding(.vertical, 9)
                 .foregroundStyle(.white)
-                .background(DS.accentGradient, in: Capsule())
+                .background(DS.accentFill, in: Capsule())
         }
         .buttonStyle(.plain)
     }

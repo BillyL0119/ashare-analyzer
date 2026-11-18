@@ -31,7 +31,7 @@ struct WatchlistSection: View {
                 SectionHeader(L("自选股")) {
                     HStack(spacing: 12) {
                         Text("\(store.items.count)")
-                            .font(.system(.caption, design: .rounded).weight(.semibold))
+                            .font(.system(.caption).weight(.semibold))
                             .foregroundStyle(.secondary)
                         Button(editing ? L("完成") : L("编辑")) {
                             withAnimation(.snappy(duration: 0.25)) { editing.toggle() }
@@ -60,7 +60,7 @@ struct WatchlistSection: View {
                 } label: {
                     Image(systemName: "minus.circle.fill")
                         .font(.title3)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(DS.bad)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(L("移出自选") + " " + item.name)
@@ -142,7 +142,7 @@ private struct WatchlistRow: View {
             }
             if let price = vm.price {
                 Text(Formatters.price(price))
-                    .font(.system(.body, design: .rounded).weight(.semibold))
+                    .font(.system(.body).weight(.semibold))
                     .monospacedDigit()
                     .contentTransition(.numericText(value: price))
                     .animation(.snappy(duration: 0.45), value: price)

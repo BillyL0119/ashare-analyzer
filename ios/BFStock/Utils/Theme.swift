@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreText
 
 // MARK: - Market type
 
@@ -28,12 +29,11 @@ enum Market: String {
 // MARK: - Theme
 
 enum Theme {
-    // Website uses: UP = #ef5350 (red), DOWN = #26a69a (teal-green)
-    // A-share: red = up, teal = down
-    // US stock: teal = up, red = down
+    // Same as the website: A-shares red = up, green = down; US, Hong Kong, Japan the reverse.
+    // A shade darker on the light theme so the numbers stay readable on white (AA contrast).
 
-    static let cnUp   = Color(r: 0xEF, g: 0x53, b: 0x50)   // #ef5350
-    static let cnDown = Color(r: 0x26, g: 0xA6, b: 0x9A)   // #26a69a
+    static let cnUp   = Color(light: Color(r: 0xDC, g: 0x26, b: 0x26), dark: Color(r: 0xE5, g: 0x48, b: 0x4D))
+    static let cnDown = Color(light: Color(r: 0x15, g: 0x80, b: 0x3D), dark: Color(r: 0x3F, g: 0xB6, b: 0x7A))
 
     // US convention is the reverse
     static var usUp:   Color { cnDown }
@@ -83,22 +83,42 @@ extension Color {
     }
 }
 
+/// Design tokens, matching bestfriendstock.com (Nov 2026 redesign): an ink-blue ramp, one blue accent
+/// used rarely (selection, the primary action, links), hairline borders, no gradients or glows.
 enum DS {
-    static let bg        = Color(light: Color(r: 0xF2, g: 0xF4, b: 0xF8), dark: Color(r: 0x09, g: 0x0C, b: 0x13))
-    static let surface   = Color(light: .white,                            dark: Color(r: 0x12, g: 0x17, b: 0x21))
-    static let surfaceHi = Color(light: Color(r: 0xEA, g: 0xEE, b: 0xF5), dark: Color(r: 0x1B, g: 0x22, b: 0x30))
-    static let stroke    = Color(light: Color.black.opacity(0.06),         dark: Color.white.opacity(0.07))
-    static let accent    = Color(light: Color(r: 0x2F, g: 0x5B, b: 0xEA), dark: Color(r: 0x6C, g: 0x8E, b: 0xFF))
-    static let accentAlt = Color(light: Color(r: 0x6A, g: 0x4B, b: 0xE8), dark: Color(r: 0x8B, g: 0x6C, b: 0xFF))
-    static var accentGradient: LinearGradient {
-        LinearGradient(colors: [accent, accentAlt], startPoint: .topLeading, endPoint: .bottomTrailing)
-    }
+    static let bg        = Color(light: Color(r: 0xF5, g: 0xF7, b: 0xFA), dark: Color(r: 0x0A, g: 0x0F, b: 0x1B))
+    static let surface   = Color(light: .white,                            dark: Color(r: 0x0F, g: 0x16, b: 0x26))
+    static let surfaceHi = Color(light: Color(r: 0xEC, g: 0xEF, b: 0xF4), dark: Color(r: 0x16, g: 0x20, b: 0x36))
+    static let stroke    = Color(light: Color.black.opacity(0.07),         dark: Color.white.opacity(0.08))
+    /// Accent as text, icons, selection and tint
+    static let accent    = Color(light: Color(r: 0x1D, g: 0x4E, b: 0xD8), dark: Color(r: 0x6C, g: 0x9C, b: 0xFF))
+    /// Accent as a solid fill under white text (5.2:1 in both themes)
+    static let accentFill = Color(r: 0x25, g: 0x63, b: 0xEB)
+    /// The selected segment of a control: a step up from `surfaceHi`
+    static let raised    = Color(light: .white,                            dark: Color(r: 0x24, g: 0x30, b: 0x4C))
+    // Meaning only (done, error, warning), toned to sit in the palette; the website's values
+    static let good      = Color(light: Color(r: 0x15, g: 0x80, b: 0x3D), dark: Color(r: 0x4C, g: 0xC3, b: 0x8A))
+    static let bad       = Color(light: Color(r: 0xDC, g: 0x26, b: 0x26), dark: Color(r: 0xE5, g: 0x48, b: 0x4D))
+    static let warn      = Color(light: Color(r: 0x9A, g: 0x62, b: 0x00), dark: Color(r: 0xE0, g: 0xA4, b: 0x3A))
+    /// Solid fills under white text (4.5:1 or better in both themes)
+    static let goodFill  = Color(r: 0x15, g: 0x80, b: 0x3D)
+    static let badFill   = Color(r: 0xC8, g: 0x1E, b: 0x1E)
+    /// Series colours for a chart that must tell several holdings apart; blue leads
+    static let series: [Color] = [
+        accent,
+        Color(light: Color(r: 0x0F, g: 0x76, b: 0x6E), dark: Color(r: 0x2D, g: 0xD4, b: 0xBF)),
+        warn,
+        Color(light: Color(r: 0x6D, g: 0x28, b: 0xD9), dark: Color(r: 0xA7, g: 0x8B, b: 0xFA)),
+        Color(light: Color(r: 0xBE, g: 0x18, b: 0x5D), dark: Color(r: 0xF4, g: 0x72, b: 0xB6)),
+        Color(light: Color(r: 0x4D, g: 0x7C, b: 0x0F), dark: Color(r: 0xA3, g: 0xE6, b: 0x35)),
+        Color(light: Color(r: 0x0E, g: 0x74, b: 0x90), dark: Color(r: 0x22, g: 0xD3, b: 0xEE)),
+    ]
     static let ma5  = Color(light: Color(r: 0xD9, g: 0x91, b: 0x00), dark: Color(r: 0xFA, g: 0xCC, b: 0x15))
     static let ma10 = Color(light: Color(r: 0x9B, g: 0x3D, b: 0xD6), dark: Color(r: 0xC0, g: 0x84, b: 0xFC))
     static let ma20 = Color(light: Color(r: 0x25, g: 0x63, b: 0xEB), dark: Color(r: 0x60, g: 0xA5, b: 0xFA))
     static let boll = Color(light: Color(r: 0x0E, g: 0x74, b: 0x90), dark: Color(r: 0x22, g: 0xD3, b: 0xEE))
-    static let radius: CGFloat = 20
-    static let tileRadius: CGFloat = 14
+    static let radius: CGFloat = 16
+    static let tileRadius: CGFloat = 12
 }
 
 private struct CardModifier: ViewModifier {
@@ -109,7 +129,8 @@ private struct CardModifier: ViewModifier {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.surface, in: RoundedRectangle(cornerRadius: DS.radius, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: DS.radius, style: .continuous).strokeBorder(DS.stroke))
-            .shadow(color: Color.black.opacity(0.05), radius: 10, y: 3)
+            // depth from surface steps and a hairline; only a faint neutral shadow on the light theme
+            .shadow(color: Color(light: Color.black.opacity(0.04), dark: .clear), radius: 6, y: 2)
     }
 }
 
@@ -128,7 +149,6 @@ struct SectionHeader<Trailing: View>: View {
         HStack {
             Text(title)
                 .font(.footnote.weight(.semibold))
-                .tracking(0.6)
                 .foregroundStyle(.secondary)
             Spacer()
             trailing
@@ -146,7 +166,7 @@ struct PctPill: View {
     var body: some View {
         let color = pct.map { Theme.changeColor($0, market: market) } ?? .secondary
         Text(pct.map { Formatters.changePct($0) } ?? "--")
-            .font(.system(.footnote, design: .rounded).weight(.semibold))
+            .font(.system(.footnote).weight(.semibold))
             .monospacedDigit()
             .lineLimit(1)
             .minimumScaleFactor(0.7)   // "+14.21%" must shrink, never wrap inside a fixed-width pill
@@ -157,7 +177,7 @@ struct PctPill: View {
             .frame(minWidth: fixedWidth == nil ? minWidth : nil)
             .frame(width: fixedWidth)
             .padding(.vertical, 5)
-            .background(color.opacity(0.14), in: Capsule())
+            .background(color.opacity(0.12), in: Capsule())
     }
 }
 
@@ -178,14 +198,18 @@ struct MarketSegmentControl: View {
                 Button {
                     withAnimation(.snappy(duration: 0.25)) { selection = m }
                 } label: {
+                    // The selected market is a raised segment with a hairline, like the website's period control
                     Text(m.label)
-                        .font(.caption.weight(.semibold))
+                        .font(.caption.weight(.medium))
                         .padding(.horizontal, order.count > 2 ? 10 : 14)
                         .padding(.vertical, 6)
-                        .foregroundStyle(selection == m ? Color.white : Color.secondary)
+                        .foregroundStyle(selection == m ? Color.primary : Color.secondary)
                         .background {
                             if selection == m {
-                                Capsule().fill(DS.accent).matchedGeometryEffect(id: "seg", in: ns)
+                                Capsule().fill(DS.raised)
+                                    .overlay(Capsule().strokeBorder(DS.stroke))
+                                    .shadow(color: Color(light: Color.black.opacity(0.06), dark: .clear), radius: 2, y: 1)
+                                    .matchedGeometryEffect(id: "seg", in: ns)
                             }
                         }
                 }
@@ -200,23 +224,29 @@ struct MarketSegmentControl: View {
 
 // MARK: - Skeleton loading
 
+/// A faint sheen across loading placeholders; still placeholders when Reduce Motion is on.
 private struct ShimmerModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var phase: CGFloat = -1
-    private let sheen = Color(light: Color.white.opacity(0.85), dark: Color.white.opacity(0.10))
+    private let sheen = Color(light: Color.white.opacity(0.6), dark: Color.white.opacity(0.06))
 
     func body(content: Content) -> some View {
-        content
-            .overlay {
-                GeometryReader { geo in
-                    LinearGradient(colors: [.clear, sheen, .clear], startPoint: .leading, endPoint: .trailing)
-                        .frame(width: geo.size.width * 0.7)
-                        .offset(x: phase * geo.size.width * 1.4)
+        if reduceMotion {
+            content
+        } else {
+            content
+                .overlay {
+                    GeometryReader { geo in
+                        LinearGradient(colors: [.clear, sheen, .clear], startPoint: .leading, endPoint: .trailing)
+                            .frame(width: geo.size.width * 0.7)
+                            .offset(x: phase * geo.size.width * 1.4)
+                    }
+                    .mask(content)
                 }
-                .mask(content)
-            }
-            .onAppear {
-                withAnimation(.linear(duration: 1.3).repeatForever(autoreverses: false)) { phase = 1 }
-            }
+                .onAppear {
+                    withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) { phase = 1 }
+                }
+        }
     }
 }
 
@@ -322,3 +352,45 @@ struct Sparkline: View {
         return p
     }
 }
+
+// MARK: - Brush script for Chinese quotes
+
+/// The website sets Chinese quotes in Long Cang, a brush hand. iOS has no brush font built in, but Apple
+/// serves some Chinese fonts on demand: the first Chinese quote asks the system for Xingkai SC (行楷),
+/// then Kaiti SC, and the card uses the system serif until one is ready. iOS keeps the font afterwards.
+@MainActor
+final class BrushFont: ObservableObject {
+    static let shared = BrushFont()
+    @Published private(set) var name: String?
+    private var requested = false
+    private static let candidates = ["STXingkai-SC-Light", "STKaiti-SC-Regular"]
+
+    func request() {
+        guard !requested else { return }
+        requested = true
+        if let ready = Self.candidates.first(where: { UIFont(name: $0, size: 17) != nil }) {
+            name = ready
+        } else {
+            download(0)
+        }
+    }
+
+    private func download(_ index: Int) {
+        guard index < Self.candidates.count else { return }
+        let font = Self.candidates[index]
+        let descriptor = CTFontDescriptorCreateWithAttributes([kCTFontNameAttribute: font] as CFDictionary)
+        CTFontDescriptorMatchFontDescriptorsWithProgressHandler([descriptor] as CFArray, nil) { state, _ in
+            if state == .didFinish {
+                Task { @MainActor in
+                    if UIFont(name: font, size: 17) != nil {
+                        BrushFont.shared.name = font
+                    } else {
+                        BrushFont.shared.download(index + 1)
+                    }
+                }
+            }
+            return true
+        }
+    }
+}
+

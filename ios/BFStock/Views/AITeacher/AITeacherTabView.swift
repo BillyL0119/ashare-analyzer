@@ -80,19 +80,14 @@ struct AITeacherTabView: View {
         VStack(spacing: 18) {
             Image(systemName: "sparkles")
                 .font(.system(size: 30, weight: .semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(DS.accent)
                 .frame(width: 72, height: 72)
-                .background(
-                    LinearGradient(colors: [DS.accent, Color(r: 0x8B, g: 0x6C, b: 0xFF)],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing),
-                    in: RoundedRectangle(cornerRadius: 22, style: .continuous)
-                )
-                .shadow(color: DS.accent.opacity(0.35), radius: 18, y: 8)
+                .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .padding(.top, 28)
 
             VStack(spacing: 6) {
                 Text("AI股票老师")
-                    .font(.system(.title2, design: .serif).weight(.semibold))
+                    .font(.system(.title2).weight(.semibold))
                 Text("股票、基金、经济学，有问必答")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -162,7 +157,7 @@ struct AITeacherTabView: View {
                             .font(.system(size: 18))
                             .foregroundStyle(.white)
                             .frame(width: 36, height: 36)
-                            .background(Color.red)
+                            .background(DS.badFill)
                             .clipShape(Circle())
                     }
                     .accessibilityLabel(L("停止生成"))
@@ -231,8 +226,7 @@ struct ChatBubble: View {
                 .background {
                     if isUser {
                         BubbleShape(isUser: true).fill(
-                            LinearGradient(colors: [DS.accent, Color(r: 0x7A, g: 0x6C, b: 0xFF)],
-                                           startPoint: .topLeading, endPoint: .bottomTrailing))
+                            DS.accentFill)
                     } else {
                         BubbleShape(isUser: false).fill(DS.surface)
                             .overlay(BubbleShape(isUser: false).stroke(DS.stroke))

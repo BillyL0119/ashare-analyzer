@@ -188,7 +188,7 @@ struct FundamentalsSection: View {
         if let target {
             tiles.append((L("分析师目标价"), String(format: "$%.2f", target),
                           upside.map { String(format: "%+.1f%% ", $0) + L("空间") },
-                          upside.map { $0 >= 0 ? .green : .red }))
+                          upside.map { $0 >= 0 ? DS.good : DS.bad }))
         }
         if let ne = d.nextEarnings, let date = ne.date {
             let timing = ne.timing == "after_close" ? L("盘后") : ne.timing == "before_open" ? L("盘前") : nil
@@ -280,7 +280,7 @@ struct FundamentalsSection: View {
             Text(label).font(.caption.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.8).gridColumnAlignment(.leading)
             ForEach(Array(values.enumerated()), id: \.offset) { _, v in
                 Text(v ?? "—").font(.caption).monospacedDigit()
-                    .foregroundStyle((v ?? "").hasPrefix("-") ? Color.red : Color.primary)
+                    .foregroundStyle((v ?? "").hasPrefix("-") ? DS.bad : Color.primary)
                     .lineLimit(1).minimumScaleFactor(0.7)
             }
         }
@@ -300,8 +300,8 @@ struct FundamentalsSection: View {
                         Text(L("预期") + " " + (r.estimate.map { String(format: "$%.2f", $0) } ?? "—"))
                             .font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.7)
                         if let sp = r.surprisePct {
-                            Text(String(format: "%+.1f%%", sp)).font(.caption2.weight(.bold))
-                                .foregroundStyle(beat ? Color.green : Color.red)
+                            Text(String(format: "%+.1f%%", sp)).font(.caption2.weight(.semibold))
+                                .foregroundStyle(beat ? DS.good : DS.bad)
                         }
                     }
                     .frame(maxWidth: .infinity)
@@ -317,7 +317,7 @@ struct FundamentalsSection: View {
 
     private func analystsCard(_ a: Fundamentals.Analysts) -> some View {
         let total = a.buy + a.hold + a.sell
-        let parts: [(String, Int, Color)] = [(L("买入"), a.buy, .green), (L("持有"), a.hold, .orange), (L("卖出"), a.sell, .red)]
+        let parts: [(String, Int, Color)] = [(L("买入"), a.buy, DS.good), (L("持有"), a.hold, DS.warn), (L("卖出"), a.sell, DS.bad)]
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(L("分析师评级")).font(.subheadline.weight(.semibold))
@@ -375,7 +375,7 @@ struct FundamentalsSection: View {
                     Text(r.value.map(Self.money) ?? "—").font(.footnote.weight(.semibold)).monospacedDigit()
                     Text(r.changePct.map { String(format: "%+.2f%%", $0) } ?? "")
                         .font(.caption).monospacedDigit()
-                        .foregroundStyle((r.changePct ?? 0) >= 0 ? Color.green : Color.red)
+                        .foregroundStyle((r.changePct ?? 0) >= 0 ? DS.good : DS.bad)
                         .frame(width: 64, alignment: .trailing)
                 }
             }

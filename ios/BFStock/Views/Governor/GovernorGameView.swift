@@ -88,7 +88,7 @@ private struct GVGame: View {
             if let err = vm.error {
                 Label(err, systemImage: "exclamationmark.circle.fill")
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(DS.bad)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -99,11 +99,11 @@ private struct GVGame: View {
                     Spacer(minLength: 8)
                     Text(GVFmt.pct(rate)).monospacedDigit()
                 }
-                .font(.subheadline.weight(.bold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 18)
                 .frame(maxWidth: .infinity, minHeight: 50)
-                .background(DS.accentGradient, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .background(DS.accentFill, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(.plain)
             .disabled(vm.busy)
@@ -120,7 +120,7 @@ private struct GVGame: View {
         return VStack(alignment: .leading, spacing: 12) {
             Text(run.finished ? "\(GVFmt.quarter(run.scenario.start)) – \(GVFmt.quarter(run.scenario.end))"
                               : GVFmt.quarter(run.now?.q ?? run.scenario.end))
-                .font(.title3.weight(.bold))
+                .font(.title3.weight(.semibold))
             HStack(spacing: 10) {
                 Text(run.finished ? GV("progress", "\(n)", "\(n)") : GV("decisionN", "\(run.decision + 1)", "\(n)"))
                     .font(.caption)
@@ -199,7 +199,7 @@ private struct GVLatestCard: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 Text(GVFmt.pct(v))
-                    .font(.system(.title3, design: .rounded).weight(.bold))
+                    .font(.system(.title3).weight(.semibold))
                     .monospacedDigit()
                 if let real {
                     Text("\(GV("real")) \(GVFmt.pct(real))").font(.caption2).foregroundStyle(.secondary).monospacedDigit()
@@ -233,7 +233,7 @@ private struct GVDecisionCard: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
                 Text(GV("setRate", GVFmt.quarter(now.q)))
-                    .font(.footnote.weight(.bold))
+                    .font(.footnote.weight(.semibold))
                     .foregroundStyle(DS.accent)
                 Spacer(minLength: 8)
                 Text("\(GV("now")) \(GVFmt.pct(now.rate))")
@@ -245,7 +245,7 @@ private struct GVDecisionCard: View {
                 stepButton("minus", label: "−0.25", disabled: busy || rate <= 0) { set(rate - 0.25) }
                 VStack(spacing: 4) {
                     Text(GVFmt.pct(rate))
-                        .font(.system(size: 40, weight: .heavy, design: .rounded))
+                        .font(.system(size: 40, weight: .medium))
                         .monospacedDigit()
                         .contentTransition(.numericText(value: rate))
                         .animation(.snappy(duration: 0.2), value: rate)
@@ -311,7 +311,7 @@ private struct GVDecisionCard: View {
     private func stepButton(_ icon: String, label: String, disabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.title3.weight(.bold))
+                .font(.title3.weight(.semibold))
                 .frame(width: 46, height: 46)
                 .foregroundStyle(.primary)
                 .background(DS.surfaceHi, in: Circle())
@@ -377,7 +377,7 @@ private struct GVVerdictCard: View {
         VStack(alignment: .leading, spacing: 14) {
             Label(GV("resultTitle"), systemImage: "flag.checkered").font(.headline)
             Text(GV("verdict.\(r.verdict)"))
-                .font(.title3.weight(.bold))
+                .font(.title3.weight(.semibold))
                 .foregroundStyle(tone)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(alignment: .top, spacing: 10) {
@@ -405,7 +405,7 @@ private struct GVVerdictCard: View {
                         Text(GV("table.\(key)"))
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(GVFmt.pct(r.me[keyPath: path])).fontWeight(.bold).foregroundStyle(DS.accent)
+                        Text(GVFmt.pct(r.me[keyPath: path])).fontWeight(.semibold).foregroundStyle(DS.accent)
                         Text(GVFmt.pct(r.fed[keyPath: path]))
                     }
                     .font(.footnote)
@@ -417,7 +417,7 @@ private struct GVVerdictCard: View {
                     Text(GV("replay")).font(.subheadline.weight(.semibold))
                         .padding(.horizontal, 18).padding(.vertical, 10)
                         .foregroundStyle(.white)
-                        .background(DS.accentGradient, in: Capsule())
+                        .background(DS.accentFill, in: Capsule())
                 }
                 .buttonStyle(.plain)
                 .disabled(busy)
@@ -438,7 +438,7 @@ private struct GVVerdictCard: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).font(.caption).foregroundStyle(.secondary).lineLimit(1)
             Text(GVFmt.points(miss))
-                .font(.system(size: 28, weight: .heavy, design: .rounded))
+                .font(.system(size: 28, weight: .medium))
                 .monospacedDigit()
                 .foregroundStyle(color)
         }
@@ -510,10 +510,10 @@ private struct GVResultDetails: View {
         var nick = row.nickname ?? GV("anon")
         if Lang.code != "zh", nick.hasPrefix("用户#") { nick = "#" + nick.dropFirst(3) }
         return HStack(spacing: 10) {
-            Text("\(row.rank)").font(.footnote.weight(.heavy)).monospacedDigit().frame(width: 26, alignment: .leading)
+            Text("\(row.rank)").font(.footnote.weight(.semibold)).monospacedDigit().frame(width: 26, alignment: .leading)
             Text(nick + (row.isMe ? " (\(GV("meTag")))" : "")).font(.footnote).lineLimit(1)
             Spacer()
-            Text(GVFmt.points(row.miss)).font(.footnote.weight(.bold)).monospacedDigit()
+            Text(GVFmt.points(row.miss)).font(.footnote.weight(.semibold)).monospacedDigit()
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
@@ -709,7 +709,7 @@ private struct GVChart: View {
     private func callout(_ k: Int) -> some View {
         let shown = series.filter { $0.values.indices.contains(k) && $0.values[k] != nil }
         return VStack(alignment: .leading, spacing: 2) {
-            Text(GVFmt.quarter(labels[k])).fontWeight(.bold)
+            Text(GVFmt.quarter(labels[k])).fontWeight(.semibold)
             ForEach(Array(shown.enumerated()), id: \.offset) { _, sr in
                 Text("\(sr.label) \(GVFmt.pct(sr.values[k]))").foregroundStyle(sr.color == .secondary ? Color.primary : sr.color)
             }

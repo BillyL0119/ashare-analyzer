@@ -97,16 +97,11 @@ struct BFStockApp: App {
     @AppStorage(Lang.storageKey) private var language = AppLanguage.system.rawValue
 
     init() {
-        // Navigation titles in New York (Apple's serif), like an editorial publication; the rest of the
-        // interface stays in SF. Only the fonts are set, so bar backgrounds keep the system behaviour.
-        func serif(_ size: CGFloat, _ weight: UIFont.Weight) -> UIFont {
-            let base = UIFont.systemFont(ofSize: size, weight: weight)
-            guard let d = base.fontDescriptor.withDesign(.serif) else { return base }
-            return UIFont(descriptor: d, size: size)
-        }
+        // Titles in SF at 600 instead of the system's 700, like the website's page titles. The serif is kept
+        // for one thing only, the quote of the day. Only the fonts are set, so bars keep the system behaviour.
         let bar = UINavigationBar.appearance()
-        bar.titleTextAttributes = [.font: serif(18, .semibold)]
-        bar.largeTitleTextAttributes = [.font: serif(34, .semibold)]
+        bar.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 17, weight: .semibold)]
+        bar.largeTitleTextAttributes = [.font: UIFont.systemFont(ofSize: 34, weight: .semibold)]
     }
 
     var body: some Scene {

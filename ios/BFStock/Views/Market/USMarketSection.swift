@@ -54,7 +54,7 @@ struct USMarketSection: View {
                 Text(ov.session.state == "regular"
                         ? String(ov.session.etTime.suffix(5)) + " ET"
                         : (nextOpenText(ov.session.nextOpenUtc) ?? String(ov.session.etTime.suffix(5)) + " ET"))
-                    .font(.system(.caption, design: .rounded)).monospacedDigit().foregroundStyle(.secondary)
+                    .font(.system(.caption)).monospacedDigit().foregroundStyle(.secondary)
             }
             if let hero = ov.indices.first {
                 IndexTileUS(quote: hero, style: .hero)
@@ -97,10 +97,10 @@ struct USMarketSection: View {
                     ForEach(items) { q in
                         NavigationLink(destination: StockDetailView(code: q.symbol, name: q.name, market: .us)) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(q.symbol).font(.system(.subheadline, design: .rounded).weight(.bold))
+                                Text(q.symbol).font(.system(.subheadline).weight(.semibold))
                                 Text(Formatters.price(q.price)).font(.caption).monospacedDigit().foregroundStyle(.secondary)
                                 Text(Formatters.changePct(q.pct))
-                                    .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                                    .font(.system(.caption).weight(.semibold)).monospacedDigit()
                                     .foregroundStyle(Theme.changeColor(q.pct, market: .us))
                             }
                             .padding(12)
@@ -130,12 +130,12 @@ struct USMarketSection: View {
                     NavigationLink(destination: StockDetailView(code: q.symbol, name: q.name, market: .us)) {
                         HStack(spacing: 10) {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(q.symbol).font(.subheadline.weight(.bold))
+                                Text(q.symbol).font(.subheadline.weight(.semibold))
                                 Text(q.name).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
                             }
                             Spacer(minLength: 8)
                             Text(Formatters.price(q.price))
-                                .font(.system(.subheadline, design: .rounded).weight(.medium)).monospacedDigit()
+                                .font(.system(.subheadline).weight(.medium)).monospacedDigit()
                             PctPill(pct: q.pct, market: .us, fixedWidth: 74)
                         }
                         .padding(.horizontal, 16).padding(.vertical, 9)
@@ -164,7 +164,7 @@ struct USMarketSection: View {
                                 .font(.caption.weight(.semibold)).lineLimit(2).minimumScaleFactor(0.8)
                                 .frame(maxWidth: .infinity, minHeight: 30, alignment: .topLeading)
                             Text(Formatters.changePct(s.pct))
-                                .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                                .font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                                 .foregroundStyle(c)
                             Text(s.symbol).font(.caption2).foregroundStyle(.secondary)
                         }
@@ -214,13 +214,13 @@ struct USMarketSection: View {
             } else {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(days.enumerated()), id: \.element.0) { i, day in
-                        Text(dayLabel(day.0)).font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                        Text(dayLabel(day.0)).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                             .padding(.horizontal, 16).padding(.top, i == 0 ? 12 : 10).padding(.bottom, 4)
                         ForEach(day.1) { e in
                             NavigationLink(destination: StockDetailView(code: e.symbol, name: e.name, market: .us)) {
                                 HStack(spacing: 8) {
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(e.symbol).font(.subheadline.weight(.bold))
+                                        Text(e.symbol).font(.subheadline.weight(.semibold))
                                         Text(e.name).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
                                     }
                                     Spacer()
@@ -251,7 +251,7 @@ struct USMarketSection: View {
     // MARK: Session
 
     private func sessionColor(_ s: String) -> Color {
-        switch s { case "regular": return Theme.usUp; case "pre", "post": return .orange; default: return .secondary }
+        switch s { case "regular": return Theme.usUp; case "pre", "post": return DS.warn; default: return .secondary }
     }
 
     private func sessionState(_ s: USSession) -> String {
@@ -303,7 +303,7 @@ private struct IndexTileUS: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(title).font(.footnote.weight(.medium)).foregroundStyle(.secondary)
                         Text(Formatters.price(quote.price))
-                            .font(.system(size: 36, weight: .medium, design: .serif)).monospacedDigit()
+                            .font(.system(size: 36, weight: .medium)).monospacedDigit()
                             .minimumScaleFactor(0.7).lineLimit(1)
                     }
                     Spacer()
@@ -311,7 +311,7 @@ private struct IndexTileUS: View {
                         PctPill(pct: quote.pct, market: .us, fixedWidth: 84)
                         if let ch = quote.change {
                             Text(Formatters.changeAbs(ch))
-                                .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                                .font(.system(.caption).weight(.semibold)).monospacedDigit()
                                 .foregroundStyle(color)
                         }
                     }
@@ -321,10 +321,10 @@ private struct IndexTileUS: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title).font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
                     Text(Formatters.price(quote.price))
-                        .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                        .font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                         .minimumScaleFactor(0.6).lineLimit(1)
                     Text(Formatters.changePct(quote.pct))
-                        .font(.system(.caption, design: .rounded).weight(.semibold)).monospacedDigit()
+                        .font(.system(.caption).weight(.semibold)).monospacedDigit()
                         .foregroundStyle(color)
                 }
                 .padding(.horizontal, 10).padding(.vertical, 9)
@@ -334,7 +334,7 @@ private struct IndexTileUS: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .background(
-            LinearGradient(colors: [color.opacity(0.16), DS.surfaceHi.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing),
+            color.opacity(0.10),
             in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
     }
 }

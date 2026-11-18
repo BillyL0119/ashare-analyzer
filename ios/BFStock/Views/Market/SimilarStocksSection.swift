@@ -52,7 +52,7 @@ struct SimilarStocksSection: View {
                 .frame(width: 70, height: 28)
             VStack(alignment: .trailing, spacing: 1) {
                 Text(String(format: "%.0f%%", p.correlation * 100))
-                    .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                    .font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                 Text(L("相关度")).font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.7)
             }
             .frame(width: 66, alignment: .trailing)

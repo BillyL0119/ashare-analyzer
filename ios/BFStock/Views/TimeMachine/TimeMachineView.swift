@@ -64,10 +64,10 @@ struct TimeMachineEntryCard: View {
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: "clock.arrow.circlepath")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 46, height: 46)
-                .background(DS.accentGradient, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+                .font(.system(size: 20, weight: .regular))
+                .foregroundStyle(DS.accent)
+                .frame(width: 44, height: 44)
+                .background(DS.surfaceHi, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             VStack(alignment: .leading, spacing: 3) {
                 Text(L("历史穿越交易")).font(.subheadline.weight(.semibold))
                 Text(L("回到 2008 金融危机、2020 疫情暴跌等真实时刻，用虚拟资金一天天做决定"))
@@ -160,7 +160,7 @@ struct TimeMachineView: View {
             ForEach(Array(steps.enumerated()), id: \.offset) { i, step in
                 HStack(alignment: .top, spacing: 12) {
                     Text("\(i + 1)")
-                        .font(.footnote.weight(.heavy))
+                        .font(.footnote.weight(.semibold))
                         .monospacedDigit()
                         .foregroundStyle(.white)
                         .frame(width: 26, height: 26)
@@ -188,7 +188,7 @@ private struct ScenarioCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center) {
                 Text(sc.year)
-                    .font(.system(size: 42, weight: .heavy, design: .rounded))
+                    .font(.system(size: 42, weight: .medium))
                     .monospacedDigit()
                     .foregroundStyle(tint)
                 Spacer()
@@ -225,7 +225,7 @@ private struct ScenarioCard: View {
                     if let best = pr.best {
                         HStack(spacing: 4) {
                             Text(L("你的最好成绩")).foregroundStyle(.secondary)
-                            Text(TMFmt.pct(best)).fontWeight(.bold).foregroundStyle(TMFmt.color(best, m))
+                            Text(TMFmt.pct(best)).fontWeight(.semibold).foregroundStyle(TMFmt.color(best, m))
                         }
                     }
                 }
@@ -259,7 +259,7 @@ private struct ScenarioCard: View {
             Text(title).font(.subheadline.weight(.semibold))
                 .padding(.horizontal, 18).padding(.vertical, 9)
                 .foregroundStyle(.white)
-                .background(DS.accentGradient, in: Capsule())
+                .background(DS.accentFill, in: Capsule())
         }
         .buttonStyle(.plain)
     }

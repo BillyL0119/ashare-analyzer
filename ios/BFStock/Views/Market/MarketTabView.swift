@@ -17,6 +17,7 @@ struct MarketTabView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 26) {
+                    QuoteOfDayCard()
                     HStack {
                         MarketSegmentControl(selection: mode, order: [.us, .cn])
                         Spacer()
@@ -163,7 +164,7 @@ struct MarketTabView: View {
                             )) {
                                 HStack(spacing: 12) {
                                     Text("\(idx + 1)")
-                                        .font(.system(.footnote, design: .rounded).weight(.bold))
+                                        .font(.system(.footnote).weight(.semibold))
                                         .monospacedDigit()
                                         .foregroundStyle(idx < 3 ? DS.accent : Color.secondary.opacity(0.6))
                                         .frame(width: 20)
@@ -240,3 +241,105 @@ struct MarketTabView: View {
         }
     }
 }
+
+// MARK: - Quote of the day
+
+/// The day's quote from a business leader, first thing on the market tab, as on the website.
+/// English is set in New York italic; Chinese in a brush script (see `BrushFont`), upright.
+/// The quote marks carry the accent; everything around the quote stays in the interface font.
+struct QuoteOfDayCard: View {
+    @State private var quote: DailyQuote? = APIClient.shared.cached("/quotes/today")
+    @ObservedObject private var brush = BrushFont.shared
+
+    var body: some View {
+        Group {
+            if let q = quote, let text = quoteText(q) {
+                card(q, text: text)
+            } else {
+                // Keeps the tab from jumping when the quote arrives on a first launch
+                VStack(alignment: .leading, spacing: 12) {
+                    SkeletonBar(width: 110, height: 11)
+                    SkeletonBar(height: 16)
+                    SkeletonBar(width: 220, height: 16)
+                }
+                .card()
+                .accessibilityHidden(true)
+            }
+        }
+        .task {
+            if let fresh: DailyQuote = try? await APIClient.shared.get("/quotes/today", persist: true) {
+                quote = fresh
+            }
+        }
+    }
+
+    private var isZh: Bool { Lang.code == "zh" }
+
+    /// Chinese readers get the Chinese text; everyone else the English one (the only two the quotes come in)
+    private func quoteText(_ q: DailyQuote) -> String? {
+        let t = isZh ? (q.quoteCn ?? q.quoteEn) : (q.quoteEn ?? q.quoteCn)
+        guard let t, !t.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
+        return t
+    }
+
+    private func card(_ q: DailyQuote, text: String) -> some View {
+        let chinese = text == q.quoteCn
+        let author = isZh ? (q.authorCn ?? q.author) : (q.author ?? q.authorCn)
+        let role = isZh ? (q.titleCn ?? q.title) : (q.title ?? q.titleCn)
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(L("今日语录")).font(.footnote.weight(.medium)).foregroundStyle(DS.accent)
+                Spacer()
+                Text(Date.now.formatted(.dateTime.month(.wide).day().locale(Lang.locale)))
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Text(marked(text))
+                .font(quoteFont(chinese: chinese, long: text.count > (chinese ? 60 : 140)))
+                .lineSpacing(chinese ? 6 : 3)
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+                .environment(\.locale, Locale(identifier: chinese ? "zh-Hans" : "en"))
+            if let author {
+                HStack(spacing: 10) {
+                    Text(initials(q.author ?? author))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 32, height: 32)
+                        .background(DS.surfaceHi, in: Circle())
+                        .overlay(Circle().strokeBorder(DS.stroke))
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(author).font(.subheadline.weight(.medium))
+                        if let role { Text(role).font(.caption).foregroundStyle(.secondary) }
+                    }
+                }
+            }
+        }
+        .card(padding: 18)
+        .accessibilityElement(children: .combine)
+        .onAppear { if chinese { brush.request() } }
+    }
+
+    private func quoteFont(chinese: Bool, long: Bool) -> Font {
+        if chinese {
+            // A brush hand sits small in its em box, so it is set a step larger than the serif
+            let size: CGFloat = long ? 20 : 22
+            if let name = brush.name { return .custom(name, size: size, relativeTo: .title3) }
+            return .system(size: size - 2, weight: .regular, design: .serif)
+        }
+        return .system(size: long ? 17 : 19, weight: .regular, design: .serif).italic()
+    }
+
+    /// The quote between accent-coloured curly quotes
+    private func marked(_ text: String) -> AttributedString {
+        var open = AttributedString("\u{201C}"); open.foregroundColor = DS.accent
+        var close = AttributedString("\u{201D}"); close.foregroundColor = DS.accent
+        return open + AttributedString(text) + close
+    }
+
+    private func initials(_ name: String) -> String {
+        let letters = name.split(separator: " ").compactMap(\.first).prefix(2)
+        return letters.isEmpty ? String(name.prefix(1)) : String(letters).uppercased()
+    }
+}
+

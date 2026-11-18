@@ -99,7 +99,7 @@ struct MonteCarloSection: View {
             ForEach(items, id: \.0) { item in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.0).font(.caption2).foregroundStyle(.secondary)
-                    Text(item.1).font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
+                    Text(item.1).font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                         .foregroundStyle(item.2 ?? .primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

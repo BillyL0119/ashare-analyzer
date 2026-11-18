@@ -1,5 +1,18 @@
 import Foundation
 
+// MARK: - Quote of the day
+
+/// GET /api/quotes/today: one business leader's quote a day (changes at midnight Beijing time), in English and Chinese
+struct DailyQuote: Codable, Equatable {
+    let id: Int?
+    let quoteEn: String?
+    let quoteCn: String?
+    let author: String?
+    let authorCn: String?
+    let title: String?
+    let titleCn: String?
+}
+
 // MARK: - Market Overview
 
 struct MarketOverview: Codable {

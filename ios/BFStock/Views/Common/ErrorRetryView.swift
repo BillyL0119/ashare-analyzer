@@ -21,7 +21,7 @@ struct ErrorRetryView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 9)
-                    .background(DS.accentGradient, in: Capsule())
+                    .background(DS.accentFill, in: Capsule())
             }
             .buttonStyle(.plain)
         }

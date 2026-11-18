@@ -57,7 +57,7 @@ struct TopicDetailView: View {
 
     private var completeButton: some View {
         let done = progress.isDone(exam, topicID)
-        let green = Color(red: 0.18, green: 0.72, blue: 0.39)
+        let green = DS.good
         return Button {
             withAnimation(.snappy(duration: 0.3)) { progress.toggle(exam, topicID) }
         } label: {
@@ -71,7 +71,7 @@ struct TopicDetailView: View {
                     if done {
                         RoundedRectangle(cornerRadius: 18, style: .continuous).fill(green.opacity(0.14))
                     } else {
-                        RoundedRectangle(cornerRadius: 18, style: .continuous).fill(DS.accentGradient)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous).fill(DS.accentFill)
                     }
                 }
         }
@@ -93,7 +93,7 @@ struct TopicDetailView: View {
             }
             Spacer(minLength: 8)
             Image(systemName: "arrow.right")
-                .font(.subheadline.weight(.bold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(DS.accent)
                 .frame(width: 34, height: 34)
                 .background(DS.accent.opacity(0.14), in: Circle())
@@ -113,7 +113,7 @@ struct TopicDetailView: View {
     private func header(_ topic: TopicDetail) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(topic.title)
-                .font(.system(.title, design: .serif).weight(.semibold))
+                .font(.system(.title).weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
             chips(topic)
         }
@@ -133,7 +133,7 @@ struct TopicDetailView: View {
 
     private func chip(_ text: String, icon: String, tint: Color) -> some View {
         Label(text, systemImage: icon)
-            .font(.system(.caption, design: .rounded).weight(.semibold))
+            .font(.system(.caption).weight(.semibold))
             .foregroundStyle(tint)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
@@ -153,7 +153,7 @@ private struct SectionCard: View {
             } label: {
                 HStack(spacing: 12) {
                     Text("\(index)")
-                        .font(.system(.footnote, design: .rounded).weight(.bold))
+                        .font(.system(.footnote).weight(.semibold))
                         .foregroundStyle(DS.accent)
                         .frame(width: 28, height: 28)
                         .background(DS.accent.opacity(0.14), in: Circle())
@@ -201,7 +201,7 @@ private struct SectionCard: View {
                 }
 
                 if let tip = section.examTip {
-                    callout(icon: "lightbulb.fill", title: L("考试技巧"), text: tip, tint: .orange)
+                    callout(icon: "lightbulb.fill", title: L("考试技巧"), text: tip, tint: DS.warn)
                 }
             }
         }
@@ -211,7 +211,7 @@ private struct SectionCard: View {
     private func callout(icon: String, title: String, text: String, tint: Color) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Label(title, systemImage: icon)
-                .font(.caption.weight(.bold))
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(tint)
             Text(text)
                 .font(.callout)

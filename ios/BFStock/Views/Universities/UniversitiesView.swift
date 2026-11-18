@@ -165,8 +165,8 @@ private struct BusinessRankRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Text(entry.rank)
-                .font(.system(.subheadline, design: .rounded).weight(.bold)).monospacedDigit()
-                .foregroundStyle(entry.rankNum <= 10 ? Color.orange : DS.accent)
+                .font(.system(.subheadline).weight(.semibold)).monospacedDigit()
+                .foregroundStyle(entry.rankNum <= 10 ? DS.warn : DS.accent)
                 .frame(width: 40)
             VStack(alignment: .leading, spacing: 3) {
                 Text(profile?.name ?? entry.name)
@@ -179,9 +179,9 @@ private struct BusinessRankRow: View {
                             .font(.caption2).foregroundStyle(.secondary)
                     }
                     if entry.overallNum == nil {
-                        tag(L("独立商学院"), color: .purple)
+                        tag(L("独立商学院"), color: .secondary)
                     } else if let g = gap, g >= 10 {
-                        tag(L("商科比综合高 %lld 位", g), color: .green)
+                        tag(L("商科比综合高 %lld 位", g), color: DS.good)
                     }
                 }
             }
@@ -209,7 +209,7 @@ private struct UniversityRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Text(uni.qsRank.map { "#\($0)" } ?? "–")
-                .font(.system(.footnote, design: .rounded).weight(.bold)).monospacedDigit()
+                .font(.system(.footnote).weight(.semibold)).monospacedDigit()
                 .foregroundStyle(DS.accent)
                 .frame(width: 40)
             VStack(alignment: .leading, spacing: 3) {
@@ -219,7 +219,7 @@ private struct UniversityRow: View {
                     if ug.isGraduateOnly {
                         Text(L("仅招研究生")).font(.caption2).foregroundStyle(.secondary)
                     } else if let s = ug.summary {
-                        (Text(L("本科")).fontWeight(.bold).foregroundColor(.purple) + Text(" " + s))
+                        (Text(L("本科")).fontWeight(.semibold).foregroundColor(DS.accent) + Text(" " + s))
                             .font(.caption2).lineLimit(1)
                     }
                 }
@@ -271,18 +271,18 @@ struct UniversityDetailView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(uni.displayName).font(.system(.title2, design: .serif).weight(.semibold))
+            Text(uni.displayName).font(.system(.title2).weight(.semibold))
             Text(uni.displayName == uni.name ? uni.university : "\(uni.name) · \(uni.university)").font(.subheadline).foregroundStyle(.secondary)
             HStack(spacing: 8) {
                 Text("\(uni.city) · \(uni.country)").font(.caption).foregroundStyle(.secondary)
             }
             HStack(spacing: 8) {
                 if let r = uni.qsRank {
-                    Text(L("QS 综合 #%@", String(r))).font(.caption.weight(.bold)).foregroundStyle(Color.orange)
-                        .padding(.horizontal, 8).padding(.vertical, 3).background(Color.orange.opacity(0.12), in: Capsule())
+                    Text(L("QS 综合 #%@", String(r))).font(.caption.weight(.semibold)).foregroundStyle(DS.warn)
+                        .padding(.horizontal, 8).padding(.vertical, 3).background(DS.warn.opacity(0.12), in: Capsule())
                 }
                 if let b = uni.qsBmRank {
-                    Text(L("QS 商科 #%@", b.replacingOccurrences(of: "=", with: ""))).font(.caption.weight(.bold)).foregroundStyle(DS.accent)
+                    Text(L("QS 商科 #%@", b.replacingOccurrences(of: "=", with: ""))).font(.caption.weight(.semibold)).foregroundStyle(DS.accent)
                         .padding(.horizontal, 8).padding(.vertical, 3).background(DS.accent.opacity(0.12), in: Capsule())
                 }
             }
@@ -299,7 +299,7 @@ struct UniversityDetailView: View {
             ForEach(Array(items.enumerated()), id: \.offset) { i, item in
                 VStack(spacing: 3) {
                     Text(item.0).font(.caption2).foregroundStyle(.secondary)
-                    Text(item.1).font(.system(.footnote, design: .rounded).weight(.bold))
+                    Text(item.1).font(.system(.footnote).weight(.semibold))
                         .multilineTextAlignment(.center).minimumScaleFactor(0.7)
                 }
                 .frame(maxWidth: .infinity)
@@ -367,7 +367,7 @@ struct UniversityDetailView: View {
         if let d = ug.deadlineDate {
             let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: d).day ?? 0
             rows.append((L("截止日期"), d.formatted(.dateTime.year().month(.abbreviated).day().locale(Lang.locale))))
-            status = days < 0 ? (L("已截止"), .secondary) : (L("还有 %lld 天", days), days <= 30 ? .red : .green)
+            status = days < 0 ? (L("已截止"), .secondary) : (L("还有 %lld 天", days), days <= 30 ? DS.bad : DS.good)
         }
         return VStack(alignment: .leading, spacing: 8) {
             Text(L("本科申请")).font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
@@ -378,7 +378,7 @@ struct UniversityDetailView: View {
                 } else {
                     if let p = ug.program {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(p).font(.subheadline.weight(.bold))
+                            Text(p).font(.subheadline.weight(.semibold))
                             if let l = ug.length { Text(l).font(.caption).foregroundStyle(.secondary) }
                         }
                         .padding(.horizontal, 14).padding(.vertical, 10)
@@ -390,7 +390,7 @@ struct UniversityDetailView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(row.1).font(.subheadline.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
                                 if row.0 == L("截止日期"), let s = status {
-                                    Text(s.0).font(.caption2.weight(.bold)).foregroundStyle(s.1)
+                                    Text(s.0).font(.caption2.weight(.semibold)).foregroundStyle(s.1)
                                         .padding(.horizontal, 7).padding(.vertical, 2)
                                         .background(s.1.opacity(0.14), in: Capsule())
                                 }

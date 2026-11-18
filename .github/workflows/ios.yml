@@ -1,0 +1,99 @@
+# Builds the iOS app for the simulator and screenshots every tab in light and dark mode, so the app can be
+# checked without Xcode on the Mac. Runs when something under ios/ changes, or by hand from the Actions tab.
+# The screenshots are in the run's "ios-screenshots" artifact. It signs and uploads nothing: an App Store
+# build still needs Xcode and the Apple developer account.
+name: iOS
+
+on:
+  push:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator:
+    name: Build and screenshot (iOS simulator)
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      BUNDLE_ID: com.bestfriendstock.bfstock
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Use the newest Xcode on the runner
+        run: |
+          XC=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+
+      - name: Build (Debug, simulator, unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/BFStock.xcodeproj -target BFStock -configuration Debug \
+            -sdk iphonesimulator -arch arm64 CODE_SIGNING_ALLOWED=NO SYMROOT="$PWD/build" build \
+            > build.log 2>&1 || { grep -E "error:" build.log | sort -u | head -80; tail -40 build.log; exit 1; }
+          echo "warnings in app sources:"
+          grep -E "/ios/BFStock/.*warning:" build.log | sed 's|.*/ios/||' | sort -u | head -60 || true
+          ls -d build/Debug-iphonesimulator/BFStock.app
+
+      - name: Boot an iPhone simulator
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          devs = json.load(sys.stdin)["devices"]
+          def ver(k):
+              return [int(x) for x in re.findall(r"\d+", k.split("iOS")[-1])] if "iOS" in k else []
+          for rt in sorted((k for k in devs if "iOS" in k), key=ver, reverse=True):
+              for d in devs[rt]:
+                  if d["name"].startswith("iPhone") and "Pro" in d["name"] and "Max" not in d["name"]:
+                      print(d["udid"]); sys.exit()
+          ')
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+          xcrun simctl list devices | grep "$UDID"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3
+          xcrun simctl install "$UDID" build/Debug-iphonesimulator/BFStock.app
+
+      - name: Screenshot each tab, light and dark
+        run: |
+          mkdir -p shots
+          shot() {   # shot <name> <seconds to wait> <launch arguments...>
+            local name=$1 wait=$2; shift 2
+            xcrun simctl terminate "$UDID" "$BUNDLE_ID" 2>/dev/null || true
+            xcrun simctl launch "$UDID" "$BUNDLE_ID" "$@" > /dev/null
+            sleep "$wait"
+            xcrun simctl io "$UDID" screenshot "shots/$name.png" > /dev/null
+            echo "shots/$name.png"
+          }
+          for scheme in light dark; do
+            xcrun simctl ui "$UDID" appearance "$scheme"
+            for tab in market learning news teacher paper; do
+              shot "$scheme-$tab" 10 -startTab "$tab" -appLanguage en
+            done
+          done
+          # Chinese: the quote switches to the brush script once iOS has fetched it
+          xcrun simctl ui "$UDID" appearance light
+          shot "zh-light-market" 25 -startTab market -appLanguage zh
+          xcrun simctl ui "$UDID" appearance dark
+          shot "zh-dark-market" 8 -startTab market -appLanguage zh
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ios-screenshots
+          path: |
+            shots/
+            build.log
+          if-no-files-found: ignore
+          retention-days: 14

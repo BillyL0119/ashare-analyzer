@@ -60,10 +60,10 @@ private struct IndexChip: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
             Text(Formatters.price(index.close ?? 0))
-                .font(.system(.subheadline, design: .rounded).weight(.bold))
+                .font(.system(.subheadline).weight(.semibold))
                 .monospacedDigit()
             Text(Formatters.changePct(pct))
-                .font(.system(.caption, design: .rounded).weight(.semibold))
+                .font(.system(.caption).weight(.semibold))
                 .monospacedDigit()
                 .foregroundStyle(color)
         }
@@ -71,8 +71,7 @@ private struct IndexChip: View {
         .padding(.vertical, 10)
         .frame(minWidth: 104, alignment: .leading)
         .background(
-            LinearGradient(colors: [color.opacity(0.14), DS.surfaceHi.opacity(0.6)],
-                           startPoint: .topLeading, endPoint: .bottomTrailing),
+            color.opacity(0.10),
             in: RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous)
         )
         .accessibilityElement(children: .combine)
@@ -119,7 +118,7 @@ private struct GaugeTile: View {
                     )
                 VStack(spacing: 0) {
                     Text(String(format: "%.0f", score))
-                        .font(.system(size: 30, weight: .medium, design: .serif))
+                        .font(.system(size: 30, weight: .medium))
                         .monospacedDigit()
                         .contentTransition(.numericText(value: score))
                 }
@@ -129,7 +128,7 @@ private struct GaugeTile: View {
             .padding(.horizontal, 6)
 
             Text(L(gauge.labelZh))
-                .font(.system(.footnote, design: .rounded).weight(.bold))
+                .font(.system(.footnote).weight(.semibold))
                 .foregroundStyle(tint)
         }
         .padding(.vertical, 12)

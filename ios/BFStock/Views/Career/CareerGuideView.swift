@@ -46,7 +46,7 @@ struct CareerGuideView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
-                Text(L("金融行业职业中心")).font(.system(.title2, design: .serif).weight(.semibold))
+                Text(L("金融行业职业中心")).font(.system(.title2).weight(.semibold))
                 Text(L("对比各条职业路径的薪酬、工时和招聘时间线，了解主要机构，练习面试。"))
                     .font(.subheadline).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -61,7 +61,7 @@ struct CareerGuideView: View {
 
     private func stat(_ n: String, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(n).font(.title3.weight(.bold)).monospacedDigit()
+            Text(n).font(.title3.weight(.semibold)).monospacedDigit()
             Text(label).font(.caption).foregroundStyle(.secondary)
         }
     }
@@ -121,10 +121,10 @@ struct CareerRoleDetailView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     if let m = meta {
                         Text(L("职业方向") + " · " + m.short.text)
-                            .font(.caption.weight(.bold)).tracking(0.8).textCase(.uppercase)
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(role.tint)
                     }
-                    Text(role.displayTitle).font(.system(.title2, design: .serif).weight(.semibold))
+                    Text(role.displayTitle).font(.system(.title2).weight(.semibold))
                     Text(role.displayTagline).font(.subheadline).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -246,7 +246,7 @@ struct CareerRoleDetailView: View {
             ForEach(Array(m.timeline.enumerated()), id: \.offset) { i, step in
                 HStack(alignment: .top, spacing: 12) {
                     VStack(spacing: 0) {
-                        Text("\(i + 1)").font(.caption2.weight(.bold)).foregroundStyle(role.tint)
+                        Text("\(i + 1)").font(.caption2.weight(.semibold)).foregroundStyle(role.tint)
                             .frame(width: 22, height: 22)
                             .background(role.tint.opacity(0.14), in: Circle())
                         if i < m.timeline.count - 1 {
@@ -298,7 +298,7 @@ struct CareerRoleDetailView: View {
             ForEach(Array(items.enumerated()), id: \.offset) { _, line in
                 let parts = line.components(separatedBy: " — ")
                 HStack(alignment: .top, spacing: 10) {
-                    Text(parts.count > 1 ? parts[0] : "").font(.caption.weight(.bold)).monospacedDigit()
+                    Text(parts.count > 1 ? parts[0] : "").font(.caption.weight(.semibold)).monospacedDigit()
                         .lineLimit(1).minimumScaleFactor(0.8)
                         .foregroundStyle(role.tint).frame(width: 84, alignment: .leading)
                     Text(parts.count > 1 ? parts.dropFirst().joined(separator: " — ") : line)
@@ -423,7 +423,7 @@ private struct FirmRow: View {
             NavigationLink(destination: StockDetailView(code: s.code, name: firm.name, market: s.market)) {
                 HStack(spacing: 3) {
                     Text(s.code).font(.caption.weight(.semibold).monospaced())
-                    Image(systemName: "chevron.right").font(.caption2.weight(.bold))
+                    Image(systemName: "chevron.right").font(.caption2.weight(.semibold))
                 }
                 .foregroundStyle(DS.accent)
                 .padding(.horizontal, 9).padding(.vertical, 5)

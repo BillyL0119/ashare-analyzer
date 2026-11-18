@@ -217,7 +217,7 @@ struct TradeSheet: View {
             // Names work too ("google", "苹果", "腾讯"): people type the company, not the ticker
             TextField(L([.us: "代码或公司名，如 AAPL、苹果", .cn: "代码或名称，如 600519、茅台",
                          .hk: "代码或名称，如 00700、腾讯", .jp: "代码或名称，如 7203、丰田"][market] ?? ""), text: $symbol)
-                .font(symbol.isEmpty ? .body : .system(size: 28, weight: .bold, design: .monospaced))
+                .font(symbol.isEmpty ? .body : .system(size: 28, weight: .semibold, design: .monospaced))
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(market == .cn ? .never : .characters)
                 .submitLabel(.search)
@@ -235,7 +235,7 @@ struct TradeSheet: View {
                     Text("· \(currency)\(String(format: "%.2f", p))").font(.subheadline).foregroundStyle(.secondary).monospacedDigit()
                 }
             } else if quoteMissing && visibleSuggestions.isEmpty {
-                Text(L("没有找到这只股票")).font(.subheadline).foregroundStyle(.red)
+                Text(L("没有找到这只股票")).font(.subheadline).foregroundStyle(DS.bad)
             }
 
             if !visibleSuggestions.isEmpty {
@@ -244,7 +244,7 @@ struct TradeSheet: View {
                         Button { symbol = s.symbol } label: {
                             HStack(spacing: 10) {
                                 Text(s.symbol)
-                                    .font(.system(.subheadline, design: .monospaced).weight(.bold))
+                                    .font(.system(.subheadline, design: .monospaced).weight(.semibold))
                                     .frame(minWidth: 64, alignment: .leading)
                                 Text(s.displayName).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
                                 Spacer(minLength: 8)
@@ -384,7 +384,7 @@ struct TradeSheet: View {
             HStack(alignment: .firstTextBaseline) {
                 Button { symbol = "" } label: {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text((name?.isEmpty == false ? name : nil) ?? sym).font(.title3.weight(.bold)).lineLimit(1)
+                        Text((name?.isEmpty == false ? name : nil) ?? sym).font(.title3.weight(.semibold)).lineLimit(1)
                         Text(sym).font(.system(.caption, design: .monospaced)).foregroundStyle(.secondary)
                     }
                 }
@@ -408,7 +408,7 @@ struct TradeSheet: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).font(.caption2).foregroundStyle(.secondary)
             Text(value)
-                .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                .font(.system(.subheadline).weight(.semibold))
                 .monospacedDigit()
                 .minimumScaleFactor(0.7)
                 .lineLimit(1)
@@ -474,7 +474,7 @@ struct TradeSheet: View {
                 if let prefix { Text(prefix).foregroundStyle(.secondary) }
                 TextField("0", text: text)
                     .keyboardType(.decimalPad)
-                    .font(.system(.body, design: .rounded).weight(.bold))
+                    .font(.system(.body).weight(.semibold))
                     .monospacedDigit()
                     .focused($focus, equals: .price)
             }
@@ -501,7 +501,7 @@ struct TradeSheet: View {
                     .accessibilityLabel(L("减少"))
                     .disabled(shares <= minStep)
                 TextField("0", text: $sharesText)
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .font(.system(size: 40, weight: .medium))
                     .monospacedDigit()
                     .multilineTextAlignment(.center)
                     .keyboardType(.numberPad)
@@ -519,7 +519,7 @@ struct TradeSheet: View {
                     ForEach(quickOptions, id: \.1) { label, value in
                         Button { setShares(value) } label: {
                             Text(label)
-                                .font(.system(.footnote, design: .rounded).weight(.semibold))
+                                .font(.system(.footnote).weight(.semibold))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
                                 .foregroundStyle(shares == value ? Color.white : Color.primary)
@@ -536,7 +536,7 @@ struct TradeSheet: View {
     private func stepButton(_ icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .bold))
+                .font(.system(size: 18, weight: .semibold))
                 .frame(width: 48, height: 48)
                 .background(DS.surfaceHi, in: Circle())
         }
@@ -574,7 +574,7 @@ struct TradeSheet: View {
                     estimateRow(L("预计盈亏"), (pl >= 0 ? "+" : "-") + money(abs(pl)), color: Theme.changeColor(pl, market: market), bold: true)
                 }
                 if side.opening && view != nil {
-                    estimateRow(L("可用购买力"), money(buyingPower), color: overBuyingPower ? .red : .primary)
+                    estimateRow(L("可用购买力"), money(buyingPower), color: overBuyingPower ? DS.bad : .primary)
                 }
             }
             .card()
@@ -594,7 +594,7 @@ struct TradeSheet: View {
             Text(label).font(.subheadline).foregroundStyle(.secondary)
             Spacer()
             Text(value)
-                .font(.system(.body, design: .rounded).weight(bold ? .bold : .regular))
+                .font(.system(.body).weight(bold ? .semibold : .regular))
                 .monospacedDigit()
                 .foregroundStyle(color)
         }

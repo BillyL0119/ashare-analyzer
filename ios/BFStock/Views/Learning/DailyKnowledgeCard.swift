@@ -13,7 +13,7 @@ struct DailyKnowledgeCard: View {
                 let zh = Lang.code == "zh"
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 6) {
-                        Image(systemName: "lightbulb.fill").foregroundStyle(.orange).font(.caption)
+                        Image(systemName: "lightbulb").foregroundStyle(.secondary).font(.caption)
                         Text("今日知识").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                         Spacer()
                         if let c = e.category, zh { Text(c).font(.caption2).foregroundStyle(.tertiary) }

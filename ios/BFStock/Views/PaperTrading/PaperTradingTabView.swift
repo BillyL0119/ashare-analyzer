@@ -372,11 +372,11 @@ struct PaperTradingTabView: View {
                 ForEach(Array(board.enumerated()), id: \.offset) { i, r in
                     HStack(spacing: 12) {
                         Text("\(i + 1)")
-                            .font(.system(.subheadline, design: .rounded).weight(.bold))
-                            .foregroundStyle(i < 3 ? [Color.yellow, Color.gray, Color.orange][i] : .secondary)
+                            .font(.system(.subheadline).weight(.semibold))
+                            .foregroundStyle(i < 3 ? Color.primary : Color.secondary)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(r.nickname + (r.isMe ? L("（我）") : "")).font(.subheadline.weight(r.isMe ? .bold : .regular))
+                            Text(r.nickname + (r.isMe ? L("（我）") : "")).font(.subheadline.weight(r.isMe ? .semibold : .regular))
                             Text("\(market.currencySymbol)\(Int(r.totalValue).formatted())").font(.caption).foregroundStyle(.secondary).monospacedDigit()
                         }
                         Spacer()
@@ -401,7 +401,7 @@ struct PaperTradingTabView: View {
                     let side = OrderSide(rawValue: o.side) ?? .buy
                     HStack(spacing: 12) {
                         Text(side.badge)
-                            .font(.caption2.weight(.bold))
+                            .font(.caption2.weight(.semibold))
                             .foregroundStyle(.white)
                             .frame(width: 28, height: 28)
                             .background(side.tint, in: Circle())
@@ -412,7 +412,7 @@ struct PaperTradingTabView: View {
                         Spacer()
                         Button(L("撤单")) { Task { await vm.cancel(o, gameId: selectedGame) } }
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(.red)
+                            .foregroundStyle(DS.bad)
                             .padding(.horizontal, 12).padding(.vertical, 6)
                             .background(DS.surfaceHi, in: Capsule())
                             .buttonStyle(.plain)
@@ -510,7 +510,7 @@ struct PaperTradingTabView: View {
                     let p = item.value
                     HStack {
                         Text(OrderSide.short.badge)
-                            .font(.caption2.weight(.bold)).foregroundStyle(.white)
+                            .font(.caption2.weight(.semibold)).foregroundStyle(.white)
                             .frame(width: 28, height: 28)
                             .background(OrderSide.short.tint, in: Circle())
                         VStack(alignment: .leading, spacing: 3) {
@@ -569,12 +569,8 @@ struct PaperTradingTabView: View {
                 .font(.system(size: 22, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 56, height: 56)
-                .background(
-                    LinearGradient(colors: [DS.accent, Color(r: 0x7A, g: 0x6C, b: 0xFF)],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing),
-                    in: Circle()
-                )
-                .shadow(color: DS.accent.opacity(0.45), radius: 12, y: 6)
+                .background(DS.accentFill, in: Circle())
+                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)   // a floating button keeps a soft neutral shadow
         }
         .accessibilityLabel(L("买入"))
     }
@@ -668,7 +664,7 @@ private struct MissionsSection: View {
 
 private struct CheckupSection: View {
     let checkup: PaperCheckup
-    private static let palette: [Color] = [.cyan, .purple, .orange, .green, .pink, .indigo, .teal, .yellow]
+    private static let palette: [Color] = DS.series
 
     private var colored: [(PaperCheckup.Slice, Color)] {
         var i = 0
@@ -697,7 +693,7 @@ private struct CheckupSection: View {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: f.level == "warn" ? "exclamationmark.circle.fill"
                               : f.level == "good" ? "checkmark.circle.fill" : "info.circle.fill")
-                            .foregroundStyle(f.level == "warn" ? Color.orange : f.level == "good" ? Color.green : Color.blue)
+                            .foregroundStyle(f.level == "warn" ? DS.warn : f.level == "good" ? DS.good : DS.accent)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(f.title).font(.subheadline.weight(.semibold))
                             Text(f.body).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
@@ -779,15 +775,15 @@ private struct GameHeaderCard: View {
                 Text(ended ? L("已结束") : game.status == "upcoming" ? L("未开始") : L("进行中"))
                     .font(.caption.weight(.semibold))
                     .padding(.horizontal, 10).padding(.vertical, 4)
-                    .foregroundStyle(ended ? Color.secondary : Color.green)
-                    .background((ended ? Color.secondary : Color.green).opacity(0.14), in: Capsule())
+                    .foregroundStyle(ended ? Color.secondary : DS.good)
+                    .background((ended ? Color.secondary : DS.good).opacity(0.14), in: Capsule())
             }
             Text("\(game.marketValue.label) · \(L("%lld 人参加", game.members)) · \(ended ? game.endDate : L("%lld 天后结束", daysLeft))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             HStack(spacing: 8) {
                 Text(game.code)
-                    .font(.system(.title3, design: .monospaced).weight(.bold))
+                    .font(.system(.title3, design: .monospaced).weight(.semibold))
                     .tracking(3)
                     .textSelection(.enabled)
                 Spacer()
@@ -806,7 +802,7 @@ private struct GameHeaderCard: View {
                     Text(L((game.isOwner ?? false) ? "删除比赛" : "退出比赛"))
                         .font(.footnote.weight(.semibold))
                         .padding(.horizontal, 12).padding(.vertical, 6)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(DS.bad)
                         .background(DS.surfaceHi, in: Capsule())
                 }
                 .buttonStyle(.plain)
@@ -855,7 +851,7 @@ private struct GameSheet: View {
                 if mode == 0 {
                     Section(L("邀请码")) {
                         TextField("ABC123", text: $code)
-                            .font(.system(.title2, design: .monospaced).weight(.bold))
+                            .font(.system(.title2, design: .monospaced).weight(.semibold))
                             .textInputAutocapitalization(.characters)
                             .autocorrectionDisabled()
                             .onChange(of: code) { _, v in
@@ -888,7 +884,7 @@ private struct GameSheet: View {
                     TextField(L("你的昵称"), text: $nick)
                 }
                 if let error {
-                    Section { Text(error).foregroundStyle(.red).font(.footnote) }
+                    Section { Text(error).foregroundStyle(DS.bad).font(.footnote) }
                 }
             }
             .navigationTitle(L("比赛"))
@@ -995,7 +991,7 @@ private struct AccountCard: View {
                 // Rank; hidden until the account has traded in this market
                 if rank > 0 {
                     Label("#\(rank)", systemImage: "trophy.fill")
-                        .font(.system(.caption, design: .rounded).weight(.semibold))
+                        .font(.system(.caption).weight(.semibold))
                         .foregroundStyle(DS.accent)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -1006,10 +1002,10 @@ private struct AccountCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(market.currencySymbol)
-                        .font(.system(.title2, design: .serif).weight(.medium))
+                        .font(.system(.title2).weight(.medium))
                         .foregroundStyle(.secondary)
                     Text(totalValue, format: .number.precision(.fractionLength(2)))
-                        .font(.system(size: 40, weight: .medium, design: .serif))
+                        .font(.system(size: 40, weight: .medium))
                         .monospacedDigit()
                         .contentTransition(.numericText(value: totalValue))
                         .animation(.snappy(duration: 0.5), value: totalValue)
@@ -1037,8 +1033,7 @@ private struct AccountCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             RoundedRectangle(cornerRadius: DS.radius + 4, style: .continuous)
-                .fill(LinearGradient(colors: [color.opacity(0.20), DS.surface, DS.surface],
-                                     startPoint: .topLeading, endPoint: .bottomTrailing))
+                .fill(DS.surface)
         }
         .overlay(RoundedRectangle(cornerRadius: DS.radius + 4, style: .continuous).strokeBorder(DS.stroke))
     }
@@ -1051,7 +1046,7 @@ private struct StatCell: View {
     var body: some View {
         VStack(spacing: 2) {
             Text(label).font(.caption).foregroundStyle(.secondary)
-            Text(value).font(.system(.subheadline, design: .rounded).weight(.semibold)).monospacedDigit()
+            Text(value).font(.system(.subheadline).weight(.semibold)).monospacedDigit()
                 .foregroundStyle(tint ?? .primary)
                 .minimumScaleFactor(0.7).lineLimit(1)
         }
@@ -1108,7 +1103,7 @@ private struct TransactionRow: View {
     private var corporateRow: some View {
         HStack {
             Text(L(Self.corpBadge[tx.type] ?? "息"))
-                .font(.caption2.weight(.bold))
+                .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white)
                 .frame(width: 28, height: 28)
                 .background(Color(r: 0x0E, g: 0xA5, b: 0xE9), in: Circle())
@@ -1136,7 +1131,7 @@ private struct TransactionRow: View {
     private var tradeRow: some View {
         HStack {
             Text(side.badge)
-                .font(.caption2.weight(.bold))
+                .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white)
                 .frame(width: 28, height: 28)
                 .background(side == .sell ? Color.secondary.opacity(0.6) : side.tint, in: Circle())
@@ -1182,10 +1177,10 @@ private struct TradeToast: View {
             .font(.subheadline)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(isSuccess ? Color.green.opacity(0.9) : Color.red.opacity(0.9))
+            .background(isSuccess ? DS.goodFill : DS.badFill)
             .foregroundStyle(.white)
             .clipShape(Capsule())
-            .shadow(radius: 4)
+            .shadow(color: .black.opacity(0.15), radius: 6, y: 2)
             .transition(.move(edge: .top).combined(with: .opacity))
             .animation(.spring, value: message)
     }
