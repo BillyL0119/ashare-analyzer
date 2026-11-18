@@ -312,7 +312,7 @@ function MissionsCard({ missions, onAction }) {
             <div style={{ width: `${(done / missions.length) * 100}%`, height: '100%', background: 'var(--accent)' }} />
           </div>
         </div>
-        {!next ? <div className="m-muted" style={{ fontSize: 14 }}>{t('全部完成！你已经掌握了模拟交易的基本功。')}</div> : (
+        {!next ? <div className="m-muted" style={{ fontSize: 14 }}>{t('全部完成。你已经掌握了模拟交易的基本功。')}</div> : (
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <div style={{ flex: 1, minWidth: 0, display: 'grid', gap: 3 }}>
               <b style={{ fontSize: 15 }}>{next.title}</b>

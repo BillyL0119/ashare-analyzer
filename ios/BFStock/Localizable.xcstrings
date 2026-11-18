@@ -1538,6 +1538,35 @@
         }
       }
     },
+    "ETF 和基金没有公司财报": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ETFs and funds have no company financial statements."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les ETF et les fonds n'ont pas d'états financiers d'entreprise."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ETF や投資信託には企業の財務諸表がありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ETF와 펀드에는 기업 재무제표가 없습니다."
+          }
+        }
+      }
+    },
     "ETF是什么": {
       "extractionState": "manual",
       "localizations": {
@@ -29384,6 +29413,35 @@
         }
       }
     },
+    "财务报表": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Financials"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "États financiers"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "財務"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재무제표"
+          }
+        }
+      }
+    },
     "财务表现": {
       "extractionState": "manual",
       "localizations": {
@@ -29438,6 +29496,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "실적 캘린더"
+          }
+        }
+      }
+    },
+    "财经日历": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendrier"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カレンダー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "캘린더"
           }
         }
       }

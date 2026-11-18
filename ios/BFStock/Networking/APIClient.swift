@@ -55,6 +55,23 @@ final class APIClient: @unchecked Sendable {
         return try? decoder.decode(T.self, from: data)
     }
 
+    // MARK: Raw GET (keys left as sent)
+
+    /// The body of a GET as bytes, for payloads whose dictionary keys must stay as sent: string tables keyed by
+    /// ids such as "pe_ttm", which the shared decoder's snake_case conversion would rename.
+    func getData(_ path: String, params: [String: String] = [:], persist: Bool = false) async throws -> Data {
+        let url = try buildURL(path: path, params: params)
+        let data = try await performRaw(URLRequest(url: url))
+        if persist { ResponseCache.store(data, for: url) }
+        return data
+    }
+
+    /// Last successful raw response for this request, if it is younger than 24 hours.
+    func cachedData(_ path: String, params: [String: String] = [:]) -> Data? {
+        guard let url = try? buildURL(path: path, params: params) else { return nil }
+        return ResponseCache.load(for: url)
+    }
+
     // MARK: POST
 
     func post<B: Encodable, T: Decodable>(_ path: String, body: B) async throws -> T {
@@ -90,6 +107,27 @@ final class APIClient: @unchecked Sendable {
         guard let url = components.url,
               url.scheme == "https", url.host == "bestfriendstock.com" else { throw URLError(.badURL) }
         return url
+    }
+
+    private func performRaw(_ request: URLRequest) async throws -> Data {
+        do {
+            let (data, response) = try await session.data(for: request)
+            guard let http = response as? HTTPURLResponse else {
+                throw APIError.networkError(URLError(.badServerResponse))
+            }
+            guard (200...299).contains(http.statusCode) else {
+                let msg = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["detail"] as? String
+                    ?? String(data: data, encoding: .utf8) ?? ""
+                throw APIError.httpError(http.statusCode, msg)
+            }
+            return data
+        } catch let e as APIError {
+            throw e
+        } catch let urlError as URLError where urlError.code == .timedOut {
+            throw APIError.timeout
+        } catch {
+            throw APIError.networkError(error)
+        }
     }
 
     private func perform<T: Decodable>(_ request: URLRequest, persistKey: URL? = nil) async throws -> T {

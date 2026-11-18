@@ -42,7 +42,7 @@ const zh = {
   },
   search: { placeholder: '搜索股票：名称或代码，如 苹果、NVDA、茅台、腾讯', chart: '看走势', trade: '交易', none: '没有找到相关股票', searching: '搜索中…', viewChart: '查看走势图', tags: { us: '美股', cn: 'A股', hk: '港股', jp: '日股' } },
   claim: { text: (n) => `这台设备上有你登录前的 ${n} 笔模拟交易。要把它们转到你的账户吗？`, move: '转到我的账户', skip: '不用了', done: '已转到你的账户' },
-  missions: { title: '学习任务', progress: (d, n) => `已完成 ${d}/${n}`, go: '去完成', allDone: '全部完成！你已经掌握了模拟交易的基本功。', hide: '收起', show: '展开' },
+  missions: { title: '学习任务', progress: (d, n) => `已完成 ${d}/${n}`, go: '去完成', allDone: '全部完成。你已经掌握了模拟交易的基本功。', hide: '收起', show: '展开' },
   corp: { dividend: '分红', split: '拆股', bonus: '送转' },
   corpNote: '分红、拆股和送转会在除权日自动处理（美股和 A 股；港股、日股暂不支持），分红按税前金额计入。卖空的股票在除息日需支付股息。',
   hoursNote: '交易时间按各交易所的常规时段计算，节假日以交易所公告为准。',

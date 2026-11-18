@@ -82,7 +82,16 @@ jobs:
               shot "$scheme-$tab" 10 -startTab "$tab" -appLanguage en
             done
             shot "$scheme-stock" 15 -startTab market -openStock AAPL -appLanguage en
+            # Yahoo-style quote screens (US) and the events calendar
+            shot "$scheme-quote-summary" 18 -startTab market -openStock AAPL -openQuote summary -appLanguage en
+            shot "$scheme-quote-statistics" 18 -startTab market -openStock AAPL -openQuote statistics -appLanguage en
+            shot "$scheme-calendar" 15 -startTab market -openCalendar 1 -appLanguage en
           done
+          xcrun simctl ui "$UDID" appearance light
+          for screen in history holders analysts; do
+            shot "light-quote-$screen" 18 -startTab market -openStock AAPL -openQuote "$screen" -appLanguage en
+          done
+          shot "zh-light-quote-summary" 18 -startTab market -openStock AAPL -openQuote summary -appLanguage zh
           # Chinese: the quote switches to the brush script once iOS has fetched it
           xcrun simctl ui "$UDID" appearance light
           shot "zh-light-market" 25 -startTab market -appLanguage zh

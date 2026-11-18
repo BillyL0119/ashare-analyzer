@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01975F2B7F1840C5842636C5 /* EventsCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1447976AF61E4950BDCA2D0F /* EventsCalendarView.swift */; };
+		C9E312485B514938AF6EAB45 /* QuoteAnalystsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67ED037DD8904657B09CC706 /* QuoteAnalystsView.swift */; };
+		BC0429D4CC8447D4BF509B4C /* QuoteHoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEEF9EC21234C9C942B071C /* QuoteHoldersView.swift */; };
+		956D26E88ABB4018974A6442 /* QuoteHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D62E67EBD249C6884C8A88 /* QuoteHistoryView.swift */; };
+		B0A4A060B7A94FC897B12252 /* QuoteStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5908D580AF2F46949A5A2BF8 /* QuoteStatisticsView.swift */; };
+		3D8457C7A30C4E298A44A2F0 /* QuoteSummarySections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C761C99321B42E2BA028F12 /* QuoteSummarySections.swift */; };
+		160AEB11DFB9451CA9198F13 /* QuoteText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2013AB3CA984579B69CA9CF /* QuoteText.swift */; };
+		8BD38A8112DE44A788646A8D /* QuoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B67BF0DAB544B4879B4FFF /* QuoteModels.swift */; };
 		F7BCE50A8B534EE7A7E4BB9D /* GovernorGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD2C296D81440CBBB897AA8 /* GovernorGameView.swift */; };
 		98895A21A0CF41FE880E2F78 /* GovernorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3598A3FCB14EBF90667C26 /* GovernorView.swift */; };
 		FAB3E8EB353B4E3986AFA351 /* DiagramLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78084B8BD2A24593B96745AB /* DiagramLabView.swift */; };
@@ -81,6 +89,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1447976AF61E4950BDCA2D0F /* EventsCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsCalendarView.swift; sourceTree = "<group>"; };
+		67ED037DD8904657B09CC706 /* QuoteAnalystsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteAnalystsView.swift; sourceTree = "<group>"; };
+		1CEEF9EC21234C9C942B071C /* QuoteHoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteHoldersView.swift; sourceTree = "<group>"; };
+		D9D62E67EBD249C6884C8A88 /* QuoteHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteHistoryView.swift; sourceTree = "<group>"; };
+		5908D580AF2F46949A5A2BF8 /* QuoteStatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteStatisticsView.swift; sourceTree = "<group>"; };
+		0C761C99321B42E2BA028F12 /* QuoteSummarySections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteSummarySections.swift; sourceTree = "<group>"; };
+		B2013AB3CA984579B69CA9CF /* QuoteText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteText.swift; sourceTree = "<group>"; };
+		41B67BF0DAB544B4879B4FFF /* QuoteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteModels.swift; sourceTree = "<group>"; };
 		3FD2C296D81440CBBB897AA8 /* GovernorGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernorGameView.swift; sourceTree = "<group>"; };
 		5D3598A3FCB14EBF90667C26 /* GovernorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernorView.swift; sourceTree = "<group>"; };
 		78084B8BD2A24593B96745AB /* DiagramLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramLabView.swift; sourceTree = "<group>"; };
@@ -157,6 +173,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		D1732FC75E4E4A12BEA487F4 /* Quote */ = {
+			isa = PBXGroup;
+			children = (
+				0C761C99321B42E2BA028F12 /* QuoteSummarySections.swift */,
+				5908D580AF2F46949A5A2BF8 /* QuoteStatisticsView.swift */,
+				D9D62E67EBD249C6884C8A88 /* QuoteHistoryView.swift */,
+				1CEEF9EC21234C9C942B071C /* QuoteHoldersView.swift */,
+				67ED037DD8904657B09CC706 /* QuoteAnalystsView.swift */,
+			);
+			path = Quote;
+			sourceTree = "<group>";
+		};
 		1EAF01327A9943CB81AC8D9C /* Governor */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,6 +284,7 @@
 				FE171F3C8CA94C68BDA120F8 /* ClassModels.swift */,
 				A708281BD19D4529827934D4 /* DiagramModels.swift */,
 				51FF92DEAF664A54A1A587FB /* GovernorModels.swift */,
+				41B67BF0DAB544B4879B4FFF /* QuoteModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -321,6 +350,7 @@
 				B187F66975F9407BB78DDDE9 /* Classes */,
 				E7630FB5C59A43169E0E3E12 /* Diagrams */,
 				1EAF01327A9943CB81AC8D9C /* Governor */,
+				D1732FC75E4E4A12BEA487F4 /* Quote */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -372,6 +402,7 @@
 				9704F08681614156B46616B6 /* ScreenerView.swift */,
 				E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */,
 				BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */,
+				1447976AF61E4950BDCA2D0F /* EventsCalendarView.swift */,
 			);
 			path = Market;
 			sourceTree = "<group>";
@@ -383,6 +414,7 @@
 				D4E5F6789012345601AB2CD0 /* SafeURL.swift */,
 				41677ED5EE74011F05A645DA /* KeychainHelper.swift */,
 				833B92D2B499C00060F09406 /* Theme.swift */,
+				B2013AB3CA984579B69CA9CF /* QuoteText.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -468,6 +500,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01975F2B7F1840C5842636C5 /* EventsCalendarView.swift in Sources */,
+				C9E312485B514938AF6EAB45 /* QuoteAnalystsView.swift in Sources */,
+				BC0429D4CC8447D4BF509B4C /* QuoteHoldersView.swift in Sources */,
+				956D26E88ABB4018974A6442 /* QuoteHistoryView.swift in Sources */,
+				B0A4A060B7A94FC897B12252 /* QuoteStatisticsView.swift in Sources */,
+				3D8457C7A30C4E298A44A2F0 /* QuoteSummarySections.swift in Sources */,
+				160AEB11DFB9451CA9198F13 /* QuoteText.swift in Sources */,
+				8BD38A8112DE44A788646A8D /* QuoteModels.swift in Sources */,
 				F7BCE50A8B534EE7A7E4BB9D /* GovernorGameView.swift in Sources */,
 				98895A21A0CF41FE880E2F78 /* GovernorView.swift in Sources */,
 				FAB3E8EB353B4E3986AFA351 /* DiagramLabView.swift in Sources */,

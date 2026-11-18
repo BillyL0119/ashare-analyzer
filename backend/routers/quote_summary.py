@@ -9,8 +9,10 @@ The heavy routers (us_market, us_stocks, fundamentals, screener) are imported in
 them: they pull in pandas, and the unit tests run without it.
 """
 
+import json
 import logging
 import math
+import os
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -520,6 +522,31 @@ def peers(symbol: str):
                    "market_cap": r["market_cap"], "pe": r.get("pe")} for r in rows],
         "as_of": _now_iso(), "source": "Nasdaq, Tencent",
     }
+
+
+# ── text (for the iOS app) ────────────────────────────────────────────────────
+
+_TEXT_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist", "quote-text.json")
+_text_cache = {"mtime": 0.0, "data": None}
+
+
+@router.get("/text")
+def quote_text(lang: str = Query("en")):
+    """Every string of the quote pages and the events calendar in one language, with the glossary: the website's
+    own wording, exported by frontend/tools/quote_text.mjs at each build, so the iOS app says the same thing."""
+    try:
+        mtime = os.path.getmtime(_TEXT_PATH)
+        if mtime != _text_cache["mtime"]:
+            with open(_TEXT_PATH, encoding="utf-8") as f:
+                _text_cache["data"] = json.load(f)
+            _text_cache["mtime"] = mtime
+    except (OSError, ValueError):
+        raise HTTPException(status_code=503, detail="Quote text not built yet")
+    langs = (_text_cache["data"] or {}).get("langs") or {}
+    body = langs.get(lang) or langs.get("en")
+    if not body:
+        raise HTTPException(status_code=503, detail="Quote text not built yet")
+    return {"lang": lang if lang in langs else "en", "generated": _text_cache["data"].get("generated"), **body}
 
 
 # ── warm-up ───────────────────────────────────────────────────────────────────

@@ -99,14 +99,13 @@ final class FundamentalsViewModel: ObservableObject {
 
 // MARK: - View
 
-/// Company fundamentals for US stocks: profile, key stats, revenue/profit trend, EPS vs estimates,
-/// analyst consensus and top institutional holders. Same data as the website's Fundamentals tab.
+/// Company financials for US stocks: revenue, profit, margins and cash flow by year or quarter, and EPS against
+/// estimates. Same data as the website's Financials tab.
 struct FundamentalsSection: View {
     let price: Double?
     var pe: Double? = nil          // trailing P/E from the quote: EPS when the earnings table is empty
     @StateObject private var vm: FundamentalsViewModel
     @State private var quarterly = false
-    @State private var showFullDescription = false
 
     init(symbol: String, price: Double?, pe: Double? = nil) {
         self.price = price
@@ -116,7 +115,7 @@ struct FundamentalsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SectionHeader(L("公司基本面")) { if vm.isLoading && vm.data == nil { ProgressView().scaleEffect(0.7) } }
+            SectionHeader(L("财务报表")) { if vm.isLoading && vm.data == nil { ProgressView().scaleEffect(0.7) } }
             if let d = vm.data {
                 content(d)
             } else if vm.failed {
@@ -131,12 +130,11 @@ struct FundamentalsSection: View {
     @ViewBuilder
     private func content(_ d: Fundamentals) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            profileCard(d)
-            statsCard(d)
+            // The profile, key stats, analysts and holders now have their own sections (QuoteSummarySections and
+            // the Statistics / Holders / Analysts screens), as on the website: here only the statements.
             if let s = (quarterly ? d.quarterly : d.annual) ?? d.annual { financialsCard(s, hasQuarterly: d.quarterly != nil) }
             if !d.earnings.isEmpty { earningsCard(d.earnings) }
-            if let a = d.analysts { analystsCard(a) }
-            if let h = d.holders, !h.top.isEmpty { holdersCard(h) }
+            if d.annual == nil { Text(L("ETF 和基金没有公司财报")).font(.footnote).foregroundStyle(.secondary).card(padding: 16) }
             Text(L("数据来源：Nasdaq · 单位美元 · 财年按公司口径"))
                 .font(.caption2).foregroundStyle(.secondary).padding(.horizontal, 4)
         }
@@ -144,73 +142,7 @@ struct FundamentalsSection: View {
 
     // Profile
 
-    private func profileCard(_ d: Fundamentals) -> some View {
-        let p = d.profile
-        let meta = [p.sector, p.industry, p.exchange].compactMap { $0 }.joined(separator: " · ")
-        return VStack(alignment: .leading, spacing: 8) {
-            if !meta.isEmpty { Text(meta).font(.footnote.weight(.semibold)).foregroundStyle(.secondary) }
-            if let desc = p.description, !desc.isEmpty {
-                Text(desc).font(.footnote).lineLimit(showFullDescription ? nil : 3)
-                    .fixedSize(horizontal: false, vertical: true)
-                Button(showFullDescription ? L("收起") : L("展开")) {
-                    withAnimation(.snappy(duration: 0.2)) { showFullDescription.toggle() }
-                }
-                .font(.caption.weight(.semibold))
-            }
-            if let site = p.website, let url = URL(string: site) {
-                Link(destination: url) {
-                    Label(url.host ?? site, systemImage: "arrow.up.right.square").font(.caption)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .card(padding: 14)
-    }
-
     // Key stats
-
-    private func statsCard(_ d: Fundamentals) -> some View {
-        let s = d.stats
-        // Last four reported quarters, or price / trailing P/E when Nasdaq's table comes back empty
-        let ttm: Double? = d.earnings.count >= 4 ? d.earnings.suffix(4).compactMap(\.eps).reduce(0, +)
-            : ((price ?? 0) > 0 && (pe ?? 0) > 0 ? price! / pe! : nil)
-        let target = d.analysts?.target ?? s.oneYearTarget
-        let upside: Double? = (target != nil && (price ?? 0) > 0) ? (target! - price!) / price! * 100 : nil
-        var tiles: [(String, String, String?, Color?)] = []
-        if let ttm { tiles.append((L("每股收益 (近4季)"), String(format: "$%.2f", ttm), nil, nil)) }
-        if d.annual != nil || s.dividendYield != nil {
-            tiles.append((L("股息率"), s.dividendYield.map { String(format: "%.2f%%", $0) } ?? L("无"),
-                          s.annualDividend.map { String(format: "$%.2f", $0) + L("/年") }, nil))
-        }
-        if let lo = s.week52Low, let hi = s.week52High {
-            tiles.append((L("52 周区间"), String(format: "$%.0f–%.0f", lo, hi), nil, nil))
-        }
-        if let target {
-            tiles.append((L("分析师目标价"), String(format: "$%.2f", target),
-                          upside.map { String(format: "%+.1f%% ", $0) + L("空间") },
-                          upside.map { $0 >= 0 ? DS.good : DS.bad }))
-        }
-        if let ne = d.nextEarnings, let date = ne.date {
-            let timing = ne.timing == "after_close" ? L("盘后") : ne.timing == "before_open" ? L("盘前") : nil
-            tiles.append((L("下次财报"), Self.shortDate(date), timing, nil))
-        }
-        if let pct = d.holders?.institutionalPct { tiles.append((L("机构持股"), String(format: "%.1f%%", pct), nil, nil)) }
-
-        return LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-            ForEach(Array(tiles.enumerated()), id: \.offset) { _, t in
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(t.0).font(.caption).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
-                    Text(t.1).font(.headline).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
-                    if let sub = t.2 {
-                        Text(sub).font(.caption2).foregroundStyle(t.3 ?? .secondary).lineLimit(1).minimumScaleFactor(0.8)
-                    }
-                }
-                .frame(maxWidth: .infinity, minHeight: 58, alignment: .topLeading)
-                .padding(12)
-                .card(padding: 0)
-            }
-        }
-    }
 
     // Financials
 
@@ -315,73 +247,7 @@ struct FundamentalsSection: View {
 
     // Analysts
 
-    private func analystsCard(_ a: Fundamentals.Analysts) -> some View {
-        let total = a.buy + a.hold + a.sell
-        let parts: [(String, Int, Color)] = [(L("买入"), a.buy, DS.good), (L("持有"), a.hold, DS.warn), (L("卖出"), a.sell, DS.bad)]
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(L("分析师评级")).font(.subheadline.weight(.semibold))
-                Spacer()
-                if total > 0 { Text(L("%lld 位分析师", total)).font(.caption).foregroundStyle(.secondary) }
-            }
-            if total > 0 {
-                GeometryReader { geo in
-                    HStack(spacing: 2) {
-                        ForEach(parts.filter { $0.1 > 0 }, id: \.0) { p in
-                            Rectangle().fill(p.2).frame(width: max(2, geo.size.width * CGFloat(p.1) / CGFloat(total) - 2))
-                        }
-                    }
-                }
-                .frame(height: 10).clipShape(Capsule())
-                HStack(spacing: 14) {
-                    ForEach(parts, id: \.0) { p in
-                        HStack(spacing: 5) {
-                            RoundedRectangle(cornerRadius: 2).fill(p.2).frame(width: 8, height: 8)
-                            Text("\(p.0) \(p.1)").font(.caption)
-                        }
-                    }
-                }
-            }
-            if a.target != nil {
-                HStack {
-                    targetCell(L("最低"), a.targetLow)
-                    targetCell(L("平均"), a.target, highlight: true)
-                    targetCell(L("最高"), a.targetHigh)
-                    targetCell(L("现价"), price)
-                }
-            }
-        }
-        .card(padding: 14)
-    }
-
-    private func targetCell(_ label: String, _ v: Double?, highlight: Bool = false) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(label).font(.caption2).foregroundStyle(.secondary)
-            Text(v.map { String(format: "$%.2f", $0) } ?? "—").font(.footnote.weight(.semibold)).monospacedDigit()
-                .foregroundStyle(highlight ? DS.accent : .primary).lineLimit(1).minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
     // Holders
-
-    private func holdersCard(_ h: Fundamentals.Holders) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(L("主要机构股东")).font(.subheadline.weight(.semibold))
-            ForEach(h.top.prefix(5)) { r in
-                HStack {
-                    Text(r.name ?? "—").font(.footnote).lineLimit(1)
-                    Spacer()
-                    Text(r.value.map(Self.money) ?? "—").font(.footnote.weight(.semibold)).monospacedDigit()
-                    Text(r.changePct.map { String(format: "%+.2f%%", $0) } ?? "")
-                        .font(.caption).monospacedDigit()
-                        .foregroundStyle((r.changePct ?? 0) >= 0 ? DS.good : DS.bad)
-                        .frame(width: 64, alignment: .trailing)
-                }
-            }
-        }
-        .card(padding: 14)
-    }
 
     // Formatting
 

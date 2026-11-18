@@ -210,3 +210,21 @@ def test_warmup_fills_each_tickers_slow_caches_and_survives_failures(monkeypatch
         qs.warmup(pause=0, cycle_hours=6)
     assert ("d", "AAPL") in calls and ("q", "SPY") in calls and ("q", "BAD") not in calls
     assert sleeps[0] == 30 and sleeps[-1] == 6 * 3600
+
+
+def test_quote_text_serves_one_language(monkeypatch, tmp_path):
+    f = tmp_path / "quote-text.json"
+    f.write_text(json.dumps({"generated": "2026-11-18T00:00:00Z", "langs": {
+        "en": {"summary": {"keyStats": "Key statistics"}, "glossary": {"pe_ttm": {"d": "Price per $1 of profit", "f": "price ÷ EPS"}}},
+        "zh": {"summary": {"keyStats": "关键数据"}, "glossary": {}}}}))
+    monkeypatch.setattr(qs, "_TEXT_PATH", str(f))
+    monkeypatch.setattr(qs, "_text_cache", {"mtime": 0.0, "data": None})
+    zh = qs.quote_text("zh")
+    assert zh["lang"] == "zh" and zh["summary"]["keyStats"] == "关键数据"
+    xx = qs.quote_text("xx")
+    assert xx["lang"] == "en" and xx["glossary"]["pe_ttm"]["f"] == "price ÷ EPS"
+    monkeypatch.setattr(qs, "_TEXT_PATH", str(tmp_path / "missing.json"))
+    monkeypatch.setattr(qs, "_text_cache", {"mtime": 0.0, "data": None})
+    with pytest.raises(HTTPException) as e:
+        qs.quote_text("en")
+    assert e.value.status_code == 503

@@ -11,6 +11,9 @@ struct StockDetailView: View {
     @StateObject private var paper = PaperTradingViewModel()
     @State private var showPaperTrade = false
     @State private var paperMessage: String?
+    #if DEBUG
+    @State private var debugQuoteScreen: String?
+    #endif
 
     init(code: String, name: String, market: Market) {
         self.code = code
@@ -25,7 +28,11 @@ struct StockDetailView: View {
                 quoteHeader
                     .padding(.horizontal, 4)
 
-                if let q = vm.quote, market != .cn || q.marketCap != nil {
+                if market == .us {
+                    // The website's Summary tab: status line, range chart, key statistics, performance vs the
+                    // S&P 500, analysts, peers, profile, and links to Statistics / Historical data / Holders / Analysts
+                    QuoteSummarySections(code: code)
+                } else if let q = vm.quote, market != .cn || q.marketCap != nil {
                     keyStats(q)
                 }
 
@@ -44,7 +51,7 @@ struct StockDetailView: View {
                 }
                 .card(padding: 12)
 
-                if let q = vm.quote {
+                if let q = vm.quote, market != .us {    // US: the key statistics above already show these
                     quoteGrid(q)
                 }
 
@@ -107,6 +114,23 @@ struct StockDetailView: View {
             }
         }
         .task { await vm.loadAll() }
+        #if DEBUG
+        // Screenshot job (.github/workflows/ios.yml): `-openQuote statistics|history|holders|analysts|summary`
+        .task {
+            if market == .us, debugQuoteScreen == nil, let screen = UserDefaults.standard.string(forKey: "openQuote") {
+                debugQuoteScreen = screen
+            }
+        }
+        .navigationDestination(item: $debugQuoteScreen) { screen in
+            switch screen {
+            case "statistics": QuoteStatisticsView(code: code)
+            case "history": QuoteHistoryView(code: code)
+            case "holders": QuoteHoldersView(code: code)
+            case "analysts": QuoteAnalystsView(code: code)
+            default: ScrollView { QuoteSummarySections(code: code).padding(.horizontal, 16) }.background(DS.bg.ignoresSafeArea())
+            }
+        }
+        #endif
         .refreshable { await vm.loadAll() }
         .onChange(of: showPaperTrade) { _, open in
             if open { Task { await paper.loadAccount() } }    // cash for the order form

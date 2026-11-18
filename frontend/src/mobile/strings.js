@@ -1207,6 +1207,30 @@ export const STR = {
   "오늘의 지식",
   "Notion du jour"
  ],
+ "今日语录": [
+  "Quote of the day",
+  "今日の言葉",
+  "오늘의 명언",
+  "Citation du jour"
+ ],
+ "财务报表": [
+  "Financials",
+  "財務",
+  "재무제표",
+  "États financiers"
+ ],
+ "财经日历": [
+  "Calendar",
+  "カレンダー",
+  "캘린더",
+  "Calendrier"
+ ],
+ "ETF 和基金没有公司财报": [
+  "ETFs and funds have no company financial statements.",
+  "ETF や投資信託には企業の財務諸表がありません。",
+  "ETF와 펀드에는 기업 재무제표가 없습니다.",
+  "Les ETF et les fonds n'ont pas d'états financiers d'entreprise."
+ ],
  "全球商学院指南": [
   "Business school guide",
   "ビジネススクールガイド",
@@ -2821,11 +2845,11 @@ export const STR = {
   "%lld/%lld 완료",
   "%lld sur %lld terminées"
  ],
- "全部完成！你已经掌握了模拟交易的基本功。": [
-  "All done! You have the basics of trading down.",
-  "すべて完了！取引の基本が身につきました。",
-  "모두 완료! 거래의 기본을 익혔어요.",
-  "Tout est fait ! Vous maîtrisez les bases du trading."
+ "全部完成。你已经掌握了模拟交易的基本功。": [
+  "All done. You have the basics of trading down.",
+  "すべて完了。取引の基本が身につきました。",
+  "모두 완료했어요. 거래의 기본을 익혔어요.",
+  "Tout est fait. Vous maîtrisez les bases du trading."
  ],
  "账户": [
   "Account",
@@ -3577,11 +3601,11 @@ export const STR = {
   "선생님 클래스에 참여하세요: 앱에서 연습하면 과제가 자동으로 완료됩니다",
   "Rejoignez la classe de votre enseignant : les devoirs se valident tout seuls quand vous vous entraînez dans l'app"
  ],
- "用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易和历史穿越自动完成。": [
-  "Join your teacher's class with its code. Assignments complete themselves from your learning missions, paper trading and time-machine runs in this app.",
-  "先生からもらったクラスコードで参加します。課題は、このアプリでの学習ミッション・模擬取引・タイムマシンの結果から自動で完了します。",
-  "선생님이 준 클래스 코드로 참여하세요. 과제는 이 앱에서의 학습 미션, 모의 투자, 타임머신 결과로 자동 완료됩니다.",
-  "Rejoignez la classe de votre enseignant avec son code. Les devoirs se valident tout seuls à partir de vos missions, de votre trading fictif et de la machine à remonter le temps dans cette app."
+ "用老师给的班级码加入班级。作业会根据你在这个 App 里的学习任务、模拟交易、历史穿越和“当美联储主席”自动完成。": [
+  "Join your teacher's class with its code. Assignments complete themselves from your learning missions, paper trading, time-machine runs and Fed chair games in this app.",
+  "先生からもらったクラスコードで参加します。課題は、このアプリでの学習ミッション・模擬取引・タイムマシン・FRB議長ゲームの結果から自動で完了します。",
+  "선생님이 준 클래스 코드로 참여하세요. 과제는 이 앱에서의 학습 미션, 모의 투자, 타임머신, 연준 의장 게임 결과로 자동 완료됩니다.",
+  "Rejoignez la classe de votre enseignant avec son code. Les devoirs se valident tout seuls à partir de vos missions, de votre trading fictif, de la machine à remonter le temps et du jeu de la Fed dans cette app."
  ],
  "我加入的班级": [
   "My classes",
@@ -3715,11 +3739,11 @@ export const STR = {
   "선생님이 알아볼 이름 (2–16자)",
   "Un nom que votre enseignant reconnaîtra, 2 à 16 caractères"
  ],
- "加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩。老师看不到你的邮箱，你可以随时退出。": [
-  "When you join, your teacher can see your nickname, learning missions, number of trades and returns, and time-machine results. Your teacher cannot see your email, and you can leave at any time.",
-  "参加すると、先生はあなたのニックネーム、学習ミッション、取引回数と収益、タイムマシンの結果を見られます。メールアドレスは見えません。いつでも退出できます。",
-  "참여하면 선생님은 닉네임, 학습 미션, 거래 횟수와 수익률, 타임머신 결과를 볼 수 있습니다. 이메일은 보이지 않으며 언제든지 나갈 수 있습니다.",
-  "En rejoignant, votre enseignant voit votre pseudo, vos missions, le nombre d'ordres et vos performances, et vos résultats de la machine à remonter le temps. Il ne voit pas votre e-mail ; vous pouvez partir à tout moment."
+ "加入后，老师可以看到你的昵称、学习任务完成情况、模拟交易次数和收益、历史穿越成绩和“当美联储主席”的成绩。老师看不到你的邮箱，你可以随时退出。": [
+  "When you join, your teacher can see your nickname, learning missions, number of trades and returns, time-machine results and Fed chair game scores. Your teacher cannot see your email, and you can leave at any time.",
+  "参加すると、先生はあなたのニックネーム、学習ミッション、取引回数と収益、タイムマシンの結果、FRB議長ゲームの成績を見られます。メールアドレスは見えません。いつでも退出できます。",
+  "참여하면 선생님은 닉네임, 학습 미션, 거래 횟수와 수익률, 타임머신 결과, 연준 의장 게임 성적을 볼 수 있습니다. 이메일은 보이지 않으며 언제든지 나갈 수 있습니다.",
+  "En rejoignant, votre enseignant voit votre pseudo, vos missions, le nombre d'ordres et vos performances, vos résultats de la machine à remonter le temps et vos scores au jeu de la Fed. Il ne voit pas votre e-mail ; vous pouvez partir à tout moment."
  ],
  "加入": [
   "Join",
@@ -3744,6 +3768,24 @@ export const STR = {
   "このクラスは満員です",
   "이 클래스는 정원이 찼습니다",
   "Cette classe est complète"
+ ],
+ "平均偏离目标 %@（真实的美联储 %@）": [
+  "Average miss %@ (real Fed %@)",
+  "目標からの平均のずれ %@（本物のFRB %@）",
+  "목표와의 평균 편차 %@ (진짜 연준 %@)",
+  "Écart moyen %@ (vraie Fed %@)"
+ ],
+ "进行中 %lld/%lld 季度": [
+  "In progress: %lld/%lld quarters",
+  "進行中 %lld/%lld 四半期",
+  "진행 중 %lld/%lld분기",
+  "En cours : %lld/%lld trimestres"
+ ],
+ "“当美联储主席”的作业要在 App 里玩才算数。网页上玩的成绩只算进在网页上加入班级的账户。": [
+  "Play Fed chair assignments in the app. A game played on the website counts only for the account that joined the class on the website.",
+  "FRB議長ゲームの課題はアプリでプレイしてください。ウェブで遊んだ成績は、ウェブでクラスに参加したアカウントにしか反映されません。",
+  "연준 의장 게임 과제는 앱에서 하세요. 웹사이트에서 한 게임은 웹사이트에서 클래스에 참여한 계정에만 반영됩니다.",
+  "Jouez les devoirs du jeu de la Fed dans l'app. Une partie jouée sur le site ne compte que pour le compte qui a rejoint la classe sur le site."
  ],
  "加载中...": [
   "Loading...",

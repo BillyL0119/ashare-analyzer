@@ -42,7 +42,19 @@ struct MacroEventsSection: View {
         Group {
             if !loaded || !events.isEmpty {
                 VStack(alignment: .leading, spacing: 10) {
-                    SectionHeader(L("重要经济数据"))
+                    SectionHeader(L("重要经济数据")) {
+                        // The whole week: economic data, earnings, IPOs, splits and dividends (the website's /macro)
+                        NavigationLink {
+                            EventsCalendarView()
+                        } label: {
+                            HStack(spacing: 3) {
+                                Text(L("财经日历"))
+                                Image(systemName: "chevron.right").font(.caption2.weight(.semibold))
+                            }
+                            .font(.footnote.weight(.medium))
+                            .foregroundStyle(DS.accent)
+                        }
+                    }
                     VStack(spacing: 0) {
                         if !loaded {
                             SkeletonRows(rows: 3, trailingPill: false)

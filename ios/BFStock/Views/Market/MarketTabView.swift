@@ -7,6 +7,9 @@ struct MarketTabView: View {
     @State private var searchText = ""
     @State private var showAbout = false
     @State private var selectedResult: StockSearchResult?
+    #if DEBUG
+    @State private var debugCalendar = false
+    #endif
     @ObservedObject private var history = SearchHistoryStore.shared
 
     private var mode: Binding<Market> {
@@ -98,11 +101,15 @@ struct MarketTabView: View {
             }
             #if DEBUG
             .task {
-                // Screenshot job (.github/workflows/ios.yml): `-openStock AAPL` opens that stock's page at launch
+                // Screenshot job (.github/workflows/ios.yml): `-openStock AAPL` opens that stock's page at launch,
+                // `-openCalendar 1` the events calendar
                 if selectedResult == nil, let code = UserDefaults.standard.string(forKey: "openStock") {
                     selectedResult = StockSearchResult(code: code, name: code, changePct: nil, market: nil)
+                } else if UserDefaults.standard.bool(forKey: "openCalendar") {
+                    debugCalendar = true
                 }
             }
+            .navigationDestination(isPresented: $debugCalendar) { EventsCalendarView() }
             #endif
             .safeAreaInset(edge: .bottom) {
                 Text("disclaimer")
