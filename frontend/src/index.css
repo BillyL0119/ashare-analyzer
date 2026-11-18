@@ -57,6 +57,8 @@
      --heading and --serif keep their names because components use them. */
   --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
   --display: 'Bricolage Grotesque', var(--sans);   /* page titles and headline figures */
+  --quote: 'Fraunces', 'ZCOOL XiaoWei', 'Noto Serif SC', 'Songti SC', Georgia, serif;   /* quote of the day */
+  --quote-zh: 'ZCOOL XiaoWei', 'Noto Serif SC', 'Songti SC', 'STSong', serif;
   --heading: var(--sans);
   --serif: var(--sans);
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;

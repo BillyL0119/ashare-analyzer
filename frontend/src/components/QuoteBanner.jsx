@@ -31,6 +31,8 @@ export default function QuoteBanner({ lang, variant }) {
   if (!quote) return null
 
   const text = zh ? (quote.quote_cn || quote.quote_en) : (quote.quote_en || quote.quote_cn)
+  // The quote's own language (Chinese readers get the Chinese text), so the right typeface is used
+  const textLang = text === quote.quote_cn ? 'zh-CN' : 'en'
   const author = zh ? (quote.author_cn || quote.author) : (quote.author || quote.author_cn)
   const title = zh ? (quote.title_cn || quote.title) : (quote.title || quote.title_cn)
   const initials = (quote.author || author || '?').split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -43,7 +45,7 @@ export default function QuoteBanner({ lang, variant }) {
         <span>{LABEL[lang] || LABEL.en}</span>
         <span>{today}</span>
       </figcaption>
-      <blockquote className={long ? 'is-long' : ''}>
+      <blockquote className={long ? 'is-long' : ''} lang={textLang}>
         <span className="mark" aria-hidden="true">“</span>{text}<span className="mark-end" aria-hidden="true">”</span>
       </blockquote>
       {author && (

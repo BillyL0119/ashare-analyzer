@@ -1,5 +1,7 @@
 /* Quote of the day, pinned above everything else on the home page.
-   A large pull quote in the display face on its own panel; the opening mark hangs in the margin. */
+   The quote is set like a pull quote in a book: Fraunces italic for English (a soft, slightly
+   wonky old-style serif), ZCOOL XiaoWei for Chinese (an elegant Song-style display face, upright),
+   with blue quotation marks. Everything around it stays in the interface font. */
 .bfs-quote {
   margin: 20px 0 8px;
   padding: 24px 36px 24px 52px;
@@ -15,11 +17,12 @@
   position: relative;
   margin: 0;
   max-width: 38ch;
-  font-family: var(--sans);
+  font-family: var(--quote);
+  font-style: italic;
   font-size: clamp(22px, 2.3vw, 32px);
-  font-weight: 500;
-  line-height: 1.18;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
   color: var(--text-primary);
   text-wrap: balance;
 }
@@ -63,10 +66,10 @@
 .bfs-quote.is-band .bfs-quote-head { flex-direction: column; gap: 2px; margin: 0; font-size: 12px; white-space: nowrap; }
 .bfs-quote.is-band .bfs-quote-head span:first-child { color: var(--accent-blue); font-weight: 500; }
 .bfs-quote.is-band blockquote, .bfs-quote.is-band blockquote.is-long {
-  max-width: none; font-family: var(--sans); font-size: 19px; font-weight: 500; line-height: 1.4; letter-spacing: 0;
+  max-width: none; font-family: var(--quote); font-style: italic; font-size: 22px; font-weight: 400; line-height: 1.3; letter-spacing: -0.005em;
   padding-left: 20px; border-left: 1px solid color-mix(in srgb, var(--accent-fill) 28%, var(--border-primary));
 }
-.bfs-quote.is-band blockquote.is-long { font-size: 17px; }
+.bfs-quote.is-band blockquote.is-long { font-size: 19px; }
 .bfs-quote.is-band .mark { position: static; font-size: 1em; }
 .bfs-quote.is-band .bfs-quote-who { margin: 0; gap: 10px; max-width: 240px; }
 .bfs-quote.is-band .bfs-quote-who .avatar { width: 32px; height: 32px; font-size: 12px; }
@@ -75,5 +78,10 @@
 @media (max-width: 900px) {
   .bfs-quote.is-band { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .bfs-quote.is-band .bfs-quote-head { flex-direction: row; justify-content: space-between; }
-  .bfs-quote.is-band blockquote { padding-left: 0; border-left: 0; font-size: 17px; }
+  .bfs-quote.is-band blockquote { padding-left: 0; border-left: 0; font-size: 19px; }
+}
+
+/* Chinese quotes: upright Song-style display face (CJK has no italic), a touch of tracking */
+.bfs-quote blockquote:lang(zh), .bfs-quote.is-band blockquote:lang(zh) {
+  font-family: var(--quote-zh); font-style: normal; letter-spacing: 0;
 }
