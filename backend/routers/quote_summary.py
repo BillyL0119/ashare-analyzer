@@ -154,6 +154,7 @@ def build_live(sym: str) -> dict:
         "beta": _pool.submit(nq.beta_5y_monthly, sym),
         "avgvol": _pool.submit(nq.avg_volume, sym, 63),
         "earn": _pool.submit(_next_earnings, sym),
+        "divs": _pool.submit(nq.dividends, sym),
     }
     got = {}
     for k, f in jobs.items():
@@ -173,6 +174,7 @@ def build_live(sym: str) -> dict:
     wk_high, wk_low = _pair(nq.val(summ, "FiftTwoWeekHighLow"))
     vol = nq.num(p.get("volume"))
     eps = got["eps"]
+    fwd = nq.forward_dividend(summ, got["divs"] or [], price)
     out = {
         "symbol": sym,
         "name": _tidy_name(info.get("companyName")),
@@ -195,9 +197,9 @@ def build_live(sym: str) -> dict:
         "pe_ttm": nq.pe_ttm(price, eps),
         "eps_ttm": eps,
         "earnings": got["earn"],
-        "dividend_rate": nq.num(nq.val(summ, "AnnualizedDividend")),
-        "dividend_yield": nq.num(nq.val(summ, "Yield")),
-        "ex_dividend_date": nq.parse_date(nq.val(summ, "ExDividendDate") or ""),
+        "dividend_rate": fwd["rate"],
+        "dividend_yield": fwd["yield"],
+        "ex_dividend_date": fwd["ex_date"],
         "target_1y": nq.num(nq.val(summ, "OneYrTarget")),
         "market_status": status,
         "as_of": _now_iso(),
@@ -219,7 +221,7 @@ def build_live(sym: str) -> dict:
 @router.get("/{symbol}/live")
 def live(symbol: str):
     sym = _symbol(symbol)
-    return nq.cached(f"qs_live_{sym}", nq.live_ttl(), lambda: build_live(sym))
+    return nq.cached(f"qs_live_{sym}", nq.live_ttl(), lambda: build_live(sym), stale=300)
 
 
 # ── chart ─────────────────────────────────────────────────────────────────────

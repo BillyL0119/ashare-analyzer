@@ -119,6 +119,7 @@ def stub_nasdaq(monkeypatch, info, summ, eps=None):
     monkeypatch.setattr(nq, "eps_ttm", lambda s: eps)
     monkeypatch.setattr(nq, "beta_5y_monthly", lambda s: 1.07)
     monkeypatch.setattr(nq, "avg_volume", lambda s, n=63: 42_000_000)
+    monkeypatch.setattr(nq, "dividends", lambda s: [])      # forward dividend comes from the summary here
     monkeypatch.setattr(qs, "_tencent_open", lambda s: 351.94)
     monkeypatch.setattr(qs, "_next_earnings", lambda s: None)
 

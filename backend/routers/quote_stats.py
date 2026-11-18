@@ -324,14 +324,14 @@ def compute(ctx, price, summ, today=None):
     paid = [d["amount"] for d in divs if since < d["ex_date"] <= today.isoformat()]
     trailing = round(sum(paid), 4) if paid else None
     pay_dates = [d["pay_date"] for d in divs if d.get("pay_date")]
-    ex_text = nq.val(summ, "ExDividendDate")
-    put("forward_dividend_rate", nq.num(nq.val(summ, "AnnualizedDividend")))
-    put("forward_dividend_yield", nq.num(nq.val(summ, "Yield")))
+    fwd = nq.forward_dividend(summ, divs, price, today)
+    put("forward_dividend_rate", fwd["rate"])
+    put("forward_dividend_yield", fwd["yield"])
     put("trailing_dividend_rate", trailing)
     put("trailing_dividend_yield", _pct(trailing, price))
     put("payout_ratio", _pct(trailing, eps) if eps and eps > 0 else None)
     put("dividend_date", max(pay_dates) if pay_dates else nq.parse_date(nq.val(summ, "DividendPaymentDate")))
-    put("ex_dividend_date", nq.parse_date(ex_text) if isinstance(ex_text, str) else None)
+    put("ex_dividend_date", fwd["ex_date"])
     return out
 
 

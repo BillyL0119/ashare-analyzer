@@ -4,6 +4,7 @@ import './history.css'
 import useQuoteApi from './useQuoteApi'
 import useActiveTicker from './useActiveTicker'
 import TickerSwitch from './TickerSwitch'
+import QuoteHeader from './QuoteHeader'
 import { fmtDate, fmtInt, fmtPrice, LOCALE } from './format'
 import historyStrings, { fill } from './historyStrings'
 import { csvName, dividendsCsv, dividendsCsvName, downloadText, historyCsv } from './historyCsv'
@@ -117,6 +118,7 @@ export default function QuoteHistory({ stocks, lang }) {
   return (
     <section className="qp" aria-label={S.title}>
       <TickerSwitch stocks={stocks} code={code} onChange={setCode} label={S.tickers} />
+      <QuoteHeader code={code} lang={lang} />
       <div className="qp-card">
         <div className="qp-head">
           <h2 className="qp-h">{S.title}</h2>

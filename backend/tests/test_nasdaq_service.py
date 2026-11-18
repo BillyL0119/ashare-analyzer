@@ -191,3 +191,43 @@ def test_empty_answers_are_not_cached(monkeypatch):
     monkeypatch.setattr(nq, "get", lambda *a, **kw: calls.append(1) or None)
     assert nq.daily_history("AAPL") == [] and nq.daily_history("AAPL") == []
     assert len(calls) == 2
+
+
+def test_stale_value_is_served_while_one_thread_refreshes(monkeypatch):
+    import threading
+    clock = [1000.0]
+    monkeypatch.setattr(nq.time, "time", lambda: clock[0])
+    assert nq.cached("k", 15, lambda: "v1", stale=300) == "v1"
+    clock[0] += 60                                        # expired, but within the stale window
+    started, release = threading.Event(), threading.Event()
+
+    def slow():
+        started.set()
+        release.wait(5)
+        return "v2"
+    assert nq.cached("k", 15, slow, stale=300) == "v1"    # answered at once with the old value
+    assert started.wait(5)
+    assert nq.cached("k", 15, lambda: "never", stale=300) == "v1"   # refresh already running: no second one
+    release.set()
+    for _ in range(100):
+        if "k" not in nq._inflight:
+            break
+        threading.Event().wait(0.01)
+    clock[0] += 1
+    assert nq.cached("k", 15, lambda: "v3", stale=300) == "v2"
+    clock[0] += 1000                                      # older than ttl + stale: fetched in line
+    assert nq.cached("k", 15, lambda: "v4", stale=300) == "v4"
+
+
+def test_forward_dividend():
+    today = date(2026, 11, 18)
+    ko = [{"ex_date": d, "amount": a} for d, a in (("2026-03-13", 0.53), ("2026-06-15", 0.53), ("2026-09-15", 0.53))]
+    f = nq.forward_dividend({}, ko, 98.0, today)                       # NYSE: nothing in Nasdaq's summary
+    assert f == {"rate": 2.12, "yield": round(2.12 / 98 * 100, 2), "ex_date": "2026-09-15"}
+    aapl = {"AnnualizedDividend": {"value": "$1.08"}, "Yield": {"value": "0.31%"}, "ExDividendDate": {"value": "Nov 12, 2026"}}
+    assert nq.forward_dividend(aapl, ko, 350.0, today) == {"rate": 1.08, "yield": 0.31, "ex_date": "2026-11-12"}
+    stopped = [{"ex_date": d, "amount": 0.125} for d in ("2024-02-06", "2024-05-06", "2024-08-06")]
+    assert nq.forward_dividend({}, stopped, 30.0, today)["rate"] is None          # INTC suspended its dividend
+    assert nq.forward_dividend({}, [], 30.0, today) == {"rate": None, "yield": None, "ex_date": None}
+    future = ko + [{"ex_date": "2026-12-11", "amount": 0.55}]                    # declared, not yet ex
+    assert nq.forward_dividend({}, future, 98.0, today)["rate"] == 2.12

@@ -116,13 +116,46 @@ def _empty(v):
     return v is None or (isinstance(v, (list, dict)) and not v)
 
 
-def cached(key: str, ttl: float, fn, disk: bool = False):
+def _store(key: str, v, disk_path):
+    if _empty(v):
+        return
+    with _lock:
+        _mem[key] = (time.time(), v)
+    if disk_path:
+        try:
+            with open(disk_path + ".tmp", "w", encoding="utf-8") as f:
+                json.dump(v, f)
+            os.replace(disk_path + ".tmp", disk_path)
+        except Exception:
+            pass
+
+
+def _refresh(key: str, fn, disk_path, ev):
+    try:
+        _store(key, fn(), disk_path)
+    except Exception as exc:
+        log.debug("refresh %s failed: %s", key, exc)
+    finally:
+        with _lock:
+            _inflight.pop(key, None)
+        ev.set()
+
+
+def cached(key: str, ttl: float, fn, disk: bool = False, stale: float = 0):
+    """fn() cached for ttl seconds. With `stale`, a value up to ttl + stale old is still returned at once while
+    one background thread refreshes it (live quotes: nobody waits on Nasdaq for a price 20 s old)."""
     now = time.time()
+    path = os.path.join(_CACHE_DIR, f"nq_{re.sub(r'[^A-Za-z0-9_.-]', '_', key)}.json") if disk else None
     with _lock:
         hit = _mem.get(key)
         if hit and now - hit[0] < ttl:
             return hit[1]
         ev = _inflight.get(key)
+        if hit and stale and now - hit[0] < ttl + stale:
+            if ev is None:
+                ev = _inflight[key] = threading.Event()
+                threading.Thread(target=_refresh, args=(key, fn, path, ev), daemon=True).start()
+            return hit[1]
         owner = ev is None
         if owner:
             ev = _inflight[key] = threading.Event()
@@ -131,8 +164,7 @@ def cached(key: str, ttl: float, fn, disk: bool = False):
         hit = _mem.get(key)
         return hit[1] if hit else None
     try:
-        path = os.path.join(_CACHE_DIR, f"nq_{re.sub(r'[^A-Za-z0-9_.-]', '_', key)}.json")
-        if disk and os.path.exists(path) and now - os.path.getmtime(path) < ttl:
+        if path and os.path.exists(path) and now - os.path.getmtime(path) < ttl:
             try:
                 with open(path, encoding="utf-8") as f:
                     v = json.load(f)
@@ -142,16 +174,7 @@ def cached(key: str, ttl: float, fn, disk: bool = False):
             except Exception:
                 pass
         v = fn()
-        if not _empty(v):
-            with _lock:
-                _mem[key] = (time.time(), v)
-            if disk:
-                try:
-                    with open(path + ".tmp", "w", encoding="utf-8") as f:
-                        json.dump(v, f)
-                    os.replace(path + ".tmp", path)
-                except Exception:
-                    pass
+        _store(key, v, path)
         return v
     finally:
         with _lock:
@@ -187,7 +210,7 @@ def info(sym: str):
     ac = asset_class(sym)
     if not ac:
         return None
-    return cached(f"info_{sym}", live_ttl(), lambda: get(f"quote/{sym}/info", {"assetclass": ac}))
+    return cached(f"info_{sym}", live_ttl(), lambda: get(f"quote/{sym}/info", {"assetclass": ac}), stale=300)
 
 
 def summary(sym: str):
@@ -200,7 +223,7 @@ def summary(sym: str):
     def fetch():
         d = get(f"quote/{sym}/summary", {"assetclass": ac})
         return (d or {}).get("summaryData") or None
-    return cached(f"summary_{sym}", 300, fetch)
+    return cached(f"summary_{sym}", 300, fetch, stale=1800)
 
 
 # ── Prices ────────────────────────────────────────────────────────────────────
@@ -428,6 +451,33 @@ def eps_ttm(sym: str):
     if total > 0 and hist and total > hist[-1]["close"]:
         return None
     return total
+
+
+def forward_dividend(summ: dict, divs: list, price, today=None) -> dict:
+    """{"rate", "yield", "ex_date"}: the forward dividend both quote tabs show. Nasdaq's indicated annual dividend
+    and yield when its summary has them (Nasdaq listings); otherwise, as the glossary defines it, the latest
+    dividend times the payments per year, read from the spacing of the recent ex-dates (monthly, quarterly,
+    half-yearly or yearly), provided the latest one is not overdue (a stopped dividend has no forward rate).
+    NYSE listings and ETFs need the fallback: Nasdaq's summary carries no dividend for them."""
+    today = today or datetime.now(ET).date()
+    rate, yld = num(val(summ, "AnnualizedDividend")), num(val(summ, "Yield"))
+    ex = parse_date(val(summ, "ExDividendDate") or "")
+    past = [d for d in divs or [] if d.get("amount") and d["ex_date"] <= today.isoformat()]
+    if not ex and past:
+        ex = past[-1]["ex_date"]
+    if rate and rate > 0:
+        return {"rate": rate, "yield": yld if yld is not None else (round(rate / price * 100, 2) if price else None), "ex_date": ex}
+    if len(past) < 2:
+        return {"rate": None, "yield": None, "ex_date": ex}
+    recent = past[-4:]
+    days = [(date.fromisoformat(b["ex_date"]) - date.fromisoformat(a["ex_date"])).days for a, b in zip(recent, recent[1:])]
+    gap = sorted(days)[len(days) // 2]
+    per_year = 12 if 20 <= gap <= 45 else 4 if 60 <= gap <= 120 else 2 if 150 <= gap <= 220 else 1 if 300 <= gap <= 400 else None
+    overdue = (today - date.fromisoformat(past[-1]["ex_date"])).days > gap + 45
+    if not per_year or overdue:
+        return {"rate": None, "yield": None, "ex_date": ex}
+    rate = round(past[-1]["amount"] * per_year, 4)
+    return {"rate": rate, "yield": round(rate / price * 100, 2) if price else None, "ex_date": ex}
 
 
 def pe_ttm(price, eps):

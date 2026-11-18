@@ -8,6 +8,7 @@ import { THEME } from '../../utils/chartHelpers'
 import useActiveTicker from './useActiveTicker'
 import useQuoteApi from './useQuoteApi'
 import TickerSwitch from './TickerSwitch'
+import QuoteHeader from './QuoteHeader'
 import { DASH, fmtCompact, fmtDate, fmtInt, fmtMoney, fmtPct, fmtPrice, fmtRatio, fmtShortDate, fmtSignedPct, isNum, changeColor } from './format'
 import holdersStrings, { fill } from './holdersStrings'
 import { Section, SkeletonBlocks, SourceLine, Tip } from './holdersParts'
@@ -220,6 +221,7 @@ export default function QuoteHolders({ stocks, lang }) {
   return (
     <div className="qp">
       <TickerSwitch stocks={stocks} code={code} onChange={setCode} label="Ticker" />
+      <QuoteHeader code={code} lang={lang} />
       {error && <div className="qp-card qp-empty" role="alert">{t.loadError}</div>}
       {!data && !error && <SkeletonBlocks />}
       {empty && <div className="qp-card qp-empty">{fill(t.holdersEmpty, { sym: code })}</div>}

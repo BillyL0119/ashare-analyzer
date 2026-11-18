@@ -7,57 +7,11 @@ import SummaryStats from './SummaryStats'
 import SummaryPerformance from './SummaryPerformance'
 import SummaryRail from './SummaryRail'
 import SummaryNews from './SummaryNews'
-import { isNum, fmtPrice, fmtSigned, fmtSignedPct, fmtShortDate, changeColor } from './format'
-import summaryStrings, { fill } from './summaryStrings'
+import { QuoteHeaderView } from './QuoteHeader'
+import { extendedSessionNow } from './session'
+import summaryStrings from './summaryStrings'
 import './quotepage.css'
 import './summary.css'
-
-// Pre-market, regular and after-hours prices all move (04:00-20:00 ET, weekdays): poll fast then, slowly otherwise.
-function extendedSessionNow() {
-  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false,
-  }).formatToParts(new Date()).map((x) => [x.type, x.value]))
-  const mins = (Number(p.hour) % 24) * 60 + Number(p.minute)
-  return !['Sat', 'Sun'].includes(p.weekday) && mins >= 4 * 60 && mins < 20 * 60
-}
-
-function statusLine(d, lang, S) {
-  const time = d.trade_time
-  if (d.market_status === 'open' && time) return fill(S.statusOpen, { time })
-  if (d.trade_date && time) return fill(S.statusClosed, { date: fmtShortDate(d.trade_date, lang), time })
-  if (d.trade_date) return fill(S.statusDateOnly, { date: fmtShortDate(d.trade_date, lang) })
-  return d.as_of_text || ''
-}
-
-function Header({ d, lang, S }) {
-  const digits = isNum(d.price) && Math.abs(d.price) < 1 ? 4 : 2
-  const color = changeColor(d.change_pct)
-  const ext = d.extended
-  const extTime = ext?.as_of_text?.match(/\d{1,2}:\d{2} [AP]M/)?.[0]
-  return (
-    <header className="qs-head">
-      <h2 className="qs-name">{d.name || d.symbol}<span className="sym">{d.symbol}</span></h2>
-      <div className="qs-exch">{fill(S.exchangeLine, { exchange: d.exchange || '', currency: d.currency || 'USD' })}</div>
-      <div className="qs-price-row">
-        <span className="qs-price">{isNum(d.price) ? fmtPrice(d.price, lang, digits) : '—'}</span>
-        {isNum(d.change_pct) && (
-          <span className="qs-chg" style={{ color }}>
-            {isNum(d.change) ? `${fmtSigned(d.change, digits)} ` : ''}({fmtSignedPct(d.change_pct)})
-          </span>
-        )}
-      </div>
-      <div className="qs-status">{statusLine(d, lang, S)}</div>
-      {ext && isNum(ext.price) && (
-        <div className="qs-ext">
-          {ext.session === 'pre' ? S.extPre : S.extPost}
-          <b>${fmtPrice(ext.price, lang, digits)}</b>
-          {isNum(ext.change_pct) && <span style={{ color: changeColor(ext.change_pct) }}>{fmtSignedPct(ext.change_pct)}</span>}
-          {extTime && <span className="t">{extTime} ET</span>}
-        </div>
-      )}
-    </header>
-  )
-}
 
 function SummaryBody({ code, lang, onOpenStock, onRetry }) {
   const S = summaryStrings(lang)
@@ -85,7 +39,7 @@ function SummaryBody({ code, lang, onOpenStock, onRetry }) {
   }
   return (
     <>
-      <Header d={d} lang={lang} S={S} />
+      <QuoteHeaderView d={d} lang={lang} />
       <div className="qs-layout">
         <div className="qs-main">
           <QuoteChart code={code} lang={lang} live={d} />

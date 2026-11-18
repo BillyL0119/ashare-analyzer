@@ -13,6 +13,7 @@ import { CUR, localName } from '../../utils/markets'
 import { Icon } from '../icons'
 import MovesPanel from '../../components/moves/MovesPanel'
 import movesStrings from '../../components/moves/movesStrings'
+import { KeyStats, Performance, AnalystSnapshot, Peers } from '../QuoteSections'
 
 const PERIODS = [['10', '10日'], ['30', '30日'], ['60', '60日'], ['120', '120日'], ['250', '1年']]
 const css = (name) => (typeof document === 'undefined' ? '#888' : getComputedStyle(document.querySelector('.m-app') || document.body).getPropertyValue(name).trim() || '#888')
@@ -162,7 +163,7 @@ function Moves({ symbol, market }) {
   )
 }
 
-function Fundamentals({ symbol, price }) {
+function Fundamentals({ symbol }) {
   const t = useT()
   const { data: d, error, reload } = useAPI(`/us/fundamentals/${symbol}`)
   const [freq, setFreq] = useState('annual')
@@ -171,16 +172,8 @@ function Fundamentals({ symbol, price }) {
   if (!d) return <Section title={t('公司基本面')}><Skeleton h={220} r={20} /></Section>
   const up = changeColor(1, 'us'), down = changeColor(-1, 'us')
   const f = (freq === 'quarterly' ? d.quarterly : d.annual) || d.annual
-  const ttm = d.earnings?.length >= 4 ? d.earnings.slice(-4).reduce((a, e) => a + (e.eps ?? 0), 0) : null
-  const target = d.analysts?.target ?? d.stats?.one_year_target
-  const upside = target && price ? ((target - price) / price) * 100 : null
-  const ne = d.next_earnings
+  // EPS, dividend, 52-week range, target and earnings date now live in the Key statistics section
   const tiles = [
-    ttm != null && [t('每股收益 (近4季)'), `$${ttm.toFixed(2)}`],
-    (d.annual || d.stats?.dividend_yield) && [t('股息率'), d.stats?.dividend_yield ? `${d.stats.dividend_yield.toFixed(2)}%` : t('无'), d.stats?.annual_dividend ? `$${d.stats.annual_dividend.toFixed(2)}${t('/年')}` : null],
-    d.stats?.week52_low != null && [t('52 周区间'), `$${d.stats.week52_low.toFixed(0)}–${d.stats.week52_high.toFixed(0)}`],
-    target && [t('分析师目标价'), `$${target.toFixed(2)}`, upside != null ? <span style={{ color: upside >= 0 ? up : down }}>{upside >= 0 ? '+' : ''}{upside.toFixed(1)}% {t('空间')}</span> : null],
-    ne?.date && [t('下次财报'), new Date(`${ne.date}T12:00:00Z`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), ne.timing === 'after_close' ? t('盘后') : ne.timing === 'before_open' ? t('盘前') : null],
     d.holders?.institutional_pct != null && [t('机构持股'), `${d.holders.institutional_pct.toFixed(1)}%`],
   ].filter(Boolean)
   const meta = [d.profile?.sector, d.profile?.industry].filter(Boolean).join(' · ')
@@ -194,8 +187,6 @@ function Fundamentals({ symbol, price }) {
       { name: t('净利润'), type: 'bar', data: f.net_income, barMaxWidth: 22, itemStyle: { color: '#3fb67a', borderRadius: [3, 3, 0, 0] } },
     ],
   }
-  const a = d.analysts
-  const total = a ? a.buy + a.hold + a.sell : 0
   return (
     <Section title={t('公司基本面')}>
       <div style={{ display: 'grid', gap: 12 }}>
@@ -209,7 +200,7 @@ function Fundamentals({ symbol, price }) {
           </div>
         )}
         {tiles.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(2, tiles.length)}, minmax(0, 1fr))`, gap: 10 }}>
             {tiles.map(([k, v, sub]) => (
               <div key={k} className="m-card" style={{ padding: 12 }}>
                 <div className="m-label">{k}</div>
@@ -255,28 +246,6 @@ function Fundamentals({ symbol, price }) {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-        {a && (
-          <div className="m-card" style={{ display: 'grid', gap: 10 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><b style={{ fontSize: 15 }}>{t('分析师评级')}</b>{total > 0 && <span className="m-label">{t('%lld 位分析师', total)}</span>}</div>
-            {total > 0 && (
-              <>
-                <div style={{ display: 'flex', gap: 2, height: 10, borderRadius: 5, overflow: 'hidden' }}>
-                  {[[a.buy, up], [a.hold, '#F5A524'], [a.sell, down]].map(([n, c], i) => n > 0 && <span key={i} style={{ flex: n, background: c }} />)}
-                </div>
-                <div className="m-label" style={{ display: 'flex', gap: 14 }}>
-                  <span>{t('买入')} {a.buy}</span><span>{t('持有')} {a.hold}</span><span>{t('卖出')} {a.sell}</span>
-                </div>
-              </>
-            )}
-            {a.target != null && (
-              <div className="m-num" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 6 }}>
-                {[[t('最低'), a.target_low], [t('平均'), a.target], [t('最高'), a.target_high], [t('现价'), price]].map(([k, v], i) => (
-                  <div key={k}><div className="m-label">{k}</div><div style={{ fontWeight: 600, fontSize: 14, marginTop: 2, color: i === 1 ? 'var(--accent)' : undefined }}>{v != null ? `$${v.toFixed(2)}` : '—'}</div></div>
-                ))}
-              </div>
-            )}
           </div>
         )}
         {d.holders?.top?.length > 0 && (
@@ -413,7 +382,15 @@ export default function StockDetail() {
         )}
       </div>
 
-      {market === 'us' && <Fundamentals symbol={code} price={d?.price} />}
+      {market === 'us' && (
+        <>
+          <KeyStats symbol={code} />
+          <Performance symbol={code} />
+          <AnalystSnapshot symbol={code} />
+          <Peers symbol={code} onOpen={(sym) => nav(`/stock/us/${encodeURIComponent(sym)}`)} />
+        </>
+      )}
+      {market === 'us' && <Fundamentals symbol={code} />}
       {(market === 'us' || market === 'cn') && <Moves symbol={code} market={market} />}
       {!hkjp && <News symbol={code} market={market} />}
       <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>

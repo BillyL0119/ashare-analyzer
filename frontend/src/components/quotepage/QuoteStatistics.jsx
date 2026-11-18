@@ -4,6 +4,7 @@ import './stats.css'
 import useQuoteApi from './useQuoteApi'
 import useActiveTicker from './useActiveTicker'
 import TickerSwitch from './TickerSwitch'
+import QuoteHeader from './QuoteHeader'
 import Term from './Term'
 import { explain } from './glossary'
 import statsStrings from './statsStrings'
@@ -64,6 +65,7 @@ export default function QuoteStatistics({ stocks, lang }) {
   const head = (
     <>
       <TickerSwitch stocks={stocks} code={code} onChange={setCode} label={t.switchLabel} />
+      <QuoteHeader code={code} lang={lang} />
       <p className="qt-intro">{t.intro}</p>
     </>
   )
