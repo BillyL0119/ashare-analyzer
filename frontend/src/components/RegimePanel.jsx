@@ -291,7 +291,7 @@ function StockRegimeCard({ stock, color, t, lang, period, startDate, endDate, ad
       </div>
 
       {loading && <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>{t.regimeLoading}</div>}
-      {error && <div style={{ color: '#e5484d', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--red-bright)', fontSize: 13 }}>{error}</div>}
 
       {data && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

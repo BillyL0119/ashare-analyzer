@@ -175,7 +175,7 @@ export default function StockCard({ stock }) {
         )}
         {error && (
           <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-            <div style={{ color: '#e5484d', fontSize: 13, textAlign: 'center', maxWidth: 280 }}>
+            <div style={{ color: 'var(--red-bright)', fontSize: 13, textAlign: 'center', maxWidth: 280 }}>
               {market !== 'cn'
                 ? (String(error).includes('API_LIMIT') || String(error).includes('limit')
                     ? t.apiLimitMsg

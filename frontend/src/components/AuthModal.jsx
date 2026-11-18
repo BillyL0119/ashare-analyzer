@@ -226,12 +226,12 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
 
             {/* Feedback messages */}
             {error && (
-              <div style={{ fontSize: 12, color: '#e5484d', marginBottom: 12, padding: '8px 12px', background: 'rgba(229,72,77,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: 'var(--red-bright)', marginBottom: 12, padding: '8px 12px', background: 'rgba(229,72,77,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {error}
               </div>
             )}
             {message && (
-              <div style={{ fontSize: 12, color: '#3fb67a', marginBottom: 12, padding: '8px 12px', background: 'rgba(63,182,122,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: 'var(--green-bright)', marginBottom: 12, padding: '8px 12px', background: 'rgba(63,182,122,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {message}
               </div>
             )}

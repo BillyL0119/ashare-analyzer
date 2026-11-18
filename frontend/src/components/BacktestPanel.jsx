@@ -327,7 +327,7 @@ export default function BacktestPanel({ stocks }) {
 
       {/* Error */}
       {error && (
-        <div style={{ color: '#e5484d', fontSize: 13, padding: '10px 16px',
+        <div style={{ color: 'var(--red-bright)', fontSize: 13, padding: '10px 16px',
           background: 'rgba(229,72,77,0.08)', borderRadius: 8, border: '1px solid rgba(229,72,77,0.2)' }}>
           {error}
         </div>

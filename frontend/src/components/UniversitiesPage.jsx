@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { tx, txEn, txf, lang as curLang } from './uniI18n'
 import { newDeviceId } from '../utils/deviceId'
 import Icon from './Icon'
+import Markdown from '../mobile/Markdown'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
@@ -1476,7 +1477,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
               <Icon name={m.role === 'user' ? 'user' : 'tutor'} size={15} />
             </div>
             <div style={m.role === 'assistant' ? bubbleAI : bubbleUser}>
-              {m.content}
+              {m.role === 'assistant' ? <Markdown text={m.content} /> : m.content}
             </div>
           </div>
         ))}
@@ -1497,7 +1498,7 @@ function ChatView({ profile, chatHistory, setChatHistory, onGenerateReport, t })
           </div>
         )}
         {error && (
-          <div style={{ fontSize: 12, color: '#e5484d', padding: '8px 12px',
+          <div style={{ fontSize: 12, color: 'var(--red-bright)', padding: '8px 12px',
             background: 'rgba(229,72,77,0.1)', borderRadius: 8 }}>
             {error}
           </div>
@@ -1609,7 +1610,7 @@ function ReportView({ profile, chatHistory, onReset, t }) {
       ) : null}
 
       {error && (
-        <div style={{ color: '#e5484d', fontSize: 13, padding: '12px 16px',
+        <div style={{ color: 'var(--red-bright)', fontSize: 13, padding: '12px 16px',
           background: 'rgba(229,72,77,0.1)', borderRadius: 8 }}>
           {error}
         </div>

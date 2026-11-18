@@ -111,7 +111,7 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
       </div>
       <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
         <span style={{ color: '#6c9cff', fontSize: 11 }}>■ Systematic</span>
-        <span style={{ color: '#4cc38a', fontSize: 11 }}>■ Idiosyncratic</span>
+        <span style={{ color: 'var(--green-bright)', fontSize: 11 }}>■ Idiosyncratic</span>
       </div>
     </div>
   )
@@ -192,7 +192,7 @@ function StockFactor({ stock, color, t, lang, params }) {
   if (error) return (
     <div style={cardStyle}>
       <div style={{ color, fontWeight: 600, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
-      <div style={{ color: '#e5484d', fontSize: 13 }}>{error}</div>
+      <div style={{ color: 'var(--red-bright)', fontSize: 13 }}>{error}</div>
     </div>
   )
 

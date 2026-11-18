@@ -4,9 +4,12 @@ import useCompareStore from '../store/compareStore'
 // watchlist, site stats) import from here, so loading them does not pull in ECharts.
 
 // A-shares are red-up / green-down; US, Hong Kong and Japan use green-up / red-down.
-const RISE_CN = '#e5484d', FALL_CN = '#3fb67a'
-export const riseColor = (market) => (market !== 'cn' ? FALL_CN : RISE_CN)
-export const fallColor = (market) => (market !== 'cn' ? RISE_CN : FALL_CN)
+// On the light theme both are a shade darker so the numbers stay readable on white (AA contrast).
+const isLight = () => typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'light'
+const red = () => (isLight() ? '#dc2626' : '#e5484d')
+const green = () => (isLight() ? '#15803d' : '#3fb67a')
+export const riseColor = (market) => (market !== 'cn' ? green() : red())
+export const fallColor = (market) => (market !== 'cn' ? red() : green())
 
 // ── Theme-reactive palette ────────────────────────────────────────────────────
 export function getChartTheme() {

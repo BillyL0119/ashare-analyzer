@@ -229,7 +229,7 @@ function StockBlock({ stock, mode, lang, market, isMobile, onOpenDetail }) {
       {error && !loading && (
         <div
           style={{
-            color: '#e5484d',
+            color: 'var(--red-bright)',
             fontSize: 13,
             padding: 12,
             background: '#f8514910',

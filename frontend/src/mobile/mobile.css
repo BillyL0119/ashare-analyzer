@@ -14,8 +14,9 @@
 }
 :root[data-theme="light"] .m-app {
   --bg: #F5F7FA; --surface: #FFFFFF; --surface-hi: #ECEFF4;
-  --stroke: rgba(0,0,0,.06); --text: #0E1420; --text-2: #5B6678; --text-3: #8A94A6;
+  --stroke: rgba(0,0,0,.06); --text: #0E1420; --text-2: #5B6678; --text-3: #6B7487;   /* muted text at 4.5:1 on white */
   --accent: #2563EB; --accent-2: #2563EB; --shadow: none;
+  --cn-up: #DC2626; --cn-down: #15803D;   /* a shade darker on white so changes stay readable */
 }
 .m-app *, .m-app *::before, .m-app *::after { box-sizing: border-box; }
 :where(.m-app) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }

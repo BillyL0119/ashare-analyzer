@@ -173,7 +173,7 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           {/* News in range */}
           {result.has_news && result.news?.length > 0 && (
             <div>
-              <div style={{ fontSize: 11, color: '#3fb67a', fontWeight: 600, marginBottom: 4 }}>
+              <div style={{ fontSize: 11, color: 'var(--green-bright)', fontWeight: 600, marginBottom: 4 }}>
                 {t.ksNewsInRange(result.news.length)}
               </div>
               {result.news.map((n, i) => (

@@ -7,6 +7,7 @@ import { T } from '../i18n/translations'
 import useAuthStore from '../store/authStore'
 import { THEME } from '../utils/chartHelpers'
 import diagramNav, { STUDY_DIAGRAM_LINKS } from './diagrams/diagramNav'
+import Markdown from '../mobile/Markdown'
 const AITeacherPage = lazy(() => import('./AITeacherPage'))
 
 const SIDEBAR_BG  = 'var(--bg-tertiary)'
@@ -161,7 +162,7 @@ function DiagramWrap({ title, caption, children }) {
       borderRadius: 10, padding: '12px 14px 10px',
       marginLeft: 15, marginBottom: 14,
     }}>
-      <div style={{ fontSize: 10, fontWeight: 600, color: '#f59e0b', letterSpacing: 0, marginBottom: 8 }}>
+      <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--accent-gold)', letterSpacing: 0, marginBottom: 8 }}>
         {title}
       </div>
       <svg viewBox="0 0 500 295" overflow="visible" style={{ width: '100%', display: 'block', maxWidth: 520 }}>
@@ -603,7 +604,7 @@ function AITutor({ topicId, exam, lang, accentColor }) {
             fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.8,
             whiteSpace: 'pre-wrap',
           }}>
-            {item.displayed}
+            <Markdown text={item.displayed} />
             {item.displayed.length < item.answer.length && (
               <span style={{ opacity: 0.5, animation: 'blink 1s infinite' }}>▋</span>
             )}
@@ -924,7 +925,7 @@ function EventTimeline({ zh }) {
               borderRadius: 12,
               padding: '16px 20px',
             }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#fbbf24', marginBottom: 14, letterSpacing: 0 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-gold)', marginBottom: 14, letterSpacing: 0 }}>
                 {zh ? '考试考点' : 'Exam Connection Points'}
               </div>
               {(zh ? active.exam_points_zh : active.exam_points).map((ep, i) => (

@@ -8,7 +8,7 @@ import classStrings from './classStrings'
 // on their own and follow the whole class's progress.
 
 const ACCENT = '#4f86f7'
-const UP = '#3fb67a', DOWN = '#e5484d'
+const UP = 'var(--green-bright)', DOWN = 'var(--red-bright)'
 
 const CSS = `
 .cl { display: grid; gap: 18px; max-width: 1180px; margin: 0 auto; width: 100%; padding: 18px 0 40px; }

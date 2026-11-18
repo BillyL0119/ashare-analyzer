@@ -122,9 +122,9 @@ body {
   --accent-blue-soft: rgba(37,99,235,0.08);
   --accent-purple: #5b53a6;
   --accent-cyan:   #1d7f8f;
-  --accent-gold:   #a86a00;
-  --green-bright:  #16a34a;
-  --red-bright:    #dc2626;
+  --accent-gold:   #9a6200;
+  --green-bright:  #15803d;   /* 5.0:1 on white */
+  --red-bright:    #dc2626;   /* 4.8:1 on white */
   --shadow-pop:    0 8px 24px rgba(17,24,39,0.08);
   color-scheme: light;
 }

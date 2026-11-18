@@ -297,7 +297,7 @@ export default function AdminPage({ lang, onOpenAuth }) {
           <input id="dash-email" className="dash-in" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.email} autoComplete="off" />
           <button className="dash-btn pri" type="submit">{t.grant}</button>
         </form>
-        {memberErr && <div style={{ color: '#e5484d', fontSize: 12.5, marginTop: 8 }}>{memberErr}</div>}
+        {memberErr && <div style={{ color: 'var(--red-bright)', fontSize: 12.5, marginTop: 8 }}>{memberErr}</div>}
         <div style={{ marginTop: 12 }}>
           {(members?.admins || []).map((e) => <div className="dash-row" key={e}><span>{e}</span><span className="dash-pill">{t.roleAdmin}</span></div>)}
           {(members?.members || []).map((m) => (

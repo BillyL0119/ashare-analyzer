@@ -19,7 +19,7 @@ function Table({ head, children, empty, emptyText }) {
   )
 }
 
-const small = (color) => ({ border: `1px solid ${color}55`, background: `${color}14`, color, borderRadius: 7, padding: '3px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer' })
+const small = (color) => ({ border: `1px solid color-mix(in srgb, ${color} 33%, transparent)`, background: `color-mix(in srgb, ${color} 8%, transparent)`, color, borderRadius: 7, padding: '3px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer' })
 
 export function Positions({ s, view, market, onAction }) {
   const longs = Object.entries(view?.portfolio || {}).sort(([, a], [, b]) => b.market_value - a.market_value)
@@ -54,7 +54,7 @@ export function Positions({ s, view, market, onAction }) {
           </>}>
             {shorts.map(([sym, p]) => (
               <tr key={sym}>
-                <td style={td}><StockLink market={market} code={sym} name={p.name} title={s.search.viewChart}><b style={{ color: '#f59e0b' }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span></StockLink></td>
+                <td style={td}><StockLink market={market} code={sym} name={p.name} title={s.search.viewChart}><b style={{ color: 'var(--accent-gold)' }}>{sym}</b> <span style={{ color: MUTED, fontSize: 12 }}>{p.name}</span></StockLink></td>
                 <td style={num}>-{p.shares}</td><td style={num}>{money(p.avg_price, market)}</td><td style={num}>{money(p.current_price, market)}</td>
                 <td style={num}>{money(-p.market_value, market, 0)}</td>
                 <td style={{ ...num, color: plColor(p.profit_loss, market) }}>{signed(p.profit_loss, market, 0)}<div style={{ fontSize: 11 }}>{pct(p.profit_loss_pct)}</div></td>

@@ -94,7 +94,7 @@ export default function MacroCalendarPage({ lang }) {
         const d = Math.floor(ms / 86400000), h = Math.max(0, Math.floor((ms % 86400000) / 3600000))
         return (
           <div className="mc-card" style={{ padding: '14px 18px', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', borderColor: 'color-mix(in srgb, #f59e0b 45%, var(--border-primary))' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0, color: '#f59e0b' }}>{t.next}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0, color: 'var(--accent-gold)' }}>{t.next}</div>
             <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
               {FLAG[COUNTRY_KEY[next.country]] || ''} {eventName(next.name, lang)}{next.period && <span className="mc-tag">{t[next.period]}</span>}
             </div>
@@ -167,7 +167,7 @@ export default function MacroCalendarPage({ lang }) {
                         {e.explain && <span style={{ marginLeft: 6, fontSize: 11, color: '#4f86f7' }}>{open === id ? '▴' : '▾'}</span>}
                       </span>
                       <span className="num" style={{ color: e.released ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: e.released ? 700 : 400 }} title={e.surprise ? t[e.surprise] : undefined}>
-                        {e.actual || '—'}{e.surprise && <span style={{ marginLeft: 4, fontSize: 10, color: '#f59e0b' }}>{e.surprise === 'above' ? '▲' : '▼'}</span>}
+                        {e.actual || '—'}{e.surprise && <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--accent-gold)' }}>{e.surprise === 'above' ? '▲' : '▼'}</span>}
                       </span>
                       <span className="num">{e.consensus || '—'}</span>
                       <span className="num prev">{e.previous || '—'}</span>

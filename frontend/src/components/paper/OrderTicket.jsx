@@ -219,7 +219,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         </div>
       )}
 
-      {sess && !sess.open && <div style={{ fontSize: 12, color: '#f59e0b', lineHeight: 1.55 }}>{s.closedHint}</div>}
+      {sess && !sess.open && <div style={{ fontSize: 12, color: 'var(--accent-gold)', lineHeight: 1.55 }}>{s.closedHint}</div>}
 
       <Button onClick={submit} disabled={!valid || busy} color={SIDE_COLOR[side]} style={{ width: '100%', padding: '11px 0', fontSize: 14.5 }}>
         {busy ? s.submitting : s.submit(s.side[side], s.type[type])}

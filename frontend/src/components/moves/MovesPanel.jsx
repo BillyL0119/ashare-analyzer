@@ -5,7 +5,7 @@ import movesStrings from './movesStrings'
 // each day (market and sector moves, SEC filings, Fed decisions, headlines, cninfo announcements),
 // and an AI explanation from those facts on request.
 
-const UP = '#3fb67a', DOWN = '#e5484d', ACCENT = '#4f86f7'
+const UP = 'var(--green-bright)', DOWN = 'var(--red-bright)', ACCENT = '#4f86f7'
 const KIND_COLOR = { market: '#7f77c2', sector: '#f59e0b', stock: ACCENT }
 
 // A-shares are red-up like the rest of the site; US green-up

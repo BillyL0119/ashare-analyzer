@@ -5,8 +5,9 @@ import useCompareStore from '../../store/compareStore'
 
 export const BDR = 'var(--border-primary)'
 export const MUTED = 'var(--text-secondary)'
-export const UP = '#3fb67a'
-export const DOWN = '#e5484d'
+// Theme tokens, so gains and losses stay readable on the light theme too (a shade darker there)
+export const UP = 'var(--green-bright)'
+export const DOWN = 'var(--red-bright)'
 export const ACCENT = '#4f86f7'
 
 export const fmt = (n, d = 2) => (n == null || isNaN(n) ? '—' : Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }))

@@ -134,7 +134,7 @@ export default function AnalysisPanel({ stocks }) {
               )}
             </div>
 
-            {pairErr && <div style={{ color: '#e5484d', fontSize: 13 }}>{pairErr}</div>}
+            {pairErr && <div style={{ color: 'var(--red-bright)', fontSize: 13 }}>{pairErr}</div>}
 
             {data && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

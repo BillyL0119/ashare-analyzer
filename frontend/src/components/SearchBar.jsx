@@ -31,6 +31,10 @@ function PctBadge({ val, market }) {
 export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
+  // Keyboard: ↑/↓ move through the results, Enter opens the highlighted one (the first when none is)
+  const [active, setActive] = useState(-1)
+  const [resultsFor, setResultsFor] = useState(results)
+  if (resultsFor !== results) { setResultsFor(results); setActive(-1) }
   const [open, setOpen] = useState(false)
   const [focused, setFocused] = useState(false)
   const [searching, setSearching] = useState(false)
@@ -143,7 +147,18 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   useEffect(() => { if (autoFocus) handleFocus() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') { setOpen(false); e.target.blur() }
+    if (e.key === 'Escape') { setOpen(false); e.target.blur(); return }
+    if (!query.trim() || !results.length) return
+    const pickable = (s) => !isFull && !selectedSymbols.find((sel) => sel.code === s.code)
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      setOpen(true)
+      const step = e.key === 'ArrowDown' ? 1 : -1
+      setActive((i) => (i + step + results.length) % results.length)
+    } else if (e.key === 'Enter') {
+      const s = results[active >= 0 ? active : 0]
+      if (s && pickable(s)) { e.preventDefault(); handleSelect(s) }
+    }
   }
 
   const isFull = selectedSymbols.length >= 4
@@ -186,6 +201,10 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
           onFocus={handleFocus}
           onBlur={() => setFocused(false)}
           onKeyDown={handleKeyDown}
+          role="combobox"
+          aria-expanded={Boolean(showResults)}
+          aria-autocomplete="list"
+          aria-activedescendant={showResults && active >= 0 ? `bfs-search-opt-${active}` : undefined}
           autoFocus={autoFocus}
           placeholder={isFull ? t.searchFull : t.searchPlaceholder}
           disabled={isFull}
@@ -252,17 +271,19 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
 
       {/* Search results panel */}
       {showResults && (
-        <div style={{ ...dropdownStyle, maxHeight: 320, overflowY: 'auto' }}>
-          {results.map((s) => {
+        <div role="listbox" style={{ ...dropdownStyle, maxHeight: 320, overflowY: 'auto' }}>
+          {results.map((s, i) => {
             const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
             const tint = MARKET_TINT[s._market] || MARKET_TINT.us
             return (
               <div
                 key={`${s._market}-${s.code}`}
+                id={`bfs-search-opt-${i}`}
+                role="option"
+                aria-selected={i === active}
                 onClick={() => !alreadyAdded && !isFull && handleSelect(s)}
-                style={rowStyle(alreadyAdded || isFull)}
-                onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                style={{ ...rowStyle(alreadyAdded || isFull), ...(i === active ? { background: 'var(--bg-hover)' } : null) }}
+                onMouseEnter={() => { if (!alreadyAdded && !isFull) setActive(i) }}
               >
                 <span style={{ color: '#4f86f7', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
                 <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>

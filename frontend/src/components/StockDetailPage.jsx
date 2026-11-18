@@ -246,7 +246,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
               {/* Right: latest news */}
               <div style={{ background: BG, border: `1px solid ${BDR}`, borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BDR}`,
-                  fontSize: 13, fontWeight: 600, color: '#ffa726' }}>
+                  fontSize: 13, fontWeight: 600, color: 'var(--accent-gold)' }}>
                   {t.sdNews}
                 </div>
                 {newsItems.length === 0 ? (

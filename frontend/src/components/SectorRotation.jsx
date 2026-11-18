@@ -312,7 +312,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
       )}
 
       {error && !loading && (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: '#e5484d', fontSize: 13 }}>
+        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--red-bright)', fontSize: 13 }}>
           {error}
         </div>
       )}

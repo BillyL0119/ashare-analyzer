@@ -63,7 +63,7 @@ function CardPanel({ item, lang }) {
       {/* Example */}
       {item.example && (
         <div style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 10, color: '#3fb67a', fontWeight: 600, marginBottom: 3, letterSpacing: 0 }}>
+          <div style={{ fontSize: 10, color: 'var(--green-bright)', fontWeight: 600, marginBottom: 3, letterSpacing: 0 }}>
             Example
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.55 }}>

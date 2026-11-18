@@ -169,7 +169,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
 
       {toast && (
         <div role="status" style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9998, maxWidth: '90vw', textAlign: 'center',
-          background: 'var(--bg-secondary)', border: `1px solid ${toast.ok ? UP : DOWN}66`, color: toast.ok ? UP : DOWN, borderRadius: 12, padding: '11px 20px', fontSize: 13.5, fontWeight: 650, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
+          background: 'var(--bg-secondary)', border: `1px solid color-mix(in srgb, ${toast.ok ? UP : DOWN} 40%, transparent)`, color: toast.ok ? UP : DOWN, borderRadius: 12, padding: '11px 20px', fontSize: 13.5, fontWeight: 650, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
           {toast.text}
         </div>
       )}

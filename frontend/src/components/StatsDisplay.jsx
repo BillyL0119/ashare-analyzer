@@ -40,7 +40,7 @@ function SourceBlock({ stats, lang }) {
   return (
     <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px', marginBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12, flexWrap: 'wrap', gap: 6 }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: '#4cc38a' }}>{L === 'zh' ? '访问来源' : 'Traffic sources'}</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--green-bright)' }}>{L === 'zh' ? '访问来源' : 'Traffic sources'}</span>
         {uiTotal > 0 && (
           <span style={{ fontSize: 11, color: MUTED }}>
             {L === 'zh' ? '手机' : 'Mobile'} {Math.round(((ui.mobile || 0) / uiTotal) * 100)}% · {L === 'zh' ? '电脑' : 'Desktop'} {Math.round(((ui.desktop || 0) / uiTotal) * 100)}%
@@ -240,7 +240,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 background: 'rgba(251,191,36,0.1)',
                 border: '1px solid rgba(251,191,36,0.25)',
                 borderRadius: 8, padding: '6px 14px',
-                color: '#fbbf24', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                color: 'var(--accent-gold)', fontSize: 12, fontWeight: 600, cursor: 'pointer',
               }}>
                 {t.stExport}
               </button>
@@ -249,7 +249,7 @@ export default function StatsDisplay({ lang, onClose }) {
                 background: 'rgba(76,195,138,0.1)',
                 border: '1px solid rgba(76,195,138,0.25)',
                 borderRadius: 8, padding: '6px 14px',
-                color: '#4cc38a', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                color: 'var(--green-bright)', fontSize: 12, fontWeight: 600, cursor: 'pointer',
               }}>
                 ✓ {t.stExitExport}
               </button>
@@ -269,7 +269,7 @@ export default function StatsDisplay({ lang, onClose }) {
             {t.stLoading}
           </div>
         ) : !stats ? (
-          <div style={{ color: '#e5484d', textAlign: 'center', padding: '40px 0' }}>
+          <div style={{ color: 'var(--red-bright)', textAlign: 'center', padding: '40px 0' }}>
             {t.stLoadFail}
           </div>
         ) : (
@@ -322,7 +322,7 @@ export default function StatsDisplay({ lang, onClose }) {
             <div style={{ display: 'grid', gridTemplateColumns: pieOption ? '1fr 1fr' : '1fr', gap: 16, marginBottom: 16 }}>
               {/* Top 5 stocks */}
               <div style={{ background: 'var(--bg-tertiary)', border: `1px solid ${BDR}`, borderRadius: 12, padding: '16px 20px' }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#fbbf24', marginBottom: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-gold)', marginBottom: 12 }}>
                   {t.stTop5}
                 </div>
                 {stats.top_stocks.length === 0 ? (

@@ -236,7 +236,7 @@ export default function FinancialPanel({ stocks }) {
             {error && !loading && (
               <div
                 style={{
-                  color: '#e5484d',
+                  color: 'var(--red-bright)',
                   fontSize: 13,
                   padding: '16px',
                   background: '#f8514910',

@@ -72,7 +72,7 @@ const PRESETS = [
 
 const money = (v) => (v == null ? '—' : v >= 1e12 ? `$${(v / 1e12).toFixed(2)}T` : v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : v >= 1e6 ? `$${(v / 1e6).toFixed(0)}M` : `$${v.toFixed(0)}`)
 const vol = (v) => (v == null ? '—' : v >= 1e9 ? `${(v / 1e9).toFixed(2)}B` : v >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : v >= 1e3 ? `${(v / 1e3).toFixed(0)}K` : String(v))
-const UP = '#3fb67a', DOWN = '#e5484d', ACCENT = '#4f86f7'
+const UP = 'var(--green-bright)', DOWN = 'var(--red-bright)', ACCENT = '#4f86f7'
 
 const CSS = `
 .sc-wrap { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }

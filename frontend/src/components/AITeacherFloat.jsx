@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
 import Icon from './Icon'
+import Markdown from '../mobile/Markdown'
 
 const ACCENT = '#4f86f7'
 const ACCENT2 = '#7f77c2'
@@ -57,7 +58,7 @@ function Bubble({ msg }) {
         whiteSpace: 'pre-wrap',
         wordBreak: 'break-word',
       }}>
-        {msg.content}
+        {isUser ? msg.content : <Markdown text={msg.content} />}
         {msg.streaming && (
           <span style={{ opacity: 0.5, marginLeft: 2, animation: 'blink 1s infinite' }}>▋</span>
         )}
