@@ -21,6 +21,7 @@ import { useMobile } from '../hooks/useMobile'
 import KLineTip from './KLineTip'
 import { CUR, localName } from '../utils/markets'
 import Icon from './Icon'
+import './stockCard.css'
 
 export default function StockCard({ stock }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -80,203 +81,71 @@ export default function StockCard({ stock }) {
         overflow: 'hidden',
       }}
     >
-      <div
-        style={{
-          padding: '8px 12px',
-          paddingLeft: 12,
-          borderBottom: `1px solid ${THEME.border}`,
-          display: 'flex',
-          alignItems: 'center',
-          gap: isMobile ? 6 : 12,
-          flexShrink: 0,
-          flexWrap: isMobile ? 'nowrap' : 'wrap',
-          overflowX: isMobile ? 'auto' : 'visible',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-          <span style={{ color: '#64b5f6', fontFamily: 'monospace', fontSize: 14, fontWeight: 600 }}>
-            {code}
-          </span>
-          {displayName && <span style={{ color: THEME.text, fontSize: 14 }}>{displayName}</span>}
+      {/* Header: the company and its price on the left, chart controls and actions on the right.
+          One primary action (paper trade); everything else is quiet. Styles in stockCard.css */}
+      <div className={`sc-head${isMobile ? ' is-mobile' : ''}`}>
+        <div className="sc-id">
+          <span className="sc-name">{displayName || code}</span>
+          {displayName && <span className="sc-code">{code}</span>}
         </div>
 
         {quote && (
-          <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
-            <span style={{ color: priceColor, fontSize: 18, fontWeight: 600 }}>
-              {market !== 'cn' ? CUR[market] : ''}{quote.price.toFixed(2)}
-            </span>
-            <span style={{ color: priceColor, fontSize: 13 }}>
-              {priceDelta >= 0 ? '+' : ''}{priceDelta.toFixed(2)}%
-            </span>
+          <div className="sc-price">
+            <span className="sc-p">{market !== 'cn' ? CUR[market] : ''}{quote.price.toFixed(2)}</span>
+            <span className="sc-c" style={{ color: priceColor }}>{priceDelta >= 0 ? '+' : ''}{priceDelta.toFixed(2)}%</span>
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 4, marginLeft: 'auto', alignItems: 'center' }}>
-          {/* K-line education button — placed right next to period selector */}
-          <button
-            onClick={() => setShowKLineTip(true)}
-            title={t.klineLearn}
-            style={{
-              padding: '3px 9px',
-              borderRadius: 4,
-              border: '1px solid rgba(79,134,247,0.35)',
-              cursor: 'pointer',
-              fontSize: 11,
-              background: 'rgba(79,134,247,0.08)',
-              color: '#4f86f7',
-              transition: 'all 0.15s',
-              whiteSpace: 'nowrap',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.2)'; e.currentTarget.style.borderColor = '#4f86f7' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.08)'; e.currentTarget.style.borderColor = 'rgba(79,134,247,0.35)' }}
-          >
-            {t.klineBtn}
-          </button>
-
-          {Object.entries(periodLabels).map(([key, label]) => (
-            <button
-              key={key}
-              onClick={() => setPeriod(key)}
-              style={{
-                padding: '3px 8px',
-                borderRadius: 4,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 12,
-                background: period === key ? '#4f86f7' : 'var(--bg-hover)',
-                color: period === key ? '#fff' : THEME.text,
-                transition: 'background 0.15s',
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {market === 'cn' && (
-          <div style={{ display: 'flex', gap: 4 }}>
-            {Object.entries(adjustLabels).map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => setAdjust(key)}
-                style={{
-                  padding: '3px 8px',
-                  borderRadius: 4,
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 11,
-                  background: adjust === key ? '#4f86f7' : 'var(--bg-hover)',
-                  color: adjust === key ? '#fff' : THEME.text,
-                  transition: 'background 0.15s',
-                }}
-              >
-                {label}
-              </button>
+        <div className="sc-tools">
+          <div className="sc-seg" role="group" aria-label={t.periodDaily}>
+            {Object.entries(periodLabels).map(([key, label]) => (
+              <button key={key} type="button" aria-pressed={period === key} onClick={() => setPeriod(key)}>{label}</button>
             ))}
           </div>
-        )}
 
-        {/* Export PDF */}
-        <button
-          onClick={() => window.open(`/api/export/pdf/${code}`, '_blank')}
-          title={t.exportTooltip}
-          style={{
-            padding: '3px 8px',
-            borderRadius: 4,
-            border: '1px solid rgba(79,134,247,0.18)',
-            cursor: 'pointer',
-            fontSize: 11,
-            background: 'transparent',
-            color: 'var(--text-muted)',
-            transition: 'all 0.15s',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.12)'; e.currentTarget.style.color = '#4f86f7' }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
-        >
-          {t.exportBtn}
-        </button>
+          {market === 'cn' && (
+            <div className="sc-seg" role="group">
+              {Object.entries(adjustLabels).map(([key, label]) => (
+                <button key={key || 'none'} type="button" aria-pressed={adjust === key} onClick={() => setAdjust(key)}>{label}</button>
+              ))}
+            </div>
+          )}
 
-        {/* Practise with this stock in paper trading (order form opens filled in) */}
-        <button
-          onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
-          title={t.paperTradeHint}
-          style={{
-            padding: '3px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 12, fontWeight: 600,
-            border: '1px solid rgba(76,195,138,0.4)', background: 'rgba(76,195,138,0.1)', color: '#4cc38a',
-            whiteSpace: 'nowrap', transition: 'background 0.15s',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(76,195,138,0.2)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(76,195,138,0.1)' }}
-        >
-          {t.paperTradeBtn}
-        </button>
+          {/* How to read a candlestick chart */}
+          <button type="button" className="sc-ghost" onClick={() => setShowKLineTip(true)} title={t.klineLearn}>
+            <Icon name="book" size={14} />{t.klineBtn}
+          </button>
 
-        {/* Watchlist star */}
-        <button
-          onClick={() => inWatchlist ? wlRemove(code) : wlAdd({ ...stock, market })}
-          title={inWatchlist ? t.watchRemove : t.watchAdd}
-          style={{
-            padding: '3px 6px',
-            borderRadius: 4,
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: 16,
-            background: 'transparent',
-            color: inWatchlist ? '#f6c90e' : 'var(--text-muted)',
-            transition: 'color 0.15s',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = '#f6c90e' }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = inWatchlist ? '#f6c90e' : 'var(--text-muted)' }}
-        >
-          {inWatchlist ? '★' : '☆'}
-        </button>
+          <button type="button" className="sc-ghost" onClick={() => window.open(`/api/export/pdf/${code}`, '_blank')} title={t.exportTooltip}>
+            {t.exportBtn}
+          </button>
 
-        {/* Copy share link */}
-        <button
-          onClick={async () => {
-            const url = `${window.location.origin}/stock/${market}/${code}`
-            await navigator.clipboard.writeText(url).catch(() => {})
-            setCopied(true)
-            setTimeout(() => setCopied(false), 1500)
-          }}
-          title={t.copyLink}
-          style={{
-            padding: '3px 8px', borderRadius: 4,
-            border: '1px solid rgba(79,134,247,0.25)',
-            cursor: 'pointer', fontSize: 12,
-            background: copied ? 'rgba(76,195,138,0.12)' : 'transparent',
-            color: copied ? '#4cc38a' : 'var(--text-muted)',
-            transition: 'all 0.15s', whiteSpace: 'nowrap',
-          }}
-          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(79,134,247,0.1)'; e.currentTarget.style.color = '#4f86f7' } }}
-          onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' } }}
-        >
-          {copied ? '✓' : <Icon name="link" size={13} />}
-        </button>
+          <button type="button" className={`sc-icon${inWatchlist ? ' is-on' : ''}`}
+            onClick={() => inWatchlist ? wlRemove(code) : wlAdd({ ...stock, market })}
+            title={inWatchlist ? t.watchRemove : t.watchAdd} aria-label={inWatchlist ? t.watchRemove : t.watchAdd} aria-pressed={inWatchlist}>
+            {inWatchlist ? '★' : '☆'}
+          </button>
 
-        <button
-          onClick={() => removeSymbol(code)}
-          style={{
-            padding: '3px 10px',
-            borderRadius: 4,
-            border: `1px solid ${THEME.border}`,
-            cursor: 'pointer',
-            fontSize: 12,
-            background: 'transparent',
-            color: 'var(--text-muted)',
-            transition: 'all 0.15s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(229,72,77,0.15)'
-            e.currentTarget.style.color = '#e5484d'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = 'var(--text-muted)'
-          }}
-        >
-          {t.remove}
-        </button>
+          <button type="button" className="sc-icon" title={t.copyLink} aria-label={t.copyLink}
+            onClick={async () => {
+              const url = `${window.location.origin}/stock/${market}/${code}`
+              await navigator.clipboard.writeText(url).catch(() => {})
+              setCopied(true)
+              setTimeout(() => setCopied(false), 1500)
+            }}>
+            {copied ? <Icon name="check" size={15} /> : <Icon name="link" size={15} />}
+          </button>
+
+          {/* Practise with this stock in paper trading (order form opens filled in) */}
+          <button type="button" className="sc-primary" title={t.paperTradeHint}
+            onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}>
+            {t.paperTradeBtn}
+          </button>
+
+          <button type="button" className="sc-icon" onClick={() => removeSymbol(code)} title={t.remove} aria-label={t.remove}>
+            <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>×</span>
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>

@@ -1,0 +1,34 @@
+/* Stock card header (StockCard.jsx). The company name and price carry the weight; the controls
+   are quiet and the one primary action is paper trading. */
+.sc-head {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px;
+  padding: 14px 16px; border-bottom: 1px solid var(--border-primary); flex-shrink: 0;
+}
+.sc-head.is-mobile { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 12px; }
+.sc-head.is-mobile::-webkit-scrollbar { display: none; }
+.sc-id { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.sc-name { font-family: var(--display); font-size: 20px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 28ch; }
+.sc-code { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+.sc-price { display: flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+.sc-p { font-family: var(--display); font-size: 22px; font-weight: 500; color: var(--text-primary); letter-spacing: -0.01em; }
+.sc-c { font-size: 14px; font-weight: 500; }
+.sc-tools { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+.sc-seg { display: inline-flex; padding: 2px; gap: 2px; border: 1px solid var(--border-primary); border-radius: 8px; background: var(--bg-secondary); }
+.sc-seg button { height: 26px; padding: 0 10px; border: 0; border-radius: 6px; background: none; color: var(--text-secondary); font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.sc-seg button:hover { color: var(--text-primary); }
+.sc-seg button[aria-pressed="true"] { background: var(--bg-hover); color: var(--text-primary); font-weight: 500; }
+
+.sc-ghost, .sc-icon, .sc-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 30px; border-radius: 8px; font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap;
+  transition: background-color 150ms var(--ease), color 150ms var(--ease);
+}
+.sc-ghost { padding: 0 10px; border: 1px solid var(--border-primary); background: transparent; color: var(--text-secondary); }
+.sc-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+.sc-icon { width: 30px; border: 0; background: transparent; color: var(--text-muted); font-size: 16px; }
+.sc-icon:hover { background: var(--bg-hover); color: var(--text-primary); }
+.sc-icon.is-on { color: #f5c542; }
+.sc-primary { padding: 0 14px; border: 0; background: var(--accent-fill); color: #fff; font-weight: 500; }
+.sc-primary:hover { background: #1d4ed8; }
+.sc-head button:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }

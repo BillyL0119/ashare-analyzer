@@ -156,15 +156,13 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           display: 'flex',
           gap: 4,
           alignItems: 'center',
-          flexWrap: isMobile ? 'nowrap' : 'wrap',
-          overflowX: isMobile ? 'auto' : 'visible',
-          background: 'var(--bg-secondary)',
-          border: '1px solid var(--border-primary)',
-          borderRadius: 16,
-          padding: '6px 10px',
+          flexWrap: 'nowrap',
+          overflowX: 'auto',
+          borderBottom: '1px solid var(--border-primary)',
+          paddingTop: 8,
         }}
+        role="tablist"
       >
-        <span style={{ color: 'var(--text-muted)', fontSize: 12, letterSpacing: '0.3px', marginRight: 2 }}>{t.viewMode}</span>
         {[
           // Grouped: charts · research · news & market · community (a divider sits between groups)
           [
@@ -200,26 +198,27 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           ],
           [{ key: 'comments', label: t.commentsTab }],
         ].filter((group) => group.length).map((group, gi) => [
-          gi > 0 && <span key={`sep-${gi}`} aria-hidden="true" style={{ width: 1, height: 16, background: 'var(--border-primary)', flexShrink: 0, margin: '0 2px' }} />,
+          gi > 0 && <span key={`sep-${gi}`} aria-hidden="true" style={{ width: 1, height: 14, background: 'var(--border-glow)', flexShrink: 0, margin: '0 6px', alignSelf: 'center' }} />,
           ...group.map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setViewMode(key)}
-              aria-pressed={viewMode === key}
+              role="tab"
+              aria-selected={viewMode === key}
               style={{
-                padding: isMobile ? '4px 10px' : '5px 10px',
-                borderRadius: 20,
+                padding: isMobile ? '8px 9px' : '9px 9px',
+                marginBottom: -1,
+                borderRadius: 0,
                 border: 'none',
+                borderBottom: `2px solid ${viewMode === key ? 'var(--accent-blue)' : 'transparent'}`,
                 cursor: 'pointer',
-                fontSize: isMobile ? 11 : 12,
-                fontWeight: viewMode === key ? 600 : 400,
-                letterSpacing: '0.2px',
+                fontSize: isMobile ? 12 : 13,
+                fontWeight: viewMode === key ? 500 : 400,
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 background: 'transparent',
-                color: viewMode === key ? '#4f86f7' : 'var(--text-secondary)',
-                transition: 'all 0.2s ease',
-                boxShadow: viewMode === key ? 'inset 0 -2px 0 #4f86f7' : 'none',
+                color: viewMode === key ? 'var(--text-primary)' : 'var(--text-secondary)',
+                transition: 'color 150ms var(--ease)',
               }}
               onMouseEnter={(e) => {
                 if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
