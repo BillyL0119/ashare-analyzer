@@ -1,0 +1,87 @@
+/* Summary tab (qs-). Builds on quotepage.css; tokens only, weights 400-600, no shadows or gradients. */
+
+.qs { gap: 16px; }
+.qs-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.qs-main, .qs-rail { display: grid; gap: 16px; min-width: 0; }
+@media (max-width: 900px) { .qs-layout { grid-template-columns: minmax(0, 1fr); } }
+
+/* Header: name, exchange line, big price in the text colour, coloured change, one status line */
+.qs-head { display: grid; gap: 6px; min-width: 0; }
+.qs-name { margin: 0; font-size: 17px; font-weight: 600; color: var(--text-primary); line-height: 1.3; overflow-wrap: anywhere; }
+.qs-name .sym { color: var(--text-muted); font-weight: 400; margin-left: 6px; }
+.qs-exch { font-size: 12.5px; color: var(--text-muted); }
+.qs-price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; }
+.qs-price { font-size: 38px; font-weight: 600; line-height: 1.1; color: var(--text-primary); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.qs-chg { font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.qs-status { font-size: 12.5px; color: var(--text-muted); }
+.qs-ext { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.qs-ext b { font-weight: 500; color: var(--text-primary); margin: 0 4px 0 2px; }
+.qs-ext span.t { color: var(--text-muted); margin-left: 6px; font-size: 12px; }
+@media (max-width: 520px) { .qs-price { font-size: 32px; } .qs-chg { font-size: 15px; } }
+
+/* Chart with its range buttons (each shows that range's change) */
+.qs-ranges { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 2px; width: 100%; margin-bottom: 8px; }
+.qs-ranges button { display: grid; justify-items: center; gap: 1px; padding: 5px 2px; min-width: 0; }
+.qs-ranges .l { font-size: 12.5px; }
+.qs-ranges .p { font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 520px) { .qs-ranges { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.qs-chart { position: relative; height: 300px; }
+.qs-chart-msg { position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; color: var(--text-muted); text-align: center; padding: 0 16px; }
+@media (max-width: 520px) { .qs-chart { height: 240px; } }
+
+/* Key statistics: two label/value columns that fold to one when the card itself is narrow */
+.qs-stats { container-type: inline-size; }
+.qs-stats-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
+@container (max-width: 560px) { .qs-stats-grid { grid-template-columns: minmax(0, 1fr); } }
+.qs-stats-grid .qp-dl > dd { white-space: normal; }
+.qs-stats-grid .qp-dl > dd .m { display: block; font-size: 11.5px; color: var(--text-muted); font-weight: 400; }
+.qs-stats-grid .qp-dl > dt { align-self: center; }
+@container (max-width: 560px) { .qs-stats-grid .qp-dl + .qp-dl > dt:first-of-type, .qs-stats-grid .qp-dl + .qp-dl > dd:first-of-type { border-top: 1px solid var(--border-primary); } }
+
+/* Range bar: a thin track with a marker at the current price */
+.qs-bar { display: block; position: relative; height: 4px; width: 128px; margin: 6px 0 2px auto; border-radius: 2px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); box-sizing: content-box; }
+.qs-bar i { position: absolute; top: -4px; width: 2px; height: 12px; margin-left: -1px; border-radius: 1px; background: var(--text-primary); }
+
+/* Performance vs the S&P 500: paired bars around a zero line */
+.qs-perf { display: grid; gap: 14px; }
+.qs-perf-row { display: grid; gap: 4px; }
+.qs-perf-label { font-size: 12.5px; color: var(--text-secondary); }
+.qs-perf-line { display: grid; grid-template-columns: 64px minmax(0, 1fr) 68px; align-items: center; gap: 8px; font-size: 12.5px; }
+.qs-perf-line .k { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qs-perf-line .v { text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; }
+.qs-track { position: relative; height: 8px; }
+.qs-track::before { content: ""; position: absolute; left: var(--zero); top: -3px; bottom: -3px; width: 1px; background: var(--border-glow); }
+.qs-track b { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
+.qs-sentence { margin: 14px 0 0; font-size: 13.5px; line-height: 1.55; color: var(--text-primary); }
+
+/* Right rail */
+.qs-targets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 14px; }
+.qs-targets > div { padding: 0 8px; border-left: 1px solid var(--border-primary); min-width: 0; }
+.qs-targets > div:first-child { padding-left: 0; border-left: none; }
+.qs-targets .k { display: block; font-size: 11.5px; color: var(--text-muted); }
+.qs-targets .v { display: block; font-size: 13px; font-weight: 500; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.qs-scale { display: block; position: relative; height: 4px; margin: 16px 6px 0; border-radius: 2px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); box-sizing: content-box; }
+.qs-scale i { position: absolute; top: -4px; width: 2px; height: 12px; margin-left: -1px; border-radius: 1px; background: var(--text-muted); }
+.qs-scale i.now { background: var(--text-primary); }
+.qs-scale i.avg { background: var(--accent-blue); }
+.qs-split { display: flex; height: 6px; margin-top: 16px; border-radius: 3px; overflow: hidden; gap: 2px; }
+.qs-split i { display: block; min-width: 3px; }
+.qs-split-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; font-size: 12.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.qs-split-legend b { font-weight: 500; color: var(--text-primary); }
+.qs-peers td, .qs-peers th { white-space: normal; }
+.qs-peers .two { display: block; font-size: 11.5px; color: var(--text-muted); }
+.qs-peers .nm { display: block; max-width: 112px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: var(--text-muted); font-weight: 400; }
+.qs-peers button.qp-link { font-weight: 500; font-size: 13px; }
+.qs-profile .qp-dl > dd { white-space: normal; overflow-wrap: anywhere; }
+.qs-desc { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+
+/* News */
+.qs-news { display: grid; margin: 0; padding: 0; list-style: none; }
+.qs-news li { padding: 10px 0; border-top: 1px solid var(--border-primary); min-width: 0; }
+.qs-news li:first-child { border-top: none; padding-top: 0; }
+.qs-news a { color: var(--text-primary); text-decoration: none; font-size: 14px; line-height: 1.45; font-weight: 500; overflow-wrap: anywhere; }
+.qs-news a:hover { color: var(--accent-blue); text-decoration: underline; }
+.qs-news a:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 3px; }
+.qs-news .by { display: block; margin-top: 2px; font-size: 12px; color: var(--text-muted); }
+
+.qs-err { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary); }
