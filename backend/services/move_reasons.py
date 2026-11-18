@@ -185,13 +185,28 @@ def _fomc_days() -> set:
 
 def _news(sym: str) -> list:
     """[(date, title, url, publisher)] of recent Nasdaq-hosted headlines where the stock is the main subject."""
+    def page(offset: int) -> list:
+        r = requests.get("https://api.nasdaq.com/api/news/topic/articlebysymbol",
+                         params={"q": f"{sym.lower()}|stocks", "offset": offset, "limit": 100, "fallback": "true"},
+                         headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=15)
+        return ((r.json().get("data") or {}).get("rows")) or []
+
     def fetch():
+        # Nasdaq takes ~4 s a page: the five pages are asked for side by side (they used to run one
+        # after another, ~18 s on a cold load), then read in order up to the first short page
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=5) as ex:
+            futs = [ex.submit(page, off) for off in range(0, 500, 100)]
+        pages = []
+        for f in futs:
+            try:
+                pages.append(f.result())
+            except Exception:
+                pages.append(None)
         out = []
-        for offset in range(0, 500, 100):
-            r = requests.get("https://api.nasdaq.com/api/news/topic/articlebysymbol",
-                             params={"q": f"{sym.lower()}|stocks", "offset": offset, "limit": 100, "fallback": "true"},
-                             headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=15)
-            rows = ((r.json().get("data") or {}).get("rows")) or []
+        for rows in pages:
+            if rows is None:
+                break
             for x in rows:
                 if (x.get("primarysymbol") or "").upper() != sym.upper():
                     continue
@@ -245,18 +260,23 @@ def _build(market: str, sym: str, limit: int) -> dict:
     from concurrent.futures import ThreadPoolExecutor
     if market not in ("us", "cn"):
         raise ValueError("market")
-    sector = _sector_of(sym) if market == "us" else None
-    etf = _SECTOR_ETF.get(sector or "") if market == "us" else None
-    # Everything a page needs is fetched side by side (a cold load otherwise waits on each in turn)
-    with ThreadPoolExecutor(max_workers=6) as ex:
+    # Everything a page needs is fetched side by side (a cold load otherwise waits on each in turn).
+    # The sector ETF's prices need the sector first, so that job starts as soon as the sector is known.
+    def sector_closes():
+        etf = _SECTOR_ETF.get(_sector_of(sym) or "")
+        return _us_closes(etf) if etf and etf != sym else None
+    with ThreadPoolExecutor(max_workers=7) as ex:
         if market == "us":
             jobs = {"closes": ex.submit(_us_closes, sym), "bench": ex.submit(_us_closes, "SPY"),
-                    "sector": ex.submit(_us_closes, etf) if etf and etf != sym else None,
+                    "sector": ex.submit(sector_closes),
                     "filings": ex.submit(_filings, sym), "fomc": ex.submit(_fomc_days), "news": ex.submit(_news, sym)}
         else:
             jobs = {"closes": ex.submit(_cn_closes, _cn_code(sym)), "bench": ex.submit(_cn_closes, "sh510300"),
                     "anns": ex.submit(_announcements, sym)}
         got = {k: (f.result() if f else None) for k, f in jobs.items()}
+    # the screener universe is loaded by now (sector_closes asked for it), so this is a dictionary lookup
+    sector = _sector_of(sym) if market == "us" else None
+    etf = _SECTOR_ETF.get(sector or "") if market == "us" else None
     closes, bench = got["closes"] or {}, got["bench"] or {}
     bench_sym = "SPY" if market == "us" else "510300"
     sector_rets = _returns(got.get("sector") or {})

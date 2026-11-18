@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import ReactECharts from '../lib/echarts'
 import { T } from '../i18n/translations'
-import { THEME } from '../utils/chartHelpers'
+import { THEME } from '../utils/chartTheme'
 
 const BDR   = 'rgba(108,156,255,0.12)'
 const MUTED = 'var(--text-muted)'

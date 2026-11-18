@@ -5,7 +5,7 @@ import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { trackSearch } from '../utils/analytics'
-import { riseColor, fallColor } from '../utils/chartHelpers'
+import { riseColor, fallColor } from '../utils/chartTheme'
 import { MARKET_TINT, marketLabel, localName } from '../utils/markets'
 
 // HK / Japan rows from /api/{hk,jp}/search and /hot, in the shape the rest of the bar uses

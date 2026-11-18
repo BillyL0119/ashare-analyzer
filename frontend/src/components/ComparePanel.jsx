@@ -1,90 +1,34 @@
-import { useState, useEffect } from 'react'
-import ReactECharts from '../lib/echarts'
+import { useState, lazy, Suspense } from 'react'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { useMobile } from '../hooks/useMobile'
-import StockCard from './StockCard'
-import { useStockData } from '../hooks/useStockData'
-import { buildOverlayOption, THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
-import AnalysisPanel from './AnalysisPanel'
-import MonteCarloPanel from './MonteCarloPanel'
-import FactorPanel from './FactorPanel'
-import FinancialPanel from './FinancialPanel'
-import SimilarPanel from './SimilarPanel'
-import NewsPanel from './NewsPanel'
-import RadarPanel from './RadarPanel'
 import MarketOverview from './MarketOverview'
-import CalendarPanel from './CalendarPanel'
-import EarningsPanel from './EarningsPanel'
-import StockDetailPage from './StockDetailPage'
-import ScorePanel from './ScorePanel'
-import FundamentalsPanel from './FundamentalsPanel'
-import BacktestPanel from './BacktestPanel'
-import GlobalNewsPanel from './GlobalNewsPanel'
-import CommentsPanel from './CommentsPanel'
-import SectorRotation from './SectorRotation'
-import MovesPanel from './moves/MovesPanel'
 import movesStrings from './moves/movesStrings'
 
-function OverlaySlot({ stock, onData }) {
-  const { period, startDate, endDate, adjust, market } = useCompareStore()
-  const { data } = useStockData(stock.code, { period, startDate, endDate, adjust, market })
-
-  useEffect(() => {
-    onData(stock.code, data)
-  }, [data, stock.code, onData])
-
-  return null
-}
-
-function OverlayView({ lang }) {
-  useThemeStore((s) => s.theme) // re-render on theme toggle
-  const { selectedSymbols } = useCompareStore()
-  const t = T[lang]
-  const [dataMap, setDataMap] = useState({})
-
-  const handleData = (code, data) => {
-    setDataMap((prev) => ({ ...prev, [code]: data }))
-  }
-
-  const allLoaded = selectedSymbols.length > 0 &&
-    selectedSymbols.every((s) => dataMap[s.code])
-
-  const symbolsData = allLoaded
-    ? selectedSymbols.map((s) => ({
-        symbol: s.code,
-        name: s.name,
-        candles: dataMap[s.code].candles,
-      }))
-    : []
-
-  return (
-    <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 12 }}>
-      {selectedSymbols.map((s) => (
-        <OverlaySlot key={s.code} stock={s} onData={handleData} />
-      ))}
-
-      <div style={{ color: THEME.text, fontSize: 14, marginBottom: 8 }}>
-        {t.overlayTitle}
-      </div>
-
-      {!allLoaded ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, color: 'var(--text-muted)' }}>
-          {t.loading}
-        </div>
-      ) : (
-        <ReactECharts
-          option={buildOverlayOption(symbolsData)}
-          style={{ height: 480, width: '100%' }}
-          opts={{ renderer: 'canvas' }}
-          notMerge={true}
-        />
-      )}
-    </div>
-  )
-}
+// Everything that draws a chart or fetches a stock's data loads on demand, so the home page (no
+// stock selected) does not download ECharts and the analysis panels up front
+const OverlayView      = lazy(() => import('./OverlayView'))
+const StockCard        = lazy(() => import('./StockCard'))
+const AnalysisPanel    = lazy(() => import('./AnalysisPanel'))
+const MonteCarloPanel  = lazy(() => import('./MonteCarloPanel'))
+const FactorPanel      = lazy(() => import('./FactorPanel'))
+const FinancialPanel   = lazy(() => import('./FinancialPanel'))
+const SimilarPanel     = lazy(() => import('./SimilarPanel'))
+const NewsPanel        = lazy(() => import('./NewsPanel'))
+const RadarPanel       = lazy(() => import('./RadarPanel'))
+const CalendarPanel    = lazy(() => import('./CalendarPanel'))
+const EarningsPanel    = lazy(() => import('./EarningsPanel'))
+const StockDetailPage  = lazy(() => import('./StockDetailPage'))
+const ScorePanel       = lazy(() => import('./ScorePanel'))
+const FundamentalsPanel = lazy(() => import('./FundamentalsPanel'))
+const BacktestPanel    = lazy(() => import('./BacktestPanel'))
+const GlobalNewsPanel  = lazy(() => import('./GlobalNewsPanel'))
+const CommentsPanel    = lazy(() => import('./CommentsPanel'))
+const SectorRotation   = lazy(() => import('./SectorRotation'))
+const MovesPanel       = lazy(() => import('./moves/MovesPanel'))
+const PanelFallback = () => <div className="skeleton" style={{ height: 360, borderRadius: 8 }} aria-hidden="true" />
 
 // View modes where the date range is irrelevant
 const _NO_DATE_MODES = new Set(['moves', 'fundamentals', 'news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
@@ -138,8 +82,10 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
         </div>
         <MarketOverview lang={lang} onStockSelect={handleStockSelect} onTabChange={onTabChange} onOpenKnowledge={onOpenKnowledge} />
         {detailSymbol && (
-          <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang} market={market}
-            onClose={closeDetail} onLoadMain={handleLoadMain} />
+          <Suspense fallback={null}>
+            <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang} market={market}
+              onClose={closeDetail} onLoadMain={handleLoadMain} />
+          </Suspense>
         )}
       </>
     )
@@ -271,6 +217,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
         </div>
       )}
 
+      <Suspense fallback={<PanelFallback />}>
       {viewMode === 'overlay' ? (
         <OverlayView lang={lang} />
       ) : viewMode === 'analysis' ? (
@@ -320,10 +267,13 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
           ))}
         </div>
       )}
+      </Suspense>
 
       {detailSymbol && (
-        <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang} market={market}
-          onClose={closeDetail} onLoadMain={handleLoadMain} />
+        <Suspense fallback={null}>
+          <StockDetailPage symbol={detailSymbol} name={detailName} lang={lang} market={market}
+            onClose={closeDetail} onLoadMain={handleLoadMain} />
+        </Suspense>
       )}
     </div>
   )

@@ -9,12 +9,12 @@ import KnowledgeCard from './components/KnowledgeCard'
 import GlobalSentiment from './components/GlobalSentiment'
 import USMarketPanel from './components/USMarketPanel'
 const IntlMarketPanel = lazy(() => import('./components/IntlMarketPanel'))
-import StatsDisplay from './components/StatsDisplay'
 import AuthModal from './components/AuthModal'
 import ErrorBoundary from './components/ErrorBoundary'
 import useAuthStore from './store/authStore'
 
 const PaperTradingPanel  = lazy(() => import('./components/PaperTradingPanel'))
+const StatsDisplay       = lazy(() => import('./components/StatsDisplay'))   // site stats dialog, draws charts
 const TimeMachinePage    = lazy(() => import('./components/timemachine/TimeMachinePage'))
 const CasesPage          = lazy(() => import('./components/cases/CasesPage'))
 const DiagramLab         = lazy(() => import('./components/diagrams/DiagramLab'))
@@ -806,7 +806,7 @@ export default function App() {
         </ErrorBoundary>
       </main>
 
-      {showStats && <StatsDisplay lang={lang} onClose={() => setShowStats(false)} />}
+      {showStats && <Suspense fallback={null}><StatsDisplay lang={lang} onClose={() => setShowStats(false)} /></Suspense>}
       {/* Toast notification for saved preferences */}
       {toast && (
         <div style={{

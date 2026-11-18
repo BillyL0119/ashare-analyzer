@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import useCompareStore from '../../store/compareStore'
+import { getJSON } from '../../utils/sharedFetch'
 import classStrings from '../classes/classStrings'
 import navStrings from '../nav/navStrings'
 import S, { SECTOR_NAMES } from './lessonStrings'
@@ -32,7 +33,7 @@ function useJson(url) {
   const [state, setState] = useState({ data: null, failed: false })
   useEffect(() => {
     let alive = true
-    fetch(url).then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
+    getJSON(url)
       .then((d) => { if (alive) setState({ data: d, failed: false }) })
       .catch(() => { if (alive) setState({ data: null, failed: true }) })
     return () => { alive = false }

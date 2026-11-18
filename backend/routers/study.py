@@ -3,6 +3,7 @@ Multi-Exam Economics Study Center — /api/study/*
 Supports: A-Level (Cambridge 9708), IGCSE (Cambridge 0455), AP Macroeconomics, AP Microeconomics, IB Economics SL/HL
 """
 
+import os
 import logging
 from datetime import datetime
 from fastapi import APIRouter, HTTPException
@@ -1498,17 +1499,28 @@ def ask_ai_tutor(body: AskBody):
         "If the question is in Chinese, answer in Chinese. If in English, answer in English."
     )
 
+    # DeepSeek, the same provider as the AI teacher and the news summaries (the server has no
+    # Anthropic key, so the old Anthropic call failed every time with a 500)
+    key = os.environ.get("DEEPSEEK_API_KEY", "")
+    if not key:
+        raise HTTPException(503, "The AI tutor is not available right now.")
+    question = (body.question or "").strip()[:2000]
+    if not question:
+        raise HTTPException(400, "Ask a question first.")
     try:
-        import anthropic
-        client = anthropic.Anthropic()
-        msg = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=600,
-            system=system_prompt,
-            messages=[{"role": "user", "content": body.question}],
+        from openai import OpenAI
+        client = OpenAI(api_key=key, base_url="https://api.deepseek.com", timeout=60, max_retries=0)
+        resp = client.chat.completions.create(
+            model="deepseek-chat", max_tokens=700, temperature=0.4,
+            messages=[{"role": "system", "content": system_prompt},
+                      {"role": "user", "content": question}],
         )
-        answer = msg.content[0].text.strip()
+        answer = ((resp.choices[0].message.content if resp and resp.choices else "") or "").strip()
+        if not answer:
+            raise ValueError("empty answer")
         return {"answer": answer, "topic": topic_title, "exam": exam_name}
+    except HTTPException:
+        raise
     except Exception:
         from security import internal_error
         raise internal_error()

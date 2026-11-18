@@ -89,56 +89,76 @@ def _keyword_sentiment(text: str) -> dict:
     return {"label": label, "score": score}
 
 
-def _ai_sentiment(title: str, content: str = "") -> dict:
-    """Call Claude API for deep sentiment analysis. Cached per title (2h)."""
+def _ai_sentiment(title: str, content: str = "") -> dict | None:
+    """DeepSeek's reading of one headline (sentiment, impact, a short summary and reason), cached per
+    title for 2h. None when there is no key, the hourly budget is spent or the call fails, so the
+    caller falls back to the keyword reading (it used to return "neutral", which hid the keywords)."""
     cache_key = hashlib.md5(title.encode("utf-8", errors="ignore")).hexdigest()
     now = time.time()
     if cache_key in _ai_cache:
         ts, result = _ai_cache[cache_key]
         if now - ts < _AI_TTL:
             return result
-
-    fallback = {"sentiment": "neutral", "impact": "low", "summary": "", "reason": ""}
-    if not _ai_budget_ok():
-        return fallback
+    key = os.environ.get("DEEPSEEK_API_KEY", "")
+    if not key or not _ai_budget_ok():
+        return None
     try:
-        import anthropic
-        client = anthropic.Anthropic()
-        input_text = title
-        if content:
-            input_text += "\n" + content[:400]
-
-        msg = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=256,
-            system=(
-                "你是A股投资分析师。分析以下新闻对相关股票的影响，"
-                "只返回合法JSON，不要任何其他文字：\n"
-                '{"sentiment":"positive/neutral/negative",'
-                '"impact":"high/medium/low",'
-                '"summary":"一句话总结(15字以内)",'
-                '"reason":"简短理由(25字以内)"}'
-            ),
-            messages=[{"role": "user", "content": input_text}],
+        from openai import OpenAI
+        client = OpenAI(api_key=key, base_url="https://api.deepseek.com", timeout=20, max_retries=0)
+        input_text = title + ("\n" + content[:400] if content else "")
+        resp = client.chat.completions.create(
+            model="deepseek-chat", max_tokens=200, temperature=0.2,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": (
+                    "你是A股投资分析师。分析以下新闻对相关股票的影响，"
+                    "只返回合法JSON，不要任何其他文字：\n"
+                    '{"sentiment":"positive/neutral/negative",'
+                    '"impact":"high/medium/low",'
+                    '"summary":"一句话总结(15字以内)",'
+                    '"reason":"简短理由(25字以内)"}'
+                )},
+                {"role": "user", "content": input_text},
+            ],
         )
-        raw = msg.content[0].text.strip()
-        # Strip markdown code block if present
+        raw = ((resp.choices[0].message.content if resp and resp.choices else "") or "").strip()
         if "```" in raw:
             raw = raw.split("```")[1].removeprefix("json").strip()
         result = json.loads(raw)
         for k in ("sentiment", "impact", "summary", "reason"):
             result.setdefault(k, "")
-        # Sanitize enums
         if result.get("sentiment") not in ("positive", "neutral", "negative"):
             result["sentiment"] = "neutral"
         if result.get("impact") not in ("high", "medium", "low"):
             result["impact"] = "low"
     except Exception as exc:
-        logger.debug("Claude sentiment failed for '%s': %s", title[:40], exc)
-        result = fallback
-
+        logger.debug("AI news sentiment failed for '%s': %s", title[:40], exc)
+        return None
     _ai_cache[cache_key] = (now, result)
     return result
+
+
+def _ai_sentiments(items: list, limit: int = 8, deadline: float = 10.0) -> dict:
+    """AI readings for the first `limit` headlines, fetched in parallel and waited on for at most
+    `deadline` seconds: {index: reading}. Headlines without one keep their keyword reading."""
+    out: dict = {}
+    todo = list(enumerate(items[:limit]))
+    if not todo:
+        return out
+    pool = ThreadPoolExecutor(max_workers=min(8, len(todo)))
+    futs = {pool.submit(_ai_sentiment, it["title"], it.get("content", "")): i for i, it in todo}
+    try:
+        for f in as_completed(futs, timeout=deadline):
+            try:
+                r = f.result()
+            except Exception:
+                r = None
+            if r:
+                out[futs[f]] = r
+    except Exception:
+        pass                       # past the deadline: the rest stay on keywords (and fill the cache for next time)
+    pool.shutdown(wait=False)
+    return out
 
 
 _SUMMARY_LANG = {"en": "English", "ja": "Japanese", "ko": "Korean", "fr": "French"}
@@ -1308,14 +1328,13 @@ def _get_news_base(symbol: str, market: str):
 
         # ── Per-item sentiment ──
         processed = []
-        for item in news_raw:
+        ai_by_index = _ai_sentiments(news_raw)
+        for idx, item in enumerate(news_raw):
             kw = _keyword_sentiment(item["title"] + " " + item.get("content", ""))
-            ai = _ai_sentiment(item["title"], item.get("content", ""))
-            final = (
-                ai["sentiment"]
-                if ai["sentiment"] in ("positive", "neutral", "negative")
-                else kw["label"]
-            )
+            ai = ai_by_index.get(idx)
+            final = ai["sentiment"] if ai else kw["label"]
+            if not ai:
+                ai = {"sentiment": "", "impact": "", "summary": "", "reason": ""}
             processed.append({
                 "title": item["title"],
                 "source": item["source"],

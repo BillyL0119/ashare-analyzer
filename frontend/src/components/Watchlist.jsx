@@ -3,7 +3,7 @@ import useWatchlistStore from '../store/watchlistStore'
 import useCompareStore from '../store/compareStore'
 import { getRealtimeQuote, getIntlRealtime } from '../api/stockApi'
 import { T } from '../i18n/translations'
-import { riseColor, fallColor } from '../utils/chartHelpers'
+import { riseColor, fallColor } from '../utils/chartTheme'
 import { CUR, MARKET_TINT, guessMarket } from '../utils/markets'
 
 const ACCENT_BLUE = '#6c9cff'

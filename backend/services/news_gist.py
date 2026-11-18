@@ -124,7 +124,8 @@ def _generate(key: str, title: str, lead: str, lang: str, banks: list) -> None:
             messages=[{"role": "system", "content": system},
                       {"role": "user", "content": f"Headline: {title}\nLead: {(lead or '')[:400]}"}],
         )
-        text = (resp.choices[0].message.content or "").strip().strip('"“”「」\'')
+        msg = resp.choices[0].message.content if resp and resp.choices else ""   # a busy reply can carry no choices
+        text = (msg or "").strip().strip('"“”「」\'')
         if not text or not _right_language(text, lang) or text == title:
             text = ""                                 # remembered as "nothing to show", not retried
         with _lock:

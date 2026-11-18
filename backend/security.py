@@ -34,6 +34,7 @@ RATE_RULES = [
     # Limits are per IP and deliberately generous: a school or office shares one IP, and
     # the endpoints that spend LLM credits also keep their own per-device limits.
     ("/api/ai/chat",         "POST", 40, 60),    # each call spends LLM credits
+    ("/api/study/ask",       "POST", 20, 60),    # study center AI tutor, also LLM credits
     ("/api/career",          "POST", 30, 60),
     ("/api/universities",    "POST", 30, 60),
     # Creating things that persist on disk: per hour, so a script cycling device ids cannot fill it
@@ -57,6 +58,8 @@ RATE_RULES = [
 GLOBAL_RULES = [
     ("/api/ai/chat",                "POST", 60, 60),
     ("/api/ai/chat",                "POST", 3000, 86400),
+    ("/api/study/ask",              "POST", 40, 60),
+    ("/api/study/ask",              "POST", 1500, 86400),
     ("/api/career/mock-interview",  "POST", 30, 60),
     ("/api/career/mock-interview",  "POST", 1000, 86400),
     ("/api/universities/interview", "POST", 30, 60),
