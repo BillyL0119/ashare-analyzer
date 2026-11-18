@@ -1,0 +1,59 @@
+/* Holders (qo-) and Analysts (qa-) tabs. Shared building blocks come from quotepage.css. */
+
+.qo-how { margin: -4px 0 12px; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
+.qo-sentence { margin: 0 0 10px; font-size: 14px; line-height: 1.5; color: var(--text-primary); }
+
+/* Ruled strip: key figures separated by hairlines, not boxed tiles */
+.qo-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; }
+.qo-strip > div { padding: 0 16px; border-left: 1px solid var(--border-primary); min-width: 0; }
+.qo-strip > div:first-child { padding-left: 0; border-left: none; }
+.qo-strip dt { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+.qo-strip dd { margin: 0; font-size: 20px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+  .qo-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+  .qo-strip > div:nth-child(odd) { padding-left: 0; border-left: none; }
+}
+
+/* Position changes: a bar sized by shares next to the signed number */
+.qo-bar { display: block; height: 6px; min-width: 2px; border-radius: 3px; background: var(--text-muted); opacity: .8; }
+.qo-bar.up { background: var(--accent-fill); opacity: 1; }
+.qo-barcell { width: 30%; min-width: 80px; padding-left: 14px; }
+.qo-table td.name { color: var(--text-primary); font-weight: 500; white-space: normal; min-width: 140px; }
+.qo-table td.l, .qo-table th.l { text-align: left; }
+.qo-table td.wrap { white-space: normal; }
+.qo-tag { display: inline-block; margin-left: 6px; padding: 0 6px; font-size: 11px; line-height: 17px; border-radius: 9px; border: 1px solid var(--border-glow); color: var(--text-secondary); }
+
+.qo-chart { width: 100%; height: 300px; }
+.qo-facts { margin-top: 12px; }
+
+/* Analysts */
+.qa-note { margin: 0; padding: 10px 14px; font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); border: 1px solid var(--border-primary); border-radius: 10px; background: var(--bg-tertiary); }
+.qa-consensus { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.qa-consensus b { font-size: 22px; font-weight: 600; color: var(--text-primary); }
+.qa-consensus span { font-size: 12.5px; color: var(--text-muted); }
+
+/* Stacked buy / hold / sell bar; each part is named in the legend below, not only coloured */
+.qa-stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--bg-tertiary); gap: 2px; }
+.qa-stack > i { display: block; min-width: 2px; }
+.qa-legend { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 10px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--text-secondary); }
+.qa-legend li { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.qa-legend b { color: var(--text-primary); font-weight: 600; }
+.qa-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
+
+/* Price target scale: track with a marker for the average and a labelled line for the current price */
+.qa-scale { position: relative; height: 56px; margin: 6px 12px 0; }
+.qa-track { position: absolute; left: 0; right: 0; top: 40px; height: 4px; border-radius: 2px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); box-sizing: content-box; margin-top: -1px; }
+.qa-range { position: absolute; top: 40px; height: 4px; border-radius: 2px; background: var(--text-muted); opacity: .6; }
+.qa-tick { position: absolute; top: 35px; width: 2px; height: 14px; margin-left: -1px; background: var(--text-secondary); }
+.qa-avg { position: absolute; top: 36px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--accent-fill); border: 2px solid var(--bg-secondary); box-sizing: border-box; }
+.qa-now { position: absolute; top: 0; transform: translateX(-50%); text-align: center; font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; }
+.qa-now::after { content: ''; display: block; width: 2px; height: 22px; margin: 2px auto 0; background: var(--text-primary); }
+.qa-targets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 12px 0 0; text-align: center; }
+.qa-targets > div { border-left: 1px solid var(--border-primary); padding: 0 8px; }
+.qa-targets > div:first-child { border-left: none; }
+.qa-targets dt { font-size: 12px; color: var(--text-muted); }
+.qa-targets dd { margin: 2px 0 0; font-size: 16px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+.qa-sub { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.qa-peg { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.qa-peg b { font-size: 22px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
