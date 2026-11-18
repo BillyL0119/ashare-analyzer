@@ -96,6 +96,14 @@ struct MarketTabView: View {
             .navigationDestination(item: $selectedResult) { r in
                 StockDetailView(code: r.code, name: r.name, market: r.resolvedMarket)
             }
+            #if DEBUG
+            .task {
+                // Screenshot job (.github/workflows/ios.yml): `-openStock AAPL` opens that stock's page at launch
+                if selectedResult == nil, let code = UserDefaults.standard.string(forKey: "openStock") {
+                    selectedResult = StockSearchResult(code: code, name: code, changePct: nil, market: nil)
+                }
+            }
+            #endif
             .safeAreaInset(edge: .bottom) {
                 Text("disclaimer")
                     .font(.caption2)

@@ -81,6 +81,7 @@ jobs:
             for tab in market learning news teacher paper; do
               shot "$scheme-$tab" 10 -startTab "$tab" -appLanguage en
             done
+            shot "$scheme-stock" 15 -startTab market -openStock AAPL -appLanguage en
           done
           # Chinese: the quote switches to the brush script once iOS has fetched it
           xcrun simctl ui "$UDID" appearance light
