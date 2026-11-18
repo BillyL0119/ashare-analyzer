@@ -1,0 +1,45 @@
+/* Quote of the day, pinned above everything else on the home page.
+   A large pull quote in the display face on its own panel; the opening mark hangs in the margin. */
+.bfs-quote {
+  margin: 20px 0 8px;
+  padding: 28px 40px 28px 56px;
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+}
+.bfs-quote-head {
+  display: flex; justify-content: space-between; gap: 16px;
+  margin: 0 0 16px; color: var(--text-muted); font-size: 13px;
+}
+.bfs-quote blockquote {
+  position: relative;
+  margin: 0;
+  max-width: 34ch;
+  font-family: var(--display);
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+.bfs-quote blockquote.is-long { max-width: 46ch; font-size: clamp(22px, 2.3vw, 30px); line-height: 1.25; }
+.bfs-quote .mark {
+  position: absolute; left: -0.62em; top: -0.05em;
+  color: var(--accent-blue); font-size: 1.6em; line-height: 1;
+}
+.bfs-quote .mark-end { color: var(--accent-blue); }
+.bfs-quote-who { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+.bfs-quote-who .avatar {
+  display: grid; place-items: center; flex: none;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg-tertiary); border: 1px solid var(--border-primary);
+  color: var(--text-secondary); font-size: 14px; font-weight: 500;
+}
+.bfs-quote-who b { display: block; font-size: 15px; font-weight: 500; color: var(--text-primary); }
+.bfs-quote-who .role { display: block; font-size: 13px; color: var(--text-muted); }
+
+@media (max-width: 700px) {
+  .bfs-quote { padding: 20px 20px 20px 36px; }
+  .bfs-quote blockquote, .bfs-quote blockquote.is-long { font-size: 22px; }
+}

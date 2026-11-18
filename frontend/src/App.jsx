@@ -776,10 +776,10 @@ export default function App() {
           ) : (
             <>
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><MarketLesson lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange} onNavigate={navigate} /></ErrorBoundary></div>
+                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
+                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><MarketLesson lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange} onNavigate={navigate} /></ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><ErrorBoundary fallback={null}>
