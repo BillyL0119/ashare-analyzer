@@ -171,3 +171,42 @@ def test_suffix_order_prefers_learned_then_exchange(monkeypatch):
     assert qs._suffix_order("AAPL", "NASDAQ-GS")[0] == ".OQ"
     assert qs._suffix_order("BRK.B", "NYSE")[0] == ".N"
     assert qs._suffix_order("SPY", "PSE")[0] == ".AM"
+
+
+def test_next_earnings_states(monkeypatch):
+    monkeypatch.setattr(nq, "_mem", {})
+    zacks_none = {"announcement": "Earnings announcement* for AAPL: ",
+                  "reportText": "Our vendor, Zacks Investment Research, hasn't provided us with the upcoming earnings report date."}
+    monkeypatch.setattr(nq, "get", lambda path, params=None, timeout=8: zacks_none)
+    assert qs._next_earnings("AAPL") == {"date": None, "timing": None, "eps_estimate": None, "announced": False}
+    monkeypatch.setattr(nq, "_mem", {})
+    wmt = {"announcement": "Earnings announcement* for WMT: Nov 19, 2099",
+           "reportText": "Walmart is expected* to report earnings on 11/19/2099 before market open. According to Zacks, "
+                         "the consensus EPS forecast for the quarter is $0.64."}
+    monkeypatch.setattr(nq, "get", lambda path, params=None, timeout=8: wmt)
+    assert qs._next_earnings("WMT") == {"date": "2099-11-19", "timing": "before_open", "eps_estimate": 0.64, "announced": True}
+    monkeypatch.setattr(nq, "_mem", {})
+    monkeypatch.setattr(nq, "get", lambda path, params=None, timeout=8: None)      # request failed
+    assert qs._next_earnings("TSLA") is None
+
+
+def test_warmup_fills_each_tickers_slow_caches_and_survives_failures(monkeypatch):
+    calls = []
+    monkeypatch.setattr(qs, "warm_tickers", lambda: ["SPY", "BAD", "AAPL"])
+    monkeypatch.setattr(nq, "daily_history", lambda s: calls.append(("h", s)) or (_ for _ in ()).throw(RuntimeError("down")) if s == "BAD" else calls.append(("h", s)))
+    monkeypatch.setattr(nq, "quarterly_results", lambda s: calls.append(("q", s)))
+    monkeypatch.setattr(nq, "dividends", lambda s: calls.append(("d", s)))
+
+    class Stop(Exception):
+        pass
+    sleeps = []
+
+    def fake_sleep(sec):
+        sleeps.append(sec)
+        if sec > 3600:
+            raise Stop                                   # end after the first full cycle
+    monkeypatch.setattr(qs.time, "sleep", fake_sleep)
+    with pytest.raises(Stop):
+        qs.warmup(pause=0, cycle_hours=6)
+    assert ("d", "AAPL") in calls and ("q", "SPY") in calls and ("q", "BAD") not in calls
+    assert sleeps[0] == 30 and sleeps[-1] == 6 * 3600

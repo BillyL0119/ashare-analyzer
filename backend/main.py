@@ -119,6 +119,9 @@ async def warmup_caches():
                 pass
             _t.sleep(1)
     loop.run_in_executor(None, _warm_fundamentals)
+    from routers.quote_summary import warmup as _warm_quotes
+    import threading as _th                      # its own thread: the loop never ends, so not the shared executor
+    _th.Thread(target=_warm_quotes, daemon=True, name="quote-warm").start()   # quote pages: ~120 tickers' history
     from routers.screener import warmup as _warm_screener
     loop.run_in_executor(None, _warm_screener)   # stock list + P/E enrichment thread
     from routers.macro import warmup as _warm_macro

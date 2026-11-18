@@ -125,22 +125,28 @@ def _tencent_open(sym):
 
 
 def _next_earnings(sym):
-    """{date, timing, eps_estimate} for a report still ahead, else None. One small Nasdaq call, cached 6 h."""
+    """{date, timing, eps_estimate} for a report still ahead; {date: None, announced: False} when Nasdaq answers
+    that its vendor (Zacks) has no date yet (AAPL two months before it reports); None when the request failed.
+    One small Nasdaq call, cached 6 h (a failure is not cached)."""
     def fetch():
         d = nq.get(f"analyst/{sym}/earnings-date")
-        text = (d or {}).get("announcement") or ""
-        report = (d or {}).get("reportText") or ""
-        day = nq.parse_date(text)
-        if not day:
+        if d is None:
             return None
+        text = d.get("announcement") or ""
+        report = d.get("reportText") or ""
+        day = nq.parse_date(text) or nq.parse_date(report)
+        if not day:
+            return {"date": None, "timing": None, "eps_estimate": None, "announced": False}
         est = re.search(r"consensus EPS forecast for the quarter is \$(-?\d+(?:\.\d+)?)", report)
         timing = ("after_close" if "after market close" in report
                   else "before_open" if "before market open" in report else None)
-        return {"date": day, "timing": timing, "eps_estimate": float(est.group(1)) if est else None}
-    e = nq.cached(f"qs_earn_{sym}", 6 * 3600, fetch)
-    if e and e["date"] >= datetime.now(nq.ET).date().isoformat():
-        return e
-    return None
+        return {"date": day, "timing": timing, "eps_estimate": float(est.group(1)) if est else None, "announced": True}
+    e = nq.cached(f"qs_earn2_{sym}", 6 * 3600, fetch)
+    if not e:
+        return None
+    if e["date"] and e["date"] < datetime.now(nq.ET).date().isoformat():
+        return {"date": None, "timing": None, "eps_estimate": None, "announced": False}   # reported: next not set
+    return e
 
 
 def build_live(sym: str) -> dict:
@@ -514,3 +520,31 @@ def peers(symbol: str):
                    "market_cap": r["market_cap"], "pe": r.get("pe")} for r in rows],
         "as_of": _now_iso(), "source": "Nasdaq, Tencent",
     }
+
+
+# ── warm-up ───────────────────────────────────────────────────────────────────
+
+def warm_tickers() -> list:
+    """The tickers most pages lead to: the S&P 500 fund, the mega caps and the movers universe."""
+    from routers.us_market import MEGA_CAPS, US_UNIVERSE
+    return list(dict.fromkeys(["SPY", *MEGA_CAPS, *US_UNIVERSE]))
+
+
+def warmup(pause: float = 2.0, cycle_hours: float = 6.0) -> None:
+    """Fill the slow shared caches (ten years of prices, splits and dividends, quarterly results) for the most
+    viewed tickers, one at a time in the background, so a first visit to their quote page does not wait ~10 s
+    on Nasdaq and Tencent. Runs every `cycle_hours`; the disk copies make a restart instant. Blocks: call it
+    from a worker thread."""
+    time.sleep(30)                                  # let the server finish starting first
+    while True:
+        started = time.time()
+        for sym in warm_tickers():
+            try:
+                nq.daily_history(sym)
+                nq.quarterly_results(sym)
+                nq.dividends(sym)                   # also fetches the splits (Tencent notes)
+            except Exception as exc:                # one bad ticker must not stop the loop
+                log.debug("warm-up %s failed: %s", sym, exc)
+            time.sleep(pause)
+        log.info("quote warm-up: %d tickers in %.0fs", len(warm_tickers()), time.time() - started)
+        time.sleep(cycle_hours * 3600)

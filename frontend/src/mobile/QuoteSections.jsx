@@ -42,7 +42,7 @@ function values(d, lang, S) {
     beta_5y_monthly: fmtRatio(d.beta_5y_monthly, lang),
     pe_ttm: fmtRatio(d.pe_ttm, lang),
     eps_ttm: fmtRatio(d.eps_ttm, lang),
-    earnings_date: e?.date ? <>{fmtDate(e.date, lang)}{sub && <span className="m-qs-sub">{sub}</span>}</> : DASH,
+    earnings_date: e?.date ? <>{fmtDate(e.date, lang)}{sub && <span className="m-qs-sub">{sub}</span>}</> : e?.announced === false ? S.notAnnounced : DASH,
     forward_dividend_yield: div,
     ex_dividend_date: d.ex_dividend_date ? fmtDate(d.ex_dividend_date, lang) : DASH,
     target_1y: isNum(d.target_1y) ? fmtPrice(d.target_1y, lang) : DASH,
