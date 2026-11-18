@@ -10,7 +10,6 @@ import GlobalSentiment from './components/GlobalSentiment'
 import USMarketPanel from './components/USMarketPanel'
 const IntlMarketPanel = lazy(() => import('./components/IntlMarketPanel'))
 import StatsDisplay from './components/StatsDisplay'
-import QuoteBanner from './components/QuoteBanner'
 import AuthModal from './components/AuthModal'
 import ErrorBoundary from './components/ErrorBoundary'
 import useAuthStore from './store/authStore'
@@ -776,14 +775,11 @@ export default function App() {
           ) : (
             <>
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} /></ErrorBoundary></div>
-              )}
-              {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-1"><ErrorBoundary fallback={null}><MarketLesson lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange} onNavigate={navigate} /></ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><ErrorBoundary fallback={null}>
-                  {market === 'hk' || market === 'jp' ? <IntlMarketPanel lang={lang} market={market} /> : <USMarketPanel lang={lang} />}
+                  {market === 'hk' || market === 'jp' ? <IntlMarketPanel lang={lang} market={market} /> : <USMarketPanel lang={lang} hideIndices />}
                 </ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (

@@ -51,7 +51,8 @@ function countdown(iso, t, lang) {
   return (OPENS_AT[lang] || OPENS_AT.en)(when)
 }
 
-export default function USMarketPanel({ lang }) {
+// hideIndices: the home page shows the four indices in its market lesson above, so not twice
+export default function USMarketPanel({ lang, hideIndices = false }) {
   const t = L[lang] || L.en
   const zh = lang === 'zh'
   const [d, setD] = useState(null)
@@ -86,7 +87,7 @@ export default function USMarketPanel({ lang }) {
       </div>
 
       {/* The four indices as one ruled strip, not four boxes */}
-      <div className="usp-strip">
+      {!hideIndices && <div className="usp-strip">
         {d.indices.map((i) => (
           <div key={i.symbol}>
             <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{zh ? INDEX_ZH[i.name] || i.name : i.name}</div>
@@ -94,7 +95,7 @@ export default function USMarketPanel({ lang }) {
             <div style={{ fontSize: 13, fontWeight: 600, color: col(i.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(i.pct)}{i.change != null && <span style={{ marginLeft: 8, opacity: 0.8 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}</div>
           </div>
         ))}
-      </div>
+      </div>}
 
       <div>
         <div style={{ display: 'flex', height: 5, borderRadius: 3, overflow: 'hidden', gap: 2 }}>
