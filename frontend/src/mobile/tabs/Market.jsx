@@ -11,6 +11,7 @@ import USMarket from './USMarket'
 import MarketMap from '../MarketMap'
 import MacroEvents from '../MacroEvents'
 import { Icon } from '../icons'
+import QuoteBanner from '../../components/QuoteBanner'
 const open = (nav, market, code) => nav(`/stock/${market}/${code}`)
 
 function useRecent() {
@@ -323,6 +324,12 @@ function useMode() {
   return [mode, change]
 }
 
+// The daily quote from the desktop home page, in the phone's language
+function QuoteOfDay() {
+  const lang = useLangStore((st) => st.lang)
+  return <div className="m-quote"><QuoteBanner lang={lang} /></div>
+}
+
 export default function Market({ onSettings }) {
   const t = useT()
   const [mode, setMode] = useMode()
@@ -332,6 +339,7 @@ export default function Market({ onSettings }) {
         <h1 className="m-title">{t('行情')}</h1>
         <button className="m-iconbtn" onClick={onSettings} aria-label={t('关于')}>{Icon.more}</button>
       </div>
+      <QuoteOfDay />
       <SearchBox />
       <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
       <div className="m-stack">

@@ -13,7 +13,6 @@ const longDate = (d, lang) => new Date(`${d}T12:00:00Z`).toLocaleDateString(LOCA
   { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', timeZone: 'UTC' })
 const shortDate = (d, lang) => new Date(`${d}T12:00:00Z`).toLocaleDateString(LOCALE[lang] || 'en-US',
   { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })
-const YEAR_TINT = { gfc_2008: '#e5484d', covid_2020: '#7f77c2', ashare_2015: '#f59e0b', rates_2022: '#4f86f7' }
 
 async function api(path, body) {
   const r = await fetch(`/api/time-machine/${path}`, body
@@ -35,7 +34,7 @@ const CSS = `
 .tm-btn:focus-visible, .tm-row:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 .tm-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 .tm-pick { display: grid; gap: 10px; align-content: start; position: relative; overflow: hidden; }
-.tm-year { font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.tm-year { font-family: var(--display); font-size: 44px; font-weight: 500; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--text-primary); }
 .tm-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .tm-game { display: grid; grid-template-columns: 290px minmax(0, 1fr) 310px; gap: 14px; align-items: start; }
 .tm-side { display: grid; gap: 14px; min-width: 0; }
@@ -145,11 +144,10 @@ function Picker({ s, lang, list, onPick }) {
       </div>
       <div className="tm-picks">
         {(list || []).map((sc) => {
-          const tint = YEAR_TINT[sc.id] || ACCENT
           const pr = sc.progress
           return (
-            <div key={sc.id} className="tm-card tm-pick" style={{ borderTop: `3px solid ${tint}` }}>
-              <div className="tm-year" style={{ color: tint }}>{sc.start_date.slice(0, 4)}</div>
+            <div key={sc.id} className="tm-card tm-pick">
+              <div className="tm-year">{sc.start_date.slice(0, 4)}</div>
               <div style={{ fontSize: 17, fontWeight: 750 }}>{sc.title}</div>
               <div className="tm-muted tm-num" style={{ fontSize: 12 }}>{shortDate(sc.start_date, lang)} → {shortDate(sc.end_date, lang)} · {s.days(sc.n_days)}</div>
               <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6 }}>{sc.tagline}</p>

@@ -70,26 +70,10 @@ const hasUG = (u) => u.undergrad && !u.undergrad.none
 
 const SPECIALTIES = ['Finance', 'Accounting', 'Economics', 'Consulting', 'Tech']
 
-const SPECIALTY_COLORS = {
-  Finance: '#4f86f7', Accounting: '#7f77c2', Economics: '#3fb67a',
-  Marketing: '#f59e0b', Consulting: '#e5484d', Strategy: '#4a9cab',
-  MBA: '#5f73b8', Undergraduate: '#84cc16', Tech: '#f97316',
-  Analytics: '#9d97d3', Entrepreneurship: '#4cc38a', STEM: '#fb923c',
-}
 
-function tagColor(tag) {
-  for (const [k, v] of Object.entries(SPECIALTY_COLORS)) {
-    if (tag.toLowerCase().includes(k.toLowerCase())) return v
-  }
-  // Hex (not a CSS var) so TagPill can append alpha for its background/border.
-  return '#7d8ca3'
-}
-
-// Generate a deterministic gradient from school name
-function schoolGradient(name) {
-  let h = 0
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360
-  return `linear-gradient(135deg, hsl(${h},55%,30%), hsl(${(h + 55) % 360},55%,20%))`
+// Initials tile behind a school's name: one quiet surface for every school (no per-school colours)
+function schoolGradient() {
+  return 'var(--bg-tertiary)'
 }
 
 function initials(name) {
@@ -122,15 +106,15 @@ function RankBadge({ rank, label = 'QS' }) {
   if (!rank) return null
   const isTop10  = rank <= 10
   const isTop50  = rank <= 50
-  const color    = isTop10 ? AMBER : isTop50 ? BLUE : '#7d8ca3'
   return (
     <div style={{
       position: 'absolute', top: 12, left: 12,
-      background: `${color}22`,
-      border: `1px solid ${color}66`,
+      background: isTop10 ? 'var(--accent-blue-soft)' : 'var(--bg-tertiary)',
+      border: '1px solid var(--border-primary)',
       borderRadius: 6,
       padding: '2px 8px',
-      fontSize: 11, fontWeight: 600, color,
+      fontSize: 11, fontWeight: 600, color: isTop10 ? 'var(--accent-blue)' : isTop50 ? 'var(--text-primary)' : 'var(--text-secondary)',
+      fontVariantNumeric: 'tabular-nums',
     }}>
       {label} #{rank}
     </div>
@@ -170,7 +154,7 @@ function SchoolLogo({ name, size = 44 }) {
       width: size, height: size, borderRadius: 10, flexShrink: 0,
       background: schoolGradient(name),
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: size * 0.34, fontWeight: 600, color: 'rgba(255,255,255,0.9)',
+      fontSize: size * 0.34, fontWeight: 600, color: 'var(--text-secondary)', border: '1px solid var(--border-primary)',
       letterSpacing: '-0.5px',
     }}>
       {initials(name)}
@@ -179,14 +163,14 @@ function SchoolLogo({ name, size = 44 }) {
 }
 
 // ── Tag pill ──────────────────────────────────────────────────────────────────
+// Specialty tags are quiet text chips; colour is kept for rank and deadlines
 function TagPill({ label }) {
-  const color = tagColor(label)
   return (
     <span style={{
-      fontSize: 11, fontWeight: 600,
-      padding: '2px 8px', borderRadius: 20,
-      background: `${color}20`, color,
-      border: `1px solid ${color}40`,
+      fontSize: 11, fontWeight: 500,
+      padding: '2px 8px', borderRadius: 6,
+      background: 'var(--bg-tertiary)', color: 'var(--text-secondary)',
+      border: '1px solid var(--border-primary)',
       whiteSpace: 'nowrap',
     }}>
       {label}
@@ -610,7 +594,7 @@ function UniModal({ uni, lang, onClose }) {
                         width: 40, height: 40, borderRadius: 10, flexShrink: 0,
                         background: schoolGradient(a.name),
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 15, fontWeight: 600, color: 'rgba(255,255,255,0.9)',
+                        fontSize: 15, fontWeight: 600, color: 'var(--text-secondary)', border: '1px solid var(--border-primary)',
                       }}>
                         {a.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
                       </div>

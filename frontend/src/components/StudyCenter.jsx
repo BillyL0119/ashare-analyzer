@@ -17,14 +17,14 @@ const GREEN       = '#4cc38a'
 const PROGRESS_BG = 'var(--bg-hover)'
 
 const EXAMS = [
-  { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '美股与股票入门', title_en: 'US Stocks & Investing Basics', color: '#ec4899', board: 'US market · Fundamentals · Investing' },
-  { key: 'kline',  label: 'K线教学', label_en: 'Reading Charts', title: 'K线图入门', title_en: 'Reading Candlestick Charts', color: '#f472b6', board: 'Candlesticks' },
-  { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#5f73b8', board: 'Cambridge 9708' },
-  { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#3fb67a', board: 'Cambridge 0455' },
-  { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: '#f59e0b', board: 'College Board' },
-  { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#e5484d', board: 'College Board' },
-  { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#7f77c2', board: 'IB SL/HL'       },
-  { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#4a9cab', board: 'Timeline' },
+  { key: 'stocks', label: '股票入门', label_en: 'Stock Basics', title: '美股与股票入门', title_en: 'US Stocks & Investing Basics', color: '#4f86f7', board: 'US market · Fundamentals · Investing' },
+  { key: 'kline',  label: 'K线教学', label_en: 'Reading Charts', title: 'K线图入门', title_en: 'Reading Candlestick Charts', color: '#4f86f7', board: 'Candlesticks' },
+  { key: 'alevel', label: 'A-Level', label_en: 'A-Level', title: 'A-Level Economics',      title_en: 'A-Level Economics',      color: '#4f86f7', board: 'Cambridge 9708' },
+  { key: 'igcse',  label: 'IGCSE',   label_en: 'IGCSE',   title: 'IGCSE Economics',        title_en: 'IGCSE Economics',        color: '#4f86f7', board: 'Cambridge 0455' },
+  { key: 'ap_macro', label: 'AP宏观', label_en: 'AP Macro', title: 'AP Macroeconomics', title_en: 'AP Macroeconomics', color: '#4f86f7', board: 'College Board' },
+  { key: 'ap_micro', label: 'AP微观', label_en: 'AP Micro', title: 'AP Microeconomics', title_en: 'AP Microeconomics', color: '#4f86f7', board: 'College Board' },
+  { key: 'ib',     label: 'IB',      label_en: 'IB',      title: 'IB Economics SL/HL',     title_en: 'IB Economics SL/HL',     color: '#4f86f7', board: 'IB SL/HL'       },
+  { key: 'events', label: '历史事件', label_en: 'Economic History', title: '经济事件时间轴', title_en: 'Economic Event Timeline', color: '#4f86f7', board: 'Timeline' },
   { key: 'ai_teacher', label: 'AI老师', label_en: 'AI Tutor', title: 'AI经济学老师', title_en: 'AI Economics Tutor', color: '#4f86f7', board: 'DeepSeek' },
 ]
 

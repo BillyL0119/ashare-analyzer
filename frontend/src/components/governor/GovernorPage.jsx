@@ -12,7 +12,6 @@ import Icon from '../Icon'
 // after the student has set theirs (routers/governor.py).
 
 const ACCENT = '#4f86f7', TARGET = '#3fb67a', HOT = '#e5484d'
-const TINT = { inflation_2021: '#4f86f7', volcker_1979: '#f59e0b', crisis_2007: '#e5484d' }
 const MAX_RATE = 20
 const STUDY = [['ib', 'ib_6'], ['alevel', 'macro_3'], ['ap_macro', 'ap_4'], ['igcse', 'igcse_7']]
 
@@ -53,7 +52,7 @@ const CSS = `
 .gv-btn:focus-visible, .gv-chip:focus-visible, .gv-step:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 .gv-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .gv-pick { display: grid; gap: 10px; align-content: start; }
-.gv-years { font-size: 38px; font-weight: 600; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.gv-years { font-family: var(--display); font-size: 38px; font-weight: 500; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--text-primary); }
 .gv-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .gv-stats { display: flex; flex-wrap: wrap; gap: 6px; }
 .gv-stat { font-size: 12px; padding: 4px 9px; border-radius: 999px; background: var(--bg-tertiary); font-variant-numeric: tabular-nums; }
@@ -193,11 +192,10 @@ function Picker({ s, list, onPick }) {
       {list === null && <div className="gv-card skeleton" style={{ height: 260 }} />}
       <div className="gv-picks">
         {(list || []).map((sc) => {
-          const tint = TINT[sc.id] || ACCENT
           const p = sc.progress
           return (
-            <article key={sc.id} className="gv-card gv-pick" style={{ borderTop: `3px solid ${tint}` }}>
-              <div className="gv-years" style={{ color: tint }}>{sc.start.slice(0, 4)}–{sc.end.slice(0, 4)}</div>
+            <article key={sc.id} className="gv-card gv-pick">
+              <div className="gv-years">{sc.start.slice(0, 4)}–{sc.end.slice(0, 4)}</div>
               <b style={{ fontSize: 16 }}>{sc.title}</b>
               <span className="gv-muted" style={{ fontSize: 12.5 }}>{s.chairWas(sc.chair)}</span>
               <p className="gv-muted" style={{ margin: 0, fontSize: 13.5, lineHeight: 1.6 }}>{sc.tagline}</p>

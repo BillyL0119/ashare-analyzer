@@ -43,3 +43,9 @@
   .bfs-quote { padding: 20px 20px 20px 36px; }
   .bfs-quote blockquote, .bfs-quote blockquote.is-long { font-size: 22px; }
 }
+
+/* Phone UI: same quote on the phone's surface, a little smaller */
+.m-quote .bfs-quote { margin: 0 0 16px; padding: 18px 18px 18px 34px; border-radius: var(--radius, 20px); background: var(--surface); border-color: var(--stroke); }
+.m-quote .bfs-quote blockquote, .m-quote .bfs-quote blockquote.is-long { font-size: 21px; line-height: 1.25; }
+.m-quote .bfs-quote-who { margin-top: 16px; }
+.m-quote .bfs-quote-who .avatar { width: 34px; height: 34px; font-size: 12px; }
