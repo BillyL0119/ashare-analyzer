@@ -36,7 +36,7 @@ import SiteNav from './components/nav/SiteNav'
 import MarketLesson from './components/home/MarketLesson'
 import QuoteBanner from './components/QuoteBanner'
 import useCompareStore from './store/compareStore'
-import useLangStore from './store/langStore'
+import useLangStore, { rememberLang } from './store/langStore'
 import useThemeStore from './store/themeStore'
 import useWatchlistStore from './store/watchlistStore'
 import { T } from './i18n/translations'
@@ -446,7 +446,7 @@ export default function App() {
                           document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
                           showToast('Language saved')
                         } else {
-                          localStorage.setItem('bfs_lang', code)
+                          rememberLang(code)
                         }
                       }}
                       style={{
@@ -589,7 +589,7 @@ export default function App() {
                               document.cookie = `bfs_lang_hint=${code}; path=/; max-age=31536000; SameSite=Lax`
                               showToast('Language saved')
                             } else {
-                              localStorage.setItem('bfs_lang', code)
+                              rememberLang(code)
                             }
                           }}
                           style={{

@@ -1,4 +1,4 @@
-import useLangStore from '../store/langStore'
+import useLangStore, { rememberLang } from '../store/langStore'
 import useThemeStore from '../store/themeStore'
 import { setUIOverride, inAppName } from '../utils/device'
 import { useT, SUPPORTED_LANGS } from './i18n'
@@ -13,7 +13,7 @@ export default function Settings({ onClose }) {
   const { theme, setTheme } = useThemeStore()
   const inApp = inAppName()
 
-  const changeLang = (code) => { setLang(code); try { localStorage.setItem('bfs_lang', code) } catch { /* ignore */ } }
+  const changeLang = (code) => { setLang(code); rememberLang(code) }
   const desktop = () => { setUIOverride('desktop'); window.location.reload() }
 
   return (

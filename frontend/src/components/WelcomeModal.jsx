@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import useAuthStore from '../store/authStore'
+import { rememberLang } from '../store/langStore'
 
 // ── Inline SVG flag components ─────────────────────────────────────────
 
@@ -144,7 +145,7 @@ export default function WelcomeModal({ onLangSelect }) {
   const handleLangSelect = (lang) => {
     if (onLangSelect) onLangSelect(lang)
     if (user) setLangPreference(lang)
-    else localStorage.setItem('bfs_lang', lang)
+    else rememberLang(lang)
     setDismissed(true)
   }
 
