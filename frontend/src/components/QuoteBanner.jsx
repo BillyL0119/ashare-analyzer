@@ -6,7 +6,8 @@ import './quote.css'
 const LABEL = { zh: '今日语录', en: 'Quote of the day', ja: '今日の言葉', ko: '오늘의 명언', fr: 'Citation du jour' }
 const LOCALE = { zh: 'zh-CN', en: 'en-US', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR' }
 
-export default function QuoteBanner({ lang, compact = false }) {
+// variant: 'band' (one slim row at the top of the desktop home page) or the default stacked card (phone)
+export default function QuoteBanner({ lang, variant }) {
   const [quote, setQuote] = useState(null)
   const [loading, setLoading] = useState(true)
   const zh = lang === 'zh'
@@ -20,7 +21,7 @@ export default function QuoteBanner({ lang, compact = false }) {
 
   if (loading) {
     return (
-      <section className={`bfs-quote${compact ? ' is-compact' : ''}`} aria-hidden="true">
+      <section className={`bfs-quote${variant === 'band' ? ' is-band' : ''}`} aria-hidden="true">
         <div className="skeleton" style={{ height: 14, width: 120, marginBottom: 20 }} />
         <div className="skeleton" style={{ height: 34, width: '80%', marginBottom: 12 }} />
         <div className="skeleton" style={{ height: 34, width: '55%' }} />
@@ -37,7 +38,7 @@ export default function QuoteBanner({ lang, compact = false }) {
   const long = text.length > (zh ? 60 : 140)
 
   return (
-    <figure className={`bfs-quote${compact ? ' is-compact' : ''}`}>
+    <figure className={`bfs-quote${variant === 'band' ? ' is-band' : ''}`}>
       <figcaption className="bfs-quote-head">
         <span>{LABEL[lang] || LABEL.en}</span>
         <span>{today}</span>

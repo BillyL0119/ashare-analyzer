@@ -34,6 +34,7 @@ const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import SiteNav from './components/nav/SiteNav'
 import MarketLesson from './components/home/MarketLesson'
+import QuoteBanner from './components/QuoteBanner'
 import useCompareStore from './store/compareStore'
 import useLangStore from './store/langStore'
 import useThemeStore from './store/themeStore'
@@ -774,6 +775,9 @@ export default function App() {
             <AITeacherPage lang={lang} />
           ) : (
             <>
+              {selectedSymbols.length === 0 && (
+                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} variant="band" /></ErrorBoundary></div>
+              )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-1"><ErrorBoundary fallback={null}><MarketLesson lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange} onNavigate={navigate} /></ErrorBoundary></div>
               )}

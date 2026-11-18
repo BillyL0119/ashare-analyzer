@@ -3,7 +3,6 @@ import useCompareStore from '../../store/compareStore'
 import classStrings from '../classes/classStrings'
 import navStrings from '../nav/navStrings'
 import S, { SECTOR_NAMES } from './lessonStrings'
-import QuoteBanner from '../QuoteBanner'
 import './lesson.css'
 
 // Top of the home page: yesterday's (or today's) US market as one sentence built from live data,
@@ -43,7 +42,7 @@ function useJson(url) {
 
 // Drawn in real pixels (the width is measured), so labels and the end dot keep their size at any width
 function Chart({ rows, dir, label }) {
-  const H = 132, PAD_B = 20, PAD_T = 6, PAD_R = 6
+  const H = 168, PAD_B = 20, PAD_T = 6, PAD_R = 6
   const [box, setBox] = useState(null)
   const [W, setW] = useState(0)
   useEffect(() => {
@@ -141,64 +140,64 @@ export default function MarketLesson({ lang, paths, onTabChange, onNavigate }) {
   const pctText = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${num(Math.abs(v))}%`
   const tone = (v) => (v > 0 ? 'is-up' : v < 0 ? 'is-down' : '')
 
-  // Two columns that fill the first screen: the day's market on the left (headline, sentence,
-  // chart, the four indices), the quote of the day and the ways in on the right
+  // One panel: the headline, sentence and four indices on the left with the S&P 500 line beside
+  // them, then the three ways in as a ruled row across the bottom
   return (
     <section className="bfs-lesson" aria-labelledby="bfs-lesson-title">
-      <div className="bfs-lesson-main">
-        <p className="bfs-lesson-status">
-          <span className={`bfs-dot${live ? ' is-live' : ''}`} aria-hidden="true" />
-          {!d ? s.loading : live ? s.open : d.session?.state === 'pre' ? s.pre : d.session?.state === 'post' ? s.post : s.closed(...untilOpen(d.session?.next_open_utc, loc))}
-        </p>
-        <h1 id="bfs-lesson-title" className={overview.data || overview.failed ? '' : 'skeleton'}>{overview.data || overview.failed ? title : '\u00a0'}</h1>
-        <p className="bfs-lesson-sentence">{sentence || ns.introSub}</p>
+      <div className="bfs-lesson-top">
+        <div className="bfs-lesson-text">
+          <p className="bfs-lesson-status">
+            <span className={`bfs-dot${live ? ' is-live' : ''}`} aria-hidden="true" />
+            {!d ? s.loading : live ? s.open : d.session?.state === 'pre' ? s.pre : d.session?.state === 'post' ? s.post : s.closed(...untilOpen(d.session?.next_open_utc, loc))}
+          </p>
+          <h1 id="bfs-lesson-title" className={overview.data || overview.failed ? '' : 'skeleton'}>{overview.data || overview.failed ? title : '\u00a0'}</h1>
+          <p className="bfs-lesson-sentence">{sentence || ns.introSub}</p>
+          {d?.indices?.length > 0 && (
+            <ul className="bfs-lesson-idx" role="list">
+              {d.indices.map((i) => (
+                <li key={i.symbol}>
+                  <span className="k">{idxName(i)}</span>
+                  <span className="v">{num(i.price)}</span>
+                  <span className={`c ${tone(i.pct)}`}>{pctText(i.pct)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <Chart rows={history.data?.data} dir={dir} label={s.chartLabel} />
-        {d?.indices?.length > 0 && (
-          <ul className="bfs-lesson-idx" role="list">
-            {d.indices.map((i) => (
-              <li key={i.symbol}>
-                <span className="k">{idxName(i)}</span>
-                <span className="v">{num(i.price)}</span>
-                <span className={`c ${tone(i.pct)}`}>{pctText(i.pct)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
 
-      <div className="bfs-lesson-side">
-        <QuoteBanner lang={lang} compact />
-
-        <ul className="bfs-lesson-ways" role="list">
-          <li>
-            {mover ? (
-              <button type="button" onClick={openMover}>
-                <span className="k">{s.why}</span>
-                <span className="v">{s.moved(shortName(mover.name), mover.pct > 0 ? 'up' : 'down', num(Math.abs(mover.pct)))}</span>
-              </button>
-            ) : (
-              <a href={paths.screener} onClick={(e) => go(e, null, 'screener')}>
-                <span className="k">{s.why}</span><span className="v">{s.findMover}</span>
-              </a>
-            )}
-          </li>
-          <li>
-            <a href="/study/stocks?topic=us_2" onClick={(e) => go(e, '/study/stocks?topic=us_2')}>
-              <span className="k">{s.idea}</span><span className="v">{s.ideaText}</span>
+      <ul className="bfs-lesson-ways" role="list">
+        <li>
+          {mover ? (
+            <button type="button" onClick={openMover}>
+              <span className="k">{s.why}</span>
+              <span className="v">{s.moved(shortName(mover.name), mover.pct > 0 ? 'up' : 'down', num(Math.abs(mover.pct)))}</span>
+            </button>
+          ) : (
+            <a href={paths.screener} onClick={(e) => go(e, null, 'screener')}>
+              <span className="k">{s.why}</span><span className="v">{s.findMover}</span>
             </a>
-          </li>
-          <li>
-            <a href={paths.paper} onClick={(e) => go(e, null, 'paper')}>
-              <span className="k">{s.try}</span><span className="v">{s.tryText}</span>
-            </a>
-          </li>
-        </ul>
-
-        <p className="bfs-lesson-class">
-          {ns.hasCode} <a href={paths.class} onClick={(e) => go(e, null, 'class')}>{cs.joinTitle}</a>
-          <span className="sep">{ns.isTeacher} <a href={paths.class} onClick={(e) => go(e, null, 'class')} title={cs.subtitle}>{cs.create}</a></span>
-        </p>
-      </div>
+          )}
+        </li>
+        <li>
+          <a href="/study/stocks?topic=us_2" onClick={(e) => go(e, '/study/stocks?topic=us_2')}>
+            <span className="k">{s.idea}</span><span className="v">{s.ideaText}</span>
+          </a>
+        </li>
+        <li>
+          <a href={paths.paper} onClick={(e) => go(e, null, 'paper')}>
+            <span className="k">{s.try}</span><span className="v">{s.tryText}</span>
+          </a>
+        </li>
+        <li className="bfs-lesson-class">
+          <span className="k">{ns.hasCode}</span>
+          <span className="v">
+            <a href={paths.class} onClick={(e) => go(e, null, 'class')}>{cs.joinTitle}</a>
+            <span className="sep"><a href={paths.class} onClick={(e) => go(e, null, 'class')} title={cs.subtitle}>{cs.create}</a></span>
+          </span>
+        </li>
+      </ul>
     </section>
   )
 }

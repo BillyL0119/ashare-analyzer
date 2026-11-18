@@ -50,12 +50,30 @@
 .m-quote .bfs-quote-who { margin-top: 16px; }
 .m-quote .bfs-quote-who .avatar { width: 34px; height: 34px; font-size: 12px; }
 
-/* Compact: the right column of the home page's market lesson */
-.bfs-quote.is-compact { margin: 0; padding: 14px 16px; border-radius: 14px; }
-.bfs-quote.is-compact .bfs-quote-head { margin-bottom: 6px; font-size: 12px; }
-.bfs-quote.is-compact blockquote, .bfs-quote.is-compact blockquote.is-long { max-width: none; font-size: 15px; line-height: 1.45; letter-spacing: 0; }
-.bfs-quote.is-compact .mark { position: static; font-size: 1em; }
-.bfs-quote.is-compact .bfs-quote-who { margin-top: 10px; gap: 8px; }
-.bfs-quote.is-compact .bfs-quote-who .avatar { width: 26px; height: 26px; font-size: 11px; }
-.bfs-quote.is-compact .bfs-quote-who b { font-size: 12px; }
-.bfs-quote.is-compact .bfs-quote-who .role { font-size: 11px; }
+/* Band: its own slim section at the very top of the desktop home page. One row: the label and
+   date, the quote, the speaker. A light blue tint sets it apart from the panels below without
+   making it big. */
+.bfs-quote.is-band {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 24px;
+  margin: 16px 0 12px; padding: 14px 20px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent-fill) 9%, var(--bg-secondary));
+  border-color: color-mix(in srgb, var(--accent-fill) 28%, var(--border-primary));
+}
+.bfs-quote.is-band .bfs-quote-head { flex-direction: column; gap: 2px; margin: 0; font-size: 12px; white-space: nowrap; }
+.bfs-quote.is-band .bfs-quote-head span:first-child { color: var(--accent-blue); font-weight: 500; }
+.bfs-quote.is-band blockquote, .bfs-quote.is-band blockquote.is-long {
+  max-width: none; font-size: 19px; line-height: 1.35; letter-spacing: -0.01em;
+  padding-left: 20px; border-left: 1px solid color-mix(in srgb, var(--accent-fill) 28%, var(--border-primary));
+}
+.bfs-quote.is-band blockquote.is-long { font-size: 17px; }
+.bfs-quote.is-band .mark { position: static; font-size: 1em; }
+.bfs-quote.is-band .bfs-quote-who { margin: 0; gap: 10px; max-width: 240px; }
+.bfs-quote.is-band .bfs-quote-who .avatar { width: 32px; height: 32px; font-size: 12px; }
+.bfs-quote.is-band .bfs-quote-who b { font-size: 13px; }
+.bfs-quote.is-band .bfs-quote-who .role { font-size: 12px; }
+@media (max-width: 900px) {
+  .bfs-quote.is-band { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .bfs-quote.is-band .bfs-quote-head { flex-direction: row; justify-content: space-between; }
+  .bfs-quote.is-band blockquote { padding-left: 0; border-left: 0; font-size: 17px; }
+}
