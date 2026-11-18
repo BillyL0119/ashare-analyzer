@@ -168,14 +168,14 @@ function StockMC({ stock, color, nSims, nDays, trigger }) {
 
   const statStyle = { textAlign: 'center', flex: 1 }
   const statLabel = { color: 'var(--text-muted)', fontSize: 11, marginBottom: 4 }
-  const statVal = (color) => ({ color, fontWeight: 700, fontSize: 18, fontVariantNumeric: 'tabular-nums' })
+  const statVal = (color) => ({ color, fontWeight: 600, fontSize: 18, fontVariantNumeric: 'tabular-nums' })
   const up = riseColor(market), down = fallColor(market)
 
   return (
     <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 14, marginBottom: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
+        <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name}</span>
         {stock.name !== stock.code && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>}
         <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>
           {t.mcCurrentPrice}: {result.lastPrice.toFixed(2)} &nbsp;|&nbsp;
@@ -255,11 +255,11 @@ export default function MonteCarloPanel({ stocks }) {
   const btnStyle = (active) => ({
     padding: '4px 10px',
     borderRadius: 4,
-    border: `1px solid ${active ? '#2f7bff' : THEME.border}`,
+    border: `1px solid ${active ? '#4f86f7' : THEME.border}`,
     cursor: 'pointer',
     fontSize: 12,
-    background: active ? 'rgba(47,123,255,0.12)' : 'var(--bg-hover)',
-    color: active ? '#2f7bff' : THEME.text,
+    background: active ? 'rgba(79,134,247,0.12)' : 'var(--bg-hover)',
+    color: active ? '#4f86f7' : THEME.text,
     transition: 'all 0.15s',
   })
 
@@ -298,7 +298,7 @@ export default function MonteCarloPanel({ stocks }) {
             cursor: running ? 'wait' : 'pointer',
             fontSize: 13,
             fontWeight: 600,
-            background: running ? 'var(--bg-hover)' : '#2f7bff',
+            background: running ? 'var(--bg-hover)' : '#4f86f7',
             color: running ? 'var(--text-muted)' : '#fff',
             transition: 'all 0.15s',
           }}

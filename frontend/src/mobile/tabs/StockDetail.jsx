@@ -103,7 +103,7 @@ function News({ symbol, market }) {
         <div className="m-card flush">
           {o && (
             <div style={{ padding: 14, borderBottom: '1px solid var(--stroke)' }}>
-              <div className="m-num" style={{ display: 'flex', gap: 10, fontSize: 12.5, fontWeight: 700 }}>
+              <div className="m-num" style={{ display: 'flex', gap: 10, fontSize: 12.5, fontWeight: 600 }}>
                 <span style={{ color: good }}>{t('利好')} {o.positive_count}</span><span className="m-muted">· {t('中性')} {o.neutral_count}</span>
                 <span style={{ color: bad }}>· {t('利空')} {o.negative_count}</span>
                 <span style={{ marginLeft: 'auto', color: o.sentiment_score > .05 ? good : o.sentiment_score < -.05 ? bad : 'var(--text-2)' }}>{t('情感 %@', (o.sentiment_score > 0 ? '+' : '') + o.sentiment_score.toFixed(2))}</span>
@@ -119,7 +119,7 @@ function News({ symbol, market }) {
                 <span style={{ width: 8, height: 8, borderRadius: 4, background: c, marginTop: 7, flex: 'none' }} />
                 <div className="m-grow">
                   <div style={{ fontSize: 14.5, lineHeight: 1.35 }}>{n.title}</div>
-                  <div className="m-label" style={{ marginTop: 5, display: 'flex', gap: 8 }}><span>{n.source}</span><span style={{ marginLeft: 'auto', color: c, fontWeight: 700 }}>{label}</span></div>
+                  <div className="m-label" style={{ marginTop: 5, display: 'flex', gap: 8 }}><span>{n.source}</span><span style={{ marginLeft: 'auto', color: c, fontWeight: 600 }}>{label}</span></div>
                 </div>
               </a>
             )
@@ -191,7 +191,7 @@ function Fundamentals({ symbol, price }) {
     yAxis: { type: 'value', axisLabel: { color: css('--text-2'), fontSize: 10, formatter: (v) => `$${Math.round(v / 1e9)}B` }, splitLine: { lineStyle: { color: css('--stroke'), type: 'dashed' } } },
     series: [
       { name: t('营收'), type: 'bar', data: f.revenue, barMaxWidth: 22, itemStyle: { color: '#5B9CF6', borderRadius: [3, 3, 0, 0] } },
-      { name: t('净利润'), type: 'bar', data: f.net_income, barMaxWidth: 22, itemStyle: { color: '#00c853', borderRadius: [3, 3, 0, 0] } },
+      { name: t('净利润'), type: 'bar', data: f.net_income, barMaxWidth: 22, itemStyle: { color: '#3fb67a', borderRadius: [3, 3, 0, 0] } },
     ],
   }
   const a = d.analysts
@@ -201,11 +201,11 @@ function Fundamentals({ symbol, price }) {
       <div style={{ display: 'grid', gap: 12 }}>
         {(meta || d.profile?.description) && (
           <div className="m-card" style={{ display: 'grid', gap: 8 }}>
-            {meta && <div className="m-label" style={{ fontWeight: 650 }}>{meta}</div>}
+            {meta && <div className="m-label" style={{ fontWeight: 600 }}>{meta}</div>}
             {d.profile?.description && (
               <div style={{ fontSize: 13.5, lineHeight: 1.55, ...(more ? {} : { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }) }}>{d.profile.description}</div>
             )}
-            {d.profile?.description && <button style={{ justifySelf: 'start', color: 'var(--accent)', fontSize: 13, fontWeight: 650 }} onClick={() => setMore((v) => !v)}>{more ? t('收起') : t('展开')}</button>}
+            {d.profile?.description && <button style={{ justifySelf: 'start', color: 'var(--accent)', fontSize: 13, fontWeight: 600 }} onClick={() => setMore((v) => !v)}>{more ? t('收起') : t('展开')}</button>}
           </div>
         )}
         {tiles.length > 0 && (
@@ -213,7 +213,7 @@ function Fundamentals({ symbol, price }) {
             {tiles.map(([k, v, sub]) => (
               <div key={k} className="m-card" style={{ padding: 12 }}>
                 <div className="m-label">{k}</div>
-                <div className="m-num" style={{ fontWeight: 800, fontSize: 17, marginTop: 4 }}>{v}</div>
+                <div className="m-num" style={{ fontWeight: 600, fontSize: 17, marginTop: 4 }}>{v}</div>
                 {sub && <div className="m-label" style={{ marginTop: 3 }}>{sub}</div>}
               </div>
             ))}
@@ -228,12 +228,12 @@ function Fundamentals({ symbol, price }) {
             <ReactECharts option={option} notMerge style={{ height: 180, width: '100%' }} />
             <div style={{ overflowX: 'auto' }}>
               <table className="m-num" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead><tr><th />{f.periods.map((p) => <th key={p} style={{ textAlign: 'right', fontWeight: 650, color: 'var(--text-2)', padding: '4px 0 6px 6px' }}>{shortPeriod(p)}</th>)}</tr></thead>
+                <thead><tr><th />{f.periods.map((p) => <th key={p} style={{ textAlign: 'right', fontWeight: 600, color: 'var(--text-2)', padding: '4px 0 6px 6px' }}>{shortPeriod(p)}</th>)}</tr></thead>
                 <tbody>
                   {[[t('营收'), f.revenue, usd], [t('净利润'), f.net_income, usd], [t('毛利率'), f.gross_margin, (v) => (v == null ? '—' : `${v.toFixed(1)}%`)],
                     [t('净利率'), f.net_margin, (v) => (v == null ? '—' : `${v.toFixed(1)}%`)], [t('自由现金流'), f.free_cash_flow, usd]].map(([k, vals, fmt]) => (
                     <tr key={k}>
-                      <td style={{ fontWeight: 650, padding: '5px 0', whiteSpace: 'nowrap' }}>{k}</td>
+                      <td style={{ fontWeight: 600, padding: '5px 0', whiteSpace: 'nowrap' }}>{k}</td>
                       {vals.map((v, i) => <td key={i} style={{ textAlign: 'right', padding: '5px 0 5px 6px', whiteSpace: 'nowrap', color: v < 0 ? down : undefined }}>{fmt(v)}</td>)}
                     </tr>
                   ))}
@@ -251,7 +251,7 @@ function Fundamentals({ symbol, price }) {
                   <span className="m-label" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.quarter}</span>
                   <b style={{ fontSize: 14 }}>{e.eps != null ? `$${e.eps.toFixed(2)}` : '—'}</b>
                   <span className="m-label">{t('预期')} {e.estimate != null ? `$${e.estimate.toFixed(2)}` : '—'}</span>
-                  {e.surprise_pct != null && <span style={{ fontSize: 12, fontWeight: 800, color: e.surprise_pct >= 0 ? up : down }}>{e.surprise_pct >= 0 ? '+' : ''}{e.surprise_pct.toFixed(1)}%</span>}
+                  {e.surprise_pct != null && <span style={{ fontSize: 12, fontWeight: 600, color: e.surprise_pct >= 0 ? up : down }}>{e.surprise_pct >= 0 ? '+' : ''}{e.surprise_pct.toFixed(1)}%</span>}
                 </div>
               ))}
             </div>
@@ -273,7 +273,7 @@ function Fundamentals({ symbol, price }) {
             {a.target != null && (
               <div className="m-num" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 6 }}>
                 {[[t('最低'), a.target_low], [t('平均'), a.target], [t('最高'), a.target_high], [t('现价'), price]].map(([k, v], i) => (
-                  <div key={k}><div className="m-label">{k}</div><div style={{ fontWeight: 800, fontSize: 14, marginTop: 2, color: i === 1 ? 'var(--accent)' : undefined }}>{v != null ? `$${v.toFixed(2)}` : '—'}</div></div>
+                  <div key={k}><div className="m-label">{k}</div><div style={{ fontWeight: 600, fontSize: 14, marginTop: 2, color: i === 1 ? 'var(--accent)' : undefined }}>{v != null ? `$${v.toFixed(2)}` : '—'}</div></div>
                 ))}
               </div>
             )}
@@ -285,7 +285,7 @@ function Fundamentals({ symbol, price }) {
             {d.holders.top.slice(0, 5).map((r) => (
               <div className="m-row" key={r.name}>
                 <div className="m-grow m-name" style={{ fontSize: 14, fontWeight: 600 }}>{r.name}</div>
-                <span className="m-num" style={{ fontWeight: 700 }}>{usd(r.value)}</span>
+                <span className="m-num" style={{ fontWeight: 600 }}>{usd(r.value)}</span>
                 <span className="m-num" style={{ width: 62, textAlign: 'right', fontSize: 12.5, color: (r.change_pct ?? 0) >= 0 ? up : down }}>{r.change_pct != null ? `${r.change_pct >= 0 ? '+' : ''}${r.change_pct.toFixed(2)}%` : ''}</span>
               </div>
             ))}
@@ -360,13 +360,13 @@ export default function StockDetail() {
         {price == null ? <Skeleton h={50} w={190} /> : (
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
             <span className="m-num m-serif-num" style={{ fontSize: 44, color: c }}>{num(price)}</span>
-            <span style={{ display: 'grid', gap: 3 }}><Pill value={p} market={market} width={86} /><span className="m-num" style={{ color: c, fontSize: 12.5, fontWeight: 650, paddingLeft: 4 }}>{d.change > 0 ? '+' : ''}{num(d.change)}</span></span>
+            <span style={{ display: 'grid', gap: 3 }}><Pill value={p} market={market} width={86} /><span className="m-num" style={{ color: c, fontSize: 12.5, fontWeight: 600, paddingLeft: 4 }}>{d.change > 0 ? '+' : ''}{num(d.change)}</span></span>
           </div>
         )}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
           <span style={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span><span className="m-sub" style={{ flex: 'none' }}>{code}</span><span className="m-chip">{t(chipLabel(market))}</span>
           <button onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}
-            style={{ marginLeft: 'auto', flex: 'none', padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'var(--accent)' }}>
+            style={{ marginLeft: 'auto', flex: 'none', padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 600, color: '#fff', background: 'var(--accent)' }}>
             {t('模拟买入')}
           </button>
         </div>
@@ -379,7 +379,7 @@ export default function StockDetail() {
             : [[t('总市值'), money(d.market_cap)], [t('市盈率'), d.pe_ttm > 0 ? d.pe_ttm.toFixed(1) : '--'], [t('市净率'), d.pb > 0 ? d.pb.toFixed(2) : '--']]
           ).map(([k, v], i) => (
             <div key={k} style={{ flex: 1, textAlign: 'center', borderLeft: i ? '1px solid var(--line, rgba(128,128,128,.25))' : 'none' }}>
-              <div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 800, fontSize: 15, marginTop: 3 }}>{v}</div>
+              <div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 600, fontSize: 15, marginTop: 3 }}>{v}</div>
             </div>
           ))}
         </div>
@@ -398,7 +398,7 @@ export default function StockDetail() {
           {[...grid, [t('成交量'), fmtVol(vol)], intl
               ? [t('日内振幅'), high > 0 && low > 0 && prevClose > 0 ? ((high - low) / prevClose * 100).toFixed(2) + '%' : '--']
               : [t('成交额'), money(d?.amount)]].map(([k, v], i) => (
-            <div key={i}><div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 700, fontSize: 15, marginTop: 3 }}>{typeof v === 'number' ? num(v) : (v ?? '--')}</div></div>
+            <div key={i}><div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 600, fontSize: 15, marginTop: 3 }}>{typeof v === 'number' ? num(v) : (v ?? '--')}</div></div>
           ))}
         </div>
         {pos != null && (
@@ -408,7 +408,7 @@ export default function StockDetail() {
               <span style={{ position: 'absolute', left: 0, right: 0, top: 4, height: 6, borderRadius: 3, background: `linear-gradient(90deg, ${changeColor(-1, market)}, ${changeColor(1, market)})`, opacity: .75 }} />
               <span style={{ position: 'absolute', top: 0, width: 14, height: 14, borderRadius: 7, background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,.35)', left: `calc((100% - 14px) * ${pos})` }} />
             </div>
-            <div className="m-num" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 7, fontSize: 12.5, fontWeight: 700 }}><span>{num(lo)}</span><span>{num(hi)}</span></div>
+            <div className="m-num" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 7, fontSize: 12.5, fontWeight: 600 }}><span>{num(lo)}</span><span>{num(hi)}</span></div>
           </div>
         )}
       </div>

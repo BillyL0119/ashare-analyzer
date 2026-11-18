@@ -4,7 +4,7 @@ import classStrings from '../classes/classStrings'
 import Chevron from './Chevron'
 import Icon from '../Icon'
 import navStrings from './navStrings'
-import { ICONS, SECTIONS, TINTS, itemLabel, sectionOf } from './navItems'
+import { ICONS, SECTIONS, itemLabel, sectionOf } from './navItems'
 import './nav.css'
 
 const HOVER_OPEN = 120     // ms a mouse rests on a section before its menu opens
@@ -183,7 +183,7 @@ export default function SiteNav({ appTab, lang, paths, onTabChange, isMobile, sc
                   {items.map((tab) => (
                     <li key={tab}>
                       <a href={paths[tab]} aria-current={appTab === tab ? 'page' : undefined} onClick={(e) => go(e, tab, key)}>
-                        <span className="bfs-chip is-sm" style={{ background: `var(--chip-${TINTS[tab]})` }}><Icon name={ICONS[tab]} size={15} strokeWidth={2} /></span>
+                        <Icon name={ICONS[tab]} size={16} strokeWidth={1.5} className="bfs-site-nav-icon" />
                         {itemLabel(tab, lang)}
                       </a>
                     </li>

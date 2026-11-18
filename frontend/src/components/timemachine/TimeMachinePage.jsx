@@ -13,7 +13,7 @@ const longDate = (d, lang) => new Date(`${d}T12:00:00Z`).toLocaleDateString(LOCA
   { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', timeZone: 'UTC' })
 const shortDate = (d, lang) => new Date(`${d}T12:00:00Z`).toLocaleDateString(LOCALE[lang] || 'en-US',
   { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })
-const YEAR_TINT = { gfc_2008: '#ff3b30', covid_2020: '#7f77c2', ashare_2015: '#f59e0b', rates_2022: '#2f7bff' }
+const YEAR_TINT = { gfc_2008: '#e5484d', covid_2020: '#7f77c2', ashare_2015: '#f59e0b', rates_2022: '#4f86f7' }
 
 async function api(path, body) {
   const r = await fetch(`/api/time-machine/${path}`, body
@@ -27,15 +27,15 @@ async function api(path, body) {
 const CSS = `
 .tm { display: grid; gap: 16px; max-width: 1240px; margin: 0 auto; width: 100%; padding-bottom: 40px; }
 .tm-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px; min-width: 0; }
-.tm-h { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .2px; }
+.tm-h { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: .2px; }
 .tm-muted { color: var(--text-secondary); }
 .tm-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .tm-btn:disabled { opacity: .45; cursor: not-allowed; }
-.tm-btn.primary { background: #2f7bff; border-color: transparent; color: #fff; }
+.tm-btn.primary { background: #4f86f7; border-color: transparent; color: #fff; }
 .tm-btn:focus-visible, .tm-row:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 .tm-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 .tm-pick { display: grid; gap: 10px; align-content: start; position: relative; overflow: hidden; }
-.tm-year { font-size: 44px; font-weight: 800; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.tm-year { font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
 .tm-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .tm-game { display: grid; grid-template-columns: 290px minmax(0, 1fr) 310px; gap: 14px; align-items: start; }
 .tm-side { display: grid; gap: 14px; min-width: 0; }
@@ -53,7 +53,7 @@ const CSS = `
 .tm-table td { padding: 7px 8px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tm-scroll { overflow-x: auto; }
 .tm-bar { height: 6px; border-radius: 3px; background: var(--bg-tertiary); overflow: hidden; }
-.tm-big { font-size: 34px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tm-big { font-size: 34px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
 @media (max-width: 1150px) { .tm-game { grid-template-columns: 280px minmax(0, 1fr); } .tm-news-col { grid-column: 1 / -1; } }
 @media (max-width: 760px) {
   .tm-game { grid-template-columns: minmax(0, 1fr); } .tm-how { grid-template-columns: 1fr; } .tm-big { font-size: 28px; } .tm-news { max-height: none; }
@@ -138,8 +138,8 @@ function Picker({ s, lang, list, onPick }) {
       <div className="tm-how">
         {s.how.map(([h, d], i) => (
           <div key={h} className="tm-card" style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: 14 }}>
-            <span className="tm-num" style={{ flex: 'none', width: 26, height: 26, borderRadius: 13, display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 13, color: '#fff', background: ACCENT }}>{i + 1}</span>
-            <div><div style={{ fontWeight: 700, fontSize: 14 }}>{h}</div><div className="tm-muted" style={{ fontSize: 12.5, lineHeight: 1.5, marginTop: 2 }}>{d}</div></div>
+            <span className="tm-num" style={{ flex: 'none', width: 26, height: 26, borderRadius: 13, display: 'grid', placeItems: 'center', fontWeight: 600, fontSize: 13, color: '#fff', background: ACCENT }}>{i + 1}</span>
+            <div><div style={{ fontWeight: 600, fontSize: 14 }}>{h}</div><div className="tm-muted" style={{ fontSize: 12.5, lineHeight: 1.5, marginTop: 2 }}>{d}</div></div>
           </div>
         ))}
       </div>
@@ -205,7 +205,7 @@ function Result({ s, lang, run, board, onReplay, onBack }) {
           <h3 className="tm-h">{s.exam}</h3>
           {r.exam_points.map((p) => (
             <div key={p.exam} style={{ display: 'flex', gap: 10, fontSize: 13, lineHeight: 1.55 }}>
-              <span style={{ flex: 'none', minWidth: 74, fontWeight: 700, color: ACCENT }}>{p.exam}</span><span>{p.point}</span>
+              <span style={{ flex: 'none', minWidth: 74, fontWeight: 600, color: ACCENT }}>{p.exam}</span><span>{p.point}</span>
             </div>
           ))}
         </section>
@@ -216,9 +216,9 @@ function Result({ s, lang, run, board, onReplay, onBack }) {
           <div className="tm-scroll"><table className="tm-table"><tbody>
             {board.rows.map((b) => (
               <tr key={b.rank} style={b.is_me ? { background: `${ACCENT}14` } : undefined}>
-                <td style={{ width: 30, fontWeight: 800 }}>{b.rank}</td>
+                <td style={{ width: 30, fontWeight: 600 }}>{b.rank}</td>
                 <td>{(b.nickname || s.anon).replace(/^用户#/, lang === 'zh' ? '用户#' : '#')}{b.is_me ? s.me : ''}</td>
-                <td style={{ textAlign: 'right', color: plColor(b.return_pct, m), fontWeight: 700 }}>{pct(b.return_pct)}</td>
+                <td style={{ textAlign: 'right', color: plColor(b.return_pct, m), fontWeight: 600 }}>{pct(b.return_pct)}</td>
               </tr>
             ))}
           </tbody></table></div>
@@ -273,7 +273,7 @@ function Game({ s, lang, run, busy, err, onAdvance, onTrade, onRestart, onBack, 
           <button className="tm-btn" onClick={onBack} aria-label={s.back}>← {s.back}</button>
           <div style={{ minWidth: 0, flex: '1 1 260px' }}>
             <div className="tm-muted" style={{ fontSize: 12 }}>{sc.title}</div>
-            <div style={{ fontSize: 22, fontWeight: 800 }}>{longDate(run.date, lang)}</div>
+            <div style={{ fontSize: 22, fontWeight: 600 }}>{longDate(run.date, lang)}</div>
           </div>
           {!run.finished && (
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -307,7 +307,7 @@ function Game({ s, lang, run, busy, err, onAdvance, onTrade, onRestart, onBack, 
         ].map(([k, v, c]) => (
           <div key={k} className="tm-card" style={{ padding: '12px 14px' }}>
             <div className="tm-muted" style={{ fontSize: 12 }}>{k}</div>
-            <div className="tm-num" style={{ fontSize: 20, fontWeight: 800, color: c || undefined }}>{v}</div>
+            <div className="tm-num" style={{ fontSize: 20, fontWeight: 600, color: c || undefined }}>{v}</div>
           </div>
         ))}
       </div>
@@ -337,8 +337,8 @@ function Game({ s, lang, run, busy, err, onAdvance, onTrade, onRestart, onBack, 
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
               <h3 className="tm-h" style={{ fontSize: 16 }}>{inst.name}</h3>
               <span className="tm-muted tm-num" style={{ fontSize: 12 }}>{inst.symbol}</span>
-              <span className="tm-num" style={{ marginLeft: 'auto', fontSize: 18, fontWeight: 800 }}>{inst.price != null ? money(inst.price, m) : '—'}</span>
-              <span className="tm-num" style={{ fontSize: 13, fontWeight: 700, color: plColor(inst.change_pct, m) }}>{inst.suspended ? s.suspended : pct(inst.change_pct)}</span>
+              <span className="tm-num" style={{ marginLeft: 'auto', fontSize: 18, fontWeight: 600 }}>{inst.price != null ? money(inst.price, m) : '—'}</span>
+              <span className="tm-num" style={{ fontSize: 13, fontWeight: 600, color: plColor(inst.change_pct, m) }}>{inst.suspended ? s.suspended : pct(inst.change_pct)}</span>
             </div>
             <LineChart lang={lang} labels={run.dates} startIndex={run.start_index} markers={markers} fmtY={(v) => fmt(v, v < 10 ? 2 : 1)}
               series={[{ key: 'p', values: inst.closes, color: plColor((inst.price || 0) - (inst.closes[run.start_index] || 0), m) === MUTED ? ACCENT : plColor((inst.price || 0) - (inst.closes[run.start_index] || 0), m) }]} />
@@ -387,7 +387,7 @@ function Game({ s, lang, run, busy, err, onAdvance, onTrade, onRestart, onBack, 
               <details>
                 <summary className="tm-muted" style={{ cursor: 'pointer', fontSize: 12.5 }}>{s.trades} ({run.trades.length})</summary>
                 <div className="tm-scroll"><table className="tm-table"><tbody>{run.trades.map((t, k) => (
-                  <tr key={k}><td>{shortDate(t.date, lang)}</td><td style={{ color: t.side === 'buy' ? UP : DOWN, fontWeight: 700 }}>{t.side === 'buy' ? s.buy : s.sell}</td>
+                  <tr key={k}><td>{shortDate(t.date, lang)}</td><td style={{ color: t.side === 'buy' ? UP : DOWN, fontWeight: 600 }}>{t.side === 'buy' ? s.buy : s.sell}</td>
                     <td>{run.instruments.find((i) => i.symbol === t.symbol)?.name || t.symbol}</td><td style={{ textAlign: 'right' }}>{t.shares} × {fmt(t.price)}</td>
                     <td style={{ textAlign: 'right', color: t.pl != null ? plColor(t.pl, m) : undefined }}>{t.pl != null ? signed(t.pl, m, 0) : ''}</td></tr>
                 ))}</tbody></table></div>
@@ -410,7 +410,7 @@ function Game({ s, lang, run, busy, err, onAdvance, onTrade, onRestart, onBack, 
               {run.events.map((e) => (
                 <div key={e.date + e.text} className={`tm-ev${e.new ? ' new' : ''}`}>
                   <div className="tm-muted tm-num" style={{ fontSize: 11.5, display: 'flex', gap: 6, alignItems: 'center' }}>
-                    {e.new && <span style={{ color: '#fff', background: '#f59e0b', borderRadius: 4, padding: '0 5px', fontWeight: 700 }}>{s.fresh}</span>}
+                    {e.new && <span style={{ color: '#fff', background: '#f59e0b', borderRadius: 4, padding: '0 5px', fontWeight: 600 }}>{s.fresh}</span>}
                     {shortDate(e.date, lang)}{e.happened !== e.date ? ` · ${s.happened(shortDate(e.happened, lang))}` : ''}
                   </div>
                   <div style={{ fontSize: 13, lineHeight: 1.55 }}>{e.text}</div>

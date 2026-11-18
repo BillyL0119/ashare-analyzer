@@ -8,7 +8,7 @@ import diagramNav, { diagramHref } from '../diagrams/diagramNav'
 // Each case also has its own page at /cases/<id>; the backend writes its static HTML for search
 // engines (backend/services/case_pages.py) and the app opens the case there.
 
-const ACCENT = '#2f7bff'
+const ACCENT = '#4f86f7'
 const BOARDS = ['ib', 'alevel', 'ap_macro', 'ap_micro', 'igcse']
 const SAVE_KEY = 'bfs_saved_cases'
 const PAGE = 20
@@ -23,10 +23,10 @@ const CSS = `
 .cs-pill.on { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
 .cs-concept { display: flex; justify-content: space-between; gap: 8px; text-align: left; width: 100%; border: none; background: none; color: var(--text-primary); padding: 7px 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
 .cs-concept:hover { background: var(--bg-tertiary); }
-.cs-concept.on { background: ${ACCENT}1f; color: ${ACCENT}; font-weight: 700; }
+.cs-concept.on { background: ${ACCENT}1f; color: ${ACCENT}; font-weight: 600; }
 .cs-concept:disabled { opacity: .45; cursor: default; }
-.cs-tag { border: none; cursor: pointer; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: ${ACCENT}1f; color: ${ACCENT}; }
-.cs-h { font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 3px; }
+.cs-tag { border: none; cursor: pointer; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: ${ACCENT}1f; color: ${ACCENT}; }
+.cs-h { font-size: 11.5px; font-weight: 600; letter-spacing: .4px; color: var(--text-secondary); margin-bottom: 3px; }
 .cs-body { font-size: 14px; line-height: 1.7; }
 .cs-q { border-left: 3px solid #f59e0b; background: #f59e0b12; border-radius: 8px; padding: 10px 12px; font-size: 14px; line-height: 1.6; }
 .cs-act { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
@@ -185,7 +185,7 @@ function OneCase({ lang, caseId, studyHref = defaultStudyHref }) {
             onConcept={(id) => navigate(`/cases?concept=${id}`)} conceptTopics={conceptTopics} drawLabel={diagramNav(lang).drawLink} />
           {other && (
             <details className="cs-card" lang={kase.other.lang === 'zh' ? 'zh-CN' : 'en'}>
-              <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>{s.otherLang}</summary>
+              <summary style={{ cursor: 'pointer', fontWeight: 600, fontSize: 14 }}>{s.otherLang}</summary>
               <div style={{ display: 'grid', gap: 12, marginTop: 12 }}><CaseText c={kase.other} s={other} /></div>
             </details>
           )}

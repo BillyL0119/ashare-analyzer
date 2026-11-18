@@ -5,12 +5,12 @@ import { getStockScore } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const ACCENT = '#5c9bff'
+const ACCENT = '#6c9cff'
 const ACCENT2 = '#a99ad6'
 
 const GRADE_COLOR = {
-  'A+': '#00ff88', A: '#00c853', 'B+': '#84cc16',
-  B: '#fbbf24', C: '#f97316', D: '#ff3b30',
+  'A+': '#00ff88', A: '#3fb67a', 'B+': '#84cc16',
+  B: '#fbbf24', C: '#f97316', D: '#e5484d',
 }
 
 // English labels for the backend's per-factor keys (it sends raw keys like "pe", "drawdown")
@@ -30,7 +30,7 @@ const DIM_LABEL = {
 }
 
 function ScoreRing({ score, grade }) {
-  const color = GRADE_COLOR[grade] || '#5c9bff'
+  const color = GRADE_COLOR[grade] || '#6c9cff'
   const r = 54, cx = 70, cy = 70
   const circ = 2 * Math.PI * r
   const dash = (score / 100) * circ
@@ -51,8 +51,8 @@ function ScoreRing({ score, grade }) {
         position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
       }}>
-        <div style={{ fontSize: 32, fontWeight: 800, color, lineHeight: 1 }}>{grade}</div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 4 }}>{score}</div>
+        <div style={{ fontSize: 32, fontWeight: 600, color, lineHeight: 1 }}>{grade}</div>
+        <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginTop: 4 }}>{score}</div>
         <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>/ 100</div>
       </div>
     </div>
@@ -77,7 +77,7 @@ function RadarChart({ dimensions }) {
       splitNumber: 4,
       axisName: { color: THEME.text, fontSize: 12, fontWeight: 600 },
       splitLine: { lineStyle: { color: THEME.border } },
-      splitArea: { show: true, areaStyle: { color: ['transparent', 'rgba(92,155,255,0.05)'] } },
+      splitArea: { show: true, areaStyle: { color: ['transparent', 'rgba(108,156,255,0.05)'] } },
       axisLine: { lineStyle: { color: THEME.border } },
     },
     series: [{
@@ -89,7 +89,7 @@ function RadarChart({ dimensions }) {
         symbolSize: 5,
         lineStyle: { color: ACCENT, width: 2 },
         itemStyle: { color: ACCENT },
-        areaStyle: { color: 'rgba(92,155,255,0.25)' },
+        areaStyle: { color: 'rgba(108,156,255,0.25)' },
       }],
     }],
   }
@@ -99,17 +99,17 @@ function RadarChart({ dimensions }) {
 function DimCard({ dimKey, dim, isCN }) {
   const label = DIM_LABEL[dimKey]
   const pct = Math.round(dim.score / dim.max * 100)
-  const barColor = pct >= 70 ? '#00c853' : pct >= 50 ? '#fbbf24' : '#ff3b30'
+  const barColor = pct >= 70 ? '#3fb67a' : pct >= 50 ? '#fbbf24' : '#e5484d'
   return (
     <div style={{
       background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
       borderRadius: 10, padding: '12px 14px',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
           {isCN ? label.zh : label.en}
         </span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: barColor }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: barColor }}>
           {dim.score} / {dim.max}
         </span>
       </div>
@@ -133,8 +133,8 @@ function DimCard({ dimKey, dim, isCN }) {
             {isCN ? d.note_zh : d.note_en}
           </span>
           <span style={{
-            fontSize: 11, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
-            color: d.score >= d.max * 0.7 ? '#00c853' : d.score >= d.max * 0.4 ? '#fbbf24' : '#ff3b30',
+            fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+            color: d.score >= d.max * 0.7 ? '#3fb67a' : d.score >= d.max * 0.4 ? '#fbbf24' : '#e5484d',
           }}>
             {d.score}/{d.max}
           </span>
@@ -215,7 +215,7 @@ export default function ScorePanel({ stocks }) {
         if (d.error) return (
           <div key={s.code} style={{
             background: THEME.gridBg, border: `1px solid ${THEME.border}`,
-            borderRadius: 10, padding: 20, color: '#ff3b30', fontSize: 13,
+            borderRadius: 10, padding: 20, color: '#e5484d', fontSize: 13,
           }}>
             {s.code}: {d.error}
           </div>
@@ -228,12 +228,12 @@ export default function ScorePanel({ stocks }) {
           }}>
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{s.name || s.code}</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{s.name || s.code}</span>
               {s.name && s.name !== s.code && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.code}</span>}
               <div style={{
                 marginLeft: 'auto', padding: '2px 12px',
                 background: `${gradeColor}22`, border: `1px solid ${gradeColor}55`,
-                borderRadius: 20, fontSize: 13, fontWeight: 700, color: gradeColor,
+                borderRadius: 20, fontSize: 13, fontWeight: 600, color: gradeColor,
               }}>
                 {d.grade}
               </div>

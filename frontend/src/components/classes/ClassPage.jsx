@@ -7,8 +7,8 @@ import classStrings from './classStrings'
 // Classroom mode: students join a teacher's class with a code; teachers set assignments that complete
 // on their own and follow the whole class's progress.
 
-const ACCENT = '#2f7bff'
-const UP = '#00c853', DOWN = '#ff3b30'
+const ACCENT = '#4f86f7'
+const UP = '#3fb67a', DOWN = '#e5484d'
 
 const CSS = `
 .cl { display: grid; gap: 18px; max-width: 1180px; margin: 0 auto; width: 100%; padding: 18px 0 40px; }
@@ -16,7 +16,7 @@ const CSS = `
 .cl-muted { color: var(--text-secondary); }
 .cl-h { margin: 0; font-size: 17px; }
 .cl-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-.cl-btn.primary { background: #2f7bff; border-color: transparent; color: #fff; }
+.cl-btn.primary { background: #4f86f7; border-color: transparent; color: #fff; }
 .cl-btn.danger { color: ${DOWN}; background: transparent; }
 .cl-btn:disabled { opacity: .5; cursor: not-allowed; }
 .cl-btn:focus-visible, .cl-input:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
@@ -27,7 +27,7 @@ const CSS = `
 .cl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .cl-table th { text-align: left; font-weight: 600; color: var(--text-secondary); padding: 7px 9px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; font-size: 12px; }
 .cl-table td { padding: 8px 9px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.cl-code { font-family: ui-monospace, Menlo, monospace; font-size: 28px; font-weight: 800; letter-spacing: 5px; }
+.cl-code { font-family: ui-monospace, Menlo, monospace; font-size: 28px; font-weight: 600; letter-spacing: 0; }
 .cl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
 .cl-bar { height: 6px; border-radius: 3px; background: var(--bg-tertiary); overflow: hidden; }
 `
@@ -121,7 +121,7 @@ function StudentClasses({ s, classes, onLeave }) {
               {c.assignments.length === 0 && <div className="cl-muted" style={{ fontSize: 13 }}>{s.noAssignments}</div>}
               {c.assignments.map((a) => (
                 <div key={a.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 10px', borderRadius: 10, border: '1px solid var(--border-primary)', opacity: a.done ? 0.65 : 1 }}>
-                  <span aria-label={a.done ? s.done : s.todo} style={{ flex: 'none', width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 12, color: '#fff', background: a.done ? UP : 'transparent', border: a.done ? 'none' : '2px solid var(--border-primary)' }}>{a.done ? '✓' : ''}</span>
+                  <span aria-label={a.done ? s.done : s.todo} style={{ flex: 'none', width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontWeight: 600, fontSize: 12, color: '#fff', background: a.done ? UP : 'transparent', border: a.done ? 'none' : '2px solid var(--border-primary)' }}>{a.done ? '✓' : ''}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 650 }}>{a.title}</div>
                     <div className="cl-muted" style={{ fontSize: 12 }}>
@@ -140,7 +140,7 @@ function StudentClasses({ s, classes, onLeave }) {
                   <thead><tr><th>#</th><th>{s.colName}</th><th style={{ textAlign: 'right' }}>{s.colDone}</th><th style={{ textAlign: 'right' }}>{s.colMissions}</th><th style={{ textAlign: 'right' }}>{s.colReturn}</th></tr></thead>
                   <tbody>{c.leaderboard.map((r, i) => (
                     <tr key={i} style={r.me ? { background: `${ACCENT}14` } : undefined}>
-                      <td style={{ fontWeight: 800 }}>{i + 1}</td><td>{r.nickname}{r.me ? s.me : ''}</td>
+                      <td style={{ fontWeight: 600 }}>{i + 1}</td><td>{r.nickname}{r.me ? s.me : ''}</td>
                       <td style={{ textAlign: 'right' }}>{r.done}/{c.assignments.length}</td><td style={{ textAlign: 'right' }}>{s.missionsOf(r.missions)}</td>
                       <td style={{ textAlign: 'right', color: pcol(r.return_pct) }}>{pct(r.return_pct)}</td>
                     </tr>

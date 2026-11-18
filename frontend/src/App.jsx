@@ -377,14 +377,14 @@ export default function App() {
             style={{ height: isMobile ? 32 : 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
           />
           {!isMobile && (
-            <span style={{ fontSize: 19, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
+            <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
               Best Friend Stock
             </span>
           )}
         </div>
 
         {/* Market switch: a segmented control */}
-        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: 999, padding: 3, gap: 2, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 8, padding: 2, gap: 2, flexShrink: 0 }}>
           {[{ key: 'us', label: t.marketUS }, { key: 'cn', label: t.marketCN },
             { key: 'hk', label: t.marketHK }, { key: 'jp', label: t.marketJP }].map(({ key, label }) => (
             <button
@@ -393,10 +393,10 @@ export default function App() {
               aria-pressed={market === key}
               style={{
                 padding: isMobile ? '4px 7px' : '5px 12px',
-                borderRadius: 999, border: 'none', cursor: 'pointer',
-                fontSize: isMobile ? 11 : 13, fontWeight: 700,
-                background: market === key ? 'var(--accent-blue)' : 'transparent',
-                color: market === key ? '#fff' : 'var(--text-secondary)',
+                borderRadius: 6, border: 'none', cursor: 'pointer',
+                fontSize: isMobile ? 11 : 13, fontWeight: 500,
+                background: market === key ? 'var(--bg-hover)' : 'transparent',
+                color: market === key ? 'var(--text-primary)' : 'var(--text-secondary)',
               }}
             >
               {isMobile && lang !== 'zh' ? { us: 'US', cn: 'CN', hk: 'HK', jp: 'JP' }[key] : label}
@@ -416,9 +416,9 @@ export default function App() {
                 onClick={() => setShowLangDropdown(v => !v)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '7px 12px', borderRadius: 999,
-                  border: 'none', background: 'var(--bg-secondary)',
-                  cursor: 'pointer', fontSize: 12, fontWeight: 700,
+                  padding: '6px 10px', borderRadius: 8,
+                  border: '1px solid var(--border-primary)', background: 'transparent',
+                  cursor: 'pointer', fontSize: 12, fontWeight: 500,
                   color: 'var(--text-secondary)', whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)' }}
@@ -534,8 +534,8 @@ export default function App() {
               {badge != null && (
                 <div style={{
                   position: 'absolute', top: -3, right: -3,
-                  background: 'var(--accent-blue)',
-                  color: '#fff', fontSize: 9, fontWeight: 700,
+                  background: 'var(--accent-fill)',
+                  color: '#fff', fontSize: 9, fontWeight: 600,
                   width: 15, height: 15, borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   pointerEvents: 'none',
@@ -577,7 +577,7 @@ export default function App() {
                 >
                   {/* Language chips */}
                   <div style={{ padding: '4px 12px 8px', borderBottom: '1px solid var(--border-primary)', marginBottom: 4 }}>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Language</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6, letterSpacing: 0 }}>Language</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                       {LANG_OPTIONS.map(({ code, label }) => (
                         <button
@@ -673,7 +673,7 @@ export default function App() {
                       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {t.signedIn}
                         {role !== 'user' && (
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 999, color: role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-gold)', border: '1px solid currentColor' }}>
+                          <span style={{ fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 999, color: role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-gold)', border: '1px solid currentColor' }}>
                             {(ROLE_LABELS[role] || ROLE_LABELS.admin)[lang] || (ROLE_LABELS[role] || ROLE_LABELS.admin).en}
                           </span>
                         )}
@@ -717,9 +717,9 @@ export default function App() {
               <button
                 onClick={() => setShowAuth(true)}
                 style={{
-                  padding: '8px 18px', borderRadius: 999, border: 'none',
+                  padding: '7px 16px', borderRadius: 8, border: 'none',
                   background: 'var(--text-primary)',
-                  cursor: 'pointer', fontSize: 13, fontWeight: 700, color: 'var(--bg-primary)',
+                  cursor: 'pointer', fontSize: 13, fontWeight: 500, color: 'var(--bg-primary)',
                   whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = '0.85' }}
@@ -807,7 +807,7 @@ export default function App() {
           display: 'flex', alignItems: 'center', gap: 8,
           pointerEvents: 'none',
         }}>
-          <span style={{ color: '#30d158', fontSize: 15, lineHeight: 1 }}>✓</span>
+          <span style={{ color: '#4cc38a', fontSize: 15, lineHeight: 1 }}>✓</span>
           {toast}
         </div>
       )}

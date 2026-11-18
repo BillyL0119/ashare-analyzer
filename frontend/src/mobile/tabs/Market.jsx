@@ -108,7 +108,7 @@ function IndexTile({ name, q, hero }) {
         </div>
         <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
           <Pill value={p} market="cn" width={84} />
-          {q && <span className="m-num" style={{ color: c, fontWeight: 650, fontSize: 12.5 }}>{q.change > 0 ? '+' : ''}{num(q.change)}</span>}
+          {q && <span className="m-num" style={{ color: c, fontWeight: 600, fontSize: 12.5 }}>{q.change > 0 ? '+' : ''}{num(q.change)}</span>}
         </div>
       </div>
     )
@@ -116,8 +116,8 @@ function IndexTile({ name, q, hero }) {
   return (
     <div className="m-tile" style={{ background: bg, padding: '10px 12px', minWidth: 0 }}>
       <div className="m-label">{name}</div>
-      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 15, fontWeight: 800 }}>{q ? num(q.value) : '--'}</div>
-      <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(p)}</div>
+      <div className="m-num" style={{ margin: '3px 0 2px', fontSize: 15, fontWeight: 600 }}>{q ? num(q.value) : '--'}</div>
+      <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 12.5 }}>{pct(p)}</div>
     </div>
   )
 }
@@ -152,7 +152,7 @@ function Overview() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <b style={{ fontSize: 17 }}>{t('A股大盘')}</b>
-              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 999, fontSize: 12, fontWeight: 650, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
+              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 999, fontSize: 12, fontWeight: 600, color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
                 <span style={{ width: 6, height: 6, borderRadius: 3, background: color }} />{label}
               </span>
             </div>
@@ -197,7 +197,7 @@ function WatchRow({ item }) {
     <button className="m-row" onClick={() => open(nav, market, item.code)}>
       <div className="m-grow"><div className="m-name">{item.name}</div><div className="m-sub">{item.code}</div></div>
       <Sparkline values={closes} color={changeColor(trend, market)} />
-      <span className="m-num" style={{ fontWeight: 650, minWidth: 66, textAlign: 'right' }}>{q.data ? num(q.data.price) : ''}</span>
+      <span className="m-num" style={{ fontWeight: 600, minWidth: 66, textAlign: 'right' }}>{q.data ? num(q.data.price) : ''}</span>
       <Pill value={p} market={market} width={78} />
     </button>
   )
@@ -223,7 +223,7 @@ function Watchlist() {
       <div className="m-card flush">
         {list.map((it) => editing ? (
           <div className="m-row" key={it.code}>
-            <button aria-label={t('移出自选') + ' ' + it.name} onClick={() => remove(it.code)} style={{ color: '#ff3b30', fontSize: 22, lineHeight: 1 }}>⊖</button>
+            <button aria-label={t('移出自选') + ' ' + it.name} onClick={() => remove(it.code)} style={{ color: '#e5484d', fontSize: 22, lineHeight: 1 }}>⊖</button>
             <div className="m-grow"><div className="m-name">{it.name}</div><div className="m-sub">{it.code}</div></div>
           </div>
         ) : <WatchRow key={it.code} item={it} />)}
@@ -250,8 +250,8 @@ function Global() {
                 return (
                   <div key={i.symbol} className="m-tile" style={{ background: `color-mix(in srgb, ${c} 9%, var(--surface-hi))` }}>
                     <div className="m-label">{lang === 'zh' ? i.name_zh : i.name}</div>
-                    <div className="m-num" style={{ fontWeight: 800, fontSize: 15, margin: '5px 0 3px' }}>{num(i.close)}</div>
-                    <div className="m-num" style={{ color: c, fontWeight: 700, fontSize: 12.5 }}>{pct(i.change_pct)}</div>
+                    <div className="m-num" style={{ fontWeight: 600, fontSize: 15, margin: '5px 0 3px' }}>{num(i.close)}</div>
+                    <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 12.5 }}>{pct(i.change_pct)}</div>
                   </div>
                 )
               })}
@@ -306,7 +306,7 @@ function Hot() {
         <div className="m-card flush">
           {data.slice(0, 20).map((s, i) => (
             <button className="m-row" key={s.code} onClick={() => open(nav, market, s.code)}>
-              <span className="m-num" style={{ width: 20, fontWeight: 800, fontSize: 13, color: i < 3 ? 'var(--accent)' : 'var(--text-3)' }}>{i + 1}</span>
+              <span className="m-num" style={{ width: 20, fontWeight: 600, fontSize: 13, color: i < 3 ? 'var(--accent)' : 'var(--text-3)' }}>{i + 1}</span>
               <div className="m-grow"><div className="m-name">{s.name}</div><div className="m-sub">{s.code}</div></div>
               <Pill value={s.change_pct} market={market} />
             </button>

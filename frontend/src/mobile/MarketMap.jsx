@@ -78,7 +78,7 @@ export default function MarketMap({ market }) {
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', lineHeight: 1.15,
               }}
             >
-              {x.w > 30 && x.h > 18 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 13 : 10, fontWeight: 700, maxWidth: '96%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'clip' }}>{tileName(x.s)}</span>}
+              {x.w > 30 && x.h > 18 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 13 : 10, fontWeight: 600, maxWidth: '96%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'clip' }}>{tileName(x.s)}</span>}
               {x.w > 40 && x.h > 34 && <span style={{ fontSize: x.w > 70 && x.h > 44 ? 11 : 9, opacity: 0.9 }}>{pct(x.s.change_pct)}</span>}
             </button>
           ))}

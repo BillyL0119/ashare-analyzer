@@ -2,18 +2,18 @@ import { useEffect } from 'react'
 import { T } from '../i18n/translations'
 
 const MUTED  = 'var(--text-muted)'
-const GREEN  = '#30d158'
-const RED    = '#ff3b30'
-const BLUE   = '#5c9bff'
+const GREEN  = '#4cc38a'
+const RED    = '#e5484d'
+const BLUE   = '#6c9cff'
 const YELLOW = '#f59e0b'
-const BDR    = 'rgba(92,155,255,0.12)'
+const BDR    = 'rgba(108,156,255,0.12)'
 
 // ─── Tiny candle SVG helper ───────────────────────────────────────────────────
 // open, close, high, low are y-coords in a 70px-tall canvas
 function TinyCandle({ cx, w, open, close, high, low }) {
   const bullish = close < open
   const stroke  = bullish ? GREEN : RED
-  const fill    = bullish ? 'rgba(48,209,88,0.2)' : 'rgba(255,59,48,0.2)'
+  const fill    = bullish ? 'rgba(76,195,138,0.2)' : 'rgba(229,72,77,0.2)'
   const bTop    = Math.min(open, close)
   const bH      = Math.max(Math.abs(close - open), 2)
   const bw      = w * 0.6
@@ -40,7 +40,7 @@ function AnatomyMini({ zh }) {
 
       {/* Body */}
       <rect x={cx - bw/2} y={CY} width={bw} height={OY - CY}
-        fill="rgba(48,209,88,0.15)" stroke={GREEN} strokeWidth={1.5} rx={2} />
+        fill="rgba(76,195,138,0.15)" stroke={GREEN} strokeWidth={1.5} rx={2} />
 
       {/* Lower wick */}
       <line x1={cx} y1={OY} x2={cx} y2={LY} stroke={BLUE} strokeWidth={1.5} />
@@ -143,7 +143,7 @@ export default function KLineTip({ zh, lang, onClose }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
               {t.ktTitle}
             </div>
             <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>
@@ -161,14 +161,14 @@ export default function KLineTip({ zh, lang, onClose }) {
           background: 'rgba(255,255,255,0.025)', border: `1px solid ${BDR}`,
           borderRadius: 10, padding: '12px 14px', marginBottom: 14,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: MUTED, marginBottom: 10, letterSpacing: 0 }}>
             {t.ktAnatomy}
           </div>
           <AnatomyMini zh={zh} />
         </div>
 
         {/* Patterns */}
-        <div style={{ fontSize: 11, fontWeight: 700, color: MUTED, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: MUTED, marginBottom: 8, letterSpacing: 0 }}>
           {t.ktPatterns}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -185,11 +185,11 @@ export default function KLineTip({ zh, lang, onClose }) {
                 </svg>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
                       {zh ? pat.name_zh : pat.name_en}
                     </span>
                     <span style={{
-                      fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 10,
+                      fontSize: 9, fontWeight: 600, padding: '1px 6px', borderRadius: 10,
                       background: `${SIG_COLOR[pat.signal]}1a`, color: SIG_COLOR[pat.signal],
                     }}>
                       {pat.signal.toUpperCase()}

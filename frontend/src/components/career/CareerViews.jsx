@@ -7,23 +7,23 @@ import { CATEGORIES, FIRMS } from './firms'
 
 const CSS = `
 .cg-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.cg-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+.cg-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0;
   color: var(--text-muted); padding: 10px 12px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; }
 .cg-table td { padding: 11px 12px; border-bottom: 1px solid var(--border-primary); color: var(--text-secondary); vertical-align: top; }
 .cg-table tr:last-child td { border-bottom: none; }
 .cg-row { cursor: pointer; transition: background .12s; }
 .cg-row:hover { background: var(--bg-hover); }
-.cg-row:focus-visible { outline: 2px solid var(--accent-blue, #2f7bff); outline-offset: -2px; }
-.cg-row.is-active { background: color-mix(in srgb, #2f7bff 9%, transparent); }
+.cg-row:focus-visible { outline: 2px solid var(--accent-blue, #4f86f7); outline-offset: -2px; }
+.cg-row.is-active { background: color-mix(in srgb, #4f86f7 9%, transparent); }
 .cg-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
-.cg-h { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 10px; }
+.cg-h { font-size: 12px; font-weight: 600; letter-spacing: 0; color: var(--text-muted); margin: 0 0 10px; }
 .cg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12px;
   border: 1px solid var(--border-primary); background: transparent; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
-.cg-chip.is-on { background: color-mix(in srgb, #2f7bff 14%, transparent); border-color: color-mix(in srgb, #2f7bff 55%, transparent); color: #2f7bff; font-weight: 600; }
+.cg-chip.is-on { background: color-mix(in srgb, #4f86f7 14%, transparent); border-color: color-mix(in srgb, #4f86f7 55%, transparent); color: #4f86f7; font-weight: 600; }
 .cg-chip .n { font-size: 11px; opacity: .7; }
-.cg-tick { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #2f7bff;
-  background: none; border: 1px solid color-mix(in srgb, #2f7bff 35%, transparent); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
-.cg-tick:hover { background: color-mix(in srgb, #2f7bff 10%, transparent); }
+.cg-tick { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #4f86f7;
+  background: none; border: 1px solid color-mix(in srgb, #4f86f7 35%, transparent); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
+.cg-tick:hover { background: color-mix(in srgb, #4f86f7 10%, transparent); }
 .cg-profile { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; }
 .cg-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 @media (max-width: 900px) { .cg-profile { grid-template-columns: minmax(0, 1fr); } .cg-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -96,7 +96,7 @@ function Tile({ label, value, sub }) {
   return (
     <div style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)', borderRadius: 10, padding: '12px 14px', minWidth: 0 }}>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>{label}</div>
-      <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.25 }}>{value}</div>
+      <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.25 }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{sub}</div>}
     </div>
   )
@@ -115,7 +115,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
       {/* Header */}
       <div className="cg-panel" style={{ padding: '18px 18px 16px', display: 'grid', gap: 14 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: role.color }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0, color: role.color }}>
             {zh ? '职业路径' : 'Career track'} · {L(m.short, zh)}
           </div>
           <h2 style={{ margin: '4px 0 6px', fontSize: 22, color: 'var(--text-primary)', letterSpacing: '-.2px' }}>{zh ? role.title : role.titleEn}</h2>
@@ -173,11 +173,11 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
               {m.timeline.map((s, i) => (
                 <li key={i} style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', gap: 12 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 700, color: role.color, background: `${role.color}1f`, border: `1px solid ${role.color}55` }}>{i + 1}</span>
+                    <span style={{ width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: role.color, background: `${role.color}1f`, border: `1px solid ${role.color}55` }}>{i + 1}</span>
                     {i < m.timeline.length - 1 && <span style={{ flex: 1, width: 1, background: 'var(--border-primary)', minHeight: 14 }} />}
                   </div>
                   <div style={{ paddingBottom: i < m.timeline.length - 1 ? 14 : 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{L(s.when, zh)}</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{L(s.when, zh)}</div>
                     <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginTop: 2 }}>{L(s.what, zh)}</div>
                   </div>
                 </li>

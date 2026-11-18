@@ -37,7 +37,6 @@ export default function QuoteBanner({ lang }) {
         fontSize: 15,
         color: 'var(--text-secondary)',
         lineHeight: 1.55,
-        fontStyle: 'italic',
         fontFamily: 'var(--heading)',
         display: '-webkit-box',
         WebkitLineClamp: 3,

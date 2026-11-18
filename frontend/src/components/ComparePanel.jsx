@@ -120,7 +120,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               onClick={() => setViewMode('calendar')}
               style={{
                 padding: '5px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
-                fontSize: 12, background: 'rgba(92,155,255,0.1)', color: '#5c9bff',
+                fontSize: 12, background: 'rgba(108,156,255,0.1)', color: '#6c9cff',
               }}
             >
               {t.calendarTab}
@@ -217,9 +217,9 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 background: 'transparent',
-                color: viewMode === key ? '#2f7bff' : 'var(--text-secondary)',
+                color: viewMode === key ? '#4f86f7' : 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
-                boxShadow: viewMode === key ? 'inset 0 -2px 0 #2f7bff' : 'none',
+                boxShadow: viewMode === key ? 'inset 0 -2px 0 #4f86f7' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (viewMode !== key) e.currentTarget.style.color = 'var(--text-primary)'
@@ -252,7 +252,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               fontSize: 12, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#2f7bff' }}
+            onFocus={(e) => { e.target.style.borderColor = '#4f86f7' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
           <span>{t.to}</span>
@@ -266,7 +266,7 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
               fontSize: 12, outline: 'none', cursor: 'pointer',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => { e.target.style.borderColor = '#2f7bff' }}
+            onFocus={(e) => { e.target.style.borderColor = '#4f86f7' }}
             onBlur={(e)  => { e.target.style.borderColor = 'var(--border-primary)' }}
           />
         </div>

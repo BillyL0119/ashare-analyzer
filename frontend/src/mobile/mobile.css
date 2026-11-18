@@ -1,9 +1,9 @@
 /* App-style phone UI. Tokens mirror the iOS app's design system (DS). Scoped under .m-app. */
 .m-app {
-  --bg: #020813; --surface: #0A1628; --surface-hi: #12223D;
-  --stroke: rgba(120,160,230,.12); --text: #F2F5FA; --text-2: #98A2B3; --text-3: #667085;
-  --accent: #2F7BFF; --accent-2: #2F7BFF; --shadow: none;
-  --cn-up: #ff3b30; --cn-down: #00c853;
+  --bg: #0a0f1b; --surface: #0A1628; --surface-hi: #12223D;
+  --stroke: rgba(238,241,247,.08); --text: #EEF1F7; --text-2: #A6AEC0; --text-3: #7F899E;
+  --accent: #4f86f7; --accent-2: #4f86f7; --shadow: none;
+  --cn-up: #E5484D; --cn-down: #4CC38A;
   --radius: 20px; --tile: 14px;
   --tabbar-h: 58px;
   position: fixed; inset: 0; display: flex; flex-direction: column;
@@ -13,9 +13,9 @@
   overscroll-behavior: none;
 }
 :root[data-theme="light"] .m-app {
-  --bg: #F0F5FB; --surface: #FFFFFF; --surface-hi: #E6EEF8;
+  --bg: #F5F7FA; --surface: #FFFFFF; --surface-hi: #ECEFF4;
   --stroke: rgba(0,0,0,.06); --text: #0E1420; --text-2: #5B6678; --text-3: #8A94A6;
-  --accent: #0B5CFF; --accent-2: #0B5CFF; --shadow: none;
+  --accent: #2563EB; --accent-2: #2563EB; --shadow: none;
 }
 .m-app *, .m-app *::before, .m-app *::after { box-sizing: border-box; }
 :where(.m-app) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -37,10 +37,10 @@
 .m-tab[aria-current="page"] { color: var(--accent); }
 
 /* headings */
-.m-title { font-family: var(--m-serif); font-size: 34px; font-weight: 800; letter-spacing: -.8px; margin: 6px 2px 18px; }
+.m-title { font-family: var(--m-serif); font-size: 34px; font-weight: 600; letter-spacing: -.8px; margin: 6px 2px 18px; }
 /* Editorial serif for titles and headline numbers (same faces as the desktop site) */
 :where(.m-app) { --m-serif: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans", "Noto Sans", system-ui, sans-serif; }
-.m-serif-num { font-family: var(--m-serif) !important; font-weight: 700 !important; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.03em; }
+.m-serif-num { font-family: var(--m-serif) !important; font-weight: 600 !important; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.03em; }
 .m-sec { display: flex; align-items: center; justify-content: space-between; margin: 0 4px 10px; color: var(--text-2); font-size: 13px; font-weight: 600; letter-spacing: .4px; }
 .m-sec button { color: var(--accent); font-weight: 600; font-size: 13px; }
 
@@ -50,18 +50,18 @@
 .m-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--stroke); width: 100%; text-align: left; }
 .m-row:first-child { border-top: 0; }
 .m-grow { flex: 1; min-width: 0; }
-.m-name { font-weight: 650; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-name { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .m-sub { font-size: 12px; color: var(--text-2); font-family: ui-monospace, "SF Mono", Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .m-muted { color: var(--text-2); }
 
 /* pills / segments / chips */
-.m-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 68px; padding: 5px 10px; border-radius: 999px; font-size: 13px; font-weight: 650; }
+.m-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 68px; padding: 5px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; }
 .m-seg { display: inline-flex; padding: 2px; border-radius: 999px; background: var(--surface-hi); }
-.m-seg button { padding: 6px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 650; color: var(--text-2); }
+.m-seg button { padding: 6px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--text-2); }
 .m-seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
 .m-seg.full { display: flex; } .m-seg.full button { flex: 1; text-align: center; }
 .m-chip { display: inline-flex; padding: 3px 8px; border-radius: 999px; background: var(--surface-hi); color: var(--text-2); font-size: 11px; font-weight: 600; }
-.m-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; border-radius: 18px; color: #fff; font-weight: 700; font-size: 16px;
+.m-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; border-radius: 18px; color: #fff; font-weight: 600; font-size: 16px;
   background: var(--accent); }
 .m-btn[disabled] { opacity: .4; }
 .m-btn.ghost { background: var(--surface-hi); color: var(--text); }
@@ -79,8 +79,8 @@
   background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .m-iconbtn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--stroke); }
 .m-iconbtn svg { width: 20px; height: 20px; }
-.m-nav-title { flex: 1; text-align: center; font-weight: 700; min-width: 0; }
-.m-nav-title small { display: block; font-size: 11px; font-weight: 650; }
+.m-nav-title { flex: 1; text-align: center; font-weight: 600; min-width: 0; }
+.m-nav-title small { display: block; font-size: 11px; font-weight: 600; }
 
 /* search */
 .m-search { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--stroke); margin-bottom: 18px; }
@@ -94,7 +94,7 @@
 .m-strip::-webkit-scrollbar { display: none; }
 .m-strip .m-tile { flex: none; min-width: 104px; }
 .m-label { font-size: 11px; color: var(--text-2); font-weight: 550; }
-.m-big { font-size: 17px; font-weight: 800; }
+.m-big { font-size: 17px; font-weight: 600; }
 .m-empty { text-align: center; padding: 26px 12px; color: var(--text-2); font-size: 14px; }
 .m-toast { position: fixed; left: 16px; right: 16px; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 14px); z-index: 40; padding: 12px 16px; border-radius: 14px; background: var(--surface-hi); border: 1px solid var(--stroke); font-size: 13px; text-align: center; }
 .m-footer { text-align: center; color: var(--text-3); font-size: 11px; padding: 6px 0 0; }
@@ -106,11 +106,11 @@
 .m-sheet { overflow-x: hidden; }
 
 /* ── Isolation from the desktop site's global element rules (index.css) ───────────────── */
-.m-app :is(h1, h2, h3, h4) { color: var(--text); font-family: var(--m-serif); font-weight: 700; letter-spacing: -.02em; text-wrap: balance; }
+.m-app :is(h1, h2, h3, h4) { color: var(--text); font-family: var(--m-serif); font-weight: 600; letter-spacing: -.02em; text-wrap: balance; }
 .m-app :is(button, a) { min-height: 0; }
 .m-app code { display: inline; font-family: ui-monospace, "SF Mono", Menlo, monospace; line-height: inherit; color: inherit; }
 .m-app p { margin: 0; }
-.m-app .m-title { font-size: 34px; margin: 6px 2px 18px; letter-spacing: -.8px; font-weight: 800; }
+.m-app .m-title { font-size: 34px; margin: 6px 2px 18px; letter-spacing: -.8px; font-weight: 600; }
 .m-app textarea, .m-app input { max-width: none; }
 /* Pushed-screen header: full-bleed (index.css caps *{max-width:100%}) and pinned to the very top of
    the scroll area. The scroller's top padding is safe-area + 6px, so pull the bar up by that much. */

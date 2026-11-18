@@ -7,7 +7,7 @@ import { getStockFactor } from '../api/stockApi'
 import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
-const COLORS = ['#5c9bff', '#f78166', '#30d158', '#d2a8ff']
+const COLORS = ['#6c9cff', '#f78166', '#4cc38a', '#d2a8ff']
 
 function bold(text) {
   if (!text) return []
@@ -71,10 +71,10 @@ function RollingBetaChart({ rolling, t }) {
         type: 'line',
         data: betas,
         smooth: true,
-        lineStyle: { color: '#5c9bff', width: 2 },
+        lineStyle: { color: '#6c9cff', width: 2 },
         areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{ offset: 0, color: 'rgba(92,155,255,0.3)' },
-                       { offset: 1, color: 'rgba(92,155,255,0)' }] } },
+          colorStops: [{ offset: 0, color: 'rgba(108,156,255,0.3)' },
+                       { offset: 1, color: 'rgba(108,156,255,0)' }] } },
         symbol: 'none',
       },
       {
@@ -106,12 +106,12 @@ function RiskDecompositionBar({ pctSys, pctIdio, t }) {
       </div>
       <div style={{ display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden',
         background: THEME.border }}>
-        <div style={{ width: `${pctSys}%`, background: '#5c9bff', transition: 'width 0.5s' }} />
-        <div style={{ width: `${pctIdio}%`, background: '#30d158', transition: 'width 0.5s' }} />
+        <div style={{ width: `${pctSys}%`, background: '#6c9cff', transition: 'width 0.5s' }} />
+        <div style={{ width: `${pctIdio}%`, background: '#4cc38a', transition: 'width 0.5s' }} />
       </div>
       <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
-        <span style={{ color: '#5c9bff', fontSize: 11 }}>■ Systematic</span>
-        <span style={{ color: '#30d158', fontSize: 11 }}>■ Idiosyncratic</span>
+        <span style={{ color: '#6c9cff', fontSize: 11 }}>■ Systematic</span>
+        <span style={{ color: '#4cc38a', fontSize: 11 }}>■ Idiosyncratic</span>
       </div>
     </div>
   )
@@ -140,10 +140,10 @@ function CorrelationBars({ correlations, t }) {
             <div key={`b-${sym}`} style={{ position: 'relative', height: 8, borderRadius: 4,
               background: THEME.border, overflow: 'hidden' }}>
               <div style={{ position: 'absolute', left: 0, top: 0, height: '100%',
-                width: `${pct}%`, background: isPos ? '#5c9bff' : '#ff453a',
+                width: `${pct}%`, background: isPos ? '#6c9cff' : '#e5484d',
                 borderRadius: 4, transition: 'width 0.5s' }} />
             </div>,
-            <span key={`c-${sym}`} style={{ color: isPos ? '#5c9bff' : '#ff453a',
+            <span key={`c-${sym}`} style={{ color: isPos ? '#6c9cff' : '#e5484d',
               fontSize: 12, fontWeight: 600 }}>
               {v.correlation.toFixed(3)}
             </span>,
@@ -184,27 +184,27 @@ function StockFactor({ stock, color, t, lang, params }) {
 
   if (loading) return (
     <div style={cardStyle}>
-      <div style={{ color, fontWeight: 700, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
+      <div style={{ color, fontWeight: 600, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
       <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{t.factorLoading}</div>
     </div>
   )
 
   if (error) return (
     <div style={cardStyle}>
-      <div style={{ color, fontWeight: 700, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
-      <div style={{ color: '#ff453a', fontSize: 13 }}>{error}</div>
+      <div style={{ color, fontWeight: 600, marginBottom: 12 }}>{stock.name} ({stock.code})</div>
+      <div style={{ color: '#e5484d', fontSize: 13 }}>{error}</div>
     </div>
   )
 
-  const betaColor = data.beta > 1.2 ? '#ff453a' : data.beta < 0.8 ? '#30d158' : '#5c9bff'
-  const alphaColor = data.alpha_annual_pct >= 0 ? '#ff3b30' : '#00c853'
+  const betaColor = data.beta > 1.2 ? '#e5484d' : data.beta < 0.8 ? '#4cc38a' : '#6c9cff'
+  const alphaColor = data.alpha_annual_pct >= 0 ? '#e5484d' : '#3fb67a'
 
   return (
     <div style={cardStyle}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         marginBottom: 14 }}>
-        <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name} ({stock.code})</span>
+        <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name} ({stock.code})</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.factorSummary} · {data.sample_days}d</span>
       </div>
 
@@ -219,7 +219,7 @@ function StockFactor({ stock, color, t, lang, params }) {
           <div key={label} style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`,
             borderRadius: 6, padding: '8px 10px', textAlign: 'center' }}>
             <div style={{ color: 'var(--text-muted)', fontSize: 11, marginBottom: 3 }}>{label}</div>
-            <div style={{ color: c, fontWeight: 700, fontSize: 16 }}>{val}</div>
+            <div style={{ color: c, fontWeight: 600, fontSize: 16 }}>{val}</div>
           </div>
         ))}
       </div>
@@ -229,10 +229,10 @@ function StockFactor({ stock, color, t, lang, params }) {
         borderRadius: 8, padding: '4px 12px', marginBottom: 12 }}>
         <MetricRow label={t.factorAnnReturn}
           value={`${data.ann_return_pct > 0 ? '+' : ''}${data.ann_return_pct.toFixed(1)}%`}
-          color={data.ann_return_pct >= 0 ? '#ff3b30' : '#00c853'} />
+          color={data.ann_return_pct >= 0 ? '#e5484d' : '#3fb67a'} />
         <MetricRow label={t.factorMktReturn}
           value={`${data.mkt_ann_return_pct > 0 ? '+' : ''}${data.mkt_ann_return_pct.toFixed(1)}%`}
-          color={data.mkt_ann_return_pct >= 0 ? '#ff3b30' : '#00c853'} />
+          color={data.mkt_ann_return_pct >= 0 ? '#e5484d' : '#3fb67a'} />
         <MetricRow label={t.factorAnnVol} value={`${data.ann_vol_pct.toFixed(1)}%`} />
         <MetricRow label={t.factorInfoRatio}
           value={data.information_ratio !== null ? data.information_ratio.toFixed(2) : 'N/A'} />

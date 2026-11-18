@@ -14,7 +14,7 @@ const COLORS = ['#64b5f6', '#b388ff', '#ffb74d', '#90a4ae']
 function pctColor(v, invert = false) {
   if (v == null) return THEME.text
   const pos = invert ? v < 0 : v > 0
-  return pos ? '#ff3b30' : '#00c853'
+  return pos ? '#e5484d' : '#3fb67a'
 }
 
 function Pill({ value, suffix = '%', invert = false, decimals = 2 }) {
@@ -37,7 +37,7 @@ function MetricRow({ label, value, suffix = '', decimals = 2, invert = false, hi
 
 function SectionTitle({ children }) {
   return (
-    <div style={{ color: '#5c9bff', fontSize: 13, fontWeight: 600, margin: '16px 0 8px', letterSpacing: 0.3 }}>
+    <div style={{ color: '#6c9cff', fontSize: 13, fontWeight: 600, margin: '16px 0 8px', letterSpacing: 0.3 }}>
       {children}
     </div>
   )
@@ -111,9 +111,9 @@ function DrawdownChart({ series }) {
       type: 'line',
       data: series,
       showSymbol: false,
-      lineStyle: { width: 1.5, color: '#ff3b30' },
-      itemStyle: { color: '#ff3b30' },
-      areaStyle: { color: 'rgba(255,59,48,0.15)' },
+      lineStyle: { width: 1.5, color: '#e5484d' },
+      itemStyle: { color: '#e5484d' },
+      areaStyle: { color: 'rgba(229,72,77,0.15)' },
     }],
   }
   return (
@@ -125,7 +125,7 @@ function DrawdownChart({ series }) {
 
 function DistributionChart({ distribution }) {
   const { centers, counts } = distribution
-  const colors = centers.map(c => c >= 0 ? 'rgba(255,59,48,0.7)' : 'rgba(0,200,83,0.7)')
+  const colors = centers.map(c => c >= 0 ? 'rgba(229,72,77,0.7)' : 'rgba(63,182,122,0.7)')
   const option = {
     backgroundColor: THEME.gridBg,
     tooltip: {
@@ -178,7 +178,7 @@ function StressTable({ tests, t, lang }) {
           return (
             <tr key={i} style={{ borderBottom: `1px solid ${THEME.border}` }}>
               <td style={{ padding: '6px 10px', color: THEME.text }}>{lang === 'zh' ? s.name_zh : s.name_en}</td>
-              <td style={{ padding: '6px 10px', textAlign: 'right', color: isDown ? '#00c853' : '#ff3b30', fontWeight: 600 }}>
+              <td style={{ padding: '6px 10px', textAlign: 'right', color: isDown ? '#3fb67a' : '#e5484d', fontWeight: 600 }}>
                 {s.shock_pct > 0 ? '+' : ''}{s.shock_pct}%
               </td>
               <td style={{ padding: '6px 10px', textAlign: 'right', color: THEME.text }}>{s.stressed_price}</td>
@@ -211,13 +211,13 @@ function StockRiskCard({ stock, color, t, lang, period, startDate, endDate, adju
     <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <span style={{ color, fontWeight: 700, fontSize: 15 }}>{stock.name}</span>
+        <span style={{ color, fontWeight: 600, fontSize: 15 }}>{stock.name}</span>
         <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{stock.code}</span>
         {data && <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 12 }}>{data.trading_days} {lang === 'zh' ? '个交易日' : 'days'} | {lang === 'zh' ? '当前价' : 'Price'}: {data.current_price}</span>}
       </div>
 
       {loading && <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>{t.riskLoading}</div>}
-      {error && <div style={{ color: '#ff3b30', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: '#e5484d', fontSize: 13 }}>{error}</div>}
 
       {data && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>

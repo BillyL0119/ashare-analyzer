@@ -31,14 +31,14 @@ function SourceBadge({ name }) {
       width: 28, height: 28, borderRadius: 8, flexShrink: 0, marginTop: 1,
       background: color + '22', color, border: `1px solid ${color}44`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 12, fontWeight: 700,
+      fontSize: 12, fontWeight: 600,
     }}>
       {letter.toUpperCase()}
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #5c9bff; }
-        .bfs-news-row:focus-visible { outline: 2px solid #5c9bff; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: #6c9cff; }
+        .bfs-news-row:focus-visible { outline: 2px solid #6c9cff; outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>
@@ -47,12 +47,12 @@ function SourceBadge({ name }) {
 }
 
 const CAT_CONFIG = {
-  all:      { zh: '全部',   en: 'All',       ja: '全て',    ko: '전체',    fr: 'Tous',      color: '#2f7bff' },
-  market:   { zh: '市场行情', en: 'Market',   ja: '市況',    ko: '시황',    fr: 'Marché',    color: '#5c9bff' },
+  all:      { zh: '全部',   en: 'All',       ja: '全て',    ko: '전체',    fr: 'Tous',      color: '#4f86f7' },
+  market:   { zh: '市场行情', en: 'Market',   ja: '市況',    ko: '시황',    fr: 'Marché',    color: '#6c9cff' },
   macro:    { zh: '宏观政策', en: 'Macro',    ja: 'マクロ',  ko: '거시',    fr: 'Macro',     color: '#9d97d3' },
-  company:  { zh: '公司动态', en: 'Company',  ja: '企業',    ko: '기업',    fr: 'Entreprise', color: '#30d158' },
+  company:  { zh: '公司动态', en: 'Company',  ja: '企業',    ko: '기업',    fr: 'Entreprise', color: '#4cc38a' },
   industry: { zh: '行业资讯', en: 'Industry', ja: '業界',    ko: '산업',    fr: 'Industrie', color: '#fb923c' },
-  breaking: { zh: '突发事件', en: 'Breaking', ja: '速報',    ko: '속보',    fr: 'Flash',     color: '#ff453a' },
+  breaking: { zh: '突发事件', en: 'Breaking', ja: '速報',    ko: '속보',    fr: 'Flash',     color: '#e5484d' },
 }
 
 function getCatLabel(cfg, lang) {
@@ -222,7 +222,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
             {t.dnTitle}
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -242,9 +242,9 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             onClick={() => fetchNews(catFilter, langFilter)}
             disabled={loading}
             style={{
-              padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(47,123,255,0.4)',
-              background: loading ? 'rgba(47,123,255,0.05)' : 'rgba(47,123,255,0.1)',
-              color: '#2f7bff', fontSize: 12, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
+              padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(79,134,247,0.4)',
+              background: loading ? 'rgba(79,134,247,0.05)' : 'rgba(79,134,247,0.1)',
+              color: '#4f86f7', fontSize: 12, fontWeight: 600, cursor: loading ? 'default' : 'pointer',
               transition: 'all 0.2s',
             }}
           >
@@ -284,7 +284,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
             <Pill
               key={opt.key}
               active={langFilter === opt.key}
-              color="#2f7bff"
+              color="#4f86f7"
               onClick={() => setLang(opt.key)}
             >
               {opt[lang] || opt.en}
@@ -342,8 +342,8 @@ export default function DailyNewsPage({ lang = 'zh' }) {
       <style>{`
         .bfs-news-row { transition: background 0.15s; }
         .bfs-news-row:hover { background: var(--bg-hover); }
-        .bfs-news-row:hover .bfs-news-title { color: #5c9bff; }
-        .bfs-news-row:focus-visible { outline: 2px solid #5c9bff; outline-offset: -2px; }
+        .bfs-news-row:hover .bfs-news-title { color: #6c9cff; }
+        .bfs-news-row:focus-visible { outline: 2px solid #6c9cff; outline-offset: -2px; }
         .bfs-news-arrow { font-size: 13px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; margin-top: 2px; }
         .bfs-news-row:hover .bfs-news-arrow { opacity: 1; }
       `}</style>

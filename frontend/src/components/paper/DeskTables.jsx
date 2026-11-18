@@ -19,7 +19,7 @@ function Table({ head, children, empty, emptyText }) {
   )
 }
 
-const small = (color) => ({ border: `1px solid ${color}55`, background: `${color}14`, color, borderRadius: 7, padding: '3px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer' })
+const small = (color) => ({ border: `1px solid ${color}55`, background: `${color}14`, color, borderRadius: 7, padding: '3px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer' })
 
 export function Positions({ s, view, market, onAction }) {
   const longs = Object.entries(view?.portfolio || {}).sort(([, a], [, b]) => b.market_value - a.market_value)
@@ -47,7 +47,7 @@ export function Positions({ s, view, market, onAction }) {
       </Table>
       {shorts.length > 0 && (
         <div>
-          <div style={{ fontSize: 12.5, fontWeight: 700, color: MUTED, margin: '0 0 6px' }}>{s.shortsTitle}</div>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: MUTED, margin: '0 0 6px' }}>{s.shortsTitle}</div>
           <Table head={<>
             <th style={th}>{s.cols.symbol}</th><th style={thr}>{s.cols.shares}</th><th style={thr}>{s.cols.avgCost}</th><th style={thr}>{s.cols.price}</th>
             <th style={thr}>{s.cols.value}</th><th style={thr}>{s.cols.pl}</th><th style={th} />
@@ -88,12 +88,12 @@ export function Orders({ s, view, market, lang, onCancel }) {
       {orders.map((o) => (
         <tr key={o.id} style={{ opacity: o.status === 'open' ? 1 : 0.65 }}>
           <td style={td}>{when(o.created_at)}</td>
-          <td style={{ ...td, fontWeight: 700 }}>{s.side[o.side]}</td>
+          <td style={{ ...td, fontWeight: 600 }}>{s.side[o.side]}</td>
           <td style={td}><StockLink market={market} code={o.symbol} title={s.search.viewChart}><b>{o.symbol}</b></StockLink></td>
           <td style={num}>{o.shares}</td>
           <td style={td}>{s.type[o.type]}{o.type !== 'market' ? ` · ${o.tif === 'gtc' ? 'GTC' : s.tif.day}` : ''}</td>
           <td style={{ ...td, whiteSpace: 'normal', minWidth: 160, color: MUTED, fontSize: 12 }}>{terms(o, s, market)}</td>
-          <td style={{ ...td, color: color[o.status], fontWeight: 700 }}>{s.status[o.status] || o.status}</td>
+          <td style={{ ...td, color: color[o.status], fontWeight: 600 }}>{s.status[o.status] || o.status}</td>
           <td style={{ ...td, textAlign: 'right' }}>{o.status === 'open' && <button style={small(DOWN)} onClick={() => onCancel(o)}>{s.cancel}</button>}</td>
         </tr>
       ))}
@@ -134,7 +134,7 @@ export function History({ s, view, market, filename }) {
             return (
               <tr key={i}>
                 <td style={td}>{t.date}{t.time ? ` ${t.time}` : ''}</td>
-                <td style={{ ...td, fontWeight: 700, color: ACCENT }}>{corp}</td>
+                <td style={{ ...td, fontWeight: 600, color: ACCENT }}>{corp}</td>
                 <td style={td}><StockLink market={market} code={t.symbol} name={t.name} title={s.search.viewChart}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 12 }}>{t.name}</span></StockLink></td>
                 <td style={num}>{t.type === 'dividend' ? Math.abs(t.shares) : `${t.shares > 0 ? '+' : ''}${t.shares}`}</td>
                 <td style={num}>{t.type === 'dividend' ? money(t.price, market) : t.ratio || '—'}</td>
@@ -146,7 +146,7 @@ export function History({ s, view, market, filename }) {
           return (
             <tr key={i}>
               <td style={td}>{t.date}{t.time ? ` ${t.time}` : ''}</td>
-              <td style={{ ...td, fontWeight: 700, color: t.type === 'buy' || t.type === 'cover' ? UP : DOWN }}>{s.side[t.type] || t.type}</td>
+              <td style={{ ...td, fontWeight: 600, color: t.type === 'buy' || t.type === 'cover' ? UP : DOWN }}>{s.side[t.type] || t.type}</td>
               <td style={td}><StockLink market={market} code={t.symbol} name={t.name} title={s.search.viewChart}><b>{t.symbol}</b> <span style={{ color: MUTED, fontSize: 12 }}>{t.name}</span></StockLink></td>
               <td style={num}>{t.shares}</td><td style={num}>{money(t.price, market)}</td><td style={num}>{money(t.amount, market, 0)}</td>
               <td style={num}>{money(t.commission, market)}</td>
@@ -165,10 +165,10 @@ export function Leaderboard({ s, rows, market }) {
       <th style={th}>#</th><th style={th}>{s.cols.trader}</th><th style={thr}>{s.cols.ret}</th><th style={thr}>{s.cols.value}</th>
     </>}>
       {(rows || []).map((r) => (
-        <tr key={r.rank} style={r.is_me ? { background: 'rgba(47,123,255,0.08)' } : undefined}>
-          <td style={{ ...td, fontWeight: 800, color: r.rank <= 3 ? '#f59e0b' : MUTED }}>{r.rank}</td>
+        <tr key={r.rank} style={r.is_me ? { background: 'rgba(79,134,247,0.08)' } : undefined}>
+          <td style={{ ...td, fontWeight: 600, color: r.rank <= 3 ? '#f59e0b' : MUTED }}>{r.rank}</td>
           <td style={{ ...td, fontWeight: r.is_me ? 800 : 500 }}>{r.nickname}{r.is_me ? s.you : ''}</td>
-          <td style={{ ...num, color: plColor(r.return_pct, market), fontWeight: 700 }}>{pct(r.return_pct)}</td>
+          <td style={{ ...num, color: plColor(r.return_pct, market), fontWeight: 600 }}>{pct(r.return_pct)}</td>
           <td style={num}>{money(r.total_value, market, 0)}</td>
         </tr>
       ))}

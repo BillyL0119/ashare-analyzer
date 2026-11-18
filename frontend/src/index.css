@@ -1,56 +1,60 @@
 /* Best Friend Stock: site-wide tokens.
-   Look: a trading app for students. Deep navy (or pale blue-white) pages, one loud blue, vivid red and green
-   for prices, heavy sans headings and big numbers, round buttons. Colour is flat: no gradients,
-   glows, glass or background decoration. */
+   Direction (unslop pass, Nov 2026)
+   - Product: a free site where students learn investing and economics with real market data,
+     paper trading and exam-style economics tools.
+   - Character: precise, encouraging, a little like a study notebook.
+   - World: a trading screen at night plus an exam notebook. Ink-blue surfaces, red and green ticks.
+   - Moments: the index figures and charts on the market overview, the candlestick chart.
+   - Signature: the live market status dot.
+   Chrome stays quiet: one ink ramp, three text roles, one accent used rarely, hairline borders,
+   weights 400 to 600. No gradients, glows, glass, coloured icon tiles or uppercase tracked labels. */
 
 /* ── Dark theme (default) ────────────────────────────────── */
 :root,
 :root[data-theme="dark"] {
-  --bg-primary:      #020813;
-  --bg-secondary:    #071224;
-  --bg-tertiary:     #0c1b33;
-  --bg-hover:        #112545;
-  --border-primary:  #172b4a;
-  --border-glow:     #2a4a7f;   /* the stronger border (hover, focus rows); the name is historical */
-  --text-primary:    #f1f5fb;
-  --text-secondary:  #9fb0c8;
-  --text-muted:      #7488a6;
-  --card-bg:         #071224;
-  --nav-bg:          #020813;
-  --nav-bg-dim:      #020813;
-  --map-ocean:       #0a1628;
-  --map-sphere:      #050d1a;
-  --map-border:      #2a3a5c;
-  --map-graticule:   #0f1f3d;
-  --map-land:        #1a2035;
-  --skeleton-base:   #0c1b33;
-  --skeleton-shine:  #172b4a;
-  --chart-bg:        #071224;
-  --chart-text:      #9fb0c8;
-  --chart-border:    #172b4a;
-  --chart-tooltip:   rgba(4,12,26,0.97);
+  --bg-primary:      #0a0f1b;
+  --bg-secondary:    #0f1626;
+  --bg-tertiary:     #162036;
+  --bg-hover:        #1b2640;
+  --border-primary:  #1d2639;
+  --border-glow:     #2b3650;   /* the stronger hairline (hover, focus rows); the name is historical */
+  --text-primary:    #eef1f7;
+  --text-secondary:  #a6aec0;
+  --text-muted:      #7f899e;
+  --card-bg:         #0f1626;
+  --nav-bg:          #080c16;
+  --nav-bg-dim:      #080c16;
+  --map-ocean:       #0d1424;
+  --map-sphere:      #0a0f1b;
+  --map-border:      #2b3650;
+  --map-graticule:   #162036;
+  --map-land:        #1b2438;
+  --skeleton-base:   #162036;
+  --skeleton-shine:  #1d2639;
+  --chart-bg:        #0f1626;
+  --chart-text:      #a6aec0;
+  --chart-border:    #1d2639;
+  --chart-tooltip:   rgba(10,15,27,0.97);
 
   /* ── accent / signal colours */
-  --accent-blue:   #2f7bff;
-  --accent-blue-soft: rgba(47,123,255,0.16);
-  --accent-purple: #8f7bff;
-  --accent-cyan:   #19c2d8;
-  --accent-gold:   #ffb020;
-  --green-bright:  #00c853;
-  --red-bright:    #ff3b30;
+  --accent-blue:   #6c9cff;               /* accent as text, links, selection */
+  --accent-fill:   #2563eb;               /* accent as a fill under white text (5.2:1) */
+  --accent-blue-soft: rgba(108,156,255,0.14);
+  --accent-purple: #9b93d8;
+  --accent-cyan:   #5fb4c4;
+  --accent-gold:   #e0a43a;
+  --green-bright:  #4cc38a;
+  --red-bright:    #e5484d;
   --on-accent:     #ffffff;
-  --shadow-pop:    0 12px 32px rgba(0,4,14,0.6);   /* menus and dialogs only */
-  /* icon chips: one flat colour per kind of page */
-  --chip-blue: #2f7bff; --chip-green: #00b34a; --chip-orange: #f07800; --chip-pink: #f0407c;
-  --chip-violet: #7b63f5; --chip-cyan: #0fa8bd; --chip-red: #f03a2f;
+  --shadow-pop:    0 12px 32px rgba(4,7,14,0.55);   /* menus and dialogs only */
+  --ease:          cubic-bezier(0.22, 1, 0.36, 1);
   color-scheme: dark;
 }
 
 :root {
-  /* Type: the system UI face everywhere (native on every device, nothing to download), set heavy
-     and tight for headings and headline numbers. --heading and --serif keep their names because
-     components refer to them. */
-  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  /* Type: Geist for the interface (system UI faces as the fallback and for Chinese), JetBrains
+     Mono for figures and meta. --heading and --serif keep their names because components use them. */
+  --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
   --heading: var(--sans);
   --serif: var(--sans);
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -85,38 +89,39 @@ body {
 
 /* ── Light theme ─────────────────────────────────────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #f0f5fb;
+  --bg-primary:      #f5f7fa;
   --bg-secondary:    #ffffff;
-  --bg-tertiary:     #e6eef8;
-  --bg-hover:        #dae6f5;
-  --border-primary:  #d3dfee;
-  --border-glow:     #a3b8d6;
-  --text-primary:    #0a1a33;
-  --text-secondary:  #3d5170;
-  --text-muted:      #5e7290;
+  --bg-tertiary:     #eceff4;
+  --bg-hover:        #e3e8f0;
+  --border-primary:  #e1e6ee;
+  --border-glow:     #c3ccda;
+  --text-primary:    #111827;
+  --text-secondary:  #4b5565;
+  --text-muted:      #646d80;
   --card-bg:         #ffffff;
   --nav-bg:          #ffffff;
   --nav-bg-dim:      #ffffff;
-  --map-ocean:       #d6e4f3;
-  --map-sphere:      #c8daee;
-  --map-border:      #8aa8c8;
-  --map-graticule:   #e3edf7;
-  --map-land:        #e6eef8;
-  --skeleton-base:   #e6eef8;
-  --skeleton-shine:  #f0f5fb;
+  --map-ocean:       #e4ebf4;
+  --map-sphere:      #d8e1ec;
+  --map-border:      #9aa7b8;
+  --map-graticule:   #edf1f6;
+  --map-land:        #eceff4;
+  --skeleton-base:   #eceff4;
+  --skeleton-shine:  #f5f7fa;
   --chart-bg:        #ffffff;
-  --chart-text:      #3d5170;
-  --chart-border:    #e6eef8;
+  --chart-text:      #4b5565;
+  --chart-border:    #e1e6ee;
   --chart-tooltip:   rgba(255,255,255,0.98);
 
-  --accent-blue:   #0b5cff;
-  --accent-blue-soft: rgba(11,92,255,0.10);
-  --accent-purple: #6a4dff;
-  --accent-cyan:   #008fa3;
-  --accent-gold:   #b86e00;
-  --green-bright:  #00a344;
-  --red-bright:    #e5281c;
-  --shadow-pop:    0 12px 32px rgba(10,26,51,0.16);
+  --accent-blue:   #1d4ed8;
+  --accent-fill:   #2563eb;
+  --accent-blue-soft: rgba(37,99,235,0.08);
+  --accent-purple: #5b53a6;
+  --accent-cyan:   #1d7f8f;
+  --accent-gold:   #a86a00;
+  --green-bright:  #16a34a;
+  --red-bright:    #dc2626;
+  --shadow-pop:    0 8px 24px rgba(17,24,39,0.08);
   color-scheme: light;
 }
 
@@ -230,22 +235,22 @@ h3,
   text-wrap: balance;
 }
 h1, h2 { color: var(--text-primary); }
-/* Page titles: large and heavy */
-html:not([data-ui="mobile"]) h1 { font-size: clamp(28px, 2.8vw, 40px) !important; line-height: 1.1 !important; }
-/* Headline numbers (scores, account value, index levels): heavy, tight, tabular */
+/* Page titles */
+html:not([data-ui="mobile"]) h1 { font-size: clamp(26px, 2.4vw, 34px) !important; line-height: 1.15 !important; }
+/* Headline numbers (scores, account value, index levels): medium weight, tabular */
 .serif-num {
   font-family: var(--sans) !important;
-  font-weight: 700 !important;
+  font-weight: 500 !important;
   font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
 }
 /* Desktop UI only: the phone UI (data-ui="mobile") sizes its own titles in mobile.css */
-html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 800 !important; letter-spacing: -0.03em !important; }
-html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 700 !important; letter-spacing: -0.02em !important; }
+html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
+html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 500 !important; letter-spacing: 0 !important; }
 
 h1 {
   font-size: 56px;
-  letter-spacing: -1.68px;
+  letter-spacing: -0.02em;
   margin: 32px 0;
   @media (max-width: 1024px) {
     font-size: 36px;
@@ -255,7 +260,7 @@ h1 {
 h2 {
   font-size: 24px;
   line-height: 118%;
-  letter-spacing: -0.24px;
+  letter-spacing: 0;
   margin: 0 0 8px;
   @media (max-width: 1024px) {
     font-size: 20px;

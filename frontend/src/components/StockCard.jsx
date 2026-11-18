@@ -102,7 +102,7 @@ export default function StockCard({ stock }) {
 
         {quote && (
           <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
-            <span style={{ color: priceColor, fontSize: 18, fontWeight: 700 }}>
+            <span style={{ color: priceColor, fontSize: 18, fontWeight: 600 }}>
               {market !== 'cn' ? CUR[market] : ''}{quote.price.toFixed(2)}
             </span>
             <span style={{ color: priceColor, fontSize: 13 }}>
@@ -119,16 +119,16 @@ export default function StockCard({ stock }) {
             style={{
               padding: '3px 9px',
               borderRadius: 4,
-              border: '1px solid rgba(47,123,255,0.35)',
+              border: '1px solid rgba(79,134,247,0.35)',
               cursor: 'pointer',
               fontSize: 11,
-              background: 'rgba(47,123,255,0.08)',
-              color: '#2f7bff',
+              background: 'rgba(79,134,247,0.08)',
+              color: '#4f86f7',
               transition: 'all 0.15s',
               whiteSpace: 'nowrap',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.2)'; e.currentTarget.style.borderColor = '#2f7bff' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(47,123,255,0.35)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.2)'; e.currentTarget.style.borderColor = '#4f86f7' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.08)'; e.currentTarget.style.borderColor = 'rgba(79,134,247,0.35)' }}
           >
             {t.klineBtn}
           </button>
@@ -143,7 +143,7 @@ export default function StockCard({ stock }) {
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 12,
-                background: period === key ? '#2f7bff' : 'var(--bg-hover)',
+                background: period === key ? '#4f86f7' : 'var(--bg-hover)',
                 color: period === key ? '#fff' : THEME.text,
                 transition: 'background 0.15s',
               }}
@@ -165,7 +165,7 @@ export default function StockCard({ stock }) {
                   border: 'none',
                   cursor: 'pointer',
                   fontSize: 11,
-                  background: adjust === key ? '#2f7bff' : 'var(--bg-hover)',
+                  background: adjust === key ? '#4f86f7' : 'var(--bg-hover)',
                   color: adjust === key ? '#fff' : THEME.text,
                   transition: 'background 0.15s',
                 }}
@@ -183,14 +183,14 @@ export default function StockCard({ stock }) {
           style={{
             padding: '3px 8px',
             borderRadius: 4,
-            border: '1px solid rgba(47,123,255,0.18)',
+            border: '1px solid rgba(79,134,247,0.18)',
             cursor: 'pointer',
             fontSize: 11,
             background: 'transparent',
             color: 'var(--text-muted)',
             transition: 'all 0.15s',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.12)'; e.currentTarget.style.color = '#2f7bff' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.12)'; e.currentTarget.style.color = '#4f86f7' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
         >
           {t.exportBtn}
@@ -202,11 +202,11 @@ export default function StockCard({ stock }) {
           title={t.paperTradeHint}
           style={{
             padding: '3px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 12, fontWeight: 600,
-            border: '1px solid rgba(48,209,88,0.4)', background: 'rgba(48,209,88,0.1)', color: '#30d158',
+            border: '1px solid rgba(76,195,138,0.4)', background: 'rgba(76,195,138,0.1)', color: '#4cc38a',
             whiteSpace: 'nowrap', transition: 'background 0.15s',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(48,209,88,0.2)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(48,209,88,0.1)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(76,195,138,0.2)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(76,195,138,0.1)' }}
         >
           {t.paperTradeBtn}
         </button>
@@ -242,13 +242,13 @@ export default function StockCard({ stock }) {
           title={t.copyLink}
           style={{
             padding: '3px 8px', borderRadius: 4,
-            border: '1px solid rgba(47,123,255,0.25)',
+            border: '1px solid rgba(79,134,247,0.25)',
             cursor: 'pointer', fontSize: 12,
-            background: copied ? 'rgba(48,209,88,0.12)' : 'transparent',
-            color: copied ? '#30d158' : 'var(--text-muted)',
+            background: copied ? 'rgba(76,195,138,0.12)' : 'transparent',
+            color: copied ? '#4cc38a' : 'var(--text-muted)',
             transition: 'all 0.15s', whiteSpace: 'nowrap',
           }}
-          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(47,123,255,0.1)'; e.currentTarget.style.color = '#2f7bff' } }}
+          onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.background = 'rgba(79,134,247,0.1)'; e.currentTarget.style.color = '#4f86f7' } }}
           onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' } }}
         >
           {copied ? '✓' : <Icon name="link" size={13} />}
@@ -267,8 +267,8 @@ export default function StockCard({ stock }) {
             transition: 'all 0.15s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255,59,48,0.15)'
-            e.currentTarget.style.color = '#ff3b30'
+            e.currentTarget.style.background = 'rgba(229,72,77,0.15)'
+            e.currentTarget.style.color = '#e5484d'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent'
@@ -306,7 +306,7 @@ export default function StockCard({ stock }) {
         )}
         {error && (
           <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-            <div style={{ color: '#ff453a', fontSize: 13, textAlign: 'center', maxWidth: 280 }}>
+            <div style={{ color: '#e5484d', fontSize: 13, textAlign: 'center', maxWidth: 280 }}>
               {market !== 'cn'
                 ? (String(error).includes('API_LIMIT') || String(error).includes('limit')
                     ? t.apiLimitMsg
@@ -319,7 +319,7 @@ export default function StockCard({ stock }) {
                 style={{
                   padding: '5px 18px', borderRadius: 16, border: 'none', cursor: 'pointer',
                   fontSize: 12, fontWeight: 600,
-                  background: '#2f7bff',
+                  background: '#4f86f7',
                   color: '#fff',
                 }}
               >

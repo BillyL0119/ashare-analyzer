@@ -20,7 +20,7 @@ function StatCard({ label, value, color }) {
       borderRadius: 6, padding: '7px 10px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 3 }}>{label}</div>
-      <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: color || 'var(--text-primary)' }}>
+      <div style={{ fontSize: 13, fontWeight: 600, fontFamily: 'monospace', color: color || 'var(--text-primary)' }}>
         {value}
       </div>
     </div>
@@ -36,7 +36,7 @@ function AIText({ text }) {
         // Section header: **Title**
         if (/^\*\*[^*]+\*\*$/.test(line.trim())) {
           return (
-            <div key={i} style={{ color: '#5c9bff', fontWeight: 700, fontSize: 13, marginTop: 12, marginBottom: 3 }}>
+            <div key={i} style={{ color: '#6c9cff', fontWeight: 600, fontSize: 13, marginTop: 12, marginBottom: 3 }}>
               {line.trim().slice(2, -2)}
             </div>
           )
@@ -96,12 +96,12 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
     <div style={{
       margin: '0 0 4px 0',
       borderTop: `1px solid ${THEME.border}`,
-      background: 'rgba(47,123,255,0.03)',
+      background: 'rgba(79,134,247,0.03)',
       padding: '12px 14px',
     }}>
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <span style={{ fontSize: 12, color: '#5c9bff', fontWeight: 700 }}>
+        <span style={{ fontSize: 12, color: '#6c9cff', fontWeight: 600 }}>
           {t.ksTitle}
         </span>
         <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
@@ -173,13 +173,13 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           {/* News in range */}
           {result.has_news && result.news?.length > 0 && (
             <div>
-              <div style={{ fontSize: 11, color: '#00c853', fontWeight: 600, marginBottom: 4 }}>
+              <div style={{ fontSize: 11, color: '#3fb67a', fontWeight: 600, marginBottom: 4 }}>
                 {t.ksNewsInRange(result.news.length)}
               </div>
               {result.news.map((n, i) => (
                 <div key={i} style={{
                   fontSize: 11, padding: '3px 0 3px 8px',
-                  borderLeft: '2px solid #00c853',
+                  borderLeft: '2px solid #3fb67a',
                   marginBottom: 3,
                 }}>
                   <span style={{ color: 'var(--text-muted)', marginRight: 4 }}>[{n.date}]</span>
@@ -204,8 +204,8 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
 
           {/* AI text */}
           <div style={{
-            background: 'rgba(92,155,255,0.05)',
-            border: `1px solid rgba(92,155,255,0.2)`,
+            background: 'rgba(108,156,255,0.05)',
+            border: `1px solid rgba(108,156,255,0.2)`,
             borderRadius: 6, padding: '10px 14px',
           }}>
             <AIText text={result.ai_analysis} />
@@ -239,8 +239,8 @@ export default function KLineSegmentPanel({ symbol, name, market, startDate, end
           style={{
             display: 'block', width: '100%', padding: '10px 0',
             background: loading
-              ? 'rgba(92,155,255,0.15)'
-              : '#2f7bff',
+              ? 'rgba(108,156,255,0.15)'
+              : '#4f86f7',
             color: '#fff', border: 'none', borderRadius: 6,
             cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: 14, fontWeight: 600, letterSpacing: '0.3px',

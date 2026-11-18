@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { MUTED, BDR } from './ui'
 import { paperHeaders } from '../../utils/paperAuth'
 
-const PALETTE = ['#2f7bff', '#7f77c2', '#f59e0b', '#00c853', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
-const LEVEL = { warn: { icon: '!', color: '#f59e0b' }, info: { icon: 'i', color: '#2f7bff' }, good: { icon: '✓', color: '#00c853' } }
+const PALETTE = ['#4f86f7', '#7f77c2', '#f59e0b', '#3fb67a', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
+const LEVEL = { warn: { icon: '!', color: '#f59e0b' }, info: { icon: 'i', color: '#4f86f7' }, good: { icon: '✓', color: '#3fb67a' } }
 
 // Portfolio check-up: where the money sits and plain findings, worked out by the server
 export default function Checkup({ accountKey, market, gameId, lang, refreshKey }) {
@@ -39,7 +39,7 @@ export default function Checkup({ accountKey, market, gameId, lang, refreshKey }
           const lv = LEVEL[f.level] || LEVEL.info
           return (
             <div key={f.id} style={{ display: 'flex', gap: 10, padding: '10px 12px', borderRadius: 10, border: `1px solid ${BDR}`, borderLeft: `3px solid ${lv.color}` }}>
-              <span aria-hidden="true" style={{ flex: 'none', width: 20, height: 20, borderRadius: 10, display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 800, color: '#fff', background: lv.color }}>{lv.icon}</span>
+              <span aria-hidden="true" style={{ flex: 'none', width: 20, height: 20, borderRadius: 10, display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 600, color: '#fff', background: lv.color }}>{lv.icon}</span>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 13.5, fontWeight: 650 }}>{f.title}</div>
                 <div style={{ fontSize: 12.5, color: MUTED, lineHeight: 1.55, marginTop: 2 }}>{f.body}</div>

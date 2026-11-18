@@ -193,7 +193,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
             width: '100%',
             padding: '8px 14px',
             background: 'var(--bg-secondary)',
-            border: `1px solid ${focused ? '#2f7bff' : 'var(--border-primary)'}`,
+            border: `1px solid ${focused ? '#4f86f7' : 'var(--border-primary)'}`,
             borderRadius: 24,
             color: 'var(--text-primary)',
             fontSize: 13,
@@ -236,7 +236,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                       >
                         <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
                         {m !== 'cn' && (
-                          <span style={{ color: '#2f7bff', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
+                          <span style={{ color: '#4f86f7', fontFamily: '"JetBrains Mono", monospace', fontSize: 11, flexShrink: 0 }}>{s.code}</span>
                         )}
                         <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                         <PctBadge val={s.change_pct} market={m} />
@@ -264,10 +264,10 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                 onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
               >
-                <span style={{ color: '#2f7bff', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
+                <span style={{ color: '#4f86f7', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
                 <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
                 <span style={{
-                  fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
+                  fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 3, flexShrink: 0,
                   background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
                 }}>
                   {s._market === 'us' ? 'US' : s._market === 'cn' ? (lang === 'zh' ? 'A股' : 'CN') : marketLabel(s._market, lang)}

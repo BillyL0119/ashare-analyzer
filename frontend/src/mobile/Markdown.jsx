@@ -28,7 +28,7 @@ export default function Markdown({ text }) {
     if (!l) { out.push(<div key={i} style={{ height: 4 }} />); return }
     if (/^-{3,}$/.test(l)) { out.push(<hr key={i} style={{ border: 0, borderTop: '1px solid var(--stroke)', margin: '8px 0' }} />); return }
     const h = l.match(/^#{1,4}\s+(.*)/)
-    if (h) { out.push(<div key={i} style={{ fontWeight: 800, fontSize: 16, marginTop: 6 }}>{inline(h[1], i)}</div>); return }
+    if (h) { out.push(<div key={i} style={{ fontWeight: 600, fontSize: 16, marginTop: 6 }}>{inline(h[1], i)}</div>); return }
     if (l.startsWith('|')) {
       const cells = l.split('|').slice(1, -1).map((c) => c.trim())
       if (cells.every((c) => /^[-: ]+$/.test(c))) return

@@ -30,35 +30,35 @@ const MARKER_META = {
 // ── Ticker helpers ────────────────────────────────────────────────────────────
 function changePctColor(pct) {
   if (pct === null || pct === undefined) return 'var(--text-secondary)'
-  if (pct > 0)  return '#00c853'
-  if (pct < 0)  return '#ff3b30'
+  if (pct > 0)  return '#3fb67a'
+  if (pct < 0)  return '#e5484d'
   return 'var(--text-secondary)'
 }
 function changePctBg(pct) {
   if (pct === null || pct === undefined) return 'rgba(148,163,184,0.06)'
-  if (pct > 0) return 'rgba(0,200,83,0.08)'
-  if (pct < 0) return 'rgba(255,59,48,0.08)'
+  if (pct > 0) return 'rgba(63,182,122,0.08)'
+  if (pct < 0) return 'rgba(229,72,77,0.08)'
   return 'rgba(148,163,184,0.06)'
 }
 function changePctBorder(pct) {
   if (pct === null || pct === undefined) return 'rgba(148,163,184,0.15)'
-  if (pct > 0) return 'rgba(0,200,83,0.2)'
-  if (pct < 0) return 'rgba(255,59,48,0.2)'
+  if (pct > 0) return 'rgba(63,182,122,0.2)'
+  if (pct < 0) return 'rgba(229,72,77,0.2)'
   return 'rgba(148,163,184,0.15)'
 }
 
 // ── Sentiment gauge ───────────────────────────────────────────────────────────
 function scoreColor(s) {
-  if (s < 25) return '#ff3b30'
+  if (s < 25) return '#e5484d'
   if (s < 45) return '#f97316'
   if (s < 55) return '#fbbf24'
   if (s < 75) return '#84cc16'
-  return '#00c853'
+  return '#3fb67a'
 }
 
 // Semicircle gauge in plain SVG: soft full-range track, a progress arc in the same five-colour
 // scale ending in a knob at the score, and the score itself set large in the middle.
-const GAUGE_STOPS = ['#ff3b30', '#f97316', '#fbbf24', '#84cc16', '#00c853']
+const GAUGE_STOPS = ['#e5484d', '#f97316', '#fbbf24', '#84cc16', '#3fb67a']
 
 function SemiGauge({ score, id }) {
   const [shown, setShown] = useState(0)
@@ -103,7 +103,7 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
       background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
       borderRadius: 14, padding: '12px 10px 10px', textAlign: 'center', fontFamily: 'var(--sans)',
     }}>
-      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
+      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 0 }}>
         {title}
       </div>
       <div style={{ position: 'relative', marginTop: 6 }}>
@@ -129,10 +129,10 @@ function GaugeCard({ title, score, labelZh, labelEn, vix, zh, parts, id }) {
             return (
               <div key={p.key} title={zh ? l.tipZh : l.tipEn}
                 style={{ borderLeft: i ? '1px solid var(--border-primary)' : 'none', padding: '0 4px', minWidth: 0 }}>
-                <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '.04em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {zh ? l.zh : l.en}
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2, color: scoreColor(p.score), fontVariantNumeric: 'tabular-nums' }}>
+                <div style={{ fontSize: 16, fontWeight: 600, marginTop: 2, color: scoreColor(p.score), fontVariantNumeric: 'tabular-nums' }}>
                   {Math.round(p.score)}
                 </div>
                 {raw && <div style={{ fontSize: 10, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>{raw}</div>}
@@ -187,7 +187,7 @@ function TickerBar({ indices, zh }) {
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2, whiteSpace: 'nowrap' }}>
               {zh ? (idx.name_zh || idx.name) : (CN_INDEX_EN[idx.name] || idx.name)}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: changePctColor(pct) }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: changePctColor(pct) }}>
               {pct != null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'}
             </div>
             <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
@@ -216,7 +216,7 @@ function LoadingSkeleton() {
         {/* Gauge cards */}
         <div style={{ flex: isMobile ? 'none' : '0 0 192px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 8 }}>
           {[0, 1].map(i => (
-            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: '12px 10px', borderRadius: 10, border: '1px solid rgba(92,155,255,0.08)' }}>
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: '12px 10px', borderRadius: 10, border: '1px solid rgba(108,156,255,0.08)' }}>
               <div className="skeleton" style={{ height: 10, width: '60%', margin: '0 auto' }} />
               {/* Gauge arc placeholder */}
               <div className="skeleton" style={{ height: 80, borderRadius: 8 }} />
@@ -229,7 +229,7 @@ function LoadingSkeleton() {
       {/* Ticker bar placeholders */}
       <div style={{ display: 'flex', gap: 8, flexShrink: 0, overflow: 'hidden' }}>
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} style={{ flexShrink: 0, width: 100, borderRadius: 8, padding: '8px 10px', border: '1px solid rgba(92,155,255,0.07)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div key={i} style={{ flexShrink: 0, width: 100, borderRadius: 8, padding: '8px 10px', border: '1px solid rgba(108,156,255,0.07)', display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div className="skeleton" style={{ height: 9, width: '70%' }} />
             <div className="skeleton" style={{ height: 13, width: '55%' }} />
             <div className="skeleton" style={{ height: 9, width: '45%' }} />
@@ -262,7 +262,7 @@ function WorldMap({ indices, lang }) {
   const css = (v, fb) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fb
   const oceanColor     = css('--map-ocean', isLight ? '#c8ddf0' : 'var(--bg-tertiary)')
   const sphereStroke   = isLight ? 'var(--map-border)' : '#1a2a4a'
-  const graticuleColor = css('--map-graticule', isLight ? '#d8e8f4' : '#0f1f3d')
+  const graticuleColor = css('--map-graticule', isLight ? '#d8e8f4' : '#162036')
   const landEmpty      = css('--map-land', isLight ? '#d8e4ee' : '#1a2035')
   const landBorder     = css('--map-border', isLight ? '#8aa8c8' : '#2a3a5c')
 
@@ -329,19 +329,19 @@ function WorldMap({ indices, lang }) {
     return createPortal(
       <div role="tooltip" style={{
         position: 'fixed', left, top, zIndex: 9999, width: W, boxSizing: 'border-box',
-        background: 'rgba(4,12,26,0.96)', border: `1px solid ${color}`, borderRadius: 8,
+        background: 'rgba(10,15,27,0.96)', border: `1px solid ${color}`, borderRadius: 8,
         padding: '9px 12px', pointerEvents: 'none', lineHeight: 1.3,
         boxShadow: '0 6px 24px rgba(0,0,0,0.55)',
       }}>
         {list.map((idx, i) => (
           <div key={idx.symbol} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginTop: i ? 7 : 0 }}>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{indexName(idx)}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{indexName(idx)}</div>
               <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.55)', fontVariantNumeric: 'tabular-nums' }}>
                 {idx.close != null ? Number(idx.close).toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
               </div>
             </div>
-            <div style={{ fontSize: i ? 13 : 16, fontWeight: 800, color: idx.change_pct >= 0 ? '#30d158' : '#ff453a', fontVariantNumeric: 'tabular-nums' }}>
+            <div style={{ fontSize: i ? 13 : 16, fontWeight: 600, color: idx.change_pct >= 0 ? '#4cc38a' : '#e5484d', fontVariantNumeric: 'tabular-nums' }}>
               {pctStr(idx.change_pct)}
             </div>
           </div>
@@ -472,7 +472,7 @@ export default function GlobalSentiment({ lang }) {
   const retrying = unavailable && attempt <= SENTIMENT_RETRIES
   const usScore = data?.us_sentiment?.score
   const cnScore = data?.cn_sentiment?.score
-  const dot = unavailable ? '#9ca3af' : loading ? '#fbbf24' : '#00c853'
+  const dot = unavailable ? '#9ca3af' : loading ? '#fbbf24' : '#3fb67a'
   const indices = data?.indices ?? []
   const updTime = data?.updated_at?.slice(11, 16) ?? ''
 
@@ -503,7 +503,7 @@ export default function GlobalSentiment({ lang }) {
             flexShrink: 0,
           }} />
           <span style={{
-            fontSize: 13, fontWeight: 700,
+            fontSize: 13, fontWeight: 600,
             color: 'var(--text-primary)',
           }}>
             {t.gsTitle}

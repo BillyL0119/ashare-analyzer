@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { T } from '../i18n/translations'
 
 const MUTED = 'var(--text-muted)'
-const BDR = 'rgba(92,155,255,0.10)'
+const BDR = 'rgba(108,156,255,0.10)'
 
 const MARKET_CFG = {
   us: { color: '#5f73b8', bg: 'rgba(95,115,184,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
@@ -33,8 +33,8 @@ function EarningsRow({ item, t, onStockClick }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '9px 14px',
-        borderBottom: '1px solid rgba(92,155,255,0.06)',
-        background: hover ? 'rgba(92,155,255,0.04)' : 'transparent',
+        borderBottom: '1px solid rgba(108,156,255,0.06)',
+        background: hover ? 'rgba(108,156,255,0.04)' : 'transparent',
         transition: 'background 0.12s',
         cursor: onStockClick ? 'pointer' : 'default',
       }}
@@ -42,7 +42,7 @@ function EarningsRow({ item, t, onStockClick }) {
     >
       {/* Symbol */}
       <span style={{
-        fontFamily: 'monospace', fontSize: 12, fontWeight: 700,
+        fontFamily: 'monospace', fontSize: 12, fontWeight: 600,
         color: mkt.color, minWidth: 60, flexShrink: 0,
       }}>
         {item.symbol}
@@ -80,16 +80,16 @@ function EarningsRow({ item, t, onStockClick }) {
             )}
             {epsBeat && (
               <span style={{
-                fontSize: 13, fontWeight: 700,
-                color: epsBeat === 'beat' ? '#30d158' : '#ff453a',
+                fontSize: 13, fontWeight: 600,
+                color: epsBeat === 'beat' ? '#4cc38a' : '#e5484d',
               }}>
                 {epsBeat === 'beat' ? '▲' : '▼'}
               </span>
             )}
             {hasActualEps && (
               <span style={{
-                fontSize: 12, fontWeight: 700,
-                color: epsBeat === 'beat' ? '#30d158' : epsBeat === 'miss' ? '#ff453a' : 'var(--text-primary)',
+                fontSize: 12, fontWeight: 600,
+                color: epsBeat === 'beat' ? '#4cc38a' : epsBeat === 'miss' ? '#e5484d' : 'var(--text-primary)',
               }}>
                 {item.eps_actual}
               </span>
@@ -111,7 +111,7 @@ function EarningsRow({ item, t, onStockClick }) {
               </span>
             )}
             {hasActualRev && (
-              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>
                 {item.revenue_actual}
               </span>
             )}
@@ -133,11 +133,11 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '6px 14px',
-        background: 'rgba(92,155,255,0.06)',
+        background: 'rgba(108,156,255,0.06)',
         borderRadius: '8px 8px 0 0',
-        borderBottom: '1px solid rgba(92,155,255,0.12)',
+        borderBottom: '1px solid rgba(108,156,255,0.12)',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#5c9bff', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: '#6c9cff', fontFamily: 'monospace' }}>
           {dateStr}
         </span>
         <span style={{
@@ -156,7 +156,7 @@ function DateGroup({ dateStr, items, lang, t, onStockClick }) {
       <div style={{
         background: 'rgba(255,255,255,0.015)',
         borderRadius: '0 0 8px 8px',
-        border: '1px solid rgba(92,155,255,0.08)',
+        border: '1px solid rgba(108,156,255,0.08)',
         borderTop: 'none',
       }}>
         {items.map((item, i) => (

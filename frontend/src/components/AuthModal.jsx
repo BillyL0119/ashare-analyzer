@@ -35,7 +35,7 @@ function Field({ label, type, value, onChange, placeholder }) {
           background: 'var(--bg-tertiary)', color: 'var(--text-primary)',
           fontSize: 14, outline: 'none', transition: 'border-color 0.15s',
         }}
-        onFocus={e  => { e.target.style.borderColor = '#2f7bff' }}
+        onFocus={e  => { e.target.style.borderColor = '#4f86f7' }}
         onBlur={e   => { e.target.style.borderColor = 'var(--border-primary)' }}
       />
     </div>
@@ -131,7 +131,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
         <div style={{ padding: '28px 32px' }}>
           {/* Header */}
           <div style={{ marginBottom: 22 }}>
-            <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+            <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
               {title}
             </div>
             <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.4 }}>
@@ -217,7 +217,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
                 <button
                   type="button"
                   onClick={() => switchMode(RESET)}
-                  style={{ fontSize: 12, color: '#2f7bff', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  style={{ fontSize: 12, color: '#4f86f7', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
                   {t.authForgotPw}
                 </button>
@@ -226,12 +226,12 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
 
             {/* Feedback messages */}
             {error && (
-              <div style={{ fontSize: 12, color: '#ff3b30', marginBottom: 12, padding: '8px 12px', background: 'rgba(255,59,48,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: '#e5484d', marginBottom: 12, padding: '8px 12px', background: 'rgba(229,72,77,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {error}
               </div>
             )}
             {message && (
-              <div style={{ fontSize: 12, color: '#00c853', marginBottom: 12, padding: '8px 12px', background: 'rgba(0,200,83,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: '#3fb67a', marginBottom: 12, padding: '8px 12px', background: 'rgba(63,182,122,0.08)', borderRadius: 6, lineHeight: 1.4 }}>
                 {message}
               </div>
             )}
@@ -242,7 +242,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
               disabled={loading}
               style={{
                 width: '100%', padding: '11px 0', borderRadius: 8, border: 'none',
-                background: loading ? 'rgba(47,123,255,0.4)' : '#2f7bff',
+                background: loading ? 'rgba(79,134,247,0.4)' : '#4f86f7',
                 color: '#fff', fontSize: 14, fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 transition: 'opacity 0.15s',

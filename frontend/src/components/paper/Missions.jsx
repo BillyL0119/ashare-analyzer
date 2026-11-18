@@ -42,7 +42,7 @@ export default function Missions({ s, missions, onAction }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 'none', marginLeft: 'auto' }}>
           {next?.action && (
             <button onClick={() => onAction(next)} style={{
-              padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', background: ACCENT, color: '#fff', fontSize: 12.5, fontWeight: 700,
+              padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', background: ACCENT, color: '#fff', fontSize: 12.5, fontWeight: 600,
             }}>{s.missions.go}</button>
           )}
           <button onClick={toggle} aria-expanded={open} style={{
@@ -55,7 +55,7 @@ export default function Missions({ s, missions, onAction }) {
           {missions.map((m) => (
             <div key={m.id} title={m.body} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, opacity: m.done ? 0.6 : 1, minWidth: 0 }}>
               <span aria-hidden="true" style={{
-                flex: 'none', width: 16, height: 16, borderRadius: 8, display: 'grid', placeItems: 'center', fontSize: 10, fontWeight: 800,
+                flex: 'none', width: 16, height: 16, borderRadius: 8, display: 'grid', placeItems: 'center', fontSize: 10, fontWeight: 600,
                 background: m.done ? ACCENT : 'transparent', color: '#fff', border: m.done ? 'none' : `1.5px solid ${m === next ? ACCENT : BDR}`,
               }}>{m.done ? '✓' : ''}</span>
               <span style={{ textDecoration: m.done ? 'line-through' : 'none', fontWeight: m === next ? 650 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.title}</span>

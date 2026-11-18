@@ -10,7 +10,7 @@ import casesStrings from '../cases/casesStrings'
 // topics and the news cases (services/econ_diagrams.py tags each case with a preset) that use it.
 // URL: /diagrams?d=<diagram>&p=<preset>&case=<case id>&cur=<currency>
 
-const ACCENT = '#2f7bff'
+const ACCENT = '#4f86f7'
 const BOARD_KEY = 'bfs_dl_board'
 const BOARD_ORDER = ['ib', 'alevel', 'ap_micro', 'ap_macro', 'igcse']
 
@@ -18,10 +18,10 @@ const CSS = `
 .dl { display: grid; gap: 16px; max-width: 1180px; margin: 0 auto; width: 100%; padding: 18px 0 40px; min-width: 0; }
 .dl-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px 18px; min-width: 0; }
 .dl-muted { color: var(--text-secondary); }
-.dl-h { font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 6px; }
+.dl-h { font-size: 11.5px; font-weight: 600; letter-spacing: .4px; color: var(--text-secondary); margin: 0 0 6px; }
 .dl-picker { display: grid; gap: 8px; }
 .dl-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.dl-group-name { font-size: 11.5px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .4px; min-width: 96px; }
+.dl-group-name { font-size: 11.5px; font-weight: 600; color: var(--text-secondary); letter-spacing: .4px; min-width: 96px; }
 .dl-pill { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .dl-pill.on { background: ${ACCENT}; border-color: ${ACCENT}; color: #fff; }
 .dl-seg { display: inline-flex; border: 1px solid var(--border-primary); border-radius: 10px; overflow: hidden; flex-wrap: wrap; }
@@ -36,7 +36,7 @@ const CSS = `
 .dl-body { font-size: 14px; line-height: 1.7; margin: 0; }
 .dl-act { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
 .dl-act:hover { background: var(--bg-tertiary); }
-.dl-act.primary { border-color: ${ACCENT}; color: ${ACCENT}; font-weight: 700; }
+.dl-act.primary { border-color: ${ACCENT}; color: ${ACCENT}; font-weight: 600; }
 .dl-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .dl-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--text-secondary); }
 .dl-sw { display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--border-primary); }

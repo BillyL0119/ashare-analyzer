@@ -6,7 +6,7 @@ import { T } from '../i18n/translations'
 import { riseColor, fallColor } from '../utils/chartHelpers'
 import { CUR, MARKET_TINT, guessMarket } from '../utils/markets'
 
-const ACCENT_BLUE = '#5c9bff'
+const ACCENT_BLUE = '#6c9cff'
 
 function WatchlistItem({ stock, t, onRemove, onClick }) {
   const [quote, setQuote] = useState(null)
@@ -32,7 +32,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
         padding: '9px 12px', borderBottom: '1px solid var(--border-primary)',
         cursor: 'pointer', transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(92,155,255,0.06)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(108,156,255,0.06)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -44,7 +44,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
             {stock.name}
           </span>
           <span style={{
-            fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4, flexShrink: 0,
+            fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 4, flexShrink: 0,
             background: `${tint}1f`, color: tint, border: `1px solid ${tint}40`,
           }}>
             {m === 'us' ? 'US' : m === 'cn' ? t.marketCN : m === 'hk' ? t.marketHK : t.marketJP}
@@ -68,7 +68,7 @@ function WatchlistItem({ stock, t, onRemove, onClick }) {
           color: 'var(--text-muted)', fontSize: 16, lineHeight: 1,
           padding: '2px 4px', borderRadius: 4, transition: 'color 0.15s', flexShrink: 0,
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = '#ff3b30' }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = '#e5484d' }}
         onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)' }}
       >
         ×
@@ -119,7 +119,7 @@ export default function Watchlist({ lang, open, onClose, anchorRef }) {
     >
       <div style={{
         padding: '11px 14px', borderBottom: '1px solid var(--border-primary)',
-        fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.2px',
+        fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.2px',
       }}>
         {t.navWatchlist}
       </div>

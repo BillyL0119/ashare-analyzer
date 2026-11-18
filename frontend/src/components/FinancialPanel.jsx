@@ -64,7 +64,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
       <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>{label}</div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-        <span style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>
+        <span style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-primary)' }}>
           {fmtVal(value)}
         </span>
         <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{unit === '亿' && lang !== 'zh' ? ' × CNY 100M' : unit}</span>
@@ -82,7 +82,7 @@ function MetricCard({ label, value, unit, yoy, date, lang }) {
           <span style={{ color: 'var(--text-muted)' }}>{t.financialYoY}:</span>
           <span
             style={{
-              color: isPositive ? '#00c853' : isNegative ? '#ff3b30' : 'var(--text-muted)',
+              color: isPositive ? '#3fb67a' : isNegative ? '#e5484d' : 'var(--text-muted)',
               fontWeight: 600,
             }}
           >
@@ -110,8 +110,7 @@ function SectionBlock({ titleKey, metrics, data, lang }) {
           fontSize: 13,
           fontWeight: 600,
           color: 'var(--text-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
+          letterSpacing: 0,
           marginBottom: 10,
           paddingBottom: 6,
           borderBottom: `1px solid ${THEME.border}`,
@@ -210,12 +209,12 @@ export default function FinancialPanel({ stocks }) {
             >
               <span
                 style={{
-                  background: 'rgba(92,155,255,0.08)',
-                  border: '1px solid rgba(92,155,255,0.3)',
+                  background: 'rgba(108,156,255,0.08)',
+                  border: '1px solid rgba(108,156,255,0.3)',
                   borderRadius: 4,
                   padding: '2px 8px',
                   fontSize: 12,
-                  color: '#5c9bff',
+                  color: '#6c9cff',
                   fontFamily: 'monospace',
                 }}
               >
@@ -237,7 +236,7 @@ export default function FinancialPanel({ stocks }) {
             {error && !loading && (
               <div
                 style={{
-                  color: '#ff453a',
+                  color: '#e5484d',
                   fontSize: 13,
                   padding: '16px',
                   background: '#f8514910',

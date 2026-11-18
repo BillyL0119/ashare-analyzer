@@ -18,9 +18,9 @@ const newsDate = (s, lang) => {
 }
 
 const SENT_COLOR = {
-  positive: '#00c853',
+  positive: '#3fb67a',
   neutral:  'var(--text-muted)',
-  negative: '#ff3b30',
+  negative: '#e5484d',
 }
 
 function MetricCard({ label, value }) {
@@ -30,7 +30,7 @@ function MetricCard({ label, value }) {
       padding: '10px 14px', minWidth: 100, flex: 1,
     }}>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'monospace' }}>
         {value ?? '--'}
       </div>
     </div>
@@ -47,10 +47,10 @@ function MiniSimilarRow({ item, onStockClick }) {
         borderBottom: '1px solid var(--border-primary)',
         transition: 'background 0.12s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.07)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.07)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
-      <span style={{ fontSize: 11, color: '#2f7bff', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
+      <span style={{ fontSize: 11, color: '#4f86f7', fontFamily: 'monospace', minWidth: 56 }}>{item.code}</span>
       <span style={{ fontSize: 13, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {item.name}
       </span>
@@ -73,7 +73,7 @@ function MiniNewsRow({ item, t, lang }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
         <span style={{
-          fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 8,
+          fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 8,
           background: `${color}20`, color, border: `1px solid ${color}40`,
           flexShrink: 0, marginTop: 1,
         }}>
@@ -166,12 +166,12 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{
-                  background: 'rgba(47,123,255,0.1)', border: '1px solid rgba(47,123,255,0.3)',
-                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: '#2f7bff', fontFamily: 'monospace',
+                  background: 'rgba(79,134,247,0.1)', border: '1px solid rgba(79,134,247,0.3)',
+                  borderRadius: 4, padding: '2px 9px', fontSize: 13, color: '#4f86f7', fontFamily: 'monospace',
                 }}>
                   {symbol}
                 </span>
-                <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <span style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-primary)' }}>
                   {(name && name !== symbol ? name : q?.name) || symbol}
                 </span>
                 {q?.industry && (
@@ -182,7 +182,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
               </div>
               {price !== null && (
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 8 }}>
-                  <span style={{ fontSize: 28, fontWeight: 700, color: up ? upColor : downColor, fontFamily: 'monospace' }}>
+                  <span style={{ fontSize: 28, fontWeight: 600, color: up ? upColor : downColor, fontFamily: 'monospace' }}>
                     {Number(price).toFixed(2)}
                   </span>
                   {change !== null && (
@@ -227,7 +227,7 @@ export default function StockDetailPage({ symbol, name, lang, market = 'cn', onC
                 ) : (
                   <div>
                     <div style={{ display: 'flex', padding: '5px 10px', fontSize: 10, color: 'var(--text-muted)',
-                      fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em',
+                      fontWeight: 600, letterSpacing: 0,
                       borderBottom: '1px solid var(--border-primary)' }}>
                       <span style={{ minWidth: 56 }}>CODE</span>
                       <span style={{ flex: 1 }}>NAME</span>

@@ -4,7 +4,7 @@ export default function AiGist({ text, lang }) {
   if (!text) return null
   return (
     <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.55, marginTop: 4 }}>
-      <span style={{ color: '#2f7bff', fontWeight: 600, marginRight: 6 }}>{AI_LABEL[lang] || AI_LABEL.en}</span>
+      <span style={{ color: '#4f86f7', fontWeight: 600, marginRight: 6 }}>{AI_LABEL[lang] || AI_LABEL.en}</span>
       {text}
     </div>
   )

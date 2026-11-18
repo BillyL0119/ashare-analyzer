@@ -23,7 +23,7 @@ function SourceBadge({ name }) {
     <div style={{
       width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
       background: color, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 0,
+      fontSize: 13, fontWeight: 600, color: '#fff', letterSpacing: 0,
     }}>
       {letter.toUpperCase()}
     </div>
@@ -51,8 +51,8 @@ function Pill({ active, onClick, children }) {
       style={{
         padding: '4px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
         fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
-        background: active ? 'rgba(47,123,255,0.18)' : 'var(--bg-tertiary)',
-        color: active ? '#2f7bff' : 'var(--text-secondary)',
+        background: active ? 'rgba(79,134,247,0.18)' : 'var(--bg-tertiary)',
+        color: active ? '#4f86f7' : 'var(--text-secondary)',
         transition: 'all 0.18s',
       }}
     >
@@ -175,7 +175,7 @@ export default function GlobalNewsPanel({ lang = 'zh' }) {
               onClick={() => fetchNews(filters)}
               style={{
                 marginLeft: 8, fontSize: 11, background: 'none', border: 'none',
-                color: '#2f7bff', cursor: 'pointer', padding: 0,
+                color: '#4f86f7', cursor: 'pointer', padding: 0,
               }}
             >
               {t.gnRefresh}

@@ -135,7 +135,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
         <div style={{ position: 'relative' }}>
           <input value={symbol} onChange={(e) => { setSymbol(e.target.value.trim().toUpperCase()); setSuggestOpen(true) }}
             onFocus={() => setSuggestOpen(true)} onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
-            placeholder={PH[market]} autoComplete="off" style={{ ...inputStyle, fontWeight: 700 }} id="pt-order-symbol" />
+            placeholder={PH[market]} autoComplete="off" style={{ ...inputStyle, fontWeight: 600 }} id="pt-order-symbol" />
           {showSuggest && (
             <div role="listbox" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 30, background: 'var(--bg-secondary)', border: `1px solid ${BDR}`, borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,.28)', overflow: 'hidden' }}>
               {suggestions.map((x) => (
@@ -164,7 +164,7 @@ export default function OrderTicket({ s, lang, market, view, accountKey, gameId,
             <input type="number" min={market === 'us' ? 1 : lot} step={market === 'us' ? 1 : lot} value={shares}
               onChange={(e) => setShares(Math.max(0, Math.floor(Number(e.target.value) || 0)))} style={inputStyle} aria-label={s.shares} />
             <button type="button" onClick={() => maxShares > 0 && setShares(maxShares)} disabled={!(maxShares > 0)}
-              style={{ ...inputStyle, width: 'auto', padding: '0 10px', cursor: 'pointer', fontSize: 12, color: ACCENT, fontWeight: 700, whiteSpace: 'nowrap', flex: 'none' }}>
+              style={{ ...inputStyle, width: 'auto', padding: '0 10px', cursor: 'pointer', fontSize: 12, color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap', flex: 'none' }}>
               {side === 'sell' || side === 'cover' ? s.all : s.max}
             </button>
           </div>

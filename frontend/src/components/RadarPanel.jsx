@@ -7,7 +7,7 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import { useMobile } from '../hooks/useMobile'
 
-const COLORS = ['#5c9bff', '#a99ad6', '#00c853', '#ffa726']
+const COLORS = ['#6c9cff', '#a99ad6', '#3fb67a', '#ffa726']
 
 export default function RadarPanel({ stocks }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
@@ -86,7 +86,7 @@ export default function RadarPanel({ stocks }) {
       },
       splitArea: {
         areaStyle: {
-          color: ['transparent', 'rgba(92,155,255,0.05)'],
+          color: ['transparent', 'rgba(108,156,255,0.05)'],
         },
       },
       axisLine: {
@@ -185,9 +185,9 @@ export default function RadarPanel({ stocks }) {
                       <td style={{ color: 'var(--text-muted)', padding: '5px 8px', whiteSpace: 'nowrap' }}>{ind.name}</td>
                       {validStocks.map((s) => {
                         const score = dataMap[s.code]?.scores?.[ind.key]
-                        const color = score >= 70 ? '#00c853' : score >= 40 ? '#e8c34a' : '#ff3b30'
+                        const color = score >= 70 ? '#3fb67a' : score >= 40 ? '#e8c34a' : '#e5484d'
                         return (
-                          <td key={s.code} style={{ textAlign: 'center', color, fontWeight: 700, padding: '5px 8px' }}>
+                          <td key={s.code} style={{ textAlign: 'center', color, fontWeight: 600, padding: '5px 8px' }}>
                             {score ?? '—'}
                           </td>
                         )

@@ -67,7 +67,7 @@ LABELS.fr = { ...LABELS.en, overview: 'Présentation', keyStats: 'Chiffres clés
   assets: 'Total actif', holders: 'Principaux actionnaires institutionnels', holder: 'Institution', shares: 'Actions', value: 'Valeur', change: 'Variation',
   source: 'Source : Nasdaq · USD · exercices tels que publiés', loading: 'Chargement des données…', error: 'Données fondamentales indisponibles pour le moment' }
 
-const BLUE = '#5b9cf6', TEAL = '#00c853', AMBER = '#f5a524', RED = '#ff3b30', GREEN = '#00c853'
+const BLUE = '#5b9cf6', TEAL = '#3fb67a', AMBER = '#f5a524', RED = '#e5484d', GREEN = '#3fb67a'
 
 const money = (v, d = 1) => {
   if (v == null || Number.isNaN(v)) return '—'
@@ -90,11 +90,11 @@ const fmtDate = (iso, lang) => {
 
 const CSS = `
 .fu-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px; min-width: 0; }
-.fu-h { margin: 0 0 12px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+.fu-h { margin: 0 0 12px; font-size: 12px; font-weight: 600; letter-spacing: 0; color: var(--text-muted); }
 .fu-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
 .fu-tile { background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 10px; padding: 11px 12px; min-width: 0; }
 .fu-tile .l { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fu-tile .v { font-size: 17px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fu-tile .v { font-size: 17px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fu-tile .s { font-size: 11px; color: var(--text-muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fu-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
 .fu-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
@@ -350,7 +350,7 @@ function Earnings({ rows, t }) {
           const c = beat == null ? 'var(--text-muted)' : beat ? GREEN : RED
           return (
             <div key={r.quarter} style={{ textAlign: 'center', fontSize: 11, padding: '6px 4px', borderRadius: 8, background: 'var(--bg-tertiary)' }}>
-              <div style={{ color: c, fontWeight: 700 }}>{signPct(r.surprise_pct)}</div>
+              <div style={{ color: c, fontWeight: 600 }}>{signPct(r.surprise_pct)}</div>
               <div style={{ color: 'var(--text-muted)', marginTop: 2 }}>{beat == null ? '' : beat ? t.beat : t.miss}</div>
             </div>
           )
@@ -396,7 +396,7 @@ function Analysts({ a, price, t }) {
             {[[t.low, a.target_low], [t.avg, a.target], [t.high, a.target_high], [t.current, price]].map(([k, v]) => (
               <div key={k}>
                 <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{k}</div>
-                <div style={{ color: k === t.avg ? BLUE : 'var(--text-primary)', fontWeight: 700, marginTop: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div style={{ color: k === t.avg ? BLUE : 'var(--text-primary)', fontWeight: 600, marginTop: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
                   {k === t.current && <span style={{ width: 9, height: 9, borderRadius: 5, border: '2px solid var(--text-primary)', boxSizing: 'border-box' }} />}{v != null ? `$${v.toFixed(2)}` : '—'}</div>
               </div>
             ))}

@@ -12,10 +12,11 @@ export function Pill({ value, market = 'cn', width }) {
   )
 }
 
+// `action` is a label (pass onAction) or an element of its own, such as a button, shown as it is
 export function Section({ title, action, onAction, children }) {
   return (
     <section>
-      <div className="m-sec"><span>{title}</span>{action && <button onClick={onAction}>{action}</button>}</div>
+      <div className="m-sec"><span>{title}</span>{action && (onAction ? <button onClick={onAction}>{action}</button> : action)}</div>
       {children}
     </section>
   )
@@ -75,7 +76,7 @@ export function Sparkline({ values, color, width = 64, height = 32 }) {
   )
 }
 
-const GAUGE_COLORS = ['#ff3b30', '#F28B3C', '#E8C54A', '#8FCB5A', '#00c853']
+const GAUGE_COLORS = ['#e5484d', '#F28B3C', '#E8C54A', '#8FCB5A', '#3fb67a']
 function gaugeTint(s) { return s < 30 ? GAUGE_COLORS[0] : s < 45 ? GAUGE_COLORS[1] : s < 55 ? GAUGE_COLORS[2] : s < 70 ? GAUGE_COLORS[3] : GAUGE_COLORS[4] }
 
 /** Fear/greed half dial: the gradient is fixed to the arc, the score only reveals more of it. */
@@ -95,9 +96,9 @@ export function Gauge({ title, score = 0, label }) {
         <path d={d} fill="none" stroke="var(--surface)" strokeWidth="10" strokeLinecap="round" />
         <path d={d} fill="none" stroke={`url(#${id})`} strokeWidth="10" strokeLinecap="round"
           strokeDasharray={len} strokeDashoffset={len * (1 - shown / 100)} style={{ transition: 'stroke-dashoffset .9s ease-out' }} />
-        <text x={cx} y={cy - 4} textAnchor="middle" className="m-num" style={{ fontSize: 28, fontWeight: 800, fill: 'var(--text)' }}>{Math.round(score)}</text>
+        <text x={cx} y={cy - 4} textAnchor="middle" className="m-num" style={{ fontSize: 28, fontWeight: 600, fill: 'var(--text)' }}>{Math.round(score)}</text>
       </svg>
-      <div style={{ color: gaugeTint(score), fontWeight: 800, fontSize: 13 }}>{label}</div>
+      <div style={{ color: gaugeTint(score), fontWeight: 600, fontSize: 13 }}>{label}</div>
     </div>
   )
 }

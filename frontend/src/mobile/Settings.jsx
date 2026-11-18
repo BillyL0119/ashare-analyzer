@@ -34,7 +34,7 @@ export default function Settings({ onClose }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {SUPPORTED_LANGS.map((l) => (
                 <button key={l.code} aria-pressed={lang === l.code} onClick={() => changeLang(l.code)}
-                  style={{ padding: '10px 4px', borderRadius: 999, fontWeight: 650, fontSize: 14,
+                  style={{ padding: '10px 4px', borderRadius: 999, fontWeight: 600, fontSize: 14,
                     background: lang === l.code ? 'var(--accent)' : 'var(--surface-hi)', color: lang === l.code ? '#fff' : 'var(--text)' }}>{l.label}</button>
               ))}
             </div>

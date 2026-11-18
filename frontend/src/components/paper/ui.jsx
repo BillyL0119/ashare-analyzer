@@ -5,9 +5,9 @@ import useCompareStore from '../../store/compareStore'
 
 export const BDR = 'var(--border-primary)'
 export const MUTED = 'var(--text-secondary)'
-export const UP = '#00c853'
-export const DOWN = '#ff3b30'
-export const ACCENT = '#2f7bff'
+export const UP = '#3fb67a'
+export const DOWN = '#e5484d'
+export const ACCENT = '#4f86f7'
 
 export const fmt = (n, d = 2) => (n == null || isNaN(n) ? '—' : Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }))
 export const money = (n, m, d = 2) => (n == null ? '—' : `${n < 0 ? '-' : ''}${CUR[m] || '$'}${fmt(Math.abs(n), d)}`)
@@ -32,7 +32,7 @@ export function Seg({ value, onChange, options, size = 'md', full }) {
           style={{
             flex: full ? 1 : 'none', whiteSpace: 'nowrap', border: 'none', cursor: o.disabled ? 'not-allowed' : 'pointer', borderRadius: 999,
             padding: size === 'sm' ? '4px 10px' : '6px 14px', fontSize: size === 'sm' ? 12 : 13, fontWeight: 650,
-            background: value === o.value ? (o.color || '#2f7bff') : 'transparent',
+            background: value === o.value ? (o.color || '#4f86f7') : 'transparent',
             color: value === o.value ? '#fff' : o.disabled ? 'var(--text-muted)' : MUTED, opacity: o.disabled ? 0.5 : 1,
           }}>
           {o.label}
@@ -83,7 +83,7 @@ export function Button({ children, onClick, disabled, color = ACCENT, ghost, sty
   return (
     <button type={type} onClick={onClick} disabled={disabled}
       style={{
-        border: ghost ? `1px solid ${BDR}` : 'none', borderRadius: 10, padding: '9px 16px', fontSize: 13.5, fontWeight: 700,
+        border: ghost ? `1px solid ${BDR}` : 'none', borderRadius: 10, padding: '9px 16px', fontSize: 13.5, fontWeight: 600,
         cursor: disabled ? 'not-allowed' : 'pointer', background: ghost ? 'transparent' : disabled ? 'var(--bg-hover)' : color,
         color: ghost ? 'var(--text-secondary)' : disabled ? 'var(--text-muted)' : '#fff', ...style,
       }}>

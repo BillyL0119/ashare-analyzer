@@ -3,7 +3,7 @@ import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
 import Icon from './Icon'
 
-const ACCENT  = '#2f7bff'
+const ACCENT  = '#4f86f7'
 const ACCENT2 = '#7f77c2'
 const BDR     = 'var(--border-primary)'
 const MUTED   = 'var(--text-muted)'
@@ -98,9 +98,9 @@ function Bubble({ msg }) {
       <div style={{
         maxWidth: '76%',
         background: isUser
-          ? `rgba(47,123,255,0.16)`
+          ? `rgba(79,134,247,0.16)`
           : 'var(--bg-tertiary)',
-        border: `1px solid ${isUser ? 'rgba(47,123,255,0.22)' : 'var(--border-primary)'}`,
+        border: `1px solid ${isUser ? 'rgba(79,134,247,0.22)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '16px 16px 4px 16px' : '4px 16px 16px 16px',
         padding: '11px 15px',
         fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.75,
@@ -234,7 +234,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
       {/* ── Top banner ── */}
       <div style={{
         padding: '12px 20px', flexShrink: 0,
-        background: 'rgba(47,123,255,0.04)',
+        background: 'rgba(79,134,247,0.04)',
         borderBottom: `1px solid ${BDR}`,
         display: 'flex', alignItems: 'center', gap: 14,
       }}>
@@ -245,7 +245,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
         }}><Icon name="tutor" size={20} /></div>
         <div>
           <div style={{
-            fontSize: 16, fontWeight: 800,
+            fontSize: 16, fontWeight: 600,
             color: 'var(--text-primary)',
           }}>
             {t.atTitle}
@@ -279,7 +279,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           display: 'flex', flexDirection: 'column',
           overflowY: 'auto',
         }}>
-          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 700, color: 'rgba(47,123,255,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 600, color: 'rgba(79,134,247,0.5)', letterSpacing: 0 }}>
             {t.atTopics}
           </div>
 
@@ -291,7 +291,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: '8px 12px', cursor: 'pointer',
-                  background: activeCat === i ? 'rgba(47,123,255,0.08)' : 'transparent',
+                  background: activeCat === i ? 'rgba(79,134,247,0.08)' : 'transparent',
                   borderLeft: activeCat === i ? `3px solid ${ACCENT}` : '3px solid transparent',
                   transition: 'all 0.12s',
                 }}
@@ -314,17 +314,17 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                       onClick={() => send(zh ? t.zh : t.en)}
                       style={{
                         padding: '6px 10px 6px 28px', cursor: 'pointer',
-                        fontSize: 11, color: 'rgba(47,123,255,0.65)',
+                        fontSize: 11, color: 'rgba(79,134,247,0.65)',
                         borderRadius: 6, lineHeight: 1.4,
                         transition: 'all 0.12s',
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(47,123,255,0.06)'
+                        e.currentTarget.style.background = 'rgba(79,134,247,0.06)'
                         e.currentTarget.style.color = ACCENT
                       }}
                       onMouseLeave={e => {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'rgba(47,123,255,0.65)'
+                        e.currentTarget.style.color = 'rgba(79,134,247,0.65)'
                       }}
                     >
                       {zh ? t.zh : t.en}
@@ -381,15 +381,15 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                 style={{
                   flex: 1,
                   background: 'var(--bg-secondary)',
-                  border: `1px solid rgba(47,123,255,0.2)`,
+                  border: `1px solid rgba(79,134,247,0.2)`,
                   borderRadius: 12, color: 'var(--text-primary)',
                   padding: '10px 14px', fontSize: 14,
                   resize: 'none', outline: 'none', lineHeight: 1.6,
                   fontFamily: 'inherit',
                   transition: 'border-color 0.2s',
                 }}
-                onFocus={e => e.target.style.borderColor = 'rgba(47,123,255,0.45)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(47,123,255,0.2)'}
+                onFocus={e => e.target.style.borderColor = 'rgba(79,134,247,0.45)'}
+                onBlur={e => e.target.style.borderColor = 'rgba(79,134,247,0.2)'}
               />
               <button
                 onClick={() => send()}

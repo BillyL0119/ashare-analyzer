@@ -71,13 +71,13 @@ export default function AITeacher() {
   return (
     <>
       <div className="m-scroll m-no-tabbar" style={{ paddingBottom: 12 }}>
-        <div style={{ textAlign: 'center', fontWeight: 700, margin: '4px 0 14px' }}>{t('AI老师')}</div>
+        <div style={{ textAlign: 'center', fontWeight: 600, margin: '4px 0 14px' }}>{t('AI老师')}</div>
         {msgs.length === 0 ? (
           <div className="m-stack" style={{ gap: 20, alignItems: 'center', paddingTop: 18 }}>
             <div style={{ width: 72, height: 72, borderRadius: 22, display: 'grid', placeItems: 'center', color: '#fff', background: 'var(--accent)', boxShadow: '0 10px 28px color-mix(in srgb, var(--accent) 35%, transparent)' }}>
               <span style={{ width: 34, height: 34 }}>{Icon.spark}</span>
             </div>
-            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 800 }}>{t('AI股票老师')}</div><div className="m-muted" style={{ marginTop: 5, fontSize: 14 }}>{t('股票、基金、经济学，有问必答')}</div></div>
+            <div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 600 }}>{t('AI股票老师')}</div><div className="m-muted" style={{ marginTop: 5, fontSize: 14 }}>{t('股票、基金、经济学，有问必答')}</div></div>
             <div style={{ width: '100%' }}>
               <div className="m-sec"><span>{t('快速提问')}</span></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -109,7 +109,7 @@ export default function AITeacher() {
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
           style={{ flex: 1, resize: 'none', maxHeight: 110, padding: '10px 14px', borderRadius: 20, border: '1px solid var(--stroke)', background: 'var(--surface)', color: 'var(--text)', font: 'inherit', fontSize: 16, outline: 0 }} />
         {busy ? (
-          <button onClick={() => ctrl.current?.abort()} aria-label={t('停止生成')} style={{ width: 40, height: 40, borderRadius: 20, background: '#ff3b30', color: '#fff', display: 'grid', placeItems: 'center' }}><span style={{ width: 18, height: 18 }}>{Icon.stop}</span></button>
+          <button onClick={() => ctrl.current?.abort()} aria-label={t('停止生成')} style={{ width: 40, height: 40, borderRadius: 20, background: '#e5484d', color: '#fff', display: 'grid', placeItems: 'center' }}><span style={{ width: 18, height: 18 }}>{Icon.stop}</span></button>
         ) : (
           <button onClick={() => send()} disabled={!input.trim()} aria-label={t('发送')} style={{ width: 40, height: 40, borderRadius: 20, color: '#fff', display: 'grid', placeItems: 'center', background: input.trim() ? 'var(--accent)' : 'var(--text-3)', opacity: input.trim() ? 1 : .5 }}><span style={{ width: 20, height: 20 }}>{Icon.up}</span></button>
         )}

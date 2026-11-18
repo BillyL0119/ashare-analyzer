@@ -6,7 +6,7 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 import useCompareStore from '../store/compareStore'
 
-const ACCENT = '#2f7bff'
+const ACCENT = '#4f86f7'
 const ACCENT2 = '#7f77c2'
 
 const STRATEGIES = [
@@ -33,11 +33,11 @@ const STRATEGY_DESC = {
 function MetricCard({ label, value, sub, color }) {
   return (
     <div style={{
-      background: 'var(--bg-tertiary)', border: '1px solid rgba(47,123,255,0.1)',
+      background: 'var(--bg-tertiary)', border: '1px solid rgba(79,134,247,0.1)',
       borderRadius: 10, padding: '12px 16px', textAlign: 'center',
     }}>
       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: color || 'var(--text-primary)', lineHeight: 1.2 }}>{value}</div>
+      <div style={{ fontSize: 22, fontWeight: 600, color: color || 'var(--text-primary)', lineHeight: 1.2 }}>{value}</div>
       {sub && <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>{sub}</div>}
     </div>
   )
@@ -64,7 +64,7 @@ function EquityChart({ data, isCN, us }) {
       lineStyle: { color: ACCENT, width: 2 },
       itemStyle: { color: ACCENT },
       showSymbol: false,
-      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(47,123,255,0.15)' }, { offset: 1, color: 'rgba(47,123,255,0.01)' }] } },
+      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(79,134,247,0.15)' }, { offset: 1, color: 'rgba(79,134,247,0.01)' }] } },
     },
   ]
 
@@ -84,8 +84,8 @@ function EquityChart({ data, isCN, us }) {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(4,12,26,0.96)',
-      borderColor: 'rgba(47,123,255,0.3)',
+      backgroundColor: 'rgba(10,15,27,0.96)',
+      borderColor: 'rgba(79,134,247,0.3)',
       textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const date = params[0]?.axisValue || ''
@@ -105,7 +105,7 @@ function EquityChart({ data, isCN, us }) {
     xAxis: {
       type: 'category',
       data: dates,
-      axisLine: { lineStyle: { color: 'rgba(47,123,255,0.1)' } },
+      axisLine: { lineStyle: { color: 'rgba(79,134,247,0.1)' } },
       axisLabel: { color: THEME.text, fontSize: 10,
         formatter: (v) => v?.slice(0, 7) || v,
         interval: Math.floor(dates.length / 6),
@@ -115,7 +115,7 @@ function EquityChart({ data, isCN, us }) {
       type: 'value',
       scale: true,  // fit the curves instead of starting at $0
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: 'rgba(47,123,255,0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(79,134,247,0.06)' } },
       axisLabel: { color: THEME.text, fontSize: 10,
         formatter: (v) => money(v, us),
       },
@@ -160,9 +160,9 @@ function TradeTable({ trades, isCN }) {
           </thead>
           <tbody>
             {paged.map((t, i) => {
-              const color = t.win ? '#00c853' : '#ff3b30'
+              const color = t.win ? '#3fb67a' : '#e5484d'
               return (
-                <tr key={i} style={{ borderTop: '1px solid rgba(47,123,255,0.06)' }}>
+                <tr key={i} style={{ borderTop: '1px solid rgba(79,134,247,0.06)' }}>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.buy_date}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-primary)', fontFamily: 'monospace' }}>{t.buy_price}</td>
                   <td style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>{t.sell_date}</td>
@@ -253,7 +253,7 @@ export default function BacktestPanel({ stocks }) {
         {stocks.length === 1 && (
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 10 }}>
             {isCN ? '回测股票：' : 'Backtesting: '}
-            <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{stock.code}</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{stock.code}</span>
             {stock.name && stock.name !== stock.code && <span style={{ marginLeft: 6 }}>{stock.name}</span>}
           </div>
         )}
@@ -288,7 +288,7 @@ export default function BacktestPanel({ stocks }) {
         <div style={{
           fontSize: 11, color: 'var(--text-muted)', marginBottom: 10,
           padding: '6px 10px', background: 'var(--bg-primary)',
-          borderRadius: 6, border: '1px solid rgba(47,123,255,0.07)',
+          borderRadius: 6, border: '1px solid rgba(79,134,247,0.07)',
         }}>
           {isCN ? STRATEGY_DESC[strategy].zh : STRATEGY_DESC[strategy].en}
         </div>
@@ -312,8 +312,8 @@ export default function BacktestPanel({ stocks }) {
           disabled={loading}
           style={{
             padding: '8px 28px', borderRadius: 20, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-            fontSize: 13, fontWeight: 700,
-            background: loading ? 'rgba(47,123,255,0.15)' : `${ACCENT}`,
+            fontSize: 13, fontWeight: 600,
+            background: loading ? 'rgba(79,134,247,0.15)' : `${ACCENT}`,
             color: loading ? 'var(--text-muted)' : '#fff',
             transition: 'all 0.2s',
           }}
@@ -327,8 +327,8 @@ export default function BacktestPanel({ stocks }) {
 
       {/* Error */}
       {error && (
-        <div style={{ color: '#ff3b30', fontSize: 13, padding: '10px 16px',
-          background: 'rgba(255,59,48,0.08)', borderRadius: 8, border: '1px solid rgba(255,59,48,0.2)' }}>
+        <div style={{ color: '#e5484d', fontSize: 13, padding: '10px 16px',
+          background: 'rgba(229,72,77,0.08)', borderRadius: 8, border: '1px solid rgba(229,72,77,0.2)' }}>
           {error}
         </div>
       )}
@@ -341,12 +341,12 @@ export default function BacktestPanel({ stocks }) {
             <MetricCard
               label={isCN ? '总收益率' : 'Total Return'}
               value={`${ret >= 0 ? '+' : ''}${ret?.toFixed(2)}%`}
-              color={ret >= 0 ? '#00c853' : '#ff3b30'}
+              color={ret >= 0 ? '#3fb67a' : '#e5484d'}
             />
             <MetricCard
               label={isCN ? '年化收益率' : 'CAGR'}
               value={`${result.cagr >= 0 ? '+' : ''}${result.cagr?.toFixed(2)}%`}
-              color={result.cagr >= 0 ? '#00c853' : '#ff3b30'}
+              color={result.cagr >= 0 ? '#3fb67a' : '#e5484d'}
             />
             {bm_ret != null && (
               <MetricCard
@@ -363,19 +363,19 @@ export default function BacktestPanel({ stocks }) {
             <MetricCard
               label={isCN ? '夏普比率' : 'Sharpe Ratio'}
               value={result.sharpe?.toFixed(2)}
-              color={result.sharpe >= 1 ? '#00c853' : result.sharpe >= 0 ? '#fbbf24' : '#ff3b30'}
+              color={result.sharpe >= 1 ? '#3fb67a' : result.sharpe >= 0 ? '#fbbf24' : '#e5484d'}
             />
             <MetricCard
               label={isCN ? '胜率' : 'Win Rate'}
               value={`${result.win_rate?.toFixed(1)}%`}
               sub={`${result.total_trades} ${isCN ? '次交易' : 'trades'}`}
-              color={result.win_rate >= 50 ? '#00c853' : '#ff3b30'}
+              color={result.win_rate >= 50 ? '#3fb67a' : '#e5484d'}
             />
           </div>
 
           {/* Equity curve */}
           <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: '14px 16px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 10 }}>
               {isCN ? `资金曲线（初始 100 万${us ? '美元' : '元'}）` : `Equity Curve (initial ${us ? '$1M' : '¥1M'})`}
             </div>
             <EquityChart data={result} isCN={isCN} us={us} />
@@ -383,7 +383,7 @@ export default function BacktestPanel({ stocks }) {
 
           {/* Trade log */}
           <div style={{ background: THEME.gridBg, border: `1px solid ${THEME.border}`, borderRadius: 12, padding: '14px 16px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 10 }}>
               {isCN ? `交易记录（共 ${result.total_trades} 笔）` : `Trade Log (${result.total_trades} total)`}
             </div>
             <TradeTable trades={result.trades || []} isCN={isCN} />

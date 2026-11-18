@@ -56,15 +56,15 @@ export default function StockSearch({ s, lang, first, only, onTrade }) {
           {(rows || []).map((r, i) => (
             <div key={r.market + r.code} role="option" aria-selected={i === sel} onMouseEnter={() => setHi(i)} onClick={() => chart(r)}
               style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, cursor: 'pointer', background: i === sel ? 'var(--bg-tertiary)' : 'transparent' }}>
-              <span style={{ flex: 'none', minWidth: 46, textAlign: 'center', fontSize: 10.5, fontWeight: 700, padding: '2px 6px', borderRadius: 5, color: MUTED, border: `1px solid ${BDR}` }}>{s.search.tags[r.market]}</span>
+              <span style={{ flex: 'none', minWidth: 46, textAlign: 'center', fontSize: 10.5, fontWeight: 600, padding: '2px 6px', borderRadius: 5, color: MUTED, border: `1px solid ${BDR}` }}>{s.search.tags[r.market]}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13.5, fontWeight: 650, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
                 <div style={{ fontSize: 11.5, color: MUTED, fontVariantNumeric: 'tabular-nums' }}>{r.code}{r.price ? ` · ${CUR[r.market]}${fmt(r.price)}` : ''}</div>
               </div>
-              {r.pct != null && <span style={{ flex: 'none', fontSize: 12.5, fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: plColor(r.pct, r.market) }}>{pct(r.pct)}</span>}
+              {r.pct != null && <span style={{ flex: 'none', fontSize: 12.5, fontWeight: 600, fontVariantNumeric: 'tabular-nums', color: plColor(r.pct, r.market) }}>{pct(r.pct)}</span>}
               <span style={{ flex: 'none', fontSize: 12, color: ACCENT, fontWeight: 650 }}>{s.search.chart} ↗</span>
               <button onClick={(e) => { e.stopPropagation(); trade(r) }}
-                style={{ flex: 'none', border: 'none', cursor: 'pointer', borderRadius: 999, padding: '5px 12px', fontSize: 12, fontWeight: 700, color: '#fff', background: '#2f7bff' }}>
+                style={{ flex: 'none', border: 'none', cursor: 'pointer', borderRadius: 999, padding: '5px 12px', fontSize: 12, fontWeight: 600, color: '#fff', background: '#4f86f7' }}>
                 {s.search.trade}
               </button>
             </div>

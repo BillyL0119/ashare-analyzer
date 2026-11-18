@@ -11,8 +11,8 @@ import Icon from '../Icon'
 // server sends only the quarters already played, and reveals the real Fed's rate for a quarter
 // after the student has set theirs (routers/governor.py).
 
-const ACCENT = '#2f7bff', TARGET = '#00c853', HOT = '#ff3b30'
-const TINT = { inflation_2021: '#2f7bff', volcker_1979: '#f59e0b', crisis_2007: '#ff3b30' }
+const ACCENT = '#4f86f7', TARGET = '#3fb67a', HOT = '#e5484d'
+const TINT = { inflation_2021: '#4f86f7', volcker_1979: '#f59e0b', crisis_2007: '#e5484d' }
 const MAX_RATE = 20
 const STUDY = [['ib', 'ib_6'], ['alevel', 'macro_3'], ['ap_macro', 'ap_4'], ['igcse', 'igcse_7']]
 
@@ -45,15 +45,15 @@ const CSS = `
 .gv { display: grid; gap: 16px; max-width: 1240px; margin: 0 auto; width: 100%; padding: 18px 0 40px; min-width: 0; }
 .gv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px; min-width: 0; }
 .gv-muted { color: var(--text-secondary); }
-.gv-h { margin: 0; font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text-secondary); }
+.gv-h { margin: 0; font-size: 11.5px; font-weight: 600; letter-spacing: .4px; color: var(--text-secondary); }
 .gv-num { font-variant-numeric: tabular-nums; }
 .gv-btn { border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .gv-btn:disabled { opacity: .45; cursor: not-allowed; }
-.gv-btn.primary { background: #2f7bff; border-color: transparent; color: #fff; }
+.gv-btn.primary { background: #4f86f7; border-color: transparent; color: #fff; }
 .gv-btn:focus-visible, .gv-chip:focus-visible, .gv-step:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
 .gv-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .gv-pick { display: grid; gap: 10px; align-content: start; }
-.gv-years { font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.gv-years { font-size: 38px; font-weight: 600; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
 .gv-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .gv-stats { display: flex; flex-wrap: wrap; gap: 6px; }
 .gv-stat { font-size: 12px; padding: 4px 9px; border-radius: 999px; background: var(--bg-tertiary); font-variant-numeric: tabular-nums; }
@@ -65,8 +65,8 @@ const CSS = `
 .gv-data { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .gv-datum { display: grid; gap: 2px; padding: 9px 10px; border-radius: 10px; background: var(--bg-tertiary); min-width: 0; }
 .gv-datum b { font-size: 20px; font-variant-numeric: tabular-nums; }
-.gv-rate { font-size: 40px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; line-height: 1; }
-.gv-step { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); font-size: 20px; font-weight: 700; cursor: pointer; flex: none; }
+.gv-rate { font-size: 40px; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; line-height: 1; }
+.gv-step { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-primary); background: var(--bg-tertiary); color: var(--text-primary); font-size: 20px; font-weight: 600; cursor: pointer; flex: none; }
 .gv-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 .gv-chip { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 650; cursor: pointer; font-variant-numeric: tabular-nums; }
 .gv-chip.on { border-color: ${ACCENT}; background: ${ACCENT}1f; color: ${ACCENT}; }
@@ -373,7 +373,7 @@ function Result({ run, s, lang, board, studyHref, labHref, onReplay, onBack }) {
         <div className="gv-scroll">
           <table className="gv-table">
             <thead><tr><th>{s.table.metric}</th><th>{s.table.you}</th><th>{s.table.fed}</th></tr></thead>
-            <tbody>{rows.map((k) => <tr key={k}><td>{s.table[k]}</td><td style={{ color: ACCENT, fontWeight: 700 }}>{pct(r.me[k])}</td><td>{pct(r.fed[k])}</td></tr>)}</tbody>
+            <tbody>{rows.map((k) => <tr key={k}><td>{s.table[k]}</td><td style={{ color: ACCENT, fontWeight: 600 }}>{pct(r.me[k])}</td><td>{pct(r.fed[k])}</td></tr>)}</tbody>
           </table>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

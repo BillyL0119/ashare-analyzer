@@ -187,7 +187,7 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
       </div>
 
       {!user && (
-        <div style={{ background: 'rgba(47,123,255,0.06)', border: '1px solid rgba(47,123,255,0.2)', borderRadius: 10, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ background: 'rgba(79,134,247,0.06)', border: '1px solid rgba(79,134,247,0.2)', borderRadius: 10, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.45 }}>{s.guest}</div>
           {onOpenAuth && <Button onClick={onOpenAuth} style={{ padding: '6px 14px', fontSize: 12 }}>{s.signIn}</Button>}
         </div>
@@ -201,10 +201,10 @@ export default function PaperTradingPanel({ lang, onOpenAuth }) {
         {game && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13 }}>
             <b style={{ fontSize: 15 }}>{game.name}</b>
-            <span style={{ color: game.status === 'ended' ? MUTED : UP, fontWeight: 700 }}>{s.game.status[game.status]}</span>
+            <span style={{ color: game.status === 'ended' ? MUTED : UP, fontWeight: 600 }}>{s.game.status[game.status]}</span>
             <span style={{ color: MUTED }}>{s.game.members(game.members)} · {game.status === 'ended' ? s.game.endedOn(game.end_date) : s.game.ends(game.end_date)} · {s.game.organiser} {game.owner_nickname}</span>
             <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-              <code style={{ fontSize: 14, fontWeight: 800, letterSpacing: 2, padding: '3px 8px', borderRadius: 6, background: 'var(--bg-tertiary)' }}>{game.code}</code>
+              <code style={{ fontSize: 14, fontWeight: 600, letterSpacing: 2, padding: '3px 8px', borderRadius: 6, background: 'var(--bg-tertiary)' }}>{game.code}</code>
               <Button ghost style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => { navigator.clipboard?.writeText(inviteText); setCopied(true); setTimeout(() => setCopied(false), 1500) }}>
                 {copied ? s.game.copied : s.game.copy}
               </Button>

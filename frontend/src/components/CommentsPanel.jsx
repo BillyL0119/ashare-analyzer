@@ -6,15 +6,15 @@ import getDeviceId from '../utils/deviceId'
 
 const API = import.meta.env.VITE_API_BASE || ''
 
-const ACCENT   = '#2f7bff'
-const GREEN    = '#00c853'
-const RED      = '#ff3b30'
+const ACCENT   = '#4f86f7'
+const GREEN    = '#3fb67a'
+const RED      = '#e5484d'
 const AMBER    = '#f59e0b'
 
 const SENT_CFG = {
-  bullish: { zh: '看多', en: 'Bullish', ja: '強気', ko: '강세', fr: 'Haussier', icon: '▲', color: GREEN,  bg: 'rgba(0,200,83,0.12)'  },
+  bullish: { zh: '看多', en: 'Bullish', ja: '強気', ko: '강세', fr: 'Haussier', icon: '▲', color: GREEN,  bg: 'rgba(63,182,122,0.12)'  },
   neutral: { zh: '中性', en: 'Neutral', ja: '中立', ko: '중립', fr: 'Neutre',   icon: '◆', color: AMBER,  bg: 'rgba(245,158,11,0.12)' },
-  bearish: { zh: '看空', en: 'Bearish', ja: '弱気', ko: '약세', fr: 'Baissier', icon: '▼', color: RED,    bg: 'rgba(255,59,48,0.12)'  },
+  bearish: { zh: '看空', en: 'Bearish', ja: '弱気', ko: '약세', fr: 'Baissier', icon: '▼', color: RED,    bg: 'rgba(229,72,77,0.12)'  },
 }
 
 function getSentLabel(cfg, lang) {
@@ -87,7 +87,7 @@ function CommentCard({ comment, lang, onLike }) {
         width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
         background: avatarColor(comment.nickname),
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 14, fontWeight: 700, color: '#fff',
+        fontSize: 14, fontWeight: 600, color: '#fff',
       }}>
         {initial}
       </div>
@@ -96,7 +96,7 @@ function CommentCard({ comment, lang, onLike }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         {/* Row 1: name + sentiment + time */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
             {comment.nickname}
           </span>
           <span style={{
@@ -245,7 +245,7 @@ export default function CommentsPanel({ stocks, lang }) {
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
         borderRadius: 12, padding: '14px 18px', marginBottom: 16,
       }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 10 }}>
           {symbol} {t.cmtSentiment}
         </div>
         <SentimentBar stats={stats} t={t} />
@@ -256,7 +256,7 @@ export default function CommentsPanel({ stocks, lang }) {
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
         borderRadius: 12, padding: '14px 18px', marginBottom: 16,
       }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12 }}>
           {t.cmtShare}
         </div>
 
@@ -353,7 +353,7 @@ export default function CommentsPanel({ stocks, lang }) {
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
         borderRadius: 12, padding: '14px 18px',
       }} ref={listRef}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
           {t.cmtAll}
           {stats?.total > 0 && (
             <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>

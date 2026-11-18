@@ -79,7 +79,7 @@ const TYPE_HELP = {
 const CORP_LABEL = { dividend: '分红', split: '拆股', bonus: '送转' }
 const CORP_BADGE = { dividend: '息', split: '拆', bonus: '送' }
 const STATUS_LABEL = { open: '未成交', filled: '已成交', cancelled: '已撤销', expired: '已过期', rejected: '被拒' }
-const STATUS_COLOR = { open: 'var(--accent)', filled: '#00c853', cancelled: 'var(--text-3)', expired: 'var(--text-3)', rejected: '#ff3b30' }
+const STATUS_COLOR = { open: 'var(--accent)', filled: '#3fb67a', cancelled: 'var(--text-3)', expired: 'var(--text-3)', rejected: '#e5484d' }
 const SHORT_MARGIN = 0.5   // extra margin the server holds on a short, as a share of its value
 
 function Row({ k, v, color, strong }) {
@@ -89,11 +89,11 @@ function Row({ k, v, color, strong }) {
 function PriceInput({ label, value, onChange, cur }) {
   return (
     <label style={{ flex: 1, minWidth: 0, display: 'grid', gap: 6 }}>
-      <span className="m-label" style={{ fontWeight: 650 }}>{label}</span>
+      <span className="m-label" style={{ fontWeight: 600 }}>{label}</span>
       <span style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'var(--surface-hi)', borderRadius: 12, padding: '10px 12px' }}>
         {cur && <span className="m-muted">{cur}</span>}
         <input className="m-num" inputMode="decimal" value={value} onChange={(e) => onChange(e.target.value.replace(/[^\d.]/g, ''))}
-          style={{ flex: 1, minWidth: 0, width: 0, background: 'none', border: 0, outline: 0, fontSize: 17, fontWeight: 700 }} />
+          style={{ flex: 1, minWidth: 0, width: 0, background: 'none', border: 0, outline: 0, fontSize: 17, fontWeight: 600 }} />
       </span>
     </label>
   )
@@ -176,13 +176,13 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
             <div style={{ minHeight: 18, fontSize: 13, marginTop: 4 }}>
               {quote?.price ? <span><b>{quote.name}</b> <span className="m-muted m-num">· {money(quote.price, cur)}</span>
                 <button onClick={() => nav(`/stock/${market}/${encodeURIComponent(sym)}`)} className="m-link" style={{ marginLeft: 10, fontSize: 13 }}>{t('查看走势')} ›</button></span>
-                : quote?.missing && !showSuggest ? <span style={{ color: '#ff3b30' }}>{t('没有找到这只股票')}</span> : null}
+                : quote?.missing && !showSuggest ? <span style={{ color: '#e5484d' }}>{t('没有找到这只股票')}</span> : null}
             </div>
             {showSuggest && (
               <div style={{ margin: '8px -16px -4px', width: 'calc(100% + 32px)' }}>
                 {suggestions.map((x) => (
                   <button key={x.symbol} className="m-row" onClick={() => setSymbol(x.symbol)} style={{ padding: '10px 16px' }}>
-                    <span className="m-num" style={{ fontWeight: 800, minWidth: 64, fontFamily: 'ui-monospace, Menlo, monospace' }}>{x.symbol}</span>
+                    <span className="m-num" style={{ fontWeight: 600, minWidth: 64, fontFamily: 'ui-monospace, Menlo, monospace' }}>{x.symbol}</span>
                     <span className="m-grow m-muted" style={{ fontSize: 13, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lang === 'zh' && x.nameZh ? x.nameZh : x.name}</span>
                     {x.price != null && <span className="m-num" style={{ fontSize: 13 }}>{money(x.price, cur)}</span>}
                   </button>
@@ -202,7 +202,7 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
         ) : held ? (
           <div className="m-card" style={{ display: 'grid', gap: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <button onClick={() => setSymbol('')} style={{ fontSize: 18, fontWeight: 800 }}>{sym} <span className="m-muted" style={{ fontSize: 13, fontWeight: 500 }}>{held.name}</span></button>
+              <button onClick={() => setSymbol('')} style={{ fontSize: 18, fontWeight: 600 }}>{sym} <span className="m-muted" style={{ fontSize: 13, fontWeight: 500 }}>{held.name}</span></button>
               <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <button onClick={() => nav(`/stock/${market}/${encodeURIComponent(sym)}`)} className="m-link" style={{ fontSize: 13 }}>{t('查看走势')} ›</button>
                 <Pill value={held.profit_loss_pct} market={market} />
@@ -211,27 +211,27 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
             <div className="m-tiles">
               {[[t('现价'), money(held.current_price, cur)], [t('成本'), money(side === 'sell' ? held.avg_cost : held.avg_price, cur)],
                 [side === 'sell' ? t('可卖/持有') : t('持仓'), side === 'sell' ? `${held.available_shares}/${held.shares}` : `-${held.shares}`]].map(([k, v]) => (
-                <div key={k} className="m-tile"><div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 700, fontSize: 13.5, marginTop: 3 }}>{v}</div></div>))}
+                <div key={k} className="m-tile"><div className="m-label">{k}</div><div className="m-num" style={{ fontWeight: 600, fontSize: 13.5, marginTop: 3 }}>{v}</div></div>))}
             </div>
             {side === 'sell' && held.available_shares < held.shares && (market === 'cn' || market === 'us') && <div style={{ fontSize: 12, color: '#F28B3C' }}>{market === 'cn' ? t('T+1：今日买入部分明日可卖') : t('T+2：部分持仓尚未结算')}</div>}
           </div>
         ) : (
           <div className="m-card" style={{ display: 'grid', gap: 10 }}>
-            <div className="m-label" style={{ fontWeight: 650 }}>{t('选择持仓')}</div>
+            <div className="m-label" style={{ fontWeight: 600 }}>{t('选择持仓')}</div>
             {holdings.length ? (
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {holdings.map((s) => <button key={s} onClick={() => setSymbol(s)} className="m-num" style={{ padding: '7px 13px', borderRadius: 999, background: 'var(--surface-hi)', fontSize: 13, fontWeight: 700 }}>{s}</button>)}
+                {holdings.map((s) => <button key={s} onClick={() => setSymbol(s)} className="m-num" style={{ padding: '7px 13px', borderRadius: 999, background: 'var(--surface-hi)', fontSize: 13, fontWeight: 600 }}>{s}</button>)}
               </div>
             ) : <div className="m-muted" style={{ fontSize: 14 }}>{t('暂无持仓')}</div>}
           </div>
         )}
 
         <div className="m-card" style={{ display: 'grid', gap: 12, minWidth: 0 }}>
-          <div className="m-label" style={{ fontWeight: 650 }}>{t('订单类型')}</div>
+          <div className="m-label" style={{ fontWeight: 600 }}>{t('订单类型')}</div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {types.map((v) => (
               <button key={v} onClick={() => setType(v)} aria-pressed={type === v}
-                style={{ flex: 'none', padding: '7px 12px', borderRadius: 999, fontSize: 13, fontWeight: 650, whiteSpace: 'nowrap', background: type === v ? tint : 'var(--surface-hi)', color: type === v ? '#fff' : 'var(--text)' }}>{t(TYPE_LABEL[v])}</button>
+                style={{ flex: 'none', padding: '7px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', background: type === v ? tint : 'var(--surface-hi)', color: type === v ? '#fff' : 'var(--text)' }}>{t(TYPE_LABEL[v])}</button>
             ))}
           </div>
           {(needStop || needLimit || type === 'trailing_stop') && (
@@ -247,16 +247,16 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
         </div>
 
         <div className="m-card" style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
-          <div className="m-label" style={{ fontWeight: 650 }}>{side === 'buy' && market === 'hk' ? t('股数（每手 %lld 股）', step) : side === 'buy' && market !== 'us' ? t('股数（100 的整数倍）') : t('股数')}</div>
+          <div className="m-label" style={{ fontWeight: 600 }}>{side === 'buy' && market === 'hk' ? t('股数（每手 %lld 股）', step) : side === 'buy' && market !== 'us' ? t('股数（100 的整数倍）') : t('股数')}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button className="m-iconbtn" style={{ width: 46, height: 46, flex: 'none' }} onClick={() => setShares(norm(shares - step))} disabled={shares <= step} aria-label={t('减少')}>−</button>
             <input className="m-num" inputMode="numeric" value={shares} onChange={(e) => setShares(parseInt(e.target.value.replace(/\D/g, ''), 10) || 0)} onBlur={() => setShares(norm(shares))}
-              style={{ flex: 1, minWidth: 0, width: 0, textAlign: 'center', background: 'none', border: 0, outline: 0, fontSize: 34, fontWeight: 800 }} />
+              style={{ flex: 1, minWidth: 0, width: 0, textAlign: 'center', background: 'none', border: 0, outline: 0, fontSize: 34, fontWeight: 600 }} />
             <button className="m-iconbtn" style={{ width: 46, height: 46, flex: 'none' }} onClick={() => setShares(norm(shares + step))} aria-label={t('增加')}>+</button>
           </div>
           {quick.length > 0 && (
             <div style={{ display: 'flex', gap: 8 }}>
-              {quick.map((v) => <button key={v} onClick={() => setShares(v)} className="m-num" style={{ flex: 1, padding: '8px 0', borderRadius: 999, fontWeight: 700, fontSize: 13, background: shares === v ? tint : 'var(--surface-hi)', color: shares === v ? '#fff' : 'var(--text)' }}>
+              {quick.map((v) => <button key={v} onClick={() => setShares(v)} className="m-num" style={{ flex: 1, padding: '8px 0', borderRadius: 999, fontWeight: 600, fontSize: 13, background: shares === v ? tint : 'var(--surface-hi)', color: shares === v ? '#fff' : 'var(--text)' }}>
                 {v === max ? (opening ? t('最多') : t('全部')) : `${Math.round((v / max) * 100)}%`}</button>)}
             </div>
           )}
@@ -270,10 +270,10 @@ function TradeSheet({ market, view, init, gameId, onClose, onDone }) {
             {side === 'cover' && <Row k={t('预计花费')} v={money(amount + fee, cur)} strong />}
             {fee > 0.005 && <Row k={market === 'hk' ? t('印花税及交易所费用') : t('手续费')} v={money(fee, cur)} />}
             {pl != null && <Row k={t('预计盈亏')} v={(pl >= 0 ? '+' : '-') + money(Math.abs(pl), cur)} color={changeColor(pl, market)} />}
-            {opening && <Row k={t('可用购买力')} v={money(bp, cur)} color={overBp ? '#ff3b30' : undefined} />}
+            {opening && <Row k={t('可用购买力')} v={money(bp, cur)} color={overBp ? '#e5484d' : undefined} />}
           </div>
         )}
-        {err && <div style={{ color: '#ff3b30', fontSize: 13, textAlign: 'center' }}>{err}</div>}
+        {err && <div style={{ color: '#e5484d', fontSize: 13, textAlign: 'center' }}>{err}</div>}
         <button className="m-btn" disabled={!valid || busy} onClick={go} style={{ background: tint }}>
           {type === 'market' && side === 'buy' ? t('确认买入 %lld 股', shares) : type === 'market' && side === 'sell' ? t('确认卖出 %lld 股', shares) : `${t('提交委托')} · ${t(SIDE_LABEL[side])} ${shares}`}
         </button>
@@ -318,14 +318,14 @@ function MissionsCard({ missions, onAction }) {
               <b style={{ fontSize: 15 }}>{next.title}</b>
               <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.45 }}>{next.body}</span>
             </div>
-            {next.action && <button onClick={() => onAction(next)} style={{ flex: 'none', padding: '8px 14px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 650, fontSize: 13.5 }}>{t('去完成')}</button>}
+            {next.action && <button onClick={() => onAction(next)} style={{ flex: 'none', padding: '8px 14px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 600, fontSize: 13.5 }}>{t('去完成')}</button>}
           </div>
         )}
         {open && (
           <div style={{ display: 'grid', gap: 2, paddingTop: 10, borderTop: '1px solid var(--stroke)' }}>
             {missions.filter((m) => m !== next).map((m) => (
               <div key={m.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, opacity: m.done ? 0.55 : 0.9, padding: '3px 0' }}>
-                <span aria-hidden="true" style={{ width: 16, textAlign: 'center', color: m.done ? 'var(--accent)' : 'var(--text-3)', fontWeight: 800 }}>{m.done ? '✓' : '○'}</span>
+                <span aria-hidden="true" style={{ width: 16, textAlign: 'center', color: m.done ? 'var(--accent)' : 'var(--text-3)', fontWeight: 600 }}>{m.done ? '✓' : '○'}</span>
                 <span style={{ textDecoration: m.done ? 'line-through' : 'none' }}>{m.title}</span>
               </div>
             ))}
@@ -336,8 +336,8 @@ function MissionsCard({ missions, onAction }) {
   )
 }
 
-const CHECK_LEVEL = { warn: ['!', '#f59e0b'], info: ['i', '#2f7bff'], good: ['✓', '#00c853'] }
-const CHECK_PALETTE = ['#2f7bff', '#7f77c2', '#f59e0b', '#00c853', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
+const CHECK_LEVEL = { warn: ['!', '#f59e0b'], info: ['i', '#4f86f7'], good: ['✓', '#3fb67a'] }
+const CHECK_PALETTE = ['#4f86f7', '#7f77c2', '#f59e0b', '#3fb67a', '#ec4899', '#5f73b8', '#14b8a6', '#f97316']
 
 // Portfolio check-up: where the money sits plus plain findings, worked out by the server
 function CheckupCard({ market, gameId, refreshKey }) {
@@ -373,7 +373,7 @@ function CheckupCard({ market, gameId, refreshKey }) {
           const [icon, color] = CHECK_LEVEL[f.level] || CHECK_LEVEL.info
           return (
             <div key={f.id} style={{ display: 'flex', gap: 10 }}>
-              <span aria-hidden="true" style={{ flex: 'none', width: 20, height: 20, marginTop: 1, borderRadius: 10, display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 800, color: '#fff', background: color }}>{icon}</span>
+              <span aria-hidden="true" style={{ flex: 'none', width: 20, height: 20, marginTop: 1, borderRadius: 10, display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 600, color: '#fff', background: color }}>{icon}</span>
               <div style={{ minWidth: 0, display: 'grid', gap: 2 }}>
                 <b style={{ fontSize: 14 }}>{f.title}</b>
                 <span className="m-muted" style={{ fontSize: 13, lineHeight: 1.5 }}>{f.body}</span>
@@ -414,7 +414,7 @@ function PaperSearch({ only, first, onTrade }) {
               </div>
               {r.pct != null && <Pill value={r.pct} market={r.market} width={68} />}
               <button onClick={(e) => { e.stopPropagation(); setQ(''); onTrade(r) }}
-                style={{ flex: 'none', padding: '6px 12px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontSize: 13, fontWeight: 650 }}>{t('交易')}</button>
+                style={{ flex: 'none', padding: '6px 12px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontSize: 13, fontWeight: 600 }}>{t('交易')}</button>
             </div>
           ))}
         </div>
@@ -433,10 +433,10 @@ function NickSheet({ nickname, onClose, onDone }) {
   return (
     <Sheet onClose={onClose}>
       <div className="m-stack" style={{ gap: 14 }}>
-        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('你的昵称')}</div>
+        <div style={{ textAlign: 'center', fontWeight: 600, fontSize: 17 }}>{t('你的昵称')}</div>
         <input value={nick} onChange={(e) => setNick(e.target.value.slice(0, 16))} autoFocus
           style={{ width: '100%', minWidth: 0, background: 'var(--surface-hi)', border: 0, outline: 0, borderRadius: 12, padding: '12px 14px', fontSize: 16, color: 'var(--text)' }} />
-        {err && <div style={{ color: '#ff3b30', fontSize: 13, textAlign: 'center' }}>{err}</div>}
+        {err && <div style={{ color: '#e5484d', fontSize: 13, textAlign: 'center' }}>{err}</div>}
         <button className="m-btn" disabled={nick.trim().length < 2} onClick={save}>{t('保存')}</button>
         <button className="m-btn ghost" onClick={onClose}>{t('取消')}</button>
       </div>
@@ -464,14 +464,14 @@ function GameSheet({ nickname, onClose, onJoined }) {
   return (
     <Sheet onClose={onClose}>
       <div className="m-stack" style={{ gap: 14 }}>
-        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('比赛')}</div>
+        <div style={{ textAlign: 'center', fontWeight: 600, fontSize: 17 }}>{t('比赛')}</div>
         <div className="m-muted" style={{ fontSize: 13, lineHeight: 1.55, textAlign: 'center' }}>{t('创建一场比赛，把邀请码发给同学，大家用同样的本金在同一个市场比收益。')}</div>
         <Segment full value={mode} onChange={setMode} options={[{ value: 'join', label: t('加入比赛') }, { value: 'create', label: t('创建比赛') }]} />
         <div className="m-card" style={{ display: 'grid', gap: 12 }}>
           {mode === 'join' ? (
             <label style={{ display: 'grid', gap: 6 }}><span className="m-label">{t('邀请码')}</span>
               <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))} placeholder="ABC123" autoCapitalize="characters" autoComplete="off"
-                style={{ ...field, textAlign: 'center', letterSpacing: 6, fontWeight: 800, fontSize: 22, fontFamily: 'ui-monospace, Menlo, monospace' }} /></label>
+                style={{ ...field, textAlign: 'center', letterSpacing: 6, fontWeight: 600, fontSize: 22, fontFamily: 'ui-monospace, Menlo, monospace' }} /></label>
           ) : (<>
             <label style={{ display: 'grid', gap: 6 }}><span className="m-label">{t('比赛名称')}</span><input value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} style={field} /></label>
             <Segment full value={gm} onChange={(m) => { setGm(m); setCash(GAME_CASH[m][1]); if (m !== 'us') setShort(false) }} options={['us', 'cn', 'hk', 'jp'].map((m) => ({ value: m, label: t(chipLabel(m)) }))} />
@@ -485,7 +485,7 @@ function GameSheet({ nickname, onClose, onJoined }) {
           </>)}
           <label style={{ display: 'grid', gap: 6 }}><span className="m-label">{t('你的昵称')}</span><input value={nick} onChange={(e) => setNick(e.target.value.slice(0, 16))} style={field} /></label>
         </div>
-        {err && <div style={{ color: '#ff3b30', fontSize: 13, textAlign: 'center' }}>{err}</div>}
+        {err && <div style={{ color: '#e5484d', fontSize: 13, textAlign: 'center' }}>{err}</div>}
         <button className="m-btn" disabled={busy || (mode === 'join' ? code.length !== 6 : name.trim().length < 2)} onClick={submit}>{mode === 'join' ? t('加入比赛') : t('创建比赛')}</button>
         <button className="m-btn ghost" onClick={onClose}>{t('取消')}</button>
       </div>
@@ -502,7 +502,7 @@ function Board({ market, onClose }) {
   return (
     <Sheet onClose={onClose}>
       <div className="m-stack" style={{ gap: 16 }}>
-        <div style={{ textAlign: 'center', fontWeight: 800, fontSize: 17 }}>{t('收益排行榜')} · {t(chipLabel(market))}</div>
+        <div style={{ textAlign: 'center', fontWeight: 600, fontSize: 17 }}>{t('收益排行榜')} · {t(chipLabel(market))}</div>
         {err ? <ErrorBox onRetry={() => { setErr(false); window.location.reload() }} /> : !rows ? <Skeleton h={180} r={20} /> : rows.length === 0 ? (
           <div className="m-muted" style={{ textAlign: 'center', fontSize: 14, padding: '24px 8px' }}>{t('还没有人在这个市场交易过，完成第一笔交易就能上榜')}</div>
         ) : (
@@ -512,8 +512,8 @@ function Board({ market, onClose }) {
                 const r = rows[i]; const first = i === 0
                 return (
                   <div key={i} className="m-card" style={{ flex: 1, textAlign: 'center', padding: first ? '20px 6px' : '14px 6px', borderColor: r.is_me ? 'var(--accent)' : `color-mix(in srgb, ${medal[i]} 40%, transparent)` }}>
-                    <div style={{ color: medal[i], fontWeight: 800, fontSize: first ? 30 : 24 }} className="m-num">{r.rank}</div>
-                    <div style={{ fontSize: 12, fontWeight: 650, margin: '6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.nickname}{r.is_me ? t('（我）') : ''}</div>
+                    <div style={{ color: medal[i], fontWeight: 600, fontSize: first ? 30 : 24 }} className="m-num">{r.rank}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, margin: '6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.nickname}{r.is_me ? t('（我）') : ''}</div>
                     <Pill value={r.return_pct} market={market} minWidth={0} />
                   </div>
                 )
@@ -522,7 +522,7 @@ function Board({ market, onClose }) {
             <div className="m-card flush">
               {rows.slice(3).map((r) => (
                 <div className="m-row" key={r.rank} style={r.is_me ? { background: 'color-mix(in srgb, var(--accent) 12%, transparent)' } : undefined}>
-                  <span className="m-num m-muted" style={{ width: 24, fontWeight: 700 }}>{r.rank}</span>
+                  <span className="m-num m-muted" style={{ width: 24, fontWeight: 600 }}>{r.rank}</span>
                   <div className="m-grow"><div className="m-name">{r.nickname}</div><div className="m-sub m-num">{cur}{Math.round(r.total_value).toLocaleString()}</div></div>
                   <Pill value={r.return_pct} market={market} />
                 </div>
@@ -671,10 +671,10 @@ export default function Paper() {
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none' }}>
           {(acc?.games || []).map((x) => (
             <button key={x.id} onClick={() => setActive('g:' + x.id)} aria-pressed={active === 'g:' + x.id}
-              style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 650, whiteSpace: 'nowrap', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis',
+              style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis',
                 background: active === 'g:' + x.id ? 'var(--accent)' : 'var(--surface-hi)', color: active === 'g:' + x.id ? '#fff' : 'var(--text)' }}>{x.name}</button>
           ))}
-          <button onClick={() => setSheet('games')} style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 650, whiteSpace: 'nowrap', border: '1px dashed var(--stroke)', color: 'var(--accent)' }}>+ {t('比赛')}</button>
+          <button onClick={() => setSheet('games')} style={{ flex: 'none', padding: '7px 13px', borderRadius: 999, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', border: '1px dashed var(--stroke)', color: 'var(--accent)' }}>+ {t('比赛')}</button>
         </div>
       </div>
 
@@ -682,15 +682,15 @@ export default function Paper() {
         <div className="m-card" style={{ display: 'grid', gap: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
             <b style={{ fontSize: 16, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.name}</b>
-            <span className="m-chip" style={{ flex: 'none', color: ended ? 'var(--text-3)' : '#00c853', background: ended ? 'var(--surface-hi)' : 'color-mix(in srgb, #00c853 14%, transparent)' }}>
+            <span className="m-chip" style={{ flex: 'none', color: ended ? 'var(--text-3)' : '#3fb67a', background: ended ? 'var(--surface-hi)' : 'color-mix(in srgb, #3fb67a 14%, transparent)' }}>
               {ended ? t('已结束') : game.status === 'upcoming' ? t('未开始') : t('进行中')}</span>
           </div>
           <div className="m-label m-num">{t(chipLabel(game.market))} · {t('%lld 人参加', game.members)} · {ended ? game.end_date : t('%lld 天后结束', daysLeft(game.end_date))}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span className="m-num" style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontWeight: 800, letterSpacing: 3, fontSize: 18 }}>{game.code}</span>
+            <span className="m-num" style={{ fontFamily: 'ui-monospace, Menlo, monospace', fontWeight: 600, letterSpacing: 3, fontSize: 18 }}>{game.code}</span>
             <span className="m-grow" />
-            <button onClick={copyInvite} style={{ padding: '7px 12px', borderRadius: 999, background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)', fontSize: 13, fontWeight: 650 }}>{t('复制邀请')}</button>
-            <button onClick={leaveGame} style={{ padding: '7px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#ff3b30', fontSize: 13, fontWeight: 650 }}>{game.is_owner ? t('删除比赛') : t('退出比赛')}</button>
+            <button onClick={copyInvite} style={{ padding: '7px 12px', borderRadius: 999, background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)', fontSize: 13, fontWeight: 600 }}>{t('复制邀请')}</button>
+            <button onClick={leaveGame} style={{ padding: '7px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#e5484d', fontSize: 13, fontWeight: 600 }}>{game.is_owner ? t('删除比赛') : t('退出比赛')}</button>
           </div>
         </div>
       )}
@@ -698,13 +698,13 @@ export default function Paper() {
       {!view ? <Skeleton h={220} r={24} /> : (
         <div className="m-card" style={{ padding: 18, display: 'grid', gap: 18, }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="m-muted" style={{ fontWeight: 650, fontSize: 14 }}>{game ? game.name : t(ACCOUNT_LABEL[market])}</span>
+            <span className="m-muted" style={{ fontWeight: 600, fontSize: 14 }}>{game ? game.name : t(ACCOUNT_LABEL[market])}</span>
             {view.rank > 0 && (
               <span className="m-chip m-num" style={{ color: 'var(--accent)', background: 'color-mix(in srgb, var(--accent) 14%, transparent)' }}>#{view.rank}</span>
             )}
           </div>
           <div>
-            <div className="m-num m-serif-num" style={{ fontSize: 38 }}><span className="m-muted" style={{ fontSize: 22, fontWeight: 650 }}>{cur}</span> {Number(view.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div className="m-num m-serif-num" style={{ fontSize: 38 }}><span className="m-muted" style={{ fontSize: 22, fontWeight: 600 }}>{cur}</span> {Number(view.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}><Pill value={view.ret} market={market} /><span className="m-label">{t('总收益率')}</span></div>
           </div>
           <div className="m-tiles" style={{ background: 'var(--surface-hi)', borderRadius: 14, padding: '12px 0' }}>
@@ -718,7 +718,7 @@ export default function Paper() {
               ].map(([k, v, c], i) => (
                 <div key={k} style={{ flex: 1, textAlign: 'center', borderLeft: i ? '1px solid var(--stroke)' : 'none', minWidth: 0 }}>
                   <div className="m-label">{k}</div>
-                  <div className="m-num" style={{ fontWeight: 700, marginTop: 3, fontSize: 15, color: c || undefined, whiteSpace: 'nowrap' }}>{v}</div>
+                  <div className="m-num" style={{ fontWeight: 600, marginTop: 3, fontSize: 15, color: c || undefined, whiteSpace: 'nowrap' }}>{v}</div>
                 </div>
               ))
             })()}
@@ -767,12 +767,12 @@ export default function Paper() {
           <div className="m-card flush">
             {view.open.map((o) => (
               <div className="m-row" key={o.id}>
-                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: SIDE_TINT[o.side] }}>{t(SIDE_BADGE[o.side])}</span>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: '#fff', background: SIDE_TINT[o.side] }}>{t(SIDE_BADGE[o.side])}</span>
                 <div className="m-grow" style={{ minWidth: 0 }}>
                   <div className="m-name">{o.symbol} · {o.shares}</div>
                   <div className="m-label m-num" style={{ whiteSpace: 'normal' }}>{t(TYPE_LABEL[o.type])}{o.type !== 'market' ? ` · ${o.tif === 'gtc' ? t('撤单前有效') : t('当日有效')}` : ''}{orderTerms(o, t, cur) ? ` · ${orderTerms(o, t, cur)}` : ''}</div>
                 </div>
-                <button onClick={() => cancel(o)} style={{ flex: 'none', padding: '6px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#ff3b30', fontSize: 13, fontWeight: 650 }}>{t('撤单')}</button>
+                <button onClick={() => cancel(o)} style={{ flex: 'none', padding: '6px 12px', borderRadius: 999, background: 'var(--surface-hi)', color: '#e5484d', fontSize: 13, fontWeight: 600 }}>{t('撤单')}</button>
               </div>
             ))}
           </div>
@@ -787,15 +787,15 @@ export default function Paper() {
             </span>
             <b style={{ fontSize: 16 }}>{t('暂无持仓')}</b>
             <span className="m-label">{t('用虚拟资金练习买卖，不承担真实风险')}</span>
-            {!ended && <button onClick={() => setSheet({ side: 'buy' })} style={{ marginTop: 4, padding: '10px 22px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 650, fontSize: 14 }}>{t('买入第一只股票')}</button>}
+            {!ended && <button onClick={() => setSheet({ side: 'buy' })} style={{ marginTop: 4, padding: '10px 22px', borderRadius: 999, background: 'var(--accent)', color: '#fff', fontWeight: 600, fontSize: 14 }}>{t('买入第一只股票')}</button>}
           </div>
         ) : (
           <div className="m-card flush">
             {view.positions.map(([sym, p]) => (
               <button className="m-row" key={sym} disabled={ended} onClick={() => setSheet({ side: 'sell', symbol: sym, shares: p.available_shares || 1 })}>
                 <div className="m-grow"><div className="m-name">{sym}</div><div className="m-label m-num">{t('%lld股 · 均价%@', p.shares, cur + num(p.avg_cost))}</div></div>
-                <div style={{ textAlign: 'right' }}><div className="m-num" style={{ fontWeight: 650 }}>{money(p.market_value, cur)}</div>
-                  <div className="m-num" style={{ fontSize: 12, fontWeight: 650, color: changeColor(p.profit_loss_pct, market) }}>{p.profit_loss >= 0 ? '+' : ''}{num(p.profit_loss)} ({pct(p.profit_loss_pct)})</div></div>
+                <div style={{ textAlign: 'right' }}><div className="m-num" style={{ fontWeight: 600 }}>{money(p.market_value, cur)}</div>
+                  <div className="m-num" style={{ fontSize: 12, fontWeight: 600, color: changeColor(p.profit_loss_pct, market) }}>{p.profit_loss >= 0 ? '+' : ''}{num(p.profit_loss)} ({pct(p.profit_loss_pct)})</div></div>
               </button>
             ))}
           </div>
@@ -807,10 +807,10 @@ export default function Paper() {
           <div className="m-card flush">
             {view.shorts.map(([sym, p]) => (
               <button className="m-row" key={sym} disabled={ended} onClick={() => setSheet({ side: 'cover', symbol: sym, shares: p.shares })}>
-                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: SIDE_TINT.short }}>{t('空')}</span>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: '#fff', background: SIDE_TINT.short }}>{t('空')}</span>
                 <div className="m-grow"><div className="m-name">{sym}</div><div className="m-label m-num">{t('%lld股 · 均价%@', -p.shares, cur + num(p.avg_price))}</div></div>
-                <div style={{ textAlign: 'right' }}><div className="m-num" style={{ fontWeight: 650 }}>{money(p.market_value, cur)}</div>
-                  <div className="m-num" style={{ fontSize: 12, fontWeight: 650, color: changeColor(p.profit_loss, market) }}>{p.profit_loss >= 0 ? '+' : ''}{num(p.profit_loss)} ({pct(p.profit_loss_pct)})</div></div>
+                <div style={{ textAlign: 'right' }}><div className="m-num" style={{ fontWeight: 600 }}>{money(p.market_value, cur)}</div>
+                  <div className="m-num" style={{ fontSize: 12, fontWeight: 600, color: changeColor(p.profit_loss, market) }}>{p.profit_loss >= 0 ? '+' : ''}{num(p.profit_loss)} ({pct(p.profit_loss_pct)})</div></div>
               </button>
             ))}
           </div>
@@ -825,7 +825,7 @@ export default function Paper() {
             <div className="m-card flush">
               {gameAcc.leaderboard.map((r, i) => (
                 <div className="m-row" key={i} style={r.is_me ? { background: 'color-mix(in srgb, var(--accent) 12%, transparent)' } : undefined}>
-                  <span className="m-num" style={{ width: 24, fontWeight: 800, color: i < 3 ? ['#F5C542', '#B8C2D0', '#D98A4E'][i] : 'var(--text-3)' }}>{i + 1}</span>
+                  <span className="m-num" style={{ width: 24, fontWeight: 600, color: i < 3 ? ['#F5C542', '#B8C2D0', '#D98A4E'][i] : 'var(--text-3)' }}>{i + 1}</span>
                   <div className="m-grow"><div className="m-name">{r.nickname}{r.is_me ? t('（我）') : ''}</div><div className="m-sub m-num">{cur}{Math.round(r.total_value).toLocaleString('en-US')}</div></div>
                   <Pill value={r.return_pct} market={market} />
                 </div>
@@ -841,24 +841,24 @@ export default function Paper() {
             {view.txs.map((x, i) => CORP_LABEL[x.type] ? (
               // Dividend / split / bonus shares, applied on the ex-date
               <div className="m-row" key={i}>
-                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: '#2f7bff' }}>{t(CORP_BADGE[x.type])}</span>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: '#fff', background: '#4f86f7' }}>{t(CORP_BADGE[x.type])}</span>
                 <div className="m-grow"><div className="m-name">{t(CORP_LABEL[x.type])} · {x.name || x.symbol}</div>
                   <div className="m-label m-num">{x.type === 'dividend' ? t('每股 %@', cur + num(x.price)) : `${x.ratio || ''} · ${x.shares > 0 ? '+' : ''}${t('%lld股', x.shares)}`}</div></div>
-                <div style={{ textAlign: 'right' }}>{x.amount ? <div className="m-num" style={{ fontWeight: 650, color: changeColor(x.amount, market) }}>{x.amount > 0 ? '+' : '-'}{money(Math.abs(x.amount), cur)}</div> : null}<div className="m-label">{x.date}</div></div>
+                <div style={{ textAlign: 'right' }}>{x.amount ? <div className="m-num" style={{ fontWeight: 600, color: changeColor(x.amount, market) }}>{x.amount > 0 ? '+' : '-'}{money(Math.abs(x.amount), cur)}</div> : null}<div className="m-label">{x.date}</div></div>
               </div>
             ) : (
               <div className="m-row" key={i}>
-                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: '#fff', background: SIDE_TINT[x.type] || 'var(--text-3)' }}>{t(SIDE_BADGE[x.type] || '卖')}</span>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: '#fff', background: SIDE_TINT[x.type] || 'var(--text-3)' }}>{t(SIDE_BADGE[x.type] || '卖')}</span>
                 <div className="m-grow"><div className="m-name">{x.name || x.symbol}</div><div className="m-label m-num">{t('%lld股 @ %@', x.shares, cur + num(x.price))}</div></div>
                 <div style={{ textAlign: 'right' }}><div className="m-num">{money(x.amount, cur)}</div>
-                  {x.profit_loss != null ? <div className="m-num" style={{ fontSize: 12, fontWeight: 650, color: changeColor(x.profit_loss, market) }}>{x.profit_loss >= 0 ? '+' : ''}{num(x.profit_loss)}</div> : <div className="m-label">{x.date}</div>}</div>
+                  {x.profit_loss != null ? <div className="m-num" style={{ fontSize: 12, fontWeight: 600, color: changeColor(x.profit_loss, market) }}>{x.profit_loss >= 0 ? '+' : ''}{num(x.profit_loss)}</div> : <div className="m-label">{x.date}</div>}</div>
               </div>
             ))}
             {view.closed.filter((o) => o.status !== 'filled').map((o) => (
               <div className="m-row" key={o.id} style={{ opacity: 0.7 }}>
-                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 800, color: 'var(--text-2)', background: 'var(--surface-hi)' }}>{t(SIDE_BADGE[o.side])}</span>
+                <span className="m-num" style={{ width: 28, height: 28, borderRadius: 14, flex: 'none', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600, color: 'var(--text-2)', background: 'var(--surface-hi)' }}>{t(SIDE_BADGE[o.side])}</span>
                 <div className="m-grow" style={{ minWidth: 0 }}><div className="m-name">{o.symbol} · {o.shares}</div><div className="m-label" style={{ whiteSpace: 'normal' }}>{t(TYPE_LABEL[o.type])}{orderTerms(o, t, cur) ? ` · ${orderTerms(o, t, cur)}` : ''}</div></div>
-                <span style={{ fontSize: 12.5, fontWeight: 700, color: STATUS_COLOR[o.status] }}>{t(STATUS_LABEL[o.status] || o.status)}</span>
+                <span style={{ fontSize: 12.5, fontWeight: 600, color: STATUS_COLOR[o.status] }}>{t(STATUS_LABEL[o.status] || o.status)}</span>
               </div>
             ))}
           </div>
@@ -880,7 +880,7 @@ export default function Paper() {
           <div className="m-stack" style={{ gap: 14, textAlign: 'center' }}>
             <b style={{ fontSize: 17 }}>{t('确认重置账户')}</b>
             <p className="m-muted" style={{ margin: 0, fontSize: 14 }}>{t('所有持仓和交易记录将清除，四个账户恢复初始资金：美股 $10万、A股 100万元、港股 HK$100万、日股 ¥1000万。')}</p>
-            <button className="m-btn" style={{ background: '#ff3b30' }} onClick={async () => { try { await post('/reset', {}); done(t('重置')) } catch (e) { setToast(e.message) } }}>{t('重置')}</button>
+            <button className="m-btn" style={{ background: '#e5484d' }} onClick={async () => { try { await post('/reset', {}); done(t('重置')) } catch (e) { setToast(e.message) } }}>{t('重置')}</button>
             <button className="m-btn ghost" onClick={() => setSheet(null)}>{t('取消')}</button>
           </div>
         </Sheet>

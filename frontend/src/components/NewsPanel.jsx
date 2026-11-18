@@ -8,13 +8,13 @@ import { THEME } from '../utils/chartHelpers'
 import useThemeStore from '../store/themeStore'
 
 const SENT_COLOR = {
-  positive: '#00c853',
+  positive: '#3fb67a',
   neutral: '#7d8ca3',
-  negative: '#ff3b30',
+  negative: '#e5484d',
 }
 
 const IMPACT_STYLE = {
-  high:   { bg: 'rgba(255,59,48,0.14)',   color: '#ff3b30' },
+  high:   { bg: 'rgba(229,72,77,0.14)',   color: '#e5484d' },
   medium: { bg: 'rgba(255,167,38,0.14)',  color: '#ffa726' },
   low:    { bg: 'rgba(154,160,166,0.10)', color: 'var(--text-muted)' },
 }
@@ -102,7 +102,7 @@ function SentimentGauge({ score, t }) {
           style={{ transition: 'stroke-dasharray 0.5s ease, stroke 0.3s' }}
         />
       </svg>
-      <div style={{ fontSize: 18, fontWeight: 700, color, marginTop: -12 }}>
+      <div style={{ fontSize: 18, fontWeight: 600, color, marginTop: -12 }}>
         {score > 0 ? '+' : ''}{score.toFixed(2)}
       </div>
     </div>
@@ -135,7 +135,7 @@ function NewsItem({ item, t }) {
         borderBottom: `1px solid ${THEME.border}`,
         transition: 'background 0.15s',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(47,123,255,0.04)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(79,134,247,0.04)' }}
       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       {/* Main row */}
@@ -144,7 +144,7 @@ function NewsItem({ item, t }) {
         <span style={{
           flexShrink: 0,
           fontSize: 10,
-          fontWeight: 700,
+          fontWeight: 600,
           padding: '2px 8px',
           borderRadius: 10,
           background: `${borderColor}1a`,
@@ -178,7 +178,7 @@ function NewsItem({ item, t }) {
             <span>{sourceName(item.source, useLangStore.getState().lang)}</span>
             {item.time && <span>{item.time.slice(0, 16)}</span>}
             {item.lang === 'en' && (
-              <span style={{ color: '#2f7bff', fontSize: 10, background: 'rgba(47,123,255,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
+              <span style={{ color: '#4f86f7', fontSize: 10, background: 'rgba(79,134,247,0.1)', padding: '1px 5px', borderRadius: 3 }}>EN</span>
             )}
           </div>
         </div>
@@ -209,8 +209,8 @@ function NewsItem({ item, t }) {
         <div style={{
           marginTop: 10,
           padding: '10px 12px',
-          background: 'rgba(47,123,255,0.04)',
-          border: '1px solid rgba(47,123,255,0.10)',
+          background: 'rgba(79,134,247,0.04)',
+          border: '1px solid rgba(79,134,247,0.10)',
           borderRadius: 6,
           fontSize: 12,
           color: 'var(--text-muted)',
@@ -218,7 +218,7 @@ function NewsItem({ item, t }) {
         }}>
           {ai.reason && (
             <div>
-              <span style={{ color: '#2f7bff', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
+              <span style={{ color: '#4f86f7', fontWeight: 600 }}>{t.newsAiAnalysis}：</span>
               {ai.reason}
             </div>
           )}
@@ -233,7 +233,7 @@ function NewsItem({ item, t }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                style={{ color: '#2f7bff', textDecoration: 'none', fontSize: 11 }}
+                style={{ color: '#4f86f7', textDecoration: 'none', fontSize: 11 }}
               >
                 {t.newsReadMore}
               </a>
@@ -258,9 +258,9 @@ function FilterPill({ active, color, onClick, children }) {
         fontSize: 11,
         fontWeight: active ? 600 : 400,
         background: active
-          ? `${color || 'rgba(47,123,255,0.25)'}30`
+          ? `${color || 'rgba(79,134,247,0.25)'}30`
           : 'var(--bg-hover)',
-        color: active ? (color || '#2f7bff') : 'var(--text-muted)',
+        color: active ? (color || '#4f86f7') : 'var(--text-muted)',
         transition: 'all 0.15s',
         letterSpacing: '0.2px',
       }}
@@ -328,12 +328,12 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
         }}
       >
         <span style={{
-          background: 'rgba(47,123,255,0.08)',
-          border: '1px solid rgba(47,123,255,0.3)',
+          background: 'rgba(79,134,247,0.08)',
+          border: '1px solid rgba(79,134,247,0.3)',
           borderRadius: 4,
           padding: '2px 8px',
           fontSize: 12,
-          color: '#2f7bff',
+          color: '#4f86f7',
           fontFamily: 'monospace',
         }}>
           {stock.code}
@@ -362,7 +362,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
       {/* Error */}
       {error && !loading && (
         <div style={{
-          color: '#ff453a',
+          color: '#e5484d',
           fontSize: 13,
           padding: 12,
           background: '#f8514910',
@@ -379,8 +379,8 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
           {/* ── Overview card ── */}
           {data.overall && (
             <div style={{
-              background: 'rgba(47,123,255,0.03)',
-              border: '1px solid rgba(47,123,255,0.10)',
+              background: 'rgba(79,134,247,0.03)',
+              border: '1px solid rgba(79,134,247,0.10)',
               borderRadius: 8,
               padding: '14px 16px',
               marginBottom: 14,
@@ -389,7 +389,7 @@ function NewsBlock({ stock, lang, market, onOpenDetail }) {
               gap: 20,
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10, textTransform: 'uppercase' }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.3px', marginBottom: 10 }}>
                   {t.newsOverview}
                 </div>
                 <SentimentBar

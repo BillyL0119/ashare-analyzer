@@ -5,7 +5,7 @@ import movesStrings from './movesStrings'
 // each day (market and sector moves, SEC filings, Fed decisions, headlines, cninfo announcements),
 // and an AI explanation from those facts on request.
 
-const UP = '#00c853', DOWN = '#ff3b30', ACCENT = '#2f7bff'
+const UP = '#3fb67a', DOWN = '#e5484d', ACCENT = '#4f86f7'
 const KIND_COLOR = { market: '#7f77c2', sector: '#f59e0b', stock: ACCENT }
 
 // A-shares are red-up like the rest of the site; US green-up
@@ -17,7 +17,7 @@ const CSS = `
 .mv-card { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
 .mv-muted { color: var(--text-secondary); }
 .mv-chip { font-size: 12px; font-weight: 650; padding: 3px 9px; border-radius: 999px; background: var(--bg-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.mv-h { font-size: 11.5px; font-weight: 800; letter-spacing: .3px; color: var(--text-secondary); text-transform: uppercase; }
+.mv-h { font-size: 11.5px; font-weight: 600; letter-spacing: .3px; color: var(--text-secondary); }
 .mv-link { color: var(--text-primary); text-decoration: none; font-size: 13px; line-height: 1.5; }
 .mv-link:hover { color: ${ACCENT}; }
 .mv-btn { border: 1px solid var(--border-primary); background: transparent; color: var(--text-primary); border-radius: 8px; padding: 6px 12px; font-size: 12.5px; font-weight: 650; cursor: pointer; justify-self: start; }
@@ -42,7 +42,7 @@ function Day({ d, s, lang, market, symbol }) {
     <article className="mv-card">
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
         <b style={{ fontSize: 15, fontVariantNumeric: 'tabular-nums' }}>{d.date}</b>
-        <span style={{ fontSize: 22, fontWeight: 800, color: col(d.change_pct, market), fontVariantNumeric: 'tabular-nums' }}>{pct(d.change_pct)}</span>
+        <span style={{ fontSize: 22, fontWeight: 600, color: col(d.change_pct, market), fontVariantNumeric: 'tabular-nums' }}>{pct(d.change_pct)}</span>
         <span className="mv-chip" title={s.kindHelp[d.kind]} style={{ background: `${KIND_COLOR[d.kind]}22`, color: KIND_COLOR[d.kind] }}>{s.kinds[d.kind]}</span>
         <span style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginLeft: 'auto' }}>
           {d.market_pct != null && <span className="mv-chip">{s.market(d.benchmark)} <span style={{ color: col(d.market_pct, market) }}>{pct(d.market_pct)}</span></span>}

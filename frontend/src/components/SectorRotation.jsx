@@ -7,13 +7,13 @@ import { T } from '../i18n/translations'
 const API = import.meta.env.VITE_API_BASE || ''
 
 const GREEN_DARK  = '#16a34a'
-const GREEN_MID   = '#00c853'
+const GREEN_MID   = '#3fb67a'
 const GREEN_LIGHT = '#86efac'
 const RED_LIGHT   = '#fca5a5'
-const RED_MID     = '#ff3b30'
+const RED_MID     = '#e5484d'
 const RED_DARK    = '#b91c1c'
 const NEUTRAL     = '#64748b'
-const ACCENT      = '#2f7bff'
+const ACCENT      = '#4f86f7'
 const ACCENT2     = '#7f77c2'
 
 // Map pct to color (red-neutral-green spectrum)
@@ -30,7 +30,7 @@ function pctColor(pct, cn = false) {
 }
 
 function pctTextColor(pct, cn = false) {
-  const up = cn ? '#ff3b30' : '#00c853', down = cn ? '#00c853' : '#ff3b30'
+  const up = cn ? '#e5484d' : '#3fb67a', down = cn ? '#3fb67a' : '#e5484d'
   return pct >= 0 ? up : down
 }
 
@@ -312,7 +312,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
       )}
 
       {error && !loading && (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: '#ff3b30', fontSize: 13 }}>
+        <div style={{ textAlign: 'center', padding: '40px 0', color: '#e5484d', fontSize: 13 }}>
           {error}
         </div>
       )}
@@ -327,7 +327,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setView(key)} style={{
                 ...pillBtn(view === key),
-                background: view === key ? 'rgba(47,123,255,0.15)' : 'var(--bg-tertiary)',
+                background: view === key ? 'rgba(79,134,247,0.15)' : 'var(--bg-tertiary)',
                 color: view === key ? ACCENT : 'var(--text-muted)',
                 border: `1px solid ${view === key ? ACCENT + '55' : 'var(--border-primary)'}`,
               }}>
@@ -426,7 +426,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
                       gap: 0,
                       padding: '7px 14px',
                       borderBottom: i < sectors.length - 1 ? '1px solid var(--border-primary)' : 'none',
-                      background: i % 2 === 0 ? 'transparent' : 'rgba(92,155,255,0.02)',
+                      background: i % 2 === 0 ? 'transparent' : 'rgba(108,156,255,0.02)',
                       alignItems: 'center',
                     }}
                   >
@@ -464,7 +464,7 @@ export default function SectorRotation({ lang, defaultMarket = 'cn' }) {
               borderRadius: 10, padding: '10px 14px',
               fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7,
             }}>
-              <span style={{ fontWeight: 700, color: ACCENT2 }}>
+              <span style={{ fontWeight: 600, color: ACCENT2 }}>
                 {t.srRotSummary}：
               </span>
               {' '}{summary}

@@ -4,13 +4,13 @@ export const DIAGRAM_CSS = `
 .dl-svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; overflow: visible; }
 .dl-svg, .dl-vars {
   --c-d: #2563eb; --c-s: #ea580c; --c-lr: #7c3aed; --c-social: #9333ea; --c-ctrl: #dc2626; --c-world: #0d9488; --c-tr: #16a34a;
-  --f-cs: rgba(37,99,235,.15); --f-ps: rgba(234,88,12,.15); --f-dwl: rgba(255,59,48,.28); --f-rev: rgba(0,200,83,.2);
-  --f-revC: rgba(0,200,83,.32); --f-revP: rgba(13,148,136,.17); --f-cost: rgba(202,138,4,.26); --f-gain: rgba(0,200,83,.32); --f-loss: rgba(255,59,48,.28);
+  --f-cs: rgba(37,99,235,.15); --f-ps: rgba(234,88,12,.15); --f-dwl: rgba(229,72,77,.28); --f-rev: rgba(63,182,122,.2);
+  --f-revC: rgba(63,182,122,.32); --f-revP: rgba(13,148,136,.17); --f-cost: rgba(202,138,4,.26); --f-gain: rgba(63,182,122,.32); --f-loss: rgba(229,72,77,.28);
   --dl-ink: var(--text-primary); --dl-ink2: var(--text-secondary); --dl-bg: var(--bg-secondary); }
 :root:not([data-theme="light"]) .dl-svg, :root:not([data-theme="light"]) .dl-vars {
-  --c-d: #5c9bff; --c-s: #fb923c; --c-lr: #a99ad6; --c-social: #d8b4fe; --c-ctrl: #ff453a; --c-world: #2dd4bf; --c-tr: #4ade80;
-  --f-cs: rgba(92,155,255,.16); --f-ps: rgba(251,146,60,.16); --f-dwl: rgba(255,69,58,.32); --f-rev: rgba(48,209,88,.17);
-  --f-revC: rgba(48,209,88,.28); --f-revP: rgba(45,212,191,.16); --f-cost: rgba(250,204,21,.22); --f-gain: rgba(48,209,88,.3); --f-loss: rgba(255,69,58,.3); }
+  --c-d: #6c9cff; --c-s: #fb923c; --c-lr: #a99ad6; --c-social: #d8b4fe; --c-ctrl: #e5484d; --c-world: #2dd4bf; --c-tr: #4ade80;
+  --f-cs: rgba(108,156,255,.16); --f-ps: rgba(251,146,60,.16); --f-dwl: rgba(229,72,77,.32); --f-rev: rgba(76,195,138,.17);
+  --f-revC: rgba(76,195,138,.28); --f-revP: rgba(45,212,191,.16); --f-cost: rgba(250,204,21,.22); --f-gain: rgba(76,195,138,.3); --f-loss: rgba(229,72,77,.3); }
 .dl-svg text { font-family: inherit; }
 .dl-svg .dl-hit { cursor: grab; outline: none; touch-action: none; }
 .dl-svg .dl-hit:active { cursor: grabbing; }

@@ -3,7 +3,7 @@ import { T } from '../i18n/translations'
 import { newDeviceId } from '../utils/deviceId'
 import Icon from './Icon'
 
-const ACCENT = '#2f7bff'
+const ACCENT = '#4f86f7'
 const ACCENT2 = '#7f77c2'
 const BDR = 'var(--border-primary)'
 
@@ -46,9 +46,9 @@ function Bubble({ msg }) {
       <div style={{
         maxWidth: '82%',
         background: isUser
-          ? `rgba(47,123,255,0.18)`
+          ? `rgba(79,134,247,0.18)`
           : 'var(--bg-tertiary)',
-        border: `1px solid ${isUser ? 'rgba(47,123,255,0.25)' : 'var(--border-primary)'}`,
+        border: `1px solid ${isUser ? 'rgba(79,134,247,0.25)' : 'var(--border-primary)'}`,
         borderRadius: isUser ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
         padding: '9px 13px',
         fontSize: 13,
@@ -195,7 +195,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '11px 14px',
-            background: 'rgba(47,123,255,0.04)',
+            background: 'rgba(79,134,247,0.04)',
             borderBottom: `1px solid ${BDR}`,
             flexShrink: 0,
           }}>
@@ -203,7 +203,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               <Icon name="tutor" size={18} style={{ color: 'var(--text-secondary)' }} />
               <div>
                 <div style={{
-                  fontSize: 13, fontWeight: 700,
+                  fontSize: 13, fontWeight: 600,
                   color: 'var(--text-primary)',
                 }}>
                   {t.atTitle}
@@ -250,8 +250,8 @@ export default function AITeacherFloat({ lang, open, onClose }) {
                   disabled={busy}
                   style={{
                     fontSize: 11, padding: '4px 9px', borderRadius: 10,
-                    background: 'rgba(47,123,255,0.08)',
-                    border: '1px solid rgba(47,123,255,0.18)',
+                    background: 'rgba(79,134,247,0.08)',
+                    border: '1px solid rgba(79,134,247,0.18)',
                     color: ACCENT, cursor: 'pointer',
                     transition: 'all 0.15s',
                   }}
@@ -278,7 +278,7 @@ export default function AITeacherFloat({ lang, open, onClose }) {
               disabled={busy}
               style={{
                 flex: 1, background: 'var(--bg-tertiary)',
-                border: `1px solid rgba(47,123,255,0.2)`, borderRadius: 10,
+                border: `1px solid rgba(79,134,247,0.2)`, borderRadius: 10,
                 color: 'var(--text-primary)', padding: '8px 11px', fontSize: 13,
                 resize: 'none', outline: 'none', lineHeight: 1.55,
                 fontFamily: 'inherit',
