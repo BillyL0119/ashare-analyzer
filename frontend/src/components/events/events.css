@@ -1,0 +1,76 @@
+/* Events calendar (/macro). Shared building blocks come from quotepage.css; classes here use the ev- prefix. */
+
+.ev { max-width: 1100px; margin: 0 auto; padding: 22px 0 48px; display: grid; gap: 16px; min-width: 0; }
+.ev-title { margin: 0 0 4px; font-size: 26px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; }
+.ev-lede { margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
+
+/* Week strip: a ruled row of seven days that scrolls sideways inside its card on phones */
+.ev-week-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.ev-week-title { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.ev-nav { display: flex; align-items: center; gap: 6px; }
+.ev-nav button {
+  border: 1px solid var(--border-primary); background: var(--bg-secondary); color: var(--text-secondary);
+  font: inherit; font-size: 12.5px; padding: 4px 10px; border-radius: 8px; cursor: pointer; min-height: 0;
+}
+.ev-nav button:hover { background: var(--bg-hover); color: var(--text-primary); }
+.ev-nav button:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+.ev-strip-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
+.ev-strip { display: grid; grid-template-columns: repeat(7, minmax(104px, 1fr)); min-width: 728px; border-top: 1px solid var(--border-primary); border-bottom: 1px solid var(--border-primary); }
+.ev-day {
+  display: grid; gap: 2px; text-align: left; padding: 10px 12px 10px; border: none; border-left: 1px solid var(--border-primary);
+  background: transparent; color: var(--text-secondary); font: inherit; font-size: 12.5px; cursor: pointer; min-height: 0;
+  border-bottom: 2px solid transparent; margin-bottom: -1px; border-radius: 0;
+}
+.ev-day:first-child { border-left: none; }
+.ev-day:hover { background: var(--bg-hover); }
+.ev-day:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: -2px; }
+.ev-day[aria-pressed="true"] { background: var(--bg-tertiary); border-bottom-color: var(--accent-blue); color: var(--text-primary); }
+.ev-day-wd { font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; gap: 6px; }
+.ev-day-wd b { font-weight: 500; color: var(--accent-blue); }
+.ev-day-date { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.ev-count { display: flex; justify-content: space-between; gap: 8px; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.ev-count span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev-count span:last-child { color: var(--text-secondary); }
+.ev-count.zero span:last-child { color: var(--text-muted); }
+.ev-count.on span:first-child { color: var(--text-primary); font-weight: 500; }
+.ev-count.on span:last-child { color: var(--text-primary); font-weight: 600; }
+
+.ev-tabs-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ev-tabs-row .qp-seg { max-width: 100%; }
+.ev-day-title { margin: 0; font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.ev-hint { margin: 4px 0 12px; font-size: 12.5px; line-height: 1.5; color: var(--text-muted); }
+
+/* Tickers and company names */
+.ev .qp-table td.sym { font-weight: 600; }
+.ev .qp-table td.co { max-width: 260px; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+.ev .qp-table td.dim { color: var(--text-muted); }
+.ev-sym { border: none; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--accent-blue); cursor: pointer; min-height: 0; }
+.ev-sym:hover { text-decoration: underline; }
+.ev-sym:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 3px; }
+
+/* Economic tab */
+.ev-filters { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.ev-filter { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ev-filter > span { font-size: 12px; color: var(--text-muted); }
+.ev-dots { display: inline-flex; gap: 2px; margin-right: 8px; vertical-align: middle; }
+.ev-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--border-primary); display: block; }
+.ev-dots i.on { background: var(--text-secondary); }
+.ev-ev { border: none; background: none; padding: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; min-height: 0; }
+.ev-ev:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 3px; }
+.ev-ev-name { color: var(--text-primary); }
+.ev-ev-name.big { font-weight: 600; }
+.ev-ev-more { margin-left: 6px; font-size: 11px; color: var(--accent-blue); }
+.ev-tag { font-size: 10.5px; padding: 1px 6px; border-radius: 6px; background: var(--bg-tertiary); color: var(--text-muted); margin-left: 6px; font-weight: 500; }
+.qp-table td.ev-evcell { text-align: left; white-space: normal; min-width: 220px; }
+.qp-table td.ev-time { text-align: left; color: var(--text-muted); }
+.qp-table th.ev-evh, .qp-table th.ev-timeh { text-align: left; }
+.ev-why { margin: 0; font-size: 12.5px; line-height: 1.65; color: var(--text-secondary); background: var(--bg-tertiary); border-radius: 8px; padding: 10px 12px; white-space: normal; text-align: left; }
+.ev-why b { color: var(--text-primary); font-weight: 600; }
+.qp-table tr.ev-whyrow td { border-top: none; padding-top: 0; text-align: left; }
+.ev-surprise { margin-left: 4px; font-size: 10px; color: var(--text-secondary); }
+.ev-note { margin: 12px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
+
+@media (max-width: 640px) {
+  .ev { padding-top: 14px; }
+  .ev-title { font-size: 22px; }
+}
