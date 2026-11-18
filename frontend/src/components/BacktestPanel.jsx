@@ -84,7 +84,7 @@ function EquityChart({ data, isCN, us }) {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(0,0,0,0.95)',
+      backgroundColor: 'rgba(4,12,26,0.96)',
       borderColor: 'rgba(47,123,255,0.3)',
       textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {

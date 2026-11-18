@@ -1,34 +1,34 @@
 /* Best Friend Stock: site-wide tokens.
-   Look: a trading app for students. True black (or white) pages, one loud blue, vivid red and green
+   Look: a trading app for students. Deep navy (or pale blue-white) pages, one loud blue, vivid red and green
    for prices, heavy sans headings and big numbers, round buttons. Colour is flat: no gradients,
    glows, glass or background decoration. */
 
 /* ── Dark theme (default) ────────────────────────────────── */
 :root,
 :root[data-theme="dark"] {
-  --bg-primary:      #000000;
-  --bg-secondary:    #111214;
-  --bg-tertiary:     #1a1c1f;
-  --bg-hover:        #25282c;
-  --border-primary:  #26292d;
-  --border-glow:     #3d4147;   /* the stronger border (hover, focus rows); the name is historical */
-  --text-primary:    #ffffff;
-  --text-secondary:  #b1b6be;
-  --text-muted:      #838993;
-  --card-bg:         #111214;
-  --nav-bg:          #000000;
-  --nav-bg-dim:      #000000;
-  --map-ocean:       #0b0c0e;
-  --map-sphere:      #000000;
-  --map-border:      #3d4147;
-  --map-graticule:   #1a1c1f;
-  --map-land:        #1f2226;
-  --skeleton-base:   #1a1c1f;
-  --skeleton-shine:  #26292d;
-  --chart-bg:        #111214;
-  --chart-text:      #b1b6be;
-  --chart-border:    #26292d;
-  --chart-tooltip:   rgba(17,18,20,0.97);
+  --bg-primary:      #020813;
+  --bg-secondary:    #071224;
+  --bg-tertiary:     #0c1b33;
+  --bg-hover:        #112545;
+  --border-primary:  #172b4a;
+  --border-glow:     #2a4a7f;   /* the stronger border (hover, focus rows); the name is historical */
+  --text-primary:    #f1f5fb;
+  --text-secondary:  #9fb0c8;
+  --text-muted:      #7488a6;
+  --card-bg:         #071224;
+  --nav-bg:          #020813;
+  --nav-bg-dim:      #020813;
+  --map-ocean:       #0a1628;
+  --map-sphere:      #050d1a;
+  --map-border:      #2a3a5c;
+  --map-graticule:   #0f1f3d;
+  --map-land:        #1a2035;
+  --skeleton-base:   #0c1b33;
+  --skeleton-shine:  #172b4a;
+  --chart-bg:        #071224;
+  --chart-text:      #9fb0c8;
+  --chart-border:    #172b4a;
+  --chart-tooltip:   rgba(4,12,26,0.97);
 
   /* ── accent / signal colours */
   --accent-blue:   #2f7bff;
@@ -39,7 +39,7 @@
   --green-bright:  #00c853;
   --red-bright:    #ff3b30;
   --on-accent:     #ffffff;
-  --shadow-pop:    0 12px 32px rgba(0,0,0,0.6);   /* menus and dialogs only */
+  --shadow-pop:    0 12px 32px rgba(0,4,14,0.6);   /* menus and dialogs only */
   /* icon chips: one flat colour per kind of page */
   --chip-blue: #2f7bff; --chip-green: #00b34a; --chip-orange: #f07800; --chip-pink: #f0407c;
   --chip-violet: #7b63f5; --chip-cyan: #0fa8bd; --chip-red: #f03a2f;
@@ -85,28 +85,28 @@ body {
 
 /* ── Light theme ─────────────────────────────────────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #ffffff;
-  --bg-secondary:    #f6f7f8;
-  --bg-tertiary:     #eceef1;
-  --bg-hover:        #e2e5e9;
-  --border-primary:  #e1e4e8;
-  --border-glow:     #b9bfc8;
-  --text-primary:    #000000;
-  --text-secondary:  #454b54;
-  --text-muted:      #6a717b;
-  --card-bg:         #f6f7f8;
+  --bg-primary:      #f0f5fb;
+  --bg-secondary:    #ffffff;
+  --bg-tertiary:     #e6eef8;
+  --bg-hover:        #dae6f5;
+  --border-primary:  #d3dfee;
+  --border-glow:     #a3b8d6;
+  --text-primary:    #0a1a33;
+  --text-secondary:  #3d5170;
+  --text-muted:      #5e7290;
+  --card-bg:         #ffffff;
   --nav-bg:          #ffffff;
   --nav-bg-dim:      #ffffff;
-  --map-ocean:       #e6edf5;
-  --map-sphere:      #dae3ee;
-  --map-border:      #9aa7b6;
-  --map-graticule:   #eef2f6;
-  --map-land:        #eceef1;
-  --skeleton-base:   #eceef1;
-  --skeleton-shine:  #f6f7f8;
+  --map-ocean:       #d6e4f3;
+  --map-sphere:      #c8daee;
+  --map-border:      #8aa8c8;
+  --map-graticule:   #e3edf7;
+  --map-land:        #e6eef8;
+  --skeleton-base:   #e6eef8;
+  --skeleton-shine:  #f0f5fb;
   --chart-bg:        #ffffff;
-  --chart-text:      #454b54;
-  --chart-border:    #e1e4e8;
+  --chart-text:      #3d5170;
+  --chart-border:    #e6eef8;
   --chart-tooltip:   rgba(255,255,255,0.98);
 
   --accent-blue:   #0b5cff;
@@ -116,7 +116,7 @@ body {
   --accent-gold:   #b86e00;
   --green-bright:  #00a344;
   --red-bright:    #e5281c;
-  --shadow-pop:    0 12px 32px rgba(0,0,0,0.16);
+  --shadow-pop:    0 12px 32px rgba(10,26,51,0.16);
   color-scheme: light;
 }
 

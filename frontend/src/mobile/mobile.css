@@ -1,7 +1,7 @@
 /* App-style phone UI. Tokens mirror the iOS app's design system (DS). Scoped under .m-app. */
 .m-app {
-  --bg: #000000; --surface: #16191D; --surface-hi: #1F2329;
-  --stroke: rgba(255,255,255,.07); --text: #F2F5FA; --text-2: #98A2B3; --text-3: #667085;
+  --bg: #020813; --surface: #0A1628; --surface-hi: #12223D;
+  --stroke: rgba(120,160,230,.12); --text: #F2F5FA; --text-2: #98A2B3; --text-3: #667085;
   --accent: #2F7BFF; --accent-2: #2F7BFF; --shadow: none;
   --cn-up: #ff3b30; --cn-down: #00c853;
   --radius: 20px; --tile: 14px;
@@ -13,7 +13,7 @@
   overscroll-behavior: none;
 }
 :root[data-theme="light"] .m-app {
-  --bg: #FFFFFF; --surface: #F6F7F8; --surface-hi: #ECEEF1;
+  --bg: #F0F5FB; --surface: #FFFFFF; --surface-hi: #E6EEF8;
   --stroke: rgba(0,0,0,.06); --text: #0E1420; --text-2: #5B6678; --text-3: #8A94A6;
   --accent: #0B5CFF; --accent-2: #0B5CFF; --shadow: none;
 }

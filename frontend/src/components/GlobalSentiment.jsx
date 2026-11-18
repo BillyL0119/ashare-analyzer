@@ -262,7 +262,7 @@ function WorldMap({ indices, lang }) {
   const css = (v, fb) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fb
   const oceanColor     = css('--map-ocean', isLight ? '#c8ddf0' : 'var(--bg-tertiary)')
   const sphereStroke   = isLight ? 'var(--map-border)' : '#1a2a4a'
-  const graticuleColor = css('--map-graticule', isLight ? '#d8e8f4' : '#25282c')
+  const graticuleColor = css('--map-graticule', isLight ? '#d8e8f4' : '#0f1f3d')
   const landEmpty      = css('--map-land', isLight ? '#d8e4ee' : '#1a2035')
   const landBorder     = css('--map-border', isLight ? '#8aa8c8' : '#2a3a5c')
 
@@ -329,7 +329,7 @@ function WorldMap({ indices, lang }) {
     return createPortal(
       <div role="tooltip" style={{
         position: 'fixed', left, top, zIndex: 9999, width: W, boxSizing: 'border-box',
-        background: 'rgba(17,18,20,0.96)', border: `1px solid ${color}`, borderRadius: 8,
+        background: 'rgba(4,12,26,0.96)', border: `1px solid ${color}`, borderRadius: 8,
         padding: '9px 12px', pointerEvents: 'none', lineHeight: 1.3,
         boxShadow: '0 6px 24px rgba(0,0,0,0.55)',
       }}>

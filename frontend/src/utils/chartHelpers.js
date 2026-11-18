@@ -27,11 +27,11 @@ export function getChartTheme() {
     typeof document !== 'undefined' &&
     document.documentElement.getAttribute('data-theme') === 'light'
   return {
-    bg:         isLight ? '#ffffff'              : '#000000',
-    gridBg:     isLight ? '#f8fafc'              : '#111214',
+    bg:         isLight ? '#ffffff'              : '#020813',
+    gridBg:     isLight ? '#f8fafc'              : '#071224',
     text:       isLight ? '#475569'              : '#94a3b8',
-    border:     isLight ? '#e2e8f0'              : '#26292d',
-    tooltipBg:  isLight ? 'rgba(255,255,255,0.97)' : 'rgba(0,0,0,0.95)',
+    border:     isLight ? '#e2e8f0'              : '#172b4a',
+    tooltipBg:  isLight ? 'rgba(255,255,255,0.97)' : 'rgba(4,12,26,0.96)',
     tooltipText:isLight ? '#0f172a'              : '#94a3b8',
     up:      riseColor(market),
     down:    fallColor(market),
