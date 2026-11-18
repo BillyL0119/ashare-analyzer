@@ -26,9 +26,12 @@ const num = (v) => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximum
 const CSS = `
 .usp-hit { transition: background .15s, border-color .15s, transform .15s; }
 .usp-hit:hover { background: var(--bg-hover) !important; }
-.usp-tile:hover { border-color: var(--border-glow) !important; }
+.usp-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.usp-strip > div { padding: 2px 16px; border-left: 1px solid var(--border-primary); min-width: 0; }
+.usp-strip > div:first-child { padding-left: 0; border-left: 0; }
+@media (max-width: 700px) { .usp-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; } .usp-strip > div:nth-child(3) { padding-left: 0; border-left: 0; } }
 .usp-hit:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .usp-hit { transition: none; } .usp-tile:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .usp-hit { transition: none; } }
 `
 const card = { background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', borderRadius: 12 }
 
@@ -78,15 +81,16 @@ export default function USMarketPanel({ lang }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <span style={{ width: 7, height: 7, borderRadius: 4, background: s.state === 'regular' ? UP : s.state === 'closed' ? 'var(--text-muted)' : 'var(--accent-gold)' }} />
         <strong style={{ fontSize: 14 }}>{t.title}</strong>
-        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 10, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{label}{cd && ` · ${cd}`}</span>
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)' }}>{d.session.et_time.slice(11)} ET · {t.delayed}</span>
+        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 10, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{label}{cd && `, ${cd}`}</span>
+        <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)' }}>{d.session.et_time.slice(11)} ET<span style={{ marginLeft: 12 }}>{t.delayed}</span></span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
+      {/* The four indices as one ruled strip, not four boxes */}
+      <div className="usp-strip">
         {d.indices.map((i) => (
-          <div key={i.symbol} style={{ background: 'var(--bg-tertiary)', borderRadius: 10, padding: '10px 12px' }}>
+          <div key={i.symbol}>
             <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{zh ? INDEX_ZH[i.name] || i.name : i.name}</div>
-            <div className="serif-num" style={{ fontSize: 27, margin: '2px 0' }}>{num(i.price)}</div>
+            <div className="serif-num" style={{ fontSize: 28, margin: '4px 0 2px' }}>{num(i.price)}</div>
             <div style={{ fontSize: 13, fontWeight: 600, color: col(i.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(i.pct)}{i.change != null && <span style={{ marginLeft: 8, opacity: 0.8 }}>{i.change > 0 ? '+' : ''}{num(i.change)}</span>}</div>
           </div>
         ))}
@@ -103,9 +107,9 @@ export default function USMarketPanel({ lang }) {
 
       <div>
         <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>{t.mega}</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(96px, 1fr))', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(96px, 1fr))', gap: 0, margin: '0 -8px' }}>
           {d.mega_caps.map((q) => (
-            <button key={q.symbol} className="usp-hit usp-tile" onClick={() => openUS(q)} style={{ minWidth: 0, textAlign: 'left', background: 'var(--bg-tertiary)', border: '1px solid transparent', borderRadius: 10, padding: '8px 10px', color: 'inherit', cursor: 'pointer' }}>
+            <button key={q.symbol} className="usp-hit" onClick={() => openUS(q)} style={{ minWidth: 0, textAlign: 'left', background: 'none', border: 0, borderRadius: 8, padding: '6px 8px', color: 'inherit', cursor: 'pointer' }}>
               <div style={{ fontWeight: 600, fontSize: 14 }}>{q.symbol}</div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{num(q.price)}</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: col(q.pct), fontVariantNumeric: 'tabular-nums' }}>{pct(q.pct)}</div>
@@ -118,7 +122,7 @@ export default function USMarketPanel({ lang }) {
         <div>
           <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
             {['gainers', 'losers', 'active'].map((k) => (
-              <button key={k} onClick={() => setTab(k)} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 14, cursor: 'pointer', border: '1px solid var(--border-primary)', background: tab === k ? 'var(--accent-blue)' : 'transparent', color: tab === k ? '#fff' : 'var(--text-secondary)' }}>{t[k]}</button>
+              <button key={k} onClick={() => setTab(k)} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 14, cursor: 'pointer', border: '1px solid var(--border-primary)', background: tab === k ? 'var(--bg-hover)' : 'transparent', color: tab === k ? 'var(--text-primary)' : 'var(--text-secondary)' }} aria-pressed={tab === k}>{t[k]}</button>
             ))}
           </div>
           {rows.map((q) => (

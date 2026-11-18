@@ -226,7 +226,7 @@ function TrackProfile({ role, m, zh, onShowFirms }) {
                     <button key={c} onClick={() => onShowFirms(c)} className="cg-row"
                       style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border-primary)', background: 'transparent', color: 'var(--text-primary)', fontSize: 13, textAlign: 'left' }}>
                       <span>{L(cat, zh)}</span>
-                      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{n} {zh ? '家' : 'firms'} →</span>
+                      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{n} {zh ? '家' : 'firms'}</span>
                     </button>
                   )
                 })}
@@ -326,7 +326,7 @@ export function FirmsView({ zh, initialCat = 'all' }) {
                   {!x.ticker
                     ? <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{zh ? '未上市' : 'Not listed'}</span>
                     : /^(us|cn|hk|jp):/.test(x.ticker)
-                      ? <button className="cg-tick" onClick={() => open(x)} title={zh ? '查看股票分析' : 'Open stock analysis'}>{x.ticker.split(':')[1]} →</button>
+                      ? <button className="cg-tick" onClick={() => open(x)} title={zh ? '查看股票分析' : 'Open stock analysis'}>{x.ticker.split(':')[1]}</button>
                       : <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: '"JetBrains Mono", ui-monospace, monospace' }}>{x.ticker.split(':')[1]} · {x.hq}</span>}
                 </td>
               </tr>

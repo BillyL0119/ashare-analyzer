@@ -379,7 +379,7 @@ function UniModal({ uni, lang, onClose }) {
                   style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 6,
                     background: `${GREEN}18`, color: GREEN, border: `1px solid ${GREEN}44`,
                     textDecoration: 'none', marginLeft: 2 }}>
-                  {tx('官网 →', 'Website →')}
+                  {tx('官网', 'Website')}
                 </a>
               </div>
             </div>
@@ -825,7 +825,7 @@ function CompareModal({ schools, lang, onClose }) {
                   borderRadius: 8, background: `${GREEN}18`, border: `1px solid ${GREEN}44`,
                   color: GREEN, fontSize: 13, fontWeight: 600, textDecoration: 'none',
                 }}>
-                  {tx('官网 →', 'Website →')}
+                  {tx('官网', 'Website')}
                 </a>
               ))}
             </div>
@@ -942,9 +942,9 @@ const IV_T = {
     test: '标化考试', scorePh: '分数',
     subjects: '相关科目成绩（选填）', subjectsPh: '如 AP Calculus AB 5分 · IB Math AA HL 7分 · A-Level Economics A*', subjectsHint: '商学院重点关注数学、经济、商科类科目',
     activities: '课外活动与经历（选填但强烈建议填写）', activitiesPh: '示例：\n• 商业计划大赛 全国季军，团队负责市场分析\n• 学生会财务官，管理年度预算$5000\n• 某机构3个月实习，协助整理财务报告', activitiesHint: 'AI面试官会针对这里的活动进行深度追问',
-    ivLang: '面试语言：', start: '开始模拟面试 →',
+    ivLang: '面试语言：', start: '开始模拟面试',
     interviewer: (s) => `${s} 招生面试官`, persona: '严格但专业 · 会追问细节', round: (a, b) => `第 ${a}/${b} 轮`,
-    answerPh: '输入你的回答…（Enter 发送 · Shift+Enter 换行）', endBtn: '面试结束，生成综合评估报告 →',
+    answerPh: '输入你的回答…（Enter 发送 · Shift+Enter 换行）', endBtn: '面试结束，生成综合评估报告',
     discTitle: '免责声明：', discStrong: '此评估基于公开录取数据的一般规律和AI分析，不代表官方立场，不构成录取保证，仅供申请策略参考。',
     discRest: '实际录取受文书质量、推荐信、面试表现、申请年份竞争情况等AI无法评估的因素影响——这些因素可能比成绩本身影响更大。概率区间为粗略估算，请以区间范围理解，而非精确数值。',
     generating: '生成中…', generatingReport: '正在生成综合评估报告…', reset: '↩ 重新评估', rangeNote: '粗略参考估算 · 非官方数据 · 仅供策略参考',
@@ -960,9 +960,9 @@ const IV_T = {
     test: 'Standardised test', scorePh: 'Score',
     subjects: 'Relevant subject grades (optional)', subjectsPh: 'e.g. AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: 'Business schools look closely at maths, economics and business subjects',
     activities: 'Activities and experience (optional, strongly recommended)', activitiesPh: 'For example:\n• Business plan competition, national 3rd place, led market research\n• Student council treasurer, managed a $5,000 annual budget\n• 3-month internship, helped prepare financial reports', activitiesHint: 'The interviewer will dig into these',
-    ivLang: 'Interview language:', start: 'Start the mock interview →',
+    ivLang: 'Interview language:', start: 'Start the mock interview',
     interviewer: (s) => `${s} admissions interviewer`, persona: 'Strict but professional · asks follow-ups', round: (a, b) => `Round ${a}/${b}`,
-    answerPh: 'Type your answer… (Enter to send · Shift+Enter for a new line)', endBtn: 'Finish and generate the assessment →',
+    answerPh: 'Type your answer… (Enter to send · Shift+Enter for a new line)', endBtn: 'Finish and generate the assessment',
     discTitle: 'Disclaimer:', discStrong: 'This assessment is based on general patterns in public admissions data and AI analysis. It is not official, does not guarantee admission, and is only for planning your application.',
     discRest: 'Real decisions depend on essays, recommendation letters, interview performance and that year’s competition, which AI cannot assess and which can matter more than grades. Read the probability as a rough range, not a precise number.',
     generating: 'Writing…', generatingReport: 'Writing your assessment…', reset: '↩ New assessment', rangeNote: 'Rough estimate · not official data · for planning only',
@@ -978,9 +978,9 @@ const IV_T = {
     test: '標準テスト', scorePh: 'スコア',
     subjects: '関連科目の成績（任意）', subjectsPh: '例：AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: 'ビジネススクールは数学・経済・商学系の科目を重視します',
     activities: '課外活動・経験（任意・入力を強く推奨）', activitiesPh: '例：\n• ビジネスプランコンテスト 全国3位、市場分析を担当\n• 生徒会会計、年間予算5000ドルを管理\n• 3か月のインターン、財務報告の作成を補助', activitiesHint: 'AI面接官はここを深く質問します',
-    ivLang: '面接の言語：', start: '模擬面接を始める →',
+    ivLang: '面接の言語：', start: '模擬面接を始める',
     interviewer: (s) => `${s} 入試面接官`, persona: '厳格だが丁寧 · 詳しく掘り下げます', round: (a, b) => `${a}/${b} ラウンド`,
-    answerPh: '回答を入力…（Enterで送信 · Shift+Enterで改行）', endBtn: '面接を終えて評価レポートを作成 →',
+    answerPh: '回答を入力…（Enterで送信 · Shift+Enterで改行）', endBtn: '面接を終えて評価レポートを作成',
     discTitle: '免責事項：', discStrong: 'この評価は公開された入試データの一般的な傾向とAI分析に基づくもので、公式見解ではなく、合格を保証するものでもありません。出願戦略の参考としてご利用ください。',
     discRest: '実際の合否は、エッセイ、推薦状、面接の出来、その年の競争状況など、AIでは評価できない要素に左右され、成績以上に影響することもあります。確率は正確な数値ではなく、おおよその幅として捉えてください。',
     generating: '作成中…', generatingReport: '評価レポートを作成しています…', reset: '↩ もう一度評価する', rangeNote: '概算 · 非公式データ · 参考用',
@@ -996,9 +996,9 @@ const IV_T = {
     test: '표준화 시험', scorePh: '점수',
     subjects: '관련 과목 성적 (선택)', subjectsPh: '예: AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: '경영대학은 수학·경제·경영 과목을 중시합니다',
     activities: '과외 활동 및 경험 (선택, 입력 강력 권장)', activitiesPh: '예:\n• 비즈니스 플랜 대회 전국 3위, 시장 분석 담당\n• 학생회 재무, 연간 예산 5,000달러 관리\n• 3개월 인턴십, 재무 보고서 작성 지원', activitiesHint: 'AI 면접관이 이 내용을 깊이 질문합니다',
-    ivLang: '면접 언어:', start: '모의 면접 시작 →',
+    ivLang: '면접 언어:', start: '모의 면접 시작',
     interviewer: (s) => `${s} 입학 면접관`, persona: '엄격하지만 전문적 · 세부 사항을 묻습니다', round: (a, b) => `${a}/${b} 라운드`,
-    answerPh: '답변 입력… (Enter 전송 · Shift+Enter 줄바꿈)', endBtn: '면접 종료 후 평가 보고서 생성 →',
+    answerPh: '답변 입력… (Enter 전송 · Shift+Enter 줄바꿈)', endBtn: '면접 종료 후 평가 보고서 생성',
     discTitle: '면책 조항:', discStrong: '이 평가는 공개된 입학 데이터의 일반적인 경향과 AI 분석에 기반하며, 공식 입장이 아니고 합격을 보장하지 않습니다. 지원 전략 참고용입니다.',
     discRest: '실제 합격 여부는 에세이, 추천서, 면접 성과, 해당 연도 경쟁 등 AI가 평가할 수 없는 요소에 좌우되며 성적보다 더 큰 영향을 줄 수 있습니다. 확률은 정확한 수치가 아닌 대략적인 범위로 이해해 주세요.',
     generating: '작성 중…', generatingReport: '평가 보고서를 작성하는 중…', reset: '↩ 다시 평가하기', rangeNote: '대략적 추정 · 비공식 데이터 · 참고용',
@@ -1014,9 +1014,9 @@ const IV_T = {
     test: 'Test standardisé', scorePh: 'Score',
     subjects: 'Notes dans les matières clés (facultatif)', subjectsPh: 'ex. AP Calculus AB 5 · IB Math AA HL 7 · A-Level Economics A*', subjectsHint: 'Les écoles de commerce regardent surtout les maths, l’économie et la gestion',
     activities: 'Activités et expériences (facultatif, fortement conseillé)', activitiesPh: "Exemple :\n• Concours de business plan, 3e national, responsable de l'étude de marché\n• Trésorier du conseil des élèves, budget annuel de 5 000 $\n• Stage de 3 mois, aide à la préparation de rapports financiers", activitiesHint: "L'examinateur vous interrogera en détail sur ce point",
-    ivLang: "Langue de l'entretien :", start: "Commencer l'entretien →",
+    ivLang: "Langue de l'entretien :", start: "Commencer l'entretien",
     interviewer: (s) => `Jury d'admission, ${s}`, persona: 'Exigeant mais professionnel · pose des questions de suivi', round: (a, b) => `Tour ${a}/${b}`,
-    answerPh: 'Votre réponse… (Entrée pour envoyer · Maj+Entrée pour aller à la ligne)', endBtn: "Terminer et générer l'évaluation →",
+    answerPh: 'Votre réponse… (Entrée pour envoyer · Maj+Entrée pour aller à la ligne)', endBtn: "Terminer et générer l'évaluation",
     discTitle: 'Avertissement :', discStrong: "Cette évaluation repose sur les tendances générales des données d'admission publiques et sur une analyse par IA. Elle n'est pas officielle, ne garantit pas l'admission et sert uniquement à préparer votre candidature.",
     discRest: "La décision réelle dépend des essais, des lettres de recommandation, de l'entretien et de la concurrence de l'année, que l'IA ne peut pas évaluer et qui peuvent peser plus que les notes. Lisez la probabilité comme une fourchette approximative, pas comme un chiffre précis.",
     generating: 'Rédaction…', generatingReport: 'Rédaction de votre évaluation…', reset: '↩ Nouvelle évaluation', rangeNote: 'Estimation approximative · données non officielles · à titre indicatif',
@@ -1817,7 +1817,7 @@ function InterviewEntryCard({ onOpen }) {
       <div style={{
         fontSize: 20, color: hov ? PURPLE : 'var(--text-muted)',
         transition: 'color 0.15s', flexShrink: 0,
-      }}>→</div>
+      }}>›</div>
     </div>
   )
 }
@@ -1938,7 +1938,7 @@ function UniCard({ uni, lang, onClick, isCompared = false, onToggleCompare, rank
           fontSize: 11, fontWeight: 600, color: hovered ? BLUE : 'var(--text-muted)',
           transition: 'color 0.15s', whiteSpace: 'nowrap', flexShrink: 0,
         }}>
-          {tx('查看详情 →', 'Details →')}
+          {tx('查看详情', 'Details')}
         </span>
       </div>
     </div>
@@ -2100,7 +2100,7 @@ function BusinessRanking({ lang, allUnis, onOpen }) {
                 <span className="bm-name">{main ? profile.map(p => p.name).join(' / ') : e.name}</span>
                 <span className="bm-sub">
                   {countryFlag(e.country)} {main ? `${e.name} · ${e.city}` : `${e.city}, ${e.country}`}
-                  {main && <span className="bm-more">{tx(' · 查看资料 →', ' · View profile →')}</span>}
+                  {main && <span className="bm-more">{tx(' · 查看资料', ' · View profile')}</span>}
                 </span>
               </span>
               <span className="bm-col-overall bm-overall">{e.overall ? `#${e.overall.replace('=', '')}` : '—'}</span>

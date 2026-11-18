@@ -443,7 +443,7 @@ function SectionBlock({ section, index, total, lang, exam }) {
       {STUDY_DIAGRAM_LINKS[section.diagram_type] && (
         <a href={STUDY_DIAGRAM_LINKS[section.diagram_type]} onClick={(e) => { e.preventDefault(); navigate(STUDY_DIAGRAM_LINKS[section.diagram_type]) }}
           style={{ display: 'inline-flex', gap: 6, alignItems: 'center', margin: '-4px 0 14px 15px', fontSize: 13, fontWeight: 650, color: '#4f86f7', textDecoration: 'none' }}>
-          {diagramNav(lang).openLab} →
+          {diagramNav(lang).openLab}
         </a>
       )}
 
@@ -1274,7 +1274,7 @@ export default function StudyCenter({ lang }) {
                     color: '#4f86f7', cursor: 'pointer',
                   }}
                 >
-                  {t.discussWithAI || 'Discuss with AI Tutor →'}
+                  {t.discussWithAI || 'Discuss with AI Tutor'}
                 </button>
               </div>
 
@@ -1327,7 +1327,7 @@ export default function StudyCenter({ lang }) {
                         fontSize: 14, fontWeight: 600, cursor: 'pointer',
                       }}
                     >
-                      {t.nextTopic || 'Next Topic →'} {localTitle(next, lang)}
+                      {t.nextTopic || 'Next Topic'} {localTitle(next, lang)}
                     </button>
                   )
                 })()}

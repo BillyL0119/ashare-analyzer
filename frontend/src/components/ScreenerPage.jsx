@@ -239,7 +239,7 @@ export default function ScreenerPage({ lang }) {
             </span>
             <div style={{ display: 'flex', gap: 6, opacity: loading ? 0.6 : 1 }}>
               <button className="sc-chip" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>← {t.prev}</button>
-              <button className="sc-chip" disabled={(page + 1) * PAGE >= total} onClick={() => setPage((p) => p + 1)}>{t.next} →</button>
+              <button className="sc-chip" disabled={(page + 1) * PAGE >= total} onClick={() => setPage((p) => p + 1)}>{t.next}</button>
             </div>
           </div>
           <div style={{ overflowX: 'auto', opacity: loading && data ? 0.65 : 1, transition: 'opacity .15s' }}>

@@ -575,7 +575,7 @@ export default function KLineLesson({ zh }) {
                     cursor: 'pointer', fontSize: 14, fontWeight: 600,
                     background: `${ACCENT}`, color: '#fff',
                   }}>
-                    {quizIdx + 1 >= QUIZ.length ? (zh ? '查看结果' : 'See Results') : (zh ? '下一题 →' : 'Next →')}
+                    {quizIdx + 1 >= QUIZ.length ? (zh ? '查看结果' : 'See Results') : (zh ? '下一题' : 'Next')}
                   </button>
                 )}
               </div>

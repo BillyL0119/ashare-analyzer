@@ -1,0 +1,85 @@
+/* Home page market lesson (MarketLesson.jsx).
+   The day's market in one sentence set large in the display face, the S&P 500 line beside it,
+   then three ways to learn from the day in a ruled row. One accent: the end-of-line dot. */
+.bfs-lesson {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border-primary);
+  margin-bottom: 16px;
+}
+.bfs-lesson-status {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 20px; color: var(--text-muted); font-size: 13px;
+}
+.bfs-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); flex: none; }
+.bfs-dot.is-live { background: var(--green-bright); }
+
+.bfs-lesson-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: end;
+}
+.bfs-lesson h1#bfs-lesson-title {
+  margin: 0;
+  max-width: 16ch;
+  font-family: var(--display) !important;
+  font-size: clamp(34px, 4.2vw, 56px) !important;
+  font-weight: 500 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.03em !important;
+}
+.bfs-lesson h1#bfs-lesson-title.skeleton { width: 70%; border-radius: 8px; }
+.bfs-lesson-sentence {
+  margin: 16px 0 0; max-width: 46ch;
+  color: var(--text-secondary); font-size: 17px; line-height: 1.55;
+}
+
+.bfs-lesson-chart { margin: 0; }
+.bfs-lesson-chart .is-empty { border-radius: 12px; background: var(--bg-secondary); }
+.bfs-lesson-chart { min-width: 0; }
+.bfs-lesson-chart svg { display: block; overflow: visible; }
+.bfs-lesson-chart .grid { stroke: var(--border-primary); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.bfs-lesson-chart .line { fill: none; stroke: var(--text-secondary); stroke-width: 1.75; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.bfs-lesson-chart .dot { stroke: var(--bg-primary); stroke-width: 2; fill: var(--text-muted); }
+.bfs-lesson-chart .dot.is-down { fill: var(--red-bright); }
+.bfs-lesson-chart .dot.is-up { fill: var(--green-bright); }
+.bfs-lesson-chart .axis { fill: var(--text-muted); font-size: 11px; font-family: var(--sans); }
+.bfs-lesson-chart figcaption { margin-top: 6px; color: var(--text-muted); font-size: 12px; text-align: right; }
+
+.bfs-lesson-ways {
+  list-style: none; margin: 32px 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--border-primary);
+}
+.bfs-lesson-ways li + li { border-left: 1px solid var(--border-primary); }
+.bfs-lesson-ways a, .bfs-lesson-ways button {
+  display: block; width: 100%; height: 100%; padding: 16px 16px 4px;
+  background: none; border: 0; text-align: left; font: inherit; color: inherit;
+  text-decoration: none; cursor: pointer;
+}
+.bfs-lesson-ways li:first-child a, .bfs-lesson-ways li:first-child button { padding-left: 0; }
+.bfs-lesson-ways .k { display: block; color: var(--text-muted); font-size: 13px; }
+.bfs-lesson-ways .v { display: block; margin-top: 4px; color: var(--text-primary); font-size: 16px; font-weight: 500; transition: color 150ms var(--ease); }
+.bfs-lesson-ways a:hover .v, .bfs-lesson-ways button:hover .v { color: var(--accent-blue); }
+
+.bfs-lesson-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 28px; }
+.bfs-lesson-class { margin: 0 0 0 8px; color: var(--text-muted); font-size: 13px; }
+.bfs-lesson-class a { color: var(--accent-blue); text-decoration: none; }
+.bfs-lesson-class a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.bfs-lesson-class .sep { margin-left: 16px; }
+
+.bfs-lesson a:focus-visible, .bfs-lesson button:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 6px; }
+
+@media (max-width: 900px) {
+  .bfs-lesson { padding: 28px 0 24px; }
+  .bfs-lesson-top { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .bfs-lesson-ways { grid-template-columns: minmax(0, 1fr); }
+  .bfs-lesson-ways li + li { border-left: 0; border-top: 1px solid var(--border-primary); }
+  .bfs-lesson-ways a, .bfs-lesson-ways button { padding: 12px 0; }
+  .bfs-lesson-class { margin-left: 0; flex-basis: 100%; }
+}
+@media (max-width: 560px) {
+  .bfs-lesson h1#bfs-lesson-title { font-size: 32px !important; }
+  .bfs-lesson-sentence { font-size: 15px; }
+  .bfs-btn-primary, .bfs-btn-secondary { flex: 1 1 auto; justify-content: center; }
+}

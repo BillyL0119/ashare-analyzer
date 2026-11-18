@@ -53,8 +53,10 @@
 
 :root {
   /* Type: Geist for the interface (system UI faces as the fallback and for Chinese), JetBrains
-     Mono for figures and meta. --heading and --serif keep their names because components use them. */
+     Mono for figures and meta, Bricolage Grotesque (--display) for page titles and headline figures.
+     --heading and --serif keep their names because components use them. */
   --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --display: 'Bricolage Grotesque', var(--sans);   /* page titles and headline figures */
   --heading: var(--sans);
   --serif: var(--sans);
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -239,13 +241,13 @@ h1, h2 { color: var(--text-primary); }
 html:not([data-ui="mobile"]) h1 { font-size: clamp(26px, 2.4vw, 34px) !important; line-height: 1.15 !important; }
 /* Headline numbers (scores, account value, index levels): medium weight, tabular */
 .serif-num {
-  font-family: var(--sans) !important;
+  font-family: var(--display) !important;
   font-weight: 500 !important;
   font-variant-numeric: lining-nums tabular-nums;
   letter-spacing: -0.01em;
 }
 /* Desktop UI only: the phone UI (data-ui="mobile") sizes its own titles in mobile.css */
-html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-weight: 500 !important; letter-spacing: -0.015em !important; }
+html:not([data-ui="mobile"]) :is(h1, .serif-title) { font-family: var(--display); font-weight: 500 !important; letter-spacing: -0.02em !important; }
 html:not([data-ui="mobile"]) :is(h2, h3) { font-weight: 500 !important; letter-spacing: 0 !important; }
 
 h1 {
