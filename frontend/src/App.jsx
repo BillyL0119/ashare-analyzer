@@ -247,7 +247,7 @@ export default function App() {
       career:       'BestFriendStock | 求职指南 - 金融行业职业规划与模拟面试',
       screener:     'BestFriendStock | 美股选股器 - US Stock Screener',
       heatmap:      'BestFriendStock | 市场热力图 - 美股与A股板块涨跌全景',
-      macro:        'BestFriendStock | 经济日历 - CPI 非农 美联储议息 GDP 发布时间与解读',
+      macro:        'BestFriendStock | 财经日历 - 经济数据、财报、新股上市、拆股与分红',
       admin:        'BestFriendStock | Admin',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
@@ -266,7 +266,7 @@ export default function App() {
       career:       'Best Friend Stock | Finance Career Guide and Mock Interviews',
       screener:     'Best Friend Stock | US Stock Screener',
       heatmap:      'Best Friend Stock | Market Heatmap',
-      macro:        'Best Friend Stock | Economic Calendar',
+      macro:        'Best Friend Stock | Calendar: economic data, earnings, IPOs, splits and dividends',
       admin:        'Best Friend Stock | Admin',
       ai_teacher:   'Best Friend Stock | AI Economics Teacher',
     }

@@ -104,7 +104,7 @@ def _splits_all():
     """Nasdaq's splits list ignores the date and returns every announced split (upcoming only), so it is
     fetched once and cut per day. Days before today therefore always read empty."""
     def fetch():
-        data = nq.get("calendar/splits", {"date": date.today().isoformat()})
+        data = nq.get("calendar/splits", {"date": datetime.now(nq.ET).date().isoformat()})
         if data is None:
             return None
         out = []

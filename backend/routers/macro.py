@@ -223,6 +223,11 @@ def _load_day(d: date) -> list:
         out.append({"date": iso, "time_utc": at, "country": _clean(row.get("country")), "name": name,
                     "actual": _clean(row.get("actual")), "consensus": _clean(row.get("consensus")),
                     "previous": _clean(row.get("previous"))})
+    if not out and d.weekday() < 5:
+        # Nasdaq sometimes answers a weekday with no rows at all (88 events for 2026-11-18 at noon, none an
+        # hour later). That is a gap in the feed, not a quiet day: keep the last good copy, cache nothing.
+        logger.warning("economic calendar %s: empty answer for a weekday, not cached", iso)
+        return hit[1] if hit else []
     with _lock:
         _cache[iso] = (time.time(), out)
         if len(_cache) > 120:
