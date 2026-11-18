@@ -149,7 +149,7 @@ struct StockDetailView: View {
                         .animation(.snappy(duration: 0.5), value: q.price)
                         .minimumScaleFactor(0.6)
                         .lineLimit(1)
-                        .foregroundStyle(Theme.changeColor(q.pctChange, market: market))
+                        .foregroundStyle(.primary)   // as on the website: the price in text colour, the change carries the colour
 
                     VStack(alignment: .leading, spacing: 4) {
                         PctPill(pct: q.pctChange, market: market, minWidth: 0)

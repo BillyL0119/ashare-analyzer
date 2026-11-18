@@ -122,7 +122,7 @@ private struct NewsFeedRow: View {
                 HStack(spacing: 6) {
                     // Source and time as quiet text, not a colour-coded tag per outlet
                     Text(item.source).font(.caption2.weight(.medium)).foregroundStyle(.secondary)
-                    Text(time).font(.caption2).foregroundStyle(.tertiary)
+                    Text(time).font(.caption2).foregroundStyle(.secondary)
                 }
                 .padding(.top, 2)
             }
