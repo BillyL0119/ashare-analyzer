@@ -43,7 +43,7 @@ function useJson(url) {
 
 // Drawn in real pixels (the width is measured), so labels and the end dot keep their size at any width
 function Chart({ rows, dir, label }) {
-  const H = 200, PAD_B = 22, PAD_T = 8, PAD_R = 8
+  const H = 132, PAD_B = 20, PAD_T = 6, PAD_R = 6
   const [box, setBox] = useState(null)
   const [W, setW] = useState(0)
   useEffect(() => {
@@ -75,7 +75,7 @@ function Chart({ rows, dir, label }) {
             return <line key={f} x1="0" x2={W} y1={yy} y2={yy} className="grid" />
           })}
           <polyline points={geo.pts} className="line" />
-          <circle cx={geo.x(geo.n - 1)} cy={geo.y(geo.last)} r="4.5" className={`dot is-${dir}`} />
+          <circle cx={geo.x(geo.n - 1)} cy={geo.y(geo.last)} r="3.5" className={`dot is-${dir}`} />
           {geo.months.filter((m) => geo.x(m.i) < W - 36).map((m) => (
             <text key={m.date} x={geo.x(m.i)} y={H - 4} className="axis">
               {new Date(m.date + 'T12:00:00Z').toLocaleDateString(undefined, { month: 'short', timeZone: 'UTC' })}
@@ -128,10 +128,6 @@ export default function MarketLesson({ lang, paths, onTabChange, onNavigate }) {
     e.preventDefault()
     if (tab) onTabChange(tab)
     else onNavigate(href)
-  }
-  const searchStock = () => {
-    const input = document.querySelector('header input')
-    if (input) { input.focus(); input.select?.() } else onTabChange('screener')
   }
 
   const title = spx ? s.title(dir, live, day) : ns.introTitle
@@ -198,10 +194,6 @@ export default function MarketLesson({ lang, paths, onTabChange, onNavigate }) {
           </li>
         </ul>
 
-        <div className="bfs-lesson-actions">
-          <a className="bfs-btn-primary" href={paths.study} onClick={(e) => go(e, null, 'study')}>{ns.startStudy}</a>
-          <button type="button" className="bfs-btn-secondary" onClick={searchStock}>{ns.searchStock}</button>
-        </div>
         <p className="bfs-lesson-class">
           {ns.hasCode} <a href={paths.class} onClick={(e) => go(e, null, 'class')}>{cs.joinTitle}</a>
           <span className="sep">{ns.isTeacher} <a href={paths.class} onClick={(e) => go(e, null, 'class')} title={cs.subtitle}>{cs.create}</a></span>

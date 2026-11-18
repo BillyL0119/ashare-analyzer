@@ -1,84 +1,86 @@
 /* Home page market lesson (MarketLesson.jsx).
-   Two columns that fill the first screen: the day's market on the left (headline, one sentence,
-   the S&P 500 line, the four indices), the quote of the day, three ways in and the actions on
-   the right. Both columns are panels of the same surface so nothing floats in empty space. */
+   A compact two-column band at the top of the home page, sized like a finance site's summary
+   strip rather than a landing hero: the day's market on the left (status, headline, one
+   sentence, a short S&P 500 line, the four indices), the quote of the day and the ways in on
+   the right. Type steps: 24 headline, 14 body, 12 labels; panels pad 20. */
 .bfs-lesson {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr);
-  gap: 16px;
-  margin: 20px 0 16px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+  gap: 12px;
+  margin: 16px 0 12px;
+  align-items: stretch;
 }
 .bfs-lesson-main {
-  padding: 24px 28px;
-  border-radius: 16px;
+  padding: 18px 20px 16px;
+  border-radius: 14px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   min-width: 0;
 }
-.bfs-lesson-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.bfs-lesson-side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 
 .bfs-lesson-status {
   display: flex; align-items: center; gap: 8px;
-  margin: 0 0 12px; color: var(--text-muted); font-size: 13px;
+  margin: 0 0 8px; color: var(--text-muted); font-size: 12px;
 }
-.bfs-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); flex: none; }
+.bfs-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); flex: none; }
 .bfs-dot.is-live { background: var(--green-bright); }
 
 .bfs-lesson h1#bfs-lesson-title {
   margin: 0;
   font-family: var(--display) !important;
-  font-size: clamp(30px, 3vw, 42px) !important;
+  font-size: 24px !important;
   font-weight: 500 !important;
-  line-height: 1.05 !important;
-  letter-spacing: -0.03em !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.015em !important;
 }
-.bfs-lesson h1#bfs-lesson-title.skeleton { width: 60%; border-radius: 8px; }
+.bfs-lesson h1#bfs-lesson-title.skeleton { width: 50%; border-radius: 6px; }
 .bfs-lesson-sentence {
-  margin: 10px 0 0; max-width: 62ch;
-  color: var(--text-secondary); font-size: 16px; line-height: 1.55;
+  margin: 4px 0 0; max-width: 72ch;
+  color: var(--text-secondary); font-size: 14px; line-height: 1.5;
 }
 
-.bfs-lesson-chart { margin: 20px 0 0; min-width: 0; }
-.bfs-lesson-chart .is-empty { border-radius: 12px; background: var(--bg-tertiary); }
+.bfs-lesson-chart { margin: 12px 0 0; min-width: 0; }
+.bfs-lesson-chart .is-empty { border-radius: 8px; background: var(--bg-tertiary); }
 .bfs-lesson-chart svg { display: block; overflow: visible; }
 .bfs-lesson-chart .grid { stroke: var(--border-primary); stroke-width: 1; }
-.bfs-lesson-chart .line { fill: none; stroke: var(--text-secondary); stroke-width: 1.75; stroke-linejoin: round; }
+.bfs-lesson-chart .line { fill: none; stroke: var(--text-secondary); stroke-width: 1.5; stroke-linejoin: round; }
 .bfs-lesson-chart .dot { stroke: var(--bg-secondary); stroke-width: 2; fill: var(--text-muted); }
 .bfs-lesson-chart .dot.is-down { fill: var(--red-bright); }
 .bfs-lesson-chart .dot.is-up { fill: var(--green-bright); }
-.bfs-lesson-chart .axis { fill: var(--text-muted); font-size: 11px; font-family: var(--sans); }
-.bfs-lesson-chart figcaption { margin-top: 4px; color: var(--text-muted); font-size: 12px; text-align: right; }
+.bfs-lesson-chart .axis { fill: var(--text-muted); font-size: 10px; font-family: var(--sans); }
+.bfs-lesson-chart figcaption { margin-top: 2px; color: var(--text-muted); font-size: 11px; text-align: right; }
 
 .bfs-lesson-idx {
-  list-style: none; margin: 16px 0 0; padding: 16px 0 0;
+  list-style: none; margin: 10px 0 0; padding: 12px 0 0;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
   border-top: 1px solid var(--border-primary);
 }
-.bfs-lesson-idx li { padding: 0 16px; border-left: 1px solid var(--border-primary); min-width: 0; font-variant-numeric: tabular-nums; }
+.bfs-lesson-idx li { padding: 0 12px; border-left: 1px solid var(--border-primary); min-width: 0; font-variant-numeric: tabular-nums; }
 .bfs-lesson-idx li:first-child { padding-left: 0; border-left: 0; }
 .bfs-lesson-idx .k { display: block; color: var(--text-muted); font-size: 12px; }
-.bfs-lesson-idx .v { display: block; margin-top: 2px; font-family: var(--display); font-size: 20px; font-weight: 500; color: var(--text-primary); }
-.bfs-lesson-idx .c { display: block; font-size: 13px; color: var(--text-secondary); }
+.bfs-lesson-idx .v { display: block; margin-top: 2px; font-size: 16px; font-weight: 500; color: var(--text-primary); }
+.bfs-lesson-idx .c { display: block; font-size: 12px; color: var(--text-secondary); }
 .bfs-lesson-idx .c.is-up { color: var(--green-bright); }
 .bfs-lesson-idx .c.is-down { color: var(--red-bright); }
 
 .bfs-lesson-ways {
-  list-style: none; margin: 0; padding: 4px 20px;
+  flex: 1; display: flex; flex-direction: column; justify-content: space-around;
+  list-style: none; margin: 0; padding: 2px 16px;
   border-radius: 14px; background: var(--bg-secondary); border: 1px solid var(--border-primary);
 }
 .bfs-lesson-ways li + li { border-top: 1px solid var(--border-primary); }
 .bfs-lesson-ways a, .bfs-lesson-ways button {
-  display: block; width: 100%; padding: 12px 0;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  width: 100%; padding: 10px 0;
   background: none; border: 0; text-align: left; font: inherit; color: inherit;
   text-decoration: none; cursor: pointer;
 }
-.bfs-lesson-ways .k { display: block; color: var(--text-muted); font-size: 12px; }
-.bfs-lesson-ways .v { display: block; margin-top: 2px; color: var(--text-primary); font-size: 15px; font-weight: 500; transition: color 150ms var(--ease); }
+.bfs-lesson-ways .k { flex: none; color: var(--text-muted); font-size: 12px; }
+.bfs-lesson-ways .v { min-width: 0; text-align: right; color: var(--text-primary); font-size: 13px; font-weight: 500; transition: color 150ms var(--ease); }
 .bfs-lesson-ways a:hover .v, .bfs-lesson-ways button:hover .v { color: var(--accent-blue); }
 
-.bfs-lesson-actions { display: flex; gap: 10px; }
-.bfs-lesson-actions > * { flex: 1 1 0; justify-content: center; }
-.bfs-lesson-class { margin: -4px 0 0; color: var(--text-muted); font-size: 13px; text-align: center; }
+.bfs-lesson-class { margin: 0; padding: 0 4px; color: var(--text-muted); font-size: 12px; }
 .bfs-lesson-class a { color: var(--accent-blue); text-decoration: none; }
 .bfs-lesson-class a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .bfs-lesson-class .sep { margin-left: 12px; }
@@ -89,9 +91,8 @@
   .bfs-lesson { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
-  .bfs-lesson-main { padding: 18px; }
-  .bfs-lesson h1#bfs-lesson-title { font-size: 28px !important; }
-  .bfs-lesson-sentence { font-size: 15px; }
-  .bfs-lesson-idx { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
+  .bfs-lesson-main { padding: 16px; }
+  .bfs-lesson h1#bfs-lesson-title { font-size: 21px !important; }
+  .bfs-lesson-idx { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 10px; }
   .bfs-lesson-idx li:nth-child(3) { padding-left: 0; border-left: 0; }
 }
