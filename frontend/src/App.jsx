@@ -29,13 +29,13 @@ const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
 const ScreenerPage       = lazy(() => import('./components/ScreenerPage'))
 const AdminPage          = lazy(() => import('./components/AdminPage'))
 const HeatmapPage        = lazy(() => import('./components/HeatmapPage'))
-const MacroCalendarPage  = lazy(() => import('./components/MacroCalendarPage'))
+const EventsCalendarPage = lazy(() => import('./components/events/EventsCalendarPage'))   // /macro: economic, earnings, IPO, split and dividend calendar
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
 import SiteNav from './components/nav/SiteNav'
 import MarketLesson from './components/home/MarketLesson'
 import QuoteBanner from './components/QuoteBanner'
-import useCompareStore from './store/compareStore'
+import useCompareStore, { VIEW_KEYS, defaultView } from './store/compareStore'
 import useLangStore, { rememberLang } from './store/langStore'
 import useThemeStore from './store/themeStore'
 import useWatchlistStore from './store/watchlistStore'
@@ -100,7 +100,7 @@ const LANG_OPTIONS = [
 ]
 
 export default function App() {
-  const { market, setMarket, selectedSymbols, switchMarketAndAddSymbol } = useCompareStore()
+  const { market, setMarket, selectedSymbols, switchMarketAndAddSymbol, viewMode, setViewMode } = useCompareStore()
   const { lang, setLang } = useLangStore()
   const { theme, toggleTheme, setTheme } = useThemeStore()
   const { user, role, init: initAuth, signOut,
@@ -288,6 +288,9 @@ export default function App() {
       if (['cn', 'us', 'hk', 'jp'].includes(urlMarket) && selectedSymbols.length === 0) {
         const code = urlMarket === 'hk' && /^\d{1,5}$/.test(urlCode) ? urlCode.padStart(5, '0') : urlCode.toUpperCase()
         switchMarketAndAddSymbol(urlMarket, { code, name: code })
+        // A shared link can open a given tab: /stock/us/AAPL?view=statistics
+        const view = new URLSearchParams(location.search).get('view')
+        if (view && VIEW_KEYS.has(view)) setViewMode(view)
       }
     }
   }, []) // eslint-disable-line
@@ -297,12 +300,14 @@ export default function App() {
     if (appTab !== 'analysis') return
     if (selectedSymbols.length > 0) {
       const s = selectedSymbols[0]
-      navigate(`/stock/${market}/${s.code}`, { replace: true })
+      // The open tab is part of the address (unless it is the stock's default tab), so links keep it
+      const view = viewMode && viewMode !== defaultView(market) ? `?view=${viewMode}` : ''
+      navigate(`/stock/${market}/${s.code}${view}`, { replace: true })
     } else if (location.pathname !== '/' && location.pathname !== '/privacy') {
       // /privacy is a standalone page: a direct visit must not be bounced to the home page
       navigate('/', { replace: true })
     }
-  }, [selectedSymbols]) // eslint-disable-line
+  }, [selectedSymbols, viewMode]) // eslint-disable-line
 
   // Watchlist cloud sync: load from account on login, save on every change
   useEffect(() => {
@@ -778,7 +783,7 @@ export default function App() {
           ) : appTab === 'heatmap' ? (
             <HeatmapPage lang={lang} />
           ) : appTab === 'macro' ? (
-            <MacroCalendarPage lang={lang} />
+            <EventsCalendarPage lang={lang} />
           ) : appTab === 'admin' ? (
             <AdminPage lang={lang} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'ai_teacher' ? (

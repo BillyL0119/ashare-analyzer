@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense } from 'react'
-import useCompareStore from '../store/compareStore'
+import useCompareStore, { US_VIEWS } from '../store/compareStore'
 import useLangStore from '../store/langStore'
 import { T } from '../i18n/translations'
 import { useMobile } from '../hooks/useMobile'
@@ -28,15 +28,23 @@ const GlobalNewsPanel  = lazy(() => import('./GlobalNewsPanel'))
 const CommentsPanel    = lazy(() => import('./CommentsPanel'))
 const SectorRotation   = lazy(() => import('./SectorRotation'))
 const MovesPanel       = lazy(() => import('./moves/MovesPanel'))
+// Quote pages in the style of Yahoo Finance (US stocks): components/quotepage/
+const QuoteSummary     = lazy(() => import('./quotepage/QuoteSummary'))
+const QuoteStatistics  = lazy(() => import('./quotepage/QuoteStatistics'))
+const QuoteHistory     = lazy(() => import('./quotepage/QuoteHistory'))
+const QuoteHolders     = lazy(() => import('./quotepage/QuoteHolders'))
+const QuoteAnalysts    = lazy(() => import('./quotepage/QuoteAnalysts'))
 const PanelFallback = () => <div className="skeleton" style={{ height: 360, borderRadius: 8 }} aria-hidden="true" />
 
 // View modes where the date range is irrelevant
-const _NO_DATE_MODES = new Set(['moves', 'fundamentals', 'news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
+const _NO_DATE_MODES = new Set(['summary', 'statistics', 'history', 'holders', 'analysts', 'moves', 'fundamentals', 'news', 'global_news', 'calendar', 'earnings', 'sectors', 'comments', 'backtest', 'score', 'radar', 'similar'])
 
 export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   useThemeStore((s) => s.theme) // re-render on theme toggle
-  const { selectedSymbols, viewMode, setViewMode, addSymbol, market,
-          startDate, endDate, setDateRange } = useCompareStore()
+  const { selectedSymbols, viewMode: storedView, setViewMode, addSymbol, market,
+          startDate, endDate, setDateRange, switchMarketAndAddSymbol } = useCompareStore()
+  // A US-only tab stays selected when the reader switches market: show the chart there instead
+  const viewMode = market !== 'us' && US_VIEWS.has(storedView) ? 'sideBySide' : storedView
   const lang = useLangStore((s) => s.lang)
   const t = T[lang]
   const isMobile = useMobile()
@@ -54,6 +62,8 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
   const handleStockSelect = (code, name) => {
     addSymbol({ code, name: name || code })
   }
+  // A peer or related ticker on a quote page opens that stock's own page (replacing the selection)
+  const openStock = (code, name) => switchMarketAndAddSymbol('us', { code, name: name || code })
 
   if (selectedSymbols.length === 0 && viewMode !== 'calendar' && viewMode !== 'earnings' && viewMode !== 'global_news') {
     return (
@@ -111,6 +121,15 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
       >
         {[
           // Grouped: charts · research · news & market · community (a divider sits between groups)
+          // US: the quote page (Yahoo-style) comes first, with the company financials among its tabs
+          market === 'us' ? [
+            { key: 'summary', label: t.tabSummary },
+            { key: 'statistics', label: t.tabStatistics },
+            { key: 'fundamentals', label: t.fundamentalsTab },
+            { key: 'history', label: t.tabHistory },
+            { key: 'holders', label: t.tabHolders },
+            { key: 'analysts', label: t.tabAnalysts },
+          ] : [],
           [
             { key: 'sideBySide', label: t.sideBySide },
             { key: 'overlay', label: t.overlay },
@@ -121,8 +140,6 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
             ...(!hkjp ? [{ key: 'backtest', label: t.backtestTab }] : []),
           ],
           hkjp ? [] : [
-            // company fundamentals (statements, estimates, analysts) cover US-listed companies
-            ...(market === 'us' ? [{ key: 'fundamentals', label: t.fundamentalsTab }] : []),
             // why the biggest daily moves happened (US: SEC filings, Fed; A-shares: cninfo announcements)
             ...(market === 'us' || market === 'cn' ? [{ key: 'moves', label: movesStrings(lang).tab }] : []),
             { key: 'score', label: t.scoreTab },
@@ -240,6 +257,16 @@ export default function ComparePanel({ onTabChange, onOpenKnowledge }) {
         <CalendarPanel lang={lang} onStockSelect={handleStockSelect} />
       ) : viewMode === 'earnings' ? (
         <EarningsPanel lang={lang} onStockSelect={handleStockSelect} />
+      ) : viewMode === 'summary' ? (
+        <QuoteSummary stocks={selectedSymbols} market={market} lang={lang} onOpenStock={openStock} />
+      ) : viewMode === 'statistics' ? (
+        <QuoteStatistics stocks={selectedSymbols} market={market} lang={lang} onOpenStock={openStock} />
+      ) : viewMode === 'history' ? (
+        <QuoteHistory stocks={selectedSymbols} market={market} lang={lang} onOpenStock={openStock} />
+      ) : viewMode === 'holders' ? (
+        <QuoteHolders stocks={selectedSymbols} market={market} lang={lang} onOpenStock={openStock} />
+      ) : viewMode === 'analysts' ? (
+        <QuoteAnalysts stocks={selectedSymbols} market={market} lang={lang} onOpenStock={openStock} />
       ) : viewMode === 'fundamentals' ? (
         <FundamentalsPanel stocks={selectedSymbols} market={market} />
       ) : viewMode === 'moves' ? (

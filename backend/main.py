@@ -470,5 +470,17 @@ from routers.heatmap import router as heatmap_router
 app.include_router(heatmap_router, prefix="/api/heatmap", tags=["heatmap"])
 from routers.macro import router as macro_router
 app.include_router(macro_router, prefix="/api/macro", tags=["macro"])
+# Quote pages in the style of Yahoo Finance (Summary, Statistics, Historical data, Holders, Analysts) and the
+# events calendar. Several routers share /api/us/quote; their paths never overlap.
+from routers.quote_summary import router as quote_summary_router
+from routers.quote_stats import router as quote_stats_router
+from routers.quote_history import router as quote_history_router
+from routers.quote_holders import router as quote_holders_router
+from routers.events_calendar import router as events_calendar_router
+app.include_router(quote_summary_router, prefix="/api/us/quote", tags=["quote"])
+app.include_router(quote_stats_router, prefix="/api/us/quote", tags=["quote"])
+app.include_router(quote_history_router, prefix="/api/us/quote", tags=["quote"])
+app.include_router(quote_holders_router, prefix="/api/us/quote", tags=["quote"])
+app.include_router(events_calendar_router, prefix="/api/events", tags=["events"])
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])

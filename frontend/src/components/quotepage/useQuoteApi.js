@@ -1,0 +1,42 @@
+import { useEffect, useState } from 'react'
+
+// Fetch one quote-page endpoint with a small in-memory cache shared by every tab, so switching tabs or
+// tickers back and forth does not refetch. `poll` (ms) refreshes live data, e.g. the price while the
+// market is open. Returns { data, error, loading } for the current url; data from a previous url is never shown.
+const cache = new Map()   // url -> { at, data }
+
+export default function useQuoteApi(url, { ttl = 60_000, poll = 0 } = {}) {
+  const [res, setRes] = useState({ url: null, data: null, error: null })
+  const [tick, setTick] = useState(0)
+
+  useEffect(() => {
+    if (!url) return undefined
+    let alive = true
+    const hit = cache.get(url)
+    if (hit && Date.now() - hit.at < ttl) {
+      Promise.resolve().then(() => { if (alive) setRes({ url, data: hit.data, error: null }) })
+      return () => { alive = false }
+    }
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((data) => {
+        cache.set(url, { at: Date.now(), data })
+        if (alive) setRes({ url, data, error: null })
+      })
+      .catch((error) => { if (alive) setRes((prev) => ({ url, data: prev.url === url ? prev.data : null, error })) })
+    return () => { alive = false }
+  }, [url, ttl, tick])
+
+  useEffect(() => {
+    if (!poll || !url) return undefined
+    const id = setInterval(() => { cache.delete(url); setTick((n) => n + 1) }, poll)
+    return () => clearInterval(id)
+  }, [poll, url])
+
+  const current = res.url === url
+  return {
+    data: current ? res.data : null,
+    error: current ? res.error : null,
+    loading: Boolean(url) && !current,
+  }
+}

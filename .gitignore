@@ -31,3 +31,6 @@ backend/data/econ_cases.json
 backend/data/classes/
 backend/data/move_reasons.json
 .pytest_cache/
+
+# Local dev venv (backend/tools/dev_quote_app.py)
+backend/.venv/

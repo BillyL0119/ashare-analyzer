@@ -1,0 +1,89 @@
+/* Quote pages (Summary, Statistics, Historical data, Holders, Analysts): the shared building blocks.
+   Colours come only from the site tokens in index.css, so both themes work. Weights 400-600, sentence case,
+   no uppercase tracked labels, no gradients or shadows. Slice-specific classes live in each slice's own file
+   with its own prefix (qs- summary, qt- statistics, qh- history, qo- holders, qa- analysts). */
+
+.qp { display: grid; gap: 16px; min-width: 0; }
+.qp-num { font-variant-numeric: tabular-nums; }
+
+/* A section: one card per topic. Cards are for grouping, not decoration: no shadow, no hover lift. */
+.qp-card {
+  background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px;
+  padding: 16px; min-width: 0;
+}
+.qp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
+.qp-h { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-primary); letter-spacing: 0; }
+.qp-sub { font-size: 12px; color: var(--text-muted); }
+.qp-note { margin: 10px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--text-muted); }
+
+/* Two columns that become one under 900px */
+.qp-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .qp-cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* Label / value rows (the key-stats style): hairlines between rows, value right-aligned */
+.qp-dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; margin: 0; font-size: 13px; }
+.qp-dl > dt, .qp-dl > dd {
+  margin: 0; padding: 8px 0; border-top: 1px solid var(--border-primary); min-width: 0;
+}
+.qp-dl > dt:first-of-type, .qp-dl > dd:first-of-type { border-top: none; }
+.qp-dl > dt { color: var(--text-secondary); padding-right: 12px; }
+.qp-dl > dd { color: var(--text-primary); text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Data tables: wrap each in .qp-scroll so wide tables scroll inside the card, never the page */
+.qp-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.qp-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.qp-table th {
+  font-size: 11.5px; font-weight: 500; color: var(--text-muted); text-align: right; white-space: nowrap;
+  padding: 8px 10px; border-bottom: 1px solid var(--border-primary); background: var(--bg-secondary);
+}
+.qp-table td { padding: 8px 10px; text-align: right; color: var(--text-secondary); border-bottom: 1px solid var(--border-primary); white-space: nowrap; }
+.qp-table th:first-child, .qp-table td:first-child { text-align: left; padding-left: 0; }
+.qp-table th:last-child, .qp-table td:last-child { padding-right: 0; }
+.qp-table tr:last-child td { border-bottom: none; }
+.qp-table td.strong { color: var(--text-primary); font-weight: 500; }
+.qp-table.sticky thead th { position: sticky; top: 0; z-index: 1; }
+.qp-table tbody tr.click { cursor: pointer; }
+.qp-table tbody tr.click:hover td { background: var(--bg-hover); }
+
+/* Segmented control (ranges, intervals, annual / quarterly) */
+.qp-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); }
+.qp-seg button {
+  border: none; background: transparent; color: var(--text-secondary); font: inherit; font-size: 12.5px;
+  padding: 4px 10px; border-radius: 6px; cursor: pointer; min-height: 0;
+}
+.qp-seg button[aria-pressed="true"] { background: var(--bg-secondary); color: var(--text-primary); font-weight: 500; }
+.qp-seg button:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+
+/* Quiet text button in the accent colour (links such as "Show more", "Download CSV") */
+.qp-link {
+  border: none; background: none; padding: 0; font: inherit; font-size: 12.5px; color: var(--accent-blue);
+  cursor: pointer; min-height: 0;
+}
+.qp-link:hover { text-decoration: underline; }
+.qp-link:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 4px; }
+
+/* One primary action per view (filled accent, white text) */
+.qp-btn {
+  border: none; border-radius: 8px; padding: 7px 14px; font: inherit; font-size: 13px; font-weight: 500;
+  background: var(--accent-fill); color: #fff; cursor: pointer;
+}
+.qp-btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+/* Loading / empty / error states */
+.qp-empty { padding: 28px 16px; text-align: center; font-size: 13px; color: var(--text-muted); }
+.qp-skel { border-radius: 12px; background: var(--skeleton-base); }
+
+/* A term with a plain-language explanation (Term.jsx): dotted underline, popover on hover, focus or tap */
+.qp-term { position: relative; display: inline; }
+.qp-term > button {
+  border: none; background: none; padding: 0; margin: 0; font: inherit; color: inherit; cursor: help; min-height: 0;
+  text-align: left; text-decoration: underline dotted; text-decoration-color: var(--text-muted); text-underline-offset: 3px;
+}
+.qp-term > button:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 3px; }
+.qp-pop {
+  position: absolute; left: 0; top: calc(100% + 6px); z-index: 30; width: max-content; max-width: min(300px, 80vw);
+  padding: 10px 12px; border-radius: 10px; background: var(--bg-tertiary); border: 1px solid var(--border-glow);
+  box-shadow: var(--shadow-pop); color: var(--text-primary); font-size: 12.5px; font-weight: 400; line-height: 1.5;
+  text-align: left; white-space: normal;
+}
+.qp-pop .f { display: block; margin-top: 6px; color: var(--text-secondary); font-size: 12px; }
