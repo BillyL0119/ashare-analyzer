@@ -37,8 +37,18 @@ export default function QuoteBanner({ lang, variant }) {
   const today = new Date().toLocaleDateString(LOCALE[lang] || 'en-US', { month: 'long', day: 'numeric' })
   const long = text.length > (zh ? 60 : 140)
 
+  if (variant === 'band') {
+    return (
+      <figure className="bfs-quote is-band">
+        <span className="bfs-quote-tag">{LABEL[lang] || LABEL.en}</span>
+        <blockquote>“{text}”</blockquote>
+        {author && <figcaption><span className="by">{author}</span>{title && <span className="role">{title}</span>}</figcaption>}
+      </figure>
+    )
+  }
+
   return (
-    <figure className={`bfs-quote${variant === 'band' ? ' is-band' : ''}`}>
+    <figure className="bfs-quote">
       <figcaption className="bfs-quote-head">
         <span>{LABEL[lang] || LABEL.en}</span>
         <span>{today}</span>

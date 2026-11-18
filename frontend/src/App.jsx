@@ -150,6 +150,16 @@ export default function App() {
   const userMenuRef       = useRef(null)
   const mobileMenuRef     = useRef(null)
   const watchlistSyncRef  = useRef(null) // tracks last saved serialized value
+  // Height of the sticky header, as --chrome-h, so the home page's top section can end exactly at
+  // the bottom of the first screen
+  const chromeRef = useRef(null)
+  useEffect(() => {
+    const el = chromeRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([e]) => document.documentElement.style.setProperty('--chrome-h', `${Math.round(e.borderBoxSize?.[0]?.blockSize ?? e.contentRect.height)}px`))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   // Initialize Supabase Auth listener once on mount
   useEffect(() => {
@@ -348,7 +358,7 @@ export default function App() {
       }}
     >
       {/* Sticky nav wrapper — primary header + secondary tab bar scroll together */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0 }}>
+      <div ref={chromeRef} style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0 }}>
       <header
         style={{
           background: 'var(--nav-bg)',
@@ -776,10 +786,10 @@ export default function App() {
           ) : (
             <>
               {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><QuoteBanner lang={lang} variant="band" /></ErrorBoundary></div>
-              )}
-              {selectedSymbols.length === 0 && (
-                <div className="bfs-enter-1"><ErrorBoundary fallback={null}><MarketLesson lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange} onNavigate={navigate} /></ErrorBoundary></div>
+                <div className="bfs-home-top bfs-enter-1">
+                  <ErrorBoundary fallback={null}><QuoteBanner lang={lang} variant="band" /></ErrorBoundary>
+                  <ErrorBoundary fallback={null}><MarketLesson lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange} onNavigate={navigate} /></ErrorBoundary>
+                </div>
               )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><ErrorBoundary fallback={null}>

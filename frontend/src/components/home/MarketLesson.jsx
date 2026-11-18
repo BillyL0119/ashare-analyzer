@@ -40,19 +40,21 @@ function useJson(url) {
   return state
 }
 
-// Drawn in real pixels (the width is measured), so labels and the end dot keep their size at any width
+// Drawn in real pixels: the plot box is sized by the layout (it grows to fill the section) and
+// the svg is placed inside it absolutely, so labels and the end dot keep their size at any size
 function Chart({ rows, dir, label }) {
-  const H = 168, PAD_B = 20, PAD_T = 6, PAD_R = 6
+  const PAD_B = 20, PAD_T = 6, PAD_R = 6
   const [box, setBox] = useState(null)
-  const [W, setW] = useState(0)
+  const [size, setSize] = useState({ w: 0, h: 0 })
   useEffect(() => {
     if (!box) return
-    const ro = new ResizeObserver(([e]) => setW(Math.round(e.contentRect.width)))
+    const ro = new ResizeObserver(([e]) => setSize({ w: Math.round(e.contentRect.width), h: Math.round(e.contentRect.height) }))
     ro.observe(box)
     return () => ro.disconnect()
   }, [box])
+  const { w: W, h: H } = size
   const geo = useMemo(() => {
-    if (!rows?.length || !W) return null
+    if (!rows?.length || !W || !H) return null
     const closes = rows.map((r) => r.close)
     const lo = Math.min(...closes), hi = Math.max(...closes)
     const span = hi - lo || 1
@@ -64,24 +66,26 @@ function Chart({ rows, dir, label }) {
       if (i === 0 || r.date.slice(0, 7) !== rows[i - 1].date.slice(0, 7)) months.push({ i, date: r.date })
     })
     return { pts, x, y, last: closes[closes.length - 1], n: rows.length, months }
-  }, [rows, W])
+  }, [rows, W, H])
   return (
-    <figure className="bfs-lesson-chart" ref={setBox}>
-      {geo ? (
-        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
-          {[0, 0.5, 1].map((f) => {
-            const yy = Math.round(PAD_T + f * (H - PAD_B - PAD_T)) + 0.5
-            return <line key={f} x1="0" x2={W} y1={yy} y2={yy} className="grid" />
-          })}
-          <polyline points={geo.pts} className="line" />
-          <circle cx={geo.x(geo.n - 1)} cy={geo.y(geo.last)} r="3.5" className={`dot is-${dir}`} />
-          {geo.months.filter((m) => geo.x(m.i) < W - 36).map((m) => (
-            <text key={m.date} x={geo.x(m.i)} y={H - 4} className="axis">
-              {new Date(m.date + 'T12:00:00Z').toLocaleDateString(undefined, { month: 'short', timeZone: 'UTC' })}
-            </text>
-          ))}
-        </svg>
-      ) : <div className="is-empty" style={{ height: H }} aria-hidden="true" />}
+    <figure className="bfs-lesson-chart">
+      <div className="bfs-lesson-plot" ref={setBox}>
+        {geo ? (
+          <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
+            {[0, 0.5, 1].map((f) => {
+              const yy = Math.round(PAD_T + f * (H - PAD_B - PAD_T)) + 0.5
+              return <line key={f} x1="0" x2={W} y1={yy} y2={yy} className="grid" />
+            })}
+            <polyline points={geo.pts} className="line" />
+            <circle cx={geo.x(geo.n - 1)} cy={geo.y(geo.last)} r="3.5" className={`dot is-${dir}`} />
+            {geo.months.filter((m) => geo.x(m.i) < W - 36).map((m) => (
+              <text key={m.date} x={geo.x(m.i)} y={H - 4} className="axis">
+                {new Date(m.date + 'T12:00:00Z').toLocaleDateString(undefined, { month: 'short', timeZone: 'UTC' })}
+              </text>
+            ))}
+          </svg>
+        ) : <div className="is-empty" aria-hidden="true" />}
+      </div>
       <figcaption>{label}</figcaption>
     </figure>
   )
@@ -136,6 +140,9 @@ export default function MarketLesson({ lang, paths, onTabChange, onNavigate }) {
     sector: sectorName, n: count, total: breadth?.sample,
   })
 
+  // Two biggest gainers and two biggest losers, largest move first
+  const movers = [...(d?.gainers || []).slice(0, 2), ...(d?.losers || []).slice(0, 2)]
+    .sort((x, y) => Math.abs(y.pct) - Math.abs(x.pct))
   const idxName = (i) => (lang === 'zh' ? i.name_zh || i.name : i.name)
   const pctText = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${num(Math.abs(v))}%`
   const tone = (v) => (v > 0 ? 'is-up' : v < 0 ? 'is-down' : '')
@@ -152,6 +159,23 @@ export default function MarketLesson({ lang, paths, onTabChange, onNavigate }) {
           </p>
           <h1 id="bfs-lesson-title" className={overview.data || overview.failed ? '' : 'skeleton'}>{overview.data || overview.failed ? title : '\u00a0'}</h1>
           <p className="bfs-lesson-sentence">{sentence || ns.introSub}</p>
+          {movers.length > 0 && (
+            <div className="bfs-lesson-movers">
+              <p className="bfs-lesson-label">{s.movers}</p>
+              <ul role="list">
+                {movers.map((q) => (
+                  <li key={q.symbol}>
+                    <button type="button" onClick={() => switchMarketAndAddSymbol('us', { code: q.symbol, name: q.name })}>
+                      <span className="sym">{q.symbol}</span>
+                      <span className="nm">{shortName(q.name)}</span>
+                      <span className="px">{num(q.price)}</span>
+                      <span className={`c ${tone(q.pct)}`}>{pctText(q.pct)}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {d?.indices?.length > 0 && (
             <ul className="bfs-lesson-idx" role="list">
               {d.indices.map((i) => (

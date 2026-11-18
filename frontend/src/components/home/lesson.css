@@ -1,22 +1,55 @@
+/* The home page's top: the quote band and the market lesson together fill the first screen down
+   to its bottom edge (the header's height arrives as --chrome-h from App.jsx), so the next
+   section starts cleanly below the fold instead of showing half a row. Capped so a tall
+   screen does not get a giant chart. */
+.bfs-home-top {
+  display: flex; flex-direction: column; gap: 12px;
+  min-height: min(calc(100svh - var(--chrome-h, 110px)), 780px);
+  padding: 16px 0;
+}
+.bfs-home-top > .bfs-lesson { flex: 1; }
+
 /* Home page market lesson (MarketLesson.jsx), under the quote band.
    One panel: the day's market on the left (status, headline, one sentence, the four indices)
    with the S&P 500 line beside it, then a ruled row of ways in across the bottom. Sized like a
    finance site's summary panel: 24 headline, 14 body, 12 labels. */
 .bfs-lesson {
-  margin: 0 0 12px;
+  display: flex; flex-direction: column;
+  margin: 0;
   border-radius: 14px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   overflow: hidden;
 }
 .bfs-lesson-top {
+  flex: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
   gap: 32px;
   padding: 18px 20px 16px;
-  align-items: end;
+  align-items: stretch;
 }
-.bfs-lesson-text { min-width: 0; }
+/* The day's biggest movers under the sentence: four quiet rows, the move in red or green */
+.bfs-lesson-movers { margin-top: 18px; }
+.bfs-lesson-label { margin: 0 0 4px; color: var(--text-muted); font-size: 12px; }
+.bfs-lesson-movers ul { list-style: none; margin: 0; padding: 0; }
+.bfs-lesson-movers li + li { border-top: 1px solid var(--border-primary); }
+.bfs-lesson-movers button {
+  display: grid; grid-template-columns: 56px minmax(0, 1fr) auto 72px; align-items: baseline; gap: 12px;
+  width: 100%; padding: 7px 0; background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.bfs-lesson-movers .sym { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.bfs-lesson-movers .nm { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bfs-lesson-movers .px { font-size: 13px; color: var(--text-secondary); }
+.bfs-lesson-movers .c { font-size: 13px; text-align: right; color: var(--text-secondary); }
+.bfs-lesson-movers .c.is-up { color: var(--green-bright); }
+.bfs-lesson-movers .c.is-down { color: var(--red-bright); }
+.bfs-lesson-movers button:hover .sym { color: var(--accent-blue); }
+
+/* Headline at the top of the column, the four indices at the bottom, level with the chart's axis */
+.bfs-lesson-text { min-width: 0; display: flex; flex-direction: column; }
+.bfs-lesson-text .bfs-lesson-idx { margin-top: auto; padding-top: 16px; }
 
 .bfs-lesson-status {
   display: flex; align-items: center; gap: 8px;
@@ -48,7 +81,9 @@
 .bfs-lesson-idx .c.is-up { color: var(--green-bright); }
 .bfs-lesson-idx .c.is-down { color: var(--red-bright); }
 
-.bfs-lesson-chart { margin: 0; min-width: 0; }
+.bfs-lesson-chart { margin: 0; min-width: 0; display: flex; flex-direction: column; }
+.bfs-lesson-plot { position: relative; flex: 1; min-height: 168px; }
+.bfs-lesson-plot > svg, .bfs-lesson-plot > .is-empty { position: absolute; inset: 0; }
 .bfs-lesson-chart .is-empty { border-radius: 8px; background: var(--bg-tertiary); }
 .bfs-lesson-chart svg { display: block; overflow: visible; }
 .bfs-lesson-chart .grid { stroke: var(--border-primary); stroke-width: 1; }
@@ -84,6 +119,7 @@
 .bfs-lesson a:focus-visible, .bfs-lesson button:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: -2px; }
 
 @media (max-width: 900px) {
+  .bfs-home-top { min-height: 0; }
   .bfs-lesson-top { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .bfs-lesson-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bfs-lesson-ways li:nth-child(3) { border-left: 0; }
@@ -95,4 +131,9 @@
   .bfs-lesson-idx li:nth-child(3) { padding-left: 0; border-left: 0; }
   .bfs-lesson-ways { grid-template-columns: minmax(0, 1fr); }
   .bfs-lesson-ways li + li { border-left: 0; border-top: 1px solid var(--border-primary); }
+}
+/* Short screens: two movers instead of four, so the section still ends at the fold */
+@media (max-height: 740px) and (min-width: 901px) {
+  .bfs-lesson-movers li:nth-child(n+3) { display: none; }
+  .bfs-lesson-movers { margin-top: 12px; }
 }

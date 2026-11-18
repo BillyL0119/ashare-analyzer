@@ -13,6 +13,7 @@ export const SECTOR_NAMES = {
 }
 
 const en = {
+  movers: 'Biggest movers',
   loading: 'US market',
   open: 'US market open',
   pre: 'US pre-market trading',
@@ -39,6 +40,7 @@ const en = {
 }
 
 const zh = {
+  movers: '涨跌最多的股票',
   loading: '美股',
   open: '美股交易中',
   pre: '美股盘前交易中',
@@ -65,6 +67,7 @@ const zh = {
 }
 
 const ja = {
+  movers: '値動きの大きい銘柄',
   loading: '米国市場',
   open: '米国市場 取引中',
   pre: '米国市場 プレマーケット',
@@ -91,6 +94,7 @@ const ja = {
 }
 
 const ko = {
+  movers: '변동 폭이 큰 종목',
   loading: '미국 증시',
   open: '미국 증시 거래 중',
   pre: '미국 증시 프리마켓',
@@ -117,6 +121,7 @@ const ko = {
 }
 
 const fr = {
+  movers: 'Plus fortes variations',
   loading: 'Marché américain',
   open: 'Marché américain ouvert',
   pre: 'Marché américain en pré-ouverture',
