@@ -1,6 +1,7 @@
 /* Quote of the day, pinned above everything else on the home page.
    The quote is set like a pull quote in a book: Fraunces italic for English (a soft, slightly
-   wonky old-style serif), ZCOOL XiaoWei for Chinese (an elegant Song-style display face, upright),
+   wonky old-style serif), Long Cang for Chinese (relaxed brush handwriting, upright; Kai as the
+   fallback where it has no glyph),
    with blue quotation marks. Everything around it stays in the interface font. */
 .bfs-quote {
   margin: 20px 0 8px;
@@ -81,7 +82,12 @@
   .bfs-quote.is-band blockquote { padding-left: 0; border-left: 0; font-size: 19px; }
 }
 
-/* Chinese quotes: upright Song-style display face (CJK has no italic), a touch of tracking */
+/* Chinese quotes: Long Cang handwriting, upright (CJK has no italic). Handwriting sits smaller in
+   its em box than a serif, so it is set a step larger */
 .bfs-quote blockquote:lang(zh), .bfs-quote.is-band blockquote:lang(zh) {
-  font-family: var(--quote-zh); font-style: normal; letter-spacing: 0;
+  font-family: var(--quote-zh); font-style: normal; letter-spacing: 0.02em; line-height: 1.35;
+  max-width: none;   /* the 38ch measure is for Latin text; Chinese uses the card's full width */
 }
+.bfs-quote.is-band blockquote:lang(zh) { font-size: 25px; }
+.bfs-quote.is-band blockquote.is-long:lang(zh) { font-size: 22px; }
+.m-quote .bfs-quote blockquote:lang(zh) { font-size: 21px; }
