@@ -148,8 +148,8 @@ struct EventsCalendarView: View {
     // MARK: Header
 
     private var header: some View {
+        // The navigation bar already says "Calendar": only the one-line description here
         VStack(alignment: .leading, spacing: 4) {
-            Text(t("title")).font(.title2.weight(.semibold))
             Text(t("sub")).font(.subheadline).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
