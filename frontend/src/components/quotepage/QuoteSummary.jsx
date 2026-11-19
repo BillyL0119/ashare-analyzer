@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import useActiveTicker from './useActiveTicker'
 import TickerSwitch from './TickerSwitch'
-import useQuoteApi from './useQuoteApi'
+import { useQuoteLive } from './useQuoteApi'
 import QuoteChart from './QuoteChart'
 import SummaryStats from './SummaryStats'
 import SummaryPerformance from './SummaryPerformance'
@@ -15,7 +15,7 @@ import './summary.css'
 
 function SummaryBody({ code, lang, onOpenStock, onRetry }) {
   const S = summaryStrings(lang)
-  const live = useQuoteApi(`/api/us/quote/${code}/live`, { ttl: 10_000, poll: extendedSessionNow() ? 15_000 : 120_000 })
+  const live = useQuoteLive(code, { ttl: 10_000, poll: extendedSessionNow() ? 15_000 : 120_000 })
   const d = live.data
 
   if (live.loading) {

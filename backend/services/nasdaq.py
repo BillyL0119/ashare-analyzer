@@ -182,6 +182,13 @@ def cached(key: str, ttl: float, fn, disk: bool = False, stale: float = 0):
         ev.set()
 
 
+def peek(key: str, max_age: float):
+    """The in-memory value of a `cached` key if it is younger than max_age seconds, else None. Never fetches."""
+    with _lock:
+        hit = _mem.get(key)
+    return hit[1] if hit and time.time() - hit[0] < max_age else None
+
+
 def market_open_now() -> bool:
     """Regular session (9:30-16:00 ET, Mon-Fri). Holidays count as open; it only shortens cache times."""
     t = datetime.now(ET)
@@ -200,6 +207,7 @@ def asset_class(sym: str):
         for ac in ("stocks", "etf"):
             d = get(f"quote/{sym}/info", {"assetclass": ac})
             if d and d.get("primaryData") and d["primaryData"].get("lastSalePrice"):
+                _store(f"info_{sym}", d, None)      # the answer that identified the class is the quote itself
                 return ac
         return None
     return cached(f"ac_{sym}", 7 * 86400, find, disk=True)

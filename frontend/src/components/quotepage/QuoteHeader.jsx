@@ -1,4 +1,4 @@
-import useQuoteApi from './useQuoteApi'
+import { useQuoteLive } from './useQuoteApi'
 import { extendedSessionNow } from './session'
 import { isNum, fmtPrice, fmtSigned, fmtSignedPct, fmtShortDate, changeColor } from './format'
 import summaryStrings, { fill } from './summaryStrings'
@@ -52,7 +52,7 @@ export function QuoteHeaderView({ d, lang }) {
  * when Summary was open). A placeholder of the same height holds its place while it loads, so the tab below
  * does not jump; if the quote fails the header is left out rather than blocking the tab. */
 export default function QuoteHeader({ code, lang }) {
-  const live = useQuoteApi(code ? `/api/us/quote/${code}/live` : null, { ttl: 10_000, poll: extendedSessionNow() ? 15_000 : 120_000 })
+  const live = useQuoteLive(code, { ttl: 10_000, poll: extendedSessionNow() ? 15_000 : 120_000 })
   if (live.loading) return <div className="qp-skel" style={{ height: 112 }} aria-hidden="true" />
   if (!live.data) return null
   return <QuoteHeaderView d={live.data} lang={lang} />

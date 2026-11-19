@@ -124,7 +124,8 @@ export default function QuoteChart({ code, lang, live }) {
     { ttl: 60_000, poll: range === '5d' && sessionHours ? 60_000 : 0 })
   const cur = range === '1d' ? base : other
   const chart = cur.data
-  const ranges = base.data?.ranges || chart?.ranges || {}
+  // 1D follows the header's number (the chart answer can be a minute older than the live quote)
+  const ranges = { ...(base.data?.ranges || chart?.ranges || {}), ...(isNum(live?.change_pct) ? { '1d': live.change_pct } : {}) }
   const ok = chart && chart.points?.length > 1
 
   const option = useMemo(() => (ok ? buildOption(chart, range, lang, theme) : null), [ok, chart, range, lang, theme])

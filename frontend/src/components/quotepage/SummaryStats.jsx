@@ -50,9 +50,12 @@ function statRows(d, lang, S) {
   ]
 }
 
+// the figures that need ten years of prices or a second source: a placeholder until the complete quote arrives
+const SLOW = new Set(['avg_volume_3m', 'beta_5y_monthly', 'pe_ttm', 'eps_ttm', 'earnings_date', 'forward_dividend_yield', 'ex_dividend_date'])
+
 export default function SummaryStats({ live, lang }) {
   const S = summaryStrings(lang)
-  const rows = statRows(live, lang, S)
+  const rows = statRows(live, lang, S).map(([k, v]) => [k, live.partial && SLOW.has(k) ? <span key={k} className="qp-wait" aria-label="…" /> : v])
   const col = (list) => (
     <dl className="qp-dl">
       {list.map(([k, v]) => [

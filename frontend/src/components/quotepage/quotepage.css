@@ -72,6 +72,7 @@
 /* Loading / empty / error states */
 .qp-empty { padding: 28px 16px; text-align: center; font-size: 13px; color: var(--text-muted); }
 .qp-skel { border-radius: 12px; background: var(--skeleton-base); }
+.qp-wait { display: inline-block; width: 3.2em; height: 0.9em; border-radius: 4px; background: var(--skeleton-base); vertical-align: -0.1em; }
 
 /* A term with a plain-language explanation (Term.jsx): dotted underline, popover on hover, focus or tap */
 .qp-term { position: relative; display: inline; }

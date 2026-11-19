@@ -40,3 +40,18 @@ export default function useQuoteApi(url, { ttl = 60_000, poll = 0 } = {}) {
     loading: Boolean(url) && !current,
   }
 }
+
+/** The live quote in two steps: the quick answer (`?fast=1`: header, price, ranges, market cap) draws the page at
+ * once, and the complete one (EPS, P/E, beta, dividend, earnings date: up to several seconds for a ticker nobody
+ * opened yet) replaces it when it arrives. While only the quick one is here `data.partial` is true. */
+export function useQuoteLive(code, opts = {}) {
+  const base = code ? `/api/us/quote/${code}/live` : null
+  const full = useQuoteApi(base, opts)
+  const quick = useQuoteApi(base ? `${base}?fast=1` : null, { ttl: 10_000 })
+  const data = full.data || quick.data
+  return {
+    data,
+    error: data ? null : full.error,
+    loading: !data && (full.loading || quick.loading) && !full.error,
+  }
+}

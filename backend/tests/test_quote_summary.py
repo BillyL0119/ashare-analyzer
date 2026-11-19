@@ -64,6 +64,32 @@ def test_live_after_hours(monkeypatch):
     assert d["bid"] == 351.80                                    # bid / ask keep the latest quote
 
 
+def test_live_fast_skips_the_slow_figures_and_warm_list_leads_with_views(monkeypatch):
+    summ = json.loads((FIX / "nasdaq" / "summary.json").read_text())["data"]["summaryData"]
+    stub_nasdaq(monkeypatch, AFTER_HOURS, summ, eps=8.98)
+    slow = []
+    for name in ("eps_ttm", "beta_5y_monthly", "avg_volume", "dividends"):
+        monkeypatch.setattr(nq, name, lambda *a, **k: slow.append(1) or 1.0)
+    d = qs.build_live("AAPL", fast=True)
+    assert d["partial"] is True and d["price"] == 352.45 and d["market_cap"] is not None
+    assert d["eps_ttm"] is None and d["pe_ttm"] is None and d["beta_5y_monthly"] is None and d["dividend_rate"] is None
+    assert not slow                                              # none of the slow lookups ran
+    monkeypatch.setattr(qs, "_most_viewed", lambda limit=150: ["ZS", "AAPL"])
+    monkeypatch.setattr(qs, "_sp500", lambda: ["AAPL", "ABBV"])
+    monkeypatch.setattr(qs, "_largest", lambda limit=300: ["NVDA", "ABBV"])
+    tickers = qs.warm_tickers()
+    assert tickers[:2] == ["ZS", "AAPL"] and {"ABBV", "NVDA", "SPY"} <= set(tickers) and len(tickers) == len(set(tickers))
+
+
+def test_view_counter_ranks_by_opens(monkeypatch, tmp_path):
+    monkeypatch.setattr(qs, "_VIEWS_PATH", str(tmp_path / "views.json"))
+    monkeypatch.setattr(qs, "_views", {})
+    for s in ("ZS", "MU", "MU", "MU", "ZS"):
+        qs.note_view(s)
+    assert qs._most_viewed(5) == ["MU", "ZS"]
+    assert json.loads((tmp_path / "views.json").read_text())["ZS"] >= 1      # the first call is saved at once
+
+
 def test_minute_feed_fixture():
     days = qs.parse_minute_feed(json.loads((FIX / "tencent_dayus_AAPL.json").read_text()))
     assert [d["date"] for d in days][-1] == "2026-11-18" and len(days) == 5

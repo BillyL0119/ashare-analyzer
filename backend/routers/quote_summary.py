@@ -14,6 +14,7 @@ import logging
 import math
 import os
 import re
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
@@ -144,19 +145,26 @@ def _next_earnings(sym):
     return e
 
 
-def build_live(sym: str) -> dict:
-    info = nq.info(sym)
-    if not info:
-        raise HTTPException(status_code=404, detail=f"No quote for {sym}")
+def build_live(sym: str, fast: bool = False) -> dict:
+    """The live quote. `fast` skips the figures that need ten years of prices or other slow calls (EPS and P/E,
+    beta, average volume, dividend, next earnings): the header, price, ranges, market cap and target are back
+    in about a second and `partial` is true, so a page can draw at once and fill the rest from the full answer."""
+    # Start every call at once: the first answer used to wait for the quote before the others began
     jobs = {
         "summary": _pool.submit(nq.summary, sym),
         "open": _pool.submit(_tencent_open, sym),
-        "eps": _pool.submit(nq.eps_ttm, sym),
-        "beta": _pool.submit(nq.beta_5y_monthly, sym),
-        "avgvol": _pool.submit(nq.avg_volume, sym, 63),
-        "earn": _pool.submit(_next_earnings, sym),
-        "divs": _pool.submit(nq.dividends, sym),
     }
+    info = nq.info(sym)
+    if not info:
+        raise HTTPException(status_code=404, detail=f"No quote for {sym}")
+    if not fast:
+        jobs.update({
+            "eps": _pool.submit(nq.eps_ttm, sym),
+            "beta": _pool.submit(nq.beta_5y_monthly, sym),
+            "avgvol": _pool.submit(nq.avg_volume, sym, 63),
+            "earn": _pool.submit(_next_earnings, sym),
+            "divs": _pool.submit(nq.dividends, sym),
+        })
     got = {}
     for k, f in jobs.items():
         try:
@@ -175,8 +183,9 @@ def build_live(sym: str) -> dict:
     day_high, day_low = _pair(nq.val(summ, "TodayHighLow"))
     wk_high, wk_low = _pair(nq.val(summ, "FiftTwoWeekHighLow"))
     vol = nq.num(p.get("volume"))
-    eps = got["eps"]
-    fwd = nq.forward_dividend(summ, got["divs"] or [], price)
+    eps = got.get("eps")
+    fwd = ({"rate": None, "yield": None, "ex_date": None} if fast
+           else nq.forward_dividend(summ, got.get("divs") or [], price))
     out = {
         "symbol": sym,
         "name": _tidy_name(info.get("companyName")),
@@ -191,14 +200,14 @@ def build_live(sym: str) -> dict:
         "day_low": day_low, "day_high": day_high,
         "week52_low": wk_low, "week52_high": wk_high,
         "volume": round(vol) if vol is not None else None,
-        "avg_volume_3m": got["avgvol"],
+        "avg_volume_3m": got.get("avgvol"),
         "bid": nq.num(p.get("bidPrice")), "bid_size": _int(nq.num(p.get("bidSize"))),
         "ask": nq.num(p.get("askPrice")), "ask_size": _int(nq.num(p.get("askSize"))),
         "market_cap": nq.num(nq.val(summ, "MarketCap")),
-        "beta_5y_monthly": got["beta"],
+        "beta_5y_monthly": got.get("beta"),
         "pe_ttm": nq.pe_ttm(price, eps),
         "eps_ttm": eps,
-        "earnings": got["earn"],
+        "earnings": got.get("earn"),
         "dividend_rate": fwd["rate"],
         "dividend_yield": fwd["yield"],
         "ex_dividend_date": fwd["ex_date"],
@@ -210,6 +219,7 @@ def build_live(sym: str) -> dict:
         "trade_time": tm,
         "extended": _extended(info, status),
         "source": "Nasdaq, Tencent",
+        "partial": fast,
     }
     if out["pe_ttm"] is not None and out["pe_ttm"] < 1:
         # Nasdaq reports EPS per share of the company's first class (BRK.B shows 53,762 = a Class A share's
@@ -221,8 +231,16 @@ def build_live(sym: str) -> dict:
 
 
 @router.get("/{symbol}/live")
-def live(symbol: str):
+def live(symbol: str, fast: bool = Query(False)):
     sym = _symbol(symbol)
+    if not fast:
+        note_view(sym)                                 # one page opening = one fast + one full request
+    if fast:
+        # the complete answer when it is already cached, else the quick one (never waits on the slow figures)
+        full = nq.peek(f"qs_live_{sym}", nq.live_ttl() + 300)
+        if full is not None:
+            return full
+        return nq.cached(f"qs_live_fast_{sym}", nq.live_ttl(), lambda: build_live(sym, fast=True), stale=300)
     return nq.cached(f"qs_live_{sym}", nq.live_ttl(), lambda: build_live(sym), stale=300)
 
 
@@ -545,10 +563,73 @@ def quote_text(lang: str = Query("en")):
 
 # ── warm-up ───────────────────────────────────────────────────────────────────
 
+_VIEWS_PATH = os.path.join(nq._CACHE_DIR, "quote_views.json")
+_views = {}                                          # ticker -> pages opened (kept on disk, so a restart keeps it)
+_views_lock = threading.Lock()
+_views_saved = [0.0]
+
+
+def note_view(sym: str) -> None:
+    """Count one page view of `sym`; the warm-up caches the most opened tickers first. Saved at most once a minute."""
+    with _views_lock:
+        if not _views:
+            try:
+                with open(_VIEWS_PATH, encoding="utf-8") as f:
+                    _views.update(json.load(f))
+            except (OSError, ValueError):
+                pass
+        _views[sym] = _views.get(sym, 0) + 1
+        if time.time() - _views_saved[0] < 60:
+            return
+        _views_saved[0] = time.time()
+        snapshot = dict(_views)
+    try:
+        os.makedirs(os.path.dirname(_VIEWS_PATH), exist_ok=True)
+        tmp = _VIEWS_PATH + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(snapshot, f)
+        os.replace(tmp, _VIEWS_PATH)
+    except OSError as exc:
+        log.debug("could not save quote views: %s", exc)
+
+
+def _most_viewed(limit: int = 150) -> list:
+    with _views_lock:
+        if not _views:
+            try:
+                with open(_VIEWS_PATH, encoding="utf-8") as f:
+                    _views.update(json.load(f))
+            except (OSError, ValueError):
+                pass
+        ranked = sorted(_views.items(), key=lambda kv: -kv[1])
+    return [k for k, _ in ranked[:limit]]
+
+
+def _sp500() -> list:
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "..", "data", "us_gics_sectors.json"), encoding="utf-8") as f:
+            return sorted(json.load(f).get("sectors") or {})
+    except (OSError, ValueError):
+        return []
+
+
+def _largest(limit: int = 300) -> list:
+    """The largest listed companies by market cap (covers the Nasdaq 100 and beyond)."""
+    try:
+        from routers import screener
+        rows = [r for r in screener._universe() if r.get("market_cap")]
+        rows.sort(key=lambda r: -r["market_cap"])
+        return [r["symbol"] for r in rows[:limit]]
+    except Exception as exc:
+        log.debug("largest companies unavailable: %s", exc)
+        return []
+
+
 def warm_tickers() -> list:
-    """The tickers most pages lead to: the S&P 500 fund, the mega caps and the movers universe."""
+    """The tickers most pages lead to, most important first: what visitors actually open, the S&P 500 fund and
+    the mega caps, the movers universe, then the whole S&P 500 and the 300 largest companies."""
     from routers.us_market import MEGA_CAPS, US_UNIVERSE
-    return list(dict.fromkeys(["SPY", *MEGA_CAPS, *US_UNIVERSE]))
+    return list(dict.fromkeys([*_most_viewed(), "SPY", *MEGA_CAPS, *US_UNIVERSE, *_sp500(), *_largest()]))
 
 
 def warmup(pause: float = 2.0, cycle_hours: float = 6.0) -> None:
