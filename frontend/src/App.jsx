@@ -381,7 +381,7 @@ export default function App() {
       >
         {/* Logo */}
         <div
-          onClick={() => handleTabChange('analysis')}
+          onClick={() => { setMarket(market); handleTabChange('analysis') }}   // setMarket also closes the open stock, so / really is the home page
           style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, cursor: 'pointer', opacity: 1, transition: 'opacity 0.15s' }}
           onMouseEnter={e => e.currentTarget.style.opacity = '0.72'}
           onMouseLeave={e => e.currentTarget.style.opacity = '1'}
