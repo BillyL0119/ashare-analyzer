@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useCompareStore from '../store/compareStore'
 import { SECTOR_ZH } from '../utils/heatmap'
@@ -74,6 +74,80 @@ const money = (v) => (v == null ? '—' : v >= 1e12 ? `$${(v / 1e12).toFixed(2)}
 const vol = (v) => (v == null ? '—' : v >= 1e9 ? `${(v / 1e9).toFixed(2)}B` : v >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : v >= 1e3 ? `${(v / 1e3).toFixed(0)}K` : String(v))
 const UP = 'var(--green-bright)', DOWN = 'var(--red-bright)', ACCENT = '#4f86f7'
 
+// A bar from the 52-week low to the high with a tick where the price is (Yahoo and Finviz show the same)
+function RangeBar({ low, high, price }) {
+  if (low == null || high == null || price == null || high <= low) return '—'
+  const pos = Math.min(100, Math.max(0, ((price - low) / (high - low)) * 100))
+  return <span className="sc-range" title={`${low.toFixed(2)} – ${high.toFixed(2)}`} role="img" aria-label={`${low.toFixed(2)} – ${high.toFixed(2)}`}><i style={{ left: `${pos}%` }} /></span>
+}
+const pctCell = (v, signed = false) => (v == null ? '—' : `${signed && v > 0 ? '+' : ''}${v.toFixed(1)}%`)
+
+// Column sets, as on Finviz: one table, three views. `sort` is the API's sort key; columns without one cannot be sorted.
+const COLS = {
+  overview: [
+    { key: 'symbol', sort: 'symbol', cls: 'l', label: (t) => t.colSymbol, cell: (r) => (
+      <td className="l" style={{ maxWidth: 150 }}>
+        <div style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontWeight: 600, color: ACCENT }}>{r.symbol}</div>
+        <div className="sc-show-sm" style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
+      </td>) },
+    { key: 'name', cls: 'l sc-hide-sm', label: (t) => t.colName, cell: (r) => (
+      <td className="l sc-hide-sm" style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.industry || r.name}>
+        <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{r.name}</span>
+      </td>) },
+    { key: 'sector', cls: 'l sc-hide-lg', label: (t) => t.colSector, cell: (r, x) => <td className="l sc-hide-lg">{r.sector ? x.sectorName(r.sector) : '—'}</td> },
+    { key: 'cap', sort: 'market_cap', label: (t) => t.colCap, cell: (r) => <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{money(r.market_cap)}</td> },
+    { key: 'price', sort: 'price', label: (t) => t.colPrice, cell: (r) => <td>${r.price?.toFixed(2)}</td> },
+    { key: 'chg', sort: 'change_pct', label: (t) => t.colChange, cell: (r) => (
+      <td style={{ color: r.change_pct > 0 ? UP : r.change_pct < 0 ? DOWN : undefined, fontWeight: 600 }}>{r.change_pct == null ? '—' : `${r.change_pct > 0 ? '+' : ''}${r.change_pct.toFixed(2)}%`}</td>) },
+    { key: 'vol', sort: 'volume', cls: 'sc-hide-sm', label: (t) => t.colVolume, cell: (r) => <td className="sc-hide-sm">{vol(r.volume)}</td> },
+    { key: 'pe', sort: 'pe', cls: 'sc-hide-sm', label: (t) => t.colPe, cell: (r) => <td className="sc-hide-sm">{r.pe != null ? r.pe.toFixed(1) : '—'}</td> },
+    { key: 'high', sort: 'off_high_pct', cls: 'sc-hide-md', label: (t) => t.colHigh, cell: (r) => <td className="sc-hide-md">{pctCell(r.off_high_pct)}</td> },
+  ],
+  performance: [
+    { key: 'symbol', sort: 'symbol', cls: 'l', label: (t) => t.colSymbol, cell: (r) => (
+      <td className="l" style={{ maxWidth: 150 }}>
+        <div style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontWeight: 600, color: ACCENT }}>{r.symbol}</div>
+        <div className="sc-show-sm" style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
+      </td>) },
+    { key: 'name', cls: 'l sc-hide-sm', label: (t) => t.colName, cell: (r) => (
+      <td className="l sc-hide-sm" style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}><span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{r.name}</span></td>) },
+    { key: 'price', sort: 'price', label: (t) => t.colPrice, cell: (r) => <td>${r.price?.toFixed(2)}</td> },
+    { key: 'chg', sort: 'change_pct', label: (t) => t.colChange, cell: (r) => (
+      <td style={{ color: r.change_pct > 0 ? UP : r.change_pct < 0 ? DOWN : undefined, fontWeight: 600 }}>{r.change_pct == null ? '—' : `${r.change_pct > 0 ? '+' : ''}${r.change_pct.toFixed(2)}%`}</td>) },
+    { key: 'range', label: (t, lang) => RANGE_LABEL[lang] || RANGE_LABEL.en, cell: (r) => <td><RangeBar low={r.low52} high={r.high52} price={r.price} /></td> },
+    { key: 'high', sort: 'off_high_pct', label: (t) => t.colHigh, cell: (r) => <td>{pctCell(r.off_high_pct)}</td> },
+    { key: 'low', label: (t, lang) => FROM_LOW[lang] || FROM_LOW.en, cell: (r) => <td>{r.low52 && r.price ? pctCell(((r.price - r.low52) / r.low52) * 100, true) : '—'}</td> },
+    { key: 'vol', sort: 'volume', cls: 'sc-hide-sm', label: (t) => t.colVolume, cell: (r) => <td className="sc-hide-sm">{vol(r.volume)}</td> },
+  ],
+  company: [
+    { key: 'symbol', sort: 'symbol', cls: 'l', label: (t) => t.colSymbol, cell: (r) => (
+      <td className="l" style={{ maxWidth: 150 }}>
+        <div style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontWeight: 600, color: ACCENT }}>{r.symbol}</div>
+        <div className="sc-show-sm" style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
+      </td>) },
+    { key: 'name', cls: 'l sc-hide-sm', label: (t) => t.colName, cell: (r) => (
+      <td className="l sc-hide-sm" style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}><span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{r.name}</span></td>) },
+    { key: 'sector', cls: 'l', label: (t) => t.colSector, cell: (r, x) => <td className="l">{r.sector ? x.sectorName(r.sector) : '—'}</td> },
+    { key: 'industry', cls: 'l sc-hide-md', label: (t, lang) => INDUSTRY[lang] || INDUSTRY.en, cell: (r) => <td className="l sc-hide-md" style={{ maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.industry}>{r.industry || '—'}</td> },
+    { key: 'country', cls: 'l sc-hide-lg', label: (t, lang) => COUNTRY[lang] || COUNTRY.en, cell: (r) => <td className="l sc-hide-lg">{r.country || '—'}</td> },
+    { key: 'ipo', cls: 'sc-hide-sm', label: (t, lang) => IPO[lang] || IPO.en, cell: (r) => <td className="sc-hide-sm">{r.ipo_year || '—'}</td> },
+    { key: 'cap', sort: 'market_cap', label: (t) => t.colCap, cell: (r) => <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{money(r.market_cap)}</td> },
+  ],
+}
+
+const VIEW_LABEL = {
+  en: { group: 'Column set', overview: 'Overview', performance: 'Performance', company: 'Company' },
+  zh: { group: '列组', overview: '概览', performance: '表现', company: '公司' },
+  ja: { group: '列セット', overview: '概要', performance: 'パフォーマンス', company: '企業' },
+  ko: { group: '열 묶음', overview: '개요', performance: '성과', company: '기업' },
+  fr: { group: 'Colonnes', overview: 'Aperçu', performance: 'Performance', company: 'Entreprise' },
+}
+const RANGE_LABEL = { en: '52-week range', zh: '52 周区间', ja: '52週レンジ', ko: '52주 범위', fr: 'Plage 52 sem.' }
+const FROM_LOW = { en: 'From low', zh: '距低点', ja: '安値から', ko: '저점 대비', fr: 'Depuis le bas' }
+const INDUSTRY = { en: 'Industry', zh: '行业', ja: '業種', ko: '산업', fr: 'Industrie' }
+const COUNTRY = { en: 'Country', zh: '国家', ja: '国', ko: '국가', fr: 'Pays' }
+const IPO = { en: 'IPO year', zh: '上市年份', ja: '上場年', ko: '상장 연도', fr: 'Année IPO' }
+
 const CSS = `
 .sc-wrap { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }
 .sc-panel { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 12px; }
@@ -86,16 +160,23 @@ const CSS = `
 .sc-chip.on { background: color-mix(in srgb, ${ACCENT} 14%, transparent); border-color: color-mix(in srgb, ${ACCENT} 55%, transparent); color: ${ACCENT}; font-weight: 600; }
 .sc-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer; padding: 3px 0; }
 .sc-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.sc-table th { text-align: right; font-size: 11px; font-weight: 600; letter-spacing: 0; color: var(--text-muted); padding: 10px 10px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; user-select: none; }
+.sc-table th { position: sticky; top: 112px; z-index: 2; background: var(--bg-secondary); text-align: right; font-size: 11px; font-weight: 600; letter-spacing: 0; color: var(--text-muted); padding: 10px 10px; border-bottom: 1px solid var(--border-primary); white-space: nowrap; user-select: none; }
 .sc-table th.l, .sc-table td.l { text-align: left; }
 .sc-table th.sortable { cursor: pointer; }
 .sc-table th.sortable:hover { color: var(--text-primary); }
-.sc-table td { text-align: right; padding: 9px 10px; border-bottom: 1px solid var(--border-primary); color: var(--text-secondary); white-space: nowrap; }
+.sc-table td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--border-primary); color: var(--text-secondary); white-space: nowrap; }
 .sc-table tr.row { cursor: pointer; transition: background .12s; }
 .sc-table tr.row:hover { background: var(--bg-hover); }
 .sc-table tr.row:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: -2px; }
+.sc-scroll { overflow: visible; }
+.sc-views { display: inline-flex; gap: 2px; padding: 3px; border-radius: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); }
+.sc-views button { padding: 5px 12px; border: none; border-radius: 6px; background: transparent; color: var(--text-secondary); font-size: 12.5px; cursor: pointer; min-height: 0; }
+.sc-views button[aria-pressed="true"] { background: var(--bg-secondary); color: var(--text-primary); font-weight: 600; }
+.sc-views button:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 1px; }
+.sc-range { display: inline-block; position: relative; width: 84px; height: 4px; border-radius: 2px; background: var(--border-primary); vertical-align: middle; }
+.sc-range i { position: absolute; top: -3px; width: 2px; height: 10px; border-radius: 1px; background: var(--text-primary); transform: translateX(-1px); }
 @media (max-width: 1400px) { .sc-hide-lg { display: none; } }
-@media (max-width: 960px) { .sc-wrap { grid-template-columns: minmax(0, 1fr); } .sc-filters { position: static; } .sc-hide-md { display: none; }
+@media (max-width: 960px) { .sc-scroll { overflow-x: auto; } .sc-table th { position: static; } .sc-wrap { grid-template-columns: minmax(0, 1fr); } .sc-filters { position: static; } .sc-hide-md { display: none; }
   .sc-filters:not(.open) { display: none; } .sc-ftoggle { display: inline-flex !important; } }
 @media (max-width: 600px) { .sc-hide-sm { display: none; } .sc-show-sm { display: block !important; max-width: 104px; } .sc-table { font-size: 12px; } .sc-table td, .sc-table th { padding: 9px 5px; } .sc-table th { font-size: 10px; letter-spacing: 0; } }
 .sc-ftoggle, .sc-show-sm { display: none; }
@@ -141,6 +222,7 @@ export default function ScreenerPage({ lang }) {
 
   const set = (patch) => { setF((x) => ({ ...x, ...patch })); setPage(0); setPreset('') }
   const applyPreset = (p) => { setF({ ...EMPTY, ...p.f }); setSort(p.sort); setPage(0); setPreset(p.key) }
+  const [view, setView] = useState('overview')
   const toggleSort = (key) => { setSort(([k, o]) => (k === key ? [k, o === 'desc' ? 'asc' : 'desc'] : [key, key === 'symbol' ? 'asc' : 'desc'])); setPage(0); setPreset('') }
   const open = (r) => {
     useCompareStore.getState().switchMarketAndAddSymbol('us', { code: r.symbol, name: r.name })
@@ -232,54 +314,33 @@ export default function ScreenerPage({ lang }) {
           <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>{t.peNote}</div>
         </aside>
 
-        <section className="sc-panel" style={{ overflow: 'hidden', minWidth: 0 }}>
+        <section className="sc-panel" style={{ overflow: 'clip', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', gap: 12, flexWrap: 'wrap', borderBottom: '1px solid var(--border-primary)' }}>
             <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
               {err ? t.error : !data ? t.loading : total === 0 ? t.none : t.results(page * PAGE + 1, Math.min(total, (page + 1) * PAGE), total)}
             </span>
+            <div className="sc-views" role="group" aria-label={VIEW_LABEL[lang]?.group || VIEW_LABEL.en.group}>
+              {['overview', 'performance', 'company'].map((v) => (
+                <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)}>{(VIEW_LABEL[lang] || VIEW_LABEL.en)[v]}</button>
+              ))}
+            </div>
             <div style={{ display: 'flex', gap: 6, opacity: loading ? 0.6 : 1 }}>
               <button className="sc-chip" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>← {t.prev}</button>
               <button className="sc-chip" disabled={(page + 1) * PAGE >= total} onClick={() => setPage((p) => p + 1)}>{t.next}</button>
             </div>
           </div>
-          <div style={{ overflowX: 'auto', opacity: loading && data ? 0.65 : 1, transition: 'opacity .15s' }}>
+          <div className="sc-scroll" style={{ opacity: loading && data ? 0.65 : 1, transition: 'opacity .15s' }}>
             <table className="sc-table">
               <thead>
-                <tr>
-                  {head('symbol', t.colSymbol, 'l')}
-                  <th className="l sc-hide-sm">{t.colName}</th>
-                  <th className="l sc-hide-lg">{t.colSector}</th>
-                  {head('market_cap', t.colCap)}
-                  {head('price', t.colPrice)}
-                  {head('change_pct', t.colChange)}
-                  {head('volume', t.colVolume, 'sc-hide-sm')}
-                  {head('pe', t.colPe, 'sc-hide-sm')}
-                  {head('off_high_pct', t.colHigh, 'sc-hide-md')}
-                </tr>
+                <tr>{COLS[view].map((c) => (c.sort ? <Fragment key={c.key}>{head(c.sort, c.label(t, lang), c.cls)}</Fragment> : <th key={c.key} className={c.cls}>{c.label(t, lang)}</th>))}</tr>
               </thead>
               <tbody>
                 {!data && !err && Array.from({ length: 10 }, (_, i) => (
-                  <tr key={i}><td colSpan={9}><div className="skeleton" style={{ height: 16, borderRadius: 6 }} /></td></tr>
+                  <tr key={i}><td colSpan={COLS[view].length}><div className="skeleton" style={{ height: 16, borderRadius: 6 }} /></td></tr>
                 ))}
                 {rows.map((r) => (
                   <tr key={r.symbol} className="row" tabIndex={0} onClick={() => open(r)} onKeyDown={(e) => e.key === 'Enter' && open(r)}>
-                    <td className="l" style={{ maxWidth: 150 }}>
-                      <div style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontWeight: 600, color: ACCENT }}>{r.symbol}</div>
-                      <div className="sc-show-sm" style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
-                    </td>
-                    <td className="l sc-hide-sm" style={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      <div style={{ color: 'var(--text-primary)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.name}>{r.name}</div>
-                      {r.industry && <div style={{ fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.industry}>{r.industry}</div>}
-                    </td>
-                    <td className="l sc-hide-lg">{r.sector ? sectorName(r.sector) : '—'}</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{money(r.market_cap)}</td>
-                    <td>${r.price?.toFixed(2)}</td>
-                    <td style={{ color: r.change_pct > 0 ? UP : r.change_pct < 0 ? DOWN : undefined, fontWeight: 600 }}>
-                      {r.change_pct == null ? '—' : `${r.change_pct > 0 ? '+' : ''}${r.change_pct.toFixed(2)}%`}
-                    </td>
-                    <td className="sc-hide-sm">{vol(r.volume)}</td>
-                    <td className="sc-hide-sm">{r.pe != null ? r.pe.toFixed(1) : '—'}</td>
-                    <td className="sc-hide-md">{r.off_high_pct != null ? `${r.off_high_pct.toFixed(1)}%` : '—'}</td>
+                    {COLS[view].map((c) => <Fragment key={c.key}>{c.cell(r, { sectorName })}</Fragment>)}
                   </tr>
                 ))}
               </tbody>

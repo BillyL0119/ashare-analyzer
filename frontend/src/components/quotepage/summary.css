@@ -85,3 +85,15 @@
 .qs-news .by { display: block; margin-top: 2px; font-size: 12px; color: var(--text-muted); }
 
 .qs-err { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary); }
+
+/* The slim price bar that follows the page once the big price has scrolled away (QuoteHeader.jsx MiniBar) */
+.qs-mini {
+  position: fixed; left: 0; right: 0; z-index: 90; display: flex; align-items: baseline; gap: 12px;
+  padding: 8px 24px; background: var(--nav-bg, var(--bg-secondary)); border-bottom: 1px solid var(--border-primary);
+  font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden;
+}
+.qs-mini .sym { font-weight: 600; color: var(--text-primary); }
+.qs-mini .nm { color: var(--text-muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.qs-mini .px { font-weight: 600; color: var(--text-primary); }
+.qs-mini .ch { font-size: 13px; font-weight: 500; }
+@media (max-width: 640px) { .qs-mini { padding: 8px 12px; } .qs-mini .nm { display: none; } }

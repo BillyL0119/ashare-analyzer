@@ -367,7 +367,7 @@ export default function App() {
       }}
     >
       {/* Sticky nav wrapper — primary header + secondary tab bar scroll together */}
-      <div ref={chromeRef} style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0 }}>
+      <div ref={chromeRef} data-bfs-chrome style={{ position: 'sticky', top: 0, zIndex: 100, flexShrink: 0 }}>
       <header
         style={{
           background: 'var(--nav-bg)',
@@ -754,7 +754,8 @@ export default function App() {
       </header>
       {/* Secondary nav: five sections with menus (components/nav) */}
       <SiteNav appTab={appTab} lang={lang} paths={TAB_PATHS} onTabChange={handleTabChange}
-        isMobile={isMobile} scrolled={scrolled} dataSource={t.dataSource} />
+        isMobile={isMobile} scrolled={scrolled} dataSource={t.dataSource}
+        showTicker={!(appTab === 'analysis' && location.pathname === '/')} />
       </div>{/* end sticky nav wrapper */}
 
       <main style={{ padding: isMobile ? '2px 12px' : '2px 24px', flex: 1 }}>
@@ -844,7 +845,7 @@ export default function App() {
         flexShrink: 0,
       }}>
         <div style={{ marginBottom: 4, fontSize: 11, color: 'var(--text-muted)' }}>
-          {FOOTER_NOTE[lang] || FOOTER_NOTE.en}
+          {FOOTER_NOTE[lang] || FOOTER_NOTE.en} {t.dataSource}
         </div>
         <a
           href="mailto:billyl090119@gmail.com"

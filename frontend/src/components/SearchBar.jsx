@@ -11,6 +11,17 @@ import { MARKET_TINT, marketLabel, localName } from '../utils/markets'
 // HK / Japan rows from /api/{hk,jp}/search and /hot, in the shape the rest of the bar uses
 const intlRow = (s, m, lang) => ({ ...s, code: s.symbol, name: localName(s, lang, m), _market: m })
 
+// Recently opened stocks, kept in this browser only (shown first when the search box opens)
+const RECENT_KEY = 'bfs_recent_stocks'
+const RECENT_TITLE = { en: 'Recently viewed', zh: '最近浏览', ja: '最近見た銘柄', ko: '최근 본 종목', fr: 'Consultés récemment' }
+const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent)
+function readRecent() {
+  try { return (JSON.parse(localStorage.getItem(RECENT_KEY) || '[]') || []).slice(0, 6) } catch { return [] }
+}
+function writeRecent(list) {
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 6))) } catch { /* private mode */ }
+}
+
 function PctBadge({ val, market }) {
   if (val == null) return null
   const pos = val >= 0
@@ -42,6 +53,8 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   const [hotUS, setHotUS] = useState([])
   const [hotIntl, setHotIntl] = useState({ hk: [], jp: [] })
   const [hotLoading, setHotLoading] = useState(false)
+  const [recent, setRecent] = useState(readRecent)
+  const inputRef = useRef(null)
   const debounceRef = useRef(null)
   const wrapperRef = useRef(null)
   const hotFetchedRef = useRef(false)
@@ -99,6 +112,34 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
       setSearching(false)
     }
   }, [])
+
+  // Remember the stock being looked at, whichever way it was opened (search, screener, link)
+  const current = selectedSymbols[selectedSymbols.length - 1]
+  useEffect(() => {
+    if (!current?.code) return
+    setRecent((list) => {
+      if (list[0]?.code === current.code && list[0]?._market === market) return list
+      const next = [{ code: current.code, name: current.name || current.code, _market: market },
+        ...list.filter((x) => !(x.code === current.code && x._market === market))].slice(0, 6)
+      writeRecent(next)
+      return next
+    })
+  }, [current?.code, current?.name, market])
+
+  // Ctrl/Cmd+K or "/" jumps to the search box (the phone header only mounts it while open)
+  useEffect(() => {
+    if (fullWidth) return undefined
+    const onKey = (e) => {
+      const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName) || e.target?.isContentEditable
+      if (((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') || (e.key === '/' && !inField && !e.metaKey && !e.ctrlKey)) {
+        e.preventDefault()
+        inputRef.current?.focus()
+        inputRef.current?.select()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [fullWidth])
 
   // Clear a leftover query when the user navigates elsewhere (e.g. opens a stock from a card).
   const { pathname } = useLocation()
@@ -195,6 +236,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
     <div ref={wrapperRef} style={{ position: 'relative', width: fullWidth ? '100%' : 300 }}>
       <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
         <input
+          ref={inputRef}
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -224,6 +266,11 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
         {searching && (
           <span style={{ color: 'var(--text-muted)', fontSize: 11, position: 'absolute', right: 14 }}>{t.searching}</span>
         )}
+        {!fullWidth && !focused && !query && !isFull && (
+          <kbd className="bfs-kbd" aria-hidden="true" style={{ position: 'absolute', right: 12, pointerEvents: 'none' }}>
+            {IS_MAC ? '⌘K' : 'Ctrl K'}
+          </kbd>
+        )}
       </div>
 
       {/* Hot stocks panel */}
@@ -232,6 +279,28 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
           <div style={{ padding: '8px 12px 6px', fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.4px', borderBottom: '1px solid var(--border-primary)' }}>
             {t.sbHot}
           </div>
+          {recent.length > 0 && (
+            <div style={{ borderBottom: '1px solid var(--border-primary)' }}>
+              <div style={{ padding: '5px 12px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary, var(--bg-secondary))' }}>
+                {RECENT_TITLE[lang] || RECENT_TITLE.en}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '8px 12px' }}>
+                {recent.map((r) => {
+                  const added = selectedSymbols.find((sel) => sel.code === r.code)
+                  return (
+                    <button
+                      key={`${r._market}-${r.code}`} type="button" className="bfs-chip"
+                      disabled={Boolean(added) || isFull}
+                      onClick={() => handleSelect(r)}
+                      title={r.name}
+                    >
+                      {r._market === 'cn' ? r.name : r.code}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
           {hotLoading ? (
             <div style={{ padding: '12px 16px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
               {t.loading}

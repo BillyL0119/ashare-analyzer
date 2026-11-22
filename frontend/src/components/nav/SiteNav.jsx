@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import classStrings from '../classes/classStrings'
 import Chevron from './Chevron'
 import Icon from '../Icon'
+import MarketTicker from './MarketTicker'
 import navStrings from './navStrings'
 import { ICONS, SECTIONS, itemLabel, sectionOf } from './navItems'
 import './nav.css'
@@ -16,7 +17,7 @@ const focusLink = (box, which) => { const l = menuLinks(box); (which === 'last' 
 // Second header row of the desktop site: five sections instead of one tab per page.
 // A section with several pages opens a menu by click, tap or keyboard (a mouse can also just rest on it);
 // Classes is a plain link. The pages are real links, so they can be opened in a new tab.
-export default function SiteNav({ appTab, lang, paths, onTabChange, isMobile, scrolled, dataSource }) {
+export default function SiteNav({ appTab, lang, paths, onTabChange, isMobile, scrolled, dataSource, showTicker }) {
   const s = navStrings(lang)
   const { pathname } = useLocation()
   // The open menu belongs to the page it was opened on, so moving to another page closes it
@@ -139,7 +140,7 @@ export default function SiteNav({ appTab, lang, paths, onTabChange, isMobile, sc
     <nav
       ref={navRef}
       aria-label={s.label}
-      className={`bfs-site-nav${isMobile ? ' is-mobile' : ''}`}
+      className={`bfs-site-nav${isMobile ? ' is-mobile' : ''}${showTicker && !isMobile ? ' with-ticker' : ''}`}
       style={{ background: scrolled ? 'var(--nav-bg)' : 'var(--nav-bg-dim)' }}
       onBlur={onBlur}
     >
@@ -194,6 +195,7 @@ export default function SiteNav({ appTab, lang, paths, onTabChange, isMobile, sc
           )
         })}
       </div>
+      {showTicker && !isMobile && <MarketTicker lang={lang} />}
       {dataSource && !isMobile && <div className="bfs-site-nav-source">{dataSource}</div>}
     </nav>
   )

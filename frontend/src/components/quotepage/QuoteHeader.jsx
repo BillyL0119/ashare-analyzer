@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { useQuoteLive } from './useQuoteApi'
 import { extendedSessionNow } from './session'
 import { isNum, fmtPrice, fmtSigned, fmtSignedPct, fmtShortDate, changeColor } from './format'
@@ -17,8 +18,44 @@ function statusLine(d, lang, S) {
   return d.as_of_text || ''
 }
 
+/** A slim bar under the site header with the ticker, price and change. It appears once the big price has
+ * scrolled out of view, so the number stays on screen while reading the rest of the page (as on Yahoo and
+ * TradingView). Same data as the header, so it is hidden from screen readers. */
+function MiniBar({ d, lang, targetRef }) {
+  const [state, setState] = useState({ show: false, top: 0 })
+  useEffect(() => {
+    const check = () => {
+      const chrome = document.querySelector('[data-bfs-chrome]')
+      const top = chrome ? Math.round(chrome.getBoundingClientRect().bottom) : 0
+      const r = targetRef.current?.getBoundingClientRect()
+      const show = Boolean(r && r.bottom < top)
+      setState((s) => (s.show === show && s.top === top ? s : { show, top }))
+    }
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    window.addEventListener('resize', check)
+    return () => { window.removeEventListener('scroll', check); window.removeEventListener('resize', check) }
+  }, [targetRef])
+  if (!state.show) return null
+  const digits = isNum(d.price) && Math.abs(d.price) < 1 ? 4 : 2
+  const color = changeColor(d.change_pct)
+  return (
+    <div className="qs-mini" style={{ top: state.top }} aria-hidden="true">
+      <span className="sym">{d.symbol}</span>
+      <span className="nm">{d.name}</span>
+      <span className="px">{isNum(d.price) ? fmtPrice(d.price, lang, digits) : '—'}</span>
+      {isNum(d.change_pct) && (
+        <span className="ch" style={{ color }}>
+          {isNum(d.change) ? `${fmtSigned(d.change, digits)} ` : ''}({fmtSignedPct(d.change_pct)})
+        </span>
+      )}
+    </div>
+  )
+}
+
 export function QuoteHeaderView({ d, lang }) {
   const S = summaryStrings(lang)
+  const priceRef = useRef(null)
   const digits = isNum(d.price) && Math.abs(d.price) < 1 ? 4 : 2
   const color = changeColor(d.change_pct)
   const ext = d.extended
@@ -27,7 +64,7 @@ export function QuoteHeaderView({ d, lang }) {
     <header className="qs-head">
       <h2 className="qs-name">{d.name || d.symbol}<span className="sym">{d.symbol}</span></h2>
       <div className="qs-exch">{fill(S.exchangeLine, { exchange: d.exchange || '', currency: d.currency || 'USD' })}</div>
-      <div className="qs-price-row">
+      <div className="qs-price-row" ref={priceRef}>
         <span className="qs-price">{isNum(d.price) ? fmtPrice(d.price, lang, digits) : '—'}</span>
         {isNum(d.change_pct) && (
           <span className="qs-chg" style={{ color }}>
@@ -35,6 +72,7 @@ export function QuoteHeaderView({ d, lang }) {
           </span>
         )}
       </div>
+      <MiniBar d={d} lang={lang} targetRef={priceRef} />
       <div className="qs-status">{statusLine(d, lang, S)}</div>
       {ext && isNum(ext.price) && (
         <div className="qs-ext">

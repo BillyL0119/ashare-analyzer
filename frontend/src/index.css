@@ -333,3 +333,19 @@ code {
 
 /* Daily News: the filter-group divider wraps to the start of a line on phones */
 @media (max-width: 600px) { .dn-sep { display: none; } }
+
+/* Keyboard hint inside the search box, and the "recently viewed" chips under it */
+.bfs-kbd {
+  font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; line-height: 1;
+  padding: 3px 6px; border-radius: 5px; color: var(--text-muted);
+  background: var(--bg-tertiary, var(--bg-hover)); border: 1px solid var(--border-primary);
+}
+.bfs-chip {
+  font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; padding: 4px 9px; min-height: 0;
+  border-radius: 6px; cursor: pointer; color: var(--text-secondary);
+  background: var(--bg-tertiary, var(--bg-hover)); border: 1px solid var(--border-primary);
+  transition: background-color 0.12s, color 0.12s;
+}
+.bfs-chip:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-primary); }
+.bfs-chip:disabled { opacity: 0.5; cursor: default; }
+.bfs-chip:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }

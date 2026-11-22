@@ -115,3 +115,19 @@
 .bfs-btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-primary); }
 .bfs-btn-secondary:hover { background: var(--bg-hover); }
 .bfs-btn-primary:active, .bfs-btn-secondary:active { transform: scale(0.98); }
+
+/* US index levels at the right of the nav row (MarketTicker). Narrow windows keep the data credit instead. */
+.bfs-site-nav-ticker {
+  margin-left: auto; display: flex; align-items: center; gap: 18px; min-width: 0; overflow: hidden;
+  font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.bfs-site-nav.with-ticker .bfs-site-nav-source { display: none; }
+.bfs-tick-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); flex: none; }
+.bfs-tick-dot.is-live { background: var(--green-bright, #4cc38a); }
+.bfs-tick { display: inline-flex; align-items: baseline; gap: 6px; }
+.bfs-tick .n { color: var(--text-muted); }
+.bfs-tick .p { color: var(--text-primary); font-weight: 500; }
+@media (max-width: 1179px) {
+  .bfs-site-nav-ticker { display: none; }
+  .bfs-site-nav.with-ticker .bfs-site-nav-source { display: block; }
+}
