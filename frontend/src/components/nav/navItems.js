@@ -4,12 +4,13 @@ import casesStrings from '../cases/casesStrings'
 import diagramNav from '../diagrams/diagramNav'
 import governorStrings from '../governor/governorStrings'
 import classStrings from '../classes/classStrings'
+import factorStrings from '../factors/factorStrings'
 
 // The desktop site's sections, split the same way as the phone tabs (行情 / 学习 / AI老师 / 模拟盘):
 // the Fed chair game sits with economics, the time machine with trading. Classes get their own entry
 // for teachers, and universities and careers theirs. Items are App.jsx tab keys (see TAB_PATHS).
 export const SECTIONS = [
-  { key: 'markets',  items: ['analysis', 'screener', 'heatmap', 'news', 'macro', 'bank_views'] },
+  { key: 'markets',  items: ['analysis', 'screener', 'heatmap', 'news', 'macro', 'factors', 'bank_views'] },
   { key: 'practice', items: ['paper', 'time_machine'] },
   { key: 'learn',    items: ['study', 'cases', 'diagrams', 'governor', 'ai_teacher'] },
   { key: 'class',    items: ['class'] },
@@ -18,7 +19,7 @@ export const SECTIONS = [
 
 // Line icon for each page (components/Icon.jsx)
 export const ICONS = {
-  analysis: 'chart', screener: 'filter', heatmap: 'grid', news: 'news', macro: 'calendar', bank_views: 'quote',
+  analysis: 'chart', screener: 'filter', heatmap: 'grid', news: 'news', macro: 'calendar', factors: 'curves', bank_views: 'quote',
   paper: 'cash', time_machine: 'clock', study: 'book', cases: 'file', diagrams: 'curves', governor: 'landmark',
   ai_teacher: 'tutor', class: 'users', universities: 'globe', career: 'briefcase',
 }
@@ -32,6 +33,7 @@ export function itemLabel(key, lang) {
     case 'heatmap':      return t.tabHeatmap
     case 'news':         return t.tabNews
     case 'macro':        return t.tabMacro
+    case 'factors':      return factorStrings(lang).nav
     case 'bank_views':   return t.tabBankViews
     case 'paper':        return t.tabPaper
     case 'time_machine': return tmStrings(lang).nav

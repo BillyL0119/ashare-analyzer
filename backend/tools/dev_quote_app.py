@@ -24,7 +24,7 @@ import httpx  # noqa: E402
 from fastapi import FastAPI, Request, Response  # noqa: E402
 
 from routers import (  # noqa: E402
-    events_calendar, fundamentals, quote_history, quote_holders, quote_stats, quote_summary, screener,
+    events_calendar, factors, fundamentals, quote_history, quote_holders, quote_stats, quote_summary, screener,
     us_market, us_stocks,
 )
 
@@ -40,6 +40,7 @@ app.include_router(quote_stats.router, prefix="/api/us/quote")
 app.include_router(quote_history.router, prefix="/api/us/quote")
 app.include_router(quote_holders.router, prefix="/api/us/quote")
 app.include_router(events_calendar.router, prefix="/api/events")
+app.include_router(factors.router, prefix="/api/us/factors")
 
 _client = httpx.AsyncClient(timeout=40, follow_redirects=False)
 _PASS_HEADERS = ("accept", "accept-language", "user-agent")

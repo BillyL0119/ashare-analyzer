@@ -1,0 +1,27 @@
+.fl { display: flex; flex-direction: column; gap: 20px; max-width: 1100px; margin: 0 auto; padding: 8px 0 40px; }
+.fl-title { margin: 0; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+.fl-intro { margin: 6px 0 0; max-width: 70ch; font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
+.fl-def { margin: 10px 0 0; font-size: 13px; color: var(--text-secondary); }
+.fl-chart { height: 340px; margin-top: 8px; }
+.fl-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--text-secondary); }
+.fl-legend i { display: inline-block; width: 14px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 6px; }
+.fl-table-wrap { overflow-x: auto; margin-top: 14px; }
+.fl-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.fl-table th, .fl-table td { padding: 8px 10px; text-align: right; border-top: 1px solid var(--border-primary); white-space: nowrap; }
+.fl-table th:first-child, .fl-table td:first-child { text-align: left; }
+.fl-table thead th { border-top: none; color: var(--text-muted); font-weight: 500; font-size: 12px; }
+.fl-table td:first-child { color: var(--text-secondary); }
+.fl-table .strong { color: var(--text-primary); font-weight: 600; }
+.fl-note { margin: 14px 0 0; max-width: 75ch; font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+.fl-note b { color: var(--text-primary); font-weight: 600; }
+.fl-sub { margin: 14px 0 4px; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.fl-checks { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 8px 0 12px; font-size: 13px; color: var(--text-secondary); }
+.fl-checks label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.fl-sym { background: none; border: none; padding: 0; font: inherit; color: var(--accent-blue); cursor: pointer; font-weight: 600; }
+.fl-sym:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 3px; }
+.fl-name { color: var(--text-muted); font-size: 12px; margin-left: 8px; max-width: 220px; display: inline-block; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+.fl-read { margin: 8px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.65; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px; }
+.fl-cov { font-size: 12px; color: var(--text-muted); margin: 10px 0 0; }
+.fl-err { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-secondary); }
+@media (max-width: 640px) { .fl-chart { height: 260px; } }
+.fl-rank th:nth-child(2), .fl-rank td:nth-child(2) { text-align: left; }

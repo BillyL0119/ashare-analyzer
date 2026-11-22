@@ -283,6 +283,21 @@ def daily_history(sym: str) -> list:
     return cached(f"hist_{sym}", 6 * 3600, fetch, disk=True) or []
 
 
+def cached_history(sym: str) -> list:
+    """The ten-year daily bars if they are already in memory or on disk, of any age, else []. Never fetches:
+    the factor lab reads hundreds of tickers and must not start hundreds of Nasdaq calls (the warm-up fills them)."""
+    with _lock:
+        hit = _mem.get(f"hist_{sym}")
+    if hit:
+        return hit[1] or []
+    path = os.path.join(_CACHE_DIR, f"nq_{re.sub(r'[^A-Za-z0-9_.-]', '_', f'hist_{sym}')}.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f) or []
+    except (OSError, ValueError):
+        return []
+
+
 def _nasdaq_dividends(sym: str):
     """Nasdaq's dividend table as paid, oldest first; [] when it lists none (it has none for NYSE listings such
     as KO or JNJ, nor for ETFs), None when the request failed."""

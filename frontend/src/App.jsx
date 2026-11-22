@@ -29,6 +29,7 @@ const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
 const ScreenerPage       = lazy(() => import('./components/ScreenerPage'))
 const AdminPage          = lazy(() => import('./components/AdminPage'))
 const HeatmapPage        = lazy(() => import('./components/HeatmapPage'))
+const FactorLab = lazy(() => import('./components/factors/FactorLab'))   // /factors: rank stocks by a rule and back-test it
 const EventsCalendarPage = lazy(() => import('./components/events/EventsCalendarPage'))   // /macro: economic, earnings, IPO, split and dividend calendar
 const AITeacherPage      = lazy(() => import('./components/AITeacherPage'))
 const PrivacyPage        = lazy(() => import('./components/PrivacyPage'))
@@ -64,6 +65,7 @@ const TAB_PATHS = {
   heatmap:      '/heatmap',
   news:         '/news',
   macro:        '/macro',
+  factors:      '/factors',
   paper:        '/paper',
   time_machine: '/time-machine',
   cases:        '/cases',
@@ -248,6 +250,7 @@ export default function App() {
       screener:     'BestFriendStock | 美股选股器 - US Stock Screener',
       heatmap:      'BestFriendStock | 市场热力图 - 美股与A股板块涨跌全景',
       macro:        'BestFriendStock | 财经日历 - 经济数据、财报、新股上市、拆股与分红',
+      factors:      'BestFriendStock | 因子实验室 - 用十年真实价格检验动量、低波动等选股规则',
       admin:        'BestFriendStock | Admin',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
@@ -267,6 +270,7 @@ export default function App() {
       screener:     'Best Friend Stock | US Stock Screener',
       heatmap:      'Best Friend Stock | Market Heatmap',
       macro:        'Best Friend Stock | Calendar: economic data, earnings, IPOs, splits and dividends',
+      factors:      'Best Friend Stock | Factor lab: test momentum and low-volatility rules on ten years of prices',
       admin:        'Best Friend Stock | Admin',
       ai_teacher:   'Best Friend Stock | AI Economics Teacher',
     }
@@ -784,6 +788,8 @@ export default function App() {
             <HeatmapPage lang={lang} />
           ) : appTab === 'macro' ? (
             <EventsCalendarPage lang={lang} />
+          ) : appTab === 'factors' ? (
+            <FactorLab lang={lang} />
           ) : appTab === 'admin' ? (
             <AdminPage lang={lang} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'ai_teacher' ? (
