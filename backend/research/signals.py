@@ -22,6 +22,7 @@ from research.portfolio_study import STEPS, choose, composite, evaluate, sector_
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "quant")
 TOP_N = 50
+SHORT_HIGH_PCT = 10        # short interest at or above this share of shares outstanding is flagged as high
 KEEP_PCT = 0.3
 
 
@@ -93,6 +94,14 @@ def build():
     adj, ends = latest["adj"], latest["ends"]
     i = ends[-1]
     ret_1y = adj[i] / adj[max(0, i - 252)] - 1
+    # short interest (FINRA, public): share of shares outstanding and days to cover, shown as a risk column only
+    from research.extra_signals import latest_short_settlement, short_interest_matrices
+    sm = short_interest_matrices(P.dates[ends], P.tickers)
+    with np.errstate(all="ignore"):
+        short_pct = sm["short_qty"][-1] / (latest["mc"] / latest["close_unadj"]) * 100
+    days_cover = sm["days_to_cover"][-1]
+    as_of_str = f"{str(latest['date'])[:4]}-{str(latest['date'])[4:6]}-{str(latest['date'])[6:]}"
+    short_date = latest_short_settlement(as_of_str)
     rows = []
     for rank, j in enumerate(order, 1):
         ey = raw["earnings_yield"][j]
@@ -106,7 +115,9 @@ def build():
             "metrics": {"pe": r(1 / ey, 1) if ey and ey > 0 else None,
                         "fcf_yield": r(raw["fcf_yield"][j] * 100, 1), "roe": r(raw["roe"][j] * 100, 1),
                         "share_change": r(raw["share_issuance"][j] * 100, 1),
-                        "gross_profit": r(raw["gross_profit"][j] * 100, 1), "return_1y": r(ret_1y[j] * 100, 1)},
+                        "gross_profit": r(raw["gross_profit"][j] * 100, 1), "return_1y": r(ret_1y[j] * 100, 1),
+                        "short_pct": r(short_pct[j], 1) if 0 <= short_pct[j] < 200 else None,
+                        "days_to_cover": r(days_cover[j], 1)},
         })
 
     lv, dates = np.array(trend["levels"]), trend["dates"]
@@ -143,6 +154,8 @@ def build():
         "portfolio": report,
         "validation": validation(),
         "live": live,
+        "short_interest": {"settlement_date": short_date, "high_pct": SHORT_HIGH_PCT,
+                           "source": "FINRA equity short interest (public), counted 14 days after settlement"},
     }
 
 

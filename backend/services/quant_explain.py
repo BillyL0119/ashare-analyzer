@@ -45,7 +45,7 @@ FACTOR_PLAIN = {
 
 
 def cache_key(sig: dict) -> str:
-    return f"v3:{sig.get('as_of')}:{sig.get('generated_at')}"
+    return f"v4:{sig.get('as_of')}:{sig.get('generated_at')}"
 
 
 def facts(sig: dict) -> str:
@@ -73,6 +73,14 @@ def facts(sig: dict) -> str:
         sectors[r["sector"]] = sectors.get(r["sector"], 0) + 1
     lines.append("Sectors among the model's top 50: "
                  + ", ".join(f"{k} {n}" for k, n in sorted(sectors.items(), key=lambda x: -x[1])) + ".")
+    si = sig.get("short_interest") or {}
+    high = [r["ticker"] for r in top if (r.get("metrics") or {}).get("short_pct") is not None
+            and r["metrics"]["short_pct"] >= si.get("high_pct", 10)]
+    if si.get("settlement_date"):
+        lines.append(f"Short interest (public FINRA data, {si['settlement_date']}): {len(high)} of the model's top 50 have "
+                     f"{si.get('high_pct', 10)}% or more of their shares sold short"
+                     + (f" ({', '.join(high[:5])})" if high else "")
+                     + "; heavily shorted stocks tend to swing more. It was tested as a signal and not added to the model.")
     lines.append(f"The first {TOP_LISTED} by the model rule: "
                  + "; ".join(f"#{r['rank']} {r['ticker']} ({r['name']}, {r['sector']})" for r in top[:TOP_LISTED]) + ".")
     if v:

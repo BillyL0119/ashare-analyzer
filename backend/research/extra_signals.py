@@ -173,3 +173,12 @@ def short_interest_matrices(month_dates, tickers, max_age_months=2):
             dtc[k, c[newer]] = d.daysToCoverQuantity.values[newer]
             stamp[k, c[newer]] = n
     return {"short_qty": qty, "days_to_cover": dtc}
+
+
+def latest_short_settlement(as_of: str):
+    """Settlement date (YYYY-MM-DD) of the newest FINRA file counted as known on `as_of`, or None."""
+    folder = os.path.join(RAW, "finra")
+    cut = pd.Timestamp(as_of) - pd.Timedelta(days=SHORT_LAG_DAYS)
+    dates = [pd.Timestamp(f[4:12]) for f in os.listdir(folder) if f.startswith("shrt")] if os.path.isdir(folder) else []
+    known = [d for d in dates if d < cut]
+    return max(known).strftime("%Y-%m-%d") if known else None

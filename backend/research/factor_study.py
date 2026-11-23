@@ -335,7 +335,7 @@ def run(return_latest=False, extra=False):
         k = len(ends) - 1
         liquid, large, signed, raw_f, mc = inputs(k, None)
         latest = {"date": int(P.dates[ends[k]]), "large": large, "signed": signed, "raw": raw_f, "mc": mc,
-                  "panel": P, "adj": adj, "ends": ends}
+                  "panel": P, "adj": adj, "ends": ends, "close_unadj": raw[ends[k]]}
         return books, month_scores, time.time() - t0, latest
     return books, month_scores, time.time() - t0
 

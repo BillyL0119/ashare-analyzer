@@ -53,3 +53,6 @@
 .qd-chip { cursor: default; font-variant-numeric: tabular-nums; }
 .qd-list { margin: 6px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.7; color: var(--text-secondary); }
 .qd-list b { color: var(--text-primary); font-weight: 500; font-variant-numeric: tabular-nums; margin-right: 6px; }
+.qd-table td.qd-high { color: var(--red-bright); }
+.qd-flag { display: inline-block; margin-left: 6px; padding: 0 5px; border: 1px solid currentColor; border-radius: 999px;
+  font-size: 10px; line-height: 15px; vertical-align: 1px; }

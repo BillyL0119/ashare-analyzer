@@ -32,7 +32,9 @@ const S = {
     notFound: '不在大盘股池里：市值不在前 1000，或股价低于 5 美元、成交额不足，或者代码有误。',
     keepNote: (n) => `模型组合是前 50 名，每季度调整一次。已经持有的股票，只要还在前 ${n} 名内就不用换，可以少交易。`,
     colRank: '排名', colStock: '股票', colSector: '行业', colCap: '市值 $B', colScore: '综合分',
-    colPe: '市盈率', colFcf: 'FCF 收益率', colRoe: 'ROE', colShares: '股本变化', colRet: '1 年涨跌',
+    colPe: '市盈率', colFcf: 'FCF 收益率', colRoe: 'ROE', colShares: '股本变化', colRet: '1 年涨跌', colShort: '卖空比例',
+    shortTip: (d) => `回补天数 ${d} 天（卖空股数 ÷ 日均成交量）`, shortHigh: '高',
+    shortNote: (date, hi) => `卖空比例 = 被卖空的股数 ÷ 总股本，来自 FINRA 公开数据（${date} 结算）。达到 ${hi}% 标为“高”：这类股票通常波动更大，也可能出现轧空暴涨；它只是风险提示，不代表一定会跌。我们测试过把它当选股信号，没有效果，所以没加入模型。`,
     factorPct: '因子分位（0–100，行业内，越高越好）', groupFactors: '因子分位（0–100）', groupMetrics: '实际数值',
     credTitle: '这套方法过去表现如何', credSub: (y) => `${y}–2026 年向前滚动检验：每年只用当时之前的数据挑因子，扣除交易成本，大盘股池`,
     bench: (cw, dd) => `对照：买入市值加权大盘股（约等于标普 500）每年 ${cw}%，最大回撤 ${dd}`,
@@ -83,7 +85,9 @@ const S = {
     notFound: 'Not in the large-cap universe: not among the 1000 largest, under $5, too thinly traded, or a typo.',
     keepNote: (n) => `The model portfolio is the top 50, reviewed quarterly. A stock already held can stay while it is in the top ${n}, which saves trading.`,
     colRank: 'Rank', colStock: 'Stock', colSector: 'Sector', colCap: 'Cap $B', colScore: 'Score',
-    colPe: 'P/E', colFcf: 'FCF yield', colRoe: 'ROE', colShares: 'Share change', colRet: '1-year',
+    colPe: 'P/E', colFcf: 'FCF yield', colRoe: 'ROE', colShares: 'Share change', colRet: '1-year', colShort: 'Short interest',
+    shortTip: (d) => `${d} days to cover (shares short ÷ average daily volume)`, shortHigh: 'high',
+    shortNote: (date, hi) => `Short interest = shares sold short ÷ shares outstanding, from FINRA’s public data (settled ${date}). ${hi}% or more is marked “high”: such stocks usually swing more and can be squeezed upwards; a risk flag, not a forecast of a fall. Tested as a ranking signal it did not help, so the model does not use it.`,
     factorPct: 'Factor percentiles (0–100 within sector, higher is better)', groupFactors: 'Factor percentiles (0–100)', groupMetrics: 'Actual figures',
     credTitle: 'How this method has done', credSub: (y) => `Walk-forward ${y}–2026: factors chosen each year from earlier data only, after trading costs, large caps`,
     bench: (cw, dd) => `Benchmark: cap-weighted large caps (about the S&P 500) ${cw}% a year, worst drawdown ${dd}`,
@@ -188,6 +192,8 @@ function Ranking({ d, L, F, zh }) {
   const navigate = useNavigate()
   const factors = d.config.chosen_factors
   const keepN = d.ranking.filter((r) => r.keep).length
+  const si = d.short_interest || {}
+  const hi = si.high_pct ?? 10
   const query = q.trim().toUpperCase()
   const rows = useMemo(() => {
     if (query) return d.ranking.filter((r) => r.ticker === query || r.ticker.startsWith(query) || (r.name || '').toUpperCase().includes(query)).slice(0, 30)
@@ -222,14 +228,14 @@ function Ranking({ d, L, F, zh }) {
               <tr className="qd-group">
                 <th colSpan={5} aria-hidden="true" />
                 <th colSpan={factors.length} scope="colgroup" title={L.factorPct}>{L.groupFactors}</th>
-                <th colSpan={5} scope="colgroup">{L.groupMetrics}</th>
+                <th colSpan={6} scope="colgroup">{L.groupMetrics}</th>
               </tr>
               <tr>
                 <th scope="col">{L.colRank}</th><th scope="col">{L.colStock}</th><th scope="col">{L.colSector}</th>
                 <th scope="col">{L.colCap}</th><th scope="col">{L.colScore}</th>
                 {factors.map((f) => <th key={f} scope="col" title={L.factorPct}>{F[f] || f}</th>)}
                 <th scope="col">{L.colPe}</th><th scope="col">{L.colFcf}</th><th scope="col">{L.colRoe}</th>
-                <th scope="col">{L.colShares}</th><th scope="col">{L.colRet}</th>
+                <th scope="col">{L.colShares}</th><th scope="col">{L.colShort}</th><th scope="col">{L.colRet}</th>
               </tr>
             </thead>
             <tbody>
@@ -248,6 +254,11 @@ function Ranking({ d, L, F, zh }) {
                   <td>{pct(r.metrics.fcf_yield)}</td>
                   <td>{pct(r.metrics.roe)}</td>
                   <td>{isNum(r.metrics.share_change) ? `${signed(r.metrics.share_change)}%` : '—'}</td>
+                  <td className={isNum(r.metrics.short_pct) && r.metrics.short_pct >= hi ? 'qd-high' : ''}
+                    title={isNum(r.metrics.days_to_cover) ? L.shortTip(r.metrics.days_to_cover) : undefined}>
+                    {isNum(r.metrics.short_pct) ? pct(r.metrics.short_pct) : '—'}
+                    {isNum(r.metrics.short_pct) && r.metrics.short_pct >= hi && <span className="qd-flag">{L.shortHigh}</span>}
+                  </td>
                   <td style={{ color: changeColor(r.metrics.return_1y) }}>{isNum(r.metrics.return_1y) ? fmtSignedPct(r.metrics.return_1y) : '—'}</td>
                 </tr>
               ))}
@@ -256,6 +267,7 @@ function Ranking({ d, L, F, zh }) {
         </div>
       )}
       <p className="qd-foot">{L.factorPct}</p>
+      {si.settlement_date && <p className="qd-foot">{L.shortNote(si.settlement_date, hi)}</p>}
     </section>
   )
 }

@@ -40,6 +40,7 @@ def main():
     if not os.path.exists(state):           # a new or wiped Mac: carry on the live record from the server's backup
         os.makedirs(os.path.dirname(state), exist_ok=True)
         subprocess.run(["scp", "-q", *ssh, f"{SERVER}:{REMOTE_DIR}/live_state.json", state], capture_output=True)
+    subprocess.run([PY, os.path.join(HERE, "finra_short_sync.py")], check=False)   # new FINRA files only
     step([PY, "-m", "research.signals"], cwd=BACKEND)
     if a.no_upload:
         return
