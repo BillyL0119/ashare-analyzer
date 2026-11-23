@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { searchStocks, searchUSStocks, getHotStocks, searchIntlStocks, getIntlHot } from '../api/stockApi'
 import useCompareStore from '../store/compareStore'
 import useLangStore from '../store/langStore'
@@ -59,7 +59,8 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   const wrapperRef = useRef(null)
   const hotFetchedRef = useRef(false)
 
-  const { addSymbol, switchMarketAndAddSymbol, selectedSymbols, market } = useCompareStore()
+  const { switchMarketAndAddSymbol, selectedSymbols, market } = useCompareStore()
+  const navigate = useNavigate()
   const lang = useLangStore((s) => s.lang)
   const t = T[lang] || T.en
   const langRef = useRef(lang); langRef.current = lang
@@ -165,13 +166,13 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  // Picking a stock opens that stock's page, from any page (comparing is done from the stock page itself)
   const handleSelect = (stock) => {
     const targetMarket = stock._market || market
-    if (targetMarket !== market) {
-      switchMarketAndAddSymbol(targetMarket, stock)
-    } else {
-      addSymbol(stock)
-    }
+    const { _market, ...clean } = stock
+    void _market
+    switchMarketAndAddSymbol(targetMarket, clean)
+    navigate(`/stock/${targetMarket}/${encodeURIComponent(stock.code)}`)
     trackSearch(stock.code)
     setQuery('')
     setOpen(false)
@@ -190,7 +191,6 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') { setOpen(false); e.target.blur(); return }
     if (!query.trim() || !results.length) return
-    const pickable = (s) => !isFull && !selectedSymbols.find((sel) => sel.code === s.code)
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault()
       setOpen(true)
@@ -198,11 +198,10 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
       setActive((i) => (i + step + results.length) % results.length)
     } else if (e.key === 'Enter') {
       const s = results[active >= 0 ? active : 0]
-      if (s && pickable(s)) { e.preventDefault(); handleSelect(s) }
+      if (s) { e.preventDefault(); handleSelect(s); e.target.blur() }
     }
   }
 
-  const isFull = selectedSymbols.length >= 4
   const showHot = open && !query.trim()
   const showResults = open && query.trim() && results.length > 0
   const showNoResults = open && query.trim() && !searching && results.length === 0
@@ -239,7 +238,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
           ref={inputRef}
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => { setQuery(e.target.value); setOpen(true) }}
           onFocus={handleFocus}
           onBlur={() => setFocused(false)}
           onKeyDown={handleKeyDown}
@@ -248,8 +247,7 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
           aria-autocomplete="list"
           aria-activedescendant={showResults && active >= 0 ? `bfs-search-opt-${active}` : undefined}
           autoFocus={autoFocus}
-          placeholder={isFull ? t.searchFull : t.searchPlaceholder}
-          disabled={isFull}
+          placeholder={t.searchPlaceholder}
           style={{
             width: '100%',
             padding: '8px 14px',
@@ -259,14 +257,14 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
             color: 'var(--text-primary)',
             fontSize: 13,
             outline: 'none',
-            cursor: isFull ? 'not-allowed' : 'text',
+            cursor: 'text',
             letterSpacing: '0.15px',
           }}
         />
         {searching && (
           <span style={{ color: 'var(--text-muted)', fontSize: 11, position: 'absolute', right: 14 }}>{t.searching}</span>
         )}
-        {!fullWidth && !focused && !query && !isFull && (
+        {!fullWidth && !focused && !query && (
           <kbd className="bfs-kbd" aria-hidden="true" style={{ position: 'absolute', right: 12, pointerEvents: 'none' }}>
             {IS_MAC ? '⌘K' : 'Ctrl K'}
           </kbd>
@@ -286,11 +284,9 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '8px 12px' }}>
                 {recent.map((r) => {
-                  const added = selectedSymbols.find((sel) => sel.code === r.code)
                   return (
                     <button
                       key={`${r._market}-${r.code}`} type="button" className="bfs-chip"
-                      disabled={Boolean(added) || isFull}
                       onClick={() => handleSelect(r)}
                       title={r.name}
                     >
@@ -313,13 +309,12 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                     {m === 'us' ? t.marketUS : m === 'cn' ? t.marketCN : marketLabel(m, lang)}
                   </div>
                   {(m === 'us' ? hotUS : m === 'cn' ? hotCN : hotIntl[m].map((x) => intlRow(x, m, lang))).map((s, i) => {
-                    const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
                     return (
                       <div
                         key={s.code}
-                        onClick={() => !alreadyAdded && !isFull && handleSelect({ ...s, _market: m })}
-                        style={rowStyle(alreadyAdded || isFull)}
-                        onMouseEnter={(e) => { if (!alreadyAdded && !isFull) e.currentTarget.style.background = 'var(--bg-hover)' }}
+                        onClick={() => handleSelect({ ...s, _market: m })}
+                        style={rowStyle(false)}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover)' }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                       >
                         <span style={{ color: 'var(--text-muted)', fontSize: 10, width: 14, flexShrink: 0 }}>{i + 1}</span>
@@ -342,7 +337,6 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
       {showResults && (
         <div role="listbox" style={{ ...dropdownStyle, maxHeight: 320, overflowY: 'auto' }}>
           {results.map((s, i) => {
-            const alreadyAdded = selectedSymbols.find((sel) => sel.code === s.code)
             const tint = MARKET_TINT[s._market] || MARKET_TINT.us
             return (
               <div
@@ -350,9 +344,9 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                 id={`bfs-search-opt-${i}`}
                 role="option"
                 aria-selected={i === active}
-                onClick={() => !alreadyAdded && !isFull && handleSelect(s)}
-                style={{ ...rowStyle(alreadyAdded || isFull), ...(i === active ? { background: 'var(--bg-hover)' } : null) }}
-                onMouseEnter={() => { if (!alreadyAdded && !isFull) setActive(i) }}
+                onClick={() => handleSelect(s)}
+                style={{ ...rowStyle(false), ...(i === active ? { background: 'var(--bg-hover)' } : null) }}
+                onMouseEnter={() => setActive(i)}
               >
                 <span style={{ color: '#4f86f7', fontFamily: '"JetBrains Mono", monospace', fontSize: 12, flexShrink: 0 }}>{s.code}</span>
                 <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
@@ -363,7 +357,6 @@ export default function SearchBar({ fullWidth = false, autoFocus = false }) {
                   {s._market === 'us' ? 'US' : s._market === 'cn' ? (lang === 'zh' ? 'A股' : 'CN') : marketLabel(s._market, lang)}
                 </span>
                 <PctBadge val={s.change_pct} market={s._market} />
-                {alreadyAdded && <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>{t.added}</span>}
               </div>
             )
           })}
