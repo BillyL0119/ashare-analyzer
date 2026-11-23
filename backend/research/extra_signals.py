@@ -139,3 +139,37 @@ def earnings_reaction_matrix(panel, month_dates, max_age_months=3):
             stop = min(events[i + 1][0] if i + 1 < len(events) else len(month_dates), k + max_age_months)
             out[k:stop, j] = car
     return out
+
+
+SHORT_LAG_DAYS = 14       # FINRA publishes about 7-8 business days after the settlement date; count it from day 14
+
+
+def short_interest_matrices(month_dates, tickers, max_age_months=2):
+    """Shares sold short and days to cover from FINRA's twice-monthly files, as of each month-end: the latest file
+    whose settlement date is at least SHORT_LAG_DAYS before the month-end."""
+    folder = os.path.join(RAW, "finra")
+    files = sorted(f for f in os.listdir(folder) if f.startswith("shrt"))
+    pos = pd.Series(np.arange(len(tickers)), index=tickers)
+    qty = np.full((len(month_dates), len(tickers)), np.nan, dtype=np.float64)
+    dtc = np.full_like(qty, np.nan)
+    stamp = np.full(qty.shape, -1, dtype=np.int64)          # which file filled the cell (later files win)
+    me = pd.to_datetime(pd.Series(month_dates.astype(str)), format="%Y%m%d").values
+    for n, f in enumerate(files):
+        settle = pd.Timestamp(f[4:12])
+        k0 = int(np.searchsorted(me, (settle + pd.Timedelta(days=SHORT_LAG_DAYS)).to_datetime64(), side="right"))
+        if k0 >= len(month_dates):
+            continue
+        # names contain stray quotes, and the newest files quote every field: read raw, then strip the quotes
+        d = pd.read_csv(os.path.join(folder, f), sep="|", quoting=3, dtype=str)
+        d.columns = [c.strip('"') for c in d.columns]
+        d = d[["symbolCode", "currentShortPositionQuantity", "daysToCoverQuantity"]].apply(lambda x: x.str.strip('"'))
+        for col in ("currentShortPositionQuantity", "daysToCoverQuantity"):
+            d[col] = pd.to_numeric(d[col], errors="coerce")
+        d = d[d.symbolCode.isin(pos.index)]
+        c = pos.reindex(d.symbolCode.values).values
+        for k in range(k0, min(k0 + max_age_months, len(month_dates))):
+            newer = stamp[k, c] < n
+            qty[k, c[newer]] = d.currentShortPositionQuantity.values[newer]
+            dtc[k, c[newer]] = d.daysToCoverQuantity.values[newer]
+            stamp[k, c[newer]] = n
+    return {"short_qty": qty, "days_to_cover": dtc}

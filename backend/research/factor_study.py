@@ -72,6 +72,8 @@ EXTRA_FACTORS = {
     "shareholder_yield": (+1, "value", "trailing-12-month dividends + net buybacks / market cap"),
     "earnings_stability": (+1, "quality", "steadiness of quarterly return on assets over 3 years"),
     "earnings_reaction": (+1, "growth", "stock minus market over the 3 days around the last earnings release"),
+    "short_interest":    (-1, "short", "shares sold short / shares outstanding (FINRA, from 2018)"),
+    "days_to_cover":     (-1, "short", "shares sold short / average daily volume (FINRA, from 2018)"),
 }
 ALL_FACTORS = {**FACTORS, **EXTRA_FACTORS}
 
@@ -217,12 +219,15 @@ def run(return_latest=False, extra=False):
     active = ALL_FACTORS if extra else FACTORS
     xm = {}
     if extra:
-        from research.extra_signals import earnings_reaction_matrix, insider_matrices, institution_matrices
+        from research.extra_signals import (earnings_reaction_matrix, insider_matrices, institution_matrices,
+                                            short_interest_matrices)
         log("insider and institution signals...")
         xm.update(insider_matrices(val["dates"], P.tickers))
         xm.update(institution_matrices(val["dates"], P.tickers))
         log("earnings reactions...")
         xm["earnings_reaction"] = earnings_reaction_matrix(P, val["dates"])
+        log("short interest...")
+        xm.update(short_interest_matrices(val["dates"], P.tickers))
         ind = P.sec.industry.fillna("?").values
         _, ind_codes = np.unique(ind, return_inverse=True)
         with np.errstate(all="ignore"):
@@ -302,6 +307,8 @@ def run(return_latest=False, extra=False):
                     "shareholder_yield": fm["payout_ttm"][k] / mc,
                     "earnings_stability": fm["m_stability"][k],
                     "earnings_reaction": xm["earnings_reaction"][k],
+                    "short_interest": xm["short_qty"][k] / (mc / raw[i]),      # shares out = market cap / price
+                    "days_to_cover": xm["days_to_cover"][k],
                 })
         signed = {}
         for f, (d, _, _) in active.items():
