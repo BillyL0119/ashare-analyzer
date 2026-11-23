@@ -22,7 +22,7 @@ import sys
 
 import numpy as np
 
-from research.factor_study import FACTORS, COST, annual, max_drawdown, rank_pct, run, tstat
+from research.factor_study import COST, annual, max_drawdown, rank_pct, run, tstat
 from research.sharadar_data import COMPACT
 
 FIRST_YEAR = 2005
@@ -31,7 +31,7 @@ FIRST_YEAR = 2005
 def choose(books, universe, year, threshold=2.0):
     """Factors whose IC t-stat on months before `year` clears the threshold, with their mean IC (weights)."""
     out = {}
-    for f in FACTORS:
+    for f in [f for (u, f) in books if u == universe]:
         b = books[(universe, f)]
         ics = [ic for ic, m in zip(b.ic, b.month) if m < year * 10000]
         t = tstat(ics)

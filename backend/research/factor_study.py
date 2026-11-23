@@ -61,6 +61,20 @@ FACTORS = {
 }
 
 
+# Candidates under test (research/improve_study.py); run(extra=True) adds them. Not used by the live desk until adopted.
+EXTRA_FACTORS = {
+    "high_52w":          (+1, "price", "price / highest price of the last 12 months"),
+    "industry_mom":      (+1, "price", "the stock's industry: average 12-1 month return"),
+    "resid_mom":         (+1, "price", "12-1 month return left after the market's share, per unit of its noise"),
+    "insider_buyers":    (+1, "insider", "officers and directors who bought on the open market, last 6 months"),
+    "insider_net_value": (+1, "insider", "insider buys minus sells, last 6 months, / market cap"),
+    "inst_breadth":      (+1, "ownership", "change in the number of institutions holding it, last reported quarter"),
+    "shareholder_yield": (+1, "value", "trailing-12-month dividends + net buybacks / market cap"),
+    "earnings_stability": (+1, "quality", "steadiness of quarterly return on assets over 3 years"),
+}
+ALL_FACTORS = {**FACTORS, **EXTRA_FACTORS}
+
+
 def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
@@ -75,7 +89,7 @@ def fundamental_matrices(month_dates, tickers):
     g = f.groupby("ticker", sort=False)
     span3 = (f.reportperiod - g.reportperiod.shift(3)).dt.days            # 4 consecutive quarters span ~273 days
     ok4 = span3.between(250, 300)
-    for c in ("revenue", "gp", "netinc", "ncfo", "fcf"):
+    for c in ("revenue", "gp", "netinc", "ncfo", "fcf", "ncfdiv", "ncfcommon"):
         f[c + "_ttm"] = g[c].transform(lambda s: s.rolling(4, min_periods=4).sum()).where(ok4)
     lag = (f.reportperiod - g.reportperiod.shift(4)).dt.days.between(340, 390)   # same quarter a year earlier
     for c in ("assets", "shareswa", "eps"):
@@ -92,7 +106,10 @@ def fundamental_matrices(month_dates, tickers):
         f["m_earnings_surprise"] = (f.eps_d / f.eps_d_sd.where(f.eps_d_sd > 0)).clip(-10, 10)
         f["m_asset_growth"] = f.assets / f.assets_y.where(f.assets_y > 0) - 1
         f["m_share_issuance"] = f.shareswa / f.shareswa_y.where(f.shareswa_y > 0) - 1
-    keep = ["netinc_ttm", "revenue_ttm", "fcf_ttm", "equity"] + [c for c in f.columns if c.startswith("m_")]
+        f["payout_ttm"] = -(f.ncfdiv_ttm.fillna(0) + f.ncfcommon_ttm.fillna(0)).where(f.ncfdiv_ttm.notna() | f.ncfcommon_ttm.notna())
+        f["roa_q"] = f.netinc / ast
+        f["m_stability"] = -f.groupby("ticker", sort=False).roa_q.transform(lambda x: x.rolling(12, min_periods=8).std())
+    keep = ["netinc_ttm", "revenue_ttm", "fcf_ttm", "equity", "payout_ttm"] + [c for c in f.columns if c.startswith("m_")]
     right = f[["ticker", "datekey"] + keep].sort_values("datekey")
 
     grid = pd.DataFrame({
@@ -187,7 +204,7 @@ class Book:
 
 
 # ── main loop ────────────────────────────────────────────────────────────────────────────────────────────────
-def run(return_latest=False):
+def run(return_latest=False, extra=False):
     t0 = time.time()
     P = Panel()
     raw = np.load(os.path.join(COMPACT, "prices.npz"))["closeunadj"]
@@ -196,7 +213,37 @@ def run(return_latest=False):
     assert np.array_equal(P.dates[ends], val["dates"]), "valuation month-ends do not line up with prices"
     log("building fundamentals by month (point in time)...")
     fm = fundamental_matrices(val["dates"], P.tickers)
+    active = ALL_FACTORS if extra else FACTORS
+    xm = {}
+    if extra:
+        from research.extra_signals import insider_matrices, institution_matrices
+        log("insider and institution signals...")
+        xm.update(insider_matrices(val["dates"], P.tickers))
+        xm.update(institution_matrices(val["dates"], P.tickers))
+        ind = P.sec.industry.fillna("?").values
+        _, ind_codes = np.unique(ind, return_inverse=True)
+        with np.errstate(all="ignore"):
+            mret = P.adj[ends[1:]] / P.adj[ends[:-1]] - 1.0
+        mret = np.vstack([np.full((1, P.adj.shape[1]), np.nan, dtype=np.float32), mret])
+        mret[~np.isfinite(mret)] = np.nan
+        mret[np.abs(mret) > 5] = np.nan                       # obvious data errors only
+        mkt = np.nanmean(mret, axis=1)
     log(f"ready in {time.time() - t0:.0f}s, running {len(ends) - 1} months")
+
+    def resid_mom(k):
+        """Blitz-style residual momentum from 36 monthly returns ending at month k."""
+        if k < 36:
+            return np.full(adj.shape[1], np.nan)
+        X = mret[k - 35: k + 1].astype(float)
+        M = np.where(np.isfinite(X), mkt[k - 35: k + 1, None], np.nan)
+        mx, mm = np.nanmean(X, 0), np.nanmean(M, 0)
+        cov = np.nanmean((X - mx) * (M - mm), 0)
+        var = np.nanmean((M - mm) ** 2, 0)
+        beta = cov / np.where(var > 0, var, np.nan)
+        e = (X - mx) - beta * (M - mm)
+        ok = np.isfinite(X).sum(0) >= 24
+        out = np.nansum(e[-12:-1], 0) / np.nanstd(e, 0)
+        return np.where(ok, out, np.nan)
     adj = P.adj
     with np.errstate(invalid="ignore", divide="ignore"):
         dret = adj[1:] / adj[:-1] - 1.0
@@ -233,14 +280,33 @@ def run(return_latest=False):
                 "low_vol": vol,
                 "reversal": adj[i] / adj[i - SKIP] - 1.0,
             }
+        if extra:
+            with np.errstate(all="ignore"):
+                mom = raw_f["momentum"]
+                im = np.full(len(mom), np.nan)
+                ok = liquid & np.isfinite(mom)
+                sums = np.bincount(ind_codes[ok], weights=mom[ok], minlength=ind_codes.max() + 1)
+                cnts = np.bincount(ind_codes[ok], minlength=ind_codes.max() + 1)
+                avg = np.where(cnts >= 3, sums / np.maximum(cnts, 1), np.nan)
+                im = avg[ind_codes]
+                raw_f.update({
+                    "high_52w": adj[i] / np.nanmax(adj[i - LOOKBACK + 1: i + 1], axis=0),
+                    "industry_mom": im,
+                    "resid_mom": resid_mom(k),
+                    "insider_buyers": xm["insider_buyers"][k],
+                    "insider_net_value": xm["insider_net_value"][k] / mc,
+                    "inst_breadth": xm["inst_breadth"][k],
+                    "shareholder_yield": fm["payout_ttm"][k] / mc,
+                    "earnings_stability": fm["m_stability"][k],
+                })
         signed = {}
-        for f, (d, _, _) in FACTORS.items():
+        for f, (d, _, _) in active.items():
             s = np.asarray(raw_f[f], dtype=float) * d
             s[~np.isfinite(s)] = np.nan
             signed[f] = s
         return liquid, large, signed, raw_f, mc
 
-    books = {(u, f): Book() for u in ("liquid", "large") for f in FACTORS}
+    books = {(u, f): Book() for u in ("liquid", "large") for f in active}
     month_scores = []          # (month, universe masks, {factor: signed score}, later) kept for the walk-forward
     for k in range(len(ends) - 1):
         i, j = ends[k], ends[k + 1]
@@ -249,7 +315,7 @@ def run(return_latest=False):
         with np.errstate(all="ignore"):
             later = holding_return(adj, i, j)
         liquid, large, signed, _, _ = inputs(k, later)
-        for f in FACTORS:
+        for f in active:
             books[("liquid", f)].add(signed[f], liquid, later, int(P.dates[j]))
             books[("large", f)].add(signed[f], large, later, int(P.dates[j]))
         month_scores.append((int(P.dates[j]), liquid, large, signed, later))
@@ -292,7 +358,7 @@ def walk_forward(books, month_scores, universe, first_year=2005, threshold=2.0):
             continue
         if y not in chosen_by_year:
             pick = []
-            for f in FACTORS:
+            for f in sorted({f for (_, f) in books}, key=list(ALL_FACTORS).index):
                 b = books[(universe, f)]
                 ics = [ic for ic, m in zip(b.ic, b.month) if m < y * 10000]
                 t = tstat(ics)
@@ -304,7 +370,7 @@ def walk_forward(books, month_scores, universe, first_year=2005, threshold=2.0):
         if names:
             ranks = np.nanmean(np.vstack([rank_pct(np.where(elig, signed[f], np.nan)) for f in names]), axis=0)
             wf.add(ranks, elig, later, month)
-        allr = np.nanmean(np.vstack([rank_pct(np.where(elig, signed[f], np.nan)) for f in FACTORS]), axis=0)
+        allr = np.nanmean(np.vstack([rank_pct(np.where(elig, signed[f], np.nan)) for f in signed]), axis=0)
         eq.add(allr, elig, later, month)
     return wf, eq, chosen_by_year
 

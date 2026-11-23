@@ -17,7 +17,7 @@ import time
 
 import numpy as np
 
-from research.factor_study import FACTORS, run
+from research.factor_study import ALL_FACTORS as FACTORS, run
 from research.portfolio_study import STEPS, choose, composite, evaluate, sector_codes_of
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "quant")

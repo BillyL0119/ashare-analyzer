@@ -27,7 +27,8 @@ OUT = os.path.join(RAW, "compact")
 CATEGORIES = {"Domestic Common Stock", "Domestic Common Stock Primary Class", "Domestic Common Stock Secondary Class"}
 SF1_COLS = ["ticker", "dimension", "datekey", "reportperiod", "fiscalperiod", "revenue", "gp", "opinc", "ebit", "ebitda",
             "netinc", "eps", "epsdil", "assets", "equity", "liabilities", "debt", "cashneq", "ncfo", "capex", "fcf",
-            "sharesbas", "shareswa", "marketcap", "ev", "pe", "pb", "ps", "roe", "roa", "grossmargin", "netmargin"]
+            "sharesbas", "shareswa", "marketcap", "ev", "pe", "pb", "ps", "roe", "roa", "grossmargin", "netmargin",
+            "ncfdiv", "ncfcommon", "dps"]
 
 
 def log(msg):
