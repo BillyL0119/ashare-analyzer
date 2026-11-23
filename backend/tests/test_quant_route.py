@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-pytest.importorskip("fastapi")
+pytest.importorskip("fastapi.testclient")     # the CI stub fastapi has no test client: skip there
 pytest.importorskip("httpx")
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

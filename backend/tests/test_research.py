@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-pytest.importorskip("pandas")
+pytest.importorskip("pandas", minversion="1.0")    # the CI stub pandas has no version: skip there
 from research.bias_study import holding_return  # noqa: E402
 
 

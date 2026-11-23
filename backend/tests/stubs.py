@@ -70,16 +70,24 @@ def _anything(name):
 def stub():
     os.environ["BFS_NO_WARMUP"] = "1"        # routers/market.py starts background threads on import
     if _missing("requests"):
-        class Timeout(Exception):
+        class RequestException(Exception):
+            pass
+
+        class Timeout(RequestException):
+            pass
+
+        class ConnectionError(RequestException):  # noqa: A001 (mirrors requests.ConnectionError)
             pass
 
         class HTTPAdapter:
             def send(self, request, **kw):
                 raise Timeout("stub")
-        exceptions = _module("requests.exceptions", Timeout=Timeout, RequestException=Exception)
+        exceptions = _module("requests.exceptions", Timeout=Timeout, RequestException=RequestException,
+                             ConnectionError=ConnectionError)
         adapters = _module("requests.adapters", HTTPAdapter=HTTPAdapter)
         _module("requests", adapters=adapters, exceptions=exceptions, get=lambda *a, **kw: None,
-                post=lambda *a, **kw: None, Session=object)
+                post=lambda *a, **kw: None, Session=object, RequestException=RequestException, Timeout=Timeout,
+                ConnectionError=ConnectionError)
     if _missing("fastapi"):
         _module("fastapi", APIRouter=_Router, BackgroundTasks=object, HTTPException=HTTPException,
                 Query=lambda default=None, **kw: default, Request=object, Depends=lambda f=None: f,
