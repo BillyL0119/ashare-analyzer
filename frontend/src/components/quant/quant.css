@@ -43,3 +43,6 @@
 .qd-table tr.qd-group th { position: static; padding-bottom: 0; text-align: center; font-size: 11px; color: var(--text-muted); }
 .qd-table tr.qd-group th[scope="colgroup"] { border-bottom: 1px solid var(--border-primary); }
 .qd-table tr.qd-group + tr th { top: 0; }
+.qd-val tr.qd-group th { position: static; padding-bottom: 0; text-align: center; font-size: 11px; color: var(--text-muted); }
+.qd-val td.qd-sep, .qd-val tr.qd-group th:nth-child(3) { border-left: 1px solid var(--border-primary); }
+.qd-val tbody td:first-child { white-space: normal; min-width: 180px; }

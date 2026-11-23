@@ -33,6 +33,29 @@ def r(x, digits=2):
     return round(v, digits) if np.isfinite(v) else None
 
 
+REPORTS = os.path.join(os.path.dirname(__file__), "..", "data", "sharadar", "reports")
+CANDIDATES = ["index", "index + trend rule", "model (step E)", "model + inv-vol + sector + trend"]
+
+
+def validation():
+    """Development-period and one-time hold-out results of the four ways to use the desk (fixed numbers from
+    improve_study --risk, the dev index+trend trial and holdout_test; not recomputed weekly)."""
+    def load(name):
+        try:
+            with open(os.path.join(REPORTS, name)) as fh:
+                return json.load(fh)
+        except (OSError, ValueError):
+            return None
+    risk, hold, trials = load("risk_study.json"), load("holdout_test.json"), load("trials.json") or []
+    if not risk or not hold:
+        return None
+    idx_trend = next((t["result"] for t in reversed(trials) if t["name"] == "dev index + trend rule"), None)
+    dev = {"index": risk.get("index"), "index + trend rule": idx_trend, "model (step E)": risk.get("E (current)"),
+           "model + inv-vol + sector + trend": risk.get("+ inv-vol + sector + trend")}
+    return {"dev_period": "2005-01 .. 2020-10", "holdout_period": hold["period"], "holdout_ran_at": hold["ran_at"],
+            "trials": len(trials), "factors_tested": len(FACTORS), "candidates": CANDIDATES, "dev": dev, "holdout": hold["results"]}
+
+
 def build():
     import warnings
     warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -106,6 +129,7 @@ def build():
         "ranking": rows,
         "factors": factor_rec,
         "portfolio": report,
+        "validation": validation(),
     }
 
 

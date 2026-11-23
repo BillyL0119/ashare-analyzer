@@ -24,7 +24,7 @@ const S = {
     trendTitle: '大盘趋势', trendSub: '市值加权大盘股指数与它的 10 个月均线',
     above: (g) => `在均线上方 ${g}%`, below: (g) => `在均线下方 ${Math.abs(g)}%`,
     aboveNote: '按规则：下个月正常持股。', belowNote: '按规则：下个月持有现金。',
-    trendRule: '规则：月初指数低于 10 个月均线，这个月就持有现金。回测 2005 年以来，最大回撤从 −58% 降到 −32%，长期收益和指数差不多。这条规则是教科书上的固定规则，没有用这段数据去调参数。',
+    trendRule: '规则：月初指数低于 10 个月均线，这个月就持有现金。它像一份保险：2005–2020 年把指数的最大回撤从 −50% 降到 −17%，最近 6 年从 −25% 降到 −14%；代价是收益变少，2005–2020 年每年少约 1.2%，最近 6 年这种急跌急涨的行情里每年少约 3.9%（回测里现金按零利息算）。这是教科书上的固定规则，没有用这段数据调参数。',
     lineIndex: '大盘股指数', lineMa: '10 个月均线',
     rankTitle: '大盘股因子排名', rankSub: (f) => `综合 ${f} 个因子，在各自行业内比较，按历史预测力加权`,
     search: '输入代码或名称，看它排第几', top50: '模型组合前 50', all: '全部',
@@ -34,7 +34,7 @@ const S = {
     colPe: '市盈率', colFcf: 'FCF 收益率', colRoe: 'ROE', colShares: '股本变化', colRet: '1 年涨跌',
     factorPct: '因子分位（0–100，行业内，越高越好）', groupFactors: '因子分位（0–100）', groupMetrics: '实际数值',
     credTitle: '这套方法过去表现如何', credSub: (y) => `${y}–2026 年向前滚动检验：每年只用当时之前的数据挑因子，扣除交易成本，大盘股池`,
-    bench: (cw, dd) => `对照：买入市值加权大盘股（约等于标普 500）每年 ${cw}%，最大回撤 ${dd}%`,
+    bench: (cw, dd) => `对照：买入市值加权大盘股（约等于标普 500）每年 ${cw}%，最大回撤 ${dd}`,
     colStep: '组合方式', colCagr: '年化', colDd: '最大回撤', colVsIdx: '相对指数', colT: 't 值', colBehind: '输给指数的年数',
     tNote: 't 值低于 2，说明相对指数的差别可能只是运气。',
     yearsTitle: '每年和指数比（模型组合前 50，未加趋势规则）',
@@ -42,11 +42,17 @@ const S = {
     colFactor: '因子', colIcT: '预测力 t 值', colTopEx: '前五分之一每年超额', colIcHalves: '预测力 2000–12 → 2013 至今',
     useTitle: '使用须知',
     use: [
-      '这是一个筛选工具，不是预测器。它在一大篮子股票上平均有一点优势，对单只股票几乎没有预测力。',
-      '过去 22 年里大约有一半年份跑输指数，2017–2020 年连续落后。真用它的话，要能接受连续几年落后。',
-      '每周更新一次：在电脑上运行 quant_publish.py --refresh。',
-      '因子分位低的股票不一定会跌，只是这些特征在历史上平均表现较差。',
+      '这是一个筛选工具，不是预测器。排名靠前只说明估值和质量更有利，对单只股票下个月涨跌几乎没有预测力。',
+      '选股模型的优势很依赖市场风格：2005–2020 年每年只比指数多 0.4%，最近 6 年多 4.9%，主要来自 2021–2022 年价值股反弹，统计上都不能排除运气。',
+      '趋势规则在两段时间里都把最大回撤减半左右，这一点最稳定，但会少赚。用不用、怎么组合，取决于你更在意收益还是更在意避免大亏。',
+      '我们试过另外 9 个信号（内部人交易、机构持仓、财报反应等）和多种风险控制，都没能提高准确性，所以没有加入。',
+      '每周六上午自动更新；需要时也可以在电脑上运行 quant_publish.py --refresh。',
     ],
+    valTitle: '四种用法的检验结果', valSub: (dev, ho) => `开发期 ${dev} 用来挑选方法；最近 6 年（${ho}）锁起来，所有方法定下来以后只检验了一次`,
+    valDev: '2005–2020 开发期', valHold: '最近 6 年（只检验一次）', colRisk: '收益/风险',
+    valNote: (n, f) => `年化收益已扣除交易成本，现金按零利息计。收益/风险 = 年化收益 ÷ 年波动，越高越好。整个研究检验过 ${f} 个单项因子、比较过 ${n} 种组合方案；试得越多，碰巧好看的可能越大。`,
+    cand: { index: '直接持有指数（约等于标普 500）', 'index + trend rule': '指数 + 趋势规则',
+      'model (step E)': '选股模型前 50（当前排名）', 'model + inv-vol + sector + trend': '选股 + 按波动加权 + 行业上限 + 趋势规则' },
     steps: { 'A baseline': '基础：约 200 只，每月调整', 'B +sector-neutral': '加：行业内比较', 'C +IC weights': '加：按预测力加权',
       'D +quarterly, keep top30%': '加：季度调整 + 缓冲', 'E +50 names': '加：只持 50 只（当前模型）', 'F +trend rule (cash)': '再加：趋势规则（跌破均线持现金）' },
   },
@@ -59,7 +65,7 @@ const S = {
     trendTitle: 'Market trend', trendSub: 'Cap-weighted large-cap index and its 10-month average',
     above: (g) => `${g}% above the average`, below: (g) => `${Math.abs(g)}% below the average`,
     aboveNote: 'Rule: stay invested next month.', belowNote: 'Rule: hold cash next month.',
-    trendRule: 'Rule: if the index starts a month below its 10-month average, hold cash that month. Since 2005 this cut the worst drawdown from −58% to −32% at about the index return. It is a fixed textbook rule, not fitted to this data.',
+    trendRule: 'Rule: if the index starts a month below its 10-month average, hold cash that month. It works like insurance: the index’s worst drawdown fell from −50% to −17% in 2005–2020 and from −25% to −14% in the last six years, at a cost of about 1.2% a year in 2005–2020 and 3.9% a year in the fast dips and rebounds of the last six years (cash earns 0 in the test). A fixed textbook rule, not fitted to this data.',
     lineIndex: 'Large-cap index', lineMa: '10-month average',
     rankTitle: 'Large-cap factor ranking', rankSub: (f) => `${f} factors, compared within each sector, weighted by past predictive power`,
     search: 'Type a ticker or name to see its rank', top50: 'Model top 50', all: 'All',
@@ -69,7 +75,7 @@ const S = {
     colPe: 'P/E', colFcf: 'FCF yield', colRoe: 'ROE', colShares: 'Share change', colRet: '1-year',
     factorPct: 'Factor percentiles (0–100 within sector, higher is better)', groupFactors: 'Factor percentiles (0–100)', groupMetrics: 'Actual figures',
     credTitle: 'How this method has done', credSub: (y) => `Walk-forward ${y}–2026: factors chosen each year from earlier data only, after trading costs, large caps`,
-    bench: (cw, dd) => `Benchmark: cap-weighted large caps (about the S&P 500) ${cw}% a year, worst drawdown ${dd}%`,
+    bench: (cw, dd) => `Benchmark: cap-weighted large caps (about the S&P 500) ${cw}% a year, worst drawdown ${dd}`,
     colStep: 'Construction', colCagr: 'Per year', colDd: 'Worst drawdown', colVsIdx: 'vs index', colT: 't', colBehind: 'Years behind the index',
     tNote: 'A t below 2 means the difference from the index may be luck.',
     yearsTitle: 'Each year against the index (model top 50, no trend rule)',
@@ -77,11 +83,17 @@ const S = {
     colFactor: 'Factor', colIcT: 'Predictive t', colTopEx: 'Top fifth excess / yr', colIcHalves: 'Predictive power 2000–12 → 2013 on',
     useTitle: 'Before using it',
     use: [
-      'This is a screen, not a forecaster: a small average edge across a basket, almost none for one stock.',
-      'It trailed the index in about half of the last 22 years, four years in a row in 2017–2020.',
-      'Refresh weekly on the Mac: quant_publish.py --refresh.',
-      'A low factor percentile does not mean the stock will fall, only that such stocks did worse on average.',
+      'A screen, not a forecaster: a high rank means better value and quality, not that the stock will rise next month.',
+      'The stock model depends on market style: +0.4% a year over the index in 2005–2020, +4.9% in the last six years (mostly the 2021–22 value rebound); neither rules out luck.',
+      'The trend rule roughly halved the worst drawdown in both periods, the steadiest result here, but it gives up return. Whether to use it depends on how you weigh return against big losses.',
+      'Nine more signals (insiders, institutions, earnings reactions and others) and several risk rules were tested and did not improve accuracy, so they are left out.',
+      'Refreshed every Saturday morning; run quant_publish.py --refresh on the Mac to refresh by hand.',
     ],
+    valTitle: 'Four ways to use it, tested', valSub: (dev, ho) => `Methods were chosen on ${dev}; the last six years (${ho}) were set aside and tested once after everything was fixed`,
+    valDev: '2005–2020 development', valHold: 'Last six years (tested once)', colRisk: 'Return/risk',
+    valNote: (n, f) => `Returns are after trading costs; cash earns 0. Return/risk = annual return ÷ annual volatility, higher is better. ${f} single factors and ${n} combinations were tested in all; the more tried, the likelier one looks good by chance.`,
+    cand: { index: 'Hold the index (about the S&P 500)', 'index + trend rule': 'Index + trend rule',
+      'model (step E)': 'Stock model top 50 (current ranking)', 'model + inv-vol + sector + trend': 'Stocks + vol weights + sector cap + trend rule' },
     steps: { 'A baseline': 'Base: ~200 names, monthly', 'B +sector-neutral': '+ within-sector ranks', 'C +IC weights': '+ weighted by predictive power',
       'D +quarterly, keep top30%': '+ quarterly with a buffer', 'E +50 names': '+ 50 names (current model)', 'F +trend rule (cash)': '+ trend rule (cash below the average)' },
   },
@@ -101,7 +113,7 @@ const SECTOR_ZH = { 'Basic Materials': '基础材料', 'Communication Services':
   'Real Estate': '房地产', Technology: '科技', Utilities: '公用事业' }
 
 const num = (v, d = 1) => (isNum(v) ? v.toFixed(d) : '—')
-const pct = (v, d = 1) => (isNum(v) ? `${v.toFixed(d)}%` : '—')
+const pct = (v, d = 1) => (isNum(v) ? `${v < 0 ? '−' : ''}${Math.abs(v).toFixed(d)}%` : '—')
 const signed = (v, d = 1) => (isNum(v) ? `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(d)}` : '—')
 
 function TrendChart({ history, L }) {
@@ -228,6 +240,49 @@ function Ranking({ d, L, F, zh }) {
   )
 }
 
+function Validation({ v, L }) {
+  const ho = v.holdout_period.replace(/(\d{4})(\d{2})\d{2}/g, '$1-$2')
+  return (
+    <section className="qp-card" aria-label={L.valTitle}>
+      <div className="qp-head"><div>
+        <h3 className="qp-h">{L.valTitle}</h3>
+        <p className="qd-sub">{L.valSub(v.dev_period, ho)}</p>
+      </div></div>
+      <div className="fl-table-wrap">
+        <table className="fl-table qd-steps qd-val">
+          <thead>
+            <tr className="qd-group">
+              <th aria-hidden="true" />
+              <th colSpan={3} scope="colgroup">{L.valDev}</th>
+              <th colSpan={4} scope="colgroup">{L.valHold}</th>
+            </tr>
+            <tr>
+              <th scope="col">{L.colStep}</th>
+              <th scope="col">{L.colCagr}</th><th scope="col">{L.colDd}</th><th scope="col">{L.colRisk}</th>
+              <th scope="col">{L.colCagr}</th><th scope="col">{L.colDd}</th><th scope="col">{L.colRisk}</th><th scope="col">{L.colVsIdx}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {v.candidates.map((c) => {
+              const a = v.dev[c] || {}
+              const b = v.holdout[c] || {}
+              return (
+                <tr key={c}>
+                  <td>{L.cand[c] || c}</td>
+                  <td>{pct(a.cagr)}</td><td>{pct(a.max_drawdown)}</td><td>{num(a.return_per_risk, 2)}</td>
+                  <td className="qd-sep">{pct(b.cagr)}</td><td>{pct(b.max_drawdown)}</td><td>{num(b.return_per_risk, 2)}</td>
+                  <td>{c === 'index' ? '—' : signed(b.vs_cap_weight)}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="qd-foot">{L.valNote(v.trials, v.factors_tested)}</p>
+    </section>
+  )
+}
+
 function Credibility({ d, L, F }) {
   const p = d.portfolio
   const cw = p.benchmarks.cap_weight
@@ -237,7 +292,7 @@ function Credibility({ d, L, F }) {
         <h3 className="qp-h">{L.credTitle}</h3>
         <p className="qd-sub">{L.credSub(p.first_year)}</p>
       </div></div>
-      <p className="qd-note">{L.bench(num(cw.cagr), num(cw.max_drawdown))}</p>
+      <p className="qd-note">{L.bench(num(cw.cagr), pct(cw.max_drawdown))}</p>
       <div className="fl-table-wrap">
         <table className="fl-table qd-steps">
           <thead><tr>
@@ -350,6 +405,7 @@ export default function QuantDesk({ lang, onOpenAuth }) {
       </section>
 
       <Ranking d={d} L={L} F={F} zh={lang === 'zh'} />
+      {d.validation && <Validation v={d.validation} L={L} />}
       <Credibility d={d} L={L} F={F} />
 
       <section className="qp-card" aria-label={L.useTitle}>
