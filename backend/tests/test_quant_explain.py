@@ -35,7 +35,7 @@ def _client(payload):
 def test_facts_hold_only_file_data():
     f = qe.facts(SIG)
     assert "5.5% below" in f and "hold cash" in f and "THC (Tenet Healthcare Corp" in f
-    assert "18.54% a year" in f and "t-statistic 1.13" in f
+    assert "18.5% a year" in f and "t-statistic 1.1" in f and "would also hold cash" in f
 
 
 def test_good_answer_passes():

@@ -35,8 +35,17 @@ CAND_LABEL = {"index": "hold the index (cap-weighted large caps, about the S&P 5
                                                   "and the trend rule"}
 
 
+FACTOR_PLAIN = {
+    "earnings_yield": "cheap relative to profits", "sales_yield": "cheap relative to sales",
+    "fcf_yield": "cheap relative to the cash it generates", "ebitda_ev": "cheap relative to operating profit",
+    "gross_profit": "high gross profit for its assets", "roe": "high return on shareholders' equity",
+    "share_issuance": "few new shares issued (buybacks rather than dilution)", "book_to_market": "cheap relative to book value",
+    "earnings_surprise": "earnings beating last year's", "low_vol": "steady share price",
+}
+
+
 def cache_key(sig: dict) -> str:
-    return f"v1:{sig.get('as_of')}:{sig.get('generated_at')}"
+    return f"v2:{sig.get('as_of')}:{sig.get('generated_at')}"
 
 
 def facts(sig: dict) -> str:
@@ -44,10 +53,11 @@ def facts(sig: dict) -> str:
     v = sig.get("validation") or {}
     lines = [
         f"Data as of {sig['as_of']}. Universe: the {sig['universe']['size']} largest US stocks.",
-        f"Trend: the cap-weighted large-cap index is {abs(t['gap_pct'])}% {'above' if t['above'] else 'below'} its "
+        f"Trend: the cap-weighted large-cap index is {abs(t['gap_pct']):.1f}% {'above' if t['above'] else 'below'} its "
         f"10-month average. The trend rule says: {'stay invested next month' if t['above'] else 'hold cash next month'}.",
-        "The stock model ranks stocks by: " + ", ".join(sig["config"]["chosen_factors"]).replace("_", " ")
-        + " (value and quality measures), compared within each sector.",
+        "The stock model ranks stocks by: " + "; ".join(FACTOR_PLAIN.get(f, f.replace("_", " "))
+                                                         for f in sig["config"]["chosen_factors"])
+        + ". Each is compared with other companies in the same sector.",
         f"The model rule holds the top {sig['config']['top_n']} names, equal weight, reviewed every quarter; a stock "
         f"already held may stay while it is in the top {int(sig['config']['keep_pct'] * 100)}%.",
     ]
@@ -66,12 +76,19 @@ def facts(sig: dict) -> str:
             a, b = v["dev"].get(c) or {}, v["holdout"].get(c) or {}
             if not a or not b:
                 continue
-            lines.append(f"- {CAND_LABEL.get(c, c)}: development {a['cagr']}% a year, worst drawdown "
-                         f"{a['max_drawdown']}%; last six years {b['cagr']}% a year, worst drawdown {b['max_drawdown']}%"
-                         + ("" if c == "index" else f", {b['vs_cap_weight']:+} points a year versus the index "
-                                                    f"(t-statistic {b['t_vs_cap_weight']})") + ".")
+            lines.append(f"- {CAND_LABEL.get(c, c)}: development {a['cagr']:.1f}% a year, worst drawdown "
+                         f"{a['max_drawdown']:.1f}%; last six years {b['cagr']:.1f}% a year, worst drawdown "
+                         f"{b['max_drawdown']:.1f}%"
+                         + ("" if c == "index" else f", {b['vs_cap_weight']:+.1f} points a year versus the index "
+                                                    f"(t-statistic {b['t_vs_cap_weight']:.1f})") + ".")
         lines.append("A t-statistic below 2 means the difference could be luck. In the development period the stock "
                      "model trailed the index in 7 of 16 years.")
+    lines.append("So right now: the trend rule alone says hold cash; the stock model alone holds its top 50; the way "
+                 "that combines the stock model with the trend rule would also hold cash next month."
+                 if not t["above"] else
+                 "So right now: the trend rule says stay invested, so both the stock model and the combined way hold "
+                 "stocks next month.")
+    lines.append("Worst drawdown means the biggest fall from a high point to a later low.")
     return "\n".join(lines)
 
 
@@ -82,10 +99,14 @@ SYSTEM = (
     "will make money. Describe what the trend rule and the model rule say now, as rules (\"the model rule picks ...\", "
     "\"under the trend rule ...\"), what each way of using them did in the tests, their worst losses, and that the "
     "stock model's edge was small and could be luck. Plain words, short sentences, no jargon left unexplained. "
-    "Write 5 short sections, in this order: the market now; what the model rule picks now (list the first tickers "
-    "given, with their company names); how the rules are used; what this did in the tests and the risks; questions "
-    "he should answer for himself before investing (how big a fall he can stand, how long he can wait, how much he "
-    "can afford to lose). Keep every number exactly as in the facts. "
+    "Write 5 short sections, in this order: (1) the market now and what the trend rule says; (2) what the model rule "
+    "picks now: name the first tickers given with their company names and say in one sentence what the ranking "
+    "favours; (3) the ways to use them and what each says right now (use the 'So right now' fact); (4) what the "
+    "tests showed: for each way give only the last-six-years return per year and worst drawdown, one line each, then "
+    "one sentence that the stock model's edge could be luck and one that the trend rule mainly cuts big falls; "
+    "(5) questions he should answer for himself before investing (how big a fall he can stand, how long he can "
+    "wait, how much he can afford to lose). Each section at most 4 sentences. Keep every number exactly as in the "
+    "facts. "
     'Return JSON only: {"zh": [{"title": "...", "body": "..."}, ...5 items in Simplified Chinese], '
     '"en": [{"title": "...", "body": "..."}, ...the same 5 in English]}'
 )
