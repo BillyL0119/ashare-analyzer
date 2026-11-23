@@ -45,7 +45,7 @@ FACTOR_PLAIN = {
 
 
 def cache_key(sig: dict) -> str:
-    return f"v4:{sig.get('as_of')}:{sig.get('generated_at')}"
+    return f"v5:{sig.get('as_of')}:{sig.get('generated_at')}"
 
 
 def facts(sig: dict) -> str:
@@ -127,7 +127,8 @@ SYSTEM = (
     "stock model's edge was small and could be luck. Plain words, short sentences, no jargon left unexplained. "
     "Write 5 short sections, in this order: (1) the market now and what the trend rule says; (2) what the model rule "
     "picks now: name the first tickers given with their company names and say in one sentence what the ranking "
-    "favours; (3) the ways to use them and what each says right now (use the 'So right now' fact); (4) what the "
+    "favours, and if a short-interest fact is given, one sentence on how many picks are heavily shorted and what that "
+    "means for risk; (3) the ways to use them and what each says right now (use the 'So right now' fact); (4) what the "
     "tests showed: for each way give only the last-six-years return per year and worst drawdown, one line each, then "
     "one sentence that the stock model's edge could be luck and one that the trend rule mainly cuts big falls; "
     "(5) questions he should answer for himself before investing (how big a fall he can stand, how long he can "
