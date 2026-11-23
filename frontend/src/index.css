@@ -358,3 +358,113 @@ code {
   .bfs-ticker { overflow-x: auto !important; }
   .bfs-ticker-track { animation: none; }
 }
+
+/* ── Light theme: text colours written inline for the dark theme ────────────────────────────────────────────
+   Many components set a bright accent straight on the element (style={{ color: '#6c9cff' }}). Those read well on
+   the dark surfaces and are 2:1 on white. Each is swapped here for a shade that holds 4.5:1 on light surfaces.
+   Only `color` is matched (the style attribute starting with it, or after a "; "), never background or border.
+   A new bright inline text colour that is hard to read in light mode gets its line added to a group below. */
+:root[data-theme="light"] [style^="color: rgb(79, 134, 247)"],
+:root[data-theme="light"] [style*="; color: rgb(79, 134, 247)"],
+:root[data-theme="light"] [style^="color: rgba(79, 134, 247,"],
+:root[data-theme="light"] [style*="; color: rgba(79, 134, 247,"],
+:root[data-theme="light"] [style^="color: rgb(108, 156, 255)"],
+:root[data-theme="light"] [style*="; color: rgb(108, 156, 255)"],
+:root[data-theme="light"] [style^="color: rgba(108, 156, 255,"],
+:root[data-theme="light"] [style*="; color: rgba(108, 156, 255,"],
+:root[data-theme="light"] [style^="color: rgb(74, 144, 226)"],
+:root[data-theme="light"] [style*="; color: rgb(74, 144, 226)"],
+:root[data-theme="light"] [style^="color: rgba(74, 144, 226,"],
+:root[data-theme="light"] [style*="; color: rgba(74, 144, 226,"],
+:root[data-theme="light"] [style^="color: rgb(91, 156, 246)"],
+:root[data-theme="light"] [style*="; color: rgb(91, 156, 246)"],
+:root[data-theme="light"] [style^="color: rgba(91, 156, 246,"],
+:root[data-theme="light"] [style*="; color: rgba(91, 156, 246,"],
+:root[data-theme="light"] [style^="color: rgb(100, 181, 246)"],
+:root[data-theme="light"] [style*="; color: rgb(100, 181, 246)"],
+:root[data-theme="light"] [style^="color: rgba(100, 181, 246,"],
+:root[data-theme="light"] [style*="; color: rgba(100, 181, 246,"] { color: var(--accent-blue) !important; }
+:root[data-theme="light"] [style^="color: rgb(63, 182, 122)"],
+:root[data-theme="light"] [style*="; color: rgb(63, 182, 122)"],
+:root[data-theme="light"] [style^="color: rgba(63, 182, 122,"],
+:root[data-theme="light"] [style*="; color: rgba(63, 182, 122,"],
+:root[data-theme="light"] [style^="color: rgb(76, 195, 138)"],
+:root[data-theme="light"] [style*="; color: rgb(76, 195, 138)"],
+:root[data-theme="light"] [style^="color: rgba(76, 195, 138,"],
+:root[data-theme="light"] [style*="; color: rgba(76, 195, 138,"] { color: var(--green-bright) !important; }
+:root[data-theme="light"] [style^="color: rgb(229, 72, 77)"],
+:root[data-theme="light"] [style*="; color: rgb(229, 72, 77)"],
+:root[data-theme="light"] [style^="color: rgba(229, 72, 77,"],
+:root[data-theme="light"] [style*="; color: rgba(229, 72, 77,"] { color: var(--red-bright) !important; }
+:root[data-theme="light"] [style^="color: rgb(127, 119, 194)"],
+:root[data-theme="light"] [style*="; color: rgb(127, 119, 194)"],
+:root[data-theme="light"] [style^="color: rgba(127, 119, 194,"],
+:root[data-theme="light"] [style*="; color: rgba(127, 119, 194,"],
+:root[data-theme="light"] [style^="color: rgb(157, 151, 211)"],
+:root[data-theme="light"] [style*="; color: rgb(157, 151, 211)"],
+:root[data-theme="light"] [style^="color: rgba(157, 151, 211,"],
+:root[data-theme="light"] [style*="; color: rgba(157, 151, 211,"],
+:root[data-theme="light"] [style^="color: rgb(169, 154, 214)"],
+:root[data-theme="light"] [style*="; color: rgb(169, 154, 214)"],
+:root[data-theme="light"] [style^="color: rgba(169, 154, 214,"],
+:root[data-theme="light"] [style*="; color: rgba(169, 154, 214,"] { color: var(--accent-purple) !important; }
+:root[data-theme="light"] [style^="color: rgb(249, 115, 22)"],
+:root[data-theme="light"] [style*="; color: rgb(249, 115, 22)"],
+:root[data-theme="light"] [style^="color: rgba(249, 115, 22,"],
+:root[data-theme="light"] [style*="; color: rgba(249, 115, 22,"],
+:root[data-theme="light"] [style^="color: rgb(251, 146, 60)"],
+:root[data-theme="light"] [style*="; color: rgb(251, 146, 60)"],
+:root[data-theme="light"] [style^="color: rgba(251, 146, 60,"],
+:root[data-theme="light"] [style*="; color: rgba(251, 146, 60,"],
+:root[data-theme="light"] [style^="color: rgb(255, 152, 0)"],
+:root[data-theme="light"] [style*="; color: rgb(255, 152, 0)"],
+:root[data-theme="light"] [style^="color: rgba(255, 152, 0,"],
+:root[data-theme="light"] [style*="; color: rgba(255, 152, 0,"],
+:root[data-theme="light"] [style^="color: rgb(242, 139, 60)"],
+:root[data-theme="light"] [style*="; color: rgb(242, 139, 60)"],
+:root[data-theme="light"] [style^="color: rgba(242, 139, 60,"],
+:root[data-theme="light"] [style*="; color: rgba(242, 139, 60,"] { color: #c2410c !important; }
+:root[data-theme="light"] [style^="color: rgb(245, 158, 11)"],
+:root[data-theme="light"] [style*="; color: rgb(245, 158, 11)"],
+:root[data-theme="light"] [style^="color: rgba(245, 158, 11,"],
+:root[data-theme="light"] [style*="; color: rgba(245, 158, 11,"],
+:root[data-theme="light"] [style^="color: rgb(255, 167, 38)"],
+:root[data-theme="light"] [style*="; color: rgb(255, 167, 38)"],
+:root[data-theme="light"] [style^="color: rgba(255, 167, 38,"],
+:root[data-theme="light"] [style*="; color: rgba(255, 167, 38,"] { color: #b45309 !important; }
+:root[data-theme="light"] [style^="color: rgb(251, 191, 36)"],
+:root[data-theme="light"] [style*="; color: rgb(251, 191, 36)"],
+:root[data-theme="light"] [style^="color: rgba(251, 191, 36,"],
+:root[data-theme="light"] [style*="; color: rgba(251, 191, 36,"],
+:root[data-theme="light"] [style^="color: rgb(246, 201, 14)"],
+:root[data-theme="light"] [style*="; color: rgb(246, 201, 14)"],
+:root[data-theme="light"] [style^="color: rgba(246, 201, 14,"],
+:root[data-theme="light"] [style*="; color: rgba(246, 201, 14,"] { color: #92600a !important; }
+:root[data-theme="light"] [style^="color: rgb(240, 230, 140)"],
+:root[data-theme="light"] [style*="; color: rgb(240, 230, 140)"],
+:root[data-theme="light"] [style^="color: rgba(240, 230, 140,"],
+:root[data-theme="light"] [style*="; color: rgba(240, 230, 140,"] { color: #7a6a00 !important; }
+:root[data-theme="light"] [style^="color: rgb(143, 153, 220)"],
+:root[data-theme="light"] [style*="; color: rgb(143, 153, 220)"],
+:root[data-theme="light"] [style^="color: rgba(143, 153, 220,"],
+:root[data-theme="light"] [style*="; color: rgba(143, 153, 220,"] { color: #4338ca !important; }
+:root[data-theme="light"] [style^="color: rgb(95, 115, 184)"],
+:root[data-theme="light"] [style*="; color: rgb(95, 115, 184)"],
+:root[data-theme="light"] [style^="color: rgba(95, 115, 184,"],
+:root[data-theme="light"] [style*="; color: rgba(95, 115, 184,"],
+:root[data-theme="light"] [style^="color: rgb(141, 159, 230)"],
+:root[data-theme="light"] [style*="; color: rgb(141, 159, 230)"],
+:root[data-theme="light"] [style^="color: rgba(141, 159, 230,"],
+:root[data-theme="light"] [style*="; color: rgba(141, 159, 230,"] { color: #3b4a96 !important; }
+:root[data-theme="light"] [style^="color: rgb(125, 140, 163)"],
+:root[data-theme="light"] [style*="; color: rgb(125, 140, 163)"],
+:root[data-theme="light"] [style^="color: rgba(125, 140, 163,"],
+:root[data-theme="light"] [style*="; color: rgba(125, 140, 163,"] { color: var(--text-secondary) !important; }
+:root[data-theme="light"] [style^="color: rgb(138, 148, 166)"],
+:root[data-theme="light"] [style*="; color: rgb(138, 148, 166)"],
+:root[data-theme="light"] [style^="color: rgba(138, 148, 166,"],
+:root[data-theme="light"] [style*="; color: rgba(138, 148, 166,"],
+:root[data-theme="light"] [style^="color: rgb(156, 163, 175)"],
+:root[data-theme="light"] [style*="; color: rgb(156, 163, 175)"],
+:root[data-theme="light"] [style^="color: rgba(156, 163, 175,"],
+:root[data-theme="light"] [style*="; color: rgba(156, 163, 175,"] { color: var(--text-muted) !important; }

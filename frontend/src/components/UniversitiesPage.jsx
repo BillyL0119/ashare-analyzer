@@ -2484,7 +2484,7 @@ export default function UniversitiesPage({ lang = 'zh' }) {
         </>)}
 
         {/* Footer note */}
-        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--border-primary)', marginTop: 40, lineHeight: 1.6 }}>
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-muted)', marginTop: 40, lineHeight: 1.6 }}>
           {tx('排名来源：QS World University Rankings 2027（综合）、QS World University Rankings by Subject 2026: Business & Management Studies（商科）。学费、GMAT、截止日期和就业数据于 2026 年 10 月对照各校报告核对；无法核实的项目留空，请以各院校官网为准。', 'Rankings: QS World University Rankings 2027 (overall) and QS World University Rankings by Subject 2026: Business & Management Studies. Tuition, GMAT, deadlines and employment figures were checked against school reports in October 2026; anything that could not be verified is left blank, so always confirm with the official school website.')}
         </div>
       </div>

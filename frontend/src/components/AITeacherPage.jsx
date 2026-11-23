@@ -280,7 +280,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
           display: 'flex', flexDirection: 'column',
           overflowY: 'auto',
         }}>
-          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 600, color: 'rgba(79,134,247,0.5)', letterSpacing: 0 }}>
+          <div style={{ padding: '12px 12px 6px', fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: 0 }}>
             {t.atTopics}
           </div>
 
@@ -315,7 +315,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                       onClick={() => send(zh ? t.zh : t.en)}
                       style={{
                         padding: '6px 10px 6px 28px', cursor: 'pointer',
-                        fontSize: 11, color: 'rgba(79,134,247,0.65)',
+                        fontSize: 11, color: 'var(--text-secondary)',
                         borderRadius: 6, lineHeight: 1.4,
                         transition: 'all 0.12s',
                       }}
@@ -325,7 +325,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                       }}
                       onMouseLeave={e => {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'rgba(79,134,247,0.65)'
+                        e.currentTarget.style.color = 'var(--text-secondary)'
                       }}
                     >
                       {zh ? t.zh : t.en}
@@ -401,7 +401,7 @@ export default function AITeacherPage({ lang, initialQuestion, embedded }) {
                     : 'var(--bg-tertiary)',
                   border: 'none', borderRadius: 12,
                   padding: '0 22px', fontSize: 20,
-                  color: input.trim() && !busy ? '#fff' : '#4a5568',
+                  color: input.trim() && !busy ? '#fff' : 'var(--text-muted)',
                   cursor: input.trim() && !busy ? 'pointer' : 'default',
                   transition: 'all 0.2s', flexShrink: 0,
                 }}

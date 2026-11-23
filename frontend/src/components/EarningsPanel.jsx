@@ -5,7 +5,7 @@ const MUTED = 'var(--text-muted)'
 const BDR = 'rgba(108,156,255,0.10)'
 
 const MARKET_CFG = {
-  us: { color: '#5f73b8', bg: 'rgba(95,115,184,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
+  us: { color: '#8d9fe6', bg: 'rgba(95,115,184,0.12)', zh: '美股', en: 'US Stocks', ja: '米国株', ko: '미국주', fr: 'Actions US' },
   cn: { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', zh: 'A股',  en: 'A-Shares',  ja: 'A株',   ko: 'A주식',  fr: 'A-Share' },
 }
 
