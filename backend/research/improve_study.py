@@ -88,6 +88,9 @@ def risk_study():
     _, codes = sector_codes_of(Panel())
     ew, cw, flags, _, _ = benchmarks(dev)
     mkt = market_returns(dev)
+    from research.rates import monthly_cash_returns
+    from research.portfolio_study import index_trend
+    rf = monthly_cash_returns([m[0] for m in dev])
     base = dict(STEPS)["E +50 names"]
     variants = [
         ("E (current)", {}),
@@ -103,9 +106,14 @@ def risk_study():
     print("\nrisk layer on step E, large caps, DEVELOPMENT 2005 .. 2020-10")
     print(f"index (cap-weight): {cws['cagr']}%/yr, vol {cws['vol']}%, max drawdown {cws['max_drawdown']}%, return/risk {cws['return_per_risk']}")
     print(f"{'variant':34} {'CAGR':>6} {'vol':>6} {'maxDD':>7} {'ret/risk':>8} {'vs CW':>6} {'t':>5} {'behind':>7}")
-    out = {"index": cws}
+    out = {"index": cws, "cash": "3-month T-bill (FRED TB3MS)"}
+    it = stats(index_trend(dev, flags, mkt, rf), ew, cw)
+    out["index + trend rule"] = it
+    log_trial("dev index + trend rule (T-bill cash)", it)
+    print(f"{'index + trend rule':34} {it['cagr']:6.1f} {it['vol']:6.1f} {it['max_drawdown']:7.1f} {it['return_per_risk']:8.2f} "
+          f"{it['vs_cap_weight']:+6.1f} {it['t_vs_cap_weight']:5.2f} {it['years_behind_cap_weight']:>7}")
     for name, kw in variants:
-        series, _ = simulate(books, dev, codes, cash_flags=flags, mkt=mkt, **{**base, **kw})
+        series, _ = simulate(books, dev, codes, cash_flags=flags, mkt=mkt, rf=rf, **{**base, **kw})
         st = stats(series, ew, cw)
         out[name] = st
         log_trial(f"dev risk {name}", st)

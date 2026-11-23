@@ -73,10 +73,11 @@ def market_returns(months):
 
 
 def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, keep_pct, n_names, trend, cash_flags,
-             weighting="equal", sector_cap=None, vol_target=None, mkt=None):
+             weighting="equal", sector_cap=None, vol_target=None, mkt=None, rf=None):
     """weighting "inv_vol": weights proportional to 1 / 12-month volatility, set at each rebalance.
     sector_cap: at most this share of the names from one sector. vol_target (annual, e.g. 0.15): when the market's
-    volatility over the previous 6 months is above it, hold only target/realised of the portfolio, rest in cash."""
+    volatility over the previous 6 months is above it, hold only target/realised of the portfolio, rest in cash.
+    rf: cash return of each month (aligned with `months`); cash earns nothing when it is None."""
     held, out, turns, chosen_log = set(), [], [], {}
     weights = {}
     since_reb = None
@@ -140,7 +141,8 @@ def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, 
             exposure = min(1.0, vol_target / realised) if realised > 0 else 1.0
         if trend and cash_flags[k]:
             exposure = 0.0
-        r = exposure * r - cost
+        cash = rf[k] if rf is not None else 0.0
+        r = exposure * r + (1 - exposure) * cash - cost
         out.append((month, r))
     return out, turns
 
@@ -199,6 +201,12 @@ def benchmarks(months):
     return ew, cw, flags, levels, dates
 
 
+def index_trend(months, flags, mkt, rf, since=FIRST_YEAR * 10000):
+    """The index, or cash at the T-bill rate in months that start below the 10-month average."""
+    return [(m[0], (rf[i] if rf is not None else 0.0) if flags[i] else mkt[i])
+            for i, m in enumerate(months) if m[0] >= since]
+
+
 def yearly(series, bench):
     out = {}
     for (month, r), b in zip(series, bench):
@@ -209,7 +217,7 @@ def yearly(series, bench):
                 "difference": round((a - b) * 100, 1)} for y, (a, b) in out.items()}
 
 
-def evaluate(books, months, sector_codes):
+def evaluate(books, months, sector_codes, rf=None):
     ew, cw, flags, levels, dates = benchmarks(months)
     report = {"first_year": FIRST_YEAR,
               "benchmarks": {"equal_weight": {"cagr": annual(ew), "max_drawdown": max_drawdown(ew)},
@@ -217,7 +225,7 @@ def evaluate(books, months, sector_codes):
                                             "vol": round(float(np.std(cw, ddof=1) * math.sqrt(12)) * 100, 1)}},
               "steps": {}, "by_year": {}}
     for name, kw in STEPS:
-        series, turns = simulate(books, months, sector_codes, cash_flags=flags, **kw)
+        series, turns = simulate(books, months, sector_codes, cash_flags=flags, rf=rf, **kw)
         st = stats(series, ew, cw)
         st["turnover_per_rebalance"] = round(float(np.mean(turns)) * 100, 1)
         st["rebalances_per_year"] = 12 // kw["every"]

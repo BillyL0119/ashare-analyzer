@@ -46,13 +46,17 @@ def validation():
                 return json.load(fh)
         except (OSError, ValueError):
             return None
-    risk, hold, trials = load("risk_study.json"), load("holdout_test.json"), load("trials.json") or []
+    # the T-bill-cash versions when present (same candidates, cash months earn the 3-month T-bill rate)
+    risk, trials = load("risk_study.json"), load("trials.json") or []
+    hold = load("holdout_test_cash.json") or load("holdout_test.json")
     if not risk or not hold:
         return None
-    idx_trend = next((t["result"] for t in reversed(trials) if t["name"] == "dev index + trend rule"), None)
+    idx_trend = risk.get("index + trend rule") or next(
+        (t["result"] for t in reversed(trials) if t["name"] == "dev index + trend rule"), None)
     dev = {"index": risk.get("index"), "index + trend rule": idx_trend, "model (step E)": risk.get("E (current)"),
            "model + inv-vol + sector + trend": risk.get("+ inv-vol + sector + trend")}
     return {"dev_period": "2005-01 .. 2020-10", "holdout_period": hold["period"], "holdout_ran_at": hold["ran_at"],
+            "cash": hold.get("cash", "0"),
             "trials": len(trials), "factors_tested": len(FACTORS), "candidates": CANDIDATES, "dev": dev, "holdout": hold["results"]}
 
 
@@ -62,7 +66,8 @@ def build():
     books, months, _, latest = run(return_latest=True)
     P = latest["panel"]
     labels, codes = sector_codes_of(P)
-    report, trend = evaluate(books, months, codes)
+    from research.rates import monthly_cash_returns, tbill_annual
+    report, trend = evaluate(books, months, codes, rf=monthly_cash_returns([m[0] for m in months]))
 
     year = latest["date"] // 10000
     chosen = choose(books, "large", year + 1)                       # every month up to now
@@ -110,6 +115,10 @@ def build():
         ma = float(np.mean(lv[max(0, k - 9): k + 1])) if k >= 9 else None
         hist.append({"month": str(dates[k])[:6], "level": r(lv[k] * 100, 1), "ma10": r(ma * 100, 1) if ma else None})
     now_ma = float(np.mean(lv[-10:]))
+    as_of = f"{str(latest['date'])[:4]}-{str(latest['date'])[4:6]}-{str(latest['date'])[6:]}"
+    from research.live_track import update as live_update
+    live = live_update(as_of, rows, P, list(lv), dates, tbill_annual(), top_n=TOP_N,
+                       keep_n=sum(1 for x in rows if x["keep"]))
     factor_rec = {}
     for f in chosen:
         b = books[("large", f)]
@@ -117,19 +126,23 @@ def build():
                          "all": b.summary(), "2000_2012": b.summary(until=20130101), "2013_now": b.summary(since=20130101)}
 
     return {
-        "as_of": f"{str(latest['date'])[:4]}-{str(latest['date'])[4:6]}-{str(latest['date'])[6:]}",
+        "as_of": as_of,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "universe": {"name": "large", "size": int(n), "rule": "US common stock, price >= $5, 60-day average dollar "
                      "volume >= $5M, the 1000 largest by market cap"},
         "config": {"step": "E +50 names", "top_n": TOP_N, "keep_pct": KEEP_PCT, "rebalance": "quarterly",
                    "chosen_factors": list(chosen)},
         "trend": {"above": bool(lv[-1] >= now_ma), "gap_pct": r((lv[-1] / now_ma - 1) * 100, 1),
+                  # the reading above uses the month so far; the rule acts on month-end closes only
+                  "provisional": live["this_month_invested"] is not None,
+                  "this_month_invested": live["this_month_invested"],
                   "rule": "hold cash in a month that starts with the cap-weighted large-cap index below its "
                           "10-month average", "history": hist[-132:]},
         "ranking": rows,
         "factors": factor_rec,
         "portfolio": report,
         "validation": validation(),
+        "live": live,
     }
 
 

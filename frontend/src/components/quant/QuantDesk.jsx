@@ -24,7 +24,8 @@ const S = {
     trendTitle: '大盘趋势', trendSub: '市值加权大盘股指数与它的 10 个月均线',
     above: (g) => `在均线上方 ${g}%`, below: (g) => `在均线下方 ${Math.abs(g)}%`,
     aboveNote: '按规则：下个月正常持股。', belowNote: '按规则：下个月持有现金。',
-    trendRule: '规则：月初指数低于 10 个月均线，这个月就持有现金。它像一份保险：2005–2020 年把指数的最大回撤从 −50% 降到 −17%，最近 6 年从 −25% 降到 −14%；代价是收益变少，2005–2020 年每年少约 1.2%，最近 6 年这种急跌急涨的行情里每年少约 3.9%（回测里现金按零利息算）。这是教科书上的固定规则，没有用这段数据调参数。',
+    provNote: (thisMonth, above) => `这是按本月到目前为止的数据算的临时读数，规则只看每月最后一个交易日的收盘。本月规则状态：${thisMonth ? '持股' : '持现金'}（由上月底决定）。${above ? '月底如果仍在均线上方，下个月继续持股。' : '月底如果仍在均线下方，下个月持有现金。'}`,
+    trendRule: '规则：月初指数低于 10 个月均线，这个月就持有现金（按 3 个月美国国债利率计息）。它像一份保险：2005–2020 年把指数的最大回撤从 −50% 降到 −17%，最近 6 年从 −25% 降到 −12%；代价是收益变少，2005–2020 年每年少约 1.0%，最近 6 年这种急跌急涨的行情里每年少约 3.2%。这是教科书上的固定规则，没有用这段数据调参数。',
     lineIndex: '大盘股指数', lineMa: '10 个月均线',
     rankTitle: '大盘股因子排名', rankSub: (f) => `综合 ${f} 个因子，在各自行业内比较，按历史预测力加权`,
     search: '输入代码或名称，看它排第几', top50: '模型组合前 50', all: '全部',
@@ -48,12 +49,18 @@ const S = {
       '我们试过另外 9 个信号（内部人交易、机构持仓、财报反应等）和多种风险控制，都没能提高准确性，所以没有加入。',
       '每周六上午自动更新；需要时也可以在电脑上运行 quant_publish.py --refresh。',
     ],
+    liveTitle: '上线以来实盘跟踪', liveSub: (d) => `从 ${d} 起按规则真实记录，持仓在决定当时就存档，之后不改`,
+    liveDays: (n) => `已跟踪 ${n} 个交易日`, liveEarly: '时间还太短，涨跌主要是运气；至少要 1–3 年才有参考价值。',
+    liveCols: { model: '选股模型前 50', index: '标普 500（SPY）', index_trend: '指数 + 趋势规则', model_trend: '选股 + 趋势规则' },
+    liveReturn: '上线以来', liveHold: '模型当前持仓（等权）', liveReview: (a, b) => `上次调整 ${a}，下次调整在 ${b} 之后`,
+    liveChanges: '调整记录', liveBought: '买入', liveSold: '卖出', liveStart: '建仓',
+    liveTrend: '趋势规则每月状态', liveIn: '持股', liveCash: '现金',
     aiTitle: 'AI 解读', aiSub: '用大白话解释这一页现在说了什么',
     aiBtn: '生成 AI 解读', aiBusy: '正在生成，大约需要 20–40 秒…', aiFail: '这次没有生成成功（AI 的回答没通过检查或服务暂时不可用），请稍后再试。',
     aiNote: '由 AI 根据本页的数据生成，每周数据更新后重新生成。它只解释规则和历史检验结果，不是投资建议，也可能有误；买不买、买多少由你自己决定。',
     valTitle: '四种用法的检验结果', valSub: (dev, ho) => `开发期 ${dev} 用来挑选方法；最近 6 年（${ho}）锁起来，所有方法定下来以后只检验了一次`,
     valDev: '2005–2020 开发期', valHold: '最近 6 年（只检验一次）', colRisk: '收益/风险',
-    valNote: (n, f) => `年化收益已扣除交易成本，现金按零利息计。收益/风险 = 年化收益 ÷ 年波动，越高越好。整个研究检验过 ${f} 个单项因子、比较过 ${n} 种组合方案；试得越多，碰巧好看的可能越大。`,
+    valNote: (n, f) => `年化收益已扣除交易成本，持有现金的月份按 3 个月美国国债利率计息。收益/风险 = 年化收益 ÷ 年波动，越高越好。整个研究检验过 ${f} 个单项因子、比较过 ${n} 种组合方案；试得越多，碰巧好看的可能越大。`,
     cand: { index: '直接持有指数（约等于标普 500）', 'index + trend rule': '指数 + 趋势规则',
       'model (step E)': '选股模型前 50（当前排名）', 'model + inv-vol + sector + trend': '选股 + 按波动加权 + 行业上限 + 趋势规则' },
     steps: { 'A baseline': '基础：约 200 只，每月调整', 'B +sector-neutral': '加：行业内比较', 'C +IC weights': '加：按预测力加权',
@@ -68,7 +75,8 @@ const S = {
     trendTitle: 'Market trend', trendSub: 'Cap-weighted large-cap index and its 10-month average',
     above: (g) => `${g}% above the average`, below: (g) => `${Math.abs(g)}% below the average`,
     aboveNote: 'Rule: stay invested next month.', belowNote: 'Rule: hold cash next month.',
-    trendRule: 'Rule: if the index starts a month below its 10-month average, hold cash that month. It works like insurance: the index’s worst drawdown fell from −50% to −17% in 2005–2020 and from −25% to −14% in the last six years, at a cost of about 1.2% a year in 2005–2020 and 3.9% a year in the fast dips and rebounds of the last six years (cash earns 0 in the test). A fixed textbook rule, not fitted to this data.',
+    provNote: (thisMonth, above) => `A reading from the month so far; the rule acts only on month-end closes. This month the rule is ${thisMonth ? 'invested' : 'in cash'} (decided at last month’s close). ${above ? 'If it is still above the average at month-end, it stays invested next month.' : 'If it is still below the average at month-end, it holds cash next month.'}`,
+    trendRule: 'Rule: if the index starts a month below its 10-month average, hold cash that month (earning the 3-month Treasury bill rate). It works like insurance: the index’s worst drawdown fell from −50% to −17% in 2005–2020 and from −25% to −12% in the last six years, at a cost of about 1.0% a year in 2005–2020 and 3.2% a year in the fast dips and rebounds of the last six years. A fixed textbook rule, not fitted to this data.',
     lineIndex: 'Large-cap index', lineMa: '10-month average',
     rankTitle: 'Large-cap factor ranking', rankSub: (f) => `${f} factors, compared within each sector, weighted by past predictive power`,
     search: 'Type a ticker or name to see its rank', top50: 'Model top 50', all: 'All',
@@ -92,12 +100,18 @@ const S = {
       'Nine more signals (insiders, institutions, earnings reactions and others) and several risk rules were tested and did not improve accuracy, so they are left out.',
       'Refreshed every Saturday morning; run quant_publish.py --refresh on the Mac to refresh by hand.',
     ],
+    liveTitle: 'Live record since launch', liveSub: (d) => `Rules followed for real from ${d}; holdings are saved when decided and never changed`,
+    liveDays: (n) => `${n} trading days tracked`, liveEarly: 'Too short to mean much: moves are mostly luck until one to three years have passed.',
+    liveCols: { model: 'Stock model top 50', index: 'S&P 500 (SPY)', index_trend: 'Index + trend rule', model_trend: 'Stocks + trend rule' },
+    liveReturn: 'Since launch', liveHold: 'Model holdings now (equal weight)', liveReview: (a, b) => `Last review ${a}; next after ${b}`,
+    liveChanges: 'Reviews', liveBought: 'Bought', liveSold: 'Sold', liveStart: 'Opened',
+    liveTrend: 'Trend rule by month', liveIn: 'Stocks', liveCash: 'Cash',
     aiTitle: 'AI reading', aiSub: 'What this page says right now, in plain words',
     aiBtn: 'Write the AI reading', aiBusy: 'Writing, about 20–40 seconds…', aiFail: 'It could not be written this time (the answer failed a check or the service is busy). Try again later.',
     aiNote: 'Written by AI from this page’s data and rewritten after each weekly update. It explains the rules and the tested results; it is not investment advice and may contain mistakes. Whether and how much to buy is your decision.',
     valTitle: 'Four ways to use it, tested', valSub: (dev, ho) => `Methods were chosen on ${dev}; the last six years (${ho}) were set aside and tested once after everything was fixed`,
     valDev: '2005–2020 development', valHold: 'Last six years (tested once)', colRisk: 'Return/risk',
-    valNote: (n, f) => `Returns are after trading costs; cash earns 0. Return/risk = annual return ÷ annual volatility, higher is better. ${f} single factors and ${n} combinations were tested in all; the more tried, the likelier one looks good by chance.`,
+    valNote: (n, f) => `Returns are after trading costs; months in cash earn the 3-month Treasury bill rate. Return/risk = annual return ÷ annual volatility, higher is better. ${f} single factors and ${n} combinations were tested in all; the more tried, the likelier one looks good by chance.`,
     cand: { index: 'Hold the index (about the S&P 500)', 'index + trend rule': 'Index + trend rule',
       'model (step E)': 'Stock model top 50 (current ranking)', 'model + inv-vol + sector + trend': 'Stocks + vol weights + sector cap + trend rule' },
     steps: { 'A baseline': 'Base: ~200 names, monthly', 'B +sector-neutral': '+ within-sector ranks', 'C +IC weights': '+ weighted by predictive power',
@@ -296,6 +310,68 @@ function AiReading({ token, lang, L }) {
   )
 }
 
+function LiveChart({ series, L }) {
+  const theme = useThemeStore((s) => s.theme)
+  const option = useMemo(() => {
+    void theme
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-blue').trim() || '#6c9cff'
+    const colors = { model: accent, index: THEME.text, index_trend: '#a99ad6', model_trend: '#3fb67a' }
+    return {
+      animation: false,
+      grid: { left: 8, right: 8, top: 10, bottom: 22, containLabel: true },
+      tooltip: { trigger: 'axis', confine: true, backgroundColor: THEME.tooltipBg, borderColor: THEME.border,
+        textStyle: { color: THEME.tooltipText, fontSize: 12 } },
+      xAxis: { type: 'category', data: series.map((x) => x.date), boundaryGap: false, axisTick: { show: false },
+        axisLine: { lineStyle: { color: THEME.border } }, axisLabel: { color: THEME.text, fontSize: 11, hideOverlap: true } },
+      yAxis: { type: 'value', scale: true, axisLine: { show: false }, axisTick: { show: false },
+        splitLine: { lineStyle: { color: THEME.border, opacity: 0.6 } }, axisLabel: { color: THEME.text, fontSize: 11 } },
+      series: Object.keys(L.liveCols).map((k) => ({ name: L.liveCols[k], type: 'line', showSymbol: false,
+        data: series.map((x) => x[k]), lineStyle: { width: k === 'model' ? 2 : 1.4, color: colors[k] }, itemStyle: { color: colors[k] } })),
+    }
+  }, [series, L, theme])
+  return <div className="qd-chart qd-chart-short"><ReactECharts option={option} notMerge style={{ height: '100%', width: '100%' }} opts={{ renderer: 'canvas' }} /></div>
+}
+
+function Live({ live, L }) {
+  const months = Object.entries(live.trend_months || {})
+  return (
+    <section className="qp-card" aria-label={L.liveTitle}>
+      <div className="qp-head"><div>
+        <h3 className="qp-h">{L.liveTitle}</h3>
+        <p className="qd-sub">{L.liveSub(live.started)}</p>
+      </div></div>
+      <p className="qd-note">{L.liveDays(live.trading_days)} · {L.liveEarly}</p>
+      <div className="fl-table-wrap">
+        <table className="fl-table qd-steps">
+          <thead><tr><th scope="col">{L.colStep}</th><th scope="col">{L.liveReturn}</th></tr></thead>
+          <tbody>
+            {Object.keys(L.liveCols).map((k) => (
+              <tr key={k}><td>{L.liveCols[k]}</td>
+                <td style={{ color: changeColor(live.returns[k]) }}>{isNum(live.returns[k]) ? fmtSignedPct(live.returns[k]) : '—'}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {live.series.length > 1 && <LiveChart series={live.series} L={L} />}
+      <h4 className="fl-sub">{L.liveHold}</h4>
+      <p className="qd-foot" style={{ marginTop: 0 }}>{L.liveReview(live.last_review, live.next_review_after)}</p>
+      <div className="qd-chips">{live.holdings.map((t) => <span key={t} className="bfs-chip qd-chip">{t}</span>)}</div>
+      <h4 className="fl-sub">{L.liveChanges}</h4>
+      <ul className="qd-list">
+        {live.reviews.map((rv, n) => (
+          <li key={rv.date}><b>{rv.date}</b> {n === 0 ? `${L.liveStart} ${rv.bought.length}` : `${L.liveBought} ${rv.bought.join(', ') || '—'} · ${L.liveSold} ${rv.sold.join(', ') || '—'}`}</li>
+        ))}
+      </ul>
+      {months.length > 0 && (
+        <>
+          <h4 className="fl-sub">{L.liveTrend}</h4>
+          <ul className="qd-list">{months.map(([m, inv]) => <li key={m}><b>{m}</b> {inv ? L.liveIn : L.liveCash}</li>)}</ul>
+        </>
+      )}
+    </section>
+  )
+}
+
 function Validation({ v, L }) {
   const ho = v.holdout_period.replace(/(\d{4})(\d{2})\d{2}/g, '$1-$2')
   return (
@@ -452,7 +528,7 @@ export default function QuantDesk({ lang, onOpenAuth }) {
             <span className={`qd-dot ${t.above ? 'up' : 'down'}`} aria-hidden="true" />
             <div>
               <div className="qd-state-main">{t.above ? L.above(t.gap_pct) : L.below(t.gap_pct)}</div>
-              <div className="qd-state-note">{t.above ? L.aboveNote : L.belowNote}</div>
+              <div className="qd-state-note">{t.provisional ? L.provNote(t.this_month_invested, t.above) : (t.above ? L.aboveNote : L.belowNote)}</div>
             </div>
           </div>
           <TrendChart history={t.history} L={L} />
@@ -461,6 +537,7 @@ export default function QuantDesk({ lang, onOpenAuth }) {
       </section>
 
       <Ranking d={d} L={L} F={F} zh={lang === 'zh'} />
+      {d.live && <Live live={d.live} L={L} />}
       {d.validation && <Validation v={d.validation} L={L} />}
       <Credibility d={d} L={L} F={F} />
 

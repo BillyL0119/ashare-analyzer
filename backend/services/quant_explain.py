@@ -45,7 +45,7 @@ FACTOR_PLAIN = {
 
 
 def cache_key(sig: dict) -> str:
-    return f"v2:{sig.get('as_of')}:{sig.get('generated_at')}"
+    return f"v3:{sig.get('as_of')}:{sig.get('generated_at')}"
 
 
 def facts(sig: dict) -> str:
@@ -54,7 +54,13 @@ def facts(sig: dict) -> str:
     lines = [
         f"Data as of {sig['as_of']}. Universe: the {sig['universe']['size']} largest US stocks.",
         f"Trend: the cap-weighted large-cap index is {abs(t['gap_pct']):.1f}% {'above' if t['above'] else 'below'} its "
-        f"10-month average. The trend rule says: {'stay invested next month' if t['above'] else 'hold cash next month'}.",
+        f"10-month average." + (
+            f" This reading uses the month so far; the trend rule acts only on month-end closes. For this month the "
+            f"rule is {'invested' if t.get('this_month_invested') else 'in cash'} (decided at last month's close); next "
+            f"month is decided at this month's close: if the index is still {'above' if t['above'] else 'below'} its "
+            f"average then, the rule will {'stay invested' if t['above'] else 'hold cash'} next month."
+            if t.get("provisional") else
+            f" The trend rule says: {'stay invested next month' if t['above'] else 'hold cash next month'}."),
         "The stock model ranks stocks by: " + "; ".join(FACTOR_PLAIN.get(f, f.replace("_", " "))
                                                          for f in sig["config"]["chosen_factors"])
         + ". Each is compared with other companies in the same sector.",
@@ -70,7 +76,8 @@ def facts(sig: dict) -> str:
     lines.append(f"The first {TOP_LISTED} by the model rule: "
                  + "; ".join(f"#{r['rank']} {r['ticker']} ({r['name']}, {r['sector']})" for r in top[:TOP_LISTED]) + ".")
     if v:
-        lines.append(f"Tested results (after trading costs, cash earns 0). Development period {v['dev_period']} and the "
+        cash = "cash earns the 3-month Treasury bill rate" if "T-bill" in str(v.get("cash")) else "cash earns 0"
+        lines.append(f"Tested results (after trading costs, {cash}). Development period {v['dev_period']} and the "
                      f"last six years, tested once:")
         for c in v.get("candidates", []):
             a, b = v["dev"].get(c) or {}, v["holdout"].get(c) or {}
@@ -83,11 +90,22 @@ def facts(sig: dict) -> str:
                                                     f"(t-statistic {b['t_vs_cap_weight']:.1f})") + ".")
         lines.append("A t-statistic below 2 means the difference could be luck. In the development period the stock "
                      "model trailed the index in 7 of 16 years.")
-    lines.append("So right now: the trend rule alone says hold cash; the stock model alone holds its top 50; the way "
-                 "that combines the stock model with the trend rule would also hold cash next month."
-                 if not t["above"] else
-                 "So right now: the trend rule says stay invested, so both the stock model and the combined way hold "
-                 "stocks next month.")
+    if t.get("provisional"):
+        now = "hold stocks" if t.get("this_month_invested") else "are in cash where the trend rule applies"
+        lines.append(f"So right now: this month all the ways {now}. "
+                     + ("If the index is still below its average at this month's close, the trend rule and the combined "
+                        "way will hold cash next month while the stock model alone keeps its top 50."
+                        if not t["above"] else "If the index stays above its average, all the ways stay invested."))
+    else:
+        lines.append("So right now: the trend rule alone says hold cash; the stock model alone holds its top 50; the way "
+                     "that combines the stock model with the trend rule would also hold cash next month."
+                     if not t["above"] else
+                     "So right now: the trend rule says stay invested, so both the stock model and the combined way "
+                     "hold stocks next month.")
+    live = sig.get("live")
+    if live:
+        lines.append(f"Live tracking of these rules started on {live['started']}; results need one to three years "
+                     "before they mean anything.")
     lines.append("Worst drawdown means the biggest fall from a high point to a later low.")
     return "\n".join(lines)
 

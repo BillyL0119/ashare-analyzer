@@ -35,15 +35,20 @@ def main():
     if a.refresh:
         step([PY, os.path.join(HERE, "sharadar_sync.py"), "--force", "TICKERS", "SEP", "SF1", "DAILY"])
         step([PY, os.path.join(HERE, "sharadar_build.py")])
+    ssh = ["-i", KEY, "-o", "BatchMode=yes"]
+    state = os.path.join(BACKEND, "data", "quant", "live_state.json")
+    if not os.path.exists(state):           # a new or wiped Mac: carry on the live record from the server's backup
+        os.makedirs(os.path.dirname(state), exist_ok=True)
+        subprocess.run(["scp", "-q", *ssh, f"{SERVER}:{REMOTE_DIR}/live_state.json", state], capture_output=True)
     step([PY, "-m", "research.signals"], cwd=BACKEND)
     if a.no_upload:
         return
     local = os.path.join(BACKEND, "data", "quant", "signals.json")
-    ssh = ["-i", KEY, "-o", "BatchMode=yes"]
     step(["ssh", *ssh, SERVER, f"mkdir -p {REMOTE_DIR}"])
     step(["scp", "-q", *ssh, local, f"{SERVER}:{REMOTE_DIR}/signals.json.tmp"])
     step(["ssh", *ssh, SERVER, f"mv {REMOTE_DIR}/signals.json.tmp {REMOTE_DIR}/signals.json"])
     print("uploaded: the admin desk shows it on the next page load")
+    step(["scp", "-q", *ssh, state, f"{SERVER}:{REMOTE_DIR}/live_state.json"])          # backup of the live record
     # this week's AI reading, written on the server (the DeepSeek key lives there); a failure leaves the page's button
     r = subprocess.run(["ssh", *ssh, SERVER, "cd /root/ashare-analyzer/backend && BFS_NO_WARMUP=1 "
                         "/root/ashare-venv/bin/python tools/quant_explain_refresh.py"], capture_output=True, text=True)
