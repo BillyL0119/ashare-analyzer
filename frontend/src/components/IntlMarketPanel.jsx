@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import useCompareStore from '../store/compareStore'
 import { CUR, localName } from '../utils/markets'
+import visibleInterval from '../utils/visibleInterval'
 
 // Landing panel for Hong Kong and Japan (the US one is USMarketPanel): index levels, whether the
 // exchange is trading, and the most-followed names. Green up / red down, as in Hong Kong and the US.
@@ -48,8 +49,8 @@ export default function IntlMarketPanel({ lang, market }) {
     setD(null)
     const load = () => fetch(`/api/${market}/overview`).then((r) => r.json()).then((j) => alive && j.hot && setD(j)).catch(() => {})
     load()
-    const id = setInterval(() => { load(); tick((n) => n + 1) }, 60000)
-    return () => { alive = false; clearInterval(id) }
+    const stop = visibleInterval(() => { load(); tick((n) => n + 1) }, 60000)
+    return () => { alive = false; stop() }
   }, [market])
 
   if (!d) return <div className="skeleton" style={{ ...card, height: 150, marginBottom: 10 }} />

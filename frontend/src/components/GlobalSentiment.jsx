@@ -153,34 +153,27 @@ const CN_INDEX_EN = {
 }
 
 function TickerBar({ indices, zh }) {
-  const scrollRef = useRef(null)
-  const pausedRef = useRef(false)
+  const wrapRef = useRef(null)
+  // The strip scrolls with a CSS transform animation (the browser's compositor does it, no JavaScript per frame),
+  // and stops while it is off screen. It used to move scrollLeft from a 24 ms timer, which kept the page
+  // re-laying-out all day.
   useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    let x = 0
-    const id = setInterval(() => {
-      if (pausedRef.current) return
-      x += 0.4
-      if (x >= el.scrollWidth / 2) x = 0
-      el.scrollLeft = x
-    }, 24)
-    return () => clearInterval(id)
-  }, [indices])
+    const el = wrapRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('bfs-ticker-off', !e.isIntersecting))
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   const doubled = [...indices, ...indices]
   return (
-    <div
-      ref={scrollRef}
-      onMouseEnter={() => { pausedRef.current = true }}
-      onMouseLeave={() => { pausedRef.current = false }}
-      style={{ display: 'flex', gap: 8, overflowX: 'hidden', padding: '4px 0 2px', marginTop: 6, userSelect: 'none' }}
-    >
+    <div ref={wrapRef} className="bfs-ticker" style={{ overflow: 'hidden', padding: '4px 0 2px', marginTop: 6, userSelect: 'none' }}>
+      <div className="bfs-ticker-track" style={{ display: 'flex', width: 'max-content', animationDuration: `${Math.max(20, indices.length * 6)}s` }}>
       {doubled.map((idx, i) => {
         const pct = idx.change_pct
         return (
           <div key={i} style={{
-            flexShrink: 0, minWidth: 100,
+            flexShrink: 0, minWidth: 100, marginRight: 8,
             background: changePctBg(pct), border: `1px solid ${changePctBorder(pct)}`,
             borderRadius: 8, padding: '4px 10px', textAlign: 'center',
           }}>
@@ -196,6 +189,7 @@ function TickerBar({ indices, zh }) {
           </div>
         )
       })}
+      </div>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import useCompareStore from '../store/compareStore'
 import { getJSON } from '../utils/sharedFetch'
+import visibleInterval from '../utils/visibleInterval'
 
 const L = {
   zh: { title: '美股大盘', pre: '盘前交易', regular: '交易中', post: '盘后交易', closed: '休市', opens: '距开盘', h: '小时', m: '分钟', d: '天',
@@ -64,8 +65,8 @@ export default function USMarketPanel({ lang, hideIndices = false }) {
     let alive = true
     const load = () => getJSON('/api/us/market/overview', 30000).then((j) => alive && j.indices && setD(j)).catch(() => {})
     load()
-    const id = setInterval(load, 60000)
-    return () => { alive = false; clearInterval(id) }
+    const stop = visibleInterval(load, 60000)
+    return () => { alive = false; stop() }
   }, [])
 
   if (!d) return <div className="skeleton" style={{ ...card, height: 150, marginBottom: 10 }} />

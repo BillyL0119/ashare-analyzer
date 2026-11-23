@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { getStockHistory, getRealtimeQuote, getIntlStockHistory, getIntlRealtime } from '../api/stockApi'
+import visibleInterval from '../utils/visibleInterval'
 
 const cache = new Map()
 
@@ -85,8 +86,8 @@ export function useStockData(symbol, { period, startDate, endDate, adjust, marke
 
     // Poll A-shares every 5s; US / HK / Japan every 60s
     const pollInterval = market !== 'cn' ? 60000 : 5000
-    intervalRef.current = setInterval(fetchQuote, pollInterval)
-    return () => clearInterval(intervalRef.current)
+    intervalRef.current = visibleInterval(fetchQuote, pollInterval)
+    return () => intervalRef.current()
   }, [symbol, period, startDate, endDate, adjust, market, retryCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return { data, loading, error, quote, refetch }

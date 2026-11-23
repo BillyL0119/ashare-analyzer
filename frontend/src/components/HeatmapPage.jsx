@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import ReactECharts from '../lib/echarts'
 import useCompareStore from '../store/compareStore'
 import { SECTOR_ZH, tileColor, money, pct } from '../utils/heatmap'
+import visibleInterval from '../utils/visibleInterval'
 
 // Market heatmap: one tile per company, area = market cap, colour = today's move, grouped by sector.
 // US colours are green up / red down; A-shares follow the local red up / green down convention.
@@ -45,8 +46,8 @@ export default function HeatmapPage({ lang }) {
       .then((d) => { if (alive) { setData(d); setState('ok') } })
       .catch(() => { if (alive) setState((s) => (s === 'ok' ? s : 'failed')) })
     load()
-    const id = setInterval(load, 60000)                  // quotes refresh in the background
-    return () => { alive = false; clearInterval(id) }
+    const stop = visibleInterval(load, 60000)            // quotes refresh while the tab is on screen
+    return () => { alive = false; stop() }
   }, [market, limit, nonce]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const cjk = zh || lang === 'ja'

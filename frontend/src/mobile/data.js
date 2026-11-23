@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import visibleInterval from '../utils/visibleInterval'
 
 const PREFIX = 'bfs_m_cache:'
 const MAX_AGE = 24 * 3600 * 1000
@@ -62,8 +63,8 @@ export function useAPI(path, { enabled = true, persist = true, refreshMs = 0 } =
     load.current()
     const runs = run
     if (!refreshMs) return () => { runs.current++ }
-    const timer = setInterval(() => load.current(), refreshMs)
-    return () => { clearInterval(timer); runs.current++ }
+    const stop = visibleInterval(() => load.current(), refreshMs)
+    return () => { stop(); runs.current++ }
   }, [key, enabled]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return { data, error, loading, stale, reload: () => load.current() }

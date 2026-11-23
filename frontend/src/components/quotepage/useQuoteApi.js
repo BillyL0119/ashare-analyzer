@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import visibleInterval from '../../utils/visibleInterval'
 
 // Fetch one quote-page endpoint with a small in-memory cache shared by every tab, so switching tabs or
 // tickers back and forth does not refetch. `poll` (ms) refreshes live data, e.g. the price while the
 // market is open. Returns { data, error, loading } for the current url; data from a previous url is never shown.
 const cache = new Map()   // url -> { at, data }
+const inflight = new Map() // url -> Promise: two components asking for the same url share one request
 
 export default function useQuoteApi(url, { ttl = 60_000, poll = 0 } = {}) {
   const [res, setRes] = useState({ url: null, data: null, error: null })
@@ -17,20 +19,28 @@ export default function useQuoteApi(url, { ttl = 60_000, poll = 0 } = {}) {
       Promise.resolve().then(() => { if (alive) setRes({ url, data: hit.data, error: null }) })
       return () => { alive = false }
     }
-    fetch(url)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((data) => {
-        cache.set(url, { at: Date.now(), data })
-        if (alive) setRes({ url, data, error: null })
-      })
+    let req = inflight.get(url)
+    if (!req) {
+      req = fetch(url)
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+        .then((data) => { cache.set(url, { at: Date.now(), data }); return data })
+        .finally(() => inflight.delete(url))
+      inflight.set(url, req)
+    }
+    req
+      .then((data) => { if (alive) setRes({ url, data, error: null }) })
       .catch((error) => { if (alive) setRes((prev) => ({ url, data: prev.url === url ? prev.data : null, error })) })
     return () => { alive = false }
   }, [url, ttl, tick])
 
   useEffect(() => {
     if (!poll || !url) return undefined
-    const id = setInterval(() => { cache.delete(url); setTick((n) => n + 1) }, poll)
-    return () => clearInterval(id)
+    // Header and summary poll the same live quote: the one that fires second finds the fresh copy instead of asking again
+    return visibleInterval(() => {
+      const hit = cache.get(url)
+      if (!hit || Date.now() - hit.at >= poll * 0.8) cache.delete(url)
+      setTick((n) => n + 1)
+    }, poll)
   }, [poll, url])
 
   const current = res.url === url

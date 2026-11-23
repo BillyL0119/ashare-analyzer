@@ -349,3 +349,12 @@ code {
 .bfs-chip:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-primary); }
 .bfs-chip:disabled { opacity: 0.5; cursor: default; }
 .bfs-chip:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+
+/* Index strip on the home page: a transform animation (compositor only), paused on hover and while off screen */
+@keyframes bfsTicker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.bfs-ticker-track { animation: bfsTicker linear infinite; will-change: transform; }
+.bfs-ticker:hover .bfs-ticker-track, .bfs-ticker-off .bfs-ticker-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .bfs-ticker { overflow-x: auto !important; }
+  .bfs-ticker-track { animation: none; }
+}
