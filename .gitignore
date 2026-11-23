@@ -34,3 +34,6 @@ backend/data/move_reasons.json
 
 # Local dev venv (backend/tools/dev_quote_app.py)
 backend/.venv/
+
+# Sharadar raw tables (personal licence: never commit or serve)
+backend/data/sharadar/
