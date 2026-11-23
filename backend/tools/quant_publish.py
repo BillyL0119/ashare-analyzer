@@ -6,7 +6,8 @@ Weekly refresh of the admin research desk, run on Billy's Mac (the Sharadar data
     backend/.venv/bin/python backend/tools/quant_publish.py --no-upload # build the file only
 
 Upload: scp of backend/data/quant/signals.json to the server (same path), written to a temp name and moved into
-place so the site never reads half a file. Uses the deploy key ~/.ssh/id_ed25519.
+place so the site never reads half a file, then the week's AI reading is written on the server
+(tools/quant_explain_refresh.py). Uses the deploy key ~/.ssh/id_ed25519.
 """
 import argparse
 import os
@@ -43,6 +44,10 @@ def main():
     step(["scp", "-q", *ssh, local, f"{SERVER}:{REMOTE_DIR}/signals.json.tmp"])
     step(["ssh", *ssh, SERVER, f"mv {REMOTE_DIR}/signals.json.tmp {REMOTE_DIR}/signals.json"])
     print("uploaded: the admin desk shows it on the next page load")
+    # this week's AI reading, written on the server (the DeepSeek key lives there); a failure leaves the page's button
+    r = subprocess.run(["ssh", *ssh, SERVER, "cd /root/ashare-analyzer/backend && BFS_NO_WARMUP=1 "
+                        "/root/ashare-venv/bin/python tools/quant_explain_refresh.py"], capture_output=True, text=True)
+    print((r.stdout or r.stderr).strip().splitlines()[-1] if (r.stdout or r.stderr).strip() else "AI reading: no output")
 
 
 if __name__ == "__main__":

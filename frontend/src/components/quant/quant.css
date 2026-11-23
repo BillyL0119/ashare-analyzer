@@ -47,5 +47,5 @@
 .qd-val td.qd-sep, .qd-val tr.qd-group th:nth-child(3) { border-left: 1px solid var(--border-primary); }
 .qd-val tbody td:first-child { white-space: normal; min-width: 180px; }
 .qd-ai { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; max-width: 80ch; }
-.qd-ai-sec p { margin: 0; font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
+.qd-ai-sec p { margin: 0; font-size: 14px; line-height: 1.7; color: var(--text-secondary); white-space: pre-line; }
 .qd-ai-start { margin-top: 12px; }
