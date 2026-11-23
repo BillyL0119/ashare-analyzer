@@ -37,3 +37,6 @@ backend/.venv/
 
 # Sharadar raw tables (personal licence: never commit or serve)
 backend/data/sharadar/
+
+# Admin quant desk file (derived from licensed data, served to admins only)
+backend/data/quant/

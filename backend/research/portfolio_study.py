@@ -120,17 +120,27 @@ def stats(series, bench_ew, bench_cw):
             "years_behind_cap_weight": f"{behind}/{len(years)}"}
 
 
-def main():
-    import warnings
-    warnings.filterwarnings("ignore", category=RuntimeWarning)
-    books, months, _ = run()
-    from research.sharadar_data import Panel
-    sec = Panel().sec.sector.fillna("Unknown").values
-    _, sector_codes = np.unique(sec, return_inverse=True)
+STEPS = [
+    ("A baseline", dict(sector_neutral=False, ic_weights=False, every=1, keep_pct=0, n_names=None, trend=False)),
+    ("B +sector-neutral", dict(sector_neutral=True, ic_weights=False, every=1, keep_pct=0, n_names=None, trend=False)),
+    ("C +IC weights", dict(sector_neutral=True, ic_weights=True, every=1, keep_pct=0, n_names=None, trend=False)),
+    ("D +quarterly, keep top30%", dict(sector_neutral=True, ic_weights=True, every=3, keep_pct=0.3, n_names=None, trend=False)),
+    ("E +50 names", dict(sector_neutral=True, ic_weights=True, every=3, keep_pct=0.3, n_names=50, trend=False)),
+    ("F +trend rule (cash)", dict(sector_neutral=True, ic_weights=True, every=3, keep_pct=0.3, n_names=50, trend=True)),
+]
 
-    # benchmarks over the large universe, and the trend flag decided from data before each month
+
+def sector_codes_of(panel):
+    names = panel.sec.sector.fillna("Unknown").values
+    labels, codes = np.unique(names, return_inverse=True)
+    return labels, codes
+
+
+def benchmarks(months):
+    """Equal- and cap-weighted large universe from FIRST_YEAR, the cap-weighted index level for every month, and
+    the trend flag (index below its 10-month average) known at the START of each month."""
     ew, cw = [], []
-    level, levels, flags = 1.0, [], []
+    level, levels, flags, dates = 1.0, [], [], []
     for month, liquid, large, signed, later in months:
         mc = np.exp(-signed["size"])                                   # size score is -log(market cap)
         w = np.where(large & np.isfinite(mc), mc, 0.0)
@@ -138,32 +148,55 @@ def main():
         flags.append(len(levels) >= 10 and levels[-1] < np.mean(levels[-10:]))
         level *= 1 + c
         levels.append(level)
+        dates.append(month)
         if month // 10000 >= FIRST_YEAR:
             ew.append(float(np.mean(later[large])))
             cw.append(c)
+    return ew, cw, flags, levels, dates
 
-    steps = [
-        ("A baseline", dict(sector_neutral=False, ic_weights=False, every=1, keep_pct=0, n_names=None, trend=False)),
-        ("B +sector-neutral", dict(sector_neutral=True, ic_weights=False, every=1, keep_pct=0, n_names=None, trend=False)),
-        ("C +IC weights", dict(sector_neutral=True, ic_weights=True, every=1, keep_pct=0, n_names=None, trend=False)),
-        ("D +quarterly, keep top30%", dict(sector_neutral=True, ic_weights=True, every=3, keep_pct=0.3, n_names=None, trend=False)),
-        ("E +50 names", dict(sector_neutral=True, ic_weights=True, every=3, keep_pct=0.3, n_names=50, trend=False)),
-        ("F +trend rule (cash)", dict(sector_neutral=True, ic_weights=True, every=3, keep_pct=0.3, n_names=50, trend=True)),
-    ]
-    report = {"benchmarks": {"equal_weight": {"cagr": annual(ew), "max_drawdown": max_drawdown(ew)},
+
+def yearly(series, bench):
+    out = {}
+    for (month, r), b in zip(series, bench):
+        y = out.setdefault(int(month // 10000), [1.0, 1.0])
+        y[0] *= 1 + r
+        y[1] *= 1 + b
+    return {y: {"strategy": round((a - 1) * 100, 1), "index": round((b - 1) * 100, 1),
+                "difference": round((a - b) * 100, 1)} for y, (a, b) in out.items()}
+
+
+def evaluate(books, months, sector_codes):
+    ew, cw, flags, levels, dates = benchmarks(months)
+    report = {"first_year": FIRST_YEAR,
+              "benchmarks": {"equal_weight": {"cagr": annual(ew), "max_drawdown": max_drawdown(ew)},
                              "cap_weight": {"cagr": annual(cw), "max_drawdown": max_drawdown(cw),
                                             "vol": round(float(np.std(cw, ddof=1) * math.sqrt(12)) * 100, 1)}},
-              "steps": {}}
+              "steps": {}, "by_year": {}}
+    for name, kw in STEPS:
+        series, turns = simulate(books, months, sector_codes, cash_flags=flags, **kw)
+        st = stats(series, ew, cw)
+        st["turnover_per_rebalance"] = round(float(np.mean(turns)) * 100, 1)
+        st["rebalances_per_year"] = 12 // kw["every"]
+        report["steps"][name] = st
+        if name.startswith(("E", "F")):
+            report["by_year"][name] = yearly(series, cw)
+    return report, {"levels": levels, "dates": dates, "flags": flags}
+
+
+def main():
+    import warnings
+    warnings.filterwarnings("ignore", category=RuntimeWarning)
+    books, months, _ = run()
+    from research.sharadar_data import Panel
+    _, sector_codes = sector_codes_of(Panel())
+    report, _ = evaluate(books, months, sector_codes)
+    b = report["benchmarks"]
     print(f"\nlarge-cap universe, walk-forward {FIRST_YEAR}-2026, after 10 bp per one-way trade")
-    print(f"benchmarks: equal-weight {annual(ew):.1f}%/yr (max DD {max_drawdown(ew)}%), "
-          f"cap-weight {annual(cw):.1f}%/yr (max DD {max_drawdown(cw)}%)\n")
+    print(f"benchmarks: equal-weight {b['equal_weight']['cagr']:.1f}%/yr (max DD {b['equal_weight']['max_drawdown']}%), "
+          f"cap-weight {b['cap_weight']['cagr']:.1f}%/yr (max DD {b['cap_weight']['max_drawdown']}%)\n")
     print(f"{'step':28} {'CAGR':>6} {'vol':>6} {'maxDD':>7} {'ret/risk':>8} {'vs EW':>6} {'vs CW':>6} {'t':>5} "
           f"{'yrs behind CW':>13} {'turnover':>8}")
-    for name, kw in steps:
-        series, turns = simulate(books, months, sector_codes, cash_flags=flags, **kw)
-        s = stats(series, ew, cw)
-        s["turnover_per_rebalance"] = round(float(np.mean(turns)) * 100, 1)
-        report["steps"][name] = s
+    for name, s in report["steps"].items():
         print(f"{name:28} {s['cagr']:6.1f} {s['vol']:6.1f} {s['max_drawdown']:7.1f} {s['return_per_risk']:8.2f} "
               f"{s['vs_equal_weight']:+6.1f} {s['vs_cap_weight']:+6.1f} {s['t_vs_cap_weight']:5.2f} "
               f"{s['years_behind_cap_weight']:>13} {s['turnover_per_rebalance']:7.1f}%")

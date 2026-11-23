@@ -469,6 +469,7 @@ app.include_router(career_router, prefix="/api/career", tags=["career"])
 app.include_router(fundamentals_router, prefix="/api/us/fundamentals", tags=["fundamentals"])
 app.include_router(screener_router, prefix="/api/us/screener", tags=["screener"])
 from routers.admin import auth_router, admin_router
+from routers.quant import quant_router
 from routers.heatmap import router as heatmap_router
 app.include_router(heatmap_router, prefix="/api/heatmap", tags=["heatmap"])
 from routers.macro import router as macro_router
@@ -489,3 +490,4 @@ app.include_router(events_calendar_router, prefix="/api/events", tags=["events"]
 app.include_router(factors_router, prefix="/api/us/factors", tags=["factors"])
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
+app.include_router(quant_router, prefix="/api/admin/quant", tags=["admin"])

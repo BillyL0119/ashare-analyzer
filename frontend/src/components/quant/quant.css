@@ -1,0 +1,45 @@
+/* Admin quant desk (/admin/quant). Builds on .qp-card (quotepage.css) and .fl-* (factors.css). */
+.qd { display: flex; flex-direction: column; gap: 20px; max-width: 1200px; margin: 0 auto; padding: 8px 0 40px; }
+.qd-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 8px 24px; }
+.qd-badge { display: inline-block; margin-left: 8px; padding: 1px 8px; border: 1px solid currentColor; border-radius: 999px;
+  font-size: 11px; font-weight: 500; color: var(--accent-blue); vertical-align: middle; letter-spacing: 0; }
+.qd-meta { margin: 6px 0 0; font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.qd-disclaimer { margin: 0; max-width: 60ch; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+.qd-sub { margin: 4px 0 0; font-size: 12px; color: var(--text-muted); }
+.qd-note { margin: 12px 0 0; max-width: 80ch; font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+.qd-foot { margin: 10px 0 0; max-width: 90ch; font-size: 12px; line-height: 1.55; color: var(--text-muted); }
+
+.qd-trend { display: grid; grid-template-columns: minmax(200px, 260px) 1fr; gap: 16px; align-items: center; margin-top: 8px; }
+.qd-state { display: flex; gap: 12px; align-items: flex-start; }
+.qd-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+.qd-dot.up { background: var(--green-bright); }
+.qd-dot.down { background: var(--red-bright); }
+.qd-state-main { font-size: 20px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.qd-state-note { margin-top: 4px; font-size: 13px; color: var(--text-secondary); }
+.qd-chart { height: 220px; min-width: 0; }
+.qd-chart-short { height: 200px; margin-top: 4px; }
+
+.qd-search { display: block; margin-top: 12px; max-width: 360px; }
+.qd-search input { width: 100%; padding: 8px 12px; font: inherit; font-size: 13px; color: var(--text-primary);
+  background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; }
+.qd-search input:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+.qd-scroll { max-height: 640px; overflow: auto; }
+.qd-table thead th { position: sticky; top: 0; background: var(--card-bg, var(--bg-secondary)); z-index: 1; }
+.qd-table th:nth-child(2), .qd-table td:nth-child(2), .qd-table th:nth-child(3), .qd-table td:nth-child(3) { text-align: left; }
+.qd-table td.qd-sector { color: var(--text-muted); max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
+.qd-table td.qd-pct { color: var(--text-secondary); }
+.qd-table tr.qd-top td:first-child { color: var(--accent-blue); font-weight: 600; }
+.qd-steps tr.qd-top td { color: var(--text-primary); font-weight: 600; }
+.qd-msg { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 14px; color: var(--text-secondary); }
+.qd-msg p { margin: 0; }
+.qd-btn { padding: 6px 14px; font: inherit; font-size: 13px; color: #fff; background: var(--accent-fill, var(--accent-blue));
+  border: none; border-radius: 8px; cursor: pointer; }
+.qd-btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (max-width: 760px) {
+  .qd-trend { grid-template-columns: 1fr; }
+  .qd-chart { height: 200px; }
+}
+.qd-table tr.qd-group th { position: static; padding-bottom: 0; text-align: center; font-size: 11px; color: var(--text-muted); }
+.qd-table tr.qd-group th[scope="colgroup"] { border-bottom: 1px solid var(--border-primary); }
+.qd-table tr.qd-group + tr th { top: 0; }

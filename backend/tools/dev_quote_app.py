@@ -42,6 +42,13 @@ app.include_router(quote_holders.router, prefix="/api/us/quote")
 app.include_router(events_calendar.router, prefix="/api/events")
 app.include_router(factors.router, prefix="/api/us/factors")
 
+# Admin quant desk with the admin check stubbed out: only ever on a dev machine, which is the only place a fake
+# session can reach it (production keeps services.auth.require_admin on every request).
+from routers.quant import quant_router  # noqa: E402
+from services import auth as _auth  # noqa: E402
+app.include_router(quant_router, prefix="/api/admin/quant")
+app.dependency_overrides[_auth.require_admin] = lambda: {"email": "dev-admin@localhost"}
+
 _client = httpx.AsyncClient(timeout=40, follow_redirects=False)
 _PASS_HEADERS = ("accept", "accept-language", "user-agent")
 

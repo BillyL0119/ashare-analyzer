@@ -187,7 +187,7 @@ class Book:
 
 
 # ── main loop ────────────────────────────────────────────────────────────────────────────────────────────────
-def run():
+def run(return_latest=False):
     t0 = time.time()
     P = Panel()
     raw = np.load(os.path.join(COMPACT, "prices.npz"))["closeunadj"]
@@ -203,17 +203,15 @@ def run():
     dret = np.vstack([np.full((1, adj.shape[1]), np.nan, dtype=np.float32), dret])
     dret[~np.isfinite(dret)] = np.nan
 
-    books = {(u, f): Book() for u in ("liquid", "large") for f in FACTORS}
-    month_scores = []          # (month, universe masks, {factor: signed score}, later) kept for the walk-forward
-    for k in range(len(ends) - 1):
-        i, j = ends[k], ends[k + 1]
-        if P.dates[j] < START or i < LOOKBACK + 5:
-            continue
+    def inputs(k, later):
+        """Universe masks, signed factor scores and raw values at month-end k (later=None: the latest day,
+        where the next month is not known yet)."""
+        i = ends[k]
         mc = val["marketcap"][k] * 1e6                       # $
         with np.errstate(all="ignore"):
-            later = holding_return(adj, i, j)
-            liquid = (np.isfinite(adj[i]) & (raw[i] >= 5) & (P.avg_dollar_volume(i) >= 5e6)
-                      & np.isfinite(later) & (mc > 0))
+            liquid = (np.isfinite(adj[i]) & (raw[i] >= 5) & (P.avg_dollar_volume(i) >= 5e6) & (mc > 0))
+            if later is not None:
+                liquid &= np.isfinite(later)
             cut = np.sort(mc[liquid])[-1000] if liquid.sum() > 1000 else 0
             large = liquid & (mc >= cut)
             win = dret[i - LOOKBACK + 1: i + 1]
@@ -240,10 +238,28 @@ def run():
             s = np.asarray(raw_f[f], dtype=float) * d
             s[~np.isfinite(s)] = np.nan
             signed[f] = s
-            books[("liquid", f)].add(s, liquid, later, int(P.dates[j]))
-            books[("large", f)].add(s, large, later, int(P.dates[j]))
+        return liquid, large, signed, raw_f, mc
+
+    books = {(u, f): Book() for u in ("liquid", "large") for f in FACTORS}
+    month_scores = []          # (month, universe masks, {factor: signed score}, later) kept for the walk-forward
+    for k in range(len(ends) - 1):
+        i, j = ends[k], ends[k + 1]
+        if P.dates[j] < START or i < LOOKBACK + 5:
+            continue
+        with np.errstate(all="ignore"):
+            later = holding_return(adj, i, j)
+        liquid, large, signed, _, _ = inputs(k, later)
+        for f in FACTORS:
+            books[("liquid", f)].add(signed[f], liquid, later, int(P.dates[j]))
+            books[("large", f)].add(signed[f], large, later, int(P.dates[j]))
         month_scores.append((int(P.dates[j]), liquid, large, signed, later))
     log(f"factor pass done in {time.time() - t0:.0f}s")
+    if return_latest:
+        k = len(ends) - 1
+        liquid, large, signed, raw_f, mc = inputs(k, None)
+        latest = {"date": int(P.dates[ends[k]]), "large": large, "signed": signed, "raw": raw_f, "mc": mc,
+                  "panel": P, "adj": adj, "ends": ends}
+        return books, month_scores, time.time() - t0, latest
     return books, month_scores, time.time() - t0
 
 
