@@ -359,6 +359,7 @@ async def sitemap():
 async def robots():
     content = """User-agent: *
 Allow: /
+Disallow: /admin
 Sitemap: https://bestfriendstock.com/sitemap.xml"""
     return Response(content=content, media_type="text/plain")
 
