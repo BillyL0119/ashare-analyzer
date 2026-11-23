@@ -45,9 +45,9 @@ function RollingBetaChart({ rolling, t }) {
     grid: { top: 30, right: 20, bottom: 40, left: 50 },
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: THEME.tooltipBg,
       borderColor: THEME.border,
-      textStyle: { color: THEME.text, fontSize: 12 },
+      textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const p = params[0]
         return `${p.axisValue}<br/>Beta: <b>${p.value}</b>`

@@ -114,9 +114,9 @@ function RegimePriceChart({ series, lang, t }) {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'cross' },
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: THEME.tooltipBg,
       borderColor: THEME.border,
-      textStyle: { color: THEME.text, fontSize: 11 },
+      textStyle: { color: THEME.tooltipText, fontSize: 11 },
       formatter: (params) => {
         const idx = params[0]?.dataIndex
         const row = series[idx]

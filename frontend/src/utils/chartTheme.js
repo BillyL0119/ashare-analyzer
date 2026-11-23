@@ -23,7 +23,7 @@ export function getChartTheme() {
     text:       isLight ? '#475569'              : '#94a3b8',
     border:     isLight ? '#e2e8f0'              : '#1d2639',
     tooltipBg:  isLight ? 'rgba(255,255,255,0.97)' : 'rgba(10,15,27,0.96)',
-    tooltipText:isLight ? '#0f172a'              : '#94a3b8',
+    tooltipText:isLight ? '#0f172a'              : '#dbe3ef',
     up:      riseColor(market),
     down:    fallColor(market),
     ma5:     '#f0e68c',

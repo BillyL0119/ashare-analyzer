@@ -6,6 +6,7 @@ import { useMobile } from '../hooks/useMobile'
 import { T } from '../i18n/translations'
 import useAuthStore from '../store/authStore'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 import diagramNav, { STUDY_DIAGRAM_LINKS } from './diagrams/diagramNav'
 import Markdown from '../mobile/Markdown'
 const AITeacherPage = lazy(() => import('./AITeacherPage'))
@@ -696,6 +697,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       .finally(() => setLoading(false))
   }, [eventId])
 
+  const theme = useThemeStore((s) => s.theme)   // re-draw the chart (palette is read when the option is built) on a theme switch
   const option = useMemo(() => {
     if (!prices) return null
     const series = tickers.map((t) => {
@@ -714,11 +716,11 @@ function EventPriceChart({ eventId, tickers, zh }) {
       backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
-        backgroundColor: '#1a2035',
-        borderColor: 'rgba(79,134,247,0.2)',
+        backgroundColor: THEME.tooltipBg,
+        borderColor: THEME.border,
         textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (params) => {
-          let s = `<div style="margin-bottom:4px;font-size:11px;color:#9aa0a6">${params[0]?.axisValue}</div>`
+          let s = `<div style="margin-bottom:4px;font-size:11px;color:var(--text-muted)">${params[0]?.axisValue}</div>`
           params.forEach((p) => {
             s += `<div style="display:flex;align-items:center;gap:6px;margin:2px 0">
               <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color}"></span>
@@ -750,7 +752,7 @@ function EventPriceChart({ eventId, tickers, zh }) {
       },
       series,
     }
-  }, [prices, tickers, zh])
+  }, [prices, tickers, zh, theme])
 
   if (loading) return (
     <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>

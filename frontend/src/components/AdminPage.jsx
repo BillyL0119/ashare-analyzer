@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react'
 import ReactECharts from '../lib/echarts'
 import useAuthStore from '../store/authStore'
 import { THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 
 const ACCENT = '#4f86f7', GREEN = '#4cc38a', VIOLET = '#9d97d3'
 const MUTED = 'var(--text-muted)'
@@ -149,22 +150,23 @@ export default function AdminPage({ lang, onOpenAuth }) {
 
   const series = useMemo(() => (data ? data.series.slice(-days) : []), [data, days])
 
+  const theme = useThemeStore((s) => s.theme)   // re-draw the chart (palette is read when the option is built) on a theme switch
   const option = useMemo(() => !data ? null : ({
     backgroundColor: 'transparent',
     grid: { top: 34, bottom: 30, left: 44, right: 40 },
-    legend: { top: 0, textStyle: { color: '#8a94a6', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
-    tooltip: { trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(108,156,255,0.12)', textStyle: { color: THEME.tooltipText, fontSize: 12 } },
-    xAxis: { type: 'category', data: series.map((d) => d.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10, interval: Math.max(0, Math.floor(series.length / 8) - 1) }, axisLine: { lineStyle: { color: 'rgba(108,156,255,0.15)' } } },
+    legend: { top: 0, textStyle: { color: THEME.text, fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+    tooltip: { trigger: 'axis', backgroundColor: THEME.tooltipBg, borderColor: THEME.border, textStyle: { color: THEME.tooltipText, fontSize: 12 } },
+    xAxis: { type: 'category', data: series.map((d) => d.date.slice(5)), axisLabel: { color: THEME.text, fontSize: 10, interval: Math.max(0, Math.floor(series.length / 8) - 1) }, axisLine: { lineStyle: { color: 'rgba(108,156,255,0.15)' } } },
     yAxis: [
-      { type: 'value', minInterval: 1, axisLabel: { color: '#8a94a6', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(108,156,255,0.07)' } } },
-      { type: 'value', minInterval: 1, axisLabel: { color: '#8a94a6', fontSize: 10 }, splitLine: { show: false } },
+      { type: 'value', minInterval: 1, axisLabel: { color: THEME.text, fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(108,156,255,0.07)' } } },
+      { type: 'value', minInterval: 1, axisLabel: { color: THEME.text, fontSize: 10 }, splitLine: { show: false } },
     ],
     series: [
       { name: `${t.visitsS} (${isZh ? '左轴' : 'left'})`, type: 'line', data: series.map((d) => d.visits), smooth: true, symbol: 'none', lineStyle: { width: 2, color: ACCENT }, areaStyle: { color: 'rgba(79,134,247,0.10)' } },
       { name: `${t.activeUsers} (${isZh ? '右轴' : 'right'})`, type: 'line', yAxisIndex: 1, data: series.map((d) => d.active_users), smooth: true, symbol: 'none', lineStyle: { width: 2, color: GREEN } },
       { name: `${t.newUsers} (${isZh ? '右轴' : 'right'})`, type: 'bar', yAxisIndex: 1, data: series.map((d) => d.new_users), barMaxWidth: 10, itemStyle: { color: VIOLET, borderRadius: [3, 3, 0, 0] } },
     ],
-  }), [data, series, t, isZh])
+  }), [data, series, t, isZh, theme])
 
   const summaryText = useMemo(() => {
     if (!data) return ''

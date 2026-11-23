@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import ReactECharts from '../lib/echarts'
 import { T } from '../i18n/translations'
 import { THEME } from '../utils/chartTheme'
+import useThemeStore from '../store/themeStore'
 
 const BDR   = 'rgba(108,156,255,0.12)'
 const MUTED = 'var(--text-muted)'
@@ -95,6 +96,7 @@ export default function StatsDisplay({ lang, onClose }) {
   const [exportMode, setExportMode] = useState(false)
   const t = T[lang] || T.en
   const containerRef = useRef(null)
+  useThemeStore((s) => s.theme)   // re-draw the charts with the new palette on a theme switch
 
   useEffect(() => {
     fetch('/api/analytics/stats')
@@ -115,8 +117,8 @@ export default function StatsDisplay({ lang, onClose }) {
     grid: { top: 20, bottom: 40, left: 48, right: 20 },
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(10,15,26,0.95)',
-      borderColor: BDR,
+      backgroundColor: THEME.tooltipBg,
+      borderColor: THEME.border,
       textStyle: { color: THEME.tooltipText, fontSize: 12 },
       formatter: (params) => {
         const d = params[0]
@@ -169,8 +171,8 @@ export default function StatsDisplay({ lang, onClose }) {
       backgroundColor: 'transparent',
       tooltip: {
         trigger: 'item',
-        backgroundColor: 'rgba(10,15,26,0.95)',
-        borderColor: BDR,
+        backgroundColor: THEME.tooltipBg,
+        borderColor: THEME.border,
         textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (p) => `${p.name}: <b>${p.value}</b> (${p.percent}%)`,
       },

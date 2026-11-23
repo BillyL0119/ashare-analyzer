@@ -90,9 +90,9 @@ function DrawdownChart({ series }) {
     backgroundColor: THEME.gridBg,
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: THEME.tooltipBg,
       borderColor: THEME.border,
-      textStyle: { color: THEME.text, fontSize: 11 },
+      textStyle: { color: THEME.tooltipText, fontSize: 11 },
       formatter: (params) => `${params[0].axisValue}: ${params[0].data.toFixed(2)}%`,
     },
     grid: { top: 16, bottom: 30, left: 56, right: 12 },
@@ -131,9 +131,9 @@ function DistributionChart({ distribution }) {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      backgroundColor: 'rgba(13,17,23,0.9)',
+      backgroundColor: THEME.tooltipBg,
       borderColor: THEME.border,
-      textStyle: { color: THEME.text, fontSize: 11 },
+      textStyle: { color: THEME.tooltipText, fontSize: 11 },
       formatter: (p) => `${p[0].axisValue.toFixed(2)}%: ${p[0].data}`,
     },
     grid: { top: 16, bottom: 30, left: 40, right: 12 },

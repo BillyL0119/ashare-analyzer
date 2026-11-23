@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import ReactECharts from '../lib/echarts'
-import { riseColor, fallColor } from '../utils/chartHelpers'
+import { riseColor, fallColor, THEME } from '../utils/chartHelpers'
+import useThemeStore from '../store/themeStore'
 import { CUR } from '../utils/markets'
 import { paperHeaders } from '../utils/paperAuth'
 
@@ -38,26 +39,27 @@ export default function PaperPerformance({ accountKey, market, lang, refreshKey,
   const bench = lang === 'zh' ? (BENCH_ZH[data?.benchmark] || data?.benchmark) : data?.benchmark
   const points = data?.points || []
 
+  const theme = useThemeStore((s) => s.theme)   // re-draw the chart (palette is read when the option is built) on a theme switch
   const option = useMemo(() => points.length < 2 ? null : ({
     backgroundColor: 'transparent',
     grid: { top: 30, bottom: 26, left: 64, right: 14 },
-    legend: { top: 0, textStyle: { color: '#8a94a6', fontSize: 11 }, itemWidth: 14, itemHeight: 3 },
+    legend: { top: 0, textStyle: { color: THEME.text, fontSize: 11 }, itemWidth: 14, itemHeight: 3 },
     tooltip: {
-      trigger: 'axis', backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(108,156,255,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
+      trigger: 'axis', backgroundColor: THEME.tooltipBg, borderColor: THEME.border, textStyle: { color: THEME.tooltipText, fontSize: 12 },
       valueFormatter: (v) => `${cur}${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
     },
-    xAxis: { type: 'category', data: points.map((p) => p.date.slice(5)), axisLabel: { color: '#8a94a6', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(108,156,255,0.15)' } } },
+    xAxis: { type: 'category', data: points.map((p) => p.date.slice(5)), axisLabel: { color: THEME.text, fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(108,156,255,0.15)' } } },
     yAxis: {
       type: 'value', scale: true,
-      axisLabel: { color: '#8a94a6', fontSize: 10, formatter: (v) => `${cur}${v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : (v / 1e3).toFixed(1) + 'K'}` },
+      axisLabel: { color: THEME.text, fontSize: 10, formatter: (v) => `${cur}${v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : (v / 1e3).toFixed(1) + 'K'}` },
       splitLine: { lineStyle: { color: 'rgba(108,156,255,0.07)' } },
     },
     series: [
       { name: t.mine, type: 'line', data: points.map((p) => p.value), smooth: true, symbol: 'none', lineStyle: { width: 2.5, color: '#4f86f7' }, areaStyle: { color: 'rgba(79,134,247,0.08)' } },
-      { name: bench, type: 'line', data: points.map((p) => p.bench), smooth: true, symbol: 'none', lineStyle: { width: 1.8, color: '#8a94a6', type: 'dashed' } },
+      { name: bench, type: 'line', data: points.map((p) => p.bench), smooth: true, symbol: 'none', lineStyle: { width: 1.8, color: THEME.text, type: 'dashed' } },
       { name: '', type: 'line', data: points.map(() => data.initial), symbol: 'none', lineStyle: { width: 1, color: 'rgba(108,156,255,0.25)' }, tooltip: { show: false }, silent: true },
     ],
-  }), [points, bench, cur, t, data])
+  }), [points, bench, cur, t, data, theme])
 
   const ahead = (data?.excess_pct ?? 0) >= 0
   return (

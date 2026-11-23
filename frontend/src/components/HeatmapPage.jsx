@@ -4,6 +4,8 @@ import ReactECharts from '../lib/echarts'
 import useCompareStore from '../store/compareStore'
 import { SECTOR_ZH, tileColor, money, pct } from '../utils/heatmap'
 import visibleInterval from '../utils/visibleInterval'
+import useThemeStore from '../store/themeStore'
+import { THEME } from '../utils/chartTheme'
 
 // Market heatmap: one tile per company, area = market cap, colour = today's move, grouped by sector.
 // US colours are green up / red down; A-shares follow the local red up / green down convention.
@@ -63,6 +65,7 @@ export default function HeatmapPage({ lang }) {
     return s.symbol
   }
 
+  const theme = useThemeStore((s) => s.theme)   // re-draw the chart (palette is read when the option is built) on a theme switch
   const option = useMemo(() => {
     if (!data || data.market !== market) return null
     const total = data.sectors.reduce((a, g) => a + g.market_cap, 0) || 1
@@ -71,7 +74,7 @@ export default function HeatmapPage({ lang }) {
     const area = w * h * 0.85                      // minus sector headers and gaps
     return {
       tooltip: {
-        backgroundColor: 'rgba(10,15,26,0.95)', borderColor: 'rgba(108,156,255,0.2)', textStyle: { color: '#e5e7eb', fontSize: 12 },
+        backgroundColor: THEME.tooltipBg, borderColor: THEME.border, textStyle: { color: THEME.tooltipText, fontSize: 12 },
         formatter: (p) => {
           const d = p.data || {}
           if (d.sector) return `<b>${d.name}</b>${d.sym && d.sym !== d.name ? ` · ${d.sym}` : ''}<br/>${t.change}: <b>${pct(d.chg)}</b><br/>${t.price}: ${d.price ?? '—'}<br/>${t.cap}: ${money(d.value, market)}`
@@ -114,7 +117,7 @@ export default function HeatmapPage({ lang }) {
         })),
       }],
     }
-  }, [data, market, lang]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data, market, lang, theme]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const onEvents = useMemo(() => ({
     click: (p) => {
