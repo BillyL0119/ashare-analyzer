@@ -48,6 +48,9 @@ const S = {
       '我们试过另外 9 个信号（内部人交易、机构持仓、财报反应等）和多种风险控制，都没能提高准确性，所以没有加入。',
       '每周六上午自动更新；需要时也可以在电脑上运行 quant_publish.py --refresh。',
     ],
+    aiTitle: 'AI 解读', aiSub: '用大白话解释这一页现在说了什么',
+    aiBtn: '生成 AI 解读', aiBusy: '正在生成，大约需要 20–40 秒…', aiFail: '这次没有生成成功（AI 的回答没通过检查或服务暂时不可用），请稍后再试。',
+    aiNote: '由 AI 根据本页的数据生成，每周数据更新后重新生成。它只解释规则和历史检验结果，不是投资建议，也可能有误；买不买、买多少由你自己决定。',
     valTitle: '四种用法的检验结果', valSub: (dev, ho) => `开发期 ${dev} 用来挑选方法；最近 6 年（${ho}）锁起来，所有方法定下来以后只检验了一次`,
     valDev: '2005–2020 开发期', valHold: '最近 6 年（只检验一次）', colRisk: '收益/风险',
     valNote: (n, f) => `年化收益已扣除交易成本，现金按零利息计。收益/风险 = 年化收益 ÷ 年波动，越高越好。整个研究检验过 ${f} 个单项因子、比较过 ${n} 种组合方案；试得越多，碰巧好看的可能越大。`,
@@ -89,6 +92,9 @@ const S = {
       'Nine more signals (insiders, institutions, earnings reactions and others) and several risk rules were tested and did not improve accuracy, so they are left out.',
       'Refreshed every Saturday morning; run quant_publish.py --refresh on the Mac to refresh by hand.',
     ],
+    aiTitle: 'AI reading', aiSub: 'What this page says right now, in plain words',
+    aiBtn: 'Write the AI reading', aiBusy: 'Writing, about 20–40 seconds…', aiFail: 'It could not be written this time (the answer failed a check or the service is busy). Try again later.',
+    aiNote: 'Written by AI from this page’s data and rewritten after each weekly update. It explains the rules and the tested results; it is not investment advice and may contain mistakes. Whether and how much to buy is your decision.',
     valTitle: 'Four ways to use it, tested', valSub: (dev, ho) => `Methods were chosen on ${dev}; the last six years (${ho}) were set aside and tested once after everything was fixed`,
     valDev: '2005–2020 development', valHold: 'Last six years (tested once)', colRisk: 'Return/risk',
     valNote: (n, f) => `Returns are after trading costs; cash earns 0. Return/risk = annual return ÷ annual volatility, higher is better. ${f} single factors and ${n} combinations were tested in all; the more tried, the likelier one looks good by chance.`,
@@ -236,6 +242,56 @@ function Ranking({ d, L, F, zh }) {
         </div>
       )}
       <p className="qd-foot">{L.factorPct}</p>
+    </section>
+  )
+}
+
+function AiReading({ token, lang, L }) {
+  const [state, setState] = useState('loading')       // loading | none | busy | ok | failed
+  const [res, setRes] = useState(null)
+  useEffect(() => {
+    let alive = true
+    fetch('/api/admin/quant/explain', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((j) => { if (!alive) return; if (j.available === false) setState('none'); else { setRes(j); setState('ok') } })
+      .catch(() => alive && setState('none'))
+    return () => { alive = false }
+  }, [token])
+  const make = async () => {
+    setState('busy')
+    try {
+      const r = await fetch('/api/admin/quant/explain', { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+      if (!r.ok) throw new Error(String(r.status))
+      setRes(await r.json())
+      setState('ok')
+    } catch { setState('failed') }
+  }
+  const sections = res ? (lang === 'zh' ? res.zh : res.en) : null
+  return (
+    <section className="qp-card" aria-label={L.aiTitle}>
+      <div className="qp-head"><div>
+        <h3 className="qp-h">{L.aiTitle}</h3>
+        <p className="qd-sub">{L.aiSub}</p>
+      </div></div>
+      {state === 'loading' && <div className="qp-skel" style={{ height: 80, marginTop: 8 }} aria-busy="true" />}
+      {(state === 'none' || state === 'failed') && (
+        <div className="qd-msg qd-ai-start">
+          {state === 'failed' && <p role="alert">{L.aiFail}</p>}
+          <button type="button" className="qd-btn" onClick={make}>{L.aiBtn}</button>
+        </div>
+      )}
+      {state === 'busy' && <p className="qd-note" role="status" aria-live="polite">{L.aiBusy}</p>}
+      {state === 'ok' && sections && (
+        <div className="qd-ai">
+          {sections.map((x) => (
+            <div key={x.title} className="qd-ai-sec">
+              <h4 className="fl-sub">{x.title}</h4>
+              <p>{x.body}</p>
+            </div>
+          ))}
+        </div>
+      )}
+      <p className="qd-foot">{L.aiNote}</p>
     </section>
   )
 }
@@ -412,6 +468,8 @@ export default function QuantDesk({ lang, onOpenAuth }) {
         <div className="qp-head"><h3 className="qp-h">{L.useTitle}</h3></div>
         <ul className="fl-read">{L.use.map((line) => <li key={line}>{line}</li>)}</ul>
       </section>
+
+      <AiReading token={token} lang={lang === 'zh' ? 'zh' : 'en'} L={L} />
     </div>
   )
 }
