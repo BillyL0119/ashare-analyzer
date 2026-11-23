@@ -62,8 +62,23 @@ def composite(signed, elig, factors, sector_codes, sector_neutral, ic_weights):
     return score
 
 
-def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, keep_pct, n_names, trend, cash_flags):
+def market_returns(months):
+    """Cap-weighted large-cap return of every month in `months` (no start-year cut)."""
+    out = []
+    for month, liquid, large, signed, later in months:
+        mc = np.exp(-signed["size"])
+        w = np.where(large & np.isfinite(mc), mc, 0.0)
+        out.append(float(np.nansum(w * np.nan_to_num(later)) / w.sum()))
+    return out
+
+
+def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, keep_pct, n_names, trend, cash_flags,
+             weighting="equal", sector_cap=None, vol_target=None, mkt=None):
+    """weighting "inv_vol": weights proportional to 1 / 12-month volatility, set at each rebalance.
+    sector_cap: at most this share of the names from one sector. vol_target (annual, e.g. 0.15): when the market's
+    volatility over the previous 6 months is above it, hold only target/realised of the portfolio, rest in cash."""
     held, out, turns, chosen_log = set(), [], [], {}
+    weights = {}
     since_reb = None
     for k, (month, liquid, large, signed, later) in enumerate(months):
         y = month // 10000
@@ -79,13 +94,32 @@ def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, 
             order = idx[np.argsort(-score[idx], kind="stable")]
             n = n_names or max(1, int(round(len(idx) * 0.2)))
             keep_cut = set(order[: max(n, int(len(idx) * keep_pct))].tolist()) if keep_pct else set()
-            new = [h for h in held if h in keep_cut][:n]
+            cap = int(np.ceil(n * sector_cap)) if sector_cap else n
+            per = {}
+            new = []
+
+            def take(h):
+                c = sector_codes[h]
+                if per.get(c, 0) >= cap:
+                    return
+                per[c] = per.get(c, 0) + 1
+                new.append(int(h))
+            for h in [h for h in order if h in held and h in keep_cut]:
+                if len(new) < n:
+                    take(h)
             for h in order:
                 if len(new) >= n:
                     break
                 if h not in new:
-                    new.append(int(h))
+                    take(h)
             new = set(new)
+            if weighting == "inv_vol":
+                vol = -signed["low_vol"]
+                med = np.nanmedian(vol[list(new)]) if new else np.nan
+                raw_w = {h: 1.0 / (vol[h] if np.isfinite(vol[h]) and vol[h] > 0 else med) for h in new}
+            else:
+                raw_w = {h: 1.0 for h in new}
+            weights = raw_w
             sold = len(held - new) / len(held) if held else 0.0
             bought = len(new - held) / len(new) if new else 0.0
             cost = (sold + bought) * COST
@@ -94,9 +128,19 @@ def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, 
         else:
             cost = 0.0
         since_reb += 1
-        r = float(np.mean(later[list(held)])) - cost if held else 0.0
+        if held:
+            w = np.array([weights.get(h, 0.0) for h in held])
+            w = w / w.sum() if w.sum() > 0 else np.full(len(held), 1.0 / len(held))
+            r = float(np.dot(w, later[list(held)]))
+        else:
+            r = 0.0
+        exposure = 1.0
+        if vol_target and mkt is not None and k >= 6:
+            realised = float(np.std(mkt[k - 6:k], ddof=1) * np.sqrt(12))
+            exposure = min(1.0, vol_target / realised) if realised > 0 else 1.0
         if trend and cash_flags[k]:
-            r = -cost
+            exposure = 0.0
+        r = exposure * r - cost
         out.append((month, r))
     return out, turns
 

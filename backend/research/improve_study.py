@@ -75,5 +75,45 @@ def main():
         json.dump(report, fh, indent=1)
 
 
+
+
+def risk_study():
+    """Step 2: risk layer on the current model (step E), development period only."""
+    import warnings
+    warnings.filterwarnings("ignore", category=RuntimeWarning)
+    from research.portfolio_study import market_returns
+    books, months, _ = run()
+    dev = [m for m in months if m[0] < DEV_END]
+    from research.sharadar_data import Panel
+    _, codes = sector_codes_of(Panel())
+    ew, cw, flags, _, _ = benchmarks(dev)
+    mkt = market_returns(dev)
+    base = dict(STEPS)["E +50 names"]
+    variants = [
+        ("E (current)", {}),
+        ("+ inverse-vol weights", {"weighting": "inv_vol"}),
+        ("+ sector cap 25%", {"sector_cap": 0.25}),
+        ("+ vol target 15%", {"vol_target": 0.15}),
+        ("+ trend rule", {"trend": True}),
+        ("+ inv-vol + sector cap", {"weighting": "inv_vol", "sector_cap": 0.25}),
+        ("+ inv-vol + sector + trend", {"weighting": "inv_vol", "sector_cap": 0.25, "trend": True}),
+        ("+ inv-vol + sector + vol target", {"weighting": "inv_vol", "sector_cap": 0.25, "vol_target": 0.15}),
+    ]
+    cws = stats([(m[0], c) for m, c in zip([x for x in dev if x[0] // 10000 >= 2005], cw)], ew, cw)
+    print("\nrisk layer on step E, large caps, DEVELOPMENT 2005 .. 2020-10")
+    print(f"index (cap-weight): {cws['cagr']}%/yr, vol {cws['vol']}%, max drawdown {cws['max_drawdown']}%, return/risk {cws['return_per_risk']}")
+    print(f"{'variant':34} {'CAGR':>6} {'vol':>6} {'maxDD':>7} {'ret/risk':>8} {'vs CW':>6} {'t':>5} {'behind':>7}")
+    out = {"index": cws}
+    for name, kw in variants:
+        series, _ = simulate(books, dev, codes, cash_flags=flags, mkt=mkt, **{**base, **kw})
+        st = stats(series, ew, cw)
+        out[name] = st
+        log_trial(f"dev risk {name}", st)
+        print(f"{name:34} {st['cagr']:6.1f} {st['vol']:6.1f} {st['max_drawdown']:7.1f} {st['return_per_risk']:8.2f} "
+              f"{st['vs_cap_weight']:+6.1f} {st['t_vs_cap_weight']:5.2f} {st['years_behind_cap_weight']:>7}")
+    with open(os.path.join(COMPACT, "..", "reports", "risk_study.json"), "w") as fh:
+        json.dump(out, fh, indent=1)
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(risk_study() if "--risk" in sys.argv else main())

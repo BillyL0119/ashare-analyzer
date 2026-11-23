@@ -79,3 +79,63 @@ def institution_matrices(month_dates, tickers, max_age_months=6):
             end = min(ks[i + 1] if i + 1 < len(ks) else len(month_dates), k + max_age_months)
             out[k:end, c] = vals[i]
     return {"inst_breadth": out}
+
+
+def earnings_reaction_matrix(panel, month_dates, max_age_months=3):
+    """Abnormal return over the 3 days around each quarterly earnings release, known from the day after.
+
+    Sharadar's datekey is the 10-Q/10-K filing date, often days or weeks after the press release, so the release day
+    is found as the day of the largest volume surge (dollar volume / its previous 60-day average, divided by the same
+    ratio for the whole market so market-wide panics do not count) between 10 days after the quarter ended and the day
+    after the filing (a release after the close is traded the next day). Spot checks: right for most AAPL, NVDA, JPM
+    quarters; some picks land on another big news day instead. Return = stock minus the equal-weight market, -1..+1."""
+    f = pd.read_csv(os.path.join(COMPACT, "fundamentals.csv.gz"), usecols=["ticker", "reportperiod", "datekey"])
+    f = f.drop_duplicates(["ticker", "reportperiod"]).sort_values(["ticker", "reportperiod"])
+    dates = pd.to_datetime(pd.Series(panel.dates.astype(str)), format="%Y%m%d").values
+    adj, dv = panel.adj, panel.dvol
+    with np.errstate(all="ignore"):
+        ret = adj[1:] / adj[:-1] - 1.0
+    ret = np.vstack([np.full((1, adj.shape[1]), np.nan, dtype=np.float32), ret])
+    ret[~np.isfinite(ret) | (np.abs(ret) > 0.9)] = np.nan
+    liquid_day = np.nan_to_num(dv) >= 1e6
+    mkt = np.nanmean(np.where(liquid_day, ret, np.nan), axis=1)
+    month_end = pd.to_datetime(pd.Series(month_dates.astype(str)), format="%Y%m%d").values
+
+    def surge_of(v):
+        cs = np.concatenate([[0.0], np.cumsum(v)])
+        idx = np.arange(len(v))
+        lo = np.maximum(idx - 60, 0)
+        avg = (cs[idx] - cs[lo]) / np.maximum(idx - lo, 1)
+        return np.where((idx - lo >= 40) & (avg > 0), v / np.where(avg > 0, avg, 1), np.nan)
+    market_surge = surge_of(np.nansum(dv.astype(float), axis=1))
+    out = np.full((len(month_dates), adj.shape[1]), np.nan, dtype=np.float32)
+    pos = pd.Series(np.arange(len(panel.tickers)), index=panel.tickers)
+    f = f[f.ticker.isin(pos.index)]
+    for t, g in f.groupby("ticker", sort=False):
+        j = pos[t]
+        v = dv[:, j].astype(float)
+        if np.isfinite(v).sum() < 120:
+            continue
+        surge = surge_of(np.nan_to_num(v)) / market_surge                 # previous 60 days, not today
+        starts = np.searchsorted(dates, (pd.to_datetime(g.reportperiod) + pd.Timedelta(days=10)).values)
+        ends_ = np.searchsorted(dates, pd.to_datetime(g.datekey).values, side="right") + 1  # through the day after filing
+        events = []
+        for a, b in zip(starts, ends_):
+            if b - a < 1 or a < 1 or b + 1 >= len(v):
+                continue
+            w = surge[a:b]
+            if not np.isfinite(w).any():
+                continue
+            d = a + int(np.nanargmax(w))
+            seg = ret[d - 1: d + 2, j]
+            mseg = mkt[d - 1: d + 2]
+            if np.isfinite(seg).sum() < 2:
+                continue
+            car = np.nanprod(1 + seg) - np.nanprod(1 + mseg)
+            known = np.searchsorted(month_end, dates[d + 1], side="right")             # first month-end after day +1
+            if known < len(month_dates):
+                events.append((known, car))
+        for i, (k, car) in enumerate(events):
+            stop = min(events[i + 1][0] if i + 1 < len(events) else len(month_dates), k + max_age_months)
+            out[k:stop, j] = car
+    return out

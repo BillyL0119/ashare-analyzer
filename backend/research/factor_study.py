@@ -71,6 +71,7 @@ EXTRA_FACTORS = {
     "inst_breadth":      (+1, "ownership", "change in the number of institutions holding it, last reported quarter"),
     "shareholder_yield": (+1, "value", "trailing-12-month dividends + net buybacks / market cap"),
     "earnings_stability": (+1, "quality", "steadiness of quarterly return on assets over 3 years"),
+    "earnings_reaction": (+1, "growth", "stock minus market over the 3 days around the last earnings release"),
 }
 ALL_FACTORS = {**FACTORS, **EXTRA_FACTORS}
 
@@ -216,10 +217,12 @@ def run(return_latest=False, extra=False):
     active = ALL_FACTORS if extra else FACTORS
     xm = {}
     if extra:
-        from research.extra_signals import insider_matrices, institution_matrices
+        from research.extra_signals import earnings_reaction_matrix, insider_matrices, institution_matrices
         log("insider and institution signals...")
         xm.update(insider_matrices(val["dates"], P.tickers))
         xm.update(institution_matrices(val["dates"], P.tickers))
+        log("earnings reactions...")
+        xm["earnings_reaction"] = earnings_reaction_matrix(P, val["dates"])
         ind = P.sec.industry.fillna("?").values
         _, ind_codes = np.unique(ind, return_inverse=True)
         with np.errstate(all="ignore"):
@@ -298,6 +301,7 @@ def run(return_latest=False, extra=False):
                     "inst_breadth": xm["inst_breadth"][k],
                     "shareholder_yield": fm["payout_ttm"][k] / mc,
                     "earnings_stability": fm["m_stability"][k],
+                    "earnings_reaction": xm["earnings_reaction"][k],
                 })
         signed = {}
         for f, (d, _, _) in active.items():
