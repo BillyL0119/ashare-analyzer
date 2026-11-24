@@ -73,11 +73,13 @@ def market_returns(months):
 
 
 def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, keep_pct, n_names, trend, cash_flags,
-             weighting="equal", sector_cap=None, vol_target=None, mkt=None, rf=None):
+             weighting="equal", sector_cap=None, vol_target=None, mkt=None, rf=None, cost_rate=None):
     """weighting "inv_vol": weights proportional to 1 / 12-month volatility, set at each rebalance.
     sector_cap: at most this share of the names from one sector. vol_target (annual, e.g. 0.15): when the market's
     volatility over the previous 6 months is above it, hold only target/realised of the portfolio, rest in cash.
-    rf: cash return of each month (aligned with `months`); cash earns nothing when it is None."""
+    rf: cash return of each month (aligned with `months`); cash earns nothing when it is None.
+    cost_rate: cost per one-way trade (default COST, 10 bp)."""
+    cost_rate = COST if cost_rate is None else cost_rate
     held, out, turns, chosen_log = set(), [], [], {}
     weights = {}
     since_reb = None
@@ -123,7 +125,7 @@ def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, 
             weights = raw_w
             sold = len(held - new) / len(held) if held else 0.0
             bought = len(new - held) / len(new) if new else 0.0
-            cost = (sold + bought) * COST
+            cost = (sold + bought) * cost_rate
             turns.append((sold + bought) / 2)
             held, since_reb = new, 0
         else:
