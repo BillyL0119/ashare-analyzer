@@ -9,6 +9,10 @@ import { isNum, fmtSignedPct, changeColor } from '../quotepage/format'
 import '../quotepage/quotepage.css'
 import '../factors/factors.css'
 import './quant.css'
+import SimpleView from './SimpleView'
+
+const MODE_KEY = 'bfs_quant_mode'
+const readMode = () => { try { return localStorage.getItem(MODE_KEY) || 'simple' } catch { return 'simple' } }
 
 // Admin-only research desk. The file behind it is built on Billy's Mac from Sharadar data (personal licence) by
 // backend/research/signals.py and uploaded by tools/quant_publish.py; /api/admin/quant/signals checks the admin
@@ -16,7 +20,7 @@ import './quant.css'
 
 const S = {
   zh: {
-    title: '量化研究台', onlyAdmin: '仅管理员可见',
+    title: '量化研究台', onlyAdmin: '仅管理员可见', modeSimple: '简单模式', modePro: '专业模式',
     asOf: (d, n) => `数据截至 ${d} · 大盘股 ${n} 只`,
     disclaimer: '研究工具，不构成投资建议，历史结果不代表未来。数据来自 Sharadar，个人授权，请勿外传或截图公开。',
     signIn: '请先登录管理员账号', signInBtn: '登录', denied: '这个账号没有管理员权限。', missing: '还没有上传研究结果。在电脑上运行 quant_publish.py 后刷新。',
@@ -69,7 +73,7 @@ const S = {
       'D +quarterly, keep top30%': '加：季度调整 + 缓冲', 'E +50 names': '加：只持 50 只（当前模型）', 'F +trend rule (cash)': '再加：趋势规则（跌破均线持现金）' },
   },
   en: {
-    title: 'Quant desk', onlyAdmin: 'Admins only',
+    title: 'Quant desk', onlyAdmin: 'Admins only', modeSimple: 'Simple', modePro: 'Full detail',
     asOf: (d, n) => `Data as of ${d} · ${n} large caps`,
     disclaimer: 'A research tool, not investment advice; past results do not predict the future. Data from Sharadar under a personal licence: do not share or post.',
     signIn: 'Sign in with an admin account to continue', signInBtn: 'Sign in', denied: 'This account does not have admin access.', missing: 'No research file has been uploaded yet. Run quant_publish.py on the Mac, then reload.',
@@ -490,6 +494,8 @@ export default function QuantDesk({ lang, onOpenAuth }) {
   const token = session?.access_token
   const [state, setState] = useState('loading')       // loading | ok | signin | denied | missing | failed
   const [d, setD] = useState(null)
+  const [mode, setModeState] = useState(readMode)
+  const setMode = (m) => { setModeState(m); try { localStorage.setItem(MODE_KEY, m) } catch { /* private mode */ } }
 
   const load = useCallback(async () => {
     if (authLoading) return
@@ -529,7 +535,12 @@ export default function QuantDesk({ lang, onOpenAuth }) {
         </div>
         <p className="qd-disclaimer">{L.disclaimer}</p>
       </header>
+      <div className="qp-seg qd-mode" role="group" aria-label={L.title}>
+        <button type="button" aria-pressed={mode === 'simple'} onClick={() => setMode('simple')}>{L.modeSimple}</button>
+        <button type="button" aria-pressed={mode === 'pro'} onClick={() => setMode('pro')}>{L.modePro}</button>
+      </div>
 
+      {mode === 'simple' ? <SimpleView d={d} lang={lang} /> : (<>
       <section className="qp-card" aria-label={L.trendTitle}>
         <div className="qp-head"><div>
           <h3 className="qp-h">{L.trendTitle}</h3>
@@ -557,6 +568,7 @@ export default function QuantDesk({ lang, onOpenAuth }) {
         <div className="qp-head"><h3 className="qp-h">{L.useTitle}</h3></div>
         <ul className="fl-read">{L.use.map((line) => <li key={line}>{line}</li>)}</ul>
       </section>
+      </>)}
 
       <AiReading token={token} lang={lang === 'zh' ? 'zh' : 'en'} L={L} />
     </div>

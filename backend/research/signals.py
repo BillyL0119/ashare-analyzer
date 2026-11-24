@@ -61,6 +61,39 @@ def validation():
             "trials": len(trials), "factors_tested": len(FACTORS), "candidates": CANDIDATES, "dev": dev, "holdout": hold["results"]}
 
 
+def chinese_names(tickers):
+    """Chinese company names from Tencent's public quote service (the site already uses it), cached in
+    data/quant/names_zh.json; only names that are really Chinese are kept."""
+    import re
+    import requests
+    path = os.path.join(OUT, "names_zh.json")
+    try:
+        with open(path) as fh:
+            cache = json.load(fh)
+    except (OSError, ValueError):
+        cache = {}
+    todo = [t for t in tickers if t not in cache]
+    for i in range(0, len(todo), 60):
+        chunk = todo[i:i + 60]
+        try:
+            r = requests.get("https://qt.gtimg.cn/q=" + ",".join("us" + t.replace(".", ".") for t in chunk), timeout=10)
+            text = r.content.decode("gbk", errors="ignore")
+        except Exception:
+            continue
+        for line in text.split(";"):
+            key, _, val = line.partition("=")
+            f = val.strip().strip('"').split("~")
+            t = key.strip().replace("v_us", "")
+            if t in chunk and len(f) > 2:
+                cache[t] = f[1] if re.search(r"[\u4e00-\u9fff]", f[1] or "") else ""
+        for t in chunk:
+            cache.setdefault(t, "")
+    os.makedirs(OUT, exist_ok=True)
+    with open(path, "w") as fh:
+        json.dump(cache, fh, ensure_ascii=False)
+    return cache
+
+
 def build():
     import warnings
     warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -102,12 +135,14 @@ def build():
     days_cover = sm["days_to_cover"][-1]
     as_of_str = f"{str(latest['date'])[:4]}-{str(latest['date'])[4:6]}-{str(latest['date'])[6:]}"
     short_date = latest_short_settlement(as_of_str)
+    names_zh = chinese_names([str(P.tickers[j]) for j in order[:150]])
     rows = []
     for rank, j in enumerate(order, 1):
         ey = raw["earnings_yield"][j]
         sec = P.sec.iloc[j]
         rows.append({
             "rank": rank, "ticker": str(P.tickers[j]), "name": str(sec["name"]).title() if isinstance(sec["name"], str) else None,
+            "name_zh": names_zh.get(str(P.tickers[j])) or None,
             "sector": str(labels[codes[j]]), "industry": sec["industry"] if isinstance(sec["industry"], str) else None,
             "mcap_bn": r(latest["mc"][j] / 1e9, 1), "score": r((n - rank) / max(n - 1, 1) * 100, 1),
             "top": rank <= TOP_N, "keep": rank <= max(TOP_N, int(n * KEEP_PCT)),
