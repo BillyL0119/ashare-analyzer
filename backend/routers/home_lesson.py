@@ -2,7 +2,7 @@
 The home page's top panel ("yesterday's market in one sentence + three months of the main index") for the markets
 other than the US (the US panel reads /api/us/market/overview and SPY's history directly).
 
-  GET /api/home/lesson?market=cn|hk|jp
+  GET /api/home/lesson?market=us|cn|hk|jp   (us: used by the phone home; the desktop US panel reads its own sources)
 
 One shape for all three:
   main      the market's headline index {name_zh, name_en, price, change_pct}
@@ -10,7 +10,9 @@ One shape for all three:
   history   ~3 months of the headline index's daily closes [{date, close}]
   movers    the two biggest gainers and two biggest losers among the market's popular names
   breadth   A-shares only: rising / falling / flat counts
-  sector    A-shares only: the sector that moved most in the day's direction
+  sector    A-shares and US: the sector that moved most in the day's direction
+  hot       all the market's popular names with price and change (the market panel under it)
+  session   US only: the session state from routers.us_market (the other markets' hours are worked out in the page)
 Sources: A-share overview and hot list (routers.market / routers.stocks), HK/JP overview (routers.global_stocks),
 index history from Tencent (上证指数 sh000001, 恒生指数 hkHSI) and FT (Nikkei 225). Cached 5 minutes per market.
 """
@@ -88,9 +90,10 @@ def _cn():
         quotes = {k[2:]: v for k, v in raw.items()}
     except Exception as e:
         logger.debug("cn quotes failed: %s", e)
-    movers = pick_movers([{"symbol": h["code"], "name": h.get("name"), "name_zh": h.get("name"),
-                           "price": (quotes.get(h["code"]) or {}).get("price"),
-                           "pct": (quotes.get(h["code"]) or {}).get("pct", h.get("change_pct"))} for h in hot])
+    hot_rows = [{"symbol": h["code"], "name": h.get("name"), "name_zh": h.get("name"),
+                 "price": (quotes.get(h["code"]) or {}).get("price"),
+                 "pct": (quotes.get(h["code"]) or {}).get("pct", h.get("change_pct"))} for h in hot]
+    movers = pick_movers(hot_rows)
     sectors = ov.get("sector_performance") or []
     main = indices[0] if indices else None
     up = (main or {}).get("change_pct") or 0
@@ -99,7 +102,7 @@ def _cn():
     breadth = ({"advancing": counts[0], "declining": counts[1], "flat": counts[2]}
                if sum(counts) > 0 else None)            # all zero = the whole-market feed failed this time
     return {"main": main, "indices": indices, "history": _tencent_index("sh000001"), "movers": movers,
-            "breadth": breadth, "sector": sector}
+            "breadth": breadth, "sector": sector, "hot": hot_rows}
 
 
 def _intl(market: str):
@@ -107,21 +110,41 @@ def _intl(market: str):
     ov = _endpoint(hk_router if market == "hk" else jp_router, "/overview")() or {}
     indices = [{"symbol": i["symbol"], "name_zh": i.get("name_zh"), "name_en": i.get("name_en"), "price": i.get("price"),
                 "change_pct": i.get("change_pct")} for i in ov.get("indices") or []]
-    movers = pick_movers([{"symbol": h["symbol"], "name": h.get("name_en") or h.get("name"), "name_zh": h.get("name_zh") or h.get("name"),
-                           "price": h.get("price"), "pct": h.get("change_pct")} for h in ov.get("hot") or []])
+    hot_rows = [{"symbol": h["symbol"], "name": h.get("name_en") or h.get("name"), "name_zh": h.get("name_zh") or h.get("name"),
+                 "price": h.get("price"), "pct": h.get("change_pct")} for h in ov.get("hot") or []]
     history = _tencent_index("hkHSI") if market == "hk" else _ft_index(FT_NIKKEI)
-    return {"main": indices[0] if indices else None, "indices": indices, "history": history, "movers": movers}
+    return {"main": indices[0] if indices else None, "indices": indices, "history": history,
+            "movers": pick_movers(hot_rows), "hot": hot_rows}
+
+
+def _us():
+    from routers.us_market import overview
+    from services import nasdaq
+    ov = overview() or {}
+    indices = [{"symbol": i["symbol"], "name_zh": i.get("name_zh"), "name_en": i.get("name"), "price": i.get("price"),
+                "change_pct": i.get("pct")} for i in ov.get("indices") or []]
+    main = next((i for i in indices if i["symbol"] == ".INX"), indices[0] if indices else None)
+    up = (main or {}).get("change_pct") or 0
+    pool = [{"symbol": q["symbol"], "name": q.get("name"), "name_zh": None, "price": q.get("price"), "pct": q.get("pct")}
+            for q in (ov.get("gainers") or []) + (ov.get("losers") or [])]
+    sectors = [{"name": x.get("name"), "change_pct": x.get("pct")} for x in ov.get("sectors") or [] if x.get("pct") is not None]
+    sector = sorted(sectors, key=lambda x: -x["change_pct"] if up >= 0 else x["change_pct"])[0] if sectors else None
+    b = ov.get("breadth") or {}
+    history = [{"date": r["date"], "close": r["close"]} for r in (nasdaq.daily_history("SPY") or [])[-64:]]
+    return {"main": main, "indices": indices, "history": history, "movers": pick_movers(pool), "sector": sector,
+            "breadth": {"advancing": b.get("advancing"), "declining": b.get("declining"), "flat": None, "sample": b.get("sample")}
+            if b.get("sample") else None, "session": ov.get("session"), "hot": pool}
 
 
 @router.get("/lesson")
-def lesson(market: str = Query(..., pattern="^(cn|hk|jp)$")):
+def lesson(market: str = Query(..., pattern="^(us|cn|hk|jp)$")):
     now = time.time()
     with _lock:
         hit = _cache.get(market)
         if hit and now - hit[0] < hit[2]:
             return hit[1]
     try:
-        data = _cn() if market == "cn" else _intl(market)
+        data = _cn() if market == "cn" else _us() if market == "us" else _intl(market)
     except Exception as e:
         logger.warning("home lesson %s failed: %s", market, e)
         if hit:
