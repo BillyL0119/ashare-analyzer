@@ -9,6 +9,7 @@ import { changeColor, marketOf, marketOfRegion, quotePath, historyPath, chipLabe
 import { localName } from '../../utils/markets'
 import USMarket from './USMarket'
 import MarketMap from '../MarketMap'
+import LessonCard from '../LessonCard'
 import MacroEvents from '../MacroEvents'
 import { Icon } from '../icons'
 import QuoteBanner from '../../components/QuoteBanner'
@@ -343,6 +344,7 @@ export default function Market({ onSettings }) {
       <SearchBox />
       <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
       <div className="m-stack">
+        <LessonCard key={mode} market={mode} />
         {mode === 'us' ? (
           <><USMarket afterOverview={<><Watchlist /><MarketMap market="us" /><MacroEvents /></>} /><Global /></>
         ) : (

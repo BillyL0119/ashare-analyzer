@@ -1,11 +1,11 @@
-// Words for the home page's top panel when the A-share, Hong Kong or Japan market is selected (MarketLesson.jsx).
-// The US panel keeps its own strings in lessonStrings.js.
+// Words for the home page's top panel when the A-share, Hong Kong or Japan market is selected (MarketLesson.jsx),
+// and for the phone home card (mobile/LessonCard.jsx, US and A-shares). The desktop US panel uses lessonStrings.js.
 
 const pctWord = { zh: (p) => `${p}%`, en: (p) => `${p}%`, ja: (p) => `${p}%`, ko: (p) => `${p}%`, fr: (p) => `${p} %` }
 
 const zh = {
-  market: { cn: 'A股', hk: '港股', jp: '日股' },
-  index: { cn: '上证指数', hk: '恒生指数', jp: '日经225' },
+  market: { us: '美股', cn: 'A股', hk: '港股', jp: '日股' },
+  index: { us: '标普500', cn: '上证指数', hk: '恒生指数', jp: '日经225' },
   open: (m) => `${zh.market[m]}交易中`, lunch: (m) => `${zh.market[m]}午间休市`, closed: (m) => `${zh.market[m]}已收盘`,
   title: (m, dir, live, day) => live
     ? { up: `${zh.market[m]}今天上涨`, down: `${zh.market[m]}今天下跌`, flat: `${zh.market[m]}今天基本持平` }[dir]
@@ -22,8 +22,8 @@ const zh = {
 }
 
 const en = {
-  market: { cn: 'China A-shares', hk: 'Hong Kong stocks', jp: 'Japanese stocks' },
-  index: { cn: 'The SSE Composite', hk: 'The Hang Seng Index', jp: 'The Nikkei 225' },
+  market: { us: 'US stocks', cn: 'China A-shares', hk: 'Hong Kong stocks', jp: 'Japanese stocks' },
+  index: { us: 'The S&P 500', cn: 'The SSE Composite', hk: 'The Hang Seng Index', jp: 'The Nikkei 225' },
   open: (m) => `${en.market[m]}: trading`, lunch: (m) => `${en.market[m]}: lunch break`, closed: (m) => `${en.market[m]}: closed`,
   title: (m, dir, live, day) => live
     ? { up: `${en.market[m]} are up today`, down: `${en.market[m]} are down today`, flat: `${en.market[m]} are flat so far today` }[dir]
@@ -41,8 +41,8 @@ const en = {
 
 const ja = {
   ...en,
-  market: { cn: '中国A株', hk: '香港株', jp: '日本株' },
-  index: { cn: '上海総合指数', hk: 'ハンセン指数', jp: '日経平均' },
+  market: { us: '米国株', cn: '中国A株', hk: '香港株', jp: '日本株' },
+  index: { us: 'S&P500', cn: '上海総合指数', hk: 'ハンセン指数', jp: '日経平均' },
   open: (m) => `${ja.market[m]}：取引中`, lunch: (m) => `${ja.market[m]}：昼休み`, closed: (m) => `${ja.market[m]}：取引終了`,
   title: (m, dir, live, day) => live
     ? { up: `${ja.market[m]}は今日上昇`, down: `${ja.market[m]}は今日下落`, flat: `${ja.market[m]}は今日ほぼ横ばい` }[dir]
@@ -54,8 +54,8 @@ const ja = {
 
 const ko = {
   ...en,
-  market: { cn: '중국 A주', hk: '홍콩 주식', jp: '일본 주식' },
-  index: { cn: '상하이종합지수', hk: '항셍지수', jp: '닛케이225' },
+  market: { us: '미국 주식', cn: '중국 A주', hk: '홍콩 주식', jp: '일본 주식' },
+  index: { us: 'S&P 500', cn: '상하이종합지수', hk: '항셍지수', jp: '닛케이225' },
   open: (m) => `${ko.market[m]}: 거래 중`, lunch: (m) => `${ko.market[m]}: 점심 휴장`, closed: (m) => `${ko.market[m]}: 장 마감`,
   title: (m, dir, live, day) => live
     ? { up: `${ko.market[m]} 오늘 상승`, down: `${ko.market[m]} 오늘 하락`, flat: `${ko.market[m]} 오늘 보합` }[dir]
@@ -67,8 +67,8 @@ const ko = {
 
 const fr = {
   ...en,
-  market: { cn: 'Les actions A chinoises', hk: 'Les actions de Hong Kong', jp: 'Les actions japonaises' },
-  index: { cn: "L'indice SSE Composite", hk: "L'indice Hang Seng", jp: 'Le Nikkei 225' },
+  market: { us: 'Les actions américaines', cn: 'Les actions A chinoises', hk: 'Les actions de Hong Kong', jp: 'Les actions japonaises' },
+  index: { us: 'Le S&P 500', cn: "L'indice SSE Composite", hk: "L'indice Hang Seng", jp: 'Le Nikkei 225' },
   open: (m) => `${fr.market[m]} : séance en cours`, lunch: (m) => `${fr.market[m]} : pause de midi`, closed: (m) => `${fr.market[m]} : marché fermé`,
   title: (m, dir, live, day) => live
     ? { up: `${fr.market[m]} montent aujourd'hui`, down: `${fr.market[m]} baissent aujourd'hui`, flat: `${fr.market[m]} sont stables aujourd'hui` }[dir]

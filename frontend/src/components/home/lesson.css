@@ -81,18 +81,6 @@
 .bfs-lesson-idx .c.is-up { color: var(--green-bright); }
 .bfs-lesson-idx .c.is-down { color: var(--red-bright); }
 
-.bfs-lesson-chart { margin: 0; min-width: 0; display: flex; flex-direction: column; }
-.bfs-lesson-plot { position: relative; flex: 1; min-height: 168px; }
-.bfs-lesson-plot > svg, .bfs-lesson-plot > .is-empty { position: absolute; inset: 0; }
-.bfs-lesson-chart .is-empty { border-radius: 8px; background: var(--bg-tertiary); }
-.bfs-lesson-chart svg { display: block; overflow: visible; }
-.bfs-lesson-chart .grid { stroke: var(--border-primary); stroke-width: 1; }
-.bfs-lesson-chart .line { fill: none; stroke: var(--text-secondary); stroke-width: 1.5; stroke-linejoin: round; }
-.bfs-lesson-chart .dot { stroke: var(--bg-secondary); stroke-width: 2; fill: var(--text-muted); }
-.bfs-lesson-chart .dot.is-down { fill: var(--red-bright); }
-.bfs-lesson-chart .dot.is-up { fill: var(--green-bright); }
-.bfs-lesson-chart .axis { fill: var(--text-muted); font-size: 10px; font-family: var(--sans); }
-.bfs-lesson-chart figcaption { margin-top: 2px; color: var(--text-muted); font-size: 11px; text-align: right; }
 
 .bfs-lesson-ways {
   list-style: none; margin: 0; padding: 0;

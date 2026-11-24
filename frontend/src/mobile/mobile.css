@@ -169,3 +169,20 @@
 .m-app .mq-past-num { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .m-app .mq-ai { display: flex; flex-direction: column; gap: 12px; }
 .m-app .mq-ai b { font-size: 14.5px; }
+
+/* home card: the market in one sentence + three months of its index (LessonCard.jsx) */
+.m-app .ml-card { display: flex; flex-direction: column; gap: 8px; }
+.m-app .ml-status { display: flex; align-items: center; gap: 6px; }
+.m-app .ml-status i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.m-app .ml-status i.live { background: var(--green-bright); }
+.m-app .ml-title { font-size: 20px; font-weight: 600; line-height: 1.3; }
+.m-app .ml-sentence { margin: 0; font-size: 14px; line-height: 1.6; }
+.m-app .ml-chart .bfs-lesson-plot { min-height: 150px; }
+.m-app .ml-card.is-cn .bfs-lesson-chart .dot.is-up { fill: var(--red-bright); }
+.m-app .ml-card.is-cn .bfs-lesson-chart .dot.is-down { fill: var(--green-bright); }
+.m-app .ml-movers { display: flex; flex-direction: column; }
+.m-app .ml-movers button { display: grid; grid-template-columns: 64px 1fr auto; gap: 8px; align-items: baseline; padding: 8px 0;
+  border-top: 1px solid var(--stroke); text-align: left; color: var(--text); font-size: 14px; }
+.m-app .ml-sym { font-weight: 600; font-variant-numeric: tabular-nums; }
+.m-app .ml-name { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.m-app .ml-pct { font-weight: 600; font-variant-numeric: tabular-nums; }

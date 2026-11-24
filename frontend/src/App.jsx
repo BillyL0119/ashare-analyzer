@@ -839,7 +839,7 @@ export default function App() {
               )}
               {selectedSymbols.length === 0 && (
                 <div className="bfs-enter-2"><ErrorBoundary fallback={null}>
-                  {market === 'hk' || market === 'jp' ? <IntlMarketPanel lang={lang} market={market} /> : <USMarketPanel lang={lang} hideIndices />}
+                  {market === 'cn' || market === 'hk' || market === 'jp' ? <IntlMarketPanel lang={lang} market={market} /> : <USMarketPanel lang={lang} hideIndices />}
                 </ErrorBoundary></div>
               )}
               {selectedSymbols.length === 0 && (
