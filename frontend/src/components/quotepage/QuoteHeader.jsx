@@ -3,6 +3,8 @@ import { useQuoteLive } from './useQuoteApi'
 import { extendedSessionNow } from './session'
 import { isNum, fmtPrice, fmtSigned, fmtSignedPct, fmtShortDate, changeColor } from './format'
 import summaryStrings, { fill } from './summaryStrings'
+import useWatchlistStore from '../../store/watchlistStore'
+import { T } from '../../i18n/translations'
 import './quotepage.css'
 import './summary.css'
 
@@ -53,6 +55,22 @@ function MiniBar({ d, lang, targetRef }) {
   )
 }
 
+// Add / remove this stock from the watchlist (the star list in the site header), as the K-line cards do
+function WatchButton({ symbol, name, lang }) {
+  const t = T[lang] || T.en
+  const on = useWatchlistStore((s) => s.list.some((x) => x.code === symbol))
+  const add = useWatchlistStore((s) => s.add)
+  const remove = useWatchlistStore((s) => s.remove)
+  if (!symbol) return null
+  const label = on ? t.watchRemove : t.watchAdd
+  return (
+    <button type="button" className={`qs-watch${on ? ' is-on' : ''}`} aria-pressed={on} title={label}
+      onClick={() => (on ? remove(symbol) : add({ code: symbol, name: name || symbol, market: 'us' }))}>
+      <span aria-hidden="true">{on ? '★' : '☆'}</span>{label}
+    </button>
+  )
+}
+
 export function QuoteHeaderView({ d, lang }) {
   const S = summaryStrings(lang)
   const priceRef = useRef(null)
@@ -62,7 +80,10 @@ export function QuoteHeaderView({ d, lang }) {
   const extTime = ext?.as_of_text?.match(/\d{1,2}:\d{2} [AP]M/)?.[0]
   return (
     <header className="qs-head">
-      <h2 className="qs-name">{d.name || d.symbol}<span className="sym">{d.symbol}</span></h2>
+      <div className="qs-title-row">
+        <h2 className="qs-name">{d.name || d.symbol}<span className="sym">{d.symbol}</span></h2>
+        <WatchButton symbol={d.symbol} name={d.name} lang={lang} />
+      </div>
       <div className="qs-exch">{fill(S.exchangeLine, { exchange: d.exchange || '', currency: d.currency || 'USD' })}</div>
       <div className="qs-price-row" ref={priceRef}>
         <span className="qs-price">{isNum(d.price) ? fmtPrice(d.price, lang, digits) : '—'}</span>

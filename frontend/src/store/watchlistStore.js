@@ -11,7 +11,7 @@ const useWatchlistStore = create((set, get) => ({
 
   add: (stock) => set((s) => {
     if (s.list.find((x) => x.code === stock.code)) return s
-    const next = [...s.list, { code: stock.code, name: stock.name }]
+    const next = [...s.list, { code: stock.code, name: stock.name, ...(stock.market ? { market: stock.market } : {}) }]
     localStorage.setItem(LS_KEY, JSON.stringify(next))
     return { list: next }
   }),

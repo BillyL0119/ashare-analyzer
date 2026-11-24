@@ -97,3 +97,9 @@
 .qs-mini .px { font-weight: 600; color: var(--text-primary); }
 .qs-mini .ch { font-size: 13px; font-weight: 500; }
 @media (max-width: 640px) { .qs-mini { padding: 8px 12px; } .qs-mini .nm { display: none; } }
+.qs-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.qs-watch { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font: inherit; font-size: 13px;
+  color: var(--text-secondary); background: transparent; border: 1px solid var(--border-primary); border-radius: 999px; cursor: pointer; white-space: nowrap; }
+.qs-watch:hover { background: var(--bg-hover); color: var(--text-primary); }
+.qs-watch.is-on { color: var(--accent-blue); border-color: currentColor; }
+.qs-watch:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
