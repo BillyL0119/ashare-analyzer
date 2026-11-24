@@ -472,6 +472,7 @@ app.include_router(screener_router, prefix="/api/us/screener", tags=["screener"]
 from routers.admin import auth_router, admin_router
 from routers.quant import quant_router
 from routers.journal import journal_router
+from routers import home_lesson
 from routers.heatmap import router as heatmap_router
 app.include_router(heatmap_router, prefix="/api/heatmap", tags=["heatmap"])
 from routers.macro import router as macro_router
@@ -494,3 +495,4 @@ app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
 app.include_router(quant_router, prefix="/api/admin/quant", tags=["admin"])
 app.include_router(journal_router, prefix="/api/admin/journal", tags=["admin"])
+app.include_router(home_lesson.router, prefix="/api/home", tags=["home"])
