@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import { isChunkError, reloadOnce } from '../utils/chunkReload'
 
 // Catches render errors in any child so one broken panel shows a fallback
 // instead of blanking the whole page.
@@ -14,6 +15,8 @@ export default class ErrorBoundary extends Component {
 
   componentDidCatch(error, info) {
     console.error('UI error:', error, info?.componentStack)
+    // a page of the previous build that no longer exists on the server: load the new build instead
+    if (isChunkError(error)) reloadOnce()
   }
 
   render() {
@@ -25,7 +28,14 @@ export default class ErrorBoundary extends Component {
         background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)',
         color: 'var(--text-secondary)', fontSize: 13,
       }}>
-        <div style={{ marginBottom: 8 }}>出错了，请刷新页面。 / Something went wrong. Please refresh.</div>
+        <div style={{ marginBottom: 8 }}>
+          {isChunkError(this.state.error)
+            ? '网站刚更新过，请刷新页面载入新版本。 / The site was just updated. Please refresh to load the new version.'
+            : '出错了，请刷新页面。 / Something went wrong. Please refresh.'}
+        </div>
+        <div style={{ marginBottom: 8, fontSize: 11, opacity: 0.7, wordBreak: 'break-word' }}>
+          {String(this.state.error?.message || this.state.error).slice(0, 160)}
+        </div>
         <button
           onClick={() => window.location.reload()}
           style={{
