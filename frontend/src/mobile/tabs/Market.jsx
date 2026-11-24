@@ -10,6 +10,7 @@ import { localName } from '../../utils/markets'
 import USMarket from './USMarket'
 import MarketMap from '../MarketMap'
 import LessonCard from '../LessonCard'
+import IntlMarket from '../IntlMarket'
 import MacroEvents from '../MacroEvents'
 import { Icon } from '../icons'
 import QuoteBanner from '../../components/QuoteBanner'
@@ -320,7 +321,9 @@ function Hot() {
 }
 
 function useMode() {
-  const [mode, setMode] = useState(() => { try { return localStorage.getItem('bfs_m_market') === 'cn' ? 'cn' : 'us' } catch { return 'us' } })
+  const [mode, setMode] = useState(() => {
+    try { const m = localStorage.getItem('bfs_m_market'); return ['cn', 'hk', 'jp'].includes(m) ? m : 'us' } catch { return 'us' }
+  })
   const change = (m) => { setMode(m); try { localStorage.setItem('bfs_m_market', m) } catch { /* ignore */ } }
   return [mode, change]
 }
@@ -342,13 +345,15 @@ export default function Market({ onSettings }) {
       </div>
       <QuoteOfDay />
       <SearchBox />
-      <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }]} /></div>
+      <div style={{ marginBottom: 20 }}><Segment full value={mode} onChange={setMode} options={[{ value: 'us', label: t('美股') }, { value: 'cn', label: t('A股') }, { value: 'hk', label: t('港股') }, { value: 'jp', label: t('日股') }]} /></div>
       <div className="m-stack">
         <LessonCard key={mode} market={mode} />
         {mode === 'us' ? (
           <><USMarket afterOverview={<><Watchlist /><MarketMap market="us" /><MacroEvents /></>} /><Global /></>
-        ) : (
+        ) : mode === 'cn' ? (
           <><Overview /><Watchlist /><MarketMap market="cn" /><Global /><Sectors /><Hot /></>
+        ) : (
+          <><IntlMarket key={mode} market={mode} /><Watchlist /><MarketMap key={`map-${mode}`} market={mode} /><Global /></>
         )}
         <div className="m-footer">{t('仅供学习，不构成投资建议')}</div>
         <div className="m-footer" style={{ marginTop: -18 }}>{t('数据延迟，仅供参考')}</div>

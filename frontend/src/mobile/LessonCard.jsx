@@ -6,19 +6,26 @@ import { SECTOR_NAMES } from '../components/home/lessonStrings'
 import useLangStore from '../store/langStore'
 
 // The desktop home's top panel on the phone: the market in one sentence, three months of its main index and the
-// popular names that moved most (/api/home/lesson). US: S&P 500; A-shares: SSE Composite, red up / green down.
+// popular names that moved most (/api/home/lesson). US: S&P 500; A-shares: SSE Composite (red up / green down);
+// Hong Kong: Hang Seng; Japan: Nikkei 225.
 
 const LOCALE = { zh: 'zh-CN', en: 'en-US', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR' }
 const FLAT = 0.1
-const CN = { tz: 'Asia/Shanghai', am: [570, 690], pm: [780, 900] }
+// Regular sessions in exchange time, minutes after midnight (holidays not modelled)
+const SESSIONS = {
+  cn: { tz: 'Asia/Shanghai', am: [570, 690], pm: [780, 900] },
+  hk: { tz: 'Asia/Hong_Kong', am: [570, 720], pm: [780, 960] },
+  jp: { tz: 'Asia/Tokyo', am: [540, 690], pm: [750, 930] },
+}
 
-function cnState() {
-  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: CN.tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+function asiaState(market) {
+  const { tz, am, pm } = SESSIONS[market]
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
     .formatToParts(new Date()).map((x) => [x.type, x.value]))
   const mins = Number(p.hour) * 60 + Number(p.minute)
   if (p.weekday === 'Sat' || p.weekday === 'Sun') return 'closed'
-  if ((mins >= CN.am[0] && mins < CN.am[1]) || (mins >= CN.pm[0] && mins < CN.pm[1])) return 'open'
-  return mins >= CN.am[1] && mins < CN.pm[0] ? 'lunch' : 'closed'
+  if ((mins >= am[0] && mins < am[1]) || (mins >= pm[0] && mins < pm[1])) return 'open'
+  return mins >= am[1] && mins < pm[0] ? 'lunch' : 'closed'
 }
 
 const shortName = (n) => (n || '').replace(/,?\s+(Inc\.?|Incorporated|Corporation|Corp\.?|Holdings|Plc|Ltd\.?|Co\.?|Company)$/i, '').trim()
@@ -39,8 +46,9 @@ export default function LessonCard({ market }) {
   const main = d?.main
   if (res.market === market && !main) return null                 // no data: the cards below still show the market
   const dir = !main ? 'flat' : main.change_pct > FLAT ? 'up' : main.change_pct < -FLAT ? 'down' : 'flat'
-  const state = market === 'us' ? (d?.session?.state === 'regular' ? 'open' : 'closed') : cnState()
-  const live = market === 'us' ? state === 'open' : state !== 'closed' && d?.as_of === new Date().toLocaleDateString('en-CA', { timeZone: CN.tz })
+  const state = market === 'us' ? (d?.session?.state === 'regular' ? 'open' : 'closed') : asiaState(market)
+  const live = market === 'us' ? state === 'open'
+    : state !== 'closed' && d?.as_of === new Date().toLocaleDateString('en-CA', { timeZone: SESSIONS[market].tz })
   const day = d?.as_of ? new Date(d.as_of + 'T12:00:00Z').toLocaleDateString(loc, { weekday: lang === 'zh' ? 'short' : 'long', timeZone: 'UTC' }) : ''
   const num = (v, n = 2) => (v == null ? '—' : Number(v).toLocaleString(loc, { minimumFractionDigits: n, maximumFractionDigits: n }))
   const pctText = (v) => (v == null ? '—' : `${v > 0 ? '+' : v < 0 ? '−' : ''}${num(Math.abs(v))}%`)
