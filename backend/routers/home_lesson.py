@@ -95,10 +95,11 @@ def _cn():
     main = indices[0] if indices else None
     up = (main or {}).get("change_pct") or 0
     sector = (sorted(sectors, key=lambda s: -s["change_pct"] if up >= 0 else s["change_pct"])[0] if sectors else None)
+    counts = [ov.get(k) or 0 for k in ("advance_count", "decline_count", "flat_count")]
+    breadth = ({"advancing": counts[0], "declining": counts[1], "flat": counts[2]}
+               if sum(counts) > 0 else None)            # all zero = the whole-market feed failed this time
     return {"main": main, "indices": indices, "history": _tencent_index("sh000001"), "movers": movers,
-            "breadth": {"advancing": ov.get("advance_count"), "declining": ov.get("decline_count"),
-                        "flat": ov.get("flat_count")},
-            "sector": sector}
+            "breadth": breadth, "sector": sector}
 
 
 def _intl(market: str):
@@ -117,7 +118,7 @@ def lesson(market: str = Query(..., pattern="^(cn|hk|jp)$")):
     now = time.time()
     with _lock:
         hit = _cache.get(market)
-        if hit and now - hit[0] < _TTL:
+        if hit and now - hit[0] < hit[2]:
             return hit[1]
     try:
         data = _cn() if market == "cn" else _intl(market)
@@ -131,6 +132,8 @@ def lesson(market: str = Query(..., pattern="^(cn|hk|jp)$")):
             return hit[1]
         raise HTTPException(503, "market data is not available right now")
     data = {"market": market, "as_of": (data["history"] or [{}])[-1].get("date"), **data}
+    # an A-share answer without the rising/falling counts is kept briefly, so the full one replaces it soon
+    ttl = 60 if market == "cn" and not data.get("breadth") else _TTL
     with _lock:
-        _cache[market] = (now, data)
+        _cache[market] = (now, data, ttl)
     return data
