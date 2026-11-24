@@ -14,9 +14,12 @@ The back-test buys the top fraction of the universe on the last trading day of e
 month, pays a cost on every share traded, and compares with the bottom fraction, all stocks equal weight and
 the S&P 500 fund.
 
-Known weaknesses, shown to the reader: the universe is today's S&P 500 (companies that fell out of it or were
-delisted are missing: survivorship bias flatters every result), prices are not dividend-adjusted, and the
-cost is a flat assumption.
+Universe: by default the S&P 500 as it was on each rebalance day (point in time, `members`), so a company counts
+only while it was in the index, including past members that are still listed. The other choice, today's members
+only, shows survivorship bias at work: it includes companies before they were added (they were added because they
+had risen) and leaves out the ones that were dropped. Past members that were bought out or went bankrupt have no
+free prices, so a smaller bias remains; the answer says how much of the index each month had prices.
+Prices include dividends, reinvested on the ex-date (`dividends` in build_matrix). The cost is a flat assumption.
 """
 
 import math
@@ -29,10 +32,11 @@ MIN_BARS = 260          # a stock needs this many bars to be ranked
 FACTORS = ("momentum", "low_vol")
 
 
-def build_matrix(histories: dict, calendar_sym: str = "SPY"):
+def build_matrix(histories: dict, calendar_sym: str = "SPY", dividends: dict = None):
     """({sym: [{"date", "close"}, ...]}) -> (dates, symbols, closes[dates x symbols]) on the calendar of
     `calendar_sym` (every US trading day). A date a stock has no bar for stays NaN; stocks with too few bars
-    are left out."""
+    are left out. With `dividends` ({sym: [{"ex_date", "amount"}]}, amounts on today's shares like the prices),
+    each column is a total-return price: every dividend is reinvested at the close before its ex-date."""
     cal = histories.get(calendar_sym) or []
     dates = [b["date"] for b in cal]
     if not dates:
@@ -46,7 +50,40 @@ def build_matrix(histories: dict, calendar_sym: str = "SPY"):
             i = pos.get(b["date"])
             if i is not None and b.get("close"):
                 closes[i, j] = float(b["close"])
+    if dividends:
+        for j, s in enumerate([calendar_sym] + syms):
+            divs = dividends.get(s)
+            if divs:
+                closes[:, j] = reinvest(dates, closes[:, j], divs)
     return dates, [calendar_sym] + syms, closes
+
+
+def reinvest(dates: list, col: np.ndarray, divs: list) -> np.ndarray:
+    """A price column -> its total-return version: from each ex-date on, prices are scaled up by
+    (1 + dividend / close of the day before), so holding the stock earns the dividend too."""
+    import bisect
+    ratio = np.ones(len(dates))
+    for d in divs:
+        amt, day = d.get("amount"), d.get("ex_date")
+        if not amt or not day:
+            continue
+        i = bisect.bisect_left(dates, day)          # first trading day on or after the ex-date
+        if i <= 0 or i >= len(dates):
+            continue
+        prev = col[i - 1]
+        k = i - 1
+        while k > 0 and np.isnan(prev):             # the last close before it
+            k -= 1
+            prev = col[k]
+        if np.isnan(prev) or prev <= 0 or amt >= prev:
+            continue
+        ratio[i] *= 1.0 + amt / prev
+    return col * np.cumprod(ratio)
+
+
+def is_member(spans: list, day: str) -> bool:
+    """spans [[start, end or None], ...]: in the index on `day` (start inclusive, end exclusive)."""
+    return any(s <= day and (e is None or day < e) for s, e in spans)
 
 
 def month_ends(dates: list) -> list:
@@ -115,11 +152,13 @@ def _stats(rets: np.ndarray, turnover: np.ndarray = None) -> dict:
 
 
 def backtest(dates: list, symbols: list, closes: np.ndarray, factor: str, frac: float = 0.2,
-             cost_bps: float = 10.0) -> dict:
+             cost_bps: float = 10.0, members: dict = None) -> dict:
     """Monthly rebalanced, equal-weight top (and bottom) `frac` of the universe by `factor`.
 
     Returns the monthly dates, growth of 100 for each line, headline numbers, a luck check and the two halves
-    of the period. `cost_bps` is charged on each one-way trade (a share sold, a share bought)."""
+    of the period. `cost_bps` is charged on each one-way trade (a share sold, a share bought).
+    `members` ({sym: spans}, see is_member): only stocks in the index on the rebalance day may be picked, and the
+    answer says how many of that day's members had prices ("members_priced")."""
     if factor not in FACTORS:
         raise ValueError(f"unknown factor {factor}")
     ends = month_ends(dates)
@@ -127,6 +166,7 @@ def backtest(dates: list, symbols: list, closes: np.ndarray, factor: str, frac: 
     spy_col = symbols.index("SPY") if "SPY" in symbols else None
     cost = cost_bps / 10_000.0
     months, top_r, bot_r, all_r, spy_r, turn, held, counts = [], [], [], [], [], [], [], []
+    in_index = []
     prev_top, prev_bot = set(), set()
     for k in range(len(ends) - 1):
         i, j = ends[k], ends[k + 1]
@@ -136,7 +176,12 @@ def backtest(dates: list, symbols: list, closes: np.ndarray, factor: str, frac: 
         later = closes[j] / closes[i] - 1.0
         eligible = np.zeros(closes.shape[1], dtype=bool)
         eligible[stock_cols] = True
-        eligible &= ~np.isnan(later)
+        n_members = None
+        if members is not None:
+            day = dates[i]
+            eligible &= np.array([is_member(members.get(sym) or [], day) for sym in symbols])
+            n_members = sum(1 for spans in members.values() if is_member(spans, day))
+        eligible &= ~np.isnan(later) & ~np.isnan(sig)
         if eligible.sum() < 30 or np.isnan(sig[eligible]).all():
             continue
         top_idx = _pick(sig, eligible, frac, True)
@@ -158,6 +203,7 @@ def backtest(dates: list, symbols: list, closes: np.ndarray, factor: str, frac: 
         turn.append((sold + bought) / 2)
         held.append(len(top_idx))
         counts.append(int(eligible.sum()))
+        in_index.append(n_members)
         months.append(dates[j])
         prev_top, prev_bot = top_set, bot_set
     n = len(months)
@@ -187,6 +233,9 @@ def backtest(dates: list, symbols: list, closes: np.ndarray, factor: str, frac: 
         "halves": {"first": {"from": months[0], "to": months[half - 1], "excess_annual": ann(top_a[:half]) - ann(all_a[:half])},
                    "second": {"from": months[half], "to": months[-1], "excess_annual": ann(top_a[half:]) - ann(all_a[half:])}},
         "avg_names_held": round(float(np.mean(held)), 1), "avg_universe": round(float(np.mean(counts)), 1),
+        "members_priced": (round(float(np.sum(counts) / np.sum(in_index)) * 100, 1)
+                           if members is not None and sum(in_index) else None),
+        "avg_members": round(float(np.mean(in_index)), 1) if members is not None else None,
     }
 
 

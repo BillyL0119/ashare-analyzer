@@ -298,6 +298,21 @@ def cached_history(sym: str) -> list:
         return []
 
 
+def cached_dividends(sym: str) -> list:
+    """The dividends() rows if they are already in memory or on disk, of any age, else []. Never fetches (the factor
+    lab reads hundreds of tickers; the warm-up fills them)."""
+    with _lock:
+        hit = _mem.get(f"divs2_{sym}")
+    if hit:
+        return (hit[1] or {}).get("rows") or []
+    path = os.path.join(_CACHE_DIR, f"nq_{re.sub(r'[^A-Za-z0-9_.-]', '_', f'divs2_{sym}')}.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return (json.load(f) or {}).get("rows") or []
+    except (OSError, ValueError, AttributeError):
+        return []
+
+
 def _nasdaq_dividends(sym: str):
     """Nasdaq's dividend table as paid, oldest first; [] when it lists none (it has none for NYSE listings such
     as KO or JNJ, nor for ETFs), None when the request failed."""

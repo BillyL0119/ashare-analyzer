@@ -112,3 +112,39 @@ def test_rank_today_blends_percentiles_and_needs_every_factor():
     assert {r["symbol"] for r in both} <= set(value) and len(both) == 3
     assert fx.rank_today(dates, syms, closes, {"momentum": 0}, {}) == []
     assert np.isnan(fx.percentile_rank(np.array([1.0, np.nan]))[1])
+
+
+def test_dividends_are_reinvested_from_the_ex_date():
+    hist = {"SPY": _bars([100.0] * 300), "D": _bars([50.0] * 300)}
+    ex = hist["D"][100]["date"]
+    dates, syms, closes = fx.build_matrix(hist, dividends={"D": [{"ex_date": ex, "amount": 1.0}]})
+    col = closes[:, syms.index("D")]
+    assert col[99] == 50.0 and abs(col[100] - 51.0) < 1e-9 and abs(col[-1] - 51.0) < 1e-9
+    assert closes[0, 0] == closes[-1, 0] == 100.0          # no dividends listed: unchanged
+    # an ex-date on a weekend counts from the next trading day
+    sat = "2015-01-03"
+    _, syms2, c2 = fx.build_matrix(hist, dividends={"D": [{"ex_date": sat, "amount": 0.5}]})
+    d = syms2.index("D")                                   # bars: Thu 1, Fri 2, Mon 5 January
+    assert c2[1, d] == 50.0 and abs(c2[2, d] - 50.5) < 1e-9
+
+
+def test_membership_spans():
+    spans = [["2016-01-04", "2018-06-01"], ["2020-03-02", None]]
+    assert fx.is_member(spans, "2016-01-04") and fx.is_member(spans, "2018-05-31")
+    assert not fx.is_member(spans, "2018-06-01") and not fx.is_member(spans, "2019-01-01")
+    assert fx.is_member(spans, "2026-11-20") and not fx.is_member([], "2020-01-01")
+
+
+def test_backtest_only_picks_members_of_the_day():
+    hist, _ = _world(2400, 80, seed=7)
+    dates, syms, closes = fx.build_matrix(hist)
+    half = dates[1200]
+    stocks = [s for s in syms if s != "SPY"]
+    # the first 40 stocks are members throughout, the rest join half-way, one more is a member nobody has prices for
+    members = {s: [[dates[0], None]] if k < 40 else [[half, None]] for k, s in enumerate(stocks)}
+    members["GONE"] = [[dates[0], None]]
+    r = fx.backtest(dates, syms, closes, "momentum", members=members)
+    full = fx.backtest(dates, syms, closes, "momentum")
+    assert r["avg_universe"] < full["avg_universe"]
+    assert 90 < r["members_priced"] < 100 and r["avg_members"] > 40
+    assert full["members_priced"] is None

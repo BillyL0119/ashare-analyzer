@@ -93,15 +93,32 @@ function Stats({ d, S, lang }) {
         from: monthLabel(f.from), to: monthLabel(f.to), a: signed(f.excess_annual),
         from2: monthLabel(s.from), to2: monthLabel(s.to), b: signed(s.excess_annual),
       })}</p>
-      <p className="fl-cov">{fill(S.coverage, { used: d.coverage.used, universe: d.coverage.universe, asOf: d.coverage.as_of })}</p>
+      {d.survivor_view && (
+        <>
+          <h4 className="fl-sub">{S.biasTitle}</h4>
+          <p className="fl-note">{fill(S.biasText, {
+            top: pct(st.top.cagr), top2: pct(d.survivor_view.top.cagr), all: pct(st.all.cagr), all2: pct(d.survivor_view.all.cagr),
+          })}</p>
+        </>
+      )}
+      {d.universe === 'today' && <p className="fl-note">{S.biasTodayNote}</p>}
+      {d.membership && isNum(d.members_priced) ? (
+        <p className="fl-cov">{fill(S.pitCoverage, {
+          members: Math.round(d.avg_members), priced: Math.round(d.members_priced), past: d.membership.past_members,
+          pastPriced: d.membership.past_priced, source: d.membership.source, last: d.membership.last_change, since: d.coverage.first_date.slice(0, 7),
+        })}</p>
+      ) : (
+        <p className="fl-cov">{fill(S.coverage, { used: d.coverage.used, universe: d.coverage.universe, asOf: d.coverage.as_of })}</p>
+      )}
     </>
   )
 }
 
 function Backtest({ lang, S }) {
   const [factor, setFactor] = useState('momentum')
+  const [universe, setUniverse] = useState('pit')
   const theme = useThemeStore((s) => s.theme)
-  const bt = useQuoteApi(`/api/us/factors/backtest?factor=${factor}`, { ttl: 5 * 60_000 })
+  const bt = useQuoteApi(`/api/us/factors/backtest?factor=${factor}&universe=${universe}`, { ttl: 5 * 60_000 })
   const label = { momentum: S.factorMomentum, low_vol: S.factorLowVol }
   const def = { momentum: S.defMomentum, low_vol: S.defLowVol }
   const d = bt.data
@@ -116,7 +133,15 @@ function Backtest({ lang, S }) {
           ))}
         </div>
       </div>
-      <p className="fl-def"><b>{label[factor]}.</b> {def[factor]} {S.testHint}</p>
+      <div className="fl-universe">
+        <span className="fl-sub" id="fl-universe-label">{S.universeLabel}</span>
+        <div className="qp-seg" role="group" aria-labelledby="fl-universe-label">
+          {[['pit', S.universePit], ['today', S.universeToday]].map(([u, name]) => (
+            <button key={u} type="button" aria-pressed={universe === u} onClick={() => setUniverse(u)}>{name}</button>
+          ))}
+        </div>
+      </div>
+      <p className="fl-def"><b>{label[factor]}.</b> {def[factor]} {d?.universe === 'today' ? S.testHintToday : S.testHint}</p>
       {bt.loading && <div className="qp-skel" style={{ height: 340, marginTop: 8 }} aria-busy="true" />}
       {!bt.loading && !d && <div className="fl-err" role="alert">{S.error}</div>}
       {d && (

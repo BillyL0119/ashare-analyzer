@@ -25,3 +25,5 @@
 .fl-err { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-secondary); }
 @media (max-width: 640px) { .fl-chart { height: 260px; } }
 .fl-rank th:nth-child(2), .fl-rank td:nth-child(2) { text-align: left; }
+.fl-universe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 10px; }
+.fl-universe .fl-sub { margin: 0; font-weight: 500; color: var(--text-secondary); }
