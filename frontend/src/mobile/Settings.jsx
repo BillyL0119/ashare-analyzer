@@ -72,6 +72,12 @@ function Account({ lang, onClose }) {
                 {lang === 'zh' ? '量化研究台（管理员）' : 'Quant desk (admin)'}
               </button>
             )}
+            {role === 'admin' && (
+              // not a phone-UI page: a full load lets the site open it in its responsive desktop layout
+              <button className="m-btn ghost" onClick={() => { onClose(); window.location.assign('/admin/journal') }}>
+                {lang === 'zh' ? '我的投资记录（管理员）' : 'My investing journal (admin)'}
+              </button>
+            )}
             <button className="m-btn ghost" onClick={() => signOut()}>{t('退出登录')}</button>
           </>
         ) : (

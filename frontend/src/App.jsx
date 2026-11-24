@@ -29,6 +29,7 @@ const CareerGuidePage    = lazy(() => import('./components/CareerGuidePage'))
 const ScreenerPage       = lazy(() => import('./components/ScreenerPage'))
 const AdminPage          = lazy(() => import('./components/AdminPage'))
 const QuantDesk          = lazy(() => import('./components/quant/QuantDesk'))   // /admin/quant: admin-only research desk
+const JournalPage        = lazy(() => import('./components/journal/JournalPage'))   // /admin/journal: admin's own trades
 const HeatmapPage        = lazy(() => import('./components/HeatmapPage'))
 const FactorLab = lazy(() => import('./components/factors/FactorLab'))   // /factors: rank stocks by a rule and back-test it
 const EventsCalendarPage = lazy(() => import('./components/events/EventsCalendarPage'))   // /macro: economic, earnings, IPO, split and dividend calendar
@@ -80,6 +81,7 @@ const TAB_PATHS = {
   ai_teacher:   '/ai-teacher',
   admin:        '/admin',
   quant:        '/admin/quant',
+  journal:      '/admin/journal',
 }
 const FOOTER_NOTE = {
   zh: '仅供学习，不构成投资建议。数据来源可能存在延迟。',
@@ -92,6 +94,7 @@ const ROLE_LABELS = {
   admin:  { en: 'Admin', zh: '管理员', ja: '管理者', ko: '관리자', fr: 'Admin' },
   member: { en: 'Member', zh: '会员', ja: 'メンバー', ko: '멤버', fr: 'Membre' },
 }
+const JOURNAL_LINK = { en: 'My investing journal', zh: '我的投资记录', ja: '投資記録', ko: '투자 기록', fr: 'Mon journal d’investissement' }
 const QUANT_LINK = { en: 'Quant desk', zh: '量化研究台', ja: 'クオンツ研究デスク', ko: '퀀트 리서치 데스크', fr: 'Bureau quant' }
 const ADMIN_LINK = { en: 'Admin dashboard', zh: '管理员看板', ja: '管理ダッシュボード', ko: '관리자 대시보드', fr: 'Tableau de bord admin' }
 const PATH_TABS = Object.fromEntries(Object.entries(TAB_PATHS).map(([k, v]) => [v, k]))
@@ -256,6 +259,7 @@ export default function App() {
       factors:      'BestFriendStock | 因子实验室 - 用十年真实价格检验动量、低波动等选股规则',
       admin:        'BestFriendStock | Admin',
       quant:        'BestFriendStock | 量化研究台',
+      journal:      'BestFriendStock | 我的投资记录',
       ai_teacher:   'BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导',
     }
     const titlesEn = {
@@ -277,13 +281,14 @@ export default function App() {
       factors:      'Best Friend Stock | Factor lab: test momentum and low-volatility rules on ten years of prices',
       admin:        'Best Friend Stock | Admin',
       quant:        'Best Friend Stock | Quant desk',
+      journal:      'Best Friend Stock | Investing journal',
       ai_teacher:   'Best Friend Stock | AI Economics Teacher',
     }
     // Crawlers always get Chinese (see langStore), so the indexed titles do not change
     const set = lang === 'zh' ? titles : titlesEn
     if (!caseRouteMatch) document.title = set[appTab] || set.analysis   // a case's page sets its own (CasesPage)
     const robots = document.querySelector('meta[name="robots"]')
-    if (robots) robots.setAttribute('content', (appTab === 'admin' || appTab === 'quant') ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large')
+    if (robots) robots.setAttribute('content', (appTab === 'admin' || appTab === 'quant' || appTab === 'journal') ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large')
     let canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
       canonical.setAttribute('href', 'https://bestfriendstock.com' + location.pathname)
@@ -723,6 +728,16 @@ export default function App() {
                         {QUANT_LINK[lang] || QUANT_LINK.en}
                       </button>
                     )}
+                    {role === 'admin' && (
+                      <button
+                        onClick={() => { setShowUserMenu(false); navigate('/admin/journal') }}
+                        style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'background 0.12s' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                      >
+                        {JOURNAL_LINK[lang] || JOURNAL_LINK.en}
+                      </button>
+                    )}
                     <button
                       onClick={async () => { setShowUserMenu(false); document.cookie = 'bfs_lang_hint=; path=/; max-age=0; SameSite=Lax'; await signOut() }}
                       style={{ display: 'block', width: '100%', textAlign: 'left', padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--red-bright)' }}
@@ -806,6 +821,8 @@ export default function App() {
             <EventsCalendarPage lang={lang} />
           ) : appTab === 'factors' ? (
             <FactorLab lang={lang} />
+          ) : appTab === 'journal' ? (
+            <JournalPage lang={lang} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'quant' ? (
             <QuantDesk lang={lang} onOpenAuth={() => setShowAuth(true)} />
           ) : appTab === 'admin' ? (

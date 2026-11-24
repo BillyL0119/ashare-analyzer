@@ -40,3 +40,6 @@ backend/data/sharadar/
 
 # Admin quant desk file (derived from licensed data, served to admins only)
 backend/data/quant/
+
+# Personal investing journal (admin's real trades): server only, never in git
+backend/data/journal/

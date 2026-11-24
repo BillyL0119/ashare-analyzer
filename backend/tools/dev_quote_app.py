@@ -47,6 +47,8 @@ app.include_router(factors.router, prefix="/api/us/factors")
 from routers.quant import quant_router  # noqa: E402
 from services import auth as _auth  # noqa: E402
 app.include_router(quant_router, prefix="/api/admin/quant")
+from routers.journal import journal_router  # noqa: E402
+app.include_router(journal_router, prefix="/api/admin/journal")
 app.dependency_overrides[_auth.require_admin] = lambda: {"email": "dev-admin@localhost"}
 
 _client = httpx.AsyncClient(timeout=40, follow_redirects=False)

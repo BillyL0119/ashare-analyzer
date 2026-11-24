@@ -1,0 +1,39 @@
+/* "我的投资记录" (/admin/journal). Builds on .qp-card, .fl-table and .qd-* from the quant desk. */
+.jn-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.jn-stat { display: flex; flex-direction: column; gap: 4px; }
+.jn-stat span { font-size: 12px; color: var(--text-muted); }
+.jn-stat b { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+.jn-stat small { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+.jn-form { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.jn-types { align-self: flex-start; flex-wrap: wrap; }
+.jn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px 12px; }
+.jn-form label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-secondary); }
+.jn-form input, .jn-form select, .jn-form textarea { font: inherit; font-size: 14px; padding: 8px 10px; border-radius: 8px;
+  border: 1px solid var(--border-primary); background: var(--bg-primary); color: var(--text-primary); }
+.jn-form textarea { resize: vertical; line-height: 1.5; }
+.jn-form input:focus-visible, .jn-form select:focus-visible, .jn-form textarea:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+.jn-reason { max-width: 720px; }
+.jn-actions { display: flex; gap: 8px; }
+.jn-error { margin: 0; font-size: 13px; color: var(--red-bright); }
+.jn-table th:first-child, .jn-table td:first-child, .jn-table th:last-child, .jn-table td:last-child { text-align: left; }
+.jn-table small { color: inherit; opacity: 0.8; margin-left: 4px; }
+.jn-reviews { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.jn-review { border: 1px solid var(--border-primary); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.jn-review header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; font-size: 14px; font-variant-numeric: tabular-nums; }
+.jn-review header .qd-sub { margin: 0; }
+.jn-why span { font-size: 11px; color: var(--text-muted); }
+.jn-why p { margin: 2px 0 0; font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+.jn-list { list-style: none; margin: 4px 0 0; padding: 0; }
+.jn-list li { display: grid; grid-template-columns: 92px 44px 1fr auto; gap: 10px; align-items: baseline; padding: 8px 0;
+  border-top: 1px solid var(--border-primary); font-size: 13px; }
+.jn-list li:first-child { border-top: none; }
+.jn-date { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.jn-what { color: var(--text-primary); font-variant-numeric: tabular-nums; min-width: 0; }
+.jn-what small { display: block; color: var(--text-muted); font-size: 12px; margin-top: 2px; white-space: pre-wrap; }
+.jn-buttons { display: flex; gap: 6px; }
+.jn-buttons button { font: inherit; font-size: 12px; background: none; border: none; color: var(--accent-blue); cursor: pointer; padding: 2px 4px; }
+.jn-buttons button:focus-visible { outline: 2px solid var(--accent-blue); border-radius: 4px; }
+@media (max-width: 560px) {
+  .jn-list li { grid-template-columns: 1fr auto; }
+  .jn-list .jn-date { grid-column: 1 / -1; }
+}
