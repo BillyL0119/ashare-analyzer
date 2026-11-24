@@ -18,6 +18,7 @@ const Cases = lazy(() => import('./tabs/Cases'))
 const Diagrams = lazy(() => import('./tabs/Diagrams'))
 const Governor = lazy(() => import('./tabs/Governor'))
 const Classes = lazy(() => import('./tabs/Classes'))
+const Quant = lazy(() => import('./tabs/Quant'))   // admin-only research desk, simple mode
 
 // Tab titles, the same wording as the desktop site (a stock page sets its own)
 const TITLES = {
@@ -105,6 +106,7 @@ export default function MobileApp() {
           <Route path="/governor" element={<Page><Governor /></Page>} />
           <Route path="/class" element={<Page><Classes /></Page>} />
           <Route path="/class/:code" element={<Page><Classes /></Page>} />
+          <Route path="/admin/quant" element={<Page><Quant /></Page>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

@@ -142,3 +142,30 @@
 .m-qs-scale i { position: absolute; top: -4px; width: 2px; height: 14px; margin-left: -1px; background: var(--text-2); }
 .m-qs-scale i.now { width: 10px; height: 10px; top: -2px; margin-left: -5px; border-radius: 50%; background: var(--accent); }
 .m-qs-split { display: flex; gap: 2px; height: 8px; border-radius: 4px; overflow: hidden; }
+
+/* admin quant desk, simple mode (tabs/Quant.jsx) */
+.m-app .mq-note { font-size: 12.5px; line-height: 1.55; margin: -4px 4px 4px; }
+.m-app .mq-points p { display: flex; gap: 10px; margin: 0; font-size: 14.5px; line-height: 1.6; }
+.m-app .mq-points p + p { margin-top: 10px; }
+.m-app .mq-dot { flex: 0 0 8px; height: 8px; margin-top: 8px; border-radius: 50%; background: var(--text-3); }
+.m-app .mq-dot.up { background: var(--green-bright); }
+.m-app .mq-dot.down { background: var(--red-bright); }
+.m-app .mq-row { display: flex; gap: 12px; width: 100%; padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--stroke); color: var(--text); }
+.m-app .mq-row:last-child { border-bottom: 0; }
+.m-app .mq-rank { min-width: 22px; font-weight: 600; font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums; padding-top: 1px; }
+.m-app .mq-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.m-app .mq-body b { font-size: 15px; font-weight: 600; }
+.m-app .mq-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.m-app .mq-tag { font-size: 11px; line-height: 18px; padding: 0 7px; border-radius: 999px; border: 1px solid currentColor; }
+.m-app .mq-tag.good { color: var(--green-bright); }
+.m-app .mq-tag.warn { color: var(--red-bright); }
+.m-app .mq-steps { display: flex; flex-direction: column; gap: 14px; }
+.m-app .mq-step { display: flex; gap: 12px; }
+.m-app .mq-step b { font-size: 14.5px; }
+.m-app .mq-step p, .m-app .mq-ai p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.6; }
+.m-app .mq-num { flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--surface-hi); color: var(--accent); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.m-app .mq-past { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--stroke); font-size: 14px; }
+.m-app .mq-past:last-child { border-bottom: 0; }
+.m-app .mq-past-num { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.m-app .mq-ai { display: flex; flex-direction: column; gap: 12px; }
+.m-app .mq-ai b { font-size: 14.5px; }

@@ -6,6 +6,7 @@ import { Segment } from './ui'
 import { useState } from 'react'
 import useAuthStore from '../store/authStore'
 import AuthModal from '../components/AuthModal'
+import { useNavigate } from 'react-router-dom'
 
 export default function Settings({ onClose }) {
   const t = useT()
@@ -39,7 +40,7 @@ export default function Settings({ onClose }) {
               ))}
             </div>
           </div>
-          <Account lang={lang} />
+          <Account lang={lang} onClose={onClose} />
           {inApp && <div className="m-tile m-muted" style={{ fontSize: 12.5 }}>{t('在 App 内置浏览器中打开')} · {t('用系统浏览器打开')} ↗</div>}
           <button className="m-btn ghost" onClick={desktop}>{t('切换到电脑版')}</button>
           <div className="m-card">
@@ -54,9 +55,10 @@ export default function Settings({ onClose }) {
 }
 
 // Sign in to share the paper trading account (and saved settings) with the desktop site
-function Account({ lang }) {
+function Account({ lang, onClose }) {
   const t = useT()
-  const { user, signOut } = useAuthStore()
+  const { user, role, signOut } = useAuthStore()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   return (
     <div>
@@ -65,6 +67,11 @@ function Account({ lang }) {
         {user ? (
           <>
             <span style={{ fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</span>
+            {role === 'admin' && (
+              <button className="m-btn" onClick={() => { onClose(); navigate('/admin/quant') }}>
+                {lang === 'zh' ? '量化研究台（管理员）' : 'Quant desk (admin)'}
+              </button>
+            )}
             <button className="m-btn ghost" onClick={() => signOut()}>{t('退出登录')}</button>
           </>
         ) : (
