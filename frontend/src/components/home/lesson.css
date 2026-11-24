@@ -137,3 +137,8 @@
   .bfs-lesson-movers li:nth-child(n+3) { display: none; }
   .bfs-lesson-movers { margin-top: 12px; }
 }
+/* A-shares: red up, green down (the convention on the site's A-share pages) */
+.bfs-lesson.is-cn .bfs-lesson-movers .c.is-up, .bfs-lesson.is-cn .bfs-lesson-idx .c.is-up { color: var(--red-bright); }
+.bfs-lesson.is-cn .bfs-lesson-movers .c.is-down, .bfs-lesson.is-cn .bfs-lesson-idx .c.is-down { color: var(--green-bright); }
+.bfs-lesson.is-cn .bfs-lesson-chart .dot.is-up { fill: var(--red-bright); }
+.bfs-lesson.is-cn .bfs-lesson-chart .dot.is-down { fill: var(--green-bright); }
