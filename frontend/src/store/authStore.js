@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { supabase } from '../lib/supabase'
+import { getAuth } from '../lib/supabase'
 import { currentUI } from '../utils/device'
 
 // Tell the backend who just loaded the site (counts one login per browser session) and learn this
@@ -31,7 +31,8 @@ const useAuthStore = create((set) => ({
   init: async () => {
     // Subscribe BEFORE getSession so the SIGNED_IN event from PKCE code
     // exchange is never missed (Supabase v2 requirement).
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const auth = await getAuth()
+    const { data: { subscription } } = auth.onAuthStateChange((event, session) => {
       console.log('[BFS Auth] onAuthStateChange:', event, session?.user?.email ?? null)
       set({ session, user: session?.user ?? null, loading: false })
       if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
@@ -39,7 +40,7 @@ const useAuthStore = create((set) => ({
       }
     })
 
-    const { data: { session }, error } = await supabase.auth.getSession()
+    const { data: { session }, error } = await auth.getSession()
     console.log('[BFS Auth] getSession:', session?.user?.email ?? null, error ?? 'no error')
     set({ session, user: session?.user ?? null, loading: false })
     if (session) syncRole(session, set)
@@ -48,36 +49,36 @@ const useAuthStore = create((set) => ({
   },
 
   signOut: async () => {
-    await supabase.auth.signOut()
+    await (await getAuth()).signOut()
   },
 
   // Persist language preference to the user's Supabase account
   setLangPreference: async (lang) => {
-    const { data: { user }, error } = await supabase.auth.updateUser({ data: { lang } })
+    const { data: { user }, error } = await (await getAuth()).updateUser({ data: { lang } })
     if (!error && user) set({ user })
   },
 
   // Persist theme preference to the user's Supabase account
   setThemePreference: async (theme) => {
-    const { data: { user }, error } = await supabase.auth.updateUser({ data: { theme } })
+    const { data: { user }, error } = await (await getAuth()).updateUser({ data: { theme } })
     if (!error && user) set({ user })
   },
 
   // Record that today's Daily Insight has been shown (so it doesn't re-appear on other devices)
   setKnowledgeDateSeen: async (date) => {
-    const { data: { user }, error } = await supabase.auth.updateUser({ data: { knowledge_date: date } })
+    const { data: { user }, error } = await (await getAuth()).updateUser({ data: { knowledge_date: date } })
     if (!error && user) set({ user })
   },
 
   // Sync watchlist to account
   setWatchlistPreference: async (watchlist) => {
-    const { data: { user }, error } = await supabase.auth.updateUser({ data: { watchlist } })
+    const { data: { user }, error } = await (await getAuth()).updateUser({ data: { watchlist } })
     if (!error && user) set({ user })
   },
 
   // Sync study progress to account (object keyed by exam)
   setStudyProgressPreference: async (study_progress) => {
-    const { data: { user }, error } = await supabase.auth.updateUser({ data: { study_progress } })
+    const { data: { user }, error } = await (await getAuth()).updateUser({ data: { study_progress } })
     if (!error && user) set({ user })
   },
 }))

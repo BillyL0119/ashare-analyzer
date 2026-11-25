@@ -5,6 +5,7 @@ import './index.css'
 import Root from './Root.jsx'
 import ErrorBoundary from './components/ErrorBoundary'
 import { reloadOnce } from './utils/chunkReload'
+import { getAuth, urlHasAuthResult } from './lib/supabase'
 
 // A file of the old build failed to load after a deploy: switch this tab to the new build.
 window.addEventListener('vite:preloadError', (event) => { if (reloadOnce()) event.preventDefault() })
@@ -20,7 +21,7 @@ if (fontsHref) {
   document.head.appendChild(fonts)
 }
 
-createRoot(document.getElementById('root')).render(
+const render = () => createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
@@ -29,3 +30,7 @@ createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </StrictMode>,
 )
+
+// Normally the sign-in client loads after the first paint; a sign-in redirect waits for it so the URL is read first.
+if (urlHasAuthResult()) getAuth().then(render, render)
+else render()

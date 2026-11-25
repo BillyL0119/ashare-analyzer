@@ -245,6 +245,20 @@ const TYPE_LABELS_ZH = { technical: '技术面试', behavioral: '行为面试', 
 const TYPE_LABELS_EN = { technical: 'Technical', behavioral: 'Behavioral', case: 'Case Analysis' }
 const TYPE_COLORS = { technical: '#4f86f7', behavioral: '#7f77c2', case: '#3fb67a' }
 
+// Small label on a question card (its type and the roles it is asked for). Restored 2026-11-25: the 2026-10-10
+// rebuild removed it while the cards still used it, so the questions tab crashed.
+function Tag({ label, color }) {
+  return (
+    <span style={{
+      display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500,
+      background: color ? `${color}22` : 'var(--bg-hover)', color: color || 'var(--text-muted)',
+      border: `1px solid ${color ? `${color}44` : 'var(--border-primary)'}`,
+    }}>
+      {label}
+    </span>
+  )
+}
+
 function QuestionCard({ q, zh }) {
   const [showFramework, setShowFramework] = useState(false)
   const typeLabel = zh ? TYPE_LABELS_ZH[q.type] : TYPE_LABELS_EN[q.type]

@@ -19,6 +19,7 @@ def fixture(name):
 def offline(monkeypatch, tmp_path):
     """Every test starts with an empty cache, writes no files into backend/data and makes no requests."""
     monkeypatch.setattr(nq, "_mem", {})
+    monkeypatch.setattr(nq, "_disk_lru", nq.OrderedDict())
     monkeypatch.setattr(nq, "_CACHE_DIR", str(tmp_path))
     monkeypatch.setattr(nq, "asset_class", lambda sym: "stocks")
 
@@ -231,3 +232,22 @@ def test_forward_dividend():
     assert nq.forward_dividend({}, [], 30.0, today) == {"rate": None, "yield": None, "ex_date": None}
     future = ko + [{"ex_date": "2026-12-11", "amount": 0.55}]                    # declared, not yet ex
     assert nq.forward_dividend({}, future, 98.0, today)["rate"] == 2.12
+
+
+def test_disk_backed_values_leave_memory_but_come_back_from_disk(monkeypatch):
+    monkeypatch.setattr(nq, "MAX_DISK_IN_MEMORY", 3)
+    calls = []
+
+    def fetch(k):
+        calls.append(k)
+        return [{"date": "2026-11-20", "close": float(k)}]
+    for k in range(5):
+        nq.cached(f"hist_T{k}", 3600, lambda k=k: fetch(k), disk=True)
+    assert len(nq._mem) == 3 and "hist_T0" not in nq._mem          # only the 3 most recent stay in memory
+    again = nq.cached("hist_T0", 3600, lambda: fetch(99), disk=True)
+    assert again == [{"date": "2026-11-20", "close": 0.0}] and 99 not in calls   # read back from disk, no refetch
+    assert nq.cached_history("T1") == [{"date": "2026-11-20", "close": 1.0}]
+    nq.cached("live_x", 60, lambda: {"p": 1})                       # memory-only keys are never evicted
+    for k in range(5, 9):
+        nq.cached(f"hist_T{k}", 3600, lambda k=k: fetch(k), disk=True)
+    assert nq.peek("live_x", 60) == {"p": 1}

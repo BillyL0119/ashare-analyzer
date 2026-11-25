@@ -15,6 +15,7 @@ import os
 import re
 import threading
 import time
+from collections import OrderedDict
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -110,6 +111,20 @@ def val(d, key):
 _mem: dict = {}
 _lock = threading.Lock()
 _inflight: dict = {}
+# Disk-backed values (ten years of daily bars is ~1 MB of Python objects per ticker) stay in memory only for the
+# MAX_DISK_IN_MEMORY most recently used keys; the rest are read back from disk (~10 ms) when asked for again.
+# Without the cap the warm-up kept ~700 tickers' bars in memory (~700 MB of the server's 2 GB).
+MAX_DISK_IN_MEMORY = 120
+_disk_lru: "OrderedDict[str, None]" = OrderedDict()
+
+
+def _touch_disk_key(key: str):
+    """Mark a disk-backed key as just used and drop the least recently used ones from memory. Hold _lock."""
+    _disk_lru[key] = None
+    _disk_lru.move_to_end(key)
+    while len(_disk_lru) > MAX_DISK_IN_MEMORY:
+        old, _ = _disk_lru.popitem(last=False)
+        _mem.pop(old, None)
 
 
 def _empty(v):
@@ -121,6 +136,8 @@ def _store(key: str, v, disk_path):
         return
     with _lock:
         _mem[key] = (time.time(), v)
+        if disk_path:
+            _touch_disk_key(key)
     if disk_path:
         try:
             with open(disk_path + ".tmp", "w", encoding="utf-8") as f:
@@ -148,6 +165,8 @@ def cached(key: str, ttl: float, fn, disk: bool = False, stale: float = 0):
     path = os.path.join(_CACHE_DIR, f"nq_{re.sub(r'[^A-Za-z0-9_.-]', '_', key)}.json") if disk else None
     with _lock:
         hit = _mem.get(key)
+        if hit and path:
+            _touch_disk_key(key)
         if hit and now - hit[0] < ttl:
             return hit[1]
         ev = _inflight.get(key)
@@ -162,6 +181,12 @@ def cached(key: str, ttl: float, fn, disk: bool = False, stale: float = 0):
     if not owner:                       # someone is already fetching this key: wait for their result
         ev.wait(30)
         hit = _mem.get(key)
+        if hit is None and path and os.path.exists(path):      # stored, then already moved out of memory
+            try:
+                with open(path, encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                return None
         return hit[1] if hit else None
     try:
         if path and os.path.exists(path) and now - os.path.getmtime(path) < ttl:
@@ -170,6 +195,7 @@ def cached(key: str, ttl: float, fn, disk: bool = False, stale: float = 0):
                     v = json.load(f)
                 with _lock:
                     _mem[key] = (os.path.getmtime(path), v)
+                    _touch_disk_key(key)
                 return v
             except Exception:
                 pass

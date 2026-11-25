@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { getAuth } from '../lib/supabase'
 import { T } from '../i18n/translations'
 
 const SIGNIN = 'signin'
@@ -60,17 +60,17 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
     setError(''); setMessage(''); setLoading(true)
     try {
       if (mode === RESET) {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        const { error } = await (await getAuth()).resetPasswordForEmail(email, {
           redirectTo: window.location.origin,
         })
         if (error) throw error
         setMessage(t.authResetSent)
       } else if (mode === SIGNUP) {
-        const { error } = await supabase.auth.signUp({ email, password })
+        const { error } = await (await getAuth()).signUp({ email, password })
         if (error) throw error
         setMessage(t.authRegistered)
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        const { error } = await (await getAuth()).signInWithPassword({ email, password })
         if (error) throw error
         onClose()
       }
@@ -83,7 +83,7 @@ export default function AuthModal({ open, onClose, lang = 'en' }) {
 
   const handleGoogle = async () => {
     setError('')
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await (await getAuth()).signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin },
     })
