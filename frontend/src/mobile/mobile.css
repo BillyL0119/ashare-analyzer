@@ -198,3 +198,6 @@
 .m-app .mi-name small { font-weight: 400; font-size: 11.5px; color: var(--text-3); }
 .m-app .mi-price { color: var(--text-2); font-size: 13px; }
 .m-app .mi-pct { text-align: right; font-weight: 600; }
+/* the journal page (desktop component) inside the phone shell */
+.m-journal { padding: 12px 12px 24px; }
+.m-journal .jn-stats { grid-template-columns: 1fr 1fr; }

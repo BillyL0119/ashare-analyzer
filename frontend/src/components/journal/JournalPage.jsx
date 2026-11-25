@@ -10,6 +10,7 @@ import '../quotepage/quotepage.css'
 import '../factors/factors.css'
 import '../quant/quant.css'
 import './journal.css'
+import JournalImport from './JournalImport'
 
 // "我的投资记录": the admin's own real trades, with the reason for each, compared with the S&P 500.
 // Data lives on the server per account (/api/admin/journal, admin only); the maths is in backend/services/journal.py.
@@ -44,7 +45,7 @@ const S = {
     save: '保存', saving: '保存中…', cancel: '取消', saved: '已保存',
     reviewTitle: '复盘：卖出时对照当初的理由', noReview: '还没有卖出过。卖出后会在这里对照你买入和卖出时写的理由。',
     held: (n) => `持有 ${n} 天`, buyWhy: '买入时的理由', sellWhy: '卖出时的理由',
-    listTitle: '全部记录', edit: '修改', del: '删除', confirmDel: '确定删除这一笔吗？删除后不能恢复（可以先导出备份）。',
+    needsReason: '待补写理由', listTitle: '全部记录', edit: '修改', del: '删除', confirmDel: '确定删除这一笔吗？删除后不能恢复（可以先导出备份）。',
     disclaimer: '这是记录和复盘工具，不是投资建议。收益按"时间加权"计算：存钱取钱不算赚亏。行情来自 Nasdaq 和腾讯，可能有延迟。',
   },
   en: {
@@ -71,7 +72,7 @@ const S = {
     save: 'Save', saving: 'Saving…', cancel: 'Cancel', saved: 'Saved',
     reviewTitle: 'Review: each sale against the original reason', noReview: 'No sales yet. After one, your buy and sell reasons appear side by side here.',
     held: (n) => `held ${n} days`, buyWhy: 'Why you bought', sellWhy: 'Why you sold',
-    listTitle: 'All entries', edit: 'Edit', del: 'Delete', confirmDel: 'Delete this entry? It cannot be undone (export a backup first if unsure).',
+    needsReason: 'Reason to write', listTitle: 'All entries', edit: 'Edit', del: 'Delete', confirmDel: 'Delete this entry? It cannot be undone (export a backup first if unsure).',
     disclaimer: 'A record-keeping and review tool, not investment advice. Returns are time-weighted: deposits and withdrawals are not gains or losses. Prices from Nasdaq and Tencent, possibly delayed.',
   },
 }
@@ -286,9 +287,11 @@ export default function JournalPage({ lang, onOpenAuth }) {
       <section className="qp-card" aria-label={editing ? L.editTitle : L.formTitle}>
         <div className="qp-head"><h3 className="qp-h">{editing ? L.editTitle : L.formTitle}</h3></div>
         <EntryForm key={editing ? editing.id : `new-${formKey}`} L={L} busy={busy} error={error}
-          initial={editing ? { ...BLANK, ...editing, fee: editing.fee ?? '', amount: editing.amount ?? '', reason: editing.reason ?? '' } : { ...BLANK, date: today() }}
+          initial={editing ? { ...BLANK, ...editing, fee: editing.fee ?? '', amount: editing.amount ?? '', reason: editing.needs_reason ? '' : (editing.reason ?? '') } : { ...BLANK, date: today() }}
           onSave={save} onCancel={editing ? () => { setEditing(null); setError('') } : null} />
       </section>
+
+      <JournalImport call={call} lang={lang} onDone={load} />
 
       {s.empty === false && (
         <section className="qp-card" aria-label={L.reviewTitle}>
@@ -322,7 +325,7 @@ export default function JournalPage({ lang, onOpenAuth }) {
                   {e.ticker ? `${e.ticker} ` : ''}
                   {e.shares != null ? `${e.shares} × ${money(e.price)}` : money(e.amount)}
                   {e.tag ? ` · ${L.tags[e.tag] || e.tag}` : ''}
-                  {e.reason ? <small>{e.reason}</small> : null}
+                  {e.needs_reason ? <span className="jn-badge">{L.needsReason}</span> : e.reason ? <small>{e.reason}</small> : null}
                 </span>
                 <span className="jn-buttons">
                   <button type="button" onClick={() => { setEditing(e); setError(''); setTimeout(() => document.getElementById('jn-date')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0) }}>{L.edit}</button>

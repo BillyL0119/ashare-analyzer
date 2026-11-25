@@ -74,7 +74,7 @@ function Account({ lang, onClose }) {
             )}
             {role === 'admin' && (
               // not a phone-UI page: a full load lets the site open it in its responsive desktop layout
-              <button className="m-btn ghost" onClick={() => { onClose(); window.location.assign('/admin/journal') }}>
+              <button className="m-btn ghost" onClick={() => { onClose(); navigate('/admin/journal') }}>
                 {lang === 'zh' ? '我的投资记录（管理员）' : 'My investing journal (admin)'}
               </button>
             )}

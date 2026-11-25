@@ -49,3 +49,20 @@ def test_accounts_are_separate(c, monkeypatch):
     monkeypatch.setattr(auth, "role_for", lambda ident: "admin")
     other = c.get("/api/admin/journal", headers={"Authorization": "Bearer other"}).json()
     assert other["entries"] == []
+
+
+def test_import_dry_run_then_commit(c):
+    rows = [{"type": "deposit", "date": "2026-11-02", "amount": 500},
+            {"type": "buy", "date": "2026-11-03", "ticker": "MSFT", "shares": 1, "price": 400}]
+    short = [{"type": "buy", "date": "2026-11-03", "ticker": "MSFT", "shares": 1, "price": 400}]
+    r = c.post("/api/admin/journal/import", headers=H, json={"rows": short, "dry_run": True}).json()
+    assert r["problem"] and r["counts"]["ok"] == 1                               # no cash: reported, nothing saved
+    assert c.post("/api/admin/journal/import", headers=H, json={"rows": short, "dry_run": False}).status_code == 422
+    r = c.post("/api/admin/journal/import", headers=H, json={"rows": rows, "dry_run": True}).json()
+    assert r["problem"] is None and r["needs_reason"] == 1
+    assert c.get("/api/admin/journal", headers=H).json()["summary"] == {"n": 0}  # a dry run writes nothing
+    r = c.post("/api/admin/journal/import", headers=H, json={"rows": rows, "dry_run": False}).json()
+    assert r["added"] == 2
+    again = c.post("/api/admin/journal/import", headers=H, json={"rows": rows, "dry_run": True}).json()
+    assert again["counts"] == {"ok": 0, "duplicate": 2, "error": 0}
+    assert c.post("/api/admin/journal/import", headers={"Authorization": "Bearer kid"}, json={"rows": rows}).status_code == 403

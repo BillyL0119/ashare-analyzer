@@ -19,6 +19,7 @@ const Diagrams = lazy(() => import('./tabs/Diagrams'))
 const Governor = lazy(() => import('./tabs/Governor'))
 const Classes = lazy(() => import('./tabs/Classes'))
 const Quant = lazy(() => import('./tabs/Quant'))   // admin-only research desk, simple mode
+const JournalPage = lazy(() => import('../components/journal/JournalPage'))   // admin's own trades (same page as desktop)
 
 // Tab titles, the same wording as the desktop site (a stock page sets its own)
 const TITLES = {
@@ -107,6 +108,7 @@ export default function MobileApp() {
           <Route path="/class" element={<Page><Classes /></Page>} />
           <Route path="/class/:code" element={<Page><Classes /></Page>} />
           <Route path="/admin/quant" element={<Page><Quant /></Page>} />
+          <Route path="/admin/journal" element={<Page><div className="m-journal"><JournalPage lang={lang} onOpenAuth={() => setSettings(true)} /></div></Page>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

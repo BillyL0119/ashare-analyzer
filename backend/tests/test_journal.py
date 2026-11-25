@@ -87,3 +87,26 @@ def test_warnings():
     assert codes == {"big_position", "big_sector", "drawdown", "many_trades"}
     assert [x["ticker"] for x in w if x["code"] == "big_position"] == ["A"]       # the index fund is not flagged
     assert any(x["code"] == "few_names" for x in j.warnings_for(holds[:2], 100, {}, 0, 0))
+
+
+def test_import_skips_duplicates_marks_missing_reasons_and_reports_errors():
+    existing = [j.new_entry({"type": "deposit", "date": "2027-01-02", "amount": 1000}, "2027-02-01")]
+    rows = [
+        {"type": "deposit", "date": "2027-01-02", "amount": 1000},                         # already there
+        {"type": "buy", "date": "2027-01-03", "ticker": "aapl", "shares": 2, "price": 200},  # no reason
+        {"type": "buy", "date": "2027-01-03", "ticker": "AAPL", "shares": 2, "price": 200},  # same as the row above
+        {"type": "sell", "date": "2027-01-04", "ticker": "MSFT", "shares": 0, "price": 1},  # bad
+        {"type": "dividend", "date": "2027-01-05", "ticker": "AAPL", "amount": 1.2},
+    ]
+    add, report = j.plan_import(existing, rows, "2027-02-01")
+    assert [r["status"] for r in report] == ["duplicate", "ok", "duplicate", "error", "ok"]
+    buy = add[0]
+    assert buy["ticker"] == "AAPL" and buy["needs_reason"] and buy["reason"] == j.NEEDS_REASON and buy["imported"]
+    j.ledger(existing + add)                                   # consistent: cash covers the buy
+
+
+def test_the_import_placeholder_is_not_a_reason_when_editing():
+    import pytest
+    with pytest.raises(j.JournalError):
+        j.clean_entry({"type": "buy", "date": "2027-01-03", "ticker": "AAPL", "shares": 1, "price": 1,
+                       "reason": j.NEEDS_REASON}, "2027-02-01")

@@ -201,7 +201,8 @@ def edit_entry(entry_id: str, body: dict = Body(...), ident: dict = Depends(auth
         hit = next((x for x in entries if x.get("id") == entry_id), None)
         if not hit:
             raise HTTPException(404, "entry not found")
-        new = {**cleaned, "id": entry_id, "created_at": hit.get("created_at"), "edited_at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+        new = {**cleaned, "id": entry_id, "created_at": hit.get("created_at"), "edited_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+               **({"imported": True} if hit.get("imported") else {})}       # a real reason clears needs_reason
         entries = [new if x.get("id") == entry_id else x for x in entries]
         _check(entries)
         _write(ident, entries)
@@ -220,9 +221,39 @@ def delete_entry(entry_id: str, ident: dict = Depends(auth.require_admin)):
     return {"ok": True}
 
 
+@journal_router.post("/import")
+def import_entries(body: dict = Body(...), ident: dict = Depends(auth.require_admin)):
+    """{"rows": [...form-shaped rows parsed from a broker CSV in the browser], "dry_run": true|false}. A dry run only
+    reports what would happen; otherwise every new row is added in one go, or none if the whole list would sell more
+    than was held or spend cash the account did not have."""
+    rows = body.get("rows")
+    if not isinstance(rows, list) or not rows:
+        raise HTTPException(422, "no rows to import")
+    with _lock:
+        existing = _read(ident)
+        add, report = J.plan_import(existing, rows, _today())
+        problem = None
+        try:
+            J.ledger(existing + add)
+        except J.JournalError as e:
+            problem = str(e)
+        counts = {k: sum(1 for r in report if r["status"] == k) for k in ("ok", "duplicate", "error")}
+        if body.get("dry_run", True) is not False:
+            return {"dry_run": True, "counts": counts, "report": report, "problem": problem,
+                    "needs_reason": sum(1 for e in add if e.get("needs_reason"))}
+        if problem:
+            raise HTTPException(422, problem)
+        stamp = time.strftime("%Y-%m-%dT%H:%M:%S")
+        for e in add:
+            e["created_at"] = stamp
+        if add:
+            _write(ident, existing + add)
+    return {"dry_run": False, "counts": counts, "added": len(add)}
+
+
 @journal_router.get("/export.csv")
 def export_csv(ident: dict = Depends(auth.require_admin)):
-    cols = ["date", "type", "ticker", "shares", "price", "fee", "amount", "tag", "reason", "id", "created_at"]
+    cols = ["date", "type", "ticker", "shares", "price", "fee", "amount", "tag", "reason", "needs_reason", "id", "created_at"]
     buf = io.StringIO()
     w = csv.DictWriter(buf, fieldnames=cols, extrasaction="ignore")
     w.writeheader()

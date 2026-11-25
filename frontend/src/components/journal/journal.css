@@ -37,3 +37,14 @@
   .jn-list li { grid-template-columns: 1fr auto; }
   .jn-list .jn-date { grid-column: 1 / -1; }
 }
+/* import (JournalImport.jsx) */
+.jn-file { position: relative; display: inline-flex; align-items: center; cursor: pointer; align-self: flex-start; }
+.jn-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.jn-file:focus-within { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+.jn-import { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.jn-import .qd-note { margin: 0; }
+.jn-import-table { max-height: 320px; overflow-y: auto; }
+.jn-import-table td { white-space: nowrap; }
+.jn-dim td { color: var(--text-muted); }
+.jn-badge { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 11px;
+  color: var(--red-bright); border: 1px solid currentColor; }

@@ -31,8 +31,12 @@ class JournalError(ValueError):
     """A message meant for the person entering the trade."""
 
 
-def clean_entry(raw: dict, today: str = None) -> dict:
-    """Validate one entry from the form; returns the stored shape (without id / created_at)."""
+NEEDS_REASON = "（导入的记录，待补写理由）"      # placeholder reason of an imported trade (needs_reason: True)
+
+
+def clean_entry(raw: dict, today: str = None, imported: bool = False) -> dict:
+    """Validate one entry from the form; returns the stored shape (without id / created_at). Only an import may keep
+    the NEEDS_REASON placeholder: an edit has to write the real reason."""
     today = today or date.today().isoformat()
     t = str(raw.get("type") or "").lower()
     if t not in TYPES:
@@ -65,7 +69,7 @@ def clean_entry(raw: dict, today: str = None) -> dict:
         out["price"] = number("price")
         out["fee"] = number("fee", allow_zero=True) if raw.get("fee") not in (None, "") else 0.0
         reason = str(raw.get("reason") or "").strip()
-        if len(reason) < 2:
+        if len(reason) < 2 or (reason == NEEDS_REASON and not imported):
             raise JournalError("write down why (the reason is what you will learn from later)")
         out["reason"] = reason[:1000]
         tag = str(raw.get("tag") or "own")
@@ -82,6 +86,43 @@ def new_entry(raw: dict, today: str = None) -> dict:
     e = clean_entry(raw, today)
     e["id"] = uuid.uuid4().hex[:12]
     return e
+
+
+def _same(e) -> tuple:
+    """What makes two entries the same trade (for skipping rows already in the journal)."""
+    return (e["date"], e["type"], e.get("ticker"), round(e.get("shares", 0), 4), round(e.get("price", 0), 4),
+            round(e.get("amount", 0), 2))
+
+
+def plan_import(existing: list, rows: list, today: str = None) -> tuple:
+    """Rows from a broker's CSV (already mapped to the form's fields in the browser) -> (entries to add, a report per
+    row: ok / duplicate / error with the message). A buy or sell without a reason gets the NEEDS_REASON placeholder and
+    needs_reason: True, so the page can ask for it later. Rows equal to an entry already there are skipped."""
+    seen = {_same(e) for e in existing}
+    add, report = [], []
+    for i, raw in enumerate(rows[:5000]):
+        raw = dict(raw or {})
+        placeholder = raw.get("type") in ("buy", "sell") and len(str(raw.get("reason") or "").strip()) < 2
+        if placeholder:
+            raw["reason"] = NEEDS_REASON
+        if raw.get("type") in ("buy", "sell") and not raw.get("tag"):
+            raw["tag"] = "other"            # a broker file does not say whose idea it was; set when writing the reason
+        try:
+            e = clean_entry(raw, today, imported=True)
+        except JournalError as err:
+            report.append({"row": i, "status": "error", "message": str(err)})
+            continue
+        e["id"] = uuid.uuid4().hex[:12]
+        e["imported"] = True
+        if placeholder:
+            e["needs_reason"] = True
+        if _same(e) in seen:
+            report.append({"row": i, "status": "duplicate"})
+            continue
+        seen.add(_same(e))
+        add.append(e)
+        report.append({"row": i, "status": "ok"})
+    return add, report
 
 
 def _sorted(entries):
