@@ -29,7 +29,7 @@ const S = {
     above: (g) => `在均线上方 ${g}%`, below: (g) => `在均线下方 ${Math.abs(g)}%`,
     aboveNote: '按规则：下个月正常持股。', belowNote: '按规则：下个月持有现金。',
     provNote: (thisMonth, above) => `这是按本月到目前为止的数据算的临时读数，规则只看每月最后一个交易日的收盘。本月规则状态：${thisMonth ? '持股' : '持现金'}（由上月底决定）。${above ? '月底如果仍在均线上方，下个月继续持股。' : '月底如果仍在均线下方，下个月持有现金。'}`,
-    trendRule: '规则：月初指数低于 10 个月均线，这个月就持有现金（按 3 个月美国国债利率计息）。它像一份保险：2005–2020 年把指数的最大回撤从 −50% 降到 −17%，最近 6 年从 −25% 降到 −12%；代价是收益变少，2005–2020 年每年少约 1.0%，最近 6 年这种急跌急涨的行情里每年少约 3.2%。这是教科书上的固定规则，没有用这段数据调参数。',
+    trendRule: '规则：月初指数低于 10 个月均线，这个月就持有现金（按 3 个月美国国债利率计息）。它像一份保险，但没有以前写的那么好：2026-11-24 查错后按更真实的方法重算（看到信号的第二天才交易），按每日价格算，2005–2020 年指数最大回撤约 −54%，用这条规则后在 −21% 到 −36% 之间，取决于每月第几个交易日检查；最近 6 年从约 −26% 降到 −16% 到 −19%。代价是收益：2005–2020 年每年差 −2.3 到 +0.4 个百分点，最近 6 年每年少 1.6 到 3.4 个百分点。这是教科书上的固定规则，没有用这段数据调参数。',
     lineIndex: '大盘股指数', lineMa: '10 个月均线',
     rankTitle: '大盘股因子排名', rankSub: (f) => `综合 ${f} 个因子，在各自行业内比较，按历史预测力加权`,
     search: '输入代码或名称，看它排第几', top50: '模型组合前 50', all: '全部',
@@ -50,7 +50,7 @@ const S = {
     useTitle: '使用须知',
     use: [
       '这是一个筛选工具，不是预测器。排名靠前只说明估值和质量更有利，对单只股票下个月涨跌几乎没有预测力。',
-      '选股模型的优势很依赖市场风格：2005–2020 年每年只比指数多 0.4%，最近 6 年多 4.9%，主要来自 2021–2022 年价值股反弹，统计上都不能排除运气。',
+      '选股模型的优势很依赖市场风格：查错后 2005–2020 年每年只比指数多 0.1%，最近 6 年多 4.5%（之前写的是 0.4% 和 4.9%），主要来自 2021–2022 年价值股反弹，统计上都不能排除运气。',
       '趋势规则在两段时间里都把最大回撤减半左右，这一点最稳定，但会少赚。用不用、怎么组合，取决于你更在意收益还是更在意避免大亏。',
       '我们试过另外 9 个信号（内部人交易、机构持仓、财报反应等）和多种风险控制，都没能提高准确性，所以没有加入。',
       '每周六上午自动更新；需要时也可以在电脑上运行 quant_publish.py --refresh。',
@@ -66,6 +66,8 @@ const S = {
     aiNote: '由 AI 根据本页的数据生成，每周数据更新后重新生成。它只解释规则和历史检验结果，不是投资建议，也可能有误；买不买、买多少由你自己决定。',
     valTitle: '四种用法的检验结果', valSub: (dev, ho) => `开发期 ${dev} 用来挑选方法；最近 6 年（${ho}）锁起来，所有方法定下来以后只检验了一次`,
     valDev: '2005–2020 开发期', valHold: '最近 6 年（只检验一次）', colRisk: '收益/风险',
+    valAudit: (day) => `这些是 ${day} 查错后的数字：同样的规则，按更真实的方法重算（看到信号第二天才交易、两次调仓之间按实际持股计算、破产退市的股票多亏 30%、修正了一个让未来大涨股更容易入选的成交额数据错误）。交易成本翻倍，最近 6 年的结果每年只再少约 0.1 个百分点。`,
+    valBefore: '查错前最近 6 年',
     valNote: (n, f) => `年化收益已扣除交易成本，持有现金的月份按 3 个月美国国债利率计息。收益/风险 = 年化收益 ÷ 年波动，越高越好。整个研究检验过 ${f} 个单项因子、比较过 ${n} 种组合方案；试得越多，碰巧好看的可能越大。`,
     cand: { index: '直接持有指数（约等于标普 500）', 'index + trend rule': '指数 + 趋势规则',
       'model (step E)': '选股模型前 50（当前排名）', 'model + inv-vol + sector + trend': '选股 + 按波动加权 + 行业上限 + 趋势规则' },
@@ -82,7 +84,7 @@ const S = {
     above: (g) => `${g}% above the average`, below: (g) => `${Math.abs(g)}% below the average`,
     aboveNote: 'Rule: stay invested next month.', belowNote: 'Rule: hold cash next month.',
     provNote: (thisMonth, above) => `A reading from the month so far; the rule acts only on month-end closes. This month the rule is ${thisMonth ? 'invested' : 'in cash'} (decided at last month’s close). ${above ? 'If it is still above the average at month-end, it stays invested next month.' : 'If it is still below the average at month-end, it holds cash next month.'}`,
-    trendRule: 'Rule: if the index starts a month below its 10-month average, hold cash that month (earning the 3-month Treasury bill rate). It works like insurance: the index’s worst drawdown fell from −50% to −17% in 2005–2020 and from −25% to −12% in the last six years, at a cost of about 1.0% a year in 2005–2020 and 3.2% a year in the fast dips and rebounds of the last six years. A fixed textbook rule, not fitted to this data.',
+    trendRule: 'Rule: if the index starts a month below its 10-month average, hold cash that month (earning the 3-month Treasury bill rate). It works like insurance, but less well than first shown: re-measured in the 2026-11-24 audit (trading the day after the signal), the index’s worst drawdown of about −54% in 2005–2020 (daily prices) became −21% to −36% depending on which trading day of the month it is checked, and about −26% became −16% to −19% in the last six years. The cost: −2.3 to +0.4 points a year in 2005–2020 and 1.6 to 3.4 points a year less in the last six years. A fixed textbook rule, not fitted to this data.',
     lineIndex: 'Large-cap index', lineMa: '10-month average',
     rankTitle: 'Large-cap factor ranking', rankSub: (f) => `${f} factors, compared within each sector, weighted by past predictive power`,
     search: 'Type a ticker or name to see its rank', top50: 'Model top 50', all: 'All',
@@ -103,7 +105,7 @@ const S = {
     useTitle: 'Before using it',
     use: [
       'A screen, not a forecaster: a high rank means better value and quality, not that the stock will rise next month.',
-      'The stock model depends on market style: +0.4% a year over the index in 2005–2020, +4.9% in the last six years (mostly the 2021–22 value rebound); neither rules out luck.',
+      'The stock model depends on market style: after the audit, +0.1% a year over the index in 2005–2020 and +4.5% in the last six years (first shown as 0.4% and 4.9%), mostly the 2021–22 value rebound; neither rules out luck.',
       'The trend rule roughly halved the worst drawdown in both periods, the steadiest result here, but it gives up return. Whether to use it depends on how you weigh return against big losses.',
       'Nine more signals (insiders, institutions, earnings reactions and others) and several risk rules were tested and did not improve accuracy, so they are left out.',
       'Refreshed every Saturday morning; run quant_publish.py --refresh on the Mac to refresh by hand.',
@@ -119,6 +121,8 @@ const S = {
     aiNote: 'Written by AI from this page’s data and rewritten after each weekly update. It explains the rules and the tested results; it is not investment advice and may contain mistakes. Whether and how much to buy is your decision.',
     valTitle: 'Four ways to use it, tested', valSub: (dev, ho) => `Methods were chosen on ${dev}; the last six years (${ho}) were set aside and tested once after everything was fixed`,
     valDev: '2005–2020 development', valHold: 'Last six years (tested once)', colRisk: 'Return/risk',
+    valAudit: (day) => `These are the figures after the ${day} audit: the same rules measured more realistically (trading the day after the signal, holding the shares between reviews, an extra 30% loss on bankrupt delistings, and a fixed data error that let future winners into the universe early). Doubling trading costs takes only about 0.1 point a year more off the last six years.`,
+    valBefore: 'Last six years before the audit',
     valNote: (n, f) => `Returns are after trading costs; months in cash earn the 3-month Treasury bill rate. Return/risk = annual return ÷ annual volatility, higher is better. ${f} single factors and ${n} combinations were tested in all; the more tried, the likelier one looks good by chance.`,
     cand: { index: 'Hold the index (about the S&P 500)', 'index + trend rule': 'Index + trend rule',
       'model (step E)': 'Stock model top 50 (current ranking)', 'model + inv-vol + sector + trend': 'Stocks + vol weights + sector cap + trend rule' },
@@ -426,6 +430,12 @@ function Validation({ v, L }) {
           </tbody>
         </table>
       </div>
+      {v.audited_at && (
+        <p className="qd-foot">
+          {L.valAudit(v.audited_at)}{' '}
+          {v.before_audit && `${L.valBefore}: ${v.candidates.map((c) => `${L.cand[c] || c} ${pct(v.before_audit.holdout[c]?.cagr)}`).join(' · ')}`}
+        </p>
+      )}
       <p className="qd-foot">{L.valNote(v.trials, v.factors_tested)}</p>
     </section>
   )

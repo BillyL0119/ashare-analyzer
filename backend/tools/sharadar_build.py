@@ -69,8 +69,9 @@ def main():
     log(f"universe: {len(keep)} tickers ({(sec.isdelisted == 'Y').sum()} delisted)")
 
     log("reading prices (45 million rows)...")
-    px = pd.read_csv(os.path.join(RAW, "SEP.csv"), usecols=["ticker", "date", "closeadj", "closeunadj", "volume"],
-                     dtype={"ticker": "category", "closeadj": "float32", "closeunadj": "float32", "volume": "float32"})
+    px = pd.read_csv(os.path.join(RAW, "SEP.csv"), usecols=["ticker", "date", "close", "closeadj", "closeunadj", "volume"],
+                     dtype={"ticker": "category", "close": "float32", "closeadj": "float32", "closeunadj": "float32",
+                            "volume": "float32"})
     px = px[px.ticker.isin(keep)]
     px["ticker"] = px.ticker.cat.remove_unused_categories()
     dates = np.sort(px.date.unique())
@@ -83,7 +84,10 @@ def main():
     raw = np.full_like(adj, np.nan)
     adj[rows, cols] = px.closeadj.values
     raw[rows, cols] = px.closeunadj.values
-    dv[rows, cols] = (px.closeunadj.values.astype(np.float64) * px.volume.values).astype(np.float32)
+    # SEP's close and volume are both split-adjusted, so their product is the dollars traded that day. (closeunadj x
+    # volume overstated it before every later split, by 112x for Apple in 2004: a look-ahead that let future
+    # winners pass the liquidity filter early. Fixed 2026-11-24.)
+    dv[rows, cols] = (px.close.values.astype(np.float64) * px.volume.values).astype(np.float32)
     ymd = np.array([int(d.replace("-", "")) for d in dates], dtype=np.int32)
     del px
     log(f"matrix {adj.shape[0]} days x {adj.shape[1]} tickers, {np.isfinite(adj).mean() * 100:.1f}% filled")

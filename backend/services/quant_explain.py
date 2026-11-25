@@ -45,7 +45,7 @@ FACTOR_PLAIN = {
 
 
 def cache_key(sig: dict) -> str:
-    return f"v5:{sig.get('as_of')}:{sig.get('generated_at')}"
+    return f"v6:{sig.get('as_of')}:{sig.get('generated_at')}"
 
 
 def facts(sig: dict) -> str:
@@ -96,8 +96,20 @@ def facts(sig: dict) -> str:
                          f"{b['max_drawdown']:.1f}%"
                          + ("" if c == "index" else f", {b['vs_cap_weight']:+.1f} points a year versus the index "
                                                     f"(t-statistic {b['t_vs_cap_weight']:.1f})") + ".")
-        lines.append("A t-statistic below 2 means the difference could be luck. In the development period the stock "
-                     "model trailed the index in 7 of 16 years.")
+        behind = ((v["dev"].get("model (step E)") or {}).get("years_behind_cap_weight") or "").split("/")
+        lines.append("A t-statistic below 2 means the difference could be luck."
+                     + (f" In the development period the stock model trailed the index in {behind[0]} of {behind[1]} years."
+                        if len(behind) == 2 else ""))
+        if v.get("audited_at"):
+            lines.append(f"These numbers come from an audit on {v['audited_at']} that measured the same rules more "
+                         "realistically (trading the day after the signal, holding shares between reviews, an extra "
+                         "loss on bankrupt companies, a data fix); they are lower than the first published figures.")
+        tb = (v.get("trend_by_check_day") or {}).get("dev")
+        if tb:
+            lines.append(f"The trend rule depends on the day it is checked: checked on one of the first five trading days "
+                         f"after month-end, its 2005-2020 worst drawdown ranged from {tb['max_drawdown'][0]:.0f}% to "
+                         f"{tb['max_drawdown'][1]:.0f}% (the index's was {tb['index_max_drawdown']:.0f}%), and its yearly "
+                         f"return from {tb['cagr'][0]:.1f}% to {tb['cagr'][1]:.1f}%.")
     if t.get("provisional"):
         now = "hold stocks" if t.get("this_month_invested") else "are in cash where the trend rule applies"
         lines.append(f"So right now: this month all the ways {now}. "

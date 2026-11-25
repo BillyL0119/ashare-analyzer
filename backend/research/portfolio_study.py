@@ -73,12 +73,14 @@ def market_returns(months):
 
 
 def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, keep_pct, n_names, trend, cash_flags,
-             weighting="equal", sector_cap=None, vol_target=None, mkt=None, rf=None, cost_rate=None):
+             weighting="equal", sector_cap=None, vol_target=None, mkt=None, rf=None, cost_rate=None, drift=False):
     """weighting "inv_vol": weights proportional to 1 / 12-month volatility, set at each rebalance.
     sector_cap: at most this share of the names from one sector. vol_target (annual, e.g. 0.15): when the market's
     volatility over the previous 6 months is above it, hold only target/realised of the portfolio, rest in cash.
     rf: cash return of each month (aligned with `months`); cash earns nothing when it is None.
-    cost_rate: cost per one-way trade (default COST, 10 bp)."""
+    cost_rate: cost per one-way trade (default COST, 10 bp).
+    drift: hold the shares between rebalances, so weights drift with prices, and charge the real traded value at each
+    rebalance (False, as before: back to the target weights every month at no cost)."""
     cost_rate = COST if cost_rate is None else cost_rate
     held, out, turns, chosen_log = set(), [], [], {}
     weights = {}
@@ -122,11 +124,21 @@ def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, 
                 raw_w = {h: 1.0 / (vol[h] if np.isfinite(vol[h]) and vol[h] > 0 else med) for h in new}
             else:
                 raw_w = {h: 1.0 for h in new}
-            weights = raw_w
-            sold = len(held - new) / len(held) if held else 0.0
-            bought = len(new - held) / len(new) if new else 0.0
-            cost = (sold + bought) * cost_rate
-            turns.append((sold + bought) / 2)
+            if drift:
+                tot = sum(raw_w.values()) or 1.0
+                target = {h: v / tot for h, v in raw_w.items()}
+                cur_tot = sum(weights.get(h, 0.0) for h in held)
+                cur = {h: weights.get(h, 0.0) / cur_tot for h in held} if cur_tot > 0 else {}
+                traded = sum(abs(target.get(h, 0.0) - cur.get(h, 0.0)) for h in set(target) | set(cur))
+                cost = traded * cost_rate
+                turns.append(traded / 2)
+                weights = target
+            else:
+                weights = raw_w
+                sold = len(held - new) / len(held) if held else 0.0
+                bought = len(new - held) / len(new) if new else 0.0
+                cost = (sold + bought) * cost_rate
+                turns.append((sold + bought) / 2)
             held, since_reb = new, 0
         else:
             cost = 0.0
@@ -134,7 +146,10 @@ def simulate(books, months, sector_codes, *, sector_neutral, ic_weights, every, 
         if held:
             w = np.array([weights.get(h, 0.0) for h in held])
             w = w / w.sum() if w.sum() > 0 else np.full(len(held), 1.0 / len(held))
-            r = float(np.dot(w, later[list(held)]))
+            hl = list(held)
+            r = float(np.dot(w, later[hl]))
+            if drift:                                   # each holding's value grows with its own return
+                weights = {h: float(wi * (1 + later[h])) for h, wi in zip(hl, w)}
         else:
             r = 0.0
         exposure = 1.0

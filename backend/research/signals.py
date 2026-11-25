@@ -56,9 +56,28 @@ def validation():
         (t["result"] for t in reversed(trials) if t["name"] == "dev index + trend rule"), None)
     dev = {"index": risk.get("index"), "index + trend rule": idx_trend, "model (step E)": risk.get("E (current)"),
            "model + inv-vol + sector + trend": risk.get("+ inv-vol + sector + trend")}
-    return {"dev_period": "2005-01 .. 2020-10", "holdout_period": hold["period"], "holdout_ran_at": hold["ran_at"],
-            "cash": hold.get("cash", "0"),
-            "trials": len(trials), "factors_tested": len(FACTORS), "candidates": CANDIDATES, "dev": dev, "holdout": hold["results"]}
+    out = {"dev_period": "2005-01 .. 2020-10", "holdout_period": hold["period"], "holdout_ran_at": hold["ran_at"],
+           "cash": hold.get("cash", "0"),
+           "trials": len(trials), "factors_tested": len(FACTORS), "candidates": CANDIDATES, "dev": dev, "holdout": hold["results"]}
+    # The audit (research/audit_study.py, 2026-11-24) re-measured the SAME four candidates more realistically: fixed
+    # dollar volume, shares held between rebalances, trades the day after the signal, extra loss on bankrupt
+    # delistings. Its numbers replace the first ones; the first hold-out figures are kept to show the change.
+    audit, timing = load("audit_study.json"), load("trend_timing.json")
+    step = (audit or {}).get("steps", {}).get("4 + delistings")
+    if step:
+        out["before_audit"] = {"dev": dev, "holdout": hold["results"]}
+        out["dev"], out["holdout"] = step["dev"], step["holdout"]
+        out["audited_at"] = audit["ran_at"][:10]
+        x2 = audit["steps"].get("5 + costs x2") or {}
+        out["costs_x2_holdout"] = {c: (x2.get("holdout") or {}).get(c, {}).get("cagr") for c in CANDIDATES}
+    if timing:
+        days = list(timing.values())
+        out["trend_by_check_day"] = {
+            p: {"cagr": [min(d[p]["trend"]["cagr"] for d in days), max(d[p]["trend"]["cagr"] for d in days)],
+                "max_drawdown": [min(d[p]["trend"]["max_drawdown"] for d in days), max(d[p]["trend"]["max_drawdown"] for d in days)],
+                "index_max_drawdown": days[0][p]["index"]["max_drawdown"]}
+            for p in ("dev", "holdout")}
+    return out
 
 
 def chinese_names(tickers):

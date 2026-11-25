@@ -207,7 +207,27 @@ class Book:
 
 
 # ── main loop ────────────────────────────────────────────────────────────────────────────────────────────────
-def run(return_latest=False, extra=False):
+def delist_adjust(later, adj, raw, i, j, last_price_date, dates, penalty):
+    """Charge `penalty` (e.g. 0.30, Shumway 1997) on top of the last traded price for a stock that stopped trading for
+    good inside (i, j] at under $2 a share: such delistings are mostly bankruptcies, where holders lose more than the
+    last exchange price. Bought-out companies (last price near the deal price) are left alone."""
+    seg = adj[i + 1: j + 1]
+    fin = np.isfinite(seg)
+    stopped = np.isfinite(adj[i]) & ~fin[-1] & (last_price_date <= dates[j])
+    if not stopped.any():
+        return later
+    last = np.where(fin, np.arange(len(seg))[:, None], -1).max(0)
+    rawseg = raw[i + 1: j + 1]
+    p_last = np.where(last >= 0, rawseg[np.maximum(last, 0), np.arange(seg.shape[1])], raw[i])
+    hit = stopped & (p_last < 2)
+    out = later.copy()
+    out[hit] = (1 + later[hit]) * (1 - penalty) - 1
+    return out
+
+
+def run(return_latest=False, extra=False, lag=0, delist_penalty=0.0):
+    """lag: trade `lag` trading days after the month-end the scores are computed on (0 = at that close, as before).
+    delist_penalty: see delist_adjust (0 = the last traded price, as before)."""
     t0 = time.time()
     P = Panel()
     raw = np.load(os.path.join(COMPACT, "prices.npz"))["closeunadj"]
@@ -317,14 +337,20 @@ def run(return_latest=False, extra=False):
             signed[f] = s
         return liquid, large, signed, raw_f, mc
 
+    last_price_date = np.array([int(str(d).replace("-", "")) if isinstance(d, str) else 99999999
+                                for d in P.sec.lastpricedate.values])
     books = {(u, f): Book() for u in ("liquid", "large") for f in active}
     month_scores = []          # (month, universe masks, {factor: signed score}, later) kept for the walk-forward
     for k in range(len(ends) - 1):
         i, j = ends[k], ends[k + 1]
         if P.dates[j] < START or i < LOOKBACK + 5:
             continue
+        last_row = len(P.dates) - 1
+        i2, j2 = min(i + lag, last_row), min(j + lag, last_row)
         with np.errstate(all="ignore"):
-            later = holding_return(adj, i, j)
+            later = holding_return(adj, i2, j2)
+            if delist_penalty:
+                later = delist_adjust(later, adj, raw, i2, j2, last_price_date, P.dates, delist_penalty)
         liquid, large, signed, _, _ = inputs(k, later)
         for f in active:
             books[("liquid", f)].add(signed[f], liquid, later, int(P.dates[j]))
