@@ -41,6 +41,7 @@
         '/ai-teacher':  ['BestFriendStock | AI经济学老师 - 免费AI经济学与股票辅导', '24小时在线的AI老师，随时解答美股、技术分析、财报与A-Level/IB/AP经济学问题。'],
         '/privacy':     ['BestFriendStock | 隐私政策', 'BestFriendStock 隐私政策：我们收集哪些数据、如何使用以及你的选择。']
       };
+      if (document.documentElement.getAttribute('data-static')) return;   // a generated page (tools/route_pages.mjs) has its own tags
       var p = window.location.pathname.replace(/\/+$/, '') || '/';
       var m = p.match(/^\/stock\/(us|cn)\/([A-Za-z0-9.\-]{1,10})$/);
       var url = 'https://bestfriendstock.com' + (p === '/' ? '/' : p);

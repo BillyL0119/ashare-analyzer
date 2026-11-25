@@ -353,7 +353,8 @@ async def sitemap():
     <priority>0.6</priority>
   </url>{cases}
 </urlset>"""
-    return Response(content=content, media_type="application/xml")
+    from services.seo_lang import with_language_versions
+    return Response(content=with_language_versions(content), media_type="application/xml")
 
 @app.get("/robots.txt", response_class=Response)
 async def robots():

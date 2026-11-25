@@ -284,14 +284,16 @@ export default function App() {
       journal:      'Best Friend Stock | Investing journal',
       ai_teacher:   'Best Friend Stock | AI Economics Teacher',
     }
-    // Crawlers always get Chinese (see langStore), so the indexed titles do not change
+    // Crawlers get Chinese unless the link asks for ?lang=en (see langStore); the English versions are indexed too
     const set = lang === 'zh' ? titles : titlesEn
     if (!caseRouteMatch) document.title = set[appTab] || set.analysis   // a case's page sets its own (CasesPage)
     const robots = document.querySelector('meta[name="robots"]')
     if (robots) robots.setAttribute('content', (appTab === 'admin' || appTab === 'quant' || appTab === 'journal') ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large')
     let canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
-      canonical.setAttribute('href', 'https://bestfriendstock.com' + location.pathname)
+      // the English versions of the main pages live at ?lang=en (tools/route_pages.mjs): keep that in their canonical
+      const enPage = /[?&]lang=en\b/.test(window.location.search) && document.documentElement.getAttribute('data-static')
+      canonical.setAttribute('href', 'https://bestfriendstock.com' + location.pathname + (enPage ? '?lang=en' : ''))
     }
   }, [appTab, selectedSymbols, location.pathname, lang]) // eslint-disable-line
 
