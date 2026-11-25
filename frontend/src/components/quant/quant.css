@@ -78,3 +78,20 @@
 .qd-steps-list { margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; max-width: 80ch; }
 .qd-steps-list b { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 .qd-steps-list p { margin: 2px 0 0; font-size: 14px; line-height: 1.65; color: var(--text-secondary); }
+/* split trend rule (SplitTrend.jsx) */
+.qd-split { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-primary); }
+.qd-split-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 8px 16px; }
+.qd-split-title { margin: 0; font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.qd-split-now { margin: 10px 0 0; font-size: 14px; color: var(--text-primary); }
+.qd-split-table td { white-space: normal; }
+.qd-split-table td:nth-child(2), .qd-split-table td:nth-child(3) { white-space: nowrap; }
+.qd-split-table th:last-child, .qd-split-table td:last-child { text-align: left; }
+.qd-split-table .qd-up { color: var(--green-bright); }
+.qd-split-table .qd-down { color: var(--red-bright); }
+@media (max-width: 560px) {
+  .qd-split-table thead { display: none; }
+  .qd-split-table tr { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; padding: 10px 0; border-top: 1px solid var(--border-primary); }
+  .qd-split-table td { padding: 0; border: 0; text-align: left; }
+  .qd-split-table td:nth-child(3) { text-align: right; }
+  .qd-split-table td:last-child { grid-column: 1 / -1; font-size: 13px; }
+}

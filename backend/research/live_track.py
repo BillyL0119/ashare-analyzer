@@ -72,8 +72,10 @@ def trend_decisions(levels, level_dates, as_of):
     return out
 
 
-def update(as_of: str, ranking: list, panel, levels, level_dates, cash_annual: dict, top_n=50, keep_n=None):
-    """Advance the live record to `as_of` and return the summary for signals.json."""
+def update(as_of: str, ranking: list, panel, levels, level_dates, cash_annual: dict, top_n=50, keep_n=None,
+           invested_by_day=None):
+    """Advance the live record to `as_of` and return the summary for signals.json. invested_by_day {date: share}:
+    the split trend rule's invested share per day (research/trend_split.py); without it, the monthly rule."""
     state = _load()
     top = [r["ticker"] for r in ranking[:top_n]]
     if state is None:
@@ -92,10 +94,10 @@ def update(as_of: str, ranking: list, panel, levels, level_dates, cash_annual: d
     state["trend"] = trend_decisions(levels, level_dates, as_of)
     state["updated_at"] = time.strftime("%Y-%m-%d %H:%M")
     _save(state)
-    return summarize(state, as_of, panel, cash_annual)
+    return summarize(state, as_of, panel, cash_annual, invested_by_day)
 
 
-def summarize(state, as_of, panel, cash_annual):
+def summarize(state, as_of, panel, cash_annual, invested_by_day=None):
     dates = pd.to_datetime(pd.Series(panel.dates.astype(str)), format="%Y%m%d").dt.strftime("%Y-%m-%d").values
     start = state["started"]
     idx = np.where((dates >= start) & (dates <= as_of))[0]
@@ -127,11 +129,12 @@ def summarize(state, as_of, panel, cash_annual):
         out = np.ones(len(curve))
         out[0] = curve[0] if len(curve) else 1.0
         for t in range(1, len(curve)):
-            invested = state["trend"].get(days[t][:7], True)
-            if invested:
-                r = curve[t] / curve[t - 1] - 1
+            if invested_by_day is not None:
+                share = invested_by_day.get(days[t], 1.0)
             else:
-                r = (1 + cash_annual.get(int(days[t][:7].replace("-", "")), cash_annual[max(cash_annual)]) / 100) ** (1 / 252) - 1
+                share = 1.0 if state["trend"].get(days[t][:7], True) else 0.0
+            cash = (1 + cash_annual.get(int(days[t][:7].replace("-", "")), cash_annual[max(cash_annual)]) / 100) ** (1 / 252) - 1
+            r = share * (curve[t] / curve[t - 1] - 1) + (1 - share) * cash
             out[t] = out[t - 1] * (1 + r)
         return out
     curves = {"model": model, "index": index, "index_trend": with_trend(index), "model_trend": with_trend(model)}

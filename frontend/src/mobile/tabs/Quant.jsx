@@ -4,6 +4,10 @@ import useAuthStore from '../../store/authStore'
 import useLangStore from '../../store/langStore'
 import { setUIOverride } from '../../utils/device'
 import { T, SECTOR_ZH, reasons, risks } from '../../components/quant/simpleText'
+import SplitTrend from '../../components/quant/SplitTrend'
+import { splitSummary } from '../../components/quant/splitText'
+import '../../components/factors/factors.css'
+import '../../components/quant/quant.css'
 
 // Phone version of the admin quant desk's simple mode (/admin/quant). Same words and the same checks as the desktop
 // simple mode (components/quant/SimpleView.jsx); /api/admin/quant/signals checks the admin role on every request.
@@ -86,10 +90,11 @@ export default function Quant() {
 
       <div className="m-sec"><span>{L.title}</span></div>
       <div className="m-card mq-points">
-        <p><i className={`mq-dot ${thisMonth ? 'up' : 'down'}`} />{L.month(thisMonth)} {L.next(t.above, t.gap_pct)}</p>
+        <p><i className={`mq-dot ${(t.split ? t.split.fraction_now >= 0.5 : thisMonth) ? 'up' : 'down'}`} />{t.split ? splitSummary(t.split, zh) : `${L.month(thisMonth)} ${L.next(t.above, t.gap_pct)}`}</p>
         <p><i className="mq-dot" />{L.picks}</p>
         <p><i className="mq-dot" />{L.honest}</p>
       </div>
+      {t.split && <div className="m-card"><SplitTrend split={t.split} live={t.split.live} reviewAfter={d.live?.next_review_after} zh={zh} /></div>}
 
       <div className="m-sec"><span>{L.listTitle}</span></div>
       <p className="m-muted mq-note">{L.listSub}</p>

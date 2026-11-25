@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useCompareStore from '../../store/compareStore'
 import { SECTOR_ZH, T, reasons, risks } from './simpleText'
+import SplitTrend from './SplitTrend'
+import { splitSummary } from './splitText'
 
 // "简单模式" of the quant desk: the same data as the full desk, told in plain words for a student.
 // It describes what the rules pick and how the rules work; it does not tell anyone what to buy.
@@ -26,10 +28,11 @@ export default function SimpleView({ d, lang }) {
       <section className="qp-card qd-simple-top" aria-label={L.title}>
         <div className="qp-head"><h3 className="qp-h">{L.title}</h3></div>
         <ul className="qd-points">
-          <li><span className={`qd-dot ${thisMonth ? 'up' : 'down'}`} aria-hidden="true" />{L.month(thisMonth)} {L.next(t.above, t.gap_pct)}</li>
+          <li><span className={`qd-dot ${(t.split ? t.split.fraction_now >= 0.5 : thisMonth) ? 'up' : 'down'}`} aria-hidden="true" />{t.split ? splitSummary(t.split, zh) : `${L.month(thisMonth)} ${L.next(t.above, t.gap_pct)}`}</li>
           <li><span className="qd-dot neutral" aria-hidden="true" />{L.picks}</li>
           <li><span className="qd-dot neutral" aria-hidden="true" />{L.honest}</li>
         </ul>
+        <SplitTrend split={t.split} live={t.split?.live} reviewAfter={d.live?.next_review_after} zh={zh} />
       </section>
 
       <section className="qp-card" aria-label={L.listTitle}>

@@ -45,7 +45,7 @@ FACTOR_PLAIN = {
 
 
 def cache_key(sig: dict) -> str:
-    return f"v6:{sig.get('as_of')}:{sig.get('generated_at')}"
+    return f"v7:{sig.get('as_of')}:{sig.get('generated_at')}"
 
 
 def facts(sig: dict) -> str:
@@ -54,13 +54,19 @@ def facts(sig: dict) -> str:
     lines = [
         f"Data as of {sig['as_of']}. Universe: the {sig['universe']['size']} largest US stocks.",
         f"Trend: the cap-weighted large-cap index is {abs(t['gap_pct']):.1f}% {'above' if t['above'] else 'below'} its "
-        f"10-month average." + (
+        f"10-month average." + ("" if t.get("split") else (
             f" This reading uses the month so far; the trend rule acts only on month-end closes. For this month the "
             f"rule is {'invested' if t.get('this_month_invested') else 'in cash'} (decided at last month's close); next "
             f"month is decided at this month's close: if the index is still {'above' if t['above'] else 'below'} its "
             f"average then, the rule will {'stay invested' if t['above'] else 'hold cash'} next month."
             if t.get("provisional") else
-            f" The trend rule says: {'stay invested next month' if t['above'] else 'hold cash next month'}."),
+            f" The trend rule says: {'stay invested next month' if t['above'] else 'hold cash next month'}.")),
+        *([f"Since 2026-11-25 the desk applies the trend rule in five parts: each fifth of the money checks the index on "
+           f"its own trading day after month-end (the month's last trading day and the next four) and switches between "
+           f"stocks and cash the day after. Now {round(t['split']['fraction_now'] * t['split']['parts_n'])} of "
+           f"{t['split']['parts_n']} parts are in stocks; the next checks are "
+           f"{min(p['next_check'] for p in t['split']['parts'])} to {max(p['next_check'] for p in t['split']['parts'])}."]
+          if t.get("split") else []),
         "The stock model ranks stocks by: " + "; ".join(FACTOR_PLAIN.get(f, f.replace("_", " "))
                                                          for f in sig["config"]["chosen_factors"])
         + ". Each is compared with other companies in the same sector.",
@@ -110,7 +116,11 @@ def facts(sig: dict) -> str:
                          f"after month-end, its 2005-2020 worst drawdown ranged from {tb['max_drawdown'][0]:.0f}% to "
                          f"{tb['max_drawdown'][1]:.0f}% (the index's was {tb['index_max_drawdown']:.0f}%), and its yearly "
                          f"return from {tb['cagr'][0]:.1f}% to {tb['cagr'][1]:.1f}%.")
-    if t.get("provisional"):
+    if t.get("split"):
+        n = round(t["split"]["fraction_now"] * t["split"]["parts_n"])
+        lines.append(f"So right now: {n} of {t['split']['parts_n']} parts of the trend rule hold stocks; each part's next "
+                     "check decides that part on its own. The stock model alone keeps its top 50 either way.")
+    elif t.get("provisional"):
         now = "hold stocks" if t.get("this_month_invested") else "are in cash where the trend rule applies"
         lines.append(f"So right now: this month all the ways {now}. "
                      + ("If the index is still below its average at this month's close, the trend rule and the combined "

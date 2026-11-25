@@ -1,7 +1,8 @@
 """
 Admin research desk: serves the file research/signals.py builds on Billy's Mac and tools/quant_publish.py uploads.
 
-  /api/admin/quant/signals  GET  admin only: trend state, large-cap factor ranking, walk-forward record
+  /api/admin/quant/signals  GET  admin only: trend state, large-cap factor ranking, walk-forward record; the split
+                                 trend rule's check-day decisions are read live from SPY's closes
 
 The numbers derive from Sharadar data under a personal licence, so the route sits behind services.auth.require_admin
 (checked on every request) and the response is never cached by a browser or proxy.
@@ -36,6 +37,16 @@ def signals(_: dict = Depends(auth.require_admin)):
     data = _load()
     if data is None:
         raise HTTPException(404, "No research file has been published yet")
+    split = (data.get("trend") or {}).get("split")
+    if split:
+        # today's reading of the split trend rule from SPY's closes (between weekly files)
+        try:
+            from services import nasdaq as nq
+            from services.trend_split_live import live_status
+            live = live_status(split, nq.daily_history("SPY"))
+            data = {**data, "trend": {**data["trend"], "split": {**split, "live": live}}}
+        except Exception:
+            pass
     return JSONResponse(data, headers={"Cache-Control": "no-store"})
 
 

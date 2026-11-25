@@ -10,6 +10,7 @@ import '../quotepage/quotepage.css'
 import '../factors/factors.css'
 import './quant.css'
 import SimpleView from './SimpleView'
+import SplitTrend from './SplitTrend'
 
 const MODE_KEY = 'bfs_quant_mode'
 const readMode = () => { try { return localStorage.getItem(MODE_KEY) || 'simple' } catch { return 'simple' } }
@@ -29,7 +30,7 @@ const S = {
     above: (g) => `在均线上方 ${g}%`, below: (g) => `在均线下方 ${Math.abs(g)}%`,
     aboveNote: '按规则：下个月正常持股。', belowNote: '按规则：下个月持有现金。',
     provNote: (thisMonth, above) => `这是按本月到目前为止的数据算的临时读数，规则只看每月最后一个交易日的收盘。本月规则状态：${thisMonth ? '持股' : '持现金'}（由上月底决定）。${above ? '月底如果仍在均线上方，下个月继续持股。' : '月底如果仍在均线下方，下个月持有现金。'}`,
-    trendRule: '规则：月初指数低于 10 个月均线，这个月就持有现金（按 3 个月美国国债利率计息）。它像一份保险，但没有以前写的那么好：2026-11-24 查错后按更真实的方法重算（看到信号的第二天才交易），按每日价格算，2005–2020 年指数最大回撤约 −54%，用这条规则后在 −21% 到 −36% 之间，取决于每月第几个交易日检查；最近 6 年从约 −26% 降到 −16% 到 −19%。代价是收益：2005–2020 年每年差 −2.3 到 +0.4 个百分点，最近 6 年每年少 1.6 到 3.4 个百分点。这是教科书上的固定规则，没有用这段数据调参数。',
+    trendRule: '原规则：月初指数低于 10 个月均线，这个月就持有现金（按 3 个月美国国债利率计息）。2026-11-25 起研究台改用下面"分 5 份"的做法。原规则像一份保险，但没有以前写的那么好：2026-11-24 查错后按更真实的方法重算（看到信号的第二天才交易），按每日价格算，2005–2020 年指数最大回撤约 −54%，用这条规则后在 −21% 到 −36% 之间，取决于每月第几个交易日检查；最近 6 年从约 −26% 降到 −16% 到 −19%。代价是收益：2005–2020 年每年差 −2.3 到 +0.4 个百分点，最近 6 年每年少 1.6 到 3.4 个百分点。这是教科书上的固定规则，没有用这段数据调参数。',
     lineIndex: '大盘股指数', lineMa: '10 个月均线',
     rankTitle: '大盘股因子排名', rankSub: (f) => `综合 ${f} 个因子，在各自行业内比较，按历史预测力加权`,
     search: '输入代码或名称，看它排第几', top50: '模型组合前 50', all: '全部',
@@ -84,7 +85,7 @@ const S = {
     above: (g) => `${g}% above the average`, below: (g) => `${Math.abs(g)}% below the average`,
     aboveNote: 'Rule: stay invested next month.', belowNote: 'Rule: hold cash next month.',
     provNote: (thisMonth, above) => `A reading from the month so far; the rule acts only on month-end closes. This month the rule is ${thisMonth ? 'invested' : 'in cash'} (decided at last month’s close). ${above ? 'If it is still above the average at month-end, it stays invested next month.' : 'If it is still below the average at month-end, it holds cash next month.'}`,
-    trendRule: 'Rule: if the index starts a month below its 10-month average, hold cash that month (earning the 3-month Treasury bill rate). It works like insurance, but less well than first shown: re-measured in the 2026-11-24 audit (trading the day after the signal), the index’s worst drawdown of about −54% in 2005–2020 (daily prices) became −21% to −36% depending on which trading day of the month it is checked, and about −26% became −16% to −19% in the last six years. The cost: −2.3 to +0.4 points a year in 2005–2020 and 1.6 to 3.4 points a year less in the last six years. A fixed textbook rule, not fitted to this data.',
+    trendRule: 'Original rule: if the index starts a month below its 10-month average, hold cash that month (earning the 3-month Treasury bill rate). Since 2026-11-25 the desk follows the five-part version below. The original works like insurance, but less well than first shown: re-measured in the 2026-11-24 audit (trading the day after the signal), the index’s worst drawdown of about −54% in 2005–2020 (daily prices) became −21% to −36% depending on which trading day of the month it is checked, and about −26% became −16% to −19% in the last six years. The cost: −2.3 to +0.4 points a year in 2005–2020 and 1.6 to 3.4 points a year less in the last six years. A fixed textbook rule, not fitted to this data.',
     lineIndex: 'Large-cap index', lineMa: '10-month average',
     rankTitle: 'Large-cap factor ranking', rankSub: (f) => `${f} factors, compared within each sector, weighted by past predictive power`,
     search: 'Type a ticker or name to see its rank', top50: 'Model top 50', all: 'All',
@@ -567,6 +568,7 @@ export default function QuantDesk({ lang, onOpenAuth }) {
           <TrendChart history={t.history} L={L} />
         </div>
         <p className="qd-foot">{L.trendRule}</p>
+        <SplitTrend split={t.split} live={t.split?.live} reviewAfter={d.live?.next_review_after} zh={lang === 'zh'} />
       </section>
 
       <Ranking d={d} L={L} F={F} zh={lang === 'zh'} />

@@ -38,6 +38,14 @@ REPORTS = os.path.join(os.path.dirname(__file__), "..", "data", "sharadar", "rep
 CANDIDATES = ["index", "index + trend rule", "model (step E)", "model + inv-vol + sector + trend"]
 
 
+def load_report(name):
+    try:
+        with open(os.path.join(REPORTS, name)) as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return None
+
+
 def validation():
     """Development-period and one-time hold-out results of the four ways to use the desk (fixed numbers from
     improve_study --risk, the dev index+trend trial and holdout_test; not recomputed weekly)."""
@@ -182,8 +190,11 @@ def build():
     now_ma = float(np.mean(lv[-10:]))
     as_of = f"{str(latest['date'])[:4]}-{str(latest['date'])[4:6]}-{str(latest['date'])[6:]}"
     from research.live_track import update as live_update
+    from research.trend_split import split_state
+    split, invested_by_day = split_state(P)
+    split["results"] = load_report("trend_split.json")
     live = live_update(as_of, rows, P, list(lv), dates, tbill_annual(), top_n=TOP_N,
-                       keep_n=sum(1 for x in rows if x["keep"]))
+                       keep_n=sum(1 for x in rows if x["keep"]), invested_by_day=invested_by_day)
     factor_rec = {}
     for f in chosen:
         b = books[("large", f)]
@@ -202,7 +213,9 @@ def build():
                   "provisional": live["this_month_invested"] is not None,
                   "this_month_invested": live["this_month_invested"],
                   "rule": "hold cash in a month that starts with the cap-weighted large-cap index below its "
-                          "10-month average", "history": hist[-132:]},
+                          "10-month average", "history": hist[-132:],
+                  # since 2026-11-25 the desk follows the split version (research/trend_split.py)
+                  "split": split},
         "ranking": rows,
         "factors": factor_rec,
         "portfolio": report,
