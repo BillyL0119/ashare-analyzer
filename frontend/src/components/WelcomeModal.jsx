@@ -173,10 +173,10 @@ export default function WelcomeModal({ onLangSelect }) {
           gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
           gap: 12,
         }}>
-          {LANG_OPTIONS.map(({ code, nativeLabel, subLabel }) => (
+          {LANG_OPTIONS.map((opt) => (
             <button
-              key={code}
-              onClick={() => handleLangSelect(code)}
+              key={opt.code}
+              onClick={() => handleLangSelect(opt.code)}
               style={{
                 padding: '16px 10px', borderRadius: 12,
                 background: 'rgba(79,134,247,0.06)',
@@ -195,9 +195,9 @@ export default function WelcomeModal({ onLangSelect }) {
                 e.currentTarget.style.borderColor = 'rgba(79,134,247,0.2)'
               }}
             >
-              <Flag height={22} />
-              <div style={{ fontSize: 14, fontWeight: 600 }}>{nativeLabel}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{subLabel}</div>
+              <opt.Flag height={22} />
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{opt.nativeLabel}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{opt.subLabel}</div>
             </button>
           ))}
         </div>
