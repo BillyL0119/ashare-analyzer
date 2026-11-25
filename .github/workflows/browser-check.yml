@@ -1,0 +1,60 @@
+# Opens every main page of bestfriendstock.com in a real browser (tools/browser_check.mjs): desktop as a first-time
+# visitor, desktop as a returning visitor, and a phone. While anything fails, one issue labelled "browser-check"
+# stays open (opened on the first failure, a comment on each later failing run, closed once everything passes);
+# GitHub emails the repo owner about each. Run it by hand after a deploy: Actions → Browser check → Run workflow,
+# or `gh workflow run browser-check.yml`.
+# GitHub starts scheduled runs on a best-effort basis, so the daily run can be late by hours.
+name: Browser check
+
+on:
+  schedule:
+    - cron: "17 23 * * *"     # once a day, 07:17 Beijing time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: browser-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install a browser
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check every page
+        id: run
+        run: node tools/browser_check.mjs
+        continue-on-error: true
+      - name: Open, update or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUTCOME: ${{ steps.run.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create browser-check --color B60205 --description "Daily browser check failed" --force >/dev/null
+          open=$(gh issue list --label browser-check --state open --json number --jq '.[0].number')
+          body="$(cat browser-check-report.md)
+
+          Run: $RUN_URL"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ -n "$open" ]; then gh issue close "$open" --comment "$body"; fi
+          elif [ ! -f browser-check-report.md ]; then
+            echo "the check did not finish"; exit 1
+          elif [ -n "$open" ]; then
+            gh issue comment "$open" --body "$body"
+          else
+            gh issue create --label browser-check --title "Browser check: pages failing on bestfriendstock.com" --body "$body"
+          fi
