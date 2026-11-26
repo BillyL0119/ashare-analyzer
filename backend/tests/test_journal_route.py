@@ -66,3 +66,17 @@ def test_import_dry_run_then_commit(c):
     again = c.post("/api/admin/journal/import", headers=H, json={"rows": rows, "dry_run": True}).json()
     assert again["counts"] == {"ok": 0, "duplicate": 2, "error": 0}
     assert c.post("/api/admin/journal/import", headers={"Authorization": "Bearer kid"}, json={"rows": rows}).status_code == 403
+
+
+def test_every_change_keeps_the_previous_version(c, tmp_path):
+    import json
+    import os
+    c.post("/api/admin/journal/entries", headers=H, json={"type": "deposit", "date": "2026-11-02", "amount": 500})
+    hist = tmp_path / "history"
+    assert not hist.exists() or not os.listdir(hist)          # the first write had nothing to keep
+    e = c.post("/api/admin/journal/entries", headers=H, json={"type": "deposit", "date": "2026-11-03", "amount": 100}).json()["entry"]
+    assert c.delete(f"/api/admin/journal/entries/{e['id']}", headers=H).status_code == 200
+    versions = sorted(os.listdir(hist))
+    assert len(versions) == 2
+    # the oldest copy is the state before the second deposit, the newest the state before the delete
+    assert [len(json.load(open(hist / v))["entries"]) for v in versions] == [1, 2]

@@ -15,6 +15,7 @@ import csv
 import io
 import json
 import os
+import shutil
 import threading
 import time
 from datetime import date, datetime, timedelta
@@ -45,9 +46,29 @@ def _read(ident):
         return []
 
 
+HISTORY_KEEP = 60           # previous versions kept per account (every add / edit / delete / import saves one)
+
+
+def _keep_previous(p):
+    """Copy the file about to be replaced into data/journal/history/ (a bad edit or delete can be undone from there)."""
+    if not os.path.exists(p):
+        return
+    hist = os.path.join(DIR, "history")
+    try:
+        os.makedirs(hist, exist_ok=True)
+        base = os.path.basename(p)[:-len(".json")]
+        shutil.copy2(p, os.path.join(hist, f"{base}-{time.strftime('%Y%m%d-%H%M%S')}-{time.time_ns() % 1_000_000:06d}.json"))
+        old = sorted(f for f in os.listdir(hist) if f.startswith(base + "-"))
+        for f in old[:-HISTORY_KEEP]:
+            os.remove(os.path.join(hist, f))
+    except OSError:
+        pass                                      # a failed copy must never block saving the entry
+
+
 def _write(ident, entries):
     os.makedirs(DIR, exist_ok=True)
     p = _path(ident)
+    _keep_previous(p)
     tmp = p + ".tmp"
     with open(tmp, "w", encoding="utf-8") as fh:
         json.dump({"entries": entries, "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S")}, fh, ensure_ascii=False)
