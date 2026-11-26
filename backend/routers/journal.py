@@ -57,7 +57,7 @@ def _keep_previous(p):
     try:
         os.makedirs(hist, exist_ok=True)
         base = os.path.basename(p)[:-len(".json")]
-        shutil.copy2(p, os.path.join(hist, f"{base}-{time.strftime('%Y%m%d-%H%M%S')}-{time.time_ns() % 1_000_000:06d}.json"))
+        shutil.copy2(p, os.path.join(hist, f"{base}-{time.strftime('%Y%m%d-%H%M%S')}-{time.time_ns()}.json"))
         old = sorted(f for f in os.listdir(hist) if f.startswith(base + "-"))
         for f in old[:-HISTORY_KEEP]:
             os.remove(os.path.join(hist, f))
