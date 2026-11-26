@@ -1,6 +1,4 @@
 """Case headlines in the reader's language (services/econ_cases.py): stored translations, outlet names, backfill."""
-import sys
-
 import pytest
 
 import stubs
