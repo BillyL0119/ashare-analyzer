@@ -89,7 +89,7 @@ _SOURCE_NAMES = {
 }
 
 
-_UNITS = re.compile(r"[万亿千]|billion|million|trillion|thousand|\d\s?(?:bn|[bmk])\b|\b(?:bn|mn)\b", re.I)
+_UNITS = re.compile(r"[百千万亿]|billion|million|trillion|thousand|\d\s?(?:bn|[bmk])\b|\b(?:bn|mn)\b", re.I)
 
 
 def source_name(source: str, lang: str) -> str:
@@ -115,7 +115,7 @@ def _title_ok(lang: str, text: str, source_text: str) -> bool:
     # compared digit for digit, so a headline with such a unit on either side is judged on language alone
     if _UNITS.search(text) or _UNITS.search(source_text or ""):
         return True
-    return not (fig(text) - fig(source_text))
+    return not (fig(text) - fig(source_text) - _FREE_NUMBERS)         # "Q1" for 一季度 adds a 1 the source does not spell as a digit
 
 
 def _valid_stored(c: dict) -> bool:

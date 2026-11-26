@@ -88,5 +88,11 @@ def test_a_date_in_a_translated_headline_is_not_an_invented_figure():
 def test_amounts_with_a_unit_are_judged_on_language_alone():
     assert ec._title_ok("en", "Korea fair trade body to fine Samsung 20 billion won over misleading game ads", "韩国公平交易委员会拟对三星电子处以200亿韩元罚款")
     assert ec._title_ok("zh", "泰晤士水务要求债权人给予更多时间偿还200亿英镑", "Thames Water asks creditors for more time to help repay £20b")
-    assert not ec._title_ok("en", "Korea to fine Samsung 20 won", "韩国拟对三星处以罚款")        # no unit: still compared
+    assert not ec._title_ok("en", "Korea to fine Samsung 47 won", "韩国拟对三星处以罚款")        # no unit: a new figure is still refused
     assert not ec._title_ok("en", "韩国罚款三星 200亿", "韩国罚款三星 200亿")                    # still must be in the right language
+
+
+def test_small_numbers_and_hundreds_in_a_translated_headline_are_fine():
+    assert ec._title_ok("en", "Wells Fargo's 2027 FX outlook: dollar strong first then weak, euro under pressure in Q1", "富国银行展望2027汇市：美元先强后弱，欧元一季度承压")
+    assert ec._title_ok("en", "Sugar mills crushing top 100, output up nearly 7-fold", "开榨糖厂突破百家、产量同比翻近7倍")
+    assert not ec._title_ok("en", "Sugar mills crushing top 47, output up nearly 7-fold", "开榨糖厂产量同比翻近7倍")   # a real figure the source lacks
