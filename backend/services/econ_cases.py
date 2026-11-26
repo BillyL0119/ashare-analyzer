@@ -89,6 +89,9 @@ _SOURCE_NAMES = {
 }
 
 
+_UNITS = re.compile(r"[万亿千]|billion|million|trillion|thousand|\d\s?(?:bn|[bmk])\b|\b(?:bn|mn)\b", re.I)
+
+
 def source_name(source: str, lang: str) -> str:
     """The outlet's name in the reader's language: Chinese outlets in English for everyone but zh, English ones in Chinese
     for zh; names without a translation (CNBC, MarketWatch) are kept."""
@@ -106,7 +109,13 @@ def _title_ok(lang: str, text: str, source_text: str) -> bool:
     """A translated headline is kept only when it is in the right language and adds no figure the article does not have."""
     # dates are not figures: "11月26日" in one language is "November 26" in the other
     fig = lambda t: _numbers(_DATES.sub(" ", t or ""))                                          # noqa: E731
-    return bool(text) and 6 <= len(text) <= 220 and _right_language(lang, text) and not (fig(text) - fig(source_text))
+    if not (bool(text) and 6 <= len(text) <= 220 and _right_language(lang, text)):
+        return False
+    # an amount is written differently across the languages (200亿 = 20 billion, 1.2万 = 12,000): the figures cannot be
+    # compared digit for digit, so a headline with such a unit on either side is judged on language alone
+    if _UNITS.search(text) or _UNITS.search(source_text or ""):
+        return True
+    return not (fig(text) - fig(source_text))
 
 
 def _valid_stored(c: dict) -> bool:
