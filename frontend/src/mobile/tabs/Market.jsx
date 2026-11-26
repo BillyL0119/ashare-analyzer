@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { CN_INDEX_EN } from '../../components/globalSentimentColors'
 import { useNavigate } from 'react-router-dom'
 import useWatchlistStore from '../../store/watchlistStore'
 import useLangStore from '../../store/langStore'
@@ -252,7 +253,7 @@ function Global() {
                 const m = marketOfRegion(i.region); const c = changeColor(i.change_pct, m)
                 return (
                   <div key={i.symbol} className="m-tile" style={{ background: `color-mix(in srgb, ${c} 9%, var(--surface-hi))` }}>
-                    <div className="m-label">{lang === 'zh' ? i.name_zh : i.name}</div>
+                    <div className="m-label">{lang === 'zh' ? i.name_zh : (CN_INDEX_EN[i.name] || i.name)}</div>
                     <div className="m-num" style={{ fontWeight: 600, fontSize: 15, margin: '5px 0 3px' }}>{num(i.close)}</div>
                     <div className="m-num" style={{ color: c, fontWeight: 600, fontSize: 12.5 }}>{pct(i.change_pct)}</div>
                   </div>

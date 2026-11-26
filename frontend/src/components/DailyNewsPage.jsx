@@ -156,7 +156,7 @@ export default function DailyNewsPage({ lang = 'zh' }) {
   const [updatedAt, setUpdatedAt] = useState(null)
   const [catFilter, setCatFilter] = useState('all')
   // Non-Chinese readers start on the English feed; they can still switch to All / 中文.
-  const [langFilter, setLangFilter] = useState(lang === 'zh' ? 'all' : 'en')
+  const [langFilter, setLangFilter] = useState(lang === 'zh' ? 'cn' : 'en')   // each reader starts with the news in their own language; the pills below show the other
   const [page,      setPage]      = useState(1)
   const timerRef = useRef(null)
   const filtersRef = useRef({ cat: 'all', lang: langFilter })

@@ -23,8 +23,8 @@ def _lang(lang: Optional[str]) -> str:
 def _view(c: dict, lang: str) -> dict:
     part = c.get("zh" if lang == "zh" else "en") or c.get("en") or {}
     return {
-        "id": c["id"], "date": (c.get("published_at") or "")[:10], "source": c.get("source"), "url": c["url"],
-        "title": c["title"], "source_lang": c.get("source_lang"),
+        "id": c["id"], "date": (c.get("published_at") or "")[:10], "source": econ_cases.source_name(c.get("source"), lang),
+        "url": c["url"], "title": econ_cases.title_in(c, lang), "source_lang": c.get("source_lang"),
         "concepts": [{"id": k, "name": concept_view(k, lang)["name"]} for k in c["concepts"] if k in CONCEPTS],
         "what": part.get("what"), "angle": part.get("angle"), "evaluate": part.get("evaluate"),
         "question": part.get("question"), "data": part.get("data") or [],
@@ -57,7 +57,8 @@ def list_cases(lang: Optional[str] = Query(None), concept: Optional[str] = Query
     if q and q.strip():
         needle = q.strip().lower()
         part = "zh" if lang == "zh" else "en"
-        items = [c for c in items if needle in " ".join([c["title"], *(str(v) for v in (c.get(part) or {}).values())]).lower()]
+        items = [c for c in items if needle in " ".join([c["title"], econ_cases.title_in(c, lang),
+                                                         *(str(v) for v in (c.get(part) or {}).values())]).lower()]
     return {"cases": [_view(c, lang) for c in items[offset:offset + limit]], "total": len(items),
             "counts": counts, "status": econ_cases.status()}
 
@@ -86,6 +87,6 @@ def one_case(case_id: str, lang: Optional[str] = Query(None)):
     part = (c.get(other) or {}) if other else {}
     out["other"] = {"lang": other, **{k: part.get(k) for k in ("what", "angle", "evaluate", "question")},
                     "data": part.get("data") or []} if part else None
-    out["related"] = [{"id": r["id"], "title": r["title"], "date": (r.get("published_at") or "")[:10]}
+    out["related"] = [{"id": r["id"], "title": econ_cases.title_in(r, lang), "date": (r.get("published_at") or "")[:10]}
                       for r in case_pages.related(c)]
     return out

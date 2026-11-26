@@ -107,3 +107,14 @@ export const FIRMS = [
   f('渣打 Standard Chartered', 'apac', '伦敦 London', 'hk:02888', '新兴市场银行业务、贸易融资', 'Emerging-market banking, trade finance'),
   f('麦格理 Macquarie', 'apac', '悉尼 Sydney', 'asx:MQG', '基础设施投资、大宗商品', 'Infrastructure investing, commodities'),
 ]
+
+// A few entries are written "中金公司 CICC" / "北京 Beijing" (both languages in one string). Shown in the reader's language:
+// English readers get the Latin part, Chinese readers get the Chinese part (a firm's name keeps its English abbreviation too).
+const HAN = /[\u3400-\u9fff]/
+export function firmText(text, zh, keepBoth = false) {
+  if (!HAN.test(text)) return text
+  const han = text.replace(/[A-Za-z][A-Za-z0-9&.,'’ -]*/g, ' ').replace(/\s+/g, ' ').trim()
+  const latin = text.replace(/[\u3400-\u9fff\u3000-\u303f（）]+/g, ' ').replace(/\s+/g, ' ').trim()
+  if (zh) return keepBoth ? text : (han || text)
+  return latin || text
+}

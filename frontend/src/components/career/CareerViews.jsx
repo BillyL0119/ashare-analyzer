@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useCompareStore from '../../store/compareStore'
 import { ROLES } from '../careerData'
 import { META, TRACK_FIRMS } from './careerMeta'
-import { CATEGORIES, FIRMS } from './firms'
+import { CATEGORIES, FIRMS, firmText } from './firms'
 
 const CSS = `
 .cg-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
@@ -318,16 +318,16 @@ export function FirmsView({ zh, initialCat = 'all' }) {
           <tbody>
             {rows.map((x) => (
               <tr key={x.name}>
-                <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{x.name}</td>
+                <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{firmText(x.name, zh, true)}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>{L(CATEGORIES.find((c) => c.key === x.cat), zh)}</td>
-                <td>{x.hq}</td>
+                <td>{firmText(x.hq, zh)}</td>
                 <td className="cg-hide-sm">{L(x.known, zh)}</td>
                 <td>
                   {!x.ticker
                     ? <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{zh ? '未上市' : 'Not listed'}</span>
                     : /^(us|cn|hk|jp):/.test(x.ticker)
                       ? <button className="cg-tick" onClick={() => open(x)} title={zh ? '查看股票分析' : 'Open stock analysis'}>{x.ticker.split(':')[1]}</button>
-                      : <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: '"JetBrains Mono", ui-monospace, monospace' }}>{x.ticker.split(':')[1]} · {x.hq}</span>}
+                      : <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: '"JetBrains Mono", ui-monospace, monospace' }}>{x.ticker.split(':')[1]} · {firmText(x.hq, zh)}</span>}
                 </td>
               </tr>
             ))}

@@ -38,6 +38,7 @@ _lock = threading.Lock()
 _db: dict = {}              # id -> case (or {"rejected": True, "ts": ...})
 _calls = {"day": "", "n": 0}
 _diagram_calls = {"day": "", "n": 0}
+_title_calls = {"day": "", "n": 0}
 _status = {"last_run": None, "added": 0}
 
 _KEYWORDS = re.compile(
@@ -77,6 +78,33 @@ def _is_figure(text: str) -> bool:
 
 def _right_language(lang: str, text: str) -> bool:
     return bool(_CJK.search(text)) if lang == "zh" else not _CJK.search(text)
+
+
+# Outlet names as a reader of each language expects to see them (the stored name is the feed's own)
+_SOURCE_NAMES = {
+    "新浪财经要闻": {"en": "Sina Finance"},
+    "新浪A股": {"en": "Sina Finance (A-shares)"},
+    "Guardian Business": {"zh": "卫报商业"},
+    "BBC Business": {"zh": "BBC 商业"},
+}
+
+
+def source_name(source: str, lang: str) -> str:
+    """The outlet's name in the reader's language: Chinese outlets in English for everyone but zh, English ones in Chinese
+    for zh; names without a translation (CNBC, MarketWatch) are kept."""
+    return (_SOURCE_NAMES.get(source or "") or {}).get("zh" if lang == "zh" else "en") or (source or "")
+
+
+def title_in(case: dict, lang: str) -> str:
+    """The headline in the reader's language (zh, or English for every other language); the article's own headline
+    when no translation has been stored yet."""
+    t = (case.get("titles") or {}).get("zh" if lang == "zh" else "en")
+    return t or case.get("title") or ""
+
+
+def _title_ok(lang: str, text: str, source_text: str) -> bool:
+    """A translated headline is kept only when it is in the right language and adds no figure the article does not have."""
+    return bool(text) and 6 <= len(text) <= 220 and _right_language(lang, text) and not (_numbers(text) - _numbers(source_text))
 
 
 def _valid_stored(c: dict) -> bool:
@@ -166,9 +194,10 @@ def _prompt() -> str:
         "do not copy sentences from the source. No investment advice.\n"
         "Return JSON only:\n"
         '{"useful": true|false, "concepts": ["concept_id", ...] (1 to 3, most relevant first), '
-        '"zh": {"what": "...", "angle": "...", "evaluate": "...", "question": "...", "data": ["..."]}, '
+        '"zh": {"title": "...", "what": "...", "angle": "...", "evaluate": "...", "question": "...", "data": ["..."]}, '
         '"en": {same keys}}\n'
-        "what: 1-2 sentences on what happened. angle: 2-3 sentences explaining how it illustrates the concept "
+        "title: the headline translated faithfully into that language (the headline itself if it is already in it), "
+        "adding nothing. what: 1-2 sentences on what happened. angle: 2-3 sentences explaining how it illustrates the concept "
         "(the mechanism a student would draw or explain). evaluate: 1-2 sentences giving one evaluation point "
         "(another factor, a limitation, short run vs long run, who wins and who loses). question: one exam-style "
         "question that uses this example. data: up to 3 short phrases with quantities from the article (amounts, "
@@ -222,6 +251,9 @@ def _check(item: dict, out: dict) -> dict | None:
         data = [str(d).strip() for d in (part.get("data") or []) if str(d).strip()][:3]
         data = [d for d in data if _is_figure(d) and not (_numbers(d) - sourced)]   # quotable figures: only the article's
         case[lang] = {**{k: v[:600] for k, v in texts.items()}, "data": [d[:200] for d in data]}
+        t = str(part.get("title") or "").strip()
+        if _title_ok(lang, t, item["title"] + " " + item["summary"]):
+            case.setdefault("titles", {})[lang] = t          # a missing or doubtful one is filled in later (backfill_titles)
     return case
 
 
@@ -248,7 +280,13 @@ def run_once(limit: int = _PER_RUN) -> int:
             _db[item["id"]] = case or {"rejected": True, "ts": time.time()}
         added += bool(case)
     tagged = _tag_diagrams()
-    if added or tagged or _db:
+    titled = 0
+    for _ in range(40):                        # every case that still lacks a translated headline, a batch at a time
+        n = backfill_titles()
+        titled += n
+        if not n:
+            break
+    if added or tagged or titled or _db:
         try:
             _save()
         except Exception as e:
@@ -259,6 +297,71 @@ def run_once(limit: int = _PER_RUN) -> int:
     _status.update(last_run=datetime.utcnow().isoformat() + "Z", added=added)
     logger.info("case library: %d new cases (%d calls today)", added, _calls["n"])
     return added
+
+
+_TITLE_BATCH = 20
+_TITLE_CAP = 60             # translation calls per day
+_TITLE_TRIES = 3            # attempts per case
+
+
+def _ask_titles(batch: list) -> dict:
+    """{id: {"zh": ..., "en": ...}} for a batch of cases: their headlines translated into both languages."""
+    api_key = os.environ.get("DEEPSEEK_API_KEY", "")
+    if not api_key:
+        return {}
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com", timeout=90, max_retries=0)
+    listing = "\n".join(f"{c['id']}\t{c['title']}" for c in batch)
+    resp = client.chat.completions.create(
+        model="deepseek-chat", max_tokens=3000, temperature=0.2, response_format={"type": "json_object"},
+        messages=[{"role": "system", "content": (
+            "Translate news headlines. For each line (id, a tab, the headline) return its headline in Simplified Chinese (zh) "
+            "and in English (en): a faithful, natural translation that adds, drops or changes no fact, name or figure; a headline "
+            "already in a language is returned unchanged for that language. Return JSON only: "
+            '{"<id>": {"zh": "...", "en": "..."}, ...}')},
+                  {"role": "user", "content": listing}])
+    return json.loads(resp.choices[0].message.content or "{}")
+
+
+def backfill_titles(limit: int = _TITLE_BATCH) -> int:
+    """Translate the headline of cases that lack one language (older cases, or a translation that was refused). One model
+    call for up to `limit` cases. Returns cases updated."""
+    today = time.strftime("%Y-%m-%d")
+    with _lock:
+        todo = [c for c in _db.values() if not c.get("rejected") and c.get("title") and c.get("title_tries", 0) < _TITLE_TRIES
+                and not ((c.get("titles") or {}).get("zh") and (c.get("titles") or {}).get("en"))][:limit]
+        if not todo or (_title_calls.get("day") == today and _title_calls["n"] >= _TITLE_CAP):
+            return 0
+        if _title_calls.get("day") != today:
+            _title_calls.update(day=today, n=0)
+        _title_calls["n"] += 1
+        for c in todo:
+            c["title_tries"] = c.get("title_tries", 0) + 1            # a headline the model never translates is given up on
+    try:
+        out = _ask_titles(todo)
+    except Exception as e:
+        logger.warning("title translation failed: %s", e)
+        return 0
+    done = 0
+    with _lock:
+        for c in todo:
+            got = out.get(c["id"]) if isinstance(out, dict) else None
+            if not isinstance(got, dict):
+                continue
+            src = c["title"] + " " + ((c.get("en") or {}).get("what") or "")
+            titles = dict(c.get("titles") or {})
+            for lang in ("zh", "en"):
+                t = str(got.get(lang) or "").strip()
+                if t and _title_ok(lang, t, src + " " + " ".join(str(v) for v in (c.get("zh") or {}).values() if isinstance(v, str))):
+                    titles[lang] = t
+                elif lang not in titles and t == c["title"] and _right_language(lang, t):
+                    titles[lang] = t
+            if titles != (c.get("titles") or {}):
+                c["titles"] = titles
+                done += 1
+    if done:
+        logger.info("case library: %d headlines translated", done)
+    return done
 
 
 def _tag_diagrams() -> int:

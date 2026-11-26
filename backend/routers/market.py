@@ -727,7 +727,9 @@ def _build_sentiment() -> dict:
             "change_pct": d.get("change_pct"),
         })
 
-    # CN indices: Tencent quotes (Eastmoney redirects our server), Sina below as the fallback
+    # CN indices: Tencent quotes (Eastmoney redirects our server), Sina below as the fallback.
+    # `name` is English for every reader but zh (they use name_zh): the clients (web, phone, iOS) show `name` outside Chinese.
+    cn_en = {"上证指数": "SSE Composite", "深证成指": "SZSE Component", "创业板指": "ChiNext"}
     cn_added = False
     try:
         names = {"shanghai_index": "上证指数", "shenzhen_index": "深证成指", "chinext_index": "创业板指"}
@@ -735,7 +737,7 @@ def _build_sentiment() -> dict:
             nm = names[key]
             indices.append({
                 "symbol":     _CN_INDEX_SYMBOLS.get(nm, "—"),
-                "name":       nm,
+                "name":       cn_en.get(nm, nm),
                 "name_zh":    nm,
                 "region":     "cn",
                 "close":      round(q["value"], 2),
@@ -763,7 +765,7 @@ def _build_sentiment() -> dict:
                     pct_val   = row.get("涨跌幅") or row.get("percent") or 0
                     indices.append({
                         "symbol":     code,
-                        "name":       display,
+                        "name":       cn_en.get(display, display),
                         "name_zh":    display,
                         "region":     "cn",
                         "close":      round(_safe_float(close_val), 2),
