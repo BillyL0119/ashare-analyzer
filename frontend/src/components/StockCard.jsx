@@ -1,3 +1,4 @@
+import { delayNote } from '../utils/quoteDelay'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -93,6 +94,7 @@ export default function StockCard({ stock }) {
           <div className="sc-price">
             <span className="sc-p">{market !== 'cn' ? CUR[market] : ''}{quote.price.toFixed(2)}</span>
             <span className="sc-c" style={{ color: priceColor }}>{priceDelta >= 0 ? '+' : ''}{priceDelta.toFixed(2)}%</span>
+            {delayNote(market, lang) && <span className="sc-delay">{delayNote(market, lang)}</span>}
           </div>
         )}
 

@@ -1,3 +1,4 @@
+import { delayNote } from '../utils/quoteDelay'
 import { useEffect, useState } from 'react'
 import useCompareStore from '../store/compareStore'
 import { CUR, localName } from '../utils/markets'
@@ -77,7 +78,7 @@ export default function IntlMarketPanel({ lang, market }) {
         <span style={{ width: 7, height: 7, borderRadius: 4, background: s.state === 'open' ? UP : s.state === 'lunch' ? 'var(--accent-gold)' : 'var(--text-muted)' }} />
         <strong style={{ fontSize: 14 }}>{t[market]}</strong>
         <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 10, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{t[s.state]}</span>
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)' }}>{s.time} {t.local[market]} · {t.delayed}</span>
+        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)' }}>{s.time} {t.local[market]} · {delayNote(market, lang) || t.delayed}</span>
       </div>
 
       {d.indices.length > 0 && (

@@ -1,3 +1,4 @@
+import { delayNote } from '../../utils/quoteDelay'
 import useLangStore from '../../store/langStore'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -332,6 +333,7 @@ export default function StockDetail() {
             <span style={{ display: 'grid', gap: 3 }}><Pill value={p} market={market} width={86} /><span className="m-num" style={{ color: c, fontSize: 12.5, fontWeight: 600, paddingLeft: 4 }}>{d.change > 0 ? '+' : ''}{num(d.change)}</span></span>
           </div>
         )}
+        {price != null && delayNote(market, lang) && <div className="m-sub" style={{ marginTop: 2, color: 'var(--orange, #c2410c)' }}>{delayNote(market, lang)}</div>}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
           <span style={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span><span className="m-sub" style={{ flex: 'none' }}>{code}</span><span className="m-chip">{t(chipLabel(market))}</span>
           <button onClick={() => nav(`/paper?buy=${encodeURIComponent(code)}&market=${market}`)}

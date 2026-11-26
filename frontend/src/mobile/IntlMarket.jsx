@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useLangStore from '../store/langStore'
 import { CUR, localName } from '../utils/markets'
 import visibleInterval from '../utils/visibleInterval'
+import { delayNote } from '../utils/quoteDelay'
 
 // Phone home for Hong Kong and Japan: the market's indices and its most-followed names (/api/{hk,jp}/overview,
 // the same data as the desktop IntlMarketPanel). Green up / red down, as in those markets.
@@ -38,6 +39,7 @@ export default function IntlMarket({ market }) {
   return (
     <div className="m-card mi-card">
       <b style={{ fontSize: 17 }}>{t[market]}</b>
+      {delayNote(market, lang) && <div className="m-sub" style={{ color: 'var(--orange, #c2410c)', marginTop: -4 }}>{delayNote(market, lang)}</div>}
       {d.indices?.length > 0 && (
         <div className="mi-idx">
           {d.indices.map((i) => (
