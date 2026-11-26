@@ -360,6 +360,9 @@ async def sitemap():
   </url>{cases}
 </urlset>"""
     from services.seo_lang import with_language_versions
+    # every S&P 500 stock page, so search engines can find them (the SPA has no crawlable links to them)
+    from services.seo_lang import sp500_stock_entries
+    content = content.replace("</urlset>", sp500_stock_entries(content, today) + "\n</urlset>")
     return Response(content=with_language_versions(content), media_type="application/xml")
 
 @app.get("/robots.txt", response_class=Response)
@@ -405,9 +408,11 @@ def _seo_quote(sym: str):
 
 # A plain function, so FastAPI runs it in its thread pool: the quote lookup must not hold up the event loop
 @app.api_route("/seo/stock/us/{symbol}", methods=["GET", "HEAD"], response_class=Response)
-def seo_us_stock(symbol: str):
-    """index.html with per-stock title/description/canonical (nginx routes /stock/us/<TICKER> here)."""
-    import html as _html, re as _re, os as _os
+def seo_us_stock(symbol: str, lang: str = ""):
+    """index.html with per-stock title/description/canonical/hreflang (nginx routes /stock/us/<TICKER> here); ?lang=en
+    gives the English version (services/seo_stock.py)."""
+    import re as _re, os as _os
+    from services import seo_stock
     sym = symbol.upper()
     if not _re.fullmatch(r"[A-Z0-9.\-]{1,10}", sym):
         return Response(status_code=404)
@@ -419,26 +424,7 @@ def seo_us_stock(symbol: str):
     q = _seo_quote(sym)
     if not q:  # unknown ticker: serve the plain SPA shell
         return Response(content=page, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-cache"})
-    e = _html.escape
-    name = e(q["name"])
-    sign = "+" if q["pct"] > 0 else ""
-    title = f"{name} ({sym}) 美股行情 · K线 · AI分析 | BestFriendStock"
-    desc = (f"{name}（{sym}）美股实时行情：最新价 ${q['price']:.2f}，涨跌幅 {sign}{q['pct']:.2f}%。"
-            f"查看K线图、MACD/RSI 技术指标、新闻情绪和 AI 分析，并可用模拟盘练习交易。仅供学习，不构成投资建议。")
-    url = f"https://bestfriendstock.com/stock/us/{sym}"
-    def sub(pattern, repl):
-        nonlocal page
-        page = _re.sub(pattern, lambda _m: repl, page, count=1)
-    sub(r"<title>.*?</title>", f"<title>{title}</title>")
-    sub(r'<meta name="description" content="[^"]*"', f'<meta name="description" content="{e(desc, quote=True)}"')
-    sub(r'<meta property="og:title" content="[^"]*"', f'<meta property="og:title" content="{title}"')
-    sub(r'<meta property="og:description" content="[^"]*"', f'<meta property="og:description" content="{e(desc, quote=True)}"')
-    sub(r'<meta property="og:url" content="[^"]*"', f'<meta property="og:url" content="{url}"')
-    sub(r'<meta name="twitter:title" content="[^"]*"', f'<meta name="twitter:title" content="{title}"')
-    sub(r'<meta name="twitter:description" content="[^"]*"', f'<meta name="twitter:description" content="{e(desc, quote=True)}"')
-    sub(r'<link rel="canonical" href="[^"]*"', f'<link rel="canonical" href="{url}"')
-    summary = f'<noscript><h1>{name} ({sym})</h1><p>{e(desc)}</p><p><a href="https://bestfriendstock.com/">Best Friend Stock</a></p></noscript>'
-    page = page.replace("<body>", "<body>" + summary, 1) if "<body>" in page else page
+    page = seo_stock.render(page, sym, q["name"], q["price"], q["pct"], "en" if lang == "en" else "zh")
     return Response(content=page, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-cache"})
 
 app.include_router(stocks.router, prefix="/api/stocks", tags=["stocks"])
