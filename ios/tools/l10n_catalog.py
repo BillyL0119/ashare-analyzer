@@ -79,6 +79,10 @@ T = {
     "移出自选": ("Remove from watchlist", "ウォッチリストから削除", "관심종목에서 삭제", "Retirer des favoris"),
     "行业板块": ("Sectors", "セクター", "업종", "Secteurs"),
     "领涨 %@": ("Leader: %@", "首位: %@", "선두: %@", "Meneur : %@"),
+    # --- home market card (HomeLessonCard)
+    "近三个月": ("Last three months", "過去3か月", "최근 3개월", "Trois derniers mois"),
+    "热门股里涨跌最大的": ("Biggest movers among popular stocks", "人気銘柄の値動きが大きい順", "인기 종목 중 가장 크게 움직인 종목", "Plus fortes variations parmi les valeurs suivies"),
+    "日股行情约延迟 20 分钟（免费数据源的交易所规定）": ("Japanese quotes are delayed about 20 minutes (exchange rule for free data)", "日本株の株価は約20分遅れです（無料データの取引所ルール）", "일본 주가는 약 20분 지연됩니다 (무료 데이터의 거래소 규정)", "Les cours japonais sont différés d’environ 20 minutes (règle de la bourse pour les données gratuites)"),
     "热门股票": ("Trending", "人気銘柄", "인기 종목", "Populaires"),
     "暂无热门股数据，稍后下拉刷新": ("No trending stocks yet. Pull down to refresh later.", "人気銘柄がまだありません。後で引いて更新してください。", "인기 종목 데이터가 없습니다. 잠시 후 당겨서 새로고침하세요.", "Pas de données. Tirez pour actualiser plus tard."),
     "最近搜索": ("Recent searches", "最近の検索", "최근 검색", "Recherches récentes"),

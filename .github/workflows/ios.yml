@@ -92,6 +92,11 @@ jobs:
             shot "light-quote-$screen" 18 -startTab market -openStock AAPL -openQuote "$screen" -appLanguage en
           done
           shot "zh-light-quote-summary" 18 -startTab market -openStock AAPL -openQuote summary -appLanguage zh
+          # The market tab in each market (-marketTabMode sets the saved segment for this launch only), and Japan's stock page
+          for m in us cn hk jp; do
+            shot "light-market-$m" 18 -startTab market -marketTabMode "$m" -appLanguage en
+          done
+          shot "light-stock-jp" 18 -startTab market -openStock 7203 -appLanguage en
           # Chinese: the quote switches to the brush script once iOS has fetched it
           xcrun simctl ui "$UDID" appearance light
           shot "zh-light-market" 25 -startTab market -appLanguage zh

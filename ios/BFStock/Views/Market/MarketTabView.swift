@@ -11,6 +11,7 @@ struct MarketTabView: View {
     @State private var debugCalendar = false
     #endif
     @ObservedObject private var history = SearchHistoryStore.shared
+    @StateObject private var lessons = HomeLessonStore()
 
     private var mode: Binding<Market> {
         Binding(get: { Market(rawValue: modeRaw) ?? .us }, set: { modeRaw = $0.rawValue })
@@ -22,10 +23,20 @@ struct MarketTabView: View {
                 LazyVStack(spacing: 26) {
                     QuoteOfDayCard()
                     HStack {
-                        MarketSegmentControl(selection: mode, order: [.us, .cn])
+                        MarketSegmentControl(selection: mode, order: [.us, .cn, .hk, .jp])
                         Spacer()
                     }
-                    if mode.wrappedValue == .us {
+                    HomeLessonCard(store: lessons, market: mode.wrappedValue)
+                    if mode.wrappedValue == .hk || mode.wrappedValue == .jp {
+                        IntlHotSection(store: lessons, market: mode.wrappedValue)
+                        WatchlistSection()
+                        GlobalMarketSection(
+                            sentiment: vm.sentiment,
+                            isLoading: vm.isLoadingSentiment,
+                            error: vm.sentimentError,
+                            onRetry: { Task { await vm.loadSentiment() } }
+                        )
+                    } else if mode.wrappedValue == .us {
                         USMarketSection(
                             overview: vm.usOverview,
                             earnings: vm.earnings,
@@ -85,7 +96,11 @@ struct MarketTabView: View {
             .onChange(of: searchText) { _, new in vm.search(new) }
             .overlay(searchOverlay)
             .task { await vm.loadAll() }
-            .refreshable { await vm.loadAll() }
+            .task(id: modeRaw) { await lessons.load(mode.wrappedValue) }
+            .refreshable {
+                await vm.loadAll()
+                await lessons.load(mode.wrappedValue)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { showAbout = true } label: {

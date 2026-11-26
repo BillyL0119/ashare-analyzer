@@ -185,6 +185,12 @@ struct StockDetailView: View {
                             .padding(.leading, 4)
                     }
                 }
+                if market == .jp {
+                    // Measured 2026-11-26: Japanese quotes are exchange-delayed at the source (same note as the website)
+                    Text(L("日股行情约延迟 20 分钟（免费数据源的交易所规定）"))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(DS.accent)
+                }
                 HStack(spacing: 8) {
                     Text(q.name)
                         .font(.subheadline.weight(.medium))

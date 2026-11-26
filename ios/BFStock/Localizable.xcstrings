@@ -23787,6 +23787,35 @@
         }
       }
     },
+    "日股行情约延迟 20 分钟（免费数据源的交易所规定）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Japanese quotes are delayed about 20 minutes (exchange rule for free data)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les cours japonais sont différés d’environ 20 minutes (règle de la bourse pour les données gratuites)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日本株の株価は約20分遅れです（無料データの取引所ルール）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일본 주가는 약 20분 지연됩니다 (무료 데이터의 거래소 규정)"
+          }
+        }
+      }
+    },
     "日股账户": {
       "extractionState": "manual",
       "localizations": {
@@ -26306,6 +26335,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "인기 종목"
+          }
+        }
+      }
+    },
+    "热门股里涨跌最大的": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biggest movers among popular stocks"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus fortes variations parmi les valeurs suivies"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "人気銘柄の値動きが大きい順"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인기 종목 중 가장 크게 움직인 종목"
           }
         }
       }
@@ -30018,6 +30076,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "질문을 입력하세요…"
+          }
+        }
+      }
+    },
+    "近三个月": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last three months"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trois derniers mois"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "過去3か月"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최근 3개월"
           }
         }
       }

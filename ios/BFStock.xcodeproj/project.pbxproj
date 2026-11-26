@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		511A38DA90604E5B94B93917 /* HomeLessonCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5769C87ED6954956AF22480D /* HomeLessonCard.swift */; };
+		CB6BA409CE0E41379E378140 /* HomeLessonModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820A66A05F8F4A4097335D97 /* HomeLessonModels.swift */; };
 		01975F2B7F1840C5842636C5 /* EventsCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1447976AF61E4950BDCA2D0F /* EventsCalendarView.swift */; };
 		C9E312485B514938AF6EAB45 /* QuoteAnalystsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67ED037DD8904657B09CC706 /* QuoteAnalystsView.swift */; };
 		BC0429D4CC8447D4BF509B4C /* QuoteHoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEEF9EC21234C9C942B071C /* QuoteHoldersView.swift */; };
@@ -89,6 +91,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5769C87ED6954956AF22480D /* HomeLessonCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLessonCard.swift; sourceTree = "<group>"; };
+		820A66A05F8F4A4097335D97 /* HomeLessonModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLessonModels.swift; sourceTree = "<group>"; };
 		1447976AF61E4950BDCA2D0F /* EventsCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsCalendarView.swift; sourceTree = "<group>"; };
 		67ED037DD8904657B09CC706 /* QuoteAnalystsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteAnalystsView.swift; sourceTree = "<group>"; };
 		1CEEF9EC21234C9C942B071C /* QuoteHoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteHoldersView.swift; sourceTree = "<group>"; };
@@ -285,6 +289,7 @@
 				A708281BD19D4529827934D4 /* DiagramModels.swift */,
 				51FF92DEAF664A54A1A587FB /* GovernorModels.swift */,
 				41B67BF0DAB544B4879B4FFF /* QuoteModels.swift */,
+				820A66A05F8F4A4097335D97 /* HomeLessonModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -403,6 +408,7 @@
 				E8EF964ED54A4617B8406827 /* MarketHeatmapSection.swift */,
 				BABAE6BD4A5248A0BCC9EE59 /* MacroEventsSection.swift */,
 				1447976AF61E4950BDCA2D0F /* EventsCalendarView.swift */,
+				5769C87ED6954956AF22480D /* HomeLessonCard.swift */,
 			);
 			path = Market;
 			sourceTree = "<group>";
@@ -500,6 +506,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				511A38DA90604E5B94B93917 /* HomeLessonCard.swift in Sources */,
+				CB6BA409CE0E41379E378140 /* HomeLessonModels.swift in Sources */,
 				01975F2B7F1840C5842636C5 /* EventsCalendarView.swift in Sources */,
 				C9E312485B514938AF6EAB45 /* QuoteAnalystsView.swift in Sources */,
 				BC0429D4CC8447D4BF509B4C /* QuoteHoldersView.swift in Sources */,
