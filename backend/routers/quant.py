@@ -16,6 +16,7 @@ from fastapi.responses import JSONResponse
 from services import auth
 
 quant_router = APIRouter()
+health_router = APIRouter()         # public, mounted at /api/health: only ages in days, nothing from the desk itself
 SIGNALS = os.path.join(os.path.dirname(__file__), "..", "data", "quant", "signals.json")
 _cache = {"mtime": None, "data": None}
 
@@ -96,3 +97,19 @@ def explain_make(_: dict = Depends(auth.require_admin)):
             json.dump(store, fh, ensure_ascii=False)
         os.replace(tmp, EXPLAIN)
     return JSONResponse(res, headers={"Cache-Control": "no-store"})
+
+
+@health_router.get("/quant-freshness")
+def quant_freshness():
+    """How old the admin desk's files are, in days (None = never published). Read by the daily maintenance check
+    (tools/maintenance_check.py) so a weekly update that silently stopped (Mac off, Sharadar subscription ended) is noticed
+    from outside the Mac. Public on purpose: it carries no figures from the desk."""
+    now = __import__("time").time()
+
+    def age(path):
+        try:
+            return round((now - os.path.getmtime(path)) / 86400, 2)
+        except OSError:
+            return None
+    return JSONResponse({"desk_age_days": age(SIGNALS), "live_record_age_days": age(os.path.join(os.path.dirname(SIGNALS), "live_state.json"))},
+                        headers={"Cache-Control": "no-store"})

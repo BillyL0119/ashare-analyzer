@@ -1,0 +1,49 @@
+# Once a day: the things that go stale on a schedule (tools/maintenance_check.py): the NYSE holiday table, the S&P 500
+# membership list and the weekly quant desk update (its file's age on the server). While anything needs doing, one issue
+# labelled "maintenance" stays open (a comment on each later failing run, closed when everything is fine again);
+# GitHub emails the repo owner. Run it by hand: `gh workflow run maintenance-check.yml`.
+name: Maintenance check
+
+on:
+  schedule:
+    - cron: "43 23 * * *"     # once a day, 07:43 Beijing time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: maintenance-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Check
+        id: run
+        run: python3 tools/maintenance_check.py | tee maintenance-report.md
+        continue-on-error: true
+      - name: Open, update or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUTCOME: ${{ steps.run.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create maintenance --color FBCA04 --description "Something that goes stale needs doing" --force >/dev/null
+          open=$(gh issue list --label maintenance --state open --json number --jq '.[0].number')
+          body="$(cat maintenance-report.md)
+
+          Run: $RUN_URL"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ -n "$open" ]; then gh issue close "$open" --comment "Everything is up to date again. $RUN_URL"; fi
+          elif [ -n "$open" ]; then
+            gh issue comment "$open" --body "$body"
+          else
+            gh issue create --label maintenance --title "Maintenance: something needs doing on bestfriendstock.com" --body "$body"
+          fi

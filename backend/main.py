@@ -477,7 +477,7 @@ app.include_router(career_router, prefix="/api/career", tags=["career"])
 app.include_router(fundamentals_router, prefix="/api/us/fundamentals", tags=["fundamentals"])
 app.include_router(screener_router, prefix="/api/us/screener", tags=["screener"])
 from routers.admin import auth_router, admin_router
-from routers.quant import quant_router
+from routers.quant import quant_router, health_router
 from routers.journal import journal_router
 from routers import home_lesson
 from routers.heatmap import router as heatmap_router
@@ -501,5 +501,6 @@ app.include_router(factors_router, prefix="/api/us/factors", tags=["factors"])
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
 app.include_router(quant_router, prefix="/api/admin/quant", tags=["admin"])
+app.include_router(health_router, prefix="/api/health", tags=["health"])
 app.include_router(journal_router, prefix="/api/admin/journal", tags=["admin"])
 app.include_router(home_lesson.router, prefix="/api/home", tags=["home"])
