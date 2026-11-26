@@ -24,6 +24,18 @@ if [[ "${1:-}" == "--force" || ! -f "$JSTAMP" || -z "$(find "$JSTAMP" -mtime -1 
   fi
 fi
 
+# The same for the site's own data (accounts, classes, paper trading, case library): tools/data_pull.py
+DSTAMP="$LOGDIR/data-last-success"
+if [[ "${1:-}" == "--force" || ! -f "$DSTAMP" || -z "$(find "$DSTAMP" -mtime -1 2>/dev/null)" ]]; then
+  if out=$("$REPO/backend/.venv/bin/python" "$REPO/backend/tools/data_pull.py" 2>&1); then
+    date "+%Y-%m-%d %H:%M" > "$DSTAMP"
+    echo "$(date) $out" >> "$LOGDIR/data-backup.log"
+  else
+    echo "$(date) FAILED: $out" >> "$LOGDIR/data-backup.log"
+    notify "网站数据备份失败" "${out:0:120}"
+  fi
+fi
+
 if [[ "${1:-}" != "--force" && -f "$STAMP" && -n "$(find "$STAMP" -mtime -5 2>/dev/null)" ]]; then
   echo "$(date) skipped: last success $(cat "$STAMP")" >> "$LOGDIR/quant-weekly-skips.log"
   exit 0
