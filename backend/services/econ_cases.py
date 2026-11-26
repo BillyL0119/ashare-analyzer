@@ -104,7 +104,9 @@ def title_in(case: dict, lang: str) -> str:
 
 def _title_ok(lang: str, text: str, source_text: str) -> bool:
     """A translated headline is kept only when it is in the right language and adds no figure the article does not have."""
-    return bool(text) and 6 <= len(text) <= 220 and _right_language(lang, text) and not (_numbers(text) - _numbers(source_text))
+    # dates are not figures: "11月26日" in one language is "November 26" in the other
+    fig = lambda t: _numbers(_DATES.sub(" ", t or ""))                                          # noqa: E731
+    return bool(text) and 6 <= len(text) <= 220 and _right_language(lang, text) and not (fig(text) - fig(source_text))
 
 
 def _valid_stored(c: dict) -> bool:
@@ -123,6 +125,9 @@ def _load() -> None:
         # A case written in the wrong language is dropped (not marked rejected), so it is written again
         _db = {k: v for k, v in data.items()
                if now - v.get("ts", 0) < (_KEEP_REJECTED if v.get("rejected") else _KEEP_CASES) and _valid_stored(v)}
+        for v in _db.values():                  # a fresh start tries the untranslated headlines again
+            if not v.get("rejected"):
+                v["title_tries"] = 0
     except Exception:
         _db = {}
 

@@ -76,3 +76,10 @@ def test_a_headline_the_model_never_translates_is_given_up_on(monkeypatch):
     monkeypatch.setitem(ec._title_calls, "n", 0)
     calls = [ec.backfill_titles() for _ in range(6)]
     assert calls == [0] * 6 and ec._db["b"]["title_tries"] == ec._TITLE_TRIES      # tried three times, then left alone
+
+
+def test_a_date_in_a_translated_headline_is_not_an_invented_figure():
+    src = "光大期货：11月26日能源化工日报"
+    assert ec._title_ok("en", "Everbright Futures: energy and chemicals daily report, November 26", src)
+    assert not ec._title_ok("en", "Everbright Futures: energy and chemicals daily report, 26 percent", src)
+    assert ec._title_ok("zh", "英国央行官员：12月可能加息", "Bank of England official says a December rate rise is possible")
