@@ -186,7 +186,10 @@ def _hsics_loop():
         time.sleep(7 * 86400)
 
 
-threading.Thread(target=_hsics_loop, daemon=True, name="hk-hsics").start()
+from services.runtime import standby  # noqa: E402
+
+if not standby():
+    threading.Thread(target=_hsics_loop, daemon=True, name="hk-hsics").start()
 
 
 # ── Hong Kong / Japan ─────────────────────────────────────────────────────────

@@ -317,4 +317,7 @@ def _warm_loop():
 
 
 import threading as _threading
-_threading.Thread(target=_warm_loop, daemon=True, name="earnings-warm").start()
+from services.runtime import standby  # noqa: E402
+
+if not standby():
+    _threading.Thread(target=_warm_loop, daemon=True, name="earnings-warm").start()

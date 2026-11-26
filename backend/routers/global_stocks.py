@@ -243,7 +243,10 @@ def _universe_loop():
         time.sleep(3600)
 
 
-threading.Thread(target=_universe_loop, daemon=True, name="global-universe").start()
+from services.runtime import standby  # noqa: E402
+
+if not standby():
+    threading.Thread(target=_universe_loop, daemon=True, name="global-universe").start()
 
 
 def normalize_code(market: str, symbol: str) -> str:

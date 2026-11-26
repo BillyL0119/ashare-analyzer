@@ -92,6 +92,9 @@ app = FastAPI(
 @app.on_event("startup")
 async def preload_stock_list():
     """Preload the A-share stock list into cache so search fallback is ready."""
+    from services.runtime import standby
+    if standby():
+        return
     import asyncio
     from services.stock_service import get_stock_list
     loop = asyncio.get_event_loop()
@@ -101,6 +104,9 @@ async def preload_stock_list():
 @app.on_event("startup")
 async def warmup_caches():
     """Pre-warm slow caches (sentiment) so first user request is fast."""
+    from services.runtime import standby
+    if standby():                   # the standby copy only answers requests (services/runtime.py)
+        return
     import asyncio
     from routers.market import warmup_sentiment
     from routers.news import get_bank_views

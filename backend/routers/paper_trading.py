@@ -1219,7 +1219,10 @@ def _matcher_loop():
         time.sleep(20)
 
 
-threading.Thread(target=_matcher_loop, daemon=True, name="paper-orders").start()
+from services.runtime import standby  # noqa: E402
+
+if not standby():            # the standby copy of the backend never fills orders or applies splits and dividends
+    threading.Thread(target=_matcher_loop, daemon=True, name="paper-orders").start()
 
 
 # ── Performance curve vs the market ──────────────────────────────────────────

@@ -1031,6 +1031,8 @@ def daily_report():
 
 
 # Warm up on startup, once every helper above is defined (BFS_NO_WARMUP: tests import this module without network)
-if not os.environ.get("BFS_NO_WARMUP"):
+from services.runtime import standby  # noqa: E402
+
+if not os.environ.get("BFS_NO_WARMUP") and not standby():
     threading.Thread(target=_get_spot_df, daemon=True).start()
     threading.Thread(target=_sentiment_loop, daemon=True, name="sentiment-loop").start()
