@@ -26,7 +26,7 @@ The site is for learning, not advice; every post that mentions investing says so
 
 ## 3. Channels
 
-- Instagram (main): 4 to 5 posts a week. Carousels for the daily case, Reels for the diagram lab and the founders.
+- Instagram (main): 4 to 5 posts a week. Carousels for the daily case, charts and screenshots of the site for the rest. No one on camera.
 - TikTok (second): the same material as short videos or slideshows, posted a day later. Do not spend extra time here until
   Instagram is steady.
 - Teachers (the multiplier): one economics teacher who uses the class tool brings 20 to 30 students. See section 7.
@@ -36,12 +36,15 @@ The site is for learning, not advice; every post that mentions investing says so
 | Day | Post | Made by |
 |---|---|---|
 | Mon | Case of the day (4-slide carousel) | generated: `tools/social/case_cards.mjs` |
-| Tue | "Draw it": 20-second screen recording of the diagram lab reacting to a real shock | Billy records, I write the caption |
-| Wed | Case of the day | generated |
-| Thu | Time machine question as a story poll: "March 2020, the market is down 30% in a month. Do you sell?" | I write it |
-| Fri | Paper-trading class or leaderboard shout-out (only with the students' permission), or the Fed-chair game | I write it |
-| Sat | Founders' story Reel: why two students built this | Billy on camera (his choice) |
-| Sun | Exam technique carousel, e.g. "Evaluate in three moves" (no link needed: builds trust) | I write it |
+| Tue | (optional) another case of the day | generated |
+| Wed | History Time Machine question with real figures, plus a story poll | `tools/social/week1.mjs` |
+| Thu | (optional) another case of the day | generated |
+| Fri | "Draw it": the diagram lab before and after a shock | `tools/social/week1.mjs` |
+| Sat | (optional) paper-trading class shout-out, only with the students' permission | I write it |
+| Sun | Exam technique carousel, e.g. "Evaluate in three moves" | `tools/social/week1.mjs` |
+
+The account is the brand, "Best Friend Stock", and nobody appears on camera (decided 2026-11-27). Every post is cards, charts and
+screenshots of the site itself. The first four posts are in `~/Documents/BFS-marketing/week-1/`.
 
 ## 5. Hook bank (first lines that make people stop)
 
@@ -77,12 +80,10 @@ Send five this month. One teacher using it is worth more than a hundred posts.
 ## 8. What I do, what you do
 
 I write: captions, scripts, the weekly calendar, teacher messages, and the daily case cards (run the generator, I check the output).
-You do: record the screen clips and the founders' Reel, read every card before it goes out, and press "Post".
+You do: read every card before it goes out, and press "Post".
 I do not log in to your accounts or post for you; both apps restrict automated posting and an account that looks automated can lose reach or be limited.
 
-## 9. Decisions needed from you
+## 9. Decided, and still open
 
-1. The Instagram handle (and whether a TikTok exists).
-2. Whether you, Frank or neither appears on camera.
-3. How many posts a week you can really keep up for a month (I plan for 4).
-4. Whether the account is "Best Friend Stock" (brand) or "Billy and Frank" (people). People accounts usually grow faster.
+Decided (2026-11-27): the account is "Best Friend Stock" (the brand) and no one appears on camera.
+Still open: the Instagram handle, whether a TikTok exists, and how many posts a week you can keep up (the plan assumes 4).
