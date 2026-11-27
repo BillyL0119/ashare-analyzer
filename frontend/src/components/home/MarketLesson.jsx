@@ -225,7 +225,7 @@ function UsLesson({ lang, paths, onTabChange, onNavigate }) {
         <div className="bfs-lesson-text">
           <p className="bfs-lesson-status">
             <span className={`bfs-dot${live ? ' is-live' : ''}`} aria-hidden="true" />
-            {!d ? s.loading : live ? s.open : d.session?.state === 'pre' ? s.pre : d.session?.state === 'post' ? s.post : s.closed(...untilOpen(d.session?.next_open_utc, loc))}
+            {!d ? s.loading : live ? s.open : d.session?.state === 'pre' ? s.pre : d.session?.state === 'post' ? s.post : `${d.session?.holiday ? s.holiday(d.session.holiday) : ''}${s.closed(...untilOpen(d.session?.next_open_utc, loc))}`}
           </p>
           <h1 id="bfs-lesson-title" className={overview.data || overview.failed ? '' : 'skeleton'}>{overview.data || overview.failed ? title : '\u00a0'}</h1>
           <p className="bfs-lesson-sentence">{sentence || ns.introSub}</p>

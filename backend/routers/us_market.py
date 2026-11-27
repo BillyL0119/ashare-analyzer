@@ -99,6 +99,29 @@ def nyse_holidays(year: int) -> set:
     return h
 
 
+def holiday_key(d: date) -> str | None:
+    """Which NYSE holiday closes the exchange on d (a weekday), or None."""
+    y = d.year
+    if d.weekday() >= 5:
+        return None
+    named = [
+        ("new_year", _observed(date(y, 1, 1)) if date(y, 1, 1).weekday() != 5 else None),
+        ("mlk", _nth_weekday(y, 1, 0, 3)),
+        ("presidents", _nth_weekday(y, 2, 0, 3)),
+        ("good_friday", _easter(y) - timedelta(days=2)),
+        ("memorial", _last_weekday(y, 5, 0)),
+        ("juneteenth", _observed(date(y, 6, 19))),
+        ("independence", _observed(date(y, 7, 4))),
+        ("labor", _nth_weekday(y, 9, 0, 1)),
+        ("thanksgiving", _nth_weekday(y, 11, 3, 4)),
+        ("christmas", _observed(date(y, 12, 25))),
+    ]
+    for key, day in named:
+        if day == d:
+            return key
+    return None
+
+
 def _is_trading_day(d: date) -> bool:
     return d.weekday() < 5 and d not in nyse_holidays(d.year)
 
@@ -140,6 +163,7 @@ def market_session(now: datetime | None = None) -> dict:
         "et_time": now.strftime("%Y-%m-%d %H:%M"),
         "next_open_utc": nxt.astimezone(timezone.utc).isoformat() if nxt else None,
         "closes_early": _early_close(today),
+        "holiday": holiday_key(today),
     }
 
 

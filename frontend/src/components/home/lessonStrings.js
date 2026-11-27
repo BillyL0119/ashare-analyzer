@@ -19,6 +19,7 @@ const en = {
   pre: 'US pre-market trading',
   post: 'US after-hours trading',
   closed: (h, m, when) => (h != null ? `US market closed, opens in ${h} h ${m} min` : when ? `US market closed, opens ${when} New York time` : 'US market closed'),
+  holiday: (key) => "US markets are closed today for {n}. ".replace('{n}', {"new_year": "New Year's Day", "mlk": "Martin Luther King Jr. Day", "presidents": "Presidents' Day", "good_friday": "Good Friday", "memorial": "Memorial Day", "juneteenth": "Juneteenth", "independence": "Independence Day", "labor": "Labor Day", "thanksgiving": "Thanksgiving", "christmas": "Christmas"}[key] || ''),
   title: (dir, live, day) => live
     ? { up: 'US stocks are up today', down: 'US stocks are down today', flat: 'US stocks are flat so far today' }[dir]
     : { up: `US stocks rose on ${day}`, down: `US stocks fell on ${day}`, flat: `US stocks barely moved on ${day}` }[dir],
@@ -46,6 +47,7 @@ const zh = {
   pre: '美股盘前交易中',
   post: '美股盘后交易中',
   closed: (h, m, when) => (h != null ? `美股已收盘，${h} 小时 ${m} 分钟后开盘` : when ? `美股已收盘，美东时间${when}开盘` : '美股已收盘'),
+  holiday: (key) => "美股今天因{n}休市。".replace('{n}', {"new_year": "元旦", "mlk": "马丁·路德·金纪念日", "presidents": "总统日", "good_friday": "耶稣受难日", "memorial": "阵亡将士纪念日", "juneteenth": "六月节", "independence": "独立日", "labor": "劳动节", "thanksgiving": "感恩节", "christmas": "圣诞节"}[key] || ''),
   title: (dir, live, day) => live
     ? { up: '美股今天上涨', down: '美股今天下跌', flat: '美股今天基本持平' }[dir]
     : { up: `美股${day}上涨`, down: `美股${day}下跌`, flat: `美股${day}基本持平` }[dir],
@@ -73,6 +75,7 @@ const ja = {
   pre: '米国市場 プレマーケット',
   post: '米国市場 時間外取引',
   closed: (h, m, when) => (h != null ? `米国市場 取引終了、${h}時間${m}分後に開始` : when ? `米国市場 取引終了、米国東部時間 ${when} に開始` : '米国市場 取引終了'),
+  holiday: (key) => "米国市場は本日{n}のため休場です。".replace('{n}', {"new_year": "元日", "mlk": "キング牧師記念日", "presidents": "大統領の日", "good_friday": "聖金曜日", "memorial": "メモリアルデー", "juneteenth": "ジューンティーンス", "independence": "独立記念日", "labor": "レイバーデー", "thanksgiving": "感謝祭", "christmas": "クリスマス"}[key] || ''),
   title: (dir, live, day) => live
     ? { up: '米国株は本日上昇', down: '米国株は本日下落', flat: '米国株は本日ほぼ横ばい' }[dir]
     : { up: `米国株は${day}に上昇`, down: `米国株は${day}に下落`, flat: `米国株は${day}ほぼ横ばい` }[dir],
@@ -100,6 +103,7 @@ const ko = {
   pre: '미국 증시 프리마켓',
   post: '미국 증시 애프터마켓',
   closed: (h, m, when) => (h != null ? `미국 증시 마감, ${h}시간 ${m}분 뒤 개장` : when ? `미국 증시 마감, 미국 동부시간 ${when} 개장` : '미국 증시 마감'),
+  holiday: (key) => "미국 증시는 오늘 {n}로 휴장입니다. ".replace('{n}', {"new_year": "새해 첫날", "mlk": "마틴 루서 킹 데이", "presidents": "대통령의 날", "good_friday": "성금요일", "memorial": "현충일", "juneteenth": "준틴스", "independence": "독립기념일", "labor": "노동절", "thanksgiving": "추수감사절", "christmas": "크리스마스"}[key] || ''),
   title: (dir, live, day) => live
     ? { up: '미국 증시 오늘 상승', down: '미국 증시 오늘 하락', flat: '미국 증시 오늘 보합' }[dir]
     : { up: `미국 증시 ${day} 상승`, down: `미국 증시 ${day} 하락`, flat: `미국 증시 ${day} 보합` }[dir],
@@ -127,6 +131,7 @@ const fr = {
   pre: 'Marché américain en pré-ouverture',
   post: 'Marché américain après la clôture',
   closed: (h, m, when) => (h != null ? `Marché américain fermé, ouverture dans ${h} h ${m} min` : when ? `Marché américain fermé, ouverture ${when} (heure de New York)` : 'Marché américain fermé'),
+  holiday: (key) => "Les marchés américains sont fermés aujourd'hui ({n}). ".replace('{n}', {"new_year": "Jour de l’An", "mlk": "Martin Luther King Day", "presidents": "Presidents’ Day", "good_friday": "Vendredi saint", "memorial": "Memorial Day", "juneteenth": "Juneteenth", "independence": "fête de l’Indépendance", "labor": "Labor Day", "thanksgiving": "Thanksgiving", "christmas": "Noël"}[key] || ''),
   title: (dir, live, day) => live
     ? { up: "Les actions américaines montent aujourd'hui", down: "Les actions américaines baissent aujourd'hui", flat: "Les actions américaines bougent peu aujourd'hui" }[dir]
     : { up: `Les actions américaines ont monté ${day}`, down: `Les actions américaines ont baissé ${day}`, flat: `Les actions américaines ont peu bougé ${day}` }[dir],
