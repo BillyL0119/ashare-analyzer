@@ -1,52 +1,55 @@
 /* Best Friend Stock: site-wide tokens.
-   Direction (unslop pass, Nov 2026)
+   Direction (Nov 2026, "navy and white"): navy and white are the two main colours.
+   - Dark theme (default): navy surfaces (page #0a1a36, cards #0f2447) with white text.
+   - Light theme: white cards with navy text on a faintly blue page; the header bar stays navy.
    - Product: a free site where students learn investing and economics with real market data,
      paper trading and exam-style economics tools.
-   - Character: precise, encouraging, a little like a study notebook.
-   - World: a trading screen at night plus an exam notebook. Ink-blue surfaces, red and green ticks.
+   - Character: precise, encouraging, a little like a study notebook; a bank's reading room, not a casino.
    - Moments: the index figures and charts on the market overview, the candlestick chart.
    - Signature: the live market status dot.
-   Chrome stays quiet: one ink ramp, three text roles, one accent used rarely, hairline borders,
+   Chrome stays quiet: one navy ramp, three text roles, one accent used rarely, hairline borders,
    weights 400 to 600. No gradients, glows, glass, coloured icon tiles or uppercase tracked labels. */
 
-/* ── Dark theme (default) ────────────────────────────────── */
+/* ── Dark theme (default): navy ─────────────────────────── */
+/* The header bar and its menus keep the navy tokens in the light theme too (white page, navy bar). */
 :root,
-:root[data-theme="dark"] {
-  --bg-primary:      #0a0f1b;
-  --bg-secondary:    #0f1626;
-  --bg-tertiary:     #162036;
-  --bg-hover:        #1b2640;
-  --border-primary:  #1d2639;
-  --border-glow:     #2b3650;   /* the stronger hairline (hover, focus rows); the name is historical */
-  --text-primary:    #eef1f7;
-  --text-secondary:  #a6aec0;
-  --text-muted:      #7f899e;
-  --card-bg:         #0f1626;
-  --nav-bg:          #080c16;
-  --nav-bg-dim:      #080c16;
-  --map-ocean:       #0d1424;
-  --map-sphere:      #0a0f1b;
-  --map-border:      #2b3650;
-  --map-graticule:   #162036;
-  --map-land:        #1b2438;
-  --skeleton-base:   #162036;
-  --skeleton-shine:  #1d2639;
-  --chart-bg:        #0f1626;
-  --chart-text:      #a6aec0;
-  --chart-border:    #1d2639;
-  --chart-tooltip:   rgba(10,15,27,0.97);
+:root[data-theme="dark"],
+:root[data-theme="light"] [data-bfs-chrome] {
+  --bg-primary:      #0a1a36;
+  --bg-secondary:    #0f2447;
+  --bg-tertiary:     #153059;
+  --bg-hover:        #1b3a6a;
+  --border-primary:  #1f3b69;
+  --border-glow:     #2f5088;   /* the stronger hairline (hover, focus rows); the name is historical */
+  --text-primary:    #ffffff;
+  --text-secondary:  #c4d0e6;
+  --text-muted:      #92a6ca;
+  --card-bg:         #0f2447;
+  --nav-bg:          #071730;
+  --nav-bg-dim:      #071730;
+  --map-ocean:       #0c2040;
+  --map-sphere:      #0a1a36;
+  --map-border:      #2f5088;
+  --map-graticule:   #132b52;
+  --map-land:        #1a3763;
+  --skeleton-base:   #153059;
+  --skeleton-shine:  #1f3b69;
+  --chart-bg:        #0f2447;
+  --chart-text:      #c4d0e6;
+  --chart-border:    #1f3b69;
+  --chart-tooltip:   rgba(7,23,48,0.97);
 
   /* ── accent / signal colours */
-  --accent-blue:   #6c9cff;               /* accent as text, links, selection */
+  --accent-blue:   #8ab7ff;               /* accent as text, links, selection */
   --accent-fill:   #2563eb;               /* accent as a fill under white text (5.2:1) */
-  --accent-blue-soft: rgba(108,156,255,0.14);
-  --accent-purple: #9b93d8;
-  --accent-cyan:   #5fb4c4;
+  --accent-blue-soft: rgba(138,183,255,0.14);
+  --accent-purple: #a39bdc;
+  --accent-cyan:   #62b8c8;
   --accent-gold:   #e0a43a;
   --green-bright:  #4cc38a;
   --red-bright:    #e5484d;
   --on-accent:     #ffffff;
-  --shadow-pop:    0 12px 32px rgba(4,7,14,0.55);   /* menus and dialogs only */
+  --shadow-pop:    0 12px 32px rgba(2,8,20,0.55);   /* menus and dialogs only */
   --ease:          cubic-bezier(0.22, 1, 0.36, 1);
   color-scheme: dark;
 }
@@ -93,39 +96,39 @@ body {
 
 /* ── Light theme ─────────────────────────────────────────── */
 :root[data-theme="light"] {
-  --bg-primary:      #f5f7fa;
+  --bg-primary:      #f3f6fb;
   --bg-secondary:    #ffffff;
-  --bg-tertiary:     #eceff4;
-  --bg-hover:        #e3e8f0;
-  --border-primary:  #e1e6ee;
-  --border-glow:     #c3ccda;
-  --text-primary:    #111827;
-  --text-secondary:  #4b5565;
-  --text-muted:      #646d80;
+  --bg-tertiary:     #e9eff8;
+  --bg-hover:        #dde7f5;
+  --border-primary:  #d9e2f0;
+  --border-glow:     #b4c5e0;
+  --text-primary:    #0a1f44;
+  --text-secondary:  #3a4f76;
+  --text-muted:      #566b92;
   --card-bg:         #ffffff;
-  --nav-bg:          #ffffff;
-  --nav-bg-dim:      #ffffff;
-  --map-ocean:       #e4ebf4;
-  --map-sphere:      #d8e1ec;
-  --map-border:      #9aa7b8;
-  --map-graticule:   #edf1f6;
-  --map-land:        #eceff4;
-  --skeleton-base:   #eceff4;
-  --skeleton-shine:  #f5f7fa;
+  --nav-bg:          #071730;
+  --nav-bg-dim:      #071730;
+  --map-ocean:       #e3ebf7;
+  --map-sphere:      #d6e1f1;
+  --map-border:      #9fb2d1;
+  --map-graticule:   #ecf1f9;
+  --map-land:        #eef2f9;
+  --skeleton-base:   #e9eff8;
+  --skeleton-shine:  #f3f6fb;
   --chart-bg:        #ffffff;
-  --chart-text:      #4b5565;
-  --chart-border:    #e1e6ee;
+  --chart-text:      #3a4f76;
+  --chart-border:    #d9e2f0;
   --chart-tooltip:   rgba(255,255,255,0.98);
 
-  --accent-blue:   #1d4ed8;
-  --accent-fill:   #2563eb;
-  --accent-blue-soft: rgba(37,99,235,0.08);
+  --accent-blue:   #1a4aa8;   /* navy-blue links and selection, 8:1 on white */
+  --accent-fill:   #143a80;   /* navy fill under white text */
+  --accent-blue-soft: rgba(20,58,128,0.08);
   --accent-purple: #5b53a6;
   --accent-cyan:   #1d7f8f;
   --accent-gold:   #9a6200;
   --green-bright:  #15803d;   /* 5.0:1 on white */
   --red-bright:    #dc2626;   /* 4.8:1 on white */
-  --shadow-pop:    0 8px 24px rgba(17,24,39,0.08);
+  --shadow-pop:    0 8px 24px rgba(10,31,68,0.10);
   color-scheme: light;
 }
 
@@ -468,3 +471,13 @@ code {
 :root[data-theme="light"] [style*="; color: rgb(156, 163, 175)"],
 :root[data-theme="light"] [style^="color: rgba(156, 163, 175,"],
 :root[data-theme="light"] [style*="; color: rgba(156, 163, 175,"] { color: var(--text-muted) !important; }
+
+/* ── Light theme: filled blue written inline ──────────────────────────────────────────────────────────────
+   Buttons and selected pills set a bright blue background straight on the element (style={{ background: '#4f86f7' }}).
+   In the light theme they take the navy fill; inside the navy header bar the same variable stays the bright blue. */
+:root[data-theme="light"] [style*="background: rgb(79, 134, 247)"],
+:root[data-theme="light"] [style*="background-color: rgb(79, 134, 247)"],
+:root[data-theme="light"] [style*="background: rgb(37, 99, 235)"],
+:root[data-theme="light"] [style*="background-color: rgb(37, 99, 235)"],
+:root[data-theme="light"] [style*="background: rgb(108, 156, 255)"],
+:root[data-theme="light"] [style*="background-color: rgb(108, 156, 255)"] { background: var(--accent-fill) !important; color: var(--on-accent, #fff); }

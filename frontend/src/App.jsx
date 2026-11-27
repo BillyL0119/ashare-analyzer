@@ -405,7 +405,7 @@ export default function App() {
           <img
             src="/logo-header.png"
             alt="Best Friend Stock"
-            style={{ height: isMobile ? 32 : 40, width: 'auto', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
+            style={{ height: isMobile ? 32 : 40, width: 'auto', filter: 'brightness(0) invert(1)' }}      /* the bar is navy in both themes */
           />
           {!isMobile && (
             <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>

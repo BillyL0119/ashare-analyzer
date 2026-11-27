@@ -1,7 +1,7 @@
 /* App-style phone UI. Tokens mirror the iOS app's design system (DS). Scoped under .m-app. */
 .m-app {
-  --bg: #0a0f1b; --surface: #0A1628; --surface-hi: #12223D;
-  --stroke: rgba(238,241,247,.08); --text: #EEF1F7; --text-2: #A6AEC0; --text-3: #7F899E;
+  --bg: #0a1a36; --surface: #0f2447; --surface-hi: #153059;
+  --stroke: rgba(255,255,255,.10); --text: #FFFFFF; --text-2: #C4D0E6; --text-3: #92A6CA;
   --accent: #4f86f7; --accent-2: #4f86f7; --shadow: none;
   --cn-up: #E5484D; --cn-down: #4CC38A;
   --radius: 20px; --tile: 14px;
@@ -13,9 +13,9 @@
   overscroll-behavior: none;
 }
 :root[data-theme="light"] .m-app {
-  --bg: #F5F7FA; --surface: #FFFFFF; --surface-hi: #ECEFF4;
-  --stroke: rgba(0,0,0,.06); --text: #0E1420; --text-2: #5B6678; --text-3: #6B7487;   /* muted text at 4.5:1 on white */
-  --accent: #2563EB; --accent-2: #2563EB; --shadow: none;
+  --bg: #F3F6FB; --surface: #FFFFFF; --surface-hi: #E9EFF8;
+  --stroke: rgba(10,31,68,.09); --text: #0A1F44; --text-2: #475B82; --text-3: #566B92;   /* muted text at 4.5:1 on white */
+  --accent: #143A80; --accent-2: #143A80; --shadow: none;
   --cn-up: #DC2626; --cn-down: #15803D;   /* a shade darker on white so changes stay readable */
 }
 .m-app *, .m-app *::before, .m-app *::after { box-sizing: border-box; }

@@ -152,11 +152,11 @@ export default function WelcomeModal({ onLangSelect }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(0,0,0,0.75)',
+      background: 'rgba(7,23,48,0.78)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
-        background: '#161b2e', borderRadius: 16,
+        background: 'var(--bg-secondary)', borderRadius: 16,
         border: '1px solid rgba(79,134,247,0.3)',
         padding: '40px 32px', width: 480, maxWidth: '94vw',
         textAlign: 'center',
@@ -181,7 +181,7 @@ export default function WelcomeModal({ onLangSelect }) {
                 padding: '16px 10px', borderRadius: 12,
                 background: 'rgba(79,134,247,0.06)',
                 border: '1px solid rgba(79,134,247,0.2)',
-                cursor: 'pointer', color: '#e8eaf0',
+                cursor: 'pointer', color: 'var(--text-primary)',
                 transition: 'all 0.2s',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', gap: 8,

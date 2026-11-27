@@ -1,6 +1,5 @@
 import useQuoteApi from '../quotepage/useQuoteApi'
 import { LOCALE, isNum, fmtPrice, fmtSignedPct } from '../quotepage/format'
-import { riseColor, fallColor } from '../../utils/chartTheme'
 
 // The US index levels in the right of the desktop nav row, on every page except the home page (which shows
 // them large). A dot marks whether the regular session is open.
@@ -16,7 +15,7 @@ export default function MarketTicker({ lang }) {
     <div className="bfs-site-nav-ticker" role="group" aria-label={label}>
       <span className={`bfs-tick-dot${state === 'regular' ? ' is-live' : ''}`} title={label} />
       {idx.slice(0, 4).map((i) => {
-        const color = !isNum(i.pct) || i.pct === 0 ? 'var(--text-muted)' : i.pct > 0 ? riseColor('us') : fallColor('us')
+        const color = !isNum(i.pct) || i.pct === 0 ? 'var(--text-muted)' : i.pct > 0 ? 'var(--green-bright)' : 'var(--red-bright)'      // the nav bar is navy in both themes: its own tokens
         return (
           <span key={i.symbol} className="bfs-tick">
             <span className="n">{lang === 'zh' ? i.name_zh || i.name : i.name}</span>
